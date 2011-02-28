@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
         private void SetupChildControls()
         {
            
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.Studies.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(Resources.SR.GridPagerStudySingleItem, Resources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.Studies.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
             StudyListGridView.Pager = GridPagerTop;
         }
         

@@ -15,7 +15,7 @@ using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {

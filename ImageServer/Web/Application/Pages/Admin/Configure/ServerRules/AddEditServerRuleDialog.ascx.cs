@@ -19,7 +19,7 @@ using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules
 {

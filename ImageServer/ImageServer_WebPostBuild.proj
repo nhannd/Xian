@@ -1,4 +1,4 @@
-<Project DefaultTargets="CopyPlugins;CopyBin;CopyConfigFiles;Build Web Viewer" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="CopyPlugins;CopyBin;CopyConfigFiles;Build Web Viewer;AddSplashScreen" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<Choose>
 		<When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
@@ -27,7 +27,12 @@
 		<SilverlightBinFolder>$(ProjectDir)ClientBin</SilverlightBinFolder>
 	</PropertyGroup>
 
-  <Choose>
+	<PropertyGroup>
+		<ImageViewerWebClientSilverlightXAPOutputDir>$(TrunkDirectory)\ImageViewer\Web\Client\Silverlight\bin\$(Configuration)</ImageViewerWebClientSilverlightXAPOutputDir>
+	</PropertyGroup>
+
+
+	<Choose>
     <When Condition=" '$(BuildPlatform)' == 'x64' ">
       <PropertyGroup>
         <PlatformSubFolder>$(BuildPlatform)</PlatformSubFolder>
@@ -125,6 +130,12 @@
 		<MSBuild Projects="$(WebViewerSolutionDir)\Viewer.sln"  Properties="ProjectDir=$(ProjectDir);Configuration=$(Configuration);"/>
 		<Message Text="Updating Silverlight Package"/>
 		<Delete Files="$(SilverlightBinFolder)\Silverlight.xap" />
-		<Copy SourceFiles="$(WebViewerSolutionDir)\SilverlightHost\ClientBin\Silverlight.xap"  DestinationFolder="$(SilverlightBinFolder)"/>
+		<Copy SourceFiles="$(ImageViewerWebClientSilverlightXAPOutputDir)\Silverlight.xap"  DestinationFolder="$(SilverlightBinFolder)"/>
+	</Target>
+
+	<Target Name="AddSplashScreen">
+		<Message Text="Adding ImageServer splash screen"/>
+		<Copy SourceFiles="$(ProjectDir)\Builds\SplashScreen\LoginSplash.png"
+			  DestinationFolder="$(ProjectDir)\App_Themes\Default\images"/>
 	</Target>
 </Project>

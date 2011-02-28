@@ -11,6 +11,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerPartitionTabs.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs" %>
+<%@ Import Namespace="Resources" %>
 
     <asp:Panel runat="server" ID="PartitionPanel" CssClass="PartitionPanel">
     <asp:Label ID="Label1" runat="server" Text="<%$Resources: Labels,Partitions %>" CssClass="SearchTextBoxLabel" EnableViewState="False" style="padding-left: 5px;"/><br />    

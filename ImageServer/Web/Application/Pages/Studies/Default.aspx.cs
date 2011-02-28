@@ -18,6 +18,7 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
@@ -32,7 +33,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             ServerPartitionTabs.SetupLoadPartitionTabs(CreatePartitionTab);
             DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
 
-            SetPageTitle(App_GlobalResources.Titles.StudiesPageTitle);
+            SetPageTitle(Titles.StudiesPageTitle);
         }
 
         protected void Page_Load(object sender, EventArgs e)

@@ -43,7 +43,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(e.Message);
-            sb.AppendLine(e.StackTrace);
 
 			context.Items.Add(ImageServerConstants.ContextKeys.ErrorMessage, sb.ToString());
 			context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, e.StackTrace);

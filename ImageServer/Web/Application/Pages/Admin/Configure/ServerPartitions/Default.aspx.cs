@@ -16,7 +16,7 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions
 {
@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
             ServerPartitionPanel.Controller = _controller;
 
-            SetPageTitle(App_GlobalResources.Titles.ServerPartitionsPageTitle);
+            SetPageTitle(Titles.ServerPartitionsPageTitle);
 
             SetupEventHandlers();
         }

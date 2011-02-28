@@ -12,7 +12,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.AddEditPartitionDialog"
     Codebehind="AddEditPartitionDialog.ascx.cs" %>
     
-    <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+    
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server">
     <ContentTemplate>

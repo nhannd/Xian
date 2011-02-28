@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 {
@@ -20,7 +21,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            SetPageTitle(App_GlobalResources.Titles.CookiesRequiredPageTitle);
+            SetPageTitle(Titles.CookiesRequiredPageTitle);
         }
     }
 }

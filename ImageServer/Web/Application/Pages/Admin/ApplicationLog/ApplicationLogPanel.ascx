@@ -9,7 +9,7 @@
 
 --%>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+<%@ Import Namespace="Resources" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ApplicationLogPanel.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog.ApplicationLogSearchPanel" %>

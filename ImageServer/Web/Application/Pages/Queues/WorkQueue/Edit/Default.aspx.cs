@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;

@@ -9,6 +9,7 @@
 
 --%>
 
+<%@ Import Namespace="Resources" %>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DevicePanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel" %>

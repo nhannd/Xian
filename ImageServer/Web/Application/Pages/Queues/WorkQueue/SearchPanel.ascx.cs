@@ -22,6 +22,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -145,7 +146,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleCalendarExtender.ClientID);
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemList.WorkQueueItemGridView, delegate { return workQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerWorkQueueSingleItem, SR.GridPagerWorkQueueMultipleItems, workQueueItemList.WorkQueueItemGridView, delegate { return workQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             workQueueItemList.Pager = GridPagerTop;
 
             workQueueItemList.ServerPartition = _serverPartition;
@@ -280,7 +281,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             }
             int prevSelectedIndex = PriorityDropDownList.SelectedIndex;
             PriorityDropDownList.Items.Clear();
-            PriorityDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
+            PriorityDropDownList.Items.Add(new ListItem(SR.Any, string.Empty));
             foreach (WorkQueuePriorityEnum p in workQueuePriorities)
                 PriorityDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(p), p.Lookup));
             PriorityDropDownList.SelectedIndex = prevSelectedIndex;
@@ -340,7 +341,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             if (!workQueueItemList.SelectedItemExists())
             {
                 MessageBox.BackgroundCSS = string.Empty;
-                MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageBox.Message = SR.SelectedWorkQueueNoLongerOnTheList;
                 MessageBox.MessageStyle = "color: red; font-weight: bold;";
                 MessageBox.MessageType =
                     Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;

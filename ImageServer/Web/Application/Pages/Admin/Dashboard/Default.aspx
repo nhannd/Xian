@@ -11,7 +11,7 @@
 
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.Default" %>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <%@ Register TagPrefix="localAsp" TagName="FileSystemsGridView" Src="~/Pages/Admin/Dashboard/FileSystemsGridView.ascx" %>
 <%@ Register TagPrefix="localAsp" TagName="ServerPartitionGridView" Src="~/Pages/Admin/Dashboard/ServerPartitionGridView.ascx" %>

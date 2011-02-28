@@ -14,6 +14,8 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.PersonNameInputPanel" %>
 <%@ Register Src="~/Controls/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
     TagPrefix="uc" %>
+<%@ Import Namespace="Resources" %>
+
 <asp:Table runat="server" ID="table">
     <asp:TableRow runat="server" ID="SingleByteRow" VerticalAlign="Bottom">
         <asp:TableCell Wrap="false" Visible="false">

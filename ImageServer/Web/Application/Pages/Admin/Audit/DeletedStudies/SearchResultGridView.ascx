@@ -9,8 +9,9 @@
 
 --%>
 
+<%@ Import Namespace="Resources" %>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SearchResultGridView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.SearchResultGridView" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
 	Width="100%">

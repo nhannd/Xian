@@ -10,7 +10,7 @@
 --%>
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="GridPager.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.GridPager" %>
-
+<%@ Import Namespace="Resources" %>
 <table width="100%" cellpadding="0" cellspacing="0" class="GlobalGridPager">
     <tr>
         <td align="left" style="padding-left: 6px;">

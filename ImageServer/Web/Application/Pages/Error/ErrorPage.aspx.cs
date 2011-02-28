@@ -12,6 +12,8 @@
 using System;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using Resources;
+using System.Text;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 {
@@ -24,7 +26,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
             } 
             if (Context.Items[ImageServerConstants.ContextKeys.StackTrace] != null)
             {
-                StackTraceTextBox.Text = Server.HtmlEncode(Context.Items[ImageServerConstants.ContextKeys.StackTrace].ToString());
+                var errorMessage = Context.Items[ImageServerConstants.ContextKeys.ErrorMessage];
+
+                StringBuilder stack = new StringBuilder();
+                stack.AppendLine(Server.HtmlEncode(ErrorMessageLabel.Text));
+                stack.AppendLine(Server.HtmlEncode(Context.Items[ImageServerConstants.ContextKeys.StackTrace].ToString()));
+
+                StackTraceTextBox.Text = stack.ToString();
                 StackTraceTextBox.Visible = true;
                 StackTraceMessage.Visible = true;
             }
@@ -33,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
                 DescriptionLabel.Text = Context.Items[ImageServerConstants.ContextKeys.ErrorDescription].ToString();
             }
 
-            SetPageTitle(App_GlobalResources.Titles.ErrorPageTitle);
+            SetPageTitle(Titles.ErrorPageTitle);
         }
 
         protected void Logout_Click(Object sender, EventArgs e)

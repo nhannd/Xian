@@ -14,7 +14,7 @@ using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
-using SR = ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails
 {

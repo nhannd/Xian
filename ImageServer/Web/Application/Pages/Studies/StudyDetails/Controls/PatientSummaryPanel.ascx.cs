@@ -14,7 +14,7 @@ using System.Web.UI;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
-using SR = ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 				}
 				else
 				{
-                    PatientAge.Text = ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR.Years;
+                    PatientAge.Text = SR.Years;
 				}
 
             	if (String.IsNullOrEmpty(_patientSummary.Sex))

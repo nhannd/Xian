@@ -10,7 +10,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SeriesDeleteChangeLog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.SeriesDeleteChangeLog" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Edit" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>

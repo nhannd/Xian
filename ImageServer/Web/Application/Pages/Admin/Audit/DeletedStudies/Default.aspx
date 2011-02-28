@@ -8,6 +8,7 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 --%>
+<%@ Import Namespace="Resources" %>
 
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.Default"

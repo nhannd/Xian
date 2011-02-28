@@ -19,7 +19,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 {

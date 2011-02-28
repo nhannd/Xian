@@ -15,7 +15,7 @@
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="localAsp" %>
 <%@ Register Src="StudyDetails/Controls/DeleteStudyConfirmDialog.ascx" TagName="DeleteStudyConfirmDialog" TagPrefix="localAsp" %>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>

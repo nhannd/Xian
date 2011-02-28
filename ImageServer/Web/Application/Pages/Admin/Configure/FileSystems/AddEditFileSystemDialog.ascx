@@ -9,10 +9,11 @@
 
 --%>
 
+<%@ Import Namespace="Resources" %>
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.AddFilesystemDialog"
     Codebehind="AddEditFileSystemDialog.ascx.cs" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
     <Services>
         <asp:ServiceReference Path="~/Services/FilesystemInfoService.asmx" />

@@ -10,7 +10,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 <%@ Import namespace="System.Xml"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Common.Utilities"%>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="HistoryPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.HistoryPanel" %>
 <%@ Register Src="StudyHistoryChangeDescPanel.ascx" TagName="StudyHistoryChangeDescPanel" TagPrefix="localAsp" %>

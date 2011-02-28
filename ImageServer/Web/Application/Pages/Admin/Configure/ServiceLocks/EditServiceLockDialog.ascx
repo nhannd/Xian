@@ -13,7 +13,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks.EditServiceLockDialog"
     Codebehind="EditServiceLockDialog.ascx.cs" %>
     
-    <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+    
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="<%$Resources: Titles, AdminServices_EditDialogTitle%>" Width="450px">
     <ContentTemplate>

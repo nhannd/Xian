@@ -24,6 +24,7 @@ using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 {
@@ -64,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
             ToDateFilter.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDateFilter.ClientID, ToDateFilter.ClientID, ToDateFilter.ClientID, ToDateCalendarExtender.ClientID, "To Date must be greater than From Date") + " " + ScriptHelper.PopulateDefaultToTime(ToTimeFilter.ClientID) + " return false;";
             FromDateFilter.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDateFilter.ClientID, ToDateFilter.ClientID, FromDateFilter.ClientID, FromDateCalendarExtender.ClientID, "From Date must be less than To Date") + " " + ScriptHelper.PopulateDefaultFromTime(FromTimeFilter.ClientID) + " return false;";
 
-			GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, delegate { return ApplicationLogGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+			GridPagerTop.InitializeGridPager(SR.GridPagerApplicationLogSingleItem, SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, delegate { return ApplicationLogGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
 		    ApplicationLogGridView.Pager = GridPagerTop;
 
 			ApplicationLogGridView.DataSourceCreated += delegate(ApplicationLogDataSource source)

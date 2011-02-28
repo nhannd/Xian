@@ -16,7 +16,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {

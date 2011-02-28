@@ -12,6 +12,8 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ApplicationAlertPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.ApplicationAlertPanel" %>
+<%@ Import Namespace="Resources" %>
+
 
    <!--[if gte IE 5.5]>
     <![if lt IE 7]>

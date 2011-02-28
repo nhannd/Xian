@@ -16,6 +16,7 @@ using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 {
@@ -74,7 +75,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 							Platform.Log(LogLevel.Error,
 										 "PreResetConfirmDialog_Confirmed: Unable to reset archive queue item.");
 
-							MessageBox.Message = App_GlobalResources.SR.ArchiveQueueResetFailed;
+							MessageBox.Message = SR.ArchiveQueueResetFailed;
 							MessageBox.MessageType =
 								MessageBox.MessageTypeEnum.ERROR;
 							MessageBox.Show();
@@ -85,7 +86,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 						Platform.Log(LogLevel.Error, e,
 										 "PreResetConfirmDialog_Confirmed: Unable to reset work queue item." );
 
-						MessageBox.Message = App_GlobalResources.SR.ArchiveQueueResetFailed;
+						MessageBox.Message = SR.ArchiveQueueResetFailed;
 						MessageBox.MessageType =
 							MessageBox.MessageTypeEnum.ERROR;
 						MessageBox.Show();
@@ -125,9 +126,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 				PreResetConfirmDialog.MessageType =
 					MessageBox.MessageTypeEnum.YESNO;
 				if (_archiveQueueItemList.Count > 1)
-					PreResetConfirmDialog.Message = App_GlobalResources.SR.MultipleArchiveQueueResetConfirm;
+					PreResetConfirmDialog.Message = SR.MultipleArchiveQueueResetConfirm;
 				else
-					PreResetConfirmDialog.Message = App_GlobalResources.SR.ArchiveQueueResetConfirm;
+					PreResetConfirmDialog.Message = SR.ArchiveQueueResetConfirm;
 				PreResetConfirmDialog.Show();
 			}
 		}

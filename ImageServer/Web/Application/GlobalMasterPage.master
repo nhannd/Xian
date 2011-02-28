@@ -1,5 +1,5 @@
 <%@ Master Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.GlobalMasterPage" Codebehind="GlobalMasterPage.master.cs" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <%@ Register Src="~/Controls/AlertIndicator.ascx" TagName="AlertIndicator" TagPrefix="ccAsp" %>
 <%@ Register Src="~/Controls/SessionTimeout.ascx" TagName="SessionTimeout" TagPrefix="ccAsp" %>
 <%@ Register Src="~/Controls/ApplicationAlertPanel.ascx" TagName="ApplicationAlertPanel" TagPrefix="ccAsp" %>

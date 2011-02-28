@@ -1130,7 +1130,7 @@ its contribution.
   <div style="margin-left: 20px; margin-top: 20px; font-size: 20px; color: #205F87">
   <span style="font-weight: bold; font-size: 16px; "><%= ProductInformation.GetNameAndVersion(false, true, true, true) %> [<%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>]</span><br />
   <div style="font-weight: bold; font-size: 16px; ">Part of the ClearCanvas RIS/PACS</div>
-  <div style="font-weight:bold; font-size:12pt; color:Red"><%= ServerPlatform.IsManifestVerified? "": ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR.NonStandardInstallation %></div>
+  <div style="font-weight:bold; font-size:12pt; color:Red"><%= ServerPlatform.IsManifestVerified? "": Resources.SR.NonStandardInstallation %></div>
 
 <p><b>ClearCanvas Inc.</b><br />
 1920-439 University Ave.<br />

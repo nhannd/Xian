@@ -12,6 +12,7 @@
 using System;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 {
@@ -42,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
             }
             #endregion
 
-            SetPageTitle(App_GlobalResources.Titles.ErrorPageTitle);
+            SetPageTitle(Titles.ErrorPageTitle);
         }
 
         protected void Logout_Click(Object sender, EventArgs e)

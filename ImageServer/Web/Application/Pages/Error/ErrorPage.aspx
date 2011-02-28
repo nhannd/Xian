@@ -8,7 +8,7 @@
 --%>
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ErrorPage.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.ErrorPage" %>
 <%@ Import namespace="System.Threading"%>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <asp:Content runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">
 	    <asp:label ID="ErrorMessageLabel" runat="server">

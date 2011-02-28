@@ -24,8 +24,8 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
-using SR = ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using SR = Resources.SR;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsPanel.js", "application/x-javascript")]
 
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                     Platform.Log(LogLevel.Error,
                                      "PreResetConfirmDialog_Confirmed: Unable to delete all Alert items.");
 
-                        MessageBox.Message = App_GlobalResources.ErrorMessages.AlertDeleteFailed;
+                        MessageBox.Message = ErrorMessages.AlertDeleteFailed;
                         MessageBox.MessageType =
                             MessageBox.MessageTypeEnum.ERROR;
                         MessageBox.Show();
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         {
             base.OnInit(e);
 
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, delegate { return AlertsGridPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerAlertSingleItemFound, SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, delegate { return AlertsGridPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             AlertsGridPanel.Pager = GridPagerTop;
             GridPagerTop.Reset();
 
@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
             prevSelectedIndex = CategoryFilter.SelectedIndex;
             CategoryFilter.Items.Clear();
-            CategoryFilter.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
+            CategoryFilter.Items.Add(new ListItem(SR.Any, string.Empty));
             foreach (AlertCategoryEnum ace in categoryEnums)
                 CategoryFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(ace), ace.Lookup));
             CategoryFilter.SelectedIndex = prevSelectedIndex;
@@ -226,8 +226,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
             if (items != null && items.Count > 0)
             {
-                if (items.Count > 1) DeleteConfirmationBox.Message = string.Format(App_GlobalResources.SR.MultipleAlertDelete);
-                else DeleteConfirmationBox.Message = string.Format(App_GlobalResources.SR.SingleAlertDelete);
+                if (items.Count > 1) DeleteConfirmationBox.Message = string.Format(SR.MultipleAlertDelete);
+                else DeleteConfirmationBox.Message = string.Format(SR.SingleAlertDelete);
 
                 DeleteConfirmationBox.Message += "<div id='DeleteAlertTableContainer' class='DeleteAlertTableContainer'> <table class='DeleteAlertConfirmTable' border='0' cellspacing='0' cellpadding='0'>";
                 DeleteConfirmationBox.Message +=
@@ -258,7 +258,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         protected void DeleteAllAlertsButton_Click(object sender, ImageClickEventArgs e)
         {
             DeleteAllConfirmationBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-            DeleteAllConfirmationBox.Message = App_GlobalResources.SR.AlertDeleteAllConfirm;
+            DeleteAllConfirmationBox.Message = SR.AlertDeleteAllConfirm;
             DeleteAllConfirmationBox.MessageStyle = "color: #ff0000; font-weight: bold;";
             DeleteAllConfirmationBox.Show();    
         }

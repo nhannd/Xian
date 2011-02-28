@@ -9,6 +9,7 @@
 
 --%>
 
+<%@ Import Namespace="Resources" %>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeletedStudiesSearchPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudiesSearchPanel" %>
 

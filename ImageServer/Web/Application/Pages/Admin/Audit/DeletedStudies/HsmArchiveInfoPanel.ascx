@@ -10,6 +10,7 @@
 --%>
 
 <%@ Import Namespace="ClearCanvas.Dicom" %>
+<%@ Import Namespace="Resources" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="HsmArchiveInfoPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.HsmArchiveInfoPanel" %>
 <asp:Panel ID="Panel3" runat="server">

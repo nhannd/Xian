@@ -13,7 +13,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     Title="Move Series | ClearCanvas ImageServer" %>
 
 <%@ Register Src="MovePanel.ascx" TagName="MovePanel" TagPrefix="localAsp" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <asp:Content runat="server" ID="ContentTitle" ContentPlaceHolderID="TitlePlaceHolder"></asp:Content>
 

@@ -22,7 +22,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
                            
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, delegate { return ArchiveQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, delegate { return ArchiveQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             ArchiveQueueItemList.Pager = GridPagerTop;
 
             MessageBox.Confirmed += delegate(object data)
@@ -201,8 +201,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             if (items != null && items.Count>0)
             {
-                if (items.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleArchiveQueueDelete);
-                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleArchiveQueueDelete);
+                if (items.Count > 1) MessageBox.Message = string.Format(SR.MultipleArchiveQueueDelete);
+                else MessageBox.Message = string.Format(SR.SingleArchiveQueueDelete);
 
                 MessageBox.Message += "<table style=\"border: solid #CCCCCC 2px; margin-top: 5px;\">";
                 foreach (Model.ArchiveQueue item in items)

@@ -10,7 +10,7 @@
 --%>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WorkQueueSummary.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.WorkQueueSummary" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <asp:DataList ID="WorkQueueDataList" runat="server" Width="100%" OnItemDataBound="Item_DataBound">
     <HeaderTemplate>

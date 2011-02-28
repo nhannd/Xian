@@ -9,10 +9,12 @@
 
 --%>
 
+
 <%@ Import namespace="ClearCanvas.ImageServer.Core.Validation"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Services.WorkQueue"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+<%@ Import Namespace="Resources" %>
+
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WorkQueueAlertContextDataView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.WorkQueueAlertContextDataView" %>
 

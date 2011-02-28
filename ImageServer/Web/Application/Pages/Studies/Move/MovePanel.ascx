@@ -10,7 +10,7 @@
 --%>
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="MovePanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.MovePanel" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
 <%@ Register Src="StudyGridView.ascx" TagName="StudyGridView" TagPrefix="localAsp" %>
 

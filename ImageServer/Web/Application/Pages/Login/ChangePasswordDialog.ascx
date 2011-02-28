@@ -13,7 +13,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ChangePasswordDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.ChangePasswordDialog" %>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="500px" Title="<%$Resources: Titles, ChangePasswordDialogTitle %>">
     <ContentTemplate>

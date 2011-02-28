@@ -12,7 +12,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.StudyListGridView"
 	Codebehind="StudyListGridView.ascx.cs" %>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 
 <style>

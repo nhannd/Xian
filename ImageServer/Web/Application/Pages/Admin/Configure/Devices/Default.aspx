@@ -6,6 +6,7 @@
 // This software is licensed under the Open Software License v3.0.
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
+<%@ Import Namespace="Resources" %>
 
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     EnableEventValidation="false" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.Default" %>

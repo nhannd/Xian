@@ -10,7 +10,7 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebViewerMultipleStudiesTimeoutErrorPage.aspx.cs" MasterPageFile="WebViewerErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.WebViewerMultipleStudiesTimeoutErrorPage" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
 <%@ Import namespace="System.Threading"%>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">
 	     <asp:label ID="ErrorMessageLabel" runat="server">

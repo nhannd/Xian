@@ -10,7 +10,6 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 
 <%@ Page Language="C#" AutoEventWireup="True" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login._Default" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources"%>
 <%@ Import Namespace="System.Threading"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Common"%> 
 

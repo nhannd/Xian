@@ -8,7 +8,7 @@ This software is licensed under the Open Software License v3.0.
 For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <%@ Import namespace="ClearCanvas.ImageServer.Core.Edit"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>

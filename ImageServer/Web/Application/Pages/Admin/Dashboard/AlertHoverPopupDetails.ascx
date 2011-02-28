@@ -13,7 +13,7 @@
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AlertHoverPopupDetails.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.AlertHoverPopupDetails" %>
 
-<asp:Panel runat="server" ID="DetailsIndicator" CssClass="MoreInfo">[<%=ClearCanvas.ImageServer.Web.Application.App_GlobalResources.Labels.AlertHoverPopupDetails_MoreInfo %>]</asp:Panel>
+<asp:Panel runat="server" ID="DetailsIndicator" CssClass="MoreInfo">[<%=Labels.AlertHoverPopupDetails_MoreInfo %>]</asp:Panel>
 <asp:Panel runat="server" ID="DetailsPanel" CssClass="AlertHoverPopupDetails" style="display:none">
     <asp:PlaceHolder runat="server" ID="DetailsPlaceHolder">
     </asp:PlaceHolder>    

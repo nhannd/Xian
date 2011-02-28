@@ -22,7 +22,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
                           
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             RestoreQueueItemList.Pager = GridPagerTop;
 
             MessageBox.Confirmed += delegate(object data)
@@ -189,8 +189,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
             if (items != null && items.Count>0)
             {
-                if (items.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleRestoreQueueDelete);
-                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleRestoreQueueDelete);
+                if (items.Count > 1) MessageBox.Message = string.Format(SR.MultipleRestoreQueueDelete);
+                else MessageBox.Message = string.Format(SR.SingleRestoreQueueDelete);
 
                 MessageBox.Message += "<table>";
                 foreach (Model.RestoreQueue item in items)

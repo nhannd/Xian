@@ -11,7 +11,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="StudySummaryPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries.StudySummaryPanel" %>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
     
 <table width="100%" class="StudySummary" cellpadding="0" cellspacing="0">
     <tr>

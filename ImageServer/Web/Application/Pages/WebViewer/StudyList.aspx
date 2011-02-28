@@ -11,11 +11,13 @@
 
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="StudyList.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.StudyList"%>
 
+<%@ Import Namespace="Resources" %>
+
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="localAsp" %>
 <%@ Register Src="SearchPanel.ascx" TagName="SearchPanel" TagPrefix="localAsp" %>
 <%@ Register Src="SessionTimeout.ascx" TagName="SessionTimeout" TagPrefix="ccAsp" %>
 <%@ Register Src="JQuery.ascx" TagName="JQuery" TagPrefix="localAsp" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 

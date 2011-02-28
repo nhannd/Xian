@@ -8,6 +8,7 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 --%>
+<%@ Import Namespace="Resources" %>
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="TimedDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.TimedDialog" %>

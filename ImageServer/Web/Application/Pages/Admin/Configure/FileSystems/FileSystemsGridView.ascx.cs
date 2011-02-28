@@ -21,7 +21,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 using Resources;
-using SR = ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems
 {

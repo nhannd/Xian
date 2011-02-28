@@ -19,10 +19,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
-using SR=ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
+using SR = Resources.SR;
+using Resources;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 {
     public partial class _Default : BasePage

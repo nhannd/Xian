@@ -10,7 +10,7 @@
 --%>
 
 <%@ Import namespace="ClearCanvas.ImageServer.Common.Utilities"%>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.DuplicateSopDialog"
     Codebehind="DuplicateSopDialog.ascx.cs" %>

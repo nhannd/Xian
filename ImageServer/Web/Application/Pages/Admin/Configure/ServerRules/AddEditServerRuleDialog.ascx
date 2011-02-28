@@ -12,7 +12,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="AddEditServerRuleDialog.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.AddEditServerRuleDialog" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <asp:ScriptManagerProxy runat="server">
 	<Services>
 		<asp:ServiceReference Path="ServerRuleSamples.asmx" />

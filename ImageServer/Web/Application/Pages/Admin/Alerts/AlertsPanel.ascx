@@ -12,6 +12,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="AlertsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsPanel" %>
+<%@ Import Namespace="Resources" %>
 
 <%@ Register Src="AlertsGridPanel.ascx" TagName="AlertsGridPanel" TagPrefix="localAsp" %>
 

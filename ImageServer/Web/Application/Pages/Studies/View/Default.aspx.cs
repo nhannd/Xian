@@ -17,6 +17,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using System.Text;
 using System.Threading;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.View
 {
@@ -28,7 +29,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.View
         {
             base.OnInit(e);
 
-            SetPageTitle(App_GlobalResources.Titles.ViewImagesPageTitle);
+            SetPageTitle(Titles.ViewImagesPageTitle);
         }
 
         protected void Page_Load(object sender, EventArgs e)

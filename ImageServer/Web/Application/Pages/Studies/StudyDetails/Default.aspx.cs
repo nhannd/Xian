@@ -24,7 +24,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 {
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         void StudyDetailsPanel_ReprocessStudyClicked(object sender, StudyDetailsPanelReprocessStudyClickEventArgs e)
         {
-            ReprocessConfirmationDialog.Message = ImageServer.Web.Application.App_GlobalResources.SR.AreYouSureToReprocessThisStudy;
+            ReprocessConfirmationDialog.Message = Resources.SR.AreYouSureToReprocessThisStudy;
             ReprocessConfirmationDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ReprocessConfirmationDialog.Show();
         }

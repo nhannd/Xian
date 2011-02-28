@@ -16,7 +16,7 @@ using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login

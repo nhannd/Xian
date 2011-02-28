@@ -13,7 +13,7 @@
 <%@ Import namespace="Microsoft.JScript"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.Helpers" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeleteSeriesConfirmDialog.ascx.cs"

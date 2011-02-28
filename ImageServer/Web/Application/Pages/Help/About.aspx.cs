@@ -12,6 +12,7 @@
 using System;
 using System.Xml;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
 {
@@ -19,7 +20,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            SetPageTitle(App_GlobalResources.Titles.AboutPageTitle);
+            SetPageTitle(Titles.AboutPageTitle);
         }
 
         protected bool EnterpriseMode

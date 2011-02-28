@@ -13,7 +13,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.ReconcileDialog"
     Codebehind="ReconcileDialog.ascx.cs" %>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <ccAsp:ModalDialog ID="ReconcileItemModalDialog" runat="server" Width="900px" Title='<%$ Resources:Titles, ReconcileStudyDialog %>'>
     <ContentTemplate> 

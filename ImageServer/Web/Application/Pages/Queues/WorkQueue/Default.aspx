@@ -12,7 +12,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Default"
     Title="Work Queue | ClearCanvas ImageServer" %>
  
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
   
 <%@ MasterType  virtualPath="~/GlobalMasterPage.master"%>    
 

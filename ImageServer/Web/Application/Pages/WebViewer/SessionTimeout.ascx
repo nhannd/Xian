@@ -12,7 +12,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionTimeout.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.SessionTimeout" %>
 
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 
 <script type="text/javascript">

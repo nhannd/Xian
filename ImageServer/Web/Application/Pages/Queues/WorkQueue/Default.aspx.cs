@@ -22,6 +22,7 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Control
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 {
@@ -91,7 +92,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                 ScheduleWorkQueueDialog.Hide();
 
                                                                 MessageBox.BackgroundCSS = string.Empty;
-                                                                MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                                                                MessageBox.Message = SR.SelectedWorkQueueNoLongerOnTheList;
                                                                 MessageBox.MessageStyle = "color: red; font-weight: bold;";
                                                                 MessageBox.MessageType =
                                                                     Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
@@ -159,7 +160,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 ServerPartitionTabs.SetActivePartition(activePartition.AeTitle);
             }
 
-            SetPageTitle(App_GlobalResources.Titles.WorkQueuePageTitle);
+            SetPageTitle(Titles.WorkQueuePageTitle);
         }
 
         void RefreshTimer_AutoDisabled(object sender, TimerEventArgs e)
@@ -223,7 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             if (item==null)
             {
-                InformationDialog.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
+                InformationDialog.Message = SR.WorkQueueNotAvailable;
                 InformationDialog.Show();
 
             }
@@ -232,7 +233,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                 {
                     // prompt the user first
-                    InformationDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed_CannotReschedule;
+                    InformationDialog.Message = SR.WorkQueueBeingProcessed_CannotReschedule;
                     InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
@@ -240,7 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 }
                 else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
                 {
-                    InformationDialog.Message = App_GlobalResources.SR.WorkQueueFailed_CannotReschedule;
+                    InformationDialog.Message = SR.WorkQueueFailed_CannotReschedule;
                     InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
@@ -280,13 +281,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 WorkQueueController controller = new WorkQueueController();
                 if (controller.ReprocessWorkQueueItem(item))
                 {
-                    InformationDialog.Message = App_GlobalResources.SR.ReprocessOK;
+                    InformationDialog.Message = SR.ReprocessOK;
                     InformationDialog.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
                     InformationDialog.Show();
                 }
                 else
                 {
-                    InformationDialog.Message = App_GlobalResources.SR.ReprocessFailed;
+                    InformationDialog.Message = SR.ReprocessFailed;
                     InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                 }

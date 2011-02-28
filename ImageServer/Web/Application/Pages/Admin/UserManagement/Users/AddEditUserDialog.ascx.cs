@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
+using Resources;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users
@@ -206,7 +207,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             if (EditMode)
             {
-                ModalDialog1.Title = App_GlobalResources.SR.DialogEditUserTitle;
+                ModalDialog1.Title = SR.DialogEditUserTitle;
                 OKButton.Visible = false;
                 UpdateButton.Visible = true;
 
@@ -228,7 +229,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
             else
             {
-                ModalDialog1.Title = App_GlobalResources.SR.DialogAddUserTitle;
+                ModalDialog1.Title = SR.DialogAddUserTitle;
                 OKButton.Visible = true;
                 UpdateButton.Visible = false;
                 

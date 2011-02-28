@@ -18,7 +18,7 @@ using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Services.Common;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups
 {
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             if (EditMode)
             {
-                ModalDialog1.Title = App_GlobalResources.SR.DialogEditUserGroupTitle;
+                ModalDialog1.Title = SR.DialogEditUserGroupTitle;
                 UpdateButton.Visible = true;
                 OKButton.Visible = false;
                 GroupName.Text = UserGroup.Name;
@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             else
             {
                 TokenCheckBoxList.ClearSelection();
-                ModalDialog1.Title = App_GlobalResources.SR.DialogAddUserGroupTitle;
+                ModalDialog1.Title = SR.DialogAddUserGroupTitle;
                 UpdateButton.Visible = false;
                 OKButton.Visible = true;
             }

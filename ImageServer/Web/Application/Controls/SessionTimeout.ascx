@@ -10,8 +10,10 @@
 --%>
 
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
+<%@ Import Namespace="Resources" %>
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionTimeout.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.SessionTimeout" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <script type="text/javascript">
     var countdownTimer;

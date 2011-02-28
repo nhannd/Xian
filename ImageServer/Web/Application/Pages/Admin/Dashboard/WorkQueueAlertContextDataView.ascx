@@ -13,7 +13,7 @@
 <%@ Import namespace="ClearCanvas.ImageServer.Services.WorkQueue"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WorkQueueAlertContextDataView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.WorkQueueAlertContextDataView" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <%  WorkQueueAlertContextData data = this.Alert.ContextData as WorkQueueAlertContextData;
     String viewWorkQueueUrl = HtmlUtility.ResolveWorkQueueDetailsUrl(Page, data.WorkQueueItemKey);

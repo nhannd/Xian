@@ -8,7 +8,7 @@ This software is licensed under the Open Software License v3.0.
 For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SeriesDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails.SeriesDetailsPanel" %>

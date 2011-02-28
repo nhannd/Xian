@@ -9,6 +9,7 @@
 
 --%>
 
+<%@ Import Namespace="Resources" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ApplicationLogGridView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog.ApplicationLogGridView" %>
 

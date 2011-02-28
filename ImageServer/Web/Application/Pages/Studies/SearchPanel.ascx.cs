@@ -29,7 +29,7 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js", "application/x-javascript")]
 
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             ToStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID, "To Date must be greater than From Date");
             FromStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, FromStudyDate.ClientID, FromStudyDateCalendarExtender.ClientID, "From Date must be less than To Date");
             
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerStudySingleItem, SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             StudyListGridView.Pager = GridPagerTop;
 
             ConfirmStudySearchMessageBox.Confirmed += delegate(object data) {
@@ -363,13 +363,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
 			if (studies != null && studies.Count > 0)
 			{
-			    string message = studies.Count > 1 ? string.Format(App_GlobalResources.SR.MultipleStudyRestore):
-				                                    string.Format(App_GlobalResources.SR.SingleStudyRestore);
+			    string message = studies.Count > 1 ? string.Format(SR.MultipleStudyRestore):
+				                                    string.Format(SR.SingleStudyRestore);
 
 			    RestoreMessageBox.Message = DialogHelper.createConfirmationMessage(message);
                 RestoreMessageBox.Message += DialogHelper.createStudyTable(studies);
 				
-			    RestoreMessageBox.Title = App_GlobalResources.Titles.RestoreStudyConfirmation;
+			    RestoreMessageBox.Title = Titles.RestoreStudyConfirmation;
                 RestoreMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
 				IList<Study> studyList = new List<Study>();
 				foreach (StudySummary summary in studies)

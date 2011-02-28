@@ -8,6 +8,7 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 --%>
+<%@ Import Namespace="Resources" %>
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.FileSystemsGridView"
     Codebehind="FileSystemsGridView.ascx.cs" %>

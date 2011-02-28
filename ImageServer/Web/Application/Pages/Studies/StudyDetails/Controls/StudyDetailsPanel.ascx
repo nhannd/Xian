@@ -17,7 +17,7 @@
 <%@ Register Src="StudyDetailsTabs.ascx" TagName="StudyDetailsTabs" TagPrefix="localAsp" %>
 <%@ Register Src="StudyStateAlertPanel.ascx" TagName="StudyStateAlertPanel" TagPrefix="localAsp" %>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>

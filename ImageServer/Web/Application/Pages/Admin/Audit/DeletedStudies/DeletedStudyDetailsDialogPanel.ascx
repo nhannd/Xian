@@ -9,6 +9,7 @@
 
 --%>
 
+<%@ Import Namespace="Resources" %>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeletedStudyDetailsDialogPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudyDetailsDialogPanel" %>
 
 <%@ Register Src="DeletedStudyDetailsDialogGeneralPanel.ascx" TagName="GeneralInfoPanel" TagPrefix="localAsp" %>

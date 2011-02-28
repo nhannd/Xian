@@ -19,7 +19,7 @@ using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using SR = ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {

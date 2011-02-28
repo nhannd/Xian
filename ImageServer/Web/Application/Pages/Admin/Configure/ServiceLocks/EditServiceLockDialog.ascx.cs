@@ -18,6 +18,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
 using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
+using Resources;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks
@@ -178,7 +179,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
                 }
                 else
                 {
-                    ErrorMessageBox.Message = App_GlobalResources.SR.ServiceLockUpdateFailed_ContactAdmin;
+                    ErrorMessageBox.Message = SR.ServiceLockUpdateFailed_ContactAdmin;
                     ErrorMessageBox.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
                     ErrorMessageBox.Show();

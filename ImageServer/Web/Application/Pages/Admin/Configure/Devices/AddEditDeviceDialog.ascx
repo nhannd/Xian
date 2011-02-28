@@ -9,11 +9,12 @@
 
 --%>
 
+<%@ Import Namespace="Resources" %>
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.AddEditDeviceDialog"
     CodeBehind="AddEditDeviceDialog.ascx.cs" %>
 <%@ Register Src="ThrottleSettingsTab.ascx" TagName="ThrottleSettingsTab" TagPrefix="localAsp" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="450px">
     <ContentTemplate>

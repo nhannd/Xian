@@ -11,6 +11,8 @@
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.DataSource"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Import namespace="System.Xml"%>
+<%@ Import Namespace="Resources" %>
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="AlertsGridPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsGridPanel" %>
 

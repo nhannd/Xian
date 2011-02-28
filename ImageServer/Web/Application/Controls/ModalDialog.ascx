@@ -12,6 +12,7 @@
 <%@ Import Namespace="System.Net.Mime" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ModalDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog" %>
+<%@ Import Namespace="Resources" %>
 
 <asp:UpdatePanel ID="ModalDialogUpdatePanel" runat="server" UpdateMode="Conditional" >
     <ContentTemplate>

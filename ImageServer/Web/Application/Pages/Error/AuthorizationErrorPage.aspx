@@ -12,7 +12,7 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="AuthorizationErrorPage.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.AuthorizationErrorPage" %>
 <%@ Import namespace="System.Threading"%>
 
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <asp:Content runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">
 	    <asp:label ID="ErrorMessageLabel" runat="server">

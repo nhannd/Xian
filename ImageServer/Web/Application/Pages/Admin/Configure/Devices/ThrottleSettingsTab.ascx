@@ -8,11 +8,12 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 --%>
+<%@ Import Namespace="Resources" %>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ThrottleSettingsTab.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.ThrottleSettingsTab" %>
     
-    <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+    
 
 <script type="text/javascript">
     Sys.Application.add_load(page_load);

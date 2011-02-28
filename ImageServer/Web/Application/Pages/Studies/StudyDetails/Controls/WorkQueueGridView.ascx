@@ -13,7 +13,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Import Namespace="ClearCanvas.ImageServer.Common"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Data"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Model" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
     
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>

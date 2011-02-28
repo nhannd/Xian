@@ -10,7 +10,7 @@
 --%>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AlertIndicator.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.AlertIndicator" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+<%@ Import Namespace="Resources" %>
 
 <div runat="server" id="AlertLinkPanel" >| <asp:LinkButton ID="AlertLink" runat="server" PostBackUrl="~/Pages/Admin/Alerts/Default.aspx" CssClass="UserInformationLink"><%= Labels.CriticalAlerts %> <asp:Label ID="AlertsCount" runat="server" /></asp:LinkButton>
 <div id="AlertDetailsPanel" class="AlertDetailsPanel" style="display: none">

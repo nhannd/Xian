@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.FileSystemsPanel.js", "application/x-javascript")]
 
@@ -101,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             _theController = new FileSystemsConfigurationController();
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, delegate { return FileSystemsGridView1.FileSystems.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerFileSystemSingleItem, SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, delegate { return FileSystemsGridView1.FileSystems.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
             FileSystemsGridView1.Pager = GridPagerTop;
             GridPagerTop.Reset();
                 
@@ -110,7 +111,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             int prevSelectIndex = TiersDropDownList.SelectedIndex;
             if (TiersDropDownList.Items.Count == 0)
             {
-                TiersDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All));
+                TiersDropDownList.Items.Add(new ListItem(SR.All));
                 foreach (FilesystemTierEnum tier in Tiers)
                 {
                     TiersDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(tier), tier.Lookup));

@@ -11,7 +11,7 @@
 
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Application.Helpers"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.Model"%>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeletedStudyDetailsDialogGeneralPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudyDetailsDialogGeneralPanel" %>
 <asp:Panel ID="Panel3" runat="server">

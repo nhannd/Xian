@@ -11,7 +11,7 @@
 
 
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.App_GlobalResources" %>
+
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.Helpers" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeleteStudyConfirmDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialog" %>

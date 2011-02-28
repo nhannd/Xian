@@ -17,6 +17,7 @@ using ClearCanvas.Common;
 using System.Threading;
 using System.Globalization;
 using ClearCanvas.ImageServer.Common;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 {
@@ -52,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
         {
             var tags = new List<string>();
             if (!string.IsNullOrEmpty(ProductInformation.Release))
-                tags.Add(App_GlobalResources.Titles.LabelNotForDiagnosticUse);
+                tags.Add(Titles.LabelNotForDiagnosticUse);
             if (!ServerPlatform.IsManifestVerified)
                 // should be hardcoded because manifest verification is all that prevents localizing this tag away
                 tags.Add("Modified Installation");

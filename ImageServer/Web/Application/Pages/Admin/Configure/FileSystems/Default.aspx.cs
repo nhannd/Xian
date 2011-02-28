@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems
@@ -91,7 +92,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            SetPageTitle(App_GlobalResources.Titles.FileSystemsPageTitle);
+            SetPageTitle(Titles.FileSystemsPageTitle);
         }
 
         #endregion  Protected methods

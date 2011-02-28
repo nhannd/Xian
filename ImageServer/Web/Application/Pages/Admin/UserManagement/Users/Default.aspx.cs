@@ -26,7 +26,7 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users
 {
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             SetupEventHandlers();
 
-            SetPageTitle(App_GlobalResources.Titles.UserManagementPageTitle);
+            SetPageTitle(Titles.UserManagementPageTitle);
         }
 
 

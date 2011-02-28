@@ -22,7 +22,7 @@ using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
