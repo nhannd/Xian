@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
@@ -41,7 +39,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
 		{
 			_dummy = new DicomAttributeCollection();
-			_sourceMessage = sourceMessage;
+			SetSourceMessage(sourceMessage);
 		}
 
 		/// <summary>
@@ -57,19 +55,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			get
 			{
-				lock (SyncLock)
-				{
-					Load();
-					return _sourceMessage;
-				}
+				return GetSourceMessage(true);
 			}
 			protected set
 			{
 				lock (SyncLock)
 				{
-					_sourceMessage = value;
+					SetSourceMessage(value);
 				}
 			}
+		}
+
+		protected DicomMessageBase GetSourceMessage(bool requireLoad)
+		{
+			lock (SyncLock)
+			{
+				if (requireLoad)
+					Load();
+
+				return _sourceMessage;
+			}
+		}
+
+		private void SetSourceMessage(DicomMessageBase sourceMessage)
+		{
+			_sourceMessage = sourceMessage;
+			_loaded = !_sourceMessage.DataSet.IsEmpty();
 		}
 
 		/// <summary>
