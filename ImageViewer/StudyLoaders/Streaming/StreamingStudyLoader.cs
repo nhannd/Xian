@@ -24,7 +24,7 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	//TODO (CR February 2011): this is not ideal, but at the moment I can't think of a better way to do it.
+	//TODO (CR February 2011) - Low: this is not ideal, but at the moment I can't think of a better way to do it.
 
 	public interface IStreamingStudyLoaderConfiguration
     {

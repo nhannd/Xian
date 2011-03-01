@@ -34,6 +34,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 		#region Private Variables
 
+		//TODO (CR February 2011) - High: Name - remove "type".
 		/// <summary>
 		/// Private enum for knowing the state of the print request, so we know what to send to the SCP
 		/// </summary>
@@ -52,6 +53,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 		#endregion
 
 		#region Public Methods/Properties
+
+		//TODO (CR February 2011) - Medium: Enum - PrintMode? Grayscale/Color.
 
 		/// <summary>
 		/// Specifies whether the SCU will be printing color or grayscale.  Default is grayscale.

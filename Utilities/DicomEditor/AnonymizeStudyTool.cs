@@ -140,7 +140,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 				for (int i = 0; i < numberOfSops; ++i)
 				{
-					//TODO (CR February 2011): Sops not disposed, will cause caching issues.
+					//TODO (CR February 2011) - High: Sops not disposed, will cause caching issues.
 					Sop sop = LocalStudyLoader.LoadNextSop();
 					if (sop != null)
 					{

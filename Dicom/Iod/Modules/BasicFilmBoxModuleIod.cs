@@ -416,6 +416,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
     }
     #endregion
 
+	//TODO (CR March 2011) - High (time permitting): Good candidate for unit tests
+
     #region ImageDisplayFormat class
     [TypeConverter(typeof(ImageDisplayFormat.DisplayValueConverter))]
     public class ImageDisplayFormat
@@ -438,6 +440,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
                 return base.ConvertTo(context, culture, value, destinationType);
             }
 
+        	//TODO (CR February 2011) - Low: don't use contractions
             public string GetDisplayString(ImageDisplayFormat idf)
             {
                 var baseTypeProperCase = GetProperCasing(idf.BaseType.ToString());
@@ -506,18 +509,24 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </para>
         /// </summary>
         /// <value></value>
-        public enum FormatType
+
+		//TODO (CR March 2011) - High(time permitting): Good candidate for unit tests
+
+        //TODO (CR February 2011) - High: Name?
+		public enum FormatType
         {
             STANDARD,
             ROW,
-            COL,
-            SLIDE,
+			COL,
+			SLIDE,
             SUPERSLIDE,
             CUSTOM
         }
 
+    	//TODO (CR February 2011) - High: Name - StandardFormats?
         public static List<ImageDisplayFormat> Choices = new List<ImageDisplayFormat>
             {
+            	//TODO (CR February 2011) - High: Move each one to a nicely named static member?  e.g. Standard_1x1
                 new ImageDisplayFormat(FormatType.STANDARD,1,1),
                 new ImageDisplayFormat(FormatType.STANDARD,1,2),
                 new ImageDisplayFormat(FormatType.STANDARD,2,1),
@@ -544,32 +553,38 @@ namespace ClearCanvas.Dicom.Iod.Modules
             this.DicomString = dicomString;
         }
 
+    	//TODO (CR February 2011) - Low: Try not to use the word "type" - how about "format" or "baseformat" and "modifiers".
         private ImageDisplayFormat(FormatType baseType, params int[] typeModifiers)
         {
             this.BaseType = baseType;
             this.TypeModifiers = new List<int>();
             this.TypeModifiers.AddRange(typeModifiers);
 
+        	//TODO (CR February 2011): Move formatting to a method - seems it's done in a few places.
             _dicomString = this.TypeModifiers.Count == 0
                 ? this.BaseType.ToString()
                 : string.Format(@"{0}\{1}", this.BaseType, StringUtilities.Combine(this.TypeModifiers, ","));
         }
 
+    	//TODO (CR February 2011) - Medium: Might be better if this class was immutable and we had a FromDicomString static method.
         public string DicomString
         {
             get { return _dicomString; }
             set
             {
-                var itemInChoices = CollectionUtils.SelectFirst(Choices, idf => Equals(value, idf._dicomString));
+            	//TODO (CR February 2011) - Medium: Need to parse this rather than rely on "Choices"?
+				var itemInChoices = CollectionUtils.SelectFirst(Choices, idf => Equals(value, idf._dicomString));
                 _dicomString = itemInChoices._dicomString;
                 this.BaseType = itemInChoices.BaseType;
                 this.TypeModifiers = itemInChoices.TypeModifiers;
             }
         }
 
+    	//TODO (CR February 2011) - High: Name - BaseFormat or just Format?
         [XmlIgnore]
         public FormatType BaseType { get; private set; }
 
+    	//TODO (CR February 2011) - High: Name - Modifiers or FormatModifiers?
         [XmlIgnore]
         public List<int> TypeModifiers { get; private set; }
 
@@ -602,6 +617,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
     #region FilmSize
 
+	//TODO (CR March 2011) - High (time permitting): Good candidate for unit tests
+
     /// <summary>
     /// Film size identification.
     /// </summary>
@@ -628,6 +645,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
             private static string GetDisplayString(FilmSize filmSize)
             {
+            	//TODO (CR February 2011) - Low: put these format strings in resources.
                 var builder = new StringBuilder();
                 builder.AppendFormat("{0} {2} x {1} {2}",
                     filmSize._width,
@@ -640,8 +658,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
             }
         }
 
+    	//TODO (CR February 2011) - High: Name - StandardFilmSizes?
         public static List<FilmSize> Choices = new List<FilmSize>
             {
+            	//TODO (CR February 2011) - High: Move each one to a nicely named static member?
                 new FilmSize("8INX10IN", 8, 10, UnitType.Inch),
                 new FilmSize("8_5INX11IN", 8.5f, 11, UnitType.Inch),
                 new FilmSize("10INX12IN", 10, 12, UnitType.Inch),
@@ -656,6 +676,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
                 new FilmSize("A3", 297, 420, UnitType.Millimeter),
             };
 
+    	//TODO (CR February 2011) - High: Name - SizeUnits?
         public enum UnitType
         {
             Inch,
@@ -685,6 +706,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
             _unitType = unitType;
         }
 
+		//TODO (CR February 2011) - Medium: Might be better if this class was immutable and we had a FromDicomString static method.
+
         // The only public property, for serialization
         public string DicomString
         {
@@ -699,6 +722,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
             }
         }
 
+    	//TODO (CR February 2011) - High: Name - desiredUnits?
         public float GetHeight(UnitType desiredType)
         {
             if (_unitType == desiredType)
@@ -709,7 +733,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
                 : ConvertToMillimeters(_height);
         }
 
-        public float GetWidth(UnitType desiredType)
+		//TODO (CR February 2011) - High: Name - desiredUnits?
+		public float GetWidth(UnitType desiredType)
         {
             if (_unitType == desiredType)
                 return _width;
@@ -745,7 +770,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
             if (value is TEnumType && destinationType == typeof(string))
             {
                 if (value.ToString() == "None")
-                    return "Default";
+                    return "Default"; //TODO (CR February 2011) - Low: To resources?
 
                 if (value is MediumType)
                     return ConvertMediumType((MediumType)value);
@@ -761,6 +786,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             switch (mediumType)
             {
+				//TODO (CR February 2011) - Low: To resources.
                 case MediumType.Paper:
                     return "Paper";
                 case MediumType.ClearFilm:

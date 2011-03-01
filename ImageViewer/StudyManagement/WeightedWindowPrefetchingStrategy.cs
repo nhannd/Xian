@@ -152,6 +152,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		//TODO (CR February 2011) - Low: Name - SelectedImageBoxWeight?
 		/// <summary>
 		/// Gets or sets the relative weighting given to loading frames in the selected <see cref="IImageBox"/>. Valid range is 1 or more.
 		/// </summary>
@@ -170,6 +171,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		//TODO (CR February 2011) - Low: Name - UnselectedImageBoxWeight?
 		/// <summary>
 		/// Gets or sets the relative weighting given to loading frames in unselected <see cref="IImageBox"/>. Valid range is 0 or more.
 		/// </summary>

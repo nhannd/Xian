@@ -19,6 +19,7 @@ using ClearCanvas.Dicom.Iod.Sequences;
 
 namespace ClearCanvas.Dicom.Network.Scu
 {
+	//TODO (CR March 2011) - High: This is a decent candidate for a unit test
 	public partial class PrintScu
 	{
 		public class FilmSession : BasicFilmSessionModuleIod
@@ -45,6 +46,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 			internal void OnFilmBoxCreated(DicomUid filmBoxUid, List<DicomUid> imageBoxUids)
 			{
 				_currentFilmBox.SopInstanceUid = filmBoxUid;
+				//TODO (CR February 2011) - Medium: verify the counts match?  Or better yet, have the
+				//FilmBox create the image boxes based on layout?
 				for (var i = 0; i < _currentFilmBox.ImageBoxes.Count; i++)
 					_currentFilmBox.ImageBoxes[i].SopInstanceUid = imageBoxUids[i];
 
@@ -56,6 +59,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			internal void OnImageBoxSet(DicomUid imageBoxUid)
 			{
+				//TODO (CR February 2011) - Low: might be easier to deal with if we used an enumerator.
 				var currentImageBox = CollectionUtils.SelectFirst(_currentFilmBox.ImageBoxes, ib => Equals(ib.SopInstanceUid, imageBoxUid));
 				var nextImageBoxIndex = _currentFilmBox.ImageBoxes.IndexOf(currentImageBox) + 1;
 
@@ -80,6 +84,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			internal void OnFilmBoxDeleted()
 			{
 				_currentFilmBox.SopInstanceUid = null;
+				//TODO (CR February 2011) - Low: Again, enumerator might make this even easier.
 				var nextFilmBoxIndex = this.FilmBoxes.IndexOf(_currentFilmBox) + 1;
 				if (nextFilmBoxIndex == this.FilmBoxes.Count)
 				{
@@ -104,6 +109,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			internal DicomUid SopInstanceUid { get; set; }
 
+			//TODO (CR February 2011) - High (time permitting): Can this class auto-populate this?  Seems error prone to let it be set externally
+			//when it's very dependent on the Image Display Format.
+
 			public List<ImageBox> ImageBoxes { get; set; }
 
 			public FilmBox()
@@ -111,7 +119,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 				this.ImageBoxes = new List<ImageBox>();
 			}
 
-			public Size GetSizeInPixel(int filmDPI)
+			//TODO (CR February 2011) - High: Add corresponding method for ImageBoxes, which can be based on film box layout
+			public Size GetSizeInPixels(int filmDPI)
 			{
 				var physicalWidthInInches = this.FilmSizeId.GetWidth(FilmSize.UnitType.Inch);
 				var physicalHeightInInches = this.FilmSizeId.GetHeight(FilmSize.UnitType.Inch);
@@ -129,6 +138,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			internal DicomUid SopInstanceUid;
 
+			//TODO (CR February 2011) - Low: Need to pass back ImageBox itself for convenience?
+
 			/// <summary>
 			/// Delegate for getting pixel data.
 			/// </summary>
@@ -136,12 +147,15 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			protected readonly PixelDataDelegate _pixelDataGetter;
 
+			//TODO (CR February 2011) - High (time permitting): Setting the position externally is error prone.  If FilmBox
+			//auto-allocated imageboxes based on layout, that might help.
 			public ImageBox(ushort imageBoxPosition, PixelDataDelegate pixelDataGetter)
 			{
 				this.ImageBoxPosition = imageBoxPosition;
 				_pixelDataGetter = pixelDataGetter;
 			}
 
+			//TODO (CR March 2011) - Low: internal?
 			public void OnSet(bool isPrintingColor)
 			{
 				if (isPrintingColor)

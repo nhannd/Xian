@@ -218,6 +218,8 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			try
 			{
 				var srcPixelSpacing = ((IImageSopProvider)image).Frame.NormalizedPixelSpacing;
+
+				//TODO (CR March 2011) - Highest: Need to account for 90 degree rotation for images with non-square pixels.
 				var srcDPI = 25.4f/srcPixelSpacing.Column;
 				var scaleForTrueSize = dpi / srcDPI;
 
