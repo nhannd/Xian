@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Common
 		#endregion
 
 		#region Protected Abstract Methods
-		protected abstract void Initialize();
+		protected abstract bool Initialize();
 		protected abstract void Run();
 		protected abstract void Stop();
 		#endregion
@@ -111,8 +111,7 @@ namespace ClearCanvas.ImageServer.Common
 												{
 													try
 													{
-														Initialize();
-														bInit = true;
+														bInit = Initialize();
 													}
 													catch (Exception e)
 													{

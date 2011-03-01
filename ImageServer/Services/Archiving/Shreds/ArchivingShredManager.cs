@@ -228,7 +228,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Shreds
 		#endregion
 
 		#region Protected Methods
-		protected override void Initialize()
+		protected override bool Initialize()
 		{
 			_archiveServiceList.Clear();
 
@@ -277,6 +277,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Shreds
 					}
 				}
 			}
+            return true;
 		}
 
 		protected override void Run()
