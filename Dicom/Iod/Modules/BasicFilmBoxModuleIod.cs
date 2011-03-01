@@ -746,12 +746,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
         private static float ConvertToMillimeters(float inches)
         {
-            return inches * 25.4f;
+        	//TODO (CR March 2011) - Highest: enough decimal places?
+			return inches * 25.4f;
         }
 
         private static float ConvertToInches(float mm)
         {
-            return mm / 25.4f;
+			//TODO (CR March 2011) - Low: this number appears in multiple places.
+			//Should we have a LengthUnits class somewhere that defines this as a const?
+			return mm / 25.4f;
         }
     }
 
