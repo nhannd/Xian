@@ -187,6 +187,12 @@ If you would like to report the error, please post to one of the forums listed b
   <data name="JavascriptIsDisabledLongDescription" xml:space="preserve">
     <value>ClearCanvas ImageServer requires Javascript in order to run. Please enable Javascript on your browser and click here to try again</value>
   </data>
+  <data name="LicenseError" xml:space="preserve">
+    <value>Could not find a valid license</value>
+  </data>
+  <data name="LicenseErrorLongDescription" xml:space="preserve">
+    <value>The ImageServer license is invalid. A valid license must be entered in ClearCanvas Workstation Team. If you have already entered a valid license, please refresh this page to login.</value>
+  </data>
   <data name="LoginInvalidUsernameOrPassword" xml:space="preserve">
     <value>Invalid User ID or Password.</value>
   </data>

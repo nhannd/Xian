@@ -30,7 +30,7 @@
 
 <asp:Content runat="server" ContentPlaceHolderID="UserEscapePlaceHolder">
     <table width="100%" class="UserEscapeTable"><tr>
-    <td class="UserEscapeCell<a href="javascript:history.back()" class="UserEscapeLink"><%= Labels.Back %></a></td>
+    <td class="UserEscapeCell"><a href="javascript:history.back()" class="UserEscapeLink"><%= Labels.Back %></a></td>
     <td class="UserEscapeCell"><asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserEscapeLink" OnClick="Logout_Click"><%= Labels.Logout %></asp:LinkButton></td>
-    <td style="width: 30%" align="center"><a href="javascript:window.close()" class="UserEscapeLink"><%= Labels.Back %></a></td></tr></table>
+    <td style="width: 30%" align="center"><a href="javascript:window.close()" class="UserEscapeLink"><%= Labels.Close %></a></td></tr></table>
 </asp:Content>

@@ -129,6 +129,7 @@
     </Compile>
     <Compile Include="Exceptions\StudyInstanceUIDNotFoundException.cs" />
     <Compile Include="ImageServerConstants.cs" />
+    <Compile Include="ImageServerHttpApplication.cs" />
     <Compile Include="KeyedCollectionBase.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Modules\HttpContextDataManagementModule.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Utilities\HtmlUtility.cs" />
     <Compile Include="Utilities\NameFormatter.cs" />
     <Compile Include="Utilities\ServerUtility.cs" />
+    <Compile Include="HttpApplicationExtension.cs" />
     <Compile Include="WebControls\UI\Timer.cs" />
     <Compile Include="WebControls\UI\AJAXScriptControl.cs">
       <SubType>ASPXCodeBehind</SubType>

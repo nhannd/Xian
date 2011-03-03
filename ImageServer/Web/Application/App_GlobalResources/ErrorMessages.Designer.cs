@@ -263,6 +263,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not find a valid license.
+        /// </summary>
+        internal static string LicenseError {
+            get {
+                return ResourceManager.GetString("LicenseError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The ImageServer license is invalid. A valid license must be entered in ClearCanvas Workstation Team. If you have already entered a valid license, please refresh this page to login..
+        /// </summary>
+        internal static string LicenseErrorLongDescription {
+            get {
+                return ResourceManager.GetString("LicenseErrorLongDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid User ID or Password..
         /// </summary>
         internal static string LoginInvalidUsernameOrPassword {

@@ -18,10 +18,12 @@ using System.Web.Security;
 using System.Web.SessionState;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using ClearCanvas.ImageServer.Web.Common;
+using System.Reflection;
 
 namespace ClearCanvas.ImageServer.Web.Application
 {
-    public class Global : System.Web.HttpApplication
+    public class Global : ImageServerHttpApplication
     {
         private DateTime start;
 
@@ -55,4 +57,5 @@ namespace ClearCanvas.ImageServer.Web.Application
             }
         }
     }
+
 }
