@@ -23,6 +23,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Graphics.Utilities;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -427,8 +428,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			var description = BuildClipboardItemDescription(image);
 
 			image = image.Clone();
-			HideTextOverlay(image);
-
 			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
 
 			return new ClipboardItem(image, bmp, name, description, clientRectangle);
@@ -481,22 +480,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		private static IClipboardItem CreateDisplaySetItem(IDisplaySet displaySet, Rectangle clientRectangle)
 		{
-			HideTextOverlay(displaySet.PresentationImages);
-
 			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet, clientRectangle);
 			return new ClipboardItem(displaySet, bmp, displaySet.Name, BuildClipboardItemDescription(displaySet), clientRectangle);
-		}
-
-		private static void HideTextOverlay(IEnumerable<IPresentationImage> images)
-		{
-			foreach (IPresentationImage image in images)
-				HideTextOverlay(image);
-		}
-
-		private static void HideTextOverlay(IPresentationImage image)
-		{
-			if (image is IAnnotationLayoutProvider)
-				((IAnnotationLayoutProvider)image).AnnotationLayout.Visible = false;
 		}
 
 		private static string BuildClipboardItemName(IPresentationImage image)
@@ -536,7 +521,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				, Format.Date(DateParser.Parse(sop.StudyDate))
 				, sop.StudyDescription
 				, sop.AccessionNumber
-				, sop.Modality);
+				, sop.Modality
+				, TextOverlayVisibilityHelper.IsVisible(image) ? SR.LabelOn : SR.LabelOff);
 		}
 
 		private static string BuildClipboardItemDescription(IDisplaySet displaySet)

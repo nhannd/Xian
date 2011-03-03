@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -24,8 +24,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private bool _checked;
 
 		protected OverlayToolBase()
+			: this(true)
 		{
-			_checked = true;
+		}
+
+		protected OverlayToolBase(bool @checked)
+		{
+			_checked = @checked;
 		}
 
 		public override void Initialize()
@@ -34,34 +39,31 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			_toolRegistry.Add(this);
 
-			this.Context.Viewer.EventBroker.ImageDrawing += OnImageDrawing;
+			this.Context.Viewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			this.Context.Viewer.EventBroker.ImageDrawing -= OnImageDrawing;
+			this.Context.Viewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
 
 			_toolRegistry.Remove(this);
 
 			base.Dispose(disposing);
 		}
 
+		//NOTE: checked is changed internally, or by the parent overlay tool.
+		//So, when it is changed externally, we don't draw because presumably the parent tool will do that.
 		public bool Checked
 		{
 			get { return _checked; }
 			set
 			{
-				if (_checked != value)
-				{
-					_checked = value;
-					OnCheckedChanged();
-				}
+				if (_checked == value)
+					return;
+				
+				_checked = value;
+				OnCheckedChanged();
 			}
-		}
-
-		protected virtual void OnCheckedChanged()
-		{
-			EventsHelper.Fire(_checkedChanged, this, new EventArgs());
 		}
 
 		public event EventHandler CheckedChanged
@@ -70,18 +72,54 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { _checkedChanged -= value; }
 		}
 
+		protected virtual void OnCheckedChanged()
+		{
+			UpdateVisibility();
+			EventsHelper.Fire(_checkedChanged, this, new EventArgs());
+		}
+
 		public void ShowHide()
 		{
-			this.Checked = !this.Checked;
-			this.Context.Viewer.PhysicalWorkspace.Draw();
+			//NOTE: When this method is called directly, the tool was invoked directly, so we draw after.
+			Checked = !Checked; //changing this updates visibility.
+			Context.Viewer.PhysicalWorkspace.Draw();
+		}
+
+		private void OnDisplaySetChanged(object sender, DisplaySetChangedEventArgs e)
+		{
+			if (e.NewDisplaySet == null)
+				return;
+
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
+			UpdateVisibility(e.NewDisplaySet, Checked);
+			
+			clock.Stop();
+			Platform.Log(LogLevel.Debug, "{0} - UpdateVisibility took {1}", GetType().FullName, clock.Seconds);
+
+			//The display set will be drawn externally because it just changed.
+		}
+
+		private void UpdateVisibility()
+		{
+			if (Context == null)
+				return;
+
+			foreach (var imageBox in Context.Viewer.PhysicalWorkspace.ImageBoxes)
+			{
+				if (imageBox.DisplaySet != null)
+					UpdateVisibility(imageBox.DisplaySet, Checked);
+			}
+		}
+
+		protected virtual void UpdateVisibility(IDisplaySet displaySet, bool visible)
+		{
+			foreach (var image in displaySet.PresentationImages)
+				UpdateVisibility(image, visible);
 		}
 
 		protected abstract void UpdateVisibility(IPresentationImage image, bool visible);
-
-		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
-		{
-			UpdateVisibility(e.PresentationImage, Checked);
-		}
 
 		public static IEnumerable<OverlayToolBase> EnumerateTools(IImageViewer imageViewer)
 		{

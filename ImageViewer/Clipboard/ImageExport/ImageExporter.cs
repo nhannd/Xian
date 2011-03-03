@@ -85,85 +85,70 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			if (transform == null)
 				throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
 
-			bool oldAnnotationLayoutVisible = false;
-			IAnnotationLayoutProvider annotationLayout = image as IAnnotationLayoutProvider;
-			if (annotationLayout != null && annotationLayout.AnnotationLayout != null)
+			if (exportParams.ExportOption == ExportOption.TrueSize)
+				return DrawTrueSizeImageToBitmap(image, exportParams.OutputSize, exportParams.Dpi);
+
+			if (exportParams.SizeMode == SizeMode.Scale)
 			{
-				oldAnnotationLayoutVisible = annotationLayout.AnnotationLayout.Visible;
-				annotationLayout.AnnotationLayout.Visible = exportParams.ShowTextOverlay;
-			}
+				// TODO: Refactor ImageExporter, so there only the displayRectangle and OutputRectangle are provided
+				//		Scale can be automatically figured out.
+				//		A "Padded" option can be provided to distinguish between the current Fixed and ScaleToFit options
+				// TODO: Refactor ImageExporter, so there are separate exporters for each ExportOption.
+				//		The ExportImageParams is getting too many options and not all of them are applicable to each exporter
+				//		Instead, each exporter should have its own parameters.
 
-			try
-			{
-				if (exportParams.ExportOption == ExportOption.TrueSize)
-					return DrawTrueSizeImageToBitmap(image, exportParams.OutputSize, exportParams.Dpi);
-
-				if (exportParams.SizeMode == SizeMode.Scale)
+				if (exportParams.ExportOption == ExportOption.Wysiwyg)
 				{
-					// TODO: Refactor ImageExporter, so there only the displayRectangle and OutputRectangle are provided
-					//		Scale can be automatically figured out.
-					//		A "Padded" option can be provided to distinguish between the current Fixed and ScaleToFit options
-					// TODO: Refactor ImageExporter, so there are separate exporters for each ExportOption.
-					//		The ExportImageParams is getting too many options and not all of them are applicable to each exporter
-					//		Instead, each exporter should have its own parameters.
-
-					if (exportParams.ExportOption == ExportOption.Wysiwyg)
-					{
-						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale, exportParams.Dpi);
-					}
-					else
-					{
-						return DrawCompleteImageToBitmap(image, exportParams.Scale, exportParams.Dpi);
-					}
-				}
-				else if (exportParams.SizeMode == SizeMode.ScaleToFit)
-				{
-					if (exportParams.ExportOption == ExportOption.Wysiwyg)
-					{
-						var scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
-						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale, exportParams.Dpi);
-					}
-					else
-					{
-						var sourceImage = (IImageGraphicProvider)image;
-						var scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
-						return DrawCompleteImageToBitmap(image, scale, exportParams.Dpi);
-					}
+					return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale, exportParams.Dpi);
 				}
 				else
 				{
-					Bitmap paddedImage = new Bitmap(exportParams.OutputSize.Width, exportParams.OutputSize.Height);
-					using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(paddedImage))
-					{
-						// paint background
-						using (Brush b = new SolidBrush(exportParams.BackgroundColor))
-						{
-							graphics.FillRectangle(b, new Rectangle(Point.Empty, exportParams.OutputSize));
-						}
-
-						// paint image portion
-						Bitmap bmp;
-						if (exportParams.ExportOption == ExportOption.Wysiwyg)
-						{
-							float scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
-							bmp = DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale, exportParams.Dpi);
-						}
-						else
-						{
-							IImageGraphicProvider sourceImage = (IImageGraphicProvider) image;
-							float scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
-							bmp = DrawCompleteImageToBitmap(image, scale, exportParams.Dpi);
-						}
-						graphics.DrawImageUnscaledAndClipped(bmp, new Rectangle(CenterRectangles(bmp.Size, exportParams.OutputSize), bmp.Size));
-						bmp.Dispose();
-					}
-					return paddedImage;
+					return DrawCompleteImageToBitmap(image, exportParams.Scale, exportParams.Dpi);
 				}
 			}
-			finally
+			else if (exportParams.SizeMode == SizeMode.ScaleToFit)
 			{
-				if (annotationLayout != null && annotationLayout.AnnotationLayout != null)
-					annotationLayout.AnnotationLayout.Visible = oldAnnotationLayoutVisible;
+				if (exportParams.ExportOption == ExportOption.Wysiwyg)
+				{
+					var scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
+					return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale, exportParams.Dpi);
+				}
+				else
+				{
+					var sourceImage = (IImageGraphicProvider) image;
+						var scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
+					return DrawCompleteImageToBitmap(image, scale, exportParams.Dpi);
+				}
+			}
+			else
+			{
+				Bitmap paddedImage = new Bitmap(exportParams.OutputSize.Width, exportParams.OutputSize.Height);
+				using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(paddedImage))
+				{
+					// paint background
+					using (Brush b = new SolidBrush(exportParams.BackgroundColor))
+					{
+						graphics.FillRectangle(b, new Rectangle(Point.Empty, exportParams.OutputSize));
+					}
+
+					// paint image portion
+					Bitmap bmp;
+					if (exportParams.ExportOption == ExportOption.Wysiwyg)
+					{
+						float scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
+						bmp = DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale, exportParams.Dpi);
+					}
+					else
+					{
+						IImageGraphicProvider sourceImage = (IImageGraphicProvider) image;
+							float scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
+						bmp = DrawCompleteImageToBitmap(image, scale, exportParams.Dpi);
+					}
+						graphics.DrawImageUnscaledAndClipped(bmp, new Rectangle(CenterRectangles(bmp.Size, exportParams.OutputSize), bmp.Size));
+					bmp.Dispose();
+				}
+				
+				return paddedImage;
 			}
 		}
 

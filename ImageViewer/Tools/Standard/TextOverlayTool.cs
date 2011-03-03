@@ -35,13 +35,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 		}
 
-		protected override void  UpdateVisibility(IPresentationImage image, bool visible)
+		protected override void UpdateVisibility(IPresentationImage image, bool visible)
 		{
-			if (image is IAnnotationLayoutProvider)
-			{
-				foreach (AnnotationBox box in ((IAnnotationLayoutProvider)image).AnnotationLayout.AnnotationBoxes)
-					box.Visible = visible;
-			}
+			var provider = image as IAnnotationLayoutProvider;
+			if (provider != null)
+				provider.AnnotationLayout.Visible = visible;
 		}
 	}
 }

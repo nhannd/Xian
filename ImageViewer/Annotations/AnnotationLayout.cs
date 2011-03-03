@@ -21,21 +21,14 @@ namespace ClearCanvas.ImageViewer.Annotations
 	public class AnnotationLayout : IAnnotationLayout
 	{
 		private readonly AnnotationBoxList _annotationBoxes;
-		private bool _visible;
-		
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public AnnotationLayout()
 		{
 			_annotationBoxes = new AnnotationBoxList();
-			_visible = true;
-		}
-
-		[CloneInitialize]
-		private void Initialize(AnnotationLayout source, ICloningContext context)
-		{
-			context.CloneFields(source, this);
+			Visible = true;
 		}
 
 		/// <summary>
@@ -59,13 +52,12 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <summary>
 		/// Gets or sets whether the <see cref="IAnnotationLayout"/> is visible.
 		/// </summary>
-		public bool Visible 
-		{
-			get { return _visible; }
-			set { _visible = value; }
-		}
+		public bool Visible { get; set; }
 
-		#endregion
+		IAnnotationLayout IAnnotationLayout.Clone()
+		{
+			return Clone();
+		}
 
 		/// <summary>
 		/// Creates a deep clone of this <see cref="AnnotationLayout"/>.
@@ -74,5 +66,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{
 			return CloneBuilder.Clone(this) as AnnotationLayout;
 		}
+		
+		#endregion
 	}
 }
