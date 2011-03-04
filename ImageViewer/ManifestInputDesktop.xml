@@ -17,7 +17,6 @@
     <File name="ClearCanvas.Executable.exe.config" config="false" />
     <File name="DicomAEServers.xml" ignore="true"/>
     <File name="EULA.rtf" />
-    <File name="License.rtf" />
     <File name="PrivacyNotice.rtf" />
     <File name="Logging.config" />
     <File name="common\ClearCanvas.Common.dll" checksum="true" />

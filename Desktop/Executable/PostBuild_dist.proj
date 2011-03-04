@@ -86,11 +86,6 @@
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\nunit.framework.dll" />
   </ItemGroup>
 
-  <!-- License files -->
-  <ItemGroup>
-    <LicenseFiles Include="$(ProjectDir)\..\..\License.rtf" />
-  </ItemGroup>
-
   <!-- Shared plugin files, to be placed in plugin directory -->
   <ItemGroup>
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
@@ -158,9 +153,6 @@
 
     <!-- Copy shared plugins -->
     <Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
-
-    <!-- Copy license file -->
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
     <!-- Copy execution files -->
     <Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />
