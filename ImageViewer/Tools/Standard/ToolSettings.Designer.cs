@@ -121,22 +121,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        /// Per modality setting profiles for certain tools.
-        /// </summary>
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Per modality setting profiles for certain tools.")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ToolSettingsProfile />")]
-        public global::ClearCanvas.ImageViewer.Tools.Standard.ToolSettingsProfile ToolSettingsProfile {
-            get {
-                return ((global::ClearCanvas.ImageViewer.Tools.Standard.ToolSettingsProfile)(this["ToolSettingsProfile"]));
-            }
-            set {
-                this["ToolSettingsProfile"] = value;
-            }
-        }
-        
-        /// <summary>
         /// Enables match scale tool for non-parallel images.
         /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
