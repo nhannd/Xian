@@ -1112,6 +1112,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		public void ValidateAllowableTransferSyntax()
+		{
+			var mySyntax = this.TransferSyntaxUid;
+			foreach (var syntax in GetAllowableTransferSyntaxes())
+			{
+				if (mySyntax == syntax.UidString)
+					return;
+			}
+
+			throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUid));
+		}
+
+		protected virtual IEnumerable<TransferSyntax> GetAllowableTransferSyntaxes()
+		{
+			yield return TransferSyntax.ImplicitVrLittleEndian;
+			yield return TransferSyntax.ExplicitVrLittleEndian;
+			yield return TransferSyntax.ExplicitVrBigEndian;
+		}
+
 		/// <summary>
 		/// Validates the <see cref="Sop"/> object.
 		/// </summary>
