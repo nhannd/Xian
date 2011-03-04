@@ -40,6 +40,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
     	void Anonymize(bool applyToAll);
 
+		int LoadedFileCount { get; }
 		void SaveAll();
 
         bool TagExists(uint tag);
@@ -227,6 +228,11 @@ namespace ClearCanvas.Utilities.DicomEditor
                 }
             }
         }
+
+    	public int LoadedFileCount
+    	{
+    		get { return _loadedFiles.Count; }
+    	}
 
 		public void SaveAll()
 		{
