@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._tbLowWatermark.Maximum = 100000;
 			this._tbLowWatermark.Name = "_tbLowWatermark";
 			this._tbLowWatermark.Size = new System.Drawing.Size(171, 45);
-			this._tbLowWatermark.SmallChange = 1000;
+			this._tbLowWatermark.SmallChange = 10;
 			this._tbLowWatermark.TabIndex = 13;
 			this._tbLowWatermark.TickFrequency = 10000;
 			this._tbLowWatermark.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._tbHighWatermark.Maximum = 100000;
 			this._tbHighWatermark.Name = "_tbHighWatermark";
 			this._tbHighWatermark.Size = new System.Drawing.Size(171, 45);
-			this._tbHighWatermark.SmallChange = 1000;
+			this._tbHighWatermark.SmallChange = 10;
 			this._tbHighWatermark.TabIndex = 3;
 			this._tbHighWatermark.TickFrequency = 10000;
 			// 
