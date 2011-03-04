@@ -53,7 +53,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 				// start setting the first imageBox
 				var firstImageBox = _currentFilmBox.ImageBoxes[0];
-				firstImageBox.OnSet(this.PrintScu.ColorPrinting);
+				firstImageBox.OnSet(this.PrintScu.ColorMode);
 				this.PrintScu.SetImageBox(firstImageBox);
 			}
 
@@ -71,7 +71,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				else
 				{
 					var nextImageBox = _currentFilmBox.ImageBoxes[nextImageBoxIndex];
-					nextImageBox.OnSet(this.PrintScu.ColorPrinting);
+					nextImageBox.OnSet(this.PrintScu.ColorMode);
 					this.PrintScu.SetImageBox(nextImageBox);
 				}
 			}
@@ -122,8 +122,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 			//TODO (CR February 2011) - High: Add corresponding method for ImageBoxes, which can be based on film box layout
 			public Size GetSizeInPixels(int filmDPI)
 			{
-				var physicalWidthInInches = this.FilmSizeId.GetWidth(FilmSize.UnitType.Inch);
-				var physicalHeightInInches = this.FilmSizeId.GetHeight(FilmSize.UnitType.Inch);
+				var physicalWidthInInches = this.FilmSizeId.GetWidth(FilmSize.FilmSizeUnit.Inch);
+				var physicalHeightInInches = this.FilmSizeId.GetHeight(FilmSize.FilmSizeUnit.Inch);
 
 				var width = (int)Math.Ceiling(physicalWidthInInches * filmDPI);
 				var height = (int)Math.Ceiling(physicalHeightInInches * filmDPI);
@@ -155,10 +155,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 				_pixelDataGetter = pixelDataGetter;
 			}
 
-			//TODO (CR March 2011) - Low: internal?
-			public void OnSet(bool isPrintingColor)
+			internal void OnSet(ColorMode colorMode)
 			{
-				if (isPrintingColor)
+				if (colorMode == ColorMode.Color)
 				{
 					var image = new BasicColorImageSequenceIod
 						{
