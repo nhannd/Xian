@@ -397,7 +397,8 @@
     <File name="Web\Pages\Error\ErrorPage.aspx" />
     <File name="Web\Pages\Error\ErrorPageMaster.Master" />
     <File name="Web\Pages\Error\JavascriptRequired.aspx" />
-    <File name="Web\Pages\Error\TimeoutErrorPage.aspx" />
+	<File name="Web\Pages\Error\LicenseErrorPage.aspx" />
+	<File name="Web\Pages\Error\TimeoutErrorPage.aspx" />
     <File name="Web\Pages\Error\WebViewerAuthorizationErrorPage.aspx" />
     <File name="Web\Pages\Error\WebViewerErrorPage.aspx" />
     <File name="Web\Pages\Error\WebViewerErrorPageMaster.Master" />
