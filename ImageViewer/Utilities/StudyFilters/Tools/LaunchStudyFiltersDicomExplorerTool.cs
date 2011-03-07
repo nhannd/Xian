@@ -22,7 +22,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
 	[ButtonAction("Open", "dicomstudybrowser-toolbar/ToolbarFilterStudy", "Open")]
 	[MenuAction("Open", "dicomstudybrowser-contextmenu/MenuFilterStudy", "Open")]
-	[VisibleStateObserver("Open", "Visible", "VisibleChanged")]
 	[EnabledStateObserver("Open", "Enabled", "EnabledChanged")]
 	[Tooltip("Open", "TooltipFilterStudy")]
 	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
@@ -30,23 +29,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[ExtensionOf(typeof (StudyBrowserToolExtensionPoint))]
 	public class LaunchStudyFiltersDicomExplorerTool : StudyBrowserTool
 	{
-		public event EventHandler VisibleChanged;
-
-		private bool _visible = true;
-
-		public bool Visible
-		{
-			get { return _visible; }
-			set
-			{
-				if (_visible != value)
-				{
-					_visible = value;
-					EventsHelper.Fire(this.VisibleChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
 		public void Open()
 		{
 			int sopCount = 0;
@@ -115,10 +97,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 
 		private void UpdateEnabled()
 		{
-			this.Visible = this.IsLocalStudyLoaderSupported
-			               && base.Context.SelectedServerGroup != null && base.Context.SelectedServerGroup.IsLocalDatastore;
-			base.Enabled = this.Visible
-			               && base.Context.SelectedStudies != null && base.Context.SelectedStudies.Count > 0;
+			base.Enabled = this.IsLocalStudyLoaderSupported
+						   && base.Context.SelectedServerGroup != null && base.Context.SelectedServerGroup.IsLocalDatastore
+						   && base.Context.SelectedStudies != null && base.Context.SelectedStudies.Count > 0;
 		}
 
 		private static IStudyLoader CreateLoader()
