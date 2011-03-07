@@ -117,7 +117,7 @@ namespace ClearCanvas.Utilities.Manifest
                     XmlDocument doc = new XmlDocument();
 
                     // must open stream manually in case file is read-only
-                    using (var fileStream = File.Open(file, FileMode.Open, FileAccess.Read))
+                    using (var fileStream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         doc.Load(fileStream);
                     }
