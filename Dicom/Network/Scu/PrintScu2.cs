@@ -11,8 +11,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Iod.Sequences;
@@ -22,57 +22,107 @@ namespace ClearCanvas.Dicom.Network.Scu
 	//TODO (CR March 2011) - High: This is a decent candidate for a unit test
 	public partial class PrintScu
 	{
+		/// <summary>
+		/// Delegate for creating a filmBox.
+		/// </summary>
+		/// <returns></returns>
+		public delegate FilmBox CreateFilmBoxDelegate();
+
+		/// <summary>
+		/// Delegate for getting pixel data for an imageBox.
+		/// </summary>
+		public delegate void GetPixelDataDelegate(ImageBox imageBox, ColorMode colorMode,
+			out ushort rows, out ushort columns, out byte[] pixelData);
+
+		public class PrintItem
+		{
+			public PrintItem(object printObject, GetPixelDataDelegate getPixelDataCallback)
+			{
+				this.PrintObject = printObject;
+				this.GetPixelDataCallback = getPixelDataCallback;
+			}
+
+			public object PrintObject { get; private set; }
+
+			public GetPixelDataDelegate GetPixelDataCallback { get; private set; }
+		}
+
 		public class FilmSession : BasicFilmSessionModuleIod
 		{
-			private FilmBox _currentFilmBox;
-
 			internal DicomUid SopInstanceUid { get; set; }
 			internal PrintScu PrintScu { get; set; }
 
-			public List<FilmBox> FilmBoxes { get; set; }
+			private readonly CreateFilmBoxDelegate _createFilmBoxCallback;
 
-			public FilmSession()
+			private readonly List<FilmBox> _filmBoxes;
+			private FilmBox _currentFilmBox;
+
+			private readonly List<PrintItem> _printItems;
+			private List<PrintItem>.Enumerator _printItemEnumerator;
+
+			public FilmSession(List<PrintItem> printItems, CreateFilmBoxDelegate createFilmBoxCallback)
 			{
-				this.FilmBoxes = new List<FilmBox>();
+				_createFilmBoxCallback = createFilmBoxCallback;
+				_filmBoxes = new List<FilmBox>();
+
+				_printItems = printItems;
+				_printItemEnumerator = _printItems.GetEnumerator();
+				_printItemEnumerator.MoveNext();
+			}
+
+			public ReadOnlyCollection<FilmBox> FilmBoxes
+			{
+				get { return _filmBoxes.AsReadOnly(); }
 			}
 
 			internal void OnCreated(DicomUid filmSessionUid)
 			{
 				this.SopInstanceUid = filmSessionUid;
-				_currentFilmBox = this.FilmBoxes[0];
+
+				// Move to the first element.
+				_filmBoxes.Add(_currentFilmBox = _createFilmBoxCallback.Invoke());
 				this.PrintScu.CreateFilmBox(this, _currentFilmBox);
 			}
 
 			internal void OnFilmBoxCreated(DicomUid filmBoxUid, List<DicomUid> imageBoxUids)
 			{
 				_currentFilmBox.SopInstanceUid = filmBoxUid;
-				//TODO (CR February 2011) - Medium: verify the counts match?  Or better yet, have the
-				//FilmBox create the image boxes based on layout?
-				for (var i = 0; i < _currentFilmBox.ImageBoxes.Count; i++)
-					_currentFilmBox.ImageBoxes[i].SopInstanceUid = imageBoxUids[i];
+
+				// The SCP returns a list of imageBoxUids.  Create an imageBox for each UID.
+				var imageBoxes = new List<ImageBox>();
+				for (var i = 0; i < imageBoxUids.Count; i++)
+				{
+					var imageBox = new ImageBox(_currentFilmBox, _printItemEnumerator.Current)
+						{
+							ImageBoxPosition = (ushort) (i+1),  // position is 1-based
+							SopInstanceUid = SopInstanceUid = imageBoxUids[i]
+						};
+					imageBoxes.Add(imageBox);
+
+					// No more print items.  Stop creating imageBoxes
+					if (!_printItemEnumerator.MoveNext())
+						break;
+				}
 
 				// start setting the first imageBox
-				var firstImageBox = _currentFilmBox.ImageBoxes[0];
-				firstImageBox.OnSet(this.PrintScu.ColorMode);
-				this.PrintScu.SetImageBox(firstImageBox);
+				_currentFilmBox.SetImageBoxes(imageBoxes);
+				var imageBoxToSet = _currentFilmBox.GetNextImageBox();
+				imageBoxToSet.OnSet(this.PrintScu.ColorMode);
+				this.PrintScu.SetImageBox(imageBoxToSet);
 			}
 
 			internal void OnImageBoxSet(DicomUid imageBoxUid)
 			{
-				//TODO (CR February 2011) - Low: might be easier to deal with if we used an enumerator.
-				var currentImageBox = CollectionUtils.SelectFirst(_currentFilmBox.ImageBoxes, ib => Equals(ib.SopInstanceUid, imageBoxUid));
-				var nextImageBoxIndex = _currentFilmBox.ImageBoxes.IndexOf(currentImageBox) + 1;
-
-				if (nextImageBoxIndex == _currentFilmBox.ImageBoxes.Count)
+				var imageBoxToSet = _currentFilmBox.GetNextImageBox();
+				if (imageBoxToSet == null)
 				{
 					// No more imageBox to set.  Print the filmBox.
 					this.PrintScu.PrintFilmBox(_currentFilmBox);
 				}
 				else
 				{
-					var nextImageBox = _currentFilmBox.ImageBoxes[nextImageBoxIndex];
-					nextImageBox.OnSet(this.PrintScu.ColorMode);
-					this.PrintScu.SetImageBox(nextImageBox);
+					imageBoxToSet.OnSet(this.PrintScu.ColorMode);
+					this.PrintScu.SetImageBox(imageBoxToSet);
 				}
 			}
 
@@ -84,16 +134,16 @@ namespace ClearCanvas.Dicom.Network.Scu
 			internal void OnFilmBoxDeleted()
 			{
 				_currentFilmBox.SopInstanceUid = null;
-				//TODO (CR February 2011) - Low: Again, enumerator might make this even easier.
-				var nextFilmBoxIndex = this.FilmBoxes.IndexOf(_currentFilmBox) + 1;
-				if (nextFilmBoxIndex == this.FilmBoxes.Count)
+
+				if (_printItemEnumerator.Current == null)
 				{
+					// No more items to create filmBox for.
 					this.PrintScu.DeleteFilmSession(this);
 				}
 				else
 				{
 					// Create the next filmBox
-					_currentFilmBox = this.FilmBoxes[nextFilmBoxIndex];
+					_filmBoxes.Add(_currentFilmBox = _createFilmBoxCallback.Invoke());
 					this.PrintScu.CreateFilmBox(this, _currentFilmBox);
 				}
 			}
@@ -109,54 +159,130 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			internal DicomUid SopInstanceUid { get; set; }
 
-			//TODO (CR February 2011) - High (time permitting): Can this class auto-populate this?  Seems error prone to let it be set externally
-			//when it's very dependent on the Image Display Format.
+			private List<ImageBox> _imageBoxes;
+			private List<ImageBox>.Enumerator _imageBoxEnumerator;
 
-			public List<ImageBox> ImageBoxes { get; set; }
+			private readonly int _standardResolutionDPI;
+			private readonly int _highResolutionDPI;
 
-			public FilmBox()
+			public FilmBox(int standardResolutionDPI, int highResolutionDPI)
 			{
-				this.ImageBoxes = new List<ImageBox>();
+				_standardResolutionDPI = standardResolutionDPI;
+				_highResolutionDPI = highResolutionDPI;
 			}
 
-			//TODO (CR February 2011) - High: Add corresponding method for ImageBoxes, which can be based on film box layout
-			public Size GetSizeInPixels(int filmDPI)
+			public ReadOnlyCollection<ImageBox> ImageBox
 			{
-				var physicalWidthInInches = this.FilmSizeId.GetWidth(FilmSize.FilmSizeUnit.Inch);
-				var physicalHeightInInches = this.FilmSizeId.GetHeight(FilmSize.FilmSizeUnit.Inch);
-
-				var width = (int)Math.Ceiling(physicalWidthInInches * filmDPI);
-				var height = (int)Math.Ceiling(physicalHeightInInches * filmDPI);
-
-				return this.FilmOrientation == FilmOrientation.Portrait
-					? new Size(width, height)
-					: new Size(height, width);
+				get { return _imageBoxes.AsReadOnly(); }
 			}
+
+			public int FilmDPI
+			{
+				get
+				{
+					return this.RequestedResolutionId == RequestedResolution.Standard 
+						? _standardResolutionDPI
+						: _highResolutionDPI;
+				}
+			}
+
+			public Size SizeInPixels
+			{
+				get
+				{
+					var physicalWidthInInches = this.FilmSizeId.GetWidth(FilmSize.FilmSizeUnit.Inch);
+					var physicalHeightInInches = this.FilmSizeId.GetHeight(FilmSize.FilmSizeUnit.Inch);
+
+					var width = (int)Math.Ceiling(physicalWidthInInches * this.FilmDPI);
+					var height = (int)Math.Ceiling(physicalHeightInInches * this.FilmDPI);
+
+					return this.FilmOrientation == FilmOrientation.Portrait
+						? new Size(width, height)
+						: new Size(height, width);
+				}
+			}
+
+			internal ImageBox GetNextImageBox()
+			{
+				return _imageBoxEnumerator.MoveNext() ? _imageBoxEnumerator.Current : null;
+			}
+
+			internal void SetImageBoxes(List<ImageBox> imageBoxes)
+			{
+				_imageBoxes = imageBoxes;
+				_imageBoxEnumerator = _imageBoxes.GetEnumerator();
+			}
+
 		}
 
 		public class ImageBox : ImageBoxPixelModuleIod
 		{
 			internal DicomUid SopInstanceUid;
 
-			//TODO (CR February 2011) - Low: Need to pass back ImageBox itself for convenience?
+			public FilmBox FilmBox { get; private set; }
+			public PrintItem PrintItem { get; private set; }
+
+			public ImageBox(FilmBox filmBox, PrintItem printItem)
+			{
+				this.FilmBox = filmBox;
+				this.PrintItem = printItem;
+			}
+
+			//TODO (CR March 2011)- High (time permitting): Good candidate for unit tests
 
 			/// <summary>
-			/// Delegate for getting pixel data.
+			/// Get the estimated size in pixel.  This method assumes that the spacing for each rows/columns of imageBoxes on a film are evenly divided.
 			/// </summary>
-			public delegate byte[] PixelDataDelegate(out Size pixelSize, bool isPrintingColor);
-
-			protected readonly PixelDataDelegate _pixelDataGetter;
-
-			//TODO (CR February 2011) - High (time permitting): Setting the position externally is error prone.  If FilmBox
-			//auto-allocated imageboxes based on layout, that might help.
-			public ImageBox(ushort imageBoxPosition, PixelDataDelegate pixelDataGetter)
+			public static Size GetEstimatedSizeInPixel(Size filmBoxSize, ImageDisplayFormat imageDisplayFormat, int imageBoxPosition)
 			{
-				this.ImageBoxPosition = imageBoxPosition;
-				_pixelDataGetter = pixelDataGetter;
+				switch (imageDisplayFormat.Format)
+				{
+					case ImageDisplayFormat.FormatEnum.STANDARD:
+						{
+							var numberOfCols = imageDisplayFormat.Modifiers[0];
+							var numberOfRows = imageDisplayFormat.Modifiers[1];
+							// Size of rows and columns are uniform, and equals to total width or height divide by the count in either dimension
+							return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
+						}
+
+					case ImageDisplayFormat.FormatEnum.ROW:
+						{
+							// Major row order: left-to-right and top-to-bottom
+							int rowIndex, colIndex;
+							GetRowColumnIndex(imageDisplayFormat, imageBoxPosition, out rowIndex, out colIndex);
+
+							var numberOfRows = imageDisplayFormat.Modifiers.Count;
+							var numberOfCols = imageDisplayFormat.Modifiers[rowIndex];  // # of columns for the row the imageBox is in
+							return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
+						}
+
+					case ImageDisplayFormat.FormatEnum.COL:
+						{
+							// Major column order: top-to-bottom and left-to-right
+							int rowIndex, colIndex;
+							GetRowColumnIndex(imageDisplayFormat, imageBoxPosition, out rowIndex, out colIndex);
+
+							var numberOfCols = imageDisplayFormat.Modifiers.Count;
+							var numberOfRows = imageDisplayFormat.Modifiers[colIndex];  // # of rows for the column the imageBox is in
+							return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
+						}
+
+					case ImageDisplayFormat.FormatEnum.SLIDE:
+					case ImageDisplayFormat.FormatEnum.SUPERSLIDE:
+					case ImageDisplayFormat.FormatEnum.CUSTOM:
+					default:
+						break;
+				}
+
+				throw new NotSupportedException(string.Format("{0} image display format is not supported", imageDisplayFormat.Format));
 			}
 
 			internal void OnSet(ColorMode colorMode)
 			{
+				byte[] pixelData;
+				ushort rows;
+				ushort columns;
+
 				if (colorMode == ColorMode.Color)
 				{
 					var image = new BasicColorImageSequenceIod
@@ -171,10 +297,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 							HighBit = 7
 						};
 
-					Size pixelSize;
-					image.PixelData = _pixelDataGetter.Invoke(out pixelSize, true);
-					image.Rows = (ushort) pixelSize.Height;
-					image.Columns = (ushort) pixelSize.Width;
+					this.PrintItem.GetPixelDataCallback.Invoke(this, colorMode, out rows, out columns, out pixelData);
+					image.PixelData = pixelData;
+					image.Rows = rows;
+					image.Columns = columns;
 
 					this.BasicColorImageSequenceList.Add(image);
 				}
@@ -191,14 +317,84 @@ namespace ClearCanvas.Dicom.Network.Scu
 							HighBit = 7
 						};
 
-					Size pixelSize;
-					image.PixelData = _pixelDataGetter.Invoke(out pixelSize, false);
-					image.Rows = (ushort)pixelSize.Height;
-					image.Columns = (ushort)pixelSize.Width;
+					this.PrintItem.GetPixelDataCallback.Invoke(this, colorMode, out rows, out columns, out pixelData);
+					image.PixelData = pixelData;
+					image.Rows = rows;
+					image.Columns = columns;
 
 					this.BasicGrayscaleImageSequenceList.Add(image);
 				}
 			}
+
+			#region Private helper methods
+
+			/// <summary>
+			/// Get the rowIndex and columnIndex of the specified imageBoxPosition for this ImageDisplayType.
+			/// </summary>
+			private static void GetRowColumnIndex(ImageDisplayFormat imageDisplayFormat, int imageBoxPosition, out int rowIndex, out int columnIndex)
+			{
+				rowIndex = 0;
+				columnIndex = 0;
+
+				switch (imageDisplayFormat.Format)
+				{
+					case ImageDisplayFormat.FormatEnum.STANDARD:
+						{
+							var numberOfColumns = imageDisplayFormat.Modifiers[0];
+							var numberOfRows = imageDisplayFormat.Modifiers[1];
+							var imageBoxIndex = imageBoxPosition - 1;
+							rowIndex = imageBoxIndex / numberOfRows;
+							columnIndex = imageBoxIndex % numberOfColumns;
+							break;
+						}
+
+					case ImageDisplayFormat.FormatEnum.ROW:
+						{
+							// Major row order: left-to-right and top-to-bottom
+							GetIndexForRowColumnFormat(imageDisplayFormat.Modifiers, imageBoxPosition, out rowIndex, out columnIndex);
+							break;
+						}
+
+					case ImageDisplayFormat.FormatEnum.COL:
+						{
+							// Major column order: top-to-bottom and left-to-right
+							GetIndexForRowColumnFormat(imageDisplayFormat.Modifiers, imageBoxPosition, out columnIndex, out rowIndex);
+							break;
+						}
+
+					case ImageDisplayFormat.FormatEnum.SLIDE:
+					case ImageDisplayFormat.FormatEnum.SUPERSLIDE:
+					case ImageDisplayFormat.FormatEnum.CUSTOM:
+					default:
+						throw new NotSupportedException(string.Format("{0} image display format is not supported", imageDisplayFormat.Format));
+				}
+			}
+
+			private static void GetIndexForRowColumnFormat(IList<int> imageBoxesPerLines, int imageBoxPosition, out int firstIndex, out int secondIndex)
+			{
+				firstIndex = 0;
+				secondIndex = 0;
+
+				var numberOfImageBoxesBeforeCurrentLine = 0;
+				var numberOfLines = imageBoxesPerLines.Count;
+				for (var lineIndex = 0; lineIndex < numberOfLines; lineIndex++)
+				{
+					var numberOfImageBoxesIncludingCurrentLine = numberOfImageBoxesBeforeCurrentLine + imageBoxesPerLines[lineIndex];
+					if (imageBoxPosition <= numberOfImageBoxesIncludingCurrentLine)
+					{
+						// Image is in current line
+						firstIndex = lineIndex;
+						secondIndex = imageBoxPosition - numberOfImageBoxesBeforeCurrentLine - 1;
+
+						break;
+					}
+
+					// Advance the total imageBox count
+					numberOfImageBoxesBeforeCurrentLine = numberOfImageBoxesIncludingCurrentLine;
+				}
+			}
+
+			#endregion
 		}
 	}
 }
