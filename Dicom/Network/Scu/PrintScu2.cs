@@ -19,7 +19,6 @@ using ClearCanvas.Dicom.Iod.Sequences;
 
 namespace ClearCanvas.Dicom.Network.Scu
 {
-	//TODO (CR March 2011) - High: This is a decent candidate for a unit test
 	public partial class PrintScu
 	{
 		/// <summary>
@@ -180,9 +179,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 			{
 				get
 				{
-					return this.RequestedResolutionId == RequestedResolution.Standard 
-						? _standardResolutionDPI
-						: _highResolutionDPI;
+					return this.RequestedResolutionId == RequestedResolution.High
+						? _highResolutionDPI
+						: _standardResolutionDPI;
 				}
 			}
 
@@ -190,15 +189,18 @@ namespace ClearCanvas.Dicom.Network.Scu
 			{
 				get
 				{
+					if (this.FilmSizeId == null)
+						return new Size();
+
 					var physicalWidthInInches = this.FilmSizeId.GetWidth(FilmSize.FilmSizeUnit.Inch);
 					var physicalHeightInInches = this.FilmSizeId.GetHeight(FilmSize.FilmSizeUnit.Inch);
 
 					var width = (int)Math.Ceiling(physicalWidthInInches * this.FilmDPI);
 					var height = (int)Math.Ceiling(physicalHeightInInches * this.FilmDPI);
 
-					return this.FilmOrientation == FilmOrientation.Portrait
-						? new Size(width, height)
-						: new Size(height, width);
+					return this.FilmOrientation == FilmOrientation.Landscape
+						? new Size(height, width)
+						: new Size(width, height); // default portrait, even if the value is None
 				}
 			}
 
@@ -228,53 +230,57 @@ namespace ClearCanvas.Dicom.Network.Scu
 				this.PrintItem = printItem;
 			}
 
-			//TODO (CR March 2011)- High (time permitting): Good candidate for unit tests
-
 			/// <summary>
 			/// Get the estimated size in pixel.  This method assumes that the spacing for each rows/columns of imageBoxes on a film are evenly divided.
 			/// </summary>
-			public static Size GetEstimatedSizeInPixel(Size filmBoxSize, ImageDisplayFormat imageDisplayFormat, int imageBoxPosition)
+			public Size EstimatedSizeInPixel
 			{
-				switch (imageDisplayFormat.Format)
+				get
 				{
-					case ImageDisplayFormat.FormatEnum.STANDARD:
-						{
-							var numberOfCols = imageDisplayFormat.Modifiers[0];
-							var numberOfRows = imageDisplayFormat.Modifiers[1];
-							// Size of rows and columns are uniform, and equals to total width or height divide by the count in either dimension
-							return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
-						}
+					var filmBoxSize = this.FilmBox.SizeInPixels;
+					var imageDisplayFormat = this.FilmBox.ImageDisplayFormat;
 
-					case ImageDisplayFormat.FormatEnum.ROW:
-						{
-							// Major row order: left-to-right and top-to-bottom
-							int rowIndex, colIndex;
-							GetRowColumnIndex(imageDisplayFormat, imageBoxPosition, out rowIndex, out colIndex);
+					switch (imageDisplayFormat.Format)
+					{
+						case ImageDisplayFormat.FormatEnum.STANDARD:
+							{
+								var numberOfCols = imageDisplayFormat.Modifiers[0];
+								var numberOfRows = imageDisplayFormat.Modifiers[1];
+								// Size of rows and columns are uniform, and equals to total width or height divide by the count in either dimension
+								return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
+							}
 
-							var numberOfRows = imageDisplayFormat.Modifiers.Count;
-							var numberOfCols = imageDisplayFormat.Modifiers[rowIndex];  // # of columns for the row the imageBox is in
-							return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
-						}
+						case ImageDisplayFormat.FormatEnum.ROW:
+							{
+								// Major row order: left-to-right and top-to-bottom
+								int rowIndex, colIndex;
+								GetRowColumnIndex(imageDisplayFormat, this.ImageBoxPosition, out rowIndex, out colIndex);
 
-					case ImageDisplayFormat.FormatEnum.COL:
-						{
-							// Major column order: top-to-bottom and left-to-right
-							int rowIndex, colIndex;
-							GetRowColumnIndex(imageDisplayFormat, imageBoxPosition, out rowIndex, out colIndex);
+								var numberOfRows = imageDisplayFormat.Modifiers.Count;
+								var numberOfCols = imageDisplayFormat.Modifiers[rowIndex];  // # of columns for the row the imageBox is in
+								return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
+							}
 
-							var numberOfCols = imageDisplayFormat.Modifiers.Count;
-							var numberOfRows = imageDisplayFormat.Modifiers[colIndex];  // # of rows for the column the imageBox is in
-							return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
-						}
+						case ImageDisplayFormat.FormatEnum.COL:
+							{
+								// Major column order: top-to-bottom and left-to-right
+								int rowIndex, colIndex;
+								GetRowColumnIndex(imageDisplayFormat, this.ImageBoxPosition, out rowIndex, out colIndex);
 
-					case ImageDisplayFormat.FormatEnum.SLIDE:
-					case ImageDisplayFormat.FormatEnum.SUPERSLIDE:
-					case ImageDisplayFormat.FormatEnum.CUSTOM:
-					default:
-						break;
+								var numberOfCols = imageDisplayFormat.Modifiers.Count;
+								var numberOfRows = imageDisplayFormat.Modifiers[colIndex];  // # of rows for the column the imageBox is in
+								return new Size(filmBoxSize.Width / numberOfCols, filmBoxSize.Height / numberOfRows);
+							}
+
+						case ImageDisplayFormat.FormatEnum.SLIDE:
+						case ImageDisplayFormat.FormatEnum.SUPERSLIDE:
+						case ImageDisplayFormat.FormatEnum.CUSTOM:
+						default:
+							break;
+					}
+
+					throw new NotSupportedException(string.Format("{0} image display format is not supported", imageDisplayFormat.Format));
 				}
-
-				throw new NotSupportedException(string.Format("{0} image display format is not supported", imageDisplayFormat.Format));
 			}
 
 			internal void OnSet(ColorMode colorMode)

@@ -426,8 +426,6 @@ namespace ClearCanvas.Dicom.Iod.Modules
     }
     #endregion
 
-	//TODO (CR March 2011) - High (time permitting): Good candidate for unit tests
-
     #region ImageDisplayFormat class
     [TypeConverter(typeof(ImageDisplayFormat.DisplayValueConverter))]
     public class ImageDisplayFormat
@@ -494,6 +492,19 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 		#endregion
 
+		public class InvalidFormatException : Exception
+		{
+			public InvalidFormatException (string dicomString)
+				: base(string.Format("Invalid format: {0}", dicomString))
+			{
+			}
+
+			public InvalidFormatException (string dicomString, Exception exception)
+				: base(string.Format("Invalid format: {0}", dicomString), exception)
+			{
+			}
+		}
+
 		/// <summary>
         /// Type of image display format. Enumerated Values:
         /// <para>
@@ -519,8 +530,6 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </para>
         /// </summary>
         /// <value></value>
-
-		//TODO (CR March 2011) - High(time permitting): Good candidate for unit tests
 
 		public enum FormatEnum
         {
@@ -556,22 +565,44 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 		public static ImageDisplayFormat FromDicomString(string dicomString)
 		{
-			var indexOfSeparator = dicomString.IndexOf(@"\");
-			var format = indexOfSeparator >= 0
-							? dicomString.Substring(0, indexOfSeparator)
-							: dicomString;
-			var commaSeparatedModifiers = indexOfSeparator >= 0
-							? dicomString.Substring(indexOfSeparator + 1)
-							: "";
-			var modifierTokens = StringUtilities.SplitQuoted(commaSeparatedModifiers, ",");
+			try
+			{
+				if (string.IsNullOrEmpty(dicomString))
+					return null;
 
-			var imageDisplayFormat = new ImageDisplayFormat
+				var indexOfSeparator = dicomString.IndexOf(@"\");
+				var formatString = indexOfSeparator >= 0
+								? dicomString.Substring(0, indexOfSeparator)
+								: dicomString;
+				var format = (FormatEnum)Enum.Parse(typeof(FormatEnum), formatString);
+				if (format == FormatEnum.SLIDE || format == FormatEnum.SUPERSLIDE || format == FormatEnum.CUSTOM)
+					throw new NotSupportedException(string.Format("{0} format is not supported.", formatString));
+
+				var commaSeparatedModifiers = indexOfSeparator >= 0
+								? dicomString.Substring(indexOfSeparator + 1)
+								: "";
+				var modifierTokens = StringUtilities.SplitQuoted(commaSeparatedModifiers, ",");
+
+				if (format == FormatEnum.STANDARD && modifierTokens.Length != 2 ||
+					format == FormatEnum.ROW && modifierTokens.Length < 2 ||
+					format == FormatEnum.COL && modifierTokens.Length < 2)
+					throw new InvalidFormatException(dicomString);
+
+				var imageDisplayFormat = new ImageDisplayFormat
 				{
 					_dicomString = dicomString,
-					Format = (FormatEnum) Enum.Parse(typeof (FormatEnum), format),
+					Format = format,
 					Modifiers = CollectionUtils.Map<string, int>(modifierTokens, m => int.Parse(m))
 				};
-			return imageDisplayFormat;
+
+				return imageDisplayFormat;
+			}
+			catch (NotSupportedException) { throw; }
+			catch (InvalidFormatException) { throw; }
+			catch (Exception e)
+			{
+				throw new InvalidFormatException(dicomString, e);
+			}
 		}
 
         private string _dicomString;
@@ -638,8 +669,6 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
     #region FilmSize
 
-	//TODO (CR March 2011) - High (time permitting): Good candidate for unit tests
-
     /// <summary>
     /// Film size identification.
     /// </summary>
@@ -682,6 +711,19 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 		#endregion
 
+		public class InvalidFilmSizeException : Exception
+		{
+			public InvalidFilmSizeException(string dicomString)
+				: base(string.Format("Invalid film size: {0}", dicomString))
+			{
+			}
+
+			public InvalidFilmSizeException(string dicomString, Exception exception)
+				: base(string.Format("Invalid film size: {0}", dicomString), exception)
+			{
+			}
+		}
+
 		// Predefined formats
     	public static FilmSize Dimension_8in_x_10in = FromDicomString("8INX10IN");
 		public static FilmSize Dimension_8_5in_x_11in = FromDicomString("8_5INX11IN");
@@ -709,35 +751,58 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 		public static FilmSize FromDicomString(string dicomString)
 		{
-			if (dicomString == "A3")
-				return new FilmSize
-				{
-					_dicomString = dicomString,
-					_sizeUnit = FilmSizeUnit.Millimeter,
-					_width = 297,
-					_height = 420
-				};
-
-			if (dicomString == "A4")
-				return new FilmSize
-				{
-					_dicomString = dicomString,
-					_sizeUnit = FilmSizeUnit.Millimeter,
-					_width = 210,
-					_height = 297
-				};
-
-			var xSeparatedDimension = dicomString.Replace("IN", "").Replace("CM", "").Replace('_', '.');
-			var dimensions = StringUtilities.SplitQuoted(xSeparatedDimension, "X");
-
-			var filmSize = new FilmSize
+			try
 			{
-				_dicomString = dicomString,
-				_sizeUnit = dicomString.Contains("IN") ? FilmSizeUnit.Inch : FilmSizeUnit.Millimeter,
-				_width = float.Parse(dimensions[0]),
-				_height = float.Parse(dimensions[1]),
-			};
-			return filmSize;
+				if (string.IsNullOrEmpty(dicomString))
+					return null;
+
+				if (dicomString == "A3")
+					return new FilmSize
+					{
+						_dicomString = dicomString,
+						_sizeUnit = FilmSizeUnit.Millimeter,
+						_width = 297,
+						_height = 420
+					};
+
+				if (dicomString == "A4")
+					return new FilmSize
+					{
+						_dicomString = dicomString,
+						_sizeUnit = FilmSizeUnit.Millimeter,
+						_width = 210,
+						_height = 297
+					};
+
+				var indexOfX = dicomString.IndexOf('X');
+				if (indexOfX < 3) // at least one char for width, and 2 chars for units
+					throw new InvalidFilmSizeException(dicomString);
+
+				var firstUnit = dicomString.Substring(indexOfX - 2, 2);
+				var secondUnit = dicomString.Substring(dicomString.Length - 2);
+				if (firstUnit != "CM" && firstUnit != "IN")
+					throw new InvalidFilmSizeException(dicomString);
+				if (firstUnit != secondUnit)
+					throw new InvalidFilmSizeException(dicomString);
+
+				var xSeparatedDimension = dicomString.Replace("IN", "").Replace("CM", "").Replace('_', '.');
+				var dimensions = StringUtilities.SplitQuoted(xSeparatedDimension, "X");
+
+				var filmSize = new FilmSize
+				{
+					_dicomString = dicomString,
+					_sizeUnit = firstUnit == "IN" ? FilmSizeUnit.Inch : FilmSizeUnit.Millimeter,
+					_width = float.Parse(dimensions[0]),
+					_height = float.Parse(dimensions[1]),
+				};
+				return filmSize;
+			}
+			catch (NotSupportedException) { throw; }
+			catch (InvalidFilmSizeException) { throw; }
+			catch (Exception e)
+			{
+				throw new InvalidFilmSizeException(dicomString, e);
+			}
 		}
 
         public enum FilmSizeUnit
