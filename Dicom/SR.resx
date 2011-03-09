@@ -329,8 +329,8 @@
   <data name="LabelFilmSizeUnitInch" xml:space="preserve">
     <value>in</value>
   </data>
-  <data name="LabelFilmSizeUnitMillimeter" xml:space="preserve">
-    <value>mm</value>
+  <data name="LabelFilmSizeUnitCentimeter" xml:space="preserve">
+    <value>cm</value>
   </data>
   <data name="FormatImageDisplayFormatColumn" xml:space="preserve">
     <value>Column {0}</value>
@@ -340,5 +340,14 @@
   </data>
   <data name="FormatImageDisplayFormatStandard" xml:space="preserve">
     <value>Standard {0}x{1}</value>
+  </data>
+  <data name="ExceptionInvalidFilmSize" xml:space="preserve">
+    <value>Invalid film size: {0}</value>
+  </data>
+  <data name="ExceptionInvalidImageDisplayFormat" xml:space="preserve">
+    <value>Invalid image display format: {0}</value>
+  </data>
+  <data name="ExceptionNotSupportedImageDisplayFormat" xml:space="preserve">
+    <value>Image display format {0} is not supported.</value>
   </data>
 </root>

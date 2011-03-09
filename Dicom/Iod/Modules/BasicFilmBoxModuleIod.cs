@@ -495,12 +495,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public class InvalidFormatException : Exception
 		{
 			public InvalidFormatException (string dicomString)
-				: base(string.Format("Invalid format: {0}", dicomString))
+				: base(string.Format(SR.ExceptionInvalidImageDisplayFormat, dicomString))
 			{
 			}
 
 			public InvalidFormatException (string dicomString, Exception exception)
-				: base(string.Format("Invalid format: {0}", dicomString), exception)
+				: base(string.Format(SR.ExceptionInvalidImageDisplayFormat, dicomString), exception)
 			{
 			}
 		}
@@ -576,7 +576,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 								: dicomString;
 				var format = (FormatEnum)Enum.Parse(typeof(FormatEnum), formatString);
 				if (format == FormatEnum.SLIDE || format == FormatEnum.SUPERSLIDE || format == FormatEnum.CUSTOM)
-					throw new NotSupportedException(string.Format("{0} format is not supported.", formatString));
+					throw new NotSupportedException(string.Format(SR.ExceptionNotSupportedImageDisplayFormat, formatString));
 
 				var commaSeparatedModifiers = indexOfSeparator >= 0
 								? dicomString.Substring(indexOfSeparator + 1)
@@ -701,7 +701,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
                 builder.AppendFormat(SR.FormatFilmSize,
                     filmSize._width,
                     filmSize._height,
-					filmSize._sizeUnit == FilmSizeUnit.Inch ? SR.LabelFilmSizeUnitInch : SR.LabelFilmSizeUnitMillimeter);
+					filmSize._sizeUnit == FilmSizeUnit.Inch ? SR.LabelFilmSizeUnitInch : SR.LabelFilmSizeUnitCentimeter);
 
                 return filmSize.DicomString == "A3" || filmSize.DicomString == "A4"
                     ? string.Format("{0} ({1})", filmSize.DicomString, builder)
@@ -714,12 +714,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public class InvalidFilmSizeException : Exception
 		{
 			public InvalidFilmSizeException(string dicomString)
-				: base(string.Format("Invalid film size: {0}", dicomString))
+				: base(string.Format(SR.ExceptionInvalidFilmSize, dicomString))
 			{
 			}
 
 			public InvalidFilmSizeException(string dicomString, Exception exception)
-				: base(string.Format("Invalid film size: {0}", dicomString), exception)
+				: base(string.Format(SR.ExceptionInvalidFilmSize, dicomString), exception)
 			{
 			}
 		}
@@ -735,8 +735,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public static FilmSize Dimension_14in_x_17in = FromDicomString("14INX17IN");
 		public static FilmSize Dimension_24cm_x_24cm = FromDicomString("24CMX24CM");
 		public static FilmSize Dimension_24cm_x_30cm = FromDicomString("24CMX30CM");
-		public static FilmSize A3 = FromDicomString("A3");
-		public static FilmSize A4 = FromDicomString("A4");
+		public static FilmSize A3 = FromDicomString("A3");	// 297mm x 420mm
+		public static FilmSize A4 = FromDicomString("A4");	// 210mm x 297mm
 
 		// A list of standard film sizes that is defined by the DICOM Standard
 		public static List<FilmSize> StandardFilmSizes = new List<FilmSize>
