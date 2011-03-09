@@ -350,4 +350,7 @@
   <data name="ExceptionNotSupportedImageDisplayFormat" xml:space="preserve">
     <value>Image display format {0} is not supported.</value>
   </data>
+  <data name="MessagePrinterError" xml:space="preserve">
+    <value>Unexpected failure reported by the printer.</value>
+  </data>
 </root>

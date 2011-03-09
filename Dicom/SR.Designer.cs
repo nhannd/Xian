@@ -743,5 +743,14 @@ namespace ClearCanvas.Dicom {
                 return ResourceManager.GetString("LabelFilmSizeUnitInch", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected failure reported by the printer..
+        /// </summary>
+        public static string MessagePrinterError {
+            get {
+                return ResourceManager.GetString("MessagePrinterError", resourceCulture);
+            }
+        }
     }
 }
