@@ -348,7 +348,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
     }
     #endregion
 
-	#region SmooBorderDensitythingType 
+	#region BorderDensity
 
 	/// <summary>
 	/// Defines the border density.  Density of the film areas surrounding and between images on the film.
