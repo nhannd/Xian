@@ -94,7 +94,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 					var imageBox = new ImageBox(_currentFilmBox, _printItemEnumerator.Current)
 						{
 							ImageBoxPosition = (ushort) (i+1),  // position is 1-based
-							SopInstanceUid = SopInstanceUid = imageBoxUids[i]
+							SopInstanceUid = imageBoxUids[i]
 						};
 					imageBoxes.Add(imageBox);
 
@@ -231,9 +231,23 @@ namespace ClearCanvas.Dicom.Network.Scu
 			}
 
 			/// <summary>
-			/// Get the estimated size in pixel.  This method assumes that the spacing for each rows/columns of imageBoxes on a film are evenly divided.
+			/// Gets the physical width of this imageBox in millimeters.  The value is accurate only if the <see cref="FilmBox.FilmDPI"/> property is 
+			/// configured to that of the actual printer.
 			/// </summary>
-			public Size EstimatedSizeInPixel
+			public float PhysicalWidth
+			{
+				get
+				{
+					var filmPixelSpacing = LengthInMillimeter.Inch / this.FilmBox.FilmDPI;
+					return this.SizeInPixel.Width * filmPixelSpacing;
+				}
+			}
+
+			/// <summary>
+			/// Get the size in pixel.  The value depends on the image position, filmBox size, filmBox orentation and filmDPI.
+			/// This property assumes that the spacing for each rows/columns of imageBoxes on a film are evenly divided.
+			/// </summary>
+			public Size SizeInPixel
 			{
 				get
 				{

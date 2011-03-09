@@ -43,12 +43,19 @@ namespace ClearCanvas.Dicom.Tests
 		[Test]
 		public void Valid_FilmSize_Test()
 		{
-			var filmSize = FilmSize.FromDicomString("11INX22IN");
-			Assert.AreEqual(filmSize.DicomString, "11INX22IN");
-			Assert.AreEqual(filmSize.GetWidth(FilmSize.FilmSizeUnit.Inch), 11);
-			Assert.AreEqual(filmSize.GetHeight(FilmSize.FilmSizeUnit.Inch), 22);
-			Assert.AreEqual(filmSize.GetWidth(FilmSize.FilmSizeUnit.Millimeter), 11 * LengthInMillimeter.Inch);
-			Assert.AreEqual(filmSize.GetHeight(FilmSize.FilmSizeUnit.Millimeter), 22 * LengthInMillimeter.Inch);
+			var filmSizeInInches = FilmSize.FromDicomString("11INX22IN");
+			Assert.AreEqual(filmSizeInInches.DicomString, "11INX22IN");
+			Assert.AreEqual(filmSizeInInches.GetWidth(FilmSize.FilmSizeUnit.Inch), 11);
+			Assert.AreEqual(filmSizeInInches.GetHeight(FilmSize.FilmSizeUnit.Inch), 22);
+			Assert.AreEqual(filmSizeInInches.GetWidth(FilmSize.FilmSizeUnit.Centimeter), 11 * LengthInMillimeter.Inch / 10);
+			Assert.AreEqual(filmSizeInInches.GetHeight(FilmSize.FilmSizeUnit.Centimeter), 22 * LengthInMillimeter.Inch / 10);
+
+			var filmSizeInCentimeter = FilmSize.FromDicomString("11CMX22CM");
+			Assert.AreEqual(filmSizeInCentimeter.DicomString, "11CMX22CM");
+			Assert.AreEqual(filmSizeInCentimeter.GetWidth(FilmSize.FilmSizeUnit.Centimeter), 11);
+			Assert.AreEqual(filmSizeInCentimeter.GetHeight(FilmSize.FilmSizeUnit.Centimeter), 22);
+			Assert.AreEqual(filmSizeInCentimeter.GetWidth(FilmSize.FilmSizeUnit.Inch), 11 * 10 / LengthInMillimeter.Inch);
+			Assert.AreEqual(filmSizeInCentimeter.GetHeight(FilmSize.FilmSizeUnit.Inch), 22 * 10 / LengthInMillimeter.Inch);
 		}
 
 		[Test]

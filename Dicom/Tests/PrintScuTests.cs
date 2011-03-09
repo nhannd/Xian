@@ -14,14 +14,15 @@
 using NUnit.Framework;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Iod.Modules;
+using System;
 
 namespace ClearCanvas.Dicom.Tests
 {
 	[TestFixture]
-	public class PrintScuTests
+	public class FilmBoxTests
 	{
 		[Test]
-		public void FilmBox_FilmDPI_Test()
+		public void FilmDPI_Test()
 		{
 			var filmBox = new PrintScu.FilmBox(300, 600);
 			Assert.AreEqual(filmBox.RequestedResolutionId, RequestedResolution.None);
@@ -37,32 +38,47 @@ namespace ClearCanvas.Dicom.Tests
 		}
 
 		[Test]
-		public void FilmBox_SizeInPixels_Test()
+		public void SizeInPixels_Portrait_Test()
 		{
-			var filmBox = new PrintScu.FilmBox(300, 600);
-			Assert.IsTrue(filmBox.SizeInPixels.IsEmpty);
+			var filmBox = new PrintScu.FilmBox(300, 600)
+			{
+				FilmSizeId = FilmSize.Dimension_8in_x_10in,
+				FilmOrientation = FilmOrientation.Portrait
+			};
 
-			// Portrait orientation is used, even if FilmOrientation.None.
-			filmBox.FilmSizeId = FilmSize.Dimension_8in_x_10in;
-			Assert.AreEqual(filmBox.FilmOrientation, FilmOrientation.None);
-			Assert.AreEqual(filmBox.SizeInPixels.Width, 8 * 300);
-			Assert.AreEqual(filmBox.SizeInPixels.Height, 10 * 300);
-
-			// Test Portrait orientation
-			filmBox.FilmOrientation = FilmOrientation.Portrait;
 			Assert.AreEqual(filmBox.FilmOrientation, FilmOrientation.Portrait);
 			Assert.AreEqual(filmBox.SizeInPixels.Width, 8 * 300);
 			Assert.AreEqual(filmBox.SizeInPixels.Height, 10 * 300);
 
-			// Test Landscape orientation
-			filmBox.FilmOrientation = FilmOrientation.Landscape;
+			// Portrait orientation is used, even if FilmOrientation.None.
+			filmBox.FilmOrientation = FilmOrientation.None;
+			Assert.AreEqual(filmBox.FilmOrientation, FilmOrientation.None);
+			Assert.AreEqual(filmBox.SizeInPixels.Width, 8 * 300);
+			Assert.AreEqual(filmBox.SizeInPixels.Height, 10 * 300);
+		}
+
+		[Test]
+		public void SizeInPixels_Landscape_Test()
+		{
+			var filmBox = new PrintScu.FilmBox(300, 600)
+			{
+				FilmSizeId = FilmSize.Dimension_8in_x_10in,
+				FilmOrientation = FilmOrientation.Landscape
+			};
+
 			Assert.AreEqual(filmBox.FilmOrientation, FilmOrientation.Landscape);
 			Assert.AreEqual(filmBox.SizeInPixels.Width, 10 * 300);
 			Assert.AreEqual(filmBox.SizeInPixels.Height, 8 * 300);
 		}
+	}
+
+	[TestFixture]
+	public class ImageBoxTests
+	{
+		private const int _floatingPointDigits = 4;
 
 		[Test]
-		public void ImageBox_SizeInPixel_Standard_Format_Test()
+		public void Standard_Format_Portrait_Test()
 		{
 			var filmBox = new PrintScu.FilmBox(300, 600)
 				{
@@ -77,32 +93,48 @@ namespace ClearCanvas.Dicom.Tests
 			// Layout is 2x4, meaning 2 columns, 4 rows.
 			// ImageBoxes are ordered top->bottom, left->right
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.EstimatedSizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 8;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
+			imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
-
-			// Now flip it around to landscape orientation
-			filmBox.FilmOrientation = FilmOrientation.Landscape;
-			filmBoxSize = filmBox.SizeInPixels;
-
-			imageBox.ImageBoxPosition = 1;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
-			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
-			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
-
-			imageBox.ImageBoxPosition = 8;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
-			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
-			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 		}
 
 		[Test]
-		public void ImageBox_SizeInPixel_Row_Format_Test()
+		public void Standard_Format_Landscape_Test()
+		{
+			var filmBox = new PrintScu.FilmBox(300, 600)
+			{
+				FilmOrientation = FilmOrientation.Landscape,
+				FilmSizeId = FilmSize.Dimension_8in_x_10in,
+				ImageDisplayFormat = ImageDisplayFormat.Standard_2x4
+			};
+
+			var imageBox = new PrintScu.ImageBox(filmBox, null);
+			var filmBoxSize = filmBox.SizeInPixels;
+
+			// Layout is 2x4, meaning 2 columns, 4 rows.
+			// ImageBoxes are ordered top->bottom, left->right
+			imageBox.ImageBoxPosition = 1;
+			var imageBoxSize = imageBox.SizeInPixel;
+			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
+			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
+
+			imageBox.ImageBoxPosition = 8;
+			imageBoxSize = imageBox.SizeInPixel;
+			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
+			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
+		}
+
+		[Test]
+		public void Row_Format_Portrait_Test()
 		{
 			var filmBox = new PrintScu.FilmBox(300, 600)
 				{
@@ -116,42 +148,59 @@ namespace ClearCanvas.Dicom.Tests
 
 			// Layout is Row 1,2, meaning 1 column in top row and 2 columns in bottom row
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.EstimatedSizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 2;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
+			imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 3;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
+			imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
-
-			// Now flip it around to landscape orientation
-			filmBox.FilmOrientation = FilmOrientation.Landscape;
-			filmBoxSize = filmBox.SizeInPixels;
-
-			imageBox.ImageBoxPosition = 1;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
-			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width);
-			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
-
-			imageBox.ImageBoxPosition = 2;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
-			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
-			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
-
-			imageBox.ImageBoxPosition = 3;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
-			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
-			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 		}
 
 		[Test]
-		public void ImageBox_SizeInPixel_Column_Format_Test()
+		public void Row_Format_Landscape_Test()
+		{
+			var filmBox = new PrintScu.FilmBox(300, 600)
+			{
+				FilmOrientation = FilmOrientation.Landscape,
+				FilmSizeId = FilmSize.Dimension_8in_x_10in,
+				ImageDisplayFormat = ImageDisplayFormat.Row_1_2
+			};
+
+			var imageBox = new PrintScu.ImageBox(filmBox, null);
+			var filmBoxSize = filmBox.SizeInPixels;
+
+			// Layout is Row 1,2, meaning 1 column in top row and 2 columns in bottom row
+			imageBox.ImageBoxPosition = 1;
+			var imageBoxSize = imageBox.SizeInPixel;
+			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width);
+			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch, _floatingPointDigits));
+
+			imageBox.ImageBoxPosition = 2;
+			imageBoxSize = imageBox.SizeInPixel;
+			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
+			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
+
+			imageBox.ImageBoxPosition = 3;
+			imageBoxSize = imageBox.SizeInPixel;
+			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
+			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
+		}
+
+		[Test]
+		public void Column_Format_Portrait_Test()
 		{
 			var filmBox = new PrintScu.FilmBox(300, 600)
 				{
@@ -163,40 +212,57 @@ namespace ClearCanvas.Dicom.Tests
 			var imageBox = new PrintScu.ImageBox(filmBox, null);
 			var filmBoxSize = filmBox.SizeInPixels;
 
-			// Layout is Column 1,2, meaning 1 row on the left column and 2 rows in the right column
+			// Layout is Column 1,2, meaning 1 row in the left column and 2 rows in the right column
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.EstimatedSizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 2;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
+			imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 3;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
+			imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
+		}
 
-			// Now flip it around to landscape orientation
-			filmBox.FilmOrientation = FilmOrientation.Landscape;
-			filmBoxSize = filmBox.SizeInPixels;
+		[Test]
+		public void Column_Format_Landscape_Test()
+		{
+			var filmBox = new PrintScu.FilmBox(300, 600)
+			{
+				FilmOrientation = FilmOrientation.Landscape,
+				FilmSizeId = FilmSize.Dimension_8in_x_10in,
+				ImageDisplayFormat = ImageDisplayFormat.COL_1_2
+			};
 
+			var imageBox = new PrintScu.ImageBox(filmBox, null);
+			var filmBoxSize = filmBox.SizeInPixels;
+
+			// Layout is Column 1,2, meaning 1 row in the left column and 2 rows in the right column
 			imageBox.ImageBoxPosition = 1;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 2;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
+			imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 3;
-			imageBoxSize = imageBox.EstimatedSizeInPixel;
+			imageBoxSize = imageBox.SizeInPixel;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
+			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 		}
 	}
 }

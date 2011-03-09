@@ -760,18 +760,18 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return new FilmSize
 					{
 						_dicomString = dicomString,
-						_sizeUnit = FilmSizeUnit.Millimeter,
-						_width = 297,
-						_height = 420
+						_sizeUnit = FilmSizeUnit.Centimeter,
+						_width = 29.7f,
+						_height = 42.0f
 					};
 
 				if (dicomString == "A4")
 					return new FilmSize
 					{
 						_dicomString = dicomString,
-						_sizeUnit = FilmSizeUnit.Millimeter,
-						_width = 210,
-						_height = 297
+						_sizeUnit = FilmSizeUnit.Centimeter,
+						_width = 21.0f,
+						_height = 29.7f
 					};
 
 				var indexOfX = dicomString.IndexOf('X');
@@ -791,7 +791,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				var filmSize = new FilmSize
 				{
 					_dicomString = dicomString,
-					_sizeUnit = firstUnit == "IN" ? FilmSizeUnit.Inch : FilmSizeUnit.Millimeter,
+					_sizeUnit = firstUnit == "IN" ? FilmSizeUnit.Inch : FilmSizeUnit.Centimeter,
 					_width = float.Parse(dimensions[0]),
 					_height = float.Parse(dimensions[1]),
 				};
@@ -808,7 +808,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         public enum FilmSizeUnit
         {
             Inch,
-            Millimeter
+            Centimeter,
         }
 
         private string _dicomString;
@@ -853,7 +853,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
             return desiredUnit == FilmSizeUnit.Inch
                 ? ConvertToInches(_height)
-                : ConvertToMillimeters(_height);
+				: ConvertToCentimeters(_height);
         }
 
         public float GetWidth(FilmSizeUnit desiredUnit)
@@ -863,21 +863,21 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
             return desiredUnit == FilmSizeUnit.Inch
                 ? ConvertToInches(_width)
-                : ConvertToMillimeters(_width);
+                : ConvertToCentimeters(_width);
 		}
 
 		#endregion
 
 		#region Private Methods
 
-		private static float ConvertToMillimeters(float inches)
+		private static float ConvertToCentimeters(float inches)
         {
-            return inches * LengthInMillimeter.Inch;
+            return (inches * LengthInMillimeter.Inch) / 10.0f;
         }
 
-        private static float ConvertToInches(float mm)
+        private static float ConvertToInches(float cm)
         {
-            return mm / LengthInMillimeter.Inch;
+            return 10.0f * cm / LengthInMillimeter.Inch;
 		}
 
 		#endregion
