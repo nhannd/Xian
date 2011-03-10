@@ -38,6 +38,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 				IStudyLoader localStudyLoader = CreateLoader();
 				if (localStudyLoader == null)
 					return;
+
 				studyLoaders.Add(localStudyLoader);
 				sopCount += localStudyLoader.Start(new StudyLoaderArgs(studyItem.StudyInstanceUid, studyItem.Server));
 			}
@@ -104,19 +105,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 
 		private static IStudyLoader CreateLoader()
 		{
-			try
-			{
-				StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
-				foreach (IStudyLoader loader in xp.CreateExtensions())
-				{
-					if (loader.Name == "DICOM_LOCAL")
-					{
-						return loader;
-					}
-				}
-			}
-			catch (NotSupportedException) {}
-			return null;
+			return StudyLoader.Create("DICOM_LOCAL");
 		}
 	}
 }
