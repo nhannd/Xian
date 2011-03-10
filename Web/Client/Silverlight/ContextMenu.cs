@@ -236,6 +236,14 @@ namespace ClearCanvas.Web.Client.Silverlight
             if (!HasItems || IsOpen)
                 return;
 
+            // Make sure the context menu is closed if it loses focus
+            // This solves 2 issues: 
+            //   1) only one context menu is visible  (singleton may not be necessary)
+            //   2) context menu is closed if other message appears on the screen
+            //
+            this.IsTabStop = true;            
+            this.LostFocus += (s, ev) => { Close(); };
+            
             Popup.Content = this;
             UpdateLayout();
 
@@ -244,6 +252,8 @@ namespace ClearCanvas.Web.Client.Silverlight
                 strategy.BeforeOpenPopup(this, Popup);
 
             Popup.IsOpen = true;
+            this.Focus();
+
             ItemCoordinator.OnMenuVisibilityChanged();
             
             UpdateLayout();

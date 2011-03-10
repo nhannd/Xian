@@ -109,7 +109,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             panel.Children.Add(buttonPanel);
             msgBox.Content = panel;
 
+            msgBox.IsTabStop = true;
             msgBox.Show();
+			msgBox.Focus();
             return msgBox;
         }
 
@@ -125,8 +127,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             msgBox.MaxWidth = Application.Current.Host.Content.ActualWidth * 0.5; 
             
             msgBox.Content = new TextBlock() { Text = message, Margin = new Thickness(20), Foreground = new SolidColorBrush(Colors.White), FontSize = 14 };
+            msgBox.IsTabStop = true;
             msgBox.Show();
-
+			msgBox.Focus();
+            
             _currentWindow = msgBox;
             return msgBox;
         }
@@ -148,8 +152,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             closeButton.Click += (s, o) => { msgBox.Close(); };
             content.Children.Add(closeButton);
             msgBox.Content = content;
+            msgBox.IsTabStop = true;
+            
             msgBox.Show();
-
+            msgBox.Focus();
+            
             _currentWindow = msgBox;
             return msgBox;
         }

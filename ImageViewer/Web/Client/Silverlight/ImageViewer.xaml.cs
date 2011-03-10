@@ -349,6 +349,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                 Visibility = System.Windows.Visibility.Collapsed;
 
+
+                if (_studyView != null)
+                {
+                    MouseHelper.SetBackgroundElement(null);
+                    _studyView.Destroy();
+                    _studyView = null;
+                }
+
                 if (Shuttingdown != null)
                 {
                     Shuttingdown(this, EventArgs.Empty);
@@ -387,12 +395,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 			}
 
 
-			if (_studyView != null)
-			{
-                MouseHelper.SetBackgroundElement(null);
-				_studyView.Destroy();
-				_studyView = null;
-			}
+            Shutdown();
 	    }
     }
 }
