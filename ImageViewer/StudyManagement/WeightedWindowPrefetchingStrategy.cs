@@ -21,8 +21,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// A base implementation for an <see cref="IPrefetchingStrategy"/> based on a window of frames around a visible frame,
 	/// with preference given to selected and unselected <see cref="IImageBox"/>es depending on a weighting factor.
 	/// </summary>
-	public abstract class WeightedWindowPrefetchingStrategy : PrefetchingStrategy
+	public class WeightedWindowPrefetchingStrategy : PrefetchingStrategy
 	{
+		private readonly ICorePrefetchingStrategy _coreStrategy;
 		private ViewerFrameEnumerator _imageBoxEnumerator;
 		private FrameBlockingThreadPool _retrieveThreadPool;
 		private SimpleBlockingThreadPool _decompressThreadPool;
@@ -33,17 +34,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private ThreadPriority _decompressionThreadPriority = ThreadPriority.Lowest;
 		private int _retrievalThreadConcurrency = 5;
 		private int _decompressionThreadConcurrency = 1;
-		private int? _frameLookAheadSize = 20;
-		private int _selectedFrameWeight = 3;
-		private int _unselectedFrameWeight = 2;
+		private int? _frameLookAheadCount = 20;
+		private int _selectedImageBoxWeight = 3;
+		private int _unselectedImageBoxWeight = 2;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="name">A unique name for the strategy, normally corresponding to the name of the parent <see cref="IStudyLoader"/>.</param>
+		/// <param name="description">An informative description.</param>
+		public WeightedWindowPrefetchingStrategy(string name, string description)
+			:this(new SimpleCorePrefetchingStrategy(), name, description)
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of a <see cref="WeightedWindowPrefetchingStrategy"/>.
 		/// </summary>
+		/// <param name="coreStrategy">The core prefetching strategy used to load images.</param>
 		/// <param name="name">The name of the <see cref="IPrefetchingStrategy"/>.</param>
 		/// <param name="description">The description of the <see cref="IPrefetchingStrategy"/>.</param>
-		protected WeightedWindowPrefetchingStrategy(string name, string description)
-			: base(name, description) {}
+		public WeightedWindowPrefetchingStrategy(ICorePrefetchingStrategy coreStrategy, string name, string description)
+			: base(name, description)
+		{
+			Platform.CheckForNullReference(coreStrategy, "coreStrategy");
+			_coreStrategy = coreStrategy;
+		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether or not the strategy is enabled.
@@ -54,8 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _enabled; }
 			set
 			{
-				if (_isStarted)
-					throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
+				CheckNotStarted();
 				_enabled = value;
 			}
 		}
@@ -68,10 +83,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public ThreadPriority RetrievalThreadPriority
 		{
 			get { return _retrievalThreadPriority; }
-			protected set
+			set
 			{
-				if (_isStarted)
-					throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
+				CheckNotStarted();
 				_retrievalThreadPriority = value;
 			}
 		}
@@ -84,10 +98,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public ThreadPriority DecompressionThreadPriority
 		{
 			get { return _decompressionThreadPriority; }
-			protected set
+			set
 			{
-				if (_isStarted)
-					throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
+				CheckNotStarted(); 
 				_decompressionThreadPriority = value;
 			}
 		}
@@ -100,18 +113,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public int RetrievalThreadConcurrency
 		{
 			get { return _retrievalThreadConcurrency; }
-			protected set
+			set
 			{
-				if (_isStarted)
-					throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
-
+				CheckNotStarted();
 				Platform.CheckPositive(value, "RetrievalThreadConcurrency");
 				_retrievalThreadConcurrency = value;
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the number of concurrent threads to be used for frame pixel data decompression. Valid range is 1 or more.
+		/// Gets or sets the number of concurrent threads to be used for frame pixel data decompression. Valid range is 0 or more.
 		/// </summary>
 		/// <remarks>Setting the thread concurrency to 0 effectively means that decompression will not be done ahead of time.</remarks>
 		/// <exception cref="ArgumentException">Thrown if an attempt was made to set the property to an invalid value.</exception>
@@ -119,12 +130,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public int DecompressionThreadConcurrency
 		{
 			get { return _decompressionThreadConcurrency; }
-			protected set
+			set
 			{
-				if (_isStarted)
-					throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
-
-				Platform.CheckPositive(value, "DecompressionThreadConcurrency");
+				CheckNotStarted();
+				Platform.CheckNonNegative(value, "DecompressionThreadConcurrency");
 				_decompressionThreadConcurrency = value;
 			}
 		}
@@ -138,78 +147,77 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		/// <exception cref="ArgumentException">Thrown if an attempt was made to set the property to an invalid value.</exception>
 		/// <exception cref="InvalidOperationException">Thrown if an attempt was made to set the property when the strategy has already been started.</exception>
-		public int? FrameLookAheadSize
+		public int? FrameLookAheadCount
 		{
-			get { return _frameLookAheadSize; }
-			protected set
+			get { return _frameLookAheadCount; }
+			set
 			{
-				if (_isStarted)
-					throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
-
+				CheckNotStarted(); 
 				if (value.HasValue)
-					Platform.CheckNonNegative(value.Value, "FrameLookAheadSize");
-				_frameLookAheadSize = value;
+					Platform.CheckNonNegative(value.Value, "FrameLookAheadCount");
+				_frameLookAheadCount = value;
 			}
 		}
 
-		//TODO (CR February 2011) - Low: Name - SelectedImageBoxWeight?
 		/// <summary>
 		/// Gets or sets the relative weighting given to loading frames in the selected <see cref="IImageBox"/>. Valid range is 1 or more.
 		/// </summary>
 		/// <exception cref="ArgumentException">Thrown if an attempt was made to set the property to an invalid value.</exception>
 		/// <exception cref="InvalidOperationException">Thrown if an attempt was made to set the property when the strategy has already been started.</exception>
-		public int SelectedFrameWeight
+		public int SelectedImageBoxWeight
 		{
-			get { return _selectedFrameWeight; }
-			protected set
+			get { return _selectedImageBoxWeight; }
+			set
 			{
-				if (_isStarted)
-					throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
-
-				Platform.CheckPositive(value, "SelectedFrameWeight");
-				_selectedFrameWeight = value;
+				CheckNotStarted();
+				Platform.CheckPositive(value, "SelectedImageBoxWeight");
+				_selectedImageBoxWeight = value;
 			}
 		}
 
-		//TODO (CR February 2011) - Low: Name - UnselectedImageBoxWeight?
 		/// <summary>
 		/// Gets or sets the relative weighting given to loading frames in unselected <see cref="IImageBox"/>. Valid range is 0 or more.
 		/// </summary>
 		/// <remarks>Setting the relative weight to 0 effectively means that only frames in the selected <see cref="IImageBox"/> will be preloaded.</remarks>
 		/// <exception cref="ArgumentException">Thrown if an attempt was made to set the property to an invalid value.</exception>
 		/// <exception cref="InvalidOperationException">Thrown if an attempt was made to set the property when the strategy has already been started.</exception>
-		public int UnselectedFrameWeight
+		public int UnselectedImageBoxWeight
 		{
-			get { return _unselectedFrameWeight; }
-			protected set
+			get { return _unselectedImageBoxWeight; }
+			set
 			{
-				if (_isStarted)
-					throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
-
-				Platform.CheckNonNegative(value, "UnselectedFrameWeight");
-				_unselectedFrameWeight = value;
+				CheckNotStarted();
+				Platform.CheckNonNegative(value, "UnselectedImageBoxWeight");
+				_unselectedImageBoxWeight = value;
 			}
 		}
 
 		protected override void Start()
 		{
+			if (!_enabled)
+				return;
+
 			_isStarted = true;
 
-			if (_enabled)
-			{
-				_imageBoxEnumerator = new ViewerFrameEnumerator(ImageViewer, SelectedFrameWeight, UnselectedFrameWeight, FrameLookAheadSize.GetValueOrDefault(-1), CanRetrieveFrame);
+			_imageBoxEnumerator = new ViewerFrameEnumerator(ImageViewer, SelectedImageBoxWeight, UnselectedImageBoxWeight, FrameLookAheadCount.GetValueOrDefault(-1), CanRetrieveFrame);
 
-				_retrieveThreadPool = new FrameBlockingThreadPool(_imageBoxEnumerator, DoRetrieveFrame);
-				_retrieveThreadPool.ThreadPoolName = GetThreadPoolName("Retrieve");
-				_retrieveThreadPool.Concurrency = RetrievalThreadConcurrency;
-				_retrieveThreadPool.ThreadPriority = _retrievalThreadPriority;
-				_retrieveThreadPool.Start();
+			_retrieveThreadPool = new FrameBlockingThreadPool(_imageBoxEnumerator, DoRetrieveFrame)
+			                      	{
+			                      		ThreadPoolName = GetThreadPoolName("Retrieve"),
+			                      		Concurrency = RetrievalThreadConcurrency,
+			                      		ThreadPriority = _retrievalThreadPriority
+			                      	};
+			_retrieveThreadPool.Start();
 
-				_decompressThreadPool = new SimpleBlockingThreadPool(DecompressionThreadConcurrency);
-				_decompressThreadPool.ThreadPoolName = GetThreadPoolName("Decompress");
-				_decompressThreadPool.ThreadPriority = _decompressionThreadPriority;
-				_decompressThreadPool.Start();
-			}
+			if (DecompressionThreadConcurrency <= 0)
+				return;
+
+			_decompressThreadPool = new SimpleBlockingThreadPool(DecompressionThreadConcurrency)
+			                        	{
+			                        		ThreadPoolName = GetThreadPoolName("Decompress"),
+			                        		ThreadPriority = _decompressionThreadPriority
+			                        	};
+			_decompressThreadPool.Start();
 		}
 
 		protected override void Stop()
@@ -235,13 +243,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_isStarted = false;
 		}
 
-		protected abstract bool CanRetrieveFrame(Frame frame);
+		private bool CanRetrieveFrame(Frame frame)
+		{
+			return _coreStrategy.CanRetrieveFrame(frame);
+		}
 
-		protected abstract void RetrieveFrame(Frame frame);
+		private void RetrieveFrame(Frame frame)
+		{
+			_coreStrategy.RetrieveFrame(frame);
+		}
 
-		protected abstract bool CanDecompressFrame(Frame frame);
+		private bool CanDecompressFrame(Frame frame)
+		{
+			return _decompressThreadPool != null &&  _coreStrategy.CanDecompressFrame(frame);
+		}
 
-		protected abstract void DecompressFrame(Frame frame);
+		private void DecompressFrame(Frame frame)
+		{
+			_coreStrategy.DecompressFrame(frame);
+		}
 
 		private void DoRetrieveFrame(Frame frame)
 		{
@@ -278,6 +298,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (string.IsNullOrEmpty(strategyName))
 				strategyName = GetType().FullName;
 			return string.Format("{0}:{1}", strategyName, operationName);
+		}
+
+		private void CheckNotStarted()
+		{
+			if (_isStarted)
+				throw new InvalidOperationException("Parameter may not be changed once the preloading strategy has been started.");
 		}
 	}
 }

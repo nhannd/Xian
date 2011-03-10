@@ -173,6 +173,7 @@
     <Compile Include="Common\BlockingCollection.cs" />
     <Compile Include="Common\BlockingThreadPool.cs" />
     <Compile Include="Common\IBlockingEnumerator.cs" />
+    <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />
