@@ -67,5 +67,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore {
                 return ((int)(this["UnselectedImageBoxWeight"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoadAllFrames {
+            get {
+                return ((bool)(this["LoadAllFrames"]));
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.Auditing;
@@ -24,12 +25,16 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
         public LocalDataStoreStudyLoader() : base("DICOM_LOCAL")
         {
+        	int? frameLookAhead = PreLoadingSettings.Default.FrameLookAheadCount;
+			if (PreLoadingSettings.Default.LoadAllFrames)
+				frameLookAhead = null;
+
 			var coreStrategy = new SimpleCorePrefetchingStrategy(frame => frame.ParentImageSop.DataSource is LocalDataStoreSopDataSource);
 			PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(coreStrategy, "DICOM_LOCAL", "Simple prefetcing strategy for local data store images.")
 			{
 				Enabled = PreLoadingSettings.Default.Enabled,
 				RetrievalThreadConcurrency = PreLoadingSettings.Default.Concurrency,
-				FrameLookAheadCount = PreLoadingSettings.Default.FrameLookAheadCount,
+				FrameLookAheadCount = frameLookAhead,
 				SelectedImageBoxWeight = PreLoadingSettings.Default.SelectedImageBoxWeight,
 				UnselectedImageBoxWeight = PreLoadingSettings.Default.UnselectedImageBoxWeight,
 				DecompressionThreadConcurrency = 0
