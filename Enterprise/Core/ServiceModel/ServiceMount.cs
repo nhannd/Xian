@@ -277,8 +277,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			if (contractAttribute == null)
 				throw new ServiceMountException(string.Format("Unknown contract for service {0}", serviceClass.Name));
 
-			Platform.Log(LogLevel.Info, "Mounting service {0}", serviceClass.Name);
-
+			
 			// determine if service requires authentication
 			var authenticationAttribute = AttributeUtils.GetAttribute<AuthenticationAttribute>(contractAttribute.ServiceContract);
 			var authenticated = authenticationAttribute == null ? true : authenticationAttribute.AuthenticationRequired;
@@ -286,7 +285,8 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			// create service URI
 			var uri = new Uri(_baseAddress, contractAttribute.ServiceContract.FullName);
 
-			Platform.Log(LogLevel.Info, "on URI {0}", uri);
+            Platform.Log(LogLevel.Info, "Mounting {0} on URI {1}", 
+                contractAttribute.ServiceContract.Name, uri);
 
 			// create service host
 			var host = new ServiceHost(serviceClass, uri);
