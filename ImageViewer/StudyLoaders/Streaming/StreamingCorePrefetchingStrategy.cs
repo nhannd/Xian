@@ -17,23 +17,12 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	internal class StreamingPrefetchingStrategy : WeightedWindowPrefetchingStrategy
+	internal class StreamingCorePrefetchingStrategy : ICorePrefetchingStrategy
 	{
 		private int _activeRetrieveThreads = 0;
 		private int _activeDecompressThreads = 0;
 
-		public StreamingPrefetchingStrategy()
-			: base("CC_STREAMING", SR.DescriptionPrefetchingStrategy)
-		{
-			Enabled = StreamingSettings.Default.RetrieveConcurrency > 0;
-			RetrievalThreadConcurrency = Math.Max(StreamingSettings.Default.RetrieveConcurrency, 1);
-			DecompressionThreadConcurrency = Math.Max(StreamingSettings.Default.DecompressConcurrency, 1);
-			FrameLookAheadSize = StreamingSettings.Default.ImageWindow >= 0 ? (int?) StreamingSettings.Default.ImageWindow : null;
-			SelectedFrameWeight = Math.Max(StreamingSettings.Default.SelectedWeighting, 1);
-			UnselectedFrameWeight = Math.Max(StreamingSettings.Default.UnselectedWeighting, 0);
-		}
-
-		protected override bool CanRetrieveFrame(Frame frame)
+		public bool CanRetrieveFrame(Frame frame)
 		{
 			if (!(frame.ParentImageSop.DataSource is StreamingSopDataSource))
 				return false;
@@ -43,9 +32,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return !frameData.PixelDataRetrieved;
 		}
 
-		protected override void RetrieveFrame(Frame frame)
+		public void RetrieveFrame(Frame frame)
 		{
 			Interlocked.Increment(ref _activeRetrieveThreads);
+
 			try
 			{
 				string message = String.Format("Retrieving Frame (active threads: {0})", Thread.VolatileRead(ref _activeRetrieveThreads));
@@ -70,7 +60,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 		}
 
-		protected override bool CanDecompressFrame(Frame frame)
+		public bool CanDecompressFrame(Frame frame)
 		{
 			if (!(frame.ParentImageSop.DataSource is StreamingSopDataSource))
 				return false;
@@ -80,7 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return frameData.PixelDataRetrieved;
 		}
 
-		protected override void DecompressFrame(Frame frame)
+		public void DecompressFrame(Frame frame)
 		{
 			Interlocked.Increment(ref _activeDecompressThreads);
 			try

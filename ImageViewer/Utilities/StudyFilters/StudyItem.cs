@@ -16,7 +16,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
-	//TODO (CR February 2011): These don't get disposed - causes caching problems.
+	//TODO (CR February 2011) - High: These don't get disposed - causes caching problems.
 	public class SopDataSourceStudyItem : StudyItem
 	{
 		private readonly string _filename;

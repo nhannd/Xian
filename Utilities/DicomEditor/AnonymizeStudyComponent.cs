@@ -133,6 +133,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 		}
 
+		[ValidateLength(0, 16, Message = "MessageAccessionNumberInvalidLength")]
 		public string AccessionNumber
 		{
 			get { return _anonymized.AccessionNumber; }

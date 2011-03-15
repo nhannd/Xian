@@ -367,6 +367,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid film size: {0}.
+        /// </summary>
+        public static string ExceptionInvalidFilmSize {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidFilmSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HighBit must be greater than zero (highBit = {0})..
         /// </summary>
         public static string ExceptionInvalidHighBit {
@@ -381,6 +390,15 @@ namespace ClearCanvas.Dicom {
         public static string ExceptionInvalidHighBitBitsAllocated {
             get {
                 return ResourceManager.GetString("ExceptionInvalidHighBitBitsAllocated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid image display format: {0}.
+        /// </summary>
+        public static string ExceptionInvalidImageDisplayFormat {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidImageDisplayFormat", resourceCulture);
             }
         }
         
@@ -565,6 +583,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image display format {0} is not supported..
+        /// </summary>
+        public static string ExceptionNotSupportedImageDisplayFormat {
+            get {
+                return ResourceManager.GetString("ExceptionNotSupportedImageDisplayFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} is null.
         /// </summary>
         public static string ExceptionNullReference {
@@ -592,6 +619,42 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} {2} x {1} {2}.
+        /// </summary>
+        public static string FormatFilmSize {
+            get {
+                return ResourceManager.GetString("FormatFilmSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column {0}.
+        /// </summary>
+        public static string FormatImageDisplayFormatColumn {
+            get {
+                return ResourceManager.GetString("FormatImageDisplayFormatColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row {0}.
+        /// </summary>
+        public static string FormatImageDisplayFormatRow {
+            get {
+                return ResourceManager.GetString("FormatImageDisplayFormatRow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard {0}x{1}.
+        /// </summary>
+        public static string FormatImageDisplayFormatStandard {
+            get {
+                return ResourceManager.GetString("FormatImageDisplayFormatStandard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The type being set is not compatible with the value representation of the tag..
         /// </summary>
         public static string InvalidType {
@@ -606,6 +669,87 @@ namespace ClearCanvas.Dicom {
         public static string InvalidVR {
             get {
                 return ResourceManager.GetString("InvalidVR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        public static string LabelDefault {
+            get {
+                return ResourceManager.GetString("LabelDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blue Film.
+        /// </summary>
+        public static string LabelFilmMediumTypeBlueFilm {
+            get {
+                return ResourceManager.GetString("LabelFilmMediumTypeBlueFilm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear Film.
+        /// </summary>
+        public static string LabelFilmMediumTypeClearFilm {
+            get {
+                return ResourceManager.GetString("LabelFilmMediumTypeClearFilm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mammo Blue Film.
+        /// </summary>
+        public static string LabelFilmMediumTypeMammoBlueFilm {
+            get {
+                return ResourceManager.GetString("LabelFilmMediumTypeMammoBlueFilm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mammo Clear Film.
+        /// </summary>
+        public static string LabelFilmMediumTypeMammoClearFilm {
+            get {
+                return ResourceManager.GetString("LabelFilmMediumTypeMammoClearFilm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paper.
+        /// </summary>
+        public static string LabelFilmMediumTypePaper {
+            get {
+                return ResourceManager.GetString("LabelFilmMediumTypePaper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to cm.
+        /// </summary>
+        public static string LabelFilmSizeUnitCentimeter {
+            get {
+                return ResourceManager.GetString("LabelFilmSizeUnitCentimeter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to in.
+        /// </summary>
+        public static string LabelFilmSizeUnitInch {
+            get {
+                return ResourceManager.GetString("LabelFilmSizeUnitInch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected failure reported by the printer..
+        /// </summary>
+        public static string MessagePrinterError {
+            get {
+                return ResourceManager.GetString("MessagePrinterError", resourceCulture);
             }
         }
     }

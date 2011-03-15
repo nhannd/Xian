@@ -41,9 +41,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public event EventHandler EnabledChanged;
 
-		public ColorBarTool()
+		public ColorBarTool() 
+			: base(false)
 		{
-			this.Checked = false;
 		}
 
 		public bool Enabled
@@ -105,6 +105,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.Enabled = e.SelectedPresentationImage is IColorMapProvider;
 		}
 
+		[Cloneable(false)]
 		private class ColorBarCompositeGraphic : CompositeGraphic
 		{
 			[CloneIgnore]

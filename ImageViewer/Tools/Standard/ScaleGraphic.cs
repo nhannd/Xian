@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -25,9 +26,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// <summary>
 	/// Generic scale graphic class.
 	/// </summary>
+	[Cloneable(false)]
 	internal class ScaleGraphic : CompositeGraphic
 	{
-		private readonly LinePrimitive _baseLine;
+		private const string _baseLineName = "Base scale line";
+		private const string _tickLineName = "Scale tick line";
+		[CloneIgnore]
+		private LinePrimitive _baseLine;
+		[CloneIgnore]
 		private readonly List<LinePrimitive> _ticklines = new List<LinePrimitive>();
 		private PointF _point1, _point2;
 		private bool _isMirrored;
@@ -38,8 +44,28 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		public ScaleGraphic()
 		{
-			base.Graphics.Add(_baseLine = new LinePrimitive());
+			Graphics.Add(_baseLine = new LinePrimitive{ Name = _baseLineName });
 			_isDirty = false;
+		}
+
+		protected ScaleGraphic(ScaleGraphic source, ICloningContext context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			foreach (var graphic in Graphics)
+			{
+				if (_baseLine == null && graphic is LinePrimitive && graphic.Name == _baseLineName)
+					_baseLine = (LinePrimitive)graphic;
+
+				if (graphic is LinePrimitive && graphic.Name == _tickLineName)
+					_ticklines.Add((LinePrimitive)graphic);
+			}
+
+			_isDirty = true;
 		}
 
 		/// <summary>
@@ -304,7 +330,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			LinePrimitive tick;
 			while (_ticklines.Count < tickCount)
 			{
-				tick = new LinePrimitive();
+				tick = new LinePrimitive {Name = _tickLineName };
 				_ticklines.Add(tick);
 				base.Graphics.Add(tick);
 			}

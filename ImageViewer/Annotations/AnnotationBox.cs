@@ -126,7 +126,6 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <exception cref="ArgumentException">Thrown when the input <paramref name="normalizedRectangle"/> is not normalized.</exception>
 		public AnnotationBox(RectangleF normalizedRectangle, IAnnotationItem annotationItem)
 		{
-			RectangleUtilities.VerifyNormalizedRectangle(normalizedRectangle); 
 			this.NormalizedRectangle = normalizedRectangle;
 			_annotationItem = annotationItem;
 		}
@@ -175,11 +174,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		public RectangleF NormalizedRectangle
 		{
 			get { return _normalizedRectangle; }
-			set 
-			{
-				RectangleUtilities.VerifyNormalizedRectangle(value);
-				_normalizedRectangle = value;
-			}
+			set { _normalizedRectangle = value; }
 		}
 
 		/// <summary>

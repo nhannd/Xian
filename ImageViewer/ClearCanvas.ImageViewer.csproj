@@ -163,6 +163,8 @@
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
+    <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
+    <Compile Include="Graphics\Utilities\TextOverlayVisibilityHelper.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
@@ -171,6 +173,7 @@
     <Compile Include="Common\BlockingCollection.cs" />
     <Compile Include="Common\BlockingThreadPool.cs" />
     <Compile Include="Common\IBlockingEnumerator.cs" />
+    <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />

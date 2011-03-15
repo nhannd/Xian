@@ -110,11 +110,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		/// Specifies the colour with which to paint the background of the output image when <see cref="SizeMode"/> has a value of <see cref="ImageExport.SizeMode.Fixed"/>.
 		/// </summary>
 		public Color BackgroundColor { get; set; }
-
-		/// <summary>
-		/// Specifies whether or not the text overlay annotation layer should be visible in the output.
-		/// </summary>
-		public bool ShowTextOverlay { get; set; }
 	}
 
 	/// <summary>

@@ -136,6 +136,11 @@
       <Output TaskParameter="Include" ItemName="ManifestFiles" />
     </CreateItem>
   </Target> 
+  <Target Name="HelpFiles" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputHelpFiles.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target> 
   
   <Target Name ="Create Manifests" >
 
@@ -213,6 +218,11 @@
       <Output TaskParameter="IsMatch" PropertyName="ExcludeEnterprise" />
     </RegexIsMatch>
     <CallTarget Targets="Enterprise" Condition ="!$(ExcludeEnterprise)"/>
+    
+    <RegexIsMatch Pattern="ExcludeHelpFiles" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpFiles" />
+    </RegexIsMatch>
+    <CallTarget Targets="HelpFiles" Condition ="!$(ExcludeHelpFiles)"/>
 
     <!-- Create the base manifest -->
     <CallTarget Targets="Create Desktop Manifest" />

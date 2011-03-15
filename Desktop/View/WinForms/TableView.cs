@@ -26,6 +26,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     {
         private event EventHandler _itemDoubleClicked;
         private event EventHandler _selectionChanged;
+        private readonly DelayedEventPublisher _delayedSelectionChangedPublisher;
         private event EventHandler<ItemDragEventArgs> _itemDrag;
 
         private ActionModelNode _toolbarModel;
@@ -62,6 +63,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.DataGridView.RowPostPaint += DisplayCellSubRows;
             this.DataGridView.RowPostPaint += OutlineCell;
             this.DataGridView.RowPostPaint += SetLinkColor;
+
+            // Use a DelayedEventPublisher to make fixes for bugs 386 and 8032 a little clearer.  Previously used a Timer directly
+            // to delay the events
+            _delayedSelectionChangedPublisher = new DelayedEventPublisher((sender, args) => NotifySelectionChanged(), 50);
         }
 
         #region Design Time properties and Events
@@ -908,24 +913,33 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (e.RowIndex > -1)    // rowindex == -1 represents a header click
             {
+                // bug 8032: need to flush selection change prior to double click too (cf bug 386)
+                FlushSelectionChangedNotification();
                 EventsHelper.Fire(_itemDoubleClicked, this, new EventArgs());
             }
         }
 
-    	private void _contextMenu_Opening(object sender, CancelEventArgs e)
-    	{
-    		// if a context menu is being opened, need to flush any pending selection change notification immediately before showing menu (bug 386)
-    		FlushPendingSelectionChangeNotification();
-    	}
+        private void _contextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            // if a context menu is being opened, need to flush any pending selection change notification immediately before showing menu (bug 386)
+            FlushSelectionChangedNotification();
+        }
 
-    	private void _dataGridView_SelectionChanged(object sender, EventArgs e)
-    	{
-    		if (SuppressSelectionChangedEvent)
-    			return;
+        private void _dataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            // fix Bug 386: rather than firing our own _selectionChanged event immediately, post delayed notification
+            PostSelectionChangedNotification();
+        }
 
-    		// fix Bug 386: rather than firing our own _selectionChanged event immediately, post delayed notification
-    		PostSelectionChangeNotification();
-    	}
+        private void FlushSelectionChangedNotification()
+        {
+            _delayedSelectionChangedPublisher.PublishNow();
+        }
+
+        private void PostSelectionChangedNotification()
+        {
+            _delayedSelectionChangedPublisher.Publish(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// Handling this event is necessary to ensure that changes to checkbox cells are propagated
@@ -952,53 +966,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             // if a drag is being initiated, need to flush any pending selection change notification immediately before
             // proceeding (bug 386)
-            FlushPendingSelectionChangeNotification();
+            FlushSelectionChangedNotification();
 
             var args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
             EventsHelper.Fire(_itemDrag, this, args);
-        }
-
-        /// <summary>
-        /// Fix Bug 386: Add a 50ms delay before posting selection changes to outside clients
-        /// this has the effect of filtering out very quick selection changes that usually reflect
-        /// "bugs" in the windowing framework rather than user actions
-        /// </summary>
-        private void PostSelectionChangeNotification()
-        {
-            // restart the timer - this effectively "posts" a selection change notification to occur on the timer tick
-            // if a change notification is already pending, it is cleared
-            _selectionChangeTimer.Stop();
-            _selectionChangeTimer.Start();
-        }
-
-        /// <summary>
-        /// If a selection change notification is pending, this method will force it to occur now rather than
-        /// waiting for the timer tick. (Bug 386)
-        /// </summary>
-        private void FlushPendingSelectionChangeNotification()
-        {
-            var pending = _selectionChangeTimer.Enabled;
-            _selectionChangeTimer.Stop();   // stop the timer before firing event, in case event handler runs long duration
-
-            // if there was a "pending" notification, send it now
-            if (pending)
-            {
-                NotifySelectionChanged();
-            }
-        }
-
-        /// <summary>
-        /// Delayed selection change notification (fix for bug 386)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void _selectionChangeTimer_Tick(object sender, EventArgs e)
-        {
-            // stop the timer (one-shot behaviour)
-            _selectionChangeTimer.Stop();
-
-            // notify clients
-            NotifySelectionChanged();
         }
 
         private void NotifySelectionChanged()
@@ -1009,7 +980,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             // notify clients of this class of a *real* selection change
             EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
         }
-
 
         protected DataGridView DataGridView
         {

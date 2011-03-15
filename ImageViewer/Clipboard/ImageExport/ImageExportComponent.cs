@@ -105,8 +105,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		private Color _backgroundColor = Color.Black;
 		private SizeMode _sizeMode = SizeMode.Scale;
 
-		private bool _showTextOverlay = false;
-
 		private ImageExportComponent()
 		{
 		}
@@ -266,19 +264,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				{
 					_sizeMode = value;
 					this.NotifyPropertyChanged("SizeMode");
-				}
-			}
-		}
-
-		public bool ShowTextOverlay
-		{
-			get { return _showTextOverlay; }
-			set
-			{
-				if (_showTextOverlay != value)
-				{
-					_showTextOverlay = value;
-					this.NotifyPropertyChanged("ShowTextOverlay");
 				}
 			}
 		}
@@ -599,7 +584,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			exportParams.SizeMode = SizeMode;
 			exportParams.OutputSize = new Size(Width, Height);
 			exportParams.BackgroundColor = BackgroundColor;
-			exportParams.ShowTextOverlay = ShowTextOverlay;
 			return exportParams;
 		}
 

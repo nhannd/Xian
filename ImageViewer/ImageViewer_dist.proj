@@ -154,7 +154,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <LicenseFiles Include="$(TrunkDirectory)\Docs\ImageViewer\EULA.rtf" />
+    <LicenseFiles Include="$(TrunkDirectory)\Docs\Workstation\EULA.rtf" />
     <LicenseFiles Include="$(TrunkDirectory)\Docs\PrivacyNotice.rtf" />
   </ItemGroup>
 
@@ -324,7 +324,7 @@
   </Target>
 
   <Target Name="Copy Help Files">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFiles="$(DistributionDirectory)\CCWorkstationCommunityUsersGuide.chm" ContinueOnError="true"/>
   </Target>
 
   <Target Name="Copy ImageViewer App Config">
@@ -415,6 +415,9 @@
 
   <Target Name="Copy Optional Viewer Plugins" Condition="$(DesktopBuild)">
 
+    <RegexIsMatch Pattern="ExcludeHelpFiles" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpFiles" />
+    </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeStudyBrowser" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyBrowser" />
     </RegexIsMatch>
@@ -458,6 +461,7 @@
       <Output TaskParameter="IsMatch" PropertyName="ExcludeFusion" />
     </RegexIsMatch>
 
+    <CallTarget Condition="!$(ExcludeHelpFiles)" Targets="Copy Help Files" />
     <CallTarget Condition="!$(ExcludeStudyBrowser)" Targets="Copy Study Browser" />
     <CallTarget Condition="!$(ExcludeServiceTools)" Targets="Copy Service Tools" />
     <CallTarget Condition="!$(ExcludeDesktopServices)" Targets="Copy Desktop Services" />
@@ -509,7 +513,7 @@
     <Copy SourceFiles="@(ExecutableBootstrapFiles)" DestinationFolder="$(DistributionDirectory)" />
   </Target>
 
-  <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files;Copy License Files;Copy Help Files">
+  <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files;Copy License Files">
     <CallTarget Targets="Copy Project Files" />
 
     <RegexIsMatch Pattern="ExcludeHttpDesktopServices" Input="$(OptionsFlags)" >

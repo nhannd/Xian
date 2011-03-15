@@ -13,11 +13,18 @@ using System;
 using System.Runtime.Remoting.Messaging;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Iod.Sequences;
 
 namespace ClearCanvas.Dicom.Network.Scu
 {
+	public enum ColorMode
+	{
+		Grayscale,
+		Color
+	}
+
 	/// <summary>
 	/// Scu class for printing a image.
 	/// </summary>
@@ -37,14 +44,14 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <summary>
 		/// Private enum for knowing the state of the print request, so we know what to send to the SCP
 		/// </summary>
-		private enum EventObjectType
+		private enum EventObject
 		{
 			FilmSession,
 			FilmBox,
 			ImageBox
 		}
 
-		private EventObjectType _eventObjectType;
+		private EventObject _eventObject;
 
 		private int _numberOfImageBoxesSent;
 		private FilmSession _filmSession;
@@ -56,7 +63,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <summary>
 		/// Specifies whether the SCU will be printing color or grayscale.  Default is grayscale.
 		/// </summary>
-		public bool ColorPrinting { get; set; }
+		public ColorMode ColorMode { get; set; }
 
 		/// <summary>
 		/// Prints with the specified parameters.  Create all image boxes up-front.
@@ -121,7 +128,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// </summary>
 		protected override void SetPresentationContexts()
 		{
-			AddSopClassToPresentationContext(this.ColorPrinting
+			AddSopClassToPresentationContext(this.ColorMode == ColorMode.Color
 				? SopClass.BasicColorPrintManagementMetaSopClass
 				: SopClass.BasicGrayscalePrintManagementMetaSopClass);
 		}
@@ -144,6 +151,40 @@ namespace ClearCanvas.Dicom.Network.Scu
 			}
 		}
 
+		public override void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
+		{
+			// We only handle NEventReport request messages
+			if (message.CommandField != DicomCommandField.NEventReportRequest ||
+				message.AffectedSopClassUid != SopClass.PrinterSopClassUid)
+			{
+				base.OnReceiveRequestMessage(client, association, presentationID, message);
+				return;
+			}
+
+			var printerStatus = IodBase.ParseEnum(message.EventTypeId.ToString(), PrinterStatus.None);
+			var printerModule = new PrinterModuleIod(message.DataSet);
+			var logMessage = string.Format("Received NEventReportRequest, Printer Status: {0}, Status Info = {1}", printerStatus, printerModule.PrinterStatusInfo);
+
+			switch (printerStatus)
+			{
+				case PrinterStatus.Failure:
+					Platform.Log(LogLevel.Error, logMessage);
+					this.FailureDescription = SR.MessagePrinterError;
+					this.ReleaseConnection(client);
+					break;
+
+				case PrinterStatus.Warning:
+					Platform.Log(LogLevel.Warn, logMessage);
+					break;
+
+				case PrinterStatus.None:
+				case PrinterStatus.Normal:
+				default:
+					Platform.Log(LogLevel.Debug, logMessage);
+					break;
+			}
+		}
+
 		/// <summary>
 		/// Called when received response message.
 		/// </summary>
@@ -156,10 +197,23 @@ namespace ClearCanvas.Dicom.Network.Scu
 			try
 			{
 				this.ResultStatus = message.Status.Status;
-				if (message.Status.Status != DicomState.Success)
+				switch (this.ResultStatus)
 				{
-					Platform.Log(LogLevel.Warn, string.Format("{0} status received in Print Scu response message", message.Status.Status));
-					return;
+					case DicomState.Cancel:
+					case DicomState.Pending:
+					case DicomState.Failure:
+						Platform.Log(LogLevel.Error, string.Format("{0} status received in Print Scu response message", message.Status.Status));
+
+						this.FailureDescription = SR.MessagePrinterError;
+						this.ReleaseConnection(client);
+						return;
+
+					case DicomState.Warning:
+						Platform.Log(LogLevel.Warn, string.Format("{0} status received in Print Scu response message", message.Status.Status));
+						break;
+
+					case DicomState.Success:
+						break;
 				}
 
 				EventsHelper.Fire(this.ProgressUpdated, this, new ProgressUpdateEventArgs(_numberOfImageBoxesSent));
@@ -178,12 +232,12 @@ namespace ClearCanvas.Dicom.Network.Scu
 				switch (message.CommandField)
 				{
 					case DicomCommandField.NCreateResponse:
-						switch (_eventObjectType)
+						switch (_eventObject)
 						{
-							case EventObjectType.FilmSession:
+							case EventObject.FilmSession:
 								_filmSession.OnCreated(affectedUid);
 								break;
-							case EventObjectType.FilmBox:
+							case EventObject.FilmBox:
 								{
 									var responseFilmBoxModule = new BasicFilmBoxModuleIod(message.DataSet);
 									_filmSession.OnFilmBoxCreated(affectedUid,
@@ -198,13 +252,13 @@ namespace ClearCanvas.Dicom.Network.Scu
 						break;
 
 					case DicomCommandField.NDeleteResponse:
-						switch (_eventObjectType)
+						switch (_eventObject)
 						{
-							case EventObjectType.FilmSession:
+							case EventObject.FilmSession:
 								_filmSession.OnDeleted();
 								this.ReleaseConnection(client);
 								break;
-							case EventObjectType.FilmBox:
+							case EventObject.FilmBox:
 								_filmSession.OnFilmBoxDeleted();
 								break;
 						}
@@ -241,7 +295,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			var message = new DicomMessage(null, (DicomAttributeCollection)filmSession.DicomAttributeProvider);
 			this.Client.SendNCreateRequest(null, GetPresentationContextId(this.AssociationParameters), this.Client.NextMessageID(), message, DicomUids.BasicFilmSession);
-			_eventObjectType = EventObjectType.FilmSession;
+			_eventObject = EventObject.FilmSession;
 
 			Platform.Log(LogLevel.Debug, "Creating film session...");
 		}
@@ -258,7 +312,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			var message = new DicomMessage(null, (DicomAttributeCollection)filmBox.DicomAttributeProvider);
 			this.Client.SendNCreateRequest(null, GetPresentationContextId(this.AssociationParameters), this.Client.NextMessageID(), message, DicomUids.BasicFilmBoxSOP);
-			_eventObjectType = EventObjectType.FilmBox;
+			_eventObject = EventObject.FilmBox;
 			Platform.Log(LogLevel.Debug, "Creating film box...");
 		}
 
@@ -266,12 +320,12 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			var message = new DicomMessage(null, (DicomAttributeCollection)imageBox.DicomAttributeProvider)
 			{
-				RequestedSopClassUid = this.ColorPrinting ? SopClass.BasicColorImageBoxSopClassUid : SopClass.BasicGrayscaleImageBoxSopClassUid,
+				RequestedSopClassUid = this.ColorMode == ColorMode.Color ? SopClass.BasicColorImageBoxSopClassUid : SopClass.BasicGrayscaleImageBoxSopClassUid,
 				RequestedSopInstanceUid = imageBox.SopInstanceUid.UID
 			};
 
 			this.Client.SendNSetRequest(GetPresentationContextId(this.AssociationParameters), this.Client.NextMessageID(), message);
-			_eventObjectType = EventObjectType.ImageBox;
+			_eventObject = EventObject.ImageBox;
 			Platform.Log(LogLevel.Debug, "Setting image box {0}...", _numberOfImageBoxesSent);
 		}
 
@@ -285,7 +339,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			};
 
 			this.Client.SendNActionRequest(GetPresentationContextId(this.AssociationParameters), this.Client.NextMessageID(), message);
-			_eventObjectType = EventObjectType.FilmBox;
+			_eventObject = EventObject.FilmBox;
 			Platform.Log(LogLevel.Debug, "Printing film box...");
 		}
 
@@ -298,7 +352,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			};
 
 			this.Client.SendNDeleteRequest(GetPresentationContextId(this.AssociationParameters), this.Client.NextMessageID(), message);
-			_eventObjectType = EventObjectType.FilmBox;
+			_eventObject = EventObject.FilmBox;
 			Platform.Log(LogLevel.Debug, "Deleting film box...");
 		}
 
@@ -311,13 +365,13 @@ namespace ClearCanvas.Dicom.Network.Scu
 			};
 
 			this.Client.SendNDeleteRequest(GetPresentationContextId(this.AssociationParameters), this.Client.NextMessageID(), message);
-			_eventObjectType = EventObjectType.FilmSession;
+			_eventObject = EventObject.FilmSession;
 			Platform.Log(LogLevel.Debug, "Deleting film session...");
 		}
 
 		private byte GetPresentationContextId(AssociationParameters association)
 		{
-			return association.FindAbstractSyntaxOrThrowException(this.ColorPrinting
+			return association.FindAbstractSyntaxOrThrowException(this.ColorMode == ColorMode.Color
 				? SopClass.BasicColorPrintManagementMetaSopClass
 				: SopClass.BasicGrayscalePrintManagementMetaSopClass);
 		}

@@ -51,27 +51,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			get
 			{
 				if (_localStudyLoader == null)
-				{
-					try
-					{
-						StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
-						foreach (IStudyLoader loader in xp.CreateExtensions())
-						{
-							if (loader.Name == "DICOM_LOCAL")
-							{
-								_localStudyLoader = loader;
-								break;
-							}
-						}
-					}
-					catch (NotSupportedException)
-					{
-						Platform.Log(LogLevel.Info, "Anonymization tool disabled; no local study loader exists.");
-					}
-
-					if (_localStudyLoader == null)
-						_localStudyLoader = new object(); //there is no loader.
-				}
+					_localStudyLoader = StudyLoader.Create("DICOM_LOCAL") ?? new object();
 
 				return _localStudyLoader as IStudyLoader;
 			}
@@ -140,7 +120,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 				for (int i = 0; i < numberOfSops; ++i)
 				{
-					//TODO (CR February 2011): Sops not disposed, will cause caching issues.
+					//TODO (CR February 2011) - High: Sops not disposed, will cause caching issues.
 					Sop sop = LocalStudyLoader.LoadNextSop();
 					if (sop != null)
 					{

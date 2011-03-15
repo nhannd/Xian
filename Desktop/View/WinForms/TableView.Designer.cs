@@ -65,7 +65,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._bindingSource = new System.Windows.Forms.BindingSource(this.components);
-			this._selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._sortButton = new System.Windows.Forms.ToolStripDropDownButton();
 			this._sortAscendingButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,11 +88,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._contextMenu.Name = "_contextMenu";
 			this._contextMenu.Size = new System.Drawing.Size(61, 4);
 			this._contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._contextMenu_Opening);
-			// 
-			// _selectionChangeTimer
-			// 
-			this._selectionChangeTimer.Interval = 50;
-			this._selectionChangeTimer.Tick += new System.EventHandler(this._selectionChangeTimer_Tick);
 			// 
 			// _toolStrip
 			// 
@@ -256,7 +250,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.ContextMenuStrip _contextMenu;
 		private System.ComponentModel.IContainer components;
 		private ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport _dataGridView;
-        private System.Windows.Forms.Timer _selectionChangeTimer;
         private System.Windows.Forms.ToolStrip _toolStrip;
         private System.Windows.Forms.ToolStripDropDownButton _sortButton;
         private System.Windows.Forms.ToolStripMenuItem _sortAscendingButton;

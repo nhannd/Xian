@@ -86,11 +86,6 @@
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\nunit.framework.dll" />
   </ItemGroup>
 
-  <!-- License files -->
-  <ItemGroup>
-    <LicenseFiles Include="$(ProjectDir)\..\..\License.rtf" />
-  </ItemGroup>
-
   <!-- Shared plugin files, to be placed in plugin directory -->
   <ItemGroup>
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
@@ -137,6 +132,11 @@
           WorkingDirectory="$(VS90COMNTOOLS)\..\IDE" />
   </Target>
 
+  <Target Name="Copy App Icon">
+    <!-- Copy icon file -->
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+  </Target>
+  
   <Target Name="Copy Files">
 
     <!-- Make required directories -->
@@ -154,14 +154,31 @@
     <!-- Copy shared plugins -->
     <Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
 
-    <!-- Copy license file -->
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
-
-    <!-- Copy icon file -->
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
-
     <!-- Copy execution files -->
     <Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />
+  </Target>
+  
+  <Target Name="Copy Desktop Executable Files">
+    <!-- Evaluate desktop executable specific build options -->
+    <RegexIsMatch Pattern="IncludeApplicationIcon" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="IncludeApplicationIcon" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="SetDesktopExecutableX86Flag" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="SetDesktopExecutableX86Flag" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="SetDesktopExecutableLAAFlag" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="SetDesktopExecutableLAAFlag" />
+    </RegexIsMatch>
+    
+    <!-- Copy core desktop executable files -->
+    <CallTarget Targets="Copy Files" />
+
+    <!-- Copy optional components -->
+    <CallTarget Condition="$(IncludeApplicationIcon)" Targets="Copy App Icon" />
+
+    <!-- Set executable header flags -->
+    <CallTarget Condition="$(SetDesktopExecutableX86Flag)" Targets="SetExeX86Flag" />
+    <CallTarget Condition="$(SetDesktopExecutableLAAFlag)" Targets="SetExeLAAFlag" />
 
     <!-- Override the value of TargetPlatform for this task. -->
     <CreateProperty Value="$(BuildPlatform)" Condition=" '$(TargetPlatform)' == '' ">
@@ -173,20 +190,10 @@
   </Target>
 
   <Target Name="Default Target">
-
     <RegexIsMatch Pattern="ExcludeDesktopExecutable" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDesktopExecutable" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="SetDesktopExecutableX86Flag" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="SetDesktopExecutableX86Flag" />
-    </RegexIsMatch>
-    <RegexIsMatch Pattern="SetDesktopExecutableLAAFlag" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="SetDesktopExecutableLAAFlag" />
-    </RegexIsMatch>
-
-    <CallTarget Condition="!$(ExcludeDesktopExecutable)" Targets="Copy Files" />
-
-    <CallTarget Condition="!$(ExcludeDesktopExecutable) AND $(SetDesktopExecutableX86Flag)" Targets="SetExeX86Flag" />
-    <CallTarget Condition="!$(ExcludeDesktopExecutable) AND $(SetDesktopExecutableLAAFlag)" Targets="SetExeLAAFlag" />
+    
+    <CallTarget Condition="!$(ExcludeDesktopExecutable)" Targets="Copy Desktop Executable Files" />
   </Target>
 </Project>

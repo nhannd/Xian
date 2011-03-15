@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
@@ -64,20 +63,7 @@ namespace ClearCanvas.Common
 
 		public DecryptedProductSettings()
 		{
-			_settings = new ProductSettings();
-			_settings.PropertyChanged += OnSettingPropertyChanged;
-		}
-
-		private void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			_product = null;
-			_component = null;
-			_edition = null;
-			_release = null;
-			_version = null;
-			_versionSuffix = null;
-			_copyright = null;
-			_license = null;
+			_settings = ((ProductSettings)(ApplicationSettingsBase.Synchronized(new ProductSettings())));
 		}
 
 		/// <summary>
@@ -129,7 +115,7 @@ namespace ClearCanvas.Common
 				if (_release == null)
 				{
 					var release = Decrypt(_settings.Release);
-					//TODO (CR February 2011): Is "Unverified" an appropriate default value?  Perhaps Unspecified, or "Unofficial".
+					//TODO (CR February 2011) - Med: Is "Unverified" an appropriate default value?  Perhaps Unspecified, or "Unofficial".
 					_release = string.IsNullOrEmpty(release) || release[0] != '*' ? "Unverified" : release.Substring(1);
 				}
 				return _release;
@@ -172,7 +158,7 @@ namespace ClearCanvas.Common
 			{
 				if (_versionSuffix == null)
 				{
-					//TODO (CR February 2011): Is "Unverified Build" an appropriate value for this now?
+					//TODO (CR February 2011) - Med: Is "Unverified Build" an appropriate value for this now?
 					string versionSuffix = Decrypt(_settings.VersionSuffix);
 					if (String.IsNullOrEmpty(versionSuffix) || versionSuffix[0] != '*')
 						_versionSuffix = "Unverified Build";
@@ -363,7 +349,7 @@ namespace ClearCanvas.Common
 		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
 		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeEdition, bool includeRelease)
 		{
-			//TODO (CR February 2011): Although unused, this is actually not correct.
+			//TODO (CR February 2011) - High: Although unused, this is actually not correct.
 			//e.g. Below will give: ClearCanvas Workstation Clinical Beta v.3.0
 			//But it should be: ClearCanvas Workstation v.3.0 Clinical Beta
 			return string.Format("{0} {1}", GetName(includeEdition, includeRelease), GetVersion(includeBuildAndRevision, includeVersionSuffix, false));

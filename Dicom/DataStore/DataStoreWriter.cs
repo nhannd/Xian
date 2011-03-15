@@ -58,7 +58,17 @@ namespace ClearCanvas.Dicom.DataStore
 					using (IDataStoreReader reader = GetIDataStoreReader())
 					{
 						foreach (Study study in reader.GetStudies())
-							File.Delete(study.StudyXmlUri.LocalDiskPath);
+						{
+							try
+							{
+								File.Delete(study.StudyXmlUri.LocalDiskPath);
+							}
+							catch (DirectoryNotFoundException)
+							{
+								// #7865: suppress this exception, which may occur if the user has manually removed the folder
+								// (maybe they're reindexing because they broke the filestore!)
+							}
+						}
 					}
 
 					SessionManager.BeginWriteTransaction();

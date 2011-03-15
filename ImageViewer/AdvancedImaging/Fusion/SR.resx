@@ -144,14 +144,14 @@
   <data name="MenuAdjustOpacity" xml:space="preserve">
     <value>Adjust &amp;Opacity</value>
   </data>
-  <data name="MenuAdvanced" xml:space="preserve">
-    <value>Ad&amp;vanced</value>
-  </data>
   <data name="MenuDebug" xml:space="preserve">
     <value>&amp;Debug</value>
   </data>
   <data name="MenuFusion" xml:space="preserve">
     <value>&amp;Fusion</value>
+  </data>
+  <data name="MenuStandard" xml:space="preserve">
+    <value>Standard</value>
   </data>
   <data name="MessageFusionComplete" xml:space="preserve">
     <value>Fusion Complete</value>
@@ -165,11 +165,11 @@
   <data name="ToolbarAdjustOpacity" xml:space="preserve">
     <value>Adjust Opacity</value>
   </data>
-  <data name="ToolbarAdvanced" xml:space="preserve">
-    <value>Advanced</value>
-  </data>
   <data name="ToolbarFusion" xml:space="preserve">
     <value>Fusion</value>
+  </data>
+  <data name="ToolbarStandard" xml:space="preserve">
+    <value>Standard</value>
   </data>
   <data name="TooltipAdjustOpacity" xml:space="preserve">
     <value>Adjust Opacity</value>

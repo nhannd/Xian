@@ -24,7 +24,7 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	//TODO (CR February 2011): this is not ideal, but at the moment I can't think of a better way to do it.
+	//TODO (CR February 2011) - Low: this is not ideal, but at the moment I can't think of a better way to do it.
 
 	public interface IStreamingStudyLoaderConfiguration
     {
@@ -55,7 +55,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
         public StreamingStudyLoader()
             : base("CC_STREAMING")
         {
-            PrefetchingStrategy = new StreamingPrefetchingStrategy();
+        	PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(new StreamingCorePrefetchingStrategy(), "CC_STREAMING", SR.DescriptionPrefetchingStrategy)
+        	                      	{
+        	                      		Enabled = StreamingSettings.Default.RetrieveConcurrency > 0,
+        	                      		RetrievalThreadConcurrency = Math.Max(StreamingSettings.Default.RetrieveConcurrency, 1),
+        	                      		DecompressionThreadConcurrency = Math.Max(StreamingSettings.Default.DecompressConcurrency, 1),
+        	                      		FrameLookAheadCount = StreamingSettings.Default.ImageWindow >= 0 ? (int?) StreamingSettings.Default.ImageWindow : null,
+        	                      		SelectedImageBoxWeight = Math.Max(StreamingSettings.Default.SelectedWeighting, 1),
+        	                      		UnselectedImageBoxWeight = Math.Max(StreamingSettings.Default.UnselectedWeighting, 0)
+        	                      	};
         }
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)

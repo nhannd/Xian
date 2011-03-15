@@ -17,13 +17,13 @@ using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Desktop;
 using System.Windows.Forms;
 using ClearCanvas.Common;
+using Application=ClearCanvas.Desktop.Application;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
 	[ExtensionOf(typeof(ReindexLocalDataStoreApplicationViewExtensionPoint))]
 	public class ReindexLocalDataStoreApplicationView : ApplicationView, IReindexLocalDataStoreApplicationView
 	{
-		private string _dialogTitle = SR.TitleReindexing;
 		private ReindexStartupDialogForm _startupDialog;
 		private ReindexLocalDataStoreDialogForm _reindexDialog;
 		private NotifyDelegate _notifyReindexClosed;
@@ -31,12 +31,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 		private readonly Stack<Form> _messageBoxes = new Stack<Form>();
 
 		#region IReindexLocalDataStoreApplicationView Members
-
-		public void SetDialogTitle(string title)
-		{
-			if (!String.IsNullOrEmpty(title))
-				_dialogTitle = title;
-		}
 
 		public void ShowStartupDialog(string message)
 		{
@@ -46,9 +40,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			if (_startupDialog != null)
 				return;
 
-			_startupDialog = new ReindexStartupDialogForm();
-			if (!String.IsNullOrEmpty(_dialogTitle))
-				_startupDialog.Text = _dialogTitle;
+			_startupDialog = new ReindexStartupDialogForm {Text = Application.Name };
 			if (!String.IsNullOrEmpty(message))
 				_startupDialog.Message = message;
 
@@ -74,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
 			_notifyReindexClosed = notifyUserClosed;
 			DismissStartupDialog();
-			_reindexDialog = new ReindexLocalDataStoreDialogForm(reindexer);
+			_reindexDialog = new ReindexLocalDataStoreDialogForm(reindexer) {Text = Application.Name };
 			_reindexDialog.FormClosed += OnReindexDialogClosed;
 			SplashScreenManager.DismissSplashScreen(_reindexDialog);
 			//Post it so the splash screen can go away.
@@ -104,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
 			var messageBox = new DismissableMessageBox
 			                 	{
-			                 		Text = _dialogTitle,
+									Text = Application.Name,
 			                 		Message = message,
 			                 		ShowInTaskbar = parentForm == null,
 									StartPosition = parentForm == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent

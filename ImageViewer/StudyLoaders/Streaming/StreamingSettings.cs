@@ -16,7 +16,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	[SettingsGroupDescription("Stores preferences for image streaming.")]
-	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class StreamingSettings
 	{
 		private StreamingSettings()
