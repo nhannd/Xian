@@ -85,7 +85,7 @@ namespace ClearCanvas.Desktop.Help
                 this._manifest.Size = AboutSettings.Default.ManifestSize;
                 this._manifest.AutoSize = AboutSettings.Default.ManifestAutoSize;
                 this._manifest.ForeColor = AboutSettings.Default.ManifestForeColor;
-                this._manifest.Font = AboutSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._license.Font;
+				this._manifest.Font = AboutSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._manifest.Font;
                 this._manifest.TextAlign = AboutSettings.Default.ManifestTextAlign;
 
 				this._closeButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;

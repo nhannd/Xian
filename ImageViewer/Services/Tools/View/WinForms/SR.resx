@@ -132,7 +132,7 @@
   <data name="MessageOneOrMoreFailedSendTasks" xml:space="preserve">
     <value>One or more tasks have failed to send.</value>
   </data>
-  <data name="TitleReindexingLocalDataStore" xml:space="preserve">
-    <value>Reindexing Local Data Store ...</value>
+  <data name="TitleReindexing" xml:space="preserve">
+    <value>Reindexing</value>
   </data>
 </root>

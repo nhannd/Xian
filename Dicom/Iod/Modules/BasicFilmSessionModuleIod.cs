@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.Dicom.Iod.Sequences;
+using System.ComponentModel;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -31,7 +32,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="FilmSessionModuleIod"/> class.
         /// </summary>
-		public BasicFilmSessionModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
+        public BasicFilmSessionModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -149,7 +150,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
             if (dicomAttributeProvider == null)
-				throw new ArgumentNullException("dicomAttributeProvider");
+                throw new ArgumentNullException("dicomAttributeProvider");
 
             dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
             dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
@@ -166,6 +167,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
     /// <summary>
     /// enumeration for Print Priority
     /// </summary>
+    [TypeConverter(typeof(BasicPrintEnumConverter<PrintPriority>))]
     public enum PrintPriority
     {
         /// <summary>
@@ -191,6 +193,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
     /// <summary>
     /// Enumeration for Medium Type (Print Film Session Module) as per Part 3, C.13.1 (2000,0030)
     /// </summary>
+    [TypeConverter(typeof(BasicPrintEnumConverter<MediumType>))]
     public enum MediumType
     {
         /// <summary>
@@ -224,10 +227,11 @@ namespace ClearCanvas.Dicom.Iod.Modules
     /// <summary>
     /// Enumeration for Film Destination
     /// </summary>
+    [TypeConverter(typeof(BasicPrintEnumConverter<FilmDestination>))]
     public enum FilmDestination
     {
         /// <summary>
-        /// None - note, it could also be BIN_i
+        /// None
         /// </summary>
         None,
         /// <summary>
@@ -237,8 +241,21 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// the exposed film is developed in film processor
         /// </summary>
-        Processor
+        Processor,
 
+        /// <summary>
+        /// Bin_0 to Bin_9
+        /// </summary>
+        Bin_0,
+        Bin_1,
+        Bin_2,
+        Bin_3,
+        Bin_4,
+        Bin_5,
+        Bin_6,
+        Bin_7,
+        Bin_8,
+        Bin_9
     }
     #endregion
 }

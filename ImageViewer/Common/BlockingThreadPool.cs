@@ -13,11 +13,11 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+namespace ClearCanvas.ImageViewer.Common
 {
 	//TODO: incorporate this kind of thing into the thread pools in common, where the items being 
 	//processed can be added and/or removed.
-	public class BlockingThreadPool<T> : ThreadPoolBase
+	internal class BlockingThreadPool<T> : ThreadPoolBase
 	{
 		private readonly IBlockingEnumerator<T> _blockingEnumerator;
 		private readonly ProcessItemDelegate<T> _processItem;
@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			if (!base.OnStop(completeBeforeStop))
 				return false;
 
-			_blockingEnumerator.ContinueBlocking = false;
+			_blockingEnumerator.IsBlocking = false;
 			return true;
 		}
 
@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			if (!base.OnStart())
 				return false;
 
-			_blockingEnumerator.ContinueBlocking = true;
+			_blockingEnumerator.IsBlocking = true;
 			return true;
 		}
 

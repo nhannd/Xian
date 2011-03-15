@@ -113,7 +113,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			Platform.CheckForNullReference(directory, "directory");
 			if (!Directory.Exists(directory))
 				throw new ArgumentException("Invalid directory path.", "directory");
-			FileProcessor.Process(directory, "*.*", _filenames.Add, false);
+
+			FileProcessor.Process(directory, "*.*", _filenames.Add, recursive);
 		}
 
 		/// <summary>

@@ -51,7 +51,6 @@
     <File name="plugins\ClearCanvas.Desktop.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Dicom.Codec.Rle.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.AnnotationProviders.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Clipboard.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Clipboard.View.WinForms.dll" checksum="true" />

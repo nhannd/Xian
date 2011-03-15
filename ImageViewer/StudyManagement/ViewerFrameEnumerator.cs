@@ -13,11 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 using System.Collections;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	internal class ViewerFrameEnumerator : IBlockingEnumerator<Frame>, IDisposable
 	{
@@ -25,6 +25,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private readonly object _syncLock = new object();
 		private readonly Queue<Frame> _framesToProcess;
+		private readonly Predicate<Frame> _canFetchFrame;
+
 		private readonly Dictionary<IImageBox, ImageBoxFrameSelectionStrategy> _imageBoxStrategies;
 		private IEnumerator<KeyValuePair<IImageBox, ImageBoxFrameSelectionStrategy>> _strategyEnumerator;
 		private IImageBox _selectedImageBox;
@@ -33,9 +35,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private readonly int _unselectedWeight;
 		private readonly int _imageWindow;
 
-		private volatile bool _continueBlocking = true;
+		private volatile bool _isBlocking = true;
 
-		public ViewerFrameEnumerator(IImageViewer viewer, int selectedWeight, int unselectedWeight, int imageWindow)
+		public ViewerFrameEnumerator(IImageViewer viewer, int selectedWeight, int unselectedWeight, int imageWindow, Predicate<Frame> canFetchFrame)
 		{
 			_viewer = viewer;
 			_selectedWeight = selectedWeight;
@@ -43,6 +45,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			_imageWindow = imageWindow;
 
 			_framesToProcess = new Queue<Frame>();
+			_canFetchFrame = canFetchFrame;
 
 			_viewer.PhysicalWorkspace.ImageBoxes.ItemAdded += OnImageBoxAdded;
 			_viewer.PhysicalWorkspace.ImageBoxes.ItemRemoved += OnImageBoxRemoved;
@@ -55,7 +58,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			_imageBoxStrategies = new Dictionary<IImageBox, ImageBoxFrameSelectionStrategy>();
 
 			foreach(IImageBox imageBox in _viewer.PhysicalWorkspace.ImageBoxes)
-				_imageBoxStrategies[imageBox] = new ImageBoxFrameSelectionStrategy(imageBox, _imageWindow, OnImageBoxDataChanged);
+				_imageBoxStrategies[imageBox] = new ImageBoxFrameSelectionStrategy(imageBox, _imageWindow, _canFetchFrame, OnImageBoxDataChanged);
 
 			_selectedImageBox = _viewer.SelectedImageBox;
 		}
@@ -90,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 			lock (_syncLock)
 			{
-				_imageBoxStrategies[e.Item] = new ImageBoxFrameSelectionStrategy(e.Item, _imageWindow, OnImageBoxDataChanged);
+				_imageBoxStrategies[e.Item] = new ImageBoxFrameSelectionStrategy(e.Item, _imageWindow, _canFetchFrame, OnImageBoxDataChanged);
 
 				OnImageBoxesChanged();
 			}
@@ -100,7 +103,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 			lock (_syncLock)
 			{
-				_imageBoxStrategies[e.Item] = new ImageBoxFrameSelectionStrategy(e.Item, _imageWindow, OnImageBoxDataChanged);
+				_imageBoxStrategies[e.Item] = new ImageBoxFrameSelectionStrategy(e.Item, _imageWindow, _canFetchFrame, OnImageBoxDataChanged);
 
 				OnImageBoxesChanged();
 			}
@@ -151,7 +154,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private IEnumerable<Frame> GetFrames()
 		{
-			while (_continueBlocking)
+			while (_isBlocking)
 			{
 				Frame nextFrame = null;
 				lock(_syncLock)
@@ -236,16 +239,16 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		#region IBlockingEnumerator<Frame> Members
 
-		public bool ContinueBlocking
+		public bool IsBlocking
 		{
-			get { return _continueBlocking; }
+			get { return _isBlocking; }
 			set
 			{
-				if (_continueBlocking == value)
+				if (_isBlocking == value)
 					return;
 
-				_continueBlocking = value;
-				if (!_continueBlocking)
+				_isBlocking = value;
+				if (!_isBlocking)
 				{
 					lock (_syncLock)
 					{
@@ -279,7 +282,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		public void Dispose()
 		{
-			ContinueBlocking = false;
+			IsBlocking = false;
 
 			_viewer.PhysicalWorkspace.ImageBoxes.ItemAdded -= OnImageBoxAdded;
 			_viewer.PhysicalWorkspace.ImageBoxes.ItemRemoved -= OnImageBoxRemoved;

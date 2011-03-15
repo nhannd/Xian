@@ -269,6 +269,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest 
 		ManifestInputDicomEditor.xml = ManifestInputDicomEditor.xml
 		ManifestInputDicomRemote.xml = ManifestInputDicomRemote.xml
 		ManifestInputEnterprise.xml = ManifestInputEnterprise.xml
+		ManifestInputFusion.xml = ManifestInputFusion.xml
 		ManifestInputHelpUpdate.xml = ManifestInputHelpUpdate.xml
 		ManifestInputMpr.xml = ManifestInputMpr.xml
 		ManifestInputReporting.xml = ManifestInputReporting.xml

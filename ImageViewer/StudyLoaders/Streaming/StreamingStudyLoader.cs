@@ -24,7 +24,9 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-    public interface IStreamingStudyLoaderConfiguration
+	//TODO (CR February 2011): this is not ideal, but at the moment I can't think of a better way to do it.
+
+	public interface IStreamingStudyLoaderConfiguration
     {
         string GetClientAETitle();
     }
@@ -122,9 +124,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 client.Open();
                 XmlDocument headerXmlDocument;
 
-                // TODO: REVIEW THIS
-                // StreamingStudyLoader now users a plugin to determine the client ae title.
-                // The default behaviour is to use the server tree.
                 using (Stream stream = client.GetStudyHeader(GetClientAETitle(), headerParams))
                 {
                     headerXmlDocument = DecompressHeaderStreamToXml(stream);

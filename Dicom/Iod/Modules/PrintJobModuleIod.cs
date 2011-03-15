@@ -125,13 +125,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
             if (dicomAttributeProvider == null)
 				throw new ArgumentNullException("dicomAttributeProvider");
 
-            //dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
-            //dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
-            //dicomAttributeProvider[DicomTags.MediumType].SetNullValue();
-            //dicomAttributeProvider[DicomTags.FilmDestination].SetNullValue();
-            //dicomAttributeProvider[DicomTags.FilmSessionLabel].SetNullValue();
-            //dicomAttributeProvider[DicomTags.MemoryAllocation].SetNullValue();
-            //dicomAttributeProvider[DicomTags.OwnerId].SetNullValue();
+			dicomAttributeProvider[DicomTags.CreationDate].SetNullValue();
+			dicomAttributeProvider[DicomTags.PrinterName].SetNullValue();
+			dicomAttributeProvider[DicomTags.Originator].SetNullValue();
+			dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
+			dicomAttributeProvider[DicomTags.ExecutionStatus].SetNullValue();
+			dicomAttributeProvider[DicomTags.ExecutionStatusInfo].SetNullValue();
         }
         #endregion
     }

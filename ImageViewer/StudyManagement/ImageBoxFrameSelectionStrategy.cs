@@ -11,10 +11,9 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.ImageViewer.StudyManagement;
 using System.Diagnostics;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	internal delegate void NotifyChangedDelegate();
 
@@ -23,14 +22,16 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private readonly IImageBox _imageBox;
 		private readonly int _window;
 		private readonly NotifyChangedDelegate _notifyChanged;
+		private readonly Predicate<Frame> _canFetchFrame;
 
 		private readonly object _syncLock = new object();
 		private readonly Queue<Frame> _frames;
 
 		private int _currentIndex = -1;
 
-		public ImageBoxFrameSelectionStrategy(IImageBox imageBox, int window, NotifyChangedDelegate notifyChanged)
+		public ImageBoxFrameSelectionStrategy(IImageBox imageBox, int window, Predicate<Frame> canFetchFrame, NotifyChangedDelegate notifyChanged)
 		{
+			_canFetchFrame = canFetchFrame;
 			_notifyChanged = notifyChanged;
 			_imageBox = imageBox;
 			_imageBox.Drawing += OnImageBoxDrawing;
@@ -91,13 +92,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						if (image is IImageSopProvider)
 						{
 							Frame frame = ((IImageSopProvider) image).Frame;
-							if (frame.ParentImageSop.DataSource is StreamingSopDataSource)
-							{
-								StreamingSopDataSource dataSource = (StreamingSopDataSource) frame.ParentImageSop.DataSource;
-								IStreamingSopFrameData frameData = (IStreamingSopFrameData) (dataSource.GetFrameData(frame.FrameNumber));
-								if (!frameData.PixelDataRetrieved)
-									_frames.Enqueue(frame);
-							}
+							if (_canFetchFrame(frame))
+								_frames.Enqueue(frame);
 						}
 					}
 

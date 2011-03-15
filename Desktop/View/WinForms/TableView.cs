@@ -34,6 +34,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ITable _table;
         private bool _multiLine;
 
+    	private bool _filterBoxVisible = false;
+    	private bool _filterLabelVisible = false;
     	private bool _smartColumnSizing = false;
         private bool _isLoaded = false;
 
@@ -72,13 +74,28 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DefaultValue(false)]
-        public bool FilterTextBoxVisible
+        public bool FilterLabelVisible
         {
-            get { return _filterTextBox.Visible; }
+            get { return _filterLabelVisible; }
             set
             {
+                // reading Visible property of ToolStripItems directly yields whether or not the item is currently showing, NOT the last set value
+                _filterLabelVisible = value;
+                _filterLabel.Visible = _filterLabelVisible && _filterBoxVisible;
+            }
+        }
+
+        [DefaultValue(false)]
+        public bool FilterTextBoxVisible
+        {
+            get { return _filterBoxVisible; }
+            set
+            {
+                // reading Visible property of ToolStripItems directly yields whether or not the item is currently showing, NOT the last set value
+                _filterBoxVisible = value;
                 _filterTextBox.Visible = value;
                 _clearFilterButton.Visible = value;
+                _filterLabel.Visible = _filterLabelVisible && _filterBoxVisible;
             }
         }
 

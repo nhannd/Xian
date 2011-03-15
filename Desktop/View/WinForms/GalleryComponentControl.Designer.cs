@@ -63,6 +63,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._listView.InsertionBoxIndex = -1;
 			this._listView.Location = new System.Drawing.Point(0, 25);
 			this._listView.Name = "_listView";
+			this._listView.ShowItemToolTips = true;
 			this._listView.Size = new System.Drawing.Size(342, 251);
 			this._listView.TabIndex = 1;
 			this._listView.UseCompatibleStateImageBehavior = false;

@@ -12,7 +12,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
+namespace ClearCanvas.Common.Utilities
 {
 	public struct FileSize : IComparable<FileSize>, IComparable, IEquatable<FileSize>
 	{

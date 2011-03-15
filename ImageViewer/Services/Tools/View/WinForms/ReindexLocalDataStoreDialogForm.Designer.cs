@@ -85,7 +85,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ReindexLocalDataStoreDialogForm";
-			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this.ResumeLayout(false);

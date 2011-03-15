@@ -187,6 +187,7 @@ namespace ClearCanvas.Common.UsageTracking
                                        Component = ProductInformation.Component,
                                        Edition = ProductInformation.Edition,
                                        Release = ProductInformation.Release,
+                                       //TODO (CR February 2011): We should have left this as a property on ProductInformation rather than checking for empty string.
                                        AllowDiagnosticUse = ProductInformation.Release == string.Empty,
                                        Region = CultureInfo.CurrentCulture.Name,
                                        Timestamp = Platform.Time,

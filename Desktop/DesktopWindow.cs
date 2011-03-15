@@ -359,14 +359,17 @@ namespace ClearCanvas.Desktop
 
         #region Helpers
 
+    	//TODO (CR February 2011): maybe put these in ProductInformation so we can improve the consistency.
     	internal static readonly string LabelModifiedInstallation = "Modified Installation";
 
     	private static string DefaultBaseTitle
     	{
     		get
     		{
+    			//TODO (CR February 2011): Not for diagnostic use is a resource, but modified installation isn't?
     			var tags = new List<string>();
-    			if (ProductInformation.Release != string.Empty)
+				//TODO (CR February 2011): We should have left this as a property on ProductInformation rather than checking for empty string.
+				if (ProductInformation.Release != string.Empty)
     				tags.Add(SR.LabelNotForDiagnosticUse);
     			if (!ManifestVerification.Valid)
     				// should be hardcoded because manifest verification is all that prevents localizing this tag away

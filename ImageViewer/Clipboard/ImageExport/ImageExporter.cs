@@ -17,6 +17,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -71,6 +73,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			if (!(image is ISpatialTransformProvider) || !(image is IImageGraphicProvider))
 				throw new ArgumentException("The image must implement IImageGraphicProvider and have a valid ImageSpatialTransform in order to be exported.");
 
+			if (exportParams.ExportOption == ExportOption.TrueSize)
+			{
+				var imageSopProvider = image as IImageSopProvider;
+				var pixelSpacing = imageSopProvider == null ? null : imageSopProvider.Frame.NormalizedPixelSpacing;
+				if (pixelSpacing == null || pixelSpacing.IsNull)
+					throw new ArgumentException("The image does not contain pixel spacing information.  TrueSize export is not possible.");
+			}
+
 			ImageSpatialTransform transform = ((ISpatialTransformProvider) image).SpatialTransform as ImageSpatialTransform;
 			if (transform == null)
 				throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
@@ -85,15 +95,39 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			try
 			{
+				if (exportParams.ExportOption == ExportOption.TrueSize)
+					return DrawTrueSizeImageToBitmap(image, exportParams.OutputSize, exportParams.Dpi);
+
 				if (exportParams.SizeMode == SizeMode.Scale)
 				{
+					// TODO: Refactor ImageExporter, so there only the displayRectangle and OutputRectangle are provided
+					//		Scale can be automatically figured out.
+					//		A "Padded" option can be provided to distinguish between the current Fixed and ScaleToFit options
+					// TODO: Refactor ImageExporter, so there are separate exporters for each ExportOption.
+					//		The ExportImageParams is getting too many options and not all of them are applicable to each exporter
+					//		Instead, each exporter should have its own parameters.
+
 					if (exportParams.ExportOption == ExportOption.Wysiwyg)
 					{
-						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale);
+						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale, exportParams.Dpi);
 					}
 					else
 					{
-						return DrawCompleteImageToBitmap(image, exportParams.Scale);
+						return DrawCompleteImageToBitmap(image, exportParams.Scale, exportParams.Dpi);
+					}
+				}
+				else if (exportParams.SizeMode == SizeMode.ScaleToFit)
+				{
+					if (exportParams.ExportOption == ExportOption.Wysiwyg)
+					{
+						var scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
+						return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale, exportParams.Dpi);
+					}
+					else
+					{
+						var sourceImage = (IImageGraphicProvider)image;
+						var scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
+						return DrawCompleteImageToBitmap(image, scale, exportParams.Dpi);
 					}
 				}
 				else
@@ -112,13 +146,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 						if (exportParams.ExportOption == ExportOption.Wysiwyg)
 						{
 							float scale = ScaleToFit(exportParams.DisplayRectangle.Size, exportParams.OutputSize);
-							bmp = DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale);
+							bmp = DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, scale, exportParams.Dpi);
 						}
 						else
 						{
 							IImageGraphicProvider sourceImage = (IImageGraphicProvider) image;
 							float scale = ScaleToFit(new Size(sourceImage.ImageGraphic.Columns, sourceImage.ImageGraphic.Rows), exportParams.OutputSize);
-							bmp = DrawCompleteImageToBitmap(image, scale);
+							bmp = DrawCompleteImageToBitmap(image, scale, exportParams.Dpi);
 						}
 						graphics.DrawImageUnscaledAndClipped(bmp, new Rectangle(CenterRectangles(bmp.Size, exportParams.OutputSize), bmp.Size));
 						bmp.Dispose();
@@ -133,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		private static Bitmap DrawCompleteImageToBitmap(IPresentationImage image, float scale)
+		private static Bitmap DrawCompleteImageToBitmap(IPresentationImage image, float scale, float dpi)
 		{
 			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
 			object restoreMemento = transform.CreateMemento();
@@ -150,7 +184,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				int height = (int) Math.Round(displayRectangle.Height);
 
 				transform.ScaleToFit = true;
-				return image.DrawToBitmap(width, height);
+				return ImageDrawToBitmap(image, width, height, dpi);
 			}
 			finally
 			{
@@ -158,7 +192,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		private static Bitmap DrawWysiwygImageToBitmap(IPresentationImage image, Rectangle displayRectangle, float scale)
+		private static Bitmap DrawWysiwygImageToBitmap(IPresentationImage image, Rectangle displayRectangle, float scale, float dpi)
 		{
 			ImageSpatialTransform transform = (ImageSpatialTransform) ((ISpatialTransformProvider) image).SpatialTransform;
 			object restoreMemento = transform.CreateMemento();
@@ -169,12 +203,65 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 				transform.Scale *= scale;
 
-				return image.DrawToBitmap(width, height);
+				return ImageDrawToBitmap(image, width, height, dpi);
 			}
 			finally
 			{
 				transform.SetMemento(restoreMemento);
 			}
+		}
+
+		private static Bitmap DrawTrueSizeImageToBitmap(IPresentationImage image, Size outputSize, float dpi)
+		{
+			var transform = (ImageSpatialTransform) ((ISpatialTransformProvider) image).SpatialTransform;
+			var restoreMemento = transform.CreateMemento();
+			try
+			{
+				var srcPixelSpacing = ((IImageSopProvider)image).Frame.NormalizedPixelSpacing;
+				var srcDPI = 25.4f/srcPixelSpacing.Column;
+				var scaleForTrueSize = dpi / srcDPI;
+
+				// Apply scale transformation
+				transform.ScaleToFit = false;
+				transform.Scale = (float)scaleForTrueSize;
+
+				return ImageDrawToBitmap(image, outputSize.Width, outputSize.Height, dpi);
+			}
+			finally
+			{
+				transform.SetMemento(restoreMemento);
+			}
+		}
+
+		private static Bitmap ImageDrawToBitmap(IPresentationImage presentationImage, int width, int height, float dpi)
+		{
+			if (!(presentationImage is PresentationImage))
+				return presentationImage.DrawToBitmap(width, height);
+
+			var image = (PresentationImage) presentationImage;
+			var bmp = new Bitmap(width, height);
+
+			var graphics = System.Drawing.Graphics.FromImage(bmp);
+			var contextId = graphics.GetHdc();
+			try
+			{
+				using (var surface = image.ImageRenderer.GetRenderingSurface(IntPtr.Zero, bmp.Width, bmp.Height))
+				{
+					surface.ContextID = contextId;
+					surface.ClipRectangle = new Rectangle(0, 0, bmp.Width, bmp.Height);
+
+					var drawArgs = new DrawArgs(surface, null, DrawMode.Render) {Dpi = dpi};
+					image.Draw(drawArgs);
+					drawArgs = new DrawArgs(surface, null, DrawMode.Refresh) {Dpi = dpi};
+					image.Draw(drawArgs);
+				}
+			}
+			finally
+			{
+				graphics.ReleaseHdc(contextId);
+				graphics.Dispose();
+			}
+			return bmp;
 		}
 
 		private static float ScaleToFit(Size source, SizeF destination)
