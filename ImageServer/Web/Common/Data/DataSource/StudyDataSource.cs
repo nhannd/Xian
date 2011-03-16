@@ -307,21 +307,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 	    public bool CanScheduleReconcile(out string reason)
 		{
-			if (IsLocked)
+            if (IsLocked)
 			{
-				reason = "Study is being locked";
-				return false;
-			}
-            
-			if (IsReconcileRequired)
-			{
-				reason = "There are images to be reconciled for this study";
+				reason = SR.ActionNotAllowed_StudyIsLocked;
 				return false;
 			}
 
+            if (IsProcessing)
+            {
+                reason = SR.ActionNotAllowed_StudyIsBeingProcessing;
+				return false;
+            }
+
 			if (IsNearline)
 			{
-				reason = "Study is nearline.";
+				reason = SR.ActionNotAllowed_StudyIsNearline;
 				return false;
 			}
 
@@ -333,24 +333,29 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	    {
             if (IsNearline)
             {
-                reason = "Study is nearline.";
+                reason = SR.ActionNotAllowed_StudyIsNearline;
                 return false;
             }
             
             
             if (HasPendingWorkQueueItems)
             {
-                reason = "There is some pending work queue item(s) for this study.";
+                reason = SR.ActionNotAllowed_StudyHasPendingWorkQueue;
                 return false;
             } 
             
             if (IsProcessing)
             {
-                reason = "Study is being processed.";
+                reason = SR.ActionNotAllowed_StudyIsBeingProcessing;
                 return false;
             }
 
-            // no pending work queue items
+            if (IsArchivedLossless && IsOnlineLossy)
+            {
+                reason = SR.ActionNotAllowed_StudyIsLossyOnline;
+                return false;
+            }
+
             reason = String.Empty;
             return true;
 	    }

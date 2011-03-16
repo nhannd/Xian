@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// <summary>
     /// Engine for acquiring WorkQueue items and finding plugins to process them.
     /// </summary>
-    public class WorkQueueProcessor
+    sealed public class WorkQueueProcessor
     {
         #region Members
 

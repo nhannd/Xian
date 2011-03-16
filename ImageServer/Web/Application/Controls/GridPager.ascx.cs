@@ -116,6 +116,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             UpdateUI();
          }
 
+        public override void DataBind()
+        {
+            base.DataBind();
+            UpdateUI();
+        }
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -219,7 +225,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         public void UpdateUI()
         {
             if (_target != null && _target.DataSource != null)
-            {                
+            {
+                ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);            
+
                 CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
                 EnableCurrentPage(_target.PageCount > 1);
 
@@ -298,9 +306,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         }
 
         
-
         public void Reset()
         {
+            // TODO: Why do we need this method beside Refresh() and UpdateUI()
+            // In other words, was it necessary to store the count in viewstate? 
             ViewState[ImageServerConstants.PagerItemCount] = null;
         }
 
@@ -322,11 +331,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             else
             {
                 UpdateUI();
-                // Set the label here.  The datasource has been bound and ItemCount is set.This was done in UpdateUI, which is
-                // called on Page_Load and from here, causing the ItemCount to be calculated on Page_Load when it didn't need to be
-                // for some tabs that were not being searched on.
-                if (_target != null && _target.DataSource != null)
-                    ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);            
             }   
         }
 

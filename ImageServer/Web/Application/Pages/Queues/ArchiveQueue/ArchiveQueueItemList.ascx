@@ -29,7 +29,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
                         </itemtemplate>
 						</asp:TemplateField>
-						<asp:BoundField DataField="<%$Resources: ColumnHeaders, PatientID %>" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left">
+						<asp:BoundField DataField="PatientID" HeaderText="<%$Resources: ColumnHeaders, PatientID %>" HeaderStyle-HorizontalAlign="Left">
 						</asp:BoundField>
 						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, ArchiveQueueSchedule %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
@@ -42,7 +42,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 						</asp:BoundField>
 					</Columns>
 					<EmptyDataTemplate>
-                        <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR.NoArchiveQueueItemFound %>" />
+                        <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR, NoArchiveQueueItemFound %>" />
 					</EmptyDataTemplate>
 					<RowStyle CssClass="GlobalGridViewRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

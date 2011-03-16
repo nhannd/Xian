@@ -42,7 +42,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 						</asp:BoundField>
 					</Columns>
 					<EmptyDataTemplate>
-                        <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR.NoRestoreQueueItemFound %>" />
+                        <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR,NoRestoreQueueItemFound %>" />
 					</EmptyDataTemplate>
 					<RowStyle CssClass="GlobalGridViewRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

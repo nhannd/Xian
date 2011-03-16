@@ -202,10 +202,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get
 			{
                 if (!StudyExists)
+                {
+                    //TODO: Study is stuck in SIQ
                     return false;
+                }
 
-				if (_study.IsLocked || _study.IsNearline || _study.IsLocked || _study.IsProcessing)
+                string reason;
+				if (!_study.CanScheduleReconcile(out reason))
 					return false;
+
 				return true;
 			}
 		}

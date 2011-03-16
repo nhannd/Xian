@@ -35,7 +35,7 @@
                             <tr><td>
                                 <asp:Panel ID="Panel1" runat="server" BackColor="white" style="padding: 10px; border: solid 1px #305ba6">
                                     <asp:Panel ID="Panel2" runat="server" CssClass="WorkQueueItemDeletedMessage" style="margin: 0px;">
-                                        <%= ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR.WorkQueueSuccessfullyDeleted %>
+                                        <%= Resources.SR.WorkQueueSuccessfullyDeleted %>
                                     </asp:Panel>
                                 </asp:Panel>                            
                             </td></tr>

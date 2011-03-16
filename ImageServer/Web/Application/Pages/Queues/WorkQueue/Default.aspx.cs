@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Web.UI;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
@@ -279,19 +280,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 Model.WorkQueue item = Model.WorkQueue.Load(itemKey);
                 WorkQueueController controller = new WorkQueueController();
-                if (controller.ReprocessWorkQueueItem(item))
+                try
                 {
-                    InformationDialog.Message = SR.ReprocessOK;
-                    InformationDialog.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
-                    InformationDialog.Show();
+                    if (controller.ReprocessWorkQueueItem(item))
+                    {
+                        InformationDialog.Message = SR.ReprocessOK;
+                        InformationDialog.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+                        InformationDialog.Show();
+                    }
+                    else
+                    {
+                        InformationDialog.Message = SR.ReprocessFailed;
+                        InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                        InformationDialog.Show();
+                    }
                 }
-                else
+                catch(InvalidStudyStateOperationException ex)
                 {
-                    InformationDialog.Message = SR.ReprocessFailed;
-                    InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
-                    InformationDialog.Show();
+                    ShowErrorMessage(ex.Message);
                 }
             }
+        
+        }
+
+        private void ShowErrorMessage(string message)
+        {
+            MessageBox.Message = message;
+            MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
+            MessageBox.Show();
         }
 
         public void HideRescheduleDialog()
