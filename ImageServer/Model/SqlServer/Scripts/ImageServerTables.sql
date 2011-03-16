@@ -1440,8 +1440,8 @@ CREATE TABLE [dbo].[ApplicationLog](
 	[Timestamp] [datetime] NOT NULL,
 	[LogLevel] [varchar](5) NOT NULL,
 	[Thread] [varchar](50) NOT NULL,
-	[Message] [varchar](3000) NOT NULL,
-	[Exception] [varchar](2000) NULL,
+	[Message] [nvarchar](2000) NOT NULL,
+	[Exception] [nvarchar](2000) NULL,
  CONSTRAINT [PK_ApplicationLog] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
