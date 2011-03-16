@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         	IList<Series> list = select.Find(parms);
 
-            string value = "";
+            string value = string.Empty;
             foreach (Series series in list)
             {
                 value = value.Length == 0 
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 			RequestAttributesSelectCriteria criteria = new RequestAttributesSelectCriteria();
 
-            criteria.SeriesKey.EqualTo(row.GetKey());
+            criteria.SeriesKey.EqualTo(row.Key);
 
             IList<RequestAttributes> list = select.Find(criteria);
 
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response">The response message to populate with results.</param>
         /// <param name="tagList">The list of tags to populate.</param>
         /// <param name="row">The <see cref="Patient"/> table to populate from.</param>
-        private void PopulatePatient(DicomMessageBase response, IEnumerable<uint> tagList, Patient row)
+        private void PopulatePatient(DicomMessageBase response, IEnumerable<DicomTag> tagList, Patient row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -211,11 +211,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 			if (relatedStudies.Count > 0)
 				study = CollectionUtils.FirstElement(relatedStudies);
 
-            foreach (uint tag in tagList)
+            foreach (DicomTag tag in tagList)
             {
                 try
                 {
-                    switch (tag)
+                    switch (tag.TagValue)
                     {
                         case DicomTags.PatientsName:
                             dataSet[DicomTags.PatientsName].SetStringValue(row.PatientsName);
@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						case DicomTags.PatientsSex:
 							if (study == null)
 								dataSet[DicomTags.PatientsSex].SetNullValue();
-							else 
+							else
 								dataSet[DicomTags.PatientsSex].SetStringValue(study.PatientsSex);
                     		break;
 						case DicomTags.PatientsBirthDate:
@@ -253,7 +253,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 							break;
 
                         default:
-                            dataSet[tag].SetNullValue();
+                            if (!tag.IsPrivate)
+                                dataSet[tag].SetNullValue();
                             break;
 
 						// Meta tags that should have not been in the RQ, but we've already set
@@ -267,7 +268,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
                                  dataSet[tag].Tag.ToString());
-                    dataSet[tag].SetNullValue();
+                    if (!tag.IsPrivate)
+                        dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -280,7 +282,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="tagList"></param>
 	    /// <param name="row">The <see cref="Study"/> table to populate the response from.</param>
 	    /// <param name="availability">Instance availability string.</param>
-        private void PopulateStudy(IPersistenceContext read, DicomMessageBase response, IEnumerable<uint> tagList, Study row, string availability)
+        private void PopulateStudy(IPersistenceContext read, DicomMessageBase response, IEnumerable<DicomTag> tagList, Study row, string availability)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -293,11 +295,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 dataSet[DicomTags.SpecificCharacterSet].SetStringValue(row.SpecificCharacterSet);
                 dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
             }
-            foreach (uint tag in tagList)
+            foreach (DicomTag tag in tagList)
             {
                 try
                 {
-                    switch (tag)
+                    switch (tag.TagValue)
                     {
                         case DicomTags.StudyInstanceUid:
                             dataSet[DicomTags.StudyInstanceUid].SetStringValue(row.StudyInstanceUid);
@@ -349,7 +351,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                             dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
                             break;
                         default:
-                            dataSet[tag].SetNullValue();
+                            if (!tag.IsPrivate)
+                                dataSet[tag].SetNullValue();
                             break;
 
 						// Meta tags that should have not been in the RQ, but we've already set
@@ -363,7 +366,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
                                  dataSet[tag].Tag.ToString());
-                    dataSet[tag].SetNullValue();
+                    if (!tag.IsPrivate)
+                        dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -376,7 +380,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response"></param>
         /// <param name="tagList"></param>
         /// <param name="row">The <see cref="Series"/> table to populate the row from.</param>
-        private void PopulateSeries(IPersistenceContext read, DicomMessageBase request, DicomMessageBase response, IEnumerable<uint> tagList,
+        private void PopulateSeries(IPersistenceContext read, DicomMessageBase request, DicomMessageBase response, IEnumerable<DicomTag> tagList,
                                     Series row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
@@ -395,11 +399,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				dataSet.SpecificCharacterSet = theStudy.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
 			}
 
-            foreach (uint tag in tagList)
+            foreach (DicomTag tag in tagList)
             {
                 try
                 {
-                    switch (tag)
+                    switch (tag.TagValue)
                     {
                         case DicomTags.PatientId:
                             dataSet[DicomTags.PatientId].SetStringValue(request.DataSet[DicomTags.PatientId].ToString());
@@ -438,7 +442,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                             dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("SERIES");
                             break;
                         default:
-                            dataSet[tag].SetNullValue();
+                            if (!tag.IsPrivate)
+                                dataSet[tag].SetNullValue();
                             break;
 						// Meta tags that should have not been in the RQ, but we've already set
 						case DicomTags.RetrieveAeTitle:
@@ -451,7 +456,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
                                  dataSet[tag].Tag.ToString());
-                    dataSet[tag].SetNullValue();
+                    if (!tag.IsPrivate)
+                        dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -463,7 +469,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response"></param>
         /// <param name="tagList"></param>
         /// <param name="theInstanceStream"></param>
-        private void PopulateInstance(DicomMessage request, DicomMessage response, List<uint> tagList,
+        private void PopulateInstance(DicomMessageBase request, DicomMessageBase response, IEnumerable<DicomTag> tagList,
                                       InstanceXml theInstanceStream)
         {
             DicomAttributeCollection dataSet = response.DataSet;
@@ -479,11 +485,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				dataSet.SpecificCharacterSet = sourceDataSet[DicomTags.SpecificCharacterSet].ToString(); // this will ensure the data is encoded using the specified character set
 			}
 
-            foreach (uint tag in tagList)
+            foreach (DicomTag tag in tagList)
             {
                 try
                 {
-                    switch (tag)
+                    switch (tag.TagValue)
                     {
                         case DicomTags.PatientId:
                             dataSet[DicomTags.PatientId].SetStringValue(request.DataSet[DicomTags.PatientId].ToString());
@@ -502,7 +508,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         default:
                             if (sourceDataSet.Contains(tag))
                                 dataSet[tag] = sourceDataSet[tag].Copy();
-                            else
+                            else if (!tag.IsPrivate)                           
                                 dataSet[tag].SetNullValue();
                             break;
 						// Meta tags that should have not been in the RQ, but we've already set
@@ -516,7 +522,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
                                  dataSet[tag].Tag.ToString());
-                    dataSet[tag].SetNullValue();
+                    if (!tag.IsPrivate)
+                        dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -623,7 +630,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceivePatientQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<uint> tagList = new List<uint>();
+            List<DicomTag> tagList = new List<DicomTag>();
 
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
@@ -637,7 +644,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             	bool studySubSelect = false;
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
-                    tagList.Add(attrib.Tag.TagValue);
+                    tagList.Add(attrib.Tag);
                     if (!attrib.IsNull)
                         switch (attrib.Tag.TagValue)
                         {
@@ -751,7 +758,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceiveStudyLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<uint> tagList = new List<uint>();
+            List<DicomTag> tagList = new List<DicomTag>();
 
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
@@ -763,7 +770,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 DicomAttributeCollection data = message.DataSet;
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
-                    tagList.Add(attrib.Tag.TagValue);
+                    tagList.Add(attrib.Tag);
                     if (!attrib.IsNull)
                         switch (attrib.Tag.TagValue)
                         {
@@ -936,7 +943,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             //Read context for the query.
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                List<uint> tagList = new List<uint>();
+                List<DicomTag> tagList = new List<DicomTag>();
 
                 ISeriesEntityBroker selectSeries = read.GetBroker<ISeriesEntityBroker>();
 
@@ -946,7 +953,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 DicomAttributeCollection data = message.DataSet;
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
-                    tagList.Add(attrib.Tag.TagValue);
+                    tagList.Add(attrib.Tag);
                     if (!attrib.IsNull)
                         switch (attrib.Tag.TagValue)
                         {
@@ -1110,7 +1117,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceiveImageLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<uint> tagList = new List<uint>();
+            List<DicomTag> tagList = new List<DicomTag>();
             List<uint> matchingTagList = new List<uint>();
 
             DicomAttributeCollection data = message.DataSet;
@@ -1155,7 +1162,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             foreach (DicomAttribute attrib in message.DataSet)
             {
-	            tagList.Add(attrib.Tag.TagValue);
+	            tagList.Add(attrib.Tag);
                 if (!attrib.IsNull)
                     matchingTagList.Add(attrib.Tag.TagValue);
             }
