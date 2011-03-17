@@ -143,6 +143,12 @@ namespace ClearCanvas.ImageServer.Common
 			}
 		}
 
+        public void StopService(string reason)
+        {
+            Platform.Log(LogLevel.Info, "{0} service is stopping : {1}", Name, reason);
+            StopService();
+        }
+		
 		/// <summary>
 		/// Stop the service.
 		/// </summary>

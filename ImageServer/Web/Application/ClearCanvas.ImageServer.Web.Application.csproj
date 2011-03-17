@@ -397,6 +397,13 @@
     <Compile Include="Pages\Error\CookiesRequired.aspx.designer.cs">
       <DependentUpon>CookiesRequired.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Error\SoftwareExpiredErrorPage.aspx.cs">
+      <DependentUpon>SoftwareExpiredErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\SoftwareExpiredErrorPage.aspx.designer.cs">
+      <DependentUpon>SoftwareExpiredErrorPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Error\LicenseErrorPage.aspx.cs">
       <DependentUpon>LicenseErrorPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1499,6 +1506,7 @@
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyHover.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
     <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
+    <Content Include="Pages\Error\SoftwareExpiredErrorPage.aspx" />
     <Content Include="Pages\Error\LicenseErrorPage.aspx" />
     <Content Include="Pages\WebViewer\GridPager.ascx" />
     <Content Include="Pages\WebViewer\Images\Searching.gif" />

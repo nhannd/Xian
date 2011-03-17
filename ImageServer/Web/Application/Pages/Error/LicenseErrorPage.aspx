@@ -17,7 +17,10 @@
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="DescriptionPlaceHolder">
    <asp:Label ID = "DescriptionLabel" runat="server">
-        <%= ClearCanvas.ImageServer.Web.Common.Utilities.HtmlUtility.Encode(ErrorMessages.LicenseErrorLongDescription)%>
+   <%= HttpContext.Current.Items.Contains(ImageServerConstants.ContextKeys.ErrorDescription)?
+        HtmlUtility.Encode(HttpContext.Current.Items[ImageServerConstants.ContextKeys.ErrorDescription] as string)
+           :HtmlUtility.Encode(ErrorMessages.LicenseErrorLongDescription)
+   %>
     </asp:Label>
 </asp:Content>
 

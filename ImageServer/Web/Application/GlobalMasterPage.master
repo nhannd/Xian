@@ -1,3 +1,4 @@
+<%@ Import Namespace="Resources"%>
 <%@ Master Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.GlobalMasterPage" Codebehind="GlobalMasterPage.master.cs" %>
 
 <%@ Register Src="~/Controls/AlertIndicator.ascx" TagName="AlertIndicator" TagPrefix="ccAsp" %>
@@ -57,6 +58,7 @@
 
         <ccAsp:ApplicationAlertPanel runat="server" ID="ApplicationAlertPanel" />
                
+
         <asp:UpdatePanel runat="server" ID="MainContentContainerUpdatePanel" UpdateMode="Conditional">
         <ContentTemplate>
             <ccAsp:SessionTimeout runat="server" ID="SessionTimeout" />

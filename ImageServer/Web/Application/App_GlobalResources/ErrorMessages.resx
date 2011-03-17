@@ -191,10 +191,13 @@ If you would like to report the error, please post to one of the forums listed b
     <value>Could not find a valid license</value>
   </data>
   <data name="LicenseErrorLongDescription" xml:space="preserve">
-    <value>The ImageServer license is invalid. A valid license must be entered in ClearCanvas Workstation Team. If you have already entered a valid license, please refresh this page to login.</value>
+    <value>The ImageServer license is invalid or has expired. A valid license must be entered in ClearCanvas Workstation Team. If you have already entered a valid license, please refresh this page to login.</value>
   </data>
   <data name="LoginInvalidUsernameOrPassword" xml:space="preserve">
     <value>Invalid User ID or Password.</value>
+  </data>
+  <data name="MessageSoftwareExpired" xml:space="preserve">
+    <value>The evaluation period for this software has expired.</value>
   </data>
   <data name="MultiplePartitionsExistWithAETitle" xml:space="preserve">
     <value>Unexpected Error: Multiple Partitions exist with AE title {0}</value>

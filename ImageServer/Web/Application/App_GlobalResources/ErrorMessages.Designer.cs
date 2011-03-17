@@ -272,7 +272,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The ImageServer license is invalid. A valid license must be entered in ClearCanvas Workstation Team. If you have already entered a valid license, please refresh this page to login..
+        ///   Looks up a localized string similar to The ImageServer license is invalid or has expired. A valid license must be entered in ClearCanvas Workstation Team. If you have already entered a valid license, please refresh this page to login..
         /// </summary>
         internal static string LicenseErrorLongDescription {
             get {
@@ -286,6 +286,15 @@ namespace Resources {
         internal static string LoginInvalidUsernameOrPassword {
             get {
                 return ResourceManager.GetString("LoginInvalidUsernameOrPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The evaluation period for this software has expired..
+        /// </summary>
+        internal static string MessageSoftwareExpired {
+            get {
+                return ResourceManager.GetString("MessageSoftwareExpired", resourceCulture);
             }
         }
         

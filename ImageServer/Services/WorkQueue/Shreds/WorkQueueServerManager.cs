@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 	/// processor supports high priority queue types for processing studies, editing studies, and 
 	/// doing moves/auto-routes.  The secondary processor will process any queue entries.
 	/// </remarks>
-	public class WorkQueueServerManager : ThreadedService
+	public sealed class WorkQueueServerManager : ThreadedService
 	{
 		#region Private Members
 		private static WorkQueueServerManager _instance;
@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
                 {
                     try
                     {
-                        extension.OnInitializing();
+                        extension.OnInitializing(this);
                     }
                     catch (WorkQueueInitializationException ex)
                     {
@@ -232,7 +232,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
         /// Called when work queue processor is being initialized
         /// </summary>
         /// <exception cref="WorkQueueInitializationException"></exception>
-        void OnInitializing();
+        void OnInitializing(WorkQueueServerManager manager);
     }
 
     [ExtensionPoint]
