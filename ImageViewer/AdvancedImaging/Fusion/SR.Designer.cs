@@ -88,6 +88,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  - {0}.
+        /// </summary>
+        internal static string FormatReason {
+            get {
+                return ResourceManager.GetString("FormatReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Advanced Imaging (Fusion).
         /// </summary>
         internal static string LabelAdvancedImageFusion {
@@ -178,11 +187,92 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to fuse images.
+        /// </summary>
+        internal static string MessageFusionError {
+            get {
+                return ResourceManager.GetString("MessageFusionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fusing Images....
         /// </summary>
         internal static string MessageFusionInProgress {
             get {
                 return ResourceManager.GetString("MessageFusionInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images have inconsistent frames of reference.
+        /// </summary>
+        internal static string MessageInconsistentFramesOfReference {
+            get {
+                return ResourceManager.GetString("MessageInconsistentFramesOfReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images have inconsistent orientation information.
+        /// </summary>
+        internal static string MessageInconsistentImageOrientation {
+            get {
+                return ResourceManager.GetString("MessageInconsistentImageOrientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images have inconsistent slice spacing.
+        /// </summary>
+        internal static string MessageInconsistentImageSpacing {
+            get {
+                return ResourceManager.GetString("MessageInconsistentImageSpacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images have inconsistent pixel spacing information.
+        /// </summary>
+        internal static string MessageInconsistentPixelSpacing {
+            get {
+                return ResourceManager.GetString("MessageInconsistentPixelSpacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid series.
+        /// </summary>
+        internal static string MessageInvalidSeries {
+            get {
+                return ResourceManager.GetString("MessageInvalidSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images lack orientation information.
+        /// </summary>
+        internal static string MessageMissingImageOrientation {
+            get {
+                return ResourceManager.GetString("MessageMissingImageOrientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images lack pixel spacing information.
+        /// </summary>
+        internal static string MessageMissingPixelSpacing {
+            get {
+                return ResourceManager.GetString("MessageMissingPixelSpacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images have an unsupported gantry tilt.
+        /// </summary>
+        internal static string MessageUnsupportedGantryTilt {
+            get {
+                return ResourceManager.GetString("MessageUnsupportedGantryTilt", resourceCulture);
             }
         }
         
