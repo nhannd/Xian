@@ -22,6 +22,7 @@ using System.Windows.Shapes;
 using System.Threading;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
+using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
@@ -112,6 +113,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             msgBox.IsTabStop = true;
             msgBox.Show();
 			msgBox.Focus();
+
+            PopupManager.CloseActivePopup();
             return msgBox;
         }
 
@@ -132,6 +135,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 			msgBox.Focus();
             
             _currentWindow = msgBox;
+            PopupManager.CloseActivePopup();
             return msgBox;
         }
 
@@ -158,6 +162,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             msgBox.Focus();
             
             _currentWindow = msgBox;
+            PopupManager.CloseActivePopup();
             return msgBox;
         }
     }
