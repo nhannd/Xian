@@ -17,6 +17,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Common.Utilities;
 using TimeoutException=System.ServiceProcess.TimeoutException;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -38,6 +39,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class ServiceControlTool : Tool<IDesktopToolContext>
 	{
+		private enum ServiceControlOperation
+		{
+			Start,
+			Stop,
+			Restart
+		}
+
+		private static readonly string _serviceName = ServiceControlSettings.Default.ServiceName;
+		private static readonly int _timeoutSeconds = ServiceControlSettings.Default.TimeoutSeconds;
+
 		private Timer _timer;
 		private bool _startEnabled;
 		private bool _stopEnabled;
@@ -77,37 +88,60 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public override void Initialize()
 		{
 			base.Initialize();
-
-			_timer = new Timer(OnTimer);
-			_timer.IntervalMilliseconds = 10000;
-			_timer.Start();
-
-			UpdateEnabled();
+			Refresh();
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if (_timer != null)
-			{
-				_timer.Stop();
-				_timer = null;
-			}
-
+			StopTimer();
 			base.Dispose(disposing);
+		}
+
+		#region Refresh
+
+		private void StartTimer()
+		{
+			if (_timer != null)
+				return;
+
+			_timer = new Timer(OnTimer) { IntervalMilliseconds = 10000 };
+			_timer.Start();
+		}
+
+		private void StopTimer()
+		{
+			if (_timer == null)
+				return;
+			
+			_timer.Stop();
+			_timer = null;
 		}
 
 		private void OnTimer(object nothing)
 		{
 			if (_timer != null)
-				UpdateEnabled();
+				Refresh();
 		}
 
-		private static ServiceController CreateServiceController()
+		private void OnUnknownService()
 		{
-			return new ServiceController(ServiceControlSettings.Default.ServiceName);
+			Platform.Log(LogLevel.Debug, "Failed to determine state of service '{0}' because it doesn't exist.", _serviceName);
+			
+			StopTimer();
+			StartEnabled = true; //Leave one button enabled so the user can try to refresh status.
+			StopEnabled = false;
 		}
 
-		private void UpdateEnabled()
+		private void OnUnknownError(Exception e)
+		{
+			Platform.Log(LogLevel.Debug, e, "Failed to determine state of service '{0}'.", _serviceName);
+
+			StopTimer();
+			StartEnabled = true; //Leave one button enabled so the user can try to refresh status.
+			StopEnabled = false;
+		}
+
+		private void Refresh()
 		{
 			try
 			{
@@ -116,114 +150,122 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					StartEnabled = controller.Status == ServiceControllerStatus.Stopped;
 					StopEnabled = controller.Status == ServiceControllerStatus.Running;
 				}
+
+				StartTimer();
 			}
-			catch(Exception e)
+			catch (InvalidOperationException)
 			{
-				Platform.Log(LogLevel.Debug, e, "Failed to determine state of service '{0}'.", ServiceControlSettings.Default.ServiceName);
-				StartEnabled = false;
-				StopEnabled = false;
+				OnUnknownService();
+			}
+			catch (Exception e)
+			{
+				OnUnknownError(e);
 			}
 		}
 
+		#endregion
+
+		private static ServiceController CreateServiceController()
+		{
+			return new ServiceController(_serviceName);
+		}
+
+		#region Service Control
+
 		public void StopService()
 		{
-			BlockingOperation.Run(StopServiceInternal);
+			BlockingOperation.Run(() => ControlService(StopService, ServiceControlOperation.Stop));
 		}
 
 		public void StartService()
 		{
-			BlockingOperation.Run(StartServiceInternal);
+			BlockingOperation.Run(() => ControlService(StartService, ServiceControlOperation.Start));
 		}
 
 		public void RestartService()
 		{
-			BlockingOperation.Run(RestartServiceInternal);
+			BlockingOperation.Run(() => ControlService(RestartService, ServiceControlOperation.Restart));
 		}
 
-		private void RestartServiceInternal()
+		private void ControlService(Action<ServiceController> controlMethod, ServiceControlOperation operation)
 		{
 			try
 			{
 				using (ServiceController controller = CreateServiceController())
 				{
-					if (controller.Status == ServiceControllerStatus.Running)
-					{
-						controller.Stop();
-						controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(ServiceControlSettings.Default.TimeoutSeconds));
-						if (controller.Status != ServiceControllerStatus.Stopped)
-						{
-							throw new TimeoutException();
-						}
-					}
-
-					if (controller.Status == ServiceControllerStatus.Stopped)
-					{
-						controller.Start();
-						controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(ServiceControlSettings.Default.TimeoutSeconds));
-						if (controller.Status != ServiceControllerStatus.Running)
-						{
-							throw new TimeoutException();
-						}
-					}
-					else
-					{
-						throw new InvalidOperationException("The service is not in the correct state to be restarted.");
-					}
+					controlMethod(controller);
 				}
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Info, e, "Failed to restart service '{0}'.", ServiceControlSettings.Default.ServiceName);
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageFailedToRestartService, MessageBoxActions.Ok);
+				Platform.Log(LogLevel.Info, e, "Failed to {0} service '{1}'.", operation.ToString().ToLower(), _serviceName);
+
+				if (IsAccessDeniedError(e))
+					Context.DesktopWindow.ShowMessageBox(SR.MessageControlServiceAccessDenied, MessageBoxActions.Ok);
+				else if (e is TimeoutException)
+					Context.DesktopWindow.ShowMessageBox(SR.MessageControlServiceTimeout, MessageBoxActions.Ok);
+				else
+					Context.DesktopWindow.ShowMessageBox(SR.MessageFailedToStartService, MessageBoxActions.Ok);
 			}
-			
-			UpdateEnabled();
+
+			Refresh();
 		}
 
-		private void StopServiceInternal()
+		private static void RestartService(ServiceController controller)
 		{
-			try
+			if (controller.Status == ServiceControllerStatus.Running)
 			{
-				using (ServiceController controller = CreateServiceController())
-				{
-					controller.Stop();
-					controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(ServiceControlSettings.Default.TimeoutSeconds));
-					if (controller.Status != ServiceControllerStatus.Stopped)
-					{
-						throw new TimeoutException();
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Info, e, "Failed to stop service '{0}'.", ServiceControlSettings.Default.ServiceName);
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageFailedToStopService, MessageBoxActions.Ok);
+				controller.Stop();
+				controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(_timeoutSeconds));
+				if (controller.Status != ServiceControllerStatus.Stopped)
+					throw new TimeoutException();
 			}
 
-			UpdateEnabled();
+			if (controller.Status == ServiceControllerStatus.Stopped)
+			{
+				controller.Start();
+				controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(_timeoutSeconds));
+				if (controller.Status != ServiceControllerStatus.Running)
+					throw new TimeoutException();
+			}
+			else
+			{
+				throw new InvalidOperationException("The service is not in the correct state to be restarted.");
+			}
 		}
 
-		private void StartServiceInternal()
+		private static void StopService(ServiceController controller)
 		{
-			try
+			if (controller.Status != ServiceControllerStatus.Stopped)
 			{
-				using (ServiceController controller = CreateServiceController())
-				{
-					controller.Start();
-					controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(ServiceControlSettings.Default.TimeoutSeconds));
-					if (controller.Status != ServiceControllerStatus.Running)
-					{
-						throw new TimeoutException();
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Info, e, "Failed to start service '{0}'.", ServiceControlSettings.Default.ServiceName);
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageFailedToStartService, MessageBoxActions.Ok);
+				//Note: don't remove the surrounding if because it tells us if the service name is wrong.
+				controller.Stop();
+				controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(_timeoutSeconds));
 			}
 
-			UpdateEnabled();
+			if (controller.Status != ServiceControllerStatus.Stopped)
+				throw new TimeoutException();
 		}
+
+		private static void StartService(ServiceController controller)
+		{
+			if (controller.Status != ServiceControllerStatus.Running)
+			{
+				//Note: don't remove the surrounding if because it tells us if the service name is wrong.
+				controller.Start();
+				controller.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(_timeoutSeconds));
+			}
+
+			if (controller.Status != ServiceControllerStatus.Running)
+				throw new TimeoutException();
+		}
+
+		private static bool IsAccessDeniedError(Exception e)
+		{
+			const int win32ErrorAccessDenied = 0x5;
+			return e.InnerException != null && e.InnerException is Win32Exception && ((Win32Exception)e.InnerException).NativeErrorCode == win32ErrorAccessDenied;
+		}
+
+		#endregion
 	}
 }

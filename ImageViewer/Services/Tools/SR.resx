@@ -474,4 +474,10 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="MessageReindexCompleted" xml:space="preserve">
     <value>The reindex has completed successfully.</value>
   </data>
+  <data name="MessageControlServiceAccessDenied" xml:space="preserve">
+    <value>You don't have the appropriate permissions to start/stop the service.</value>
+  </data>
+  <data name="MessageControlServiceTimeout" xml:space="preserve">
+    <value>A timeout has occurred while attempting to control the service.</value>
+  </data>
 </root>

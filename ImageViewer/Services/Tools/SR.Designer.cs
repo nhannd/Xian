@@ -404,6 +404,24 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t have the appropriate permissions to start/stop the service..
+        /// </summary>
+        internal static string MessageControlServiceAccessDenied {
+            get {
+                return ResourceManager.GetString("MessageControlServiceAccessDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A timeout has occurred while attempting to control the service..
+        /// </summary>
+        internal static string MessageControlServiceTimeout {
+            get {
+                return ResourceManager.GetString("MessageControlServiceTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deleting studies ....
         /// </summary>
         internal static string MessageDeletingStudies {
