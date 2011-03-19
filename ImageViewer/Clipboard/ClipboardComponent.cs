@@ -14,16 +14,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Annotations.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Graphics.Utilities;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -522,7 +520,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				, sop.StudyDescription
 				, sop.AccessionNumber
 				, sop.Modality
-				, TextOverlayVisibilityHelper.IsVisible(image) ? SR.LabelOn : SR.LabelOff);
+				, TextOverlayVisibilityHelper.IsVisible(image, true) ? SR.LabelOn : SR.LabelOff);
 		}
 
 		private static string BuildClipboardItemDescription(IDisplaySet displaySet)
