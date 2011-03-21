@@ -272,7 +272,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The ImageServer license is invalid or has expired. A valid license must be entered in ClearCanvas Workstation Team. If you have already entered a valid license, please refresh this page to login..
+        ///   Looks up a localized string similar to The ImageServer license is invalid or has expired. A valid license must be entered in ClearCanvas Workstation Team Edition. If you have already entered a valid license, please refresh this page to login..
         /// </summary>
         internal static string LicenseErrorLongDescription {
             get {

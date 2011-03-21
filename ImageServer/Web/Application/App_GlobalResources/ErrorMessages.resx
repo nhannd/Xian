@@ -191,7 +191,7 @@ If you would like to report the error, please post to one of the forums listed b
     <value>Could not find a valid license</value>
   </data>
   <data name="LicenseErrorLongDescription" xml:space="preserve">
-    <value>The ImageServer license is invalid or has expired. A valid license must be entered in ClearCanvas Workstation Team. If you have already entered a valid license, please refresh this page to login.</value>
+    <value>The ImageServer license is invalid or has expired. A valid license must be entered in ClearCanvas Workstation Team Edition. If you have already entered a valid license, please refresh this page to login.</value>
   </data>
   <data name="LoginInvalidUsernameOrPassword" xml:space="preserve">
     <value>Invalid User ID or Password.</value>
