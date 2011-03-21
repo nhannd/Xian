@@ -328,7 +328,7 @@ namespace ClearCanvas.ImageViewer.Web
             // TODO: Need to think about this more. What's the best way to swap different loader?
             // Do we need to support loading studies from multiple servers? 
 
-	        if (WebViewerServices.Default.StudyLoaderName.Equals("CC_STREAMING"))
+            if (WebViewerServices.Default.StudyLoaderName.Equals("CC_WEBSTATION_STREAMING"))
 	        {
 	            string host = WebViewerServices.Default.ArchiveServerHostname;
 	            int port = WebViewerServices.Default.ArchiveServerPort;
