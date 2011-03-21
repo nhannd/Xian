@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 							{
 								// if there is an error with a single base series, generate a placeholder series
 								displaySets.Add(CreateFusionErrorDisplaySet(baseSeries, series, error));
+								continue;
 							}
 
 							var descriptor = new PETFusionDisplaySetDescriptor(baseSeries.GetIdentifier(), series.GetIdentifier(), IsAttenuationCorrected(series.Sops[0]));
