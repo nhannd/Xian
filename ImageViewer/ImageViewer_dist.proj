@@ -521,8 +521,7 @@
     </RegexIsMatch>
 
     <CallTarget Condition="$(ExcludeHttpDesktopServices)" Targets="Exclude Http Desktop Services" />
-
-    <CallTarget Targets="Copy Executable Bootstrap" />
+    
     <Copy SourceFiles="$(DistributionDesktopConfig)" DestinationFiles="$(DistributionConsoleConfig)" />
     <!--<Copy SourceFiles="$(DistributionDesktopCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />-->
 
@@ -536,7 +535,8 @@
     
     <CallTarget Condition="$(DesktopBuild)" Targets="Copy Desktop Files" />
     <CallTarget Condition="$(ShredHostBuild)" Targets="Copy ShredHost Files" />
-
+    <CallTarget Condition="$(ConsoleBuild)" Targets="Copy Executable Bootstrap" />
+    
   </Target>
 
 </Project>
