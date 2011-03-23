@@ -237,7 +237,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_items.Remove(sopInstanceUid);
 
 				if (_items.Count == 0)
-					Trace.WriteLine("The sop data cache is empty.");
+				{
+					const string message = "The sop data cache is empty.";
+					Platform.Log(LogLevel.Debug, message);
+					Trace.WriteLine(message);
+				}
 			}
 		}
 

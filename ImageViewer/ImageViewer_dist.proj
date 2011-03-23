@@ -159,7 +159,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <HelpFiles Include="$(TrunkDirectory)\Docs\Workstation\UsersGuide\CCWorkstationUsersGuide.chm" />
+    <HelpFiles Include="$(TrunkDirectory)\Docs\Workstation\UsersGuide\CCWorkstationCommunityUsersGuide.chm" />
   </ItemGroup>
 
   <ItemGroup>

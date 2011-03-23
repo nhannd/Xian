@@ -1762,7 +1762,27 @@ namespace ClearCanvas.Dicom.Network
 			message.Status = status;
 			SendDimse(presentationId, message.CommandSet, message.DataSet);
 		}
-      
+
+		/// <summary>
+		/// Sends an N-Event-Report Response.
+		/// </summary>
+		/// <param name="presentationID">The presentation context ID</param>
+		/// <param name="requestMessage">The message being responsed to.</param>
+		/// <param name="message">The response message to send.</param>
+		/// <param name="status">The status to send.</param>
+		public void SendNEventReportResponse(byte presentationID, DicomMessage requestMessage, DicomMessage message, DicomStatus status)
+		{
+			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort)DicomCommandField.NEventReportResponse);
+			message.CommandSet[DicomTags.MessageIdBeingRespondedTo].SetUInt16(0, requestMessage.MessageId);
+			message.CommandSet[DicomTags.EventTypeId].SetUInt16(0, requestMessage.EventTypeId);
+			message.CommandSet[DicomTags.AffectedSopClassUid].SetStringValue(requestMessage.AffectedSopClassUid);
+			message.CommandSet[DicomTags.AffectedSopInstanceUid].SetStringValue(requestMessage.AffectedSopInstanceUid);
+			message.CommandSet[DicomTags.Status].SetUInt16(0, status.Code);
+			message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x0101);
+
+			SendDimse(presentationID, message.CommandSet, message.DataSet);
+		}
+
         private static void LogSendReceive(bool receive, DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
         {
 			if (Platform.IsLogLevelEnabled(LogLevel.Debug))

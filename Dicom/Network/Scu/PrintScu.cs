@@ -153,35 +153,49 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 		public override void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
 		{
-			// We only handle NEventReport request messages
-			if (message.CommandField != DicomCommandField.NEventReportRequest ||
-				message.AffectedSopClassUid != SopClass.PrinterSopClassUid)
+			try
 			{
-				base.OnReceiveRequestMessage(client, association, presentationID, message);
-				return;
+				// We only handle NEventReport request messages
+				if (message.CommandField != DicomCommandField.NEventReportRequest ||
+					message.AffectedSopClassUid != SopClass.PrinterSopClassUid)
+				{
+					base.OnReceiveRequestMessage(client, association, presentationID, message);
+					return;
+				}
+				
+				var printerStatus = IodBase.ParseEnum(message.EventTypeId.ToString(), PrinterStatus.None);
+				var printerModule = new PrinterModuleIod(message.DataSet);
+				var logMessage = string.Format("Received NEventReportRequest, Printer Status: {0}, Status Info = {1}", printerStatus,
+											   printerModule.PrinterStatusInfo);
+
+				//Always respond.
+				Client.SendNEventReportResponse(GetPresentationContextId(this.AssociationParameters),
+												 message, new DicomMessage(), DicomStatuses.Success);
+
+				switch (printerStatus)
+				{
+					case PrinterStatus.Failure:
+						Platform.Log(LogLevel.Error, logMessage);
+						this.FailureDescription = SR.MessagePrinterError;
+						this.ReleaseConnection(client);
+						return;
+					case PrinterStatus.Warning:
+						Platform.Log(LogLevel.Warn, logMessage);
+						break;
+					case PrinterStatus.None:
+					case PrinterStatus.Normal:
+					default:
+						Platform.Log(LogLevel.Debug, logMessage);
+						break;
+				}
+
 			}
-
-			var printerStatus = IodBase.ParseEnum(message.EventTypeId.ToString(), PrinterStatus.None);
-			var printerModule = new PrinterModuleIod(message.DataSet);
-			var logMessage = string.Format("Received NEventReportRequest, Printer Status: {0}, Status Info = {1}", printerStatus, printerModule.PrinterStatusInfo);
-
-			switch (printerStatus)
+			catch (Exception ex)
 			{
-				case PrinterStatus.Failure:
-					Platform.Log(LogLevel.Error, logMessage);
-					this.FailureDescription = SR.MessagePrinterError;
-					this.ReleaseConnection(client);
-					break;
-
-				case PrinterStatus.Warning:
-					Platform.Log(LogLevel.Warn, logMessage);
-					break;
-
-				case PrinterStatus.None:
-				case PrinterStatus.Normal:
-				default:
-					Platform.Log(LogLevel.Debug, logMessage);
-					break;
+				this.FailureDescription = ex.Message;
+				Platform.Log(LogLevel.Error, ex.ToString());
+				ReleaseConnection(client);
+				throw;
 			}
 		}
 

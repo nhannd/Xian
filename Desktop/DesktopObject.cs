@@ -202,7 +202,7 @@ namespace ClearCanvas.Desktop
         public event EventHandler<ClosingEventArgs> Closing
         {
             add { _closing += value; }
-            remove { _closing += value; }
+            remove { _closing -= value; }
         }
 
         /// <summary>

@@ -350,16 +350,21 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <summary>
 		/// Gets or sets whether or not the item is visible.
 		/// </summary>
+		/// <remarks>Takes into account the value of <see cref="AlwaysVisible"/> when returning a value;
+		/// however, internally, the value is always set.</remarks>
 		public bool Visible
 		{
-			get { return _visible; }
-			set
-			{
-				if (_alwaysVisible)
-					value = true;
+			get { return _alwaysVisible ? true : _visible; }
+			set{ _visible = value; }
+		}
 
-				_visible = value;
-			}
+		/// <summary>
+		/// Gets the internal value of <see cref="Visible"/>.
+		/// </summary>
+		/// <returns>Returns the true value of <see cref="Visible"/> regardless of the value of <see cref="AlwaysVisible"/>.</returns>
+		public bool VisibleInternal
+		{
+			get { return _visible; }	
 		}
 
 		/// <summary>
