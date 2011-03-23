@@ -9,11 +9,12 @@
 
 #endregion
 
+using System;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 {
-    public partial class WorkQueueAlertContextDataView : System.Web.UI.UserControl, IAlertPopupView
+    public partial class StudyAlertContextInfoView : System.Web.UI.UserControl, IAlertPopupView
     {
         protected AlertSummary Alert { get; set; }
 

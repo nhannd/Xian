@@ -256,6 +256,14 @@
     <Compile Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx.designer.cs">
       <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Alerts\IAlertPopupView.ascx.cs" />
+    <Compile Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx.cs">
+      <DependentUpon>StudyAlertContextInfoView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx.designer.cs">
+      <DependentUpon>StudyAlertContextInfoView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx.cs">
       <DependentUpon>WorkQueueAlertContextDataView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1506,6 +1514,7 @@
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyHover.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
     <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
+    <Content Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <Content Include="Pages\Error\SoftwareExpiredErrorPage.aspx" />
     <Content Include="Pages\Error\LicenseErrorPage.aspx" />
     <Content Include="Pages\WebViewer\GridPager.ascx" />

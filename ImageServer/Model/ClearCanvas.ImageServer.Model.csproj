@@ -330,6 +330,7 @@
     <Compile Include="Parameters\UpdateWorkQueueParameters.cs" />
     <Compile Include="Parameters\PartitionSopClassQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
+    <Compile Include="StudyAlertContextInfo.cs" />
     <Compile Include="StudyDeleteRecord.cs" />
     <Compile Include="StudyDeleteRecord.gen.cs" />
     <Compile Include="StudyHistory.gen.cs" />

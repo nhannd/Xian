@@ -13,13 +13,8 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 {
-    public partial class WorkQueueAlertContextDataView : System.Web.UI.UserControl, IAlertPopupView
+    public interface IAlertPopupView
     {
-        protected AlertSummary Alert { get; set; }
-
-        public void SetAlert(AlertSummary alert)
-        {
-            Alert = alert;
-        }
+        void SetAlert(AlertSummary alert);
     }
 }
