@@ -70,7 +70,6 @@
 	<ItemGroup>
 		<WebViewerPlugins Include="$(TrunkDirectory)\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll"/>
 		
-		<WebViewerPlugins Include="$(TrunkDirectory)\ImageServer\Services\WebViewer\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WebViewer.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageServer\Utilities\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll"/>

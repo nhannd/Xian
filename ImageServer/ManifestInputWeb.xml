@@ -250,7 +250,6 @@
     <File name="Web\bin\ClearCanvas.ImageServer.Services.Archiving.Hsm.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Services.Common.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Services.Dicom.dll" checksum="true" />
-    <File name="Web\bin\ClearCanvas.ImageServer.Services.WebViewer.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Services.WorkQueue.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Utilities.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Web.Application.Assembly.dll" checksum="true" />

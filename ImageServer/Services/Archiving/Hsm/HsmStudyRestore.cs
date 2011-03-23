@@ -140,11 +140,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                     // fails, we just set back to pending and recheck.
                     try
                     {
-                        FileStream stream = File.OpenRead(zipFile);
-                        // Read a byte, just in case that makes a difference.
-                        stream.ReadByte();
-                        stream.Close();
-                        stream.Dispose();
+                        using (FileStream stream = File.OpenRead(zipFile))
+                        {
+                            // Read a byte, just in case that makes a difference.
+                            stream.ReadByte();
+                            stream.Close();                         
+                        }
                     }
                     catch (DirectoryNotFoundException ex)
                     {

@@ -59,7 +59,7 @@
     <Compile Include="ConsoleHelper.cs" />
     <Compile Include="EntityHandler.cs" />
     <Compile Include="EntityHandlerStore.cs" />
-    <Compile Include="EventBroker.cs" />
+    <Compile Include="EventQueue.cs" />
     <Compile Include="ExceptionTranslator.cs" />
     <Compile Include="IncomingMessageQueue.cs" />
     <Compile Include="PerformanceMonitor.cs" />

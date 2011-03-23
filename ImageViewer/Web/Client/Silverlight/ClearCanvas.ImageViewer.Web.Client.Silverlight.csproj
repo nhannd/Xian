@@ -157,7 +157,7 @@
     <Compile Include="Helpers\PopupHelper.cs" />
     <Compile Include="Helpers\MouseHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
-    <Compile Include="Helpers\SpeedTester.cs" />
+    <Compile Include="Helpers\ConnectionTester.cs" />
     <Compile Include="Helpers\UIElementExtensions.cs" />
     <Compile Include="Helpers\UIThread.cs" />
     <Compile Include="ImageViewer.xaml.cs">

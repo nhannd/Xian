@@ -24,7 +24,7 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-    internal class MessagePollerEventReceivedEventArgs:EventArgs
+    internal class MessagePollerEventReceivedEventArgs : EventArgs
     {
         public EventSet EventSet { get; set; }
     }
@@ -40,10 +40,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private ApplicationServiceClient _service;
         private Thread _pollingThread;
         private bool _stop;
-
-        private object _sync = new object();
-
-
+        private object _syncLock = new object();
         private long _lastPollTick = Environment.TickCount;
         private int _pendingPollingCount;
 
@@ -55,7 +52,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             _service.GetPendingEventCompleted += OnGetPendingEventCompleted;
         }
 
-        
         public void Start()
         {
             _pollingThread = new Thread(ThreadStart);
@@ -77,13 +73,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     continue;
                 }
 
-
-                // TODO: REVIEW THIS
-                // Per MSDN:
-                // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-                // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
                 long now = Environment.TickCount;
-                if (now - ApplicationActivityMonitor.Instance.LastActivityTick < MinPollDelaySinceLastActivity)
+
+                // TimeSpan used to deal with roll over of TickCount
+                if (TimeSpan.FromTicks(now - ApplicationActivityMonitor.Instance.LastActivityTick) < TimeSpan.FromMilliseconds(MinPollDelaySinceLastActivity))
                 {
                     Thread.Sleep(50);
                     continue;
@@ -93,7 +86,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 {
                     Thread.Sleep(50);
                 }
-
             }
         }
 
@@ -102,11 +94,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             _lastPollTick = Environment.TickCount;
             Interlocked.Decrement(ref _pendingPollingCount);
 
-            lock (_sync)
+            lock (_syncLock)
             {
-                Monitor.PulseAll(_sync);
+                Monitor.PulseAll(_syncLock);
             }
-
 
             if (e.Error != null)
             {
@@ -116,16 +107,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             {
                 if (e.Result != null)
                 {
-
                     if (e.Result.Events != null)
                     {
                         if (MessageReceived != null)
                         {
                             MessageReceived(this, new MessagePollerEventReceivedEventArgs { EventSet = e.Result });
                         }
-
                     }
-
                 }
             }
         }
@@ -134,18 +122,18 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             if (_pendingPollingCount == 0 && _service != null)
             {
-                lock (_sync)
+                lock (_syncLock)
                 {
                     Interlocked.Increment(ref _pendingPollingCount);
 
-                    int maxWaitTime = 10000;
+                    int maxWaitTime = 10000; //ms
 
                     try
                     {
                         // TODO: the client may have disconnected
                         _service.GetPendingEventAsync(new GetPendingEventRequest() { ApplicationId = ApplicationContext.Current.ID, MaxWaitTime = maxWaitTime });
 
-                        Monitor.Wait(_sync, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
+                        Monitor.Wait(_syncLock, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
                     }
                     catch (Exception)
                     {
@@ -153,12 +141,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     }
                     finally
                     {
-                        
-
-                        // TODO: REVIEW THIS
-                        // Per MSDN:
-                        // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-                        // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
                         _lastPollTick = Environment.TickCount;
                     }
                 }
@@ -166,7 +148,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
 
             return false;
-
         }
 
         #region IDisposable Members
@@ -177,6 +158,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             {
                 _stop = true;
                 _service.GetPendingEventCompleted -= OnGetPendingEventCompleted;
+
+                lock (_syncLock)
+                    Monitor.PulseAll(_syncLock);
             }
         }
 

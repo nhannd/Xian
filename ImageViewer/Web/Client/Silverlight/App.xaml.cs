@@ -54,8 +54,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             ApplicationLog.Initialize();
 
-            if (false==String.IsNullOrEmpty(ApplicationStartupParameters.Current.Language) && 
-                false == ApplicationStartupParameters.Current.Language.StartsWith("EN", StringComparison.InvariantCultureIgnoreCase))
+            if (!String.IsNullOrEmpty(ApplicationStartupParameters.Current.Language) && 
+                !ApplicationStartupParameters.Current.Language.StartsWith("EN", StringComparison.InvariantCultureIgnoreCase))
             {
                 var culture = new CultureInfo(ApplicationStartupParameters.Current.Language);
 
@@ -157,8 +157,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 ThrottleSettings.Default.EnableDynamicImageQuality = true;
                 ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 1;
             }
-
-            
         }
 
         private void StartWebViewer()
