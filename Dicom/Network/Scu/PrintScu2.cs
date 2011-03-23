@@ -16,6 +16,7 @@ using System.Drawing;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Iod.Sequences;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Network.Scu
 {
@@ -27,47 +28,62 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <returns></returns>
 		public delegate FilmBox CreateFilmBoxDelegate();
 
-		/// <summary>
-		/// Delegate for getting pixel data for an imageBox.
-		/// </summary>
-		public delegate void GetPixelDataDelegate(ImageBox imageBox, ColorMode colorMode,
-			out ushort rows, out ushort columns, out byte[] pixelData);
+		public delegate void GetPixelDataDelegate(ImageBox imageBox, ColorMode colorMode, out ushort rows, out ushort columns, out byte[] pixelData);
 
-		public class PrintItem
+		public interface IPrintItem
 		{
-			public PrintItem(object printObject, GetPixelDataDelegate getPixelDataCallback)
+			void GetPixelData(ImageBox imageBox, ColorMode colorMode, out ushort rows, out ushort columns, out byte[] pixelData);
+		}
+
+		public class PrintItem : IPrintItem
+		{
+			public PrintItem()
 			{
-				this.PrintObject = printObject;
-				this.GetPixelDataCallback = getPixelDataCallback;
 			}
 
-			public object PrintObject { get; private set; }
+			public PrintItem(GetPixelDataDelegate getPixelDataCallback)
+			{
+				GetPixelDataCallback = getPixelDataCallback;
+			}
 
-			public GetPixelDataDelegate GetPixelDataCallback { get; private set; }
+			public object PrintObject { get; set; }
+			public GetPixelDataDelegate GetPixelDataCallback { get; set; }
+
+			#region IPrintItem Members
+
+			public void GetPixelData(ImageBox imageBox, ColorMode colorMode, out ushort rows, out ushort columns, out byte[] pixelData)
+			{
+				Platform.CheckMemberIsSet(GetPixelDataCallback, "GetPixelDataCallback");
+				GetPixelDataCallback(imageBox, colorMode, out rows, out columns, out pixelData);
+			}
+
+			#endregion
 		}
 
 		public class FilmSession : BasicFilmSessionModuleIod
 		{
-			internal DicomUid SopInstanceUid { get; set; }
-			internal PrintScu PrintScu { get; set; }
-
 			private readonly CreateFilmBoxDelegate _createFilmBoxCallback;
 
 			private readonly List<FilmBox> _filmBoxes;
 			private FilmBox _currentFilmBox;
 
-			private readonly List<PrintItem> _printItems;
-			private List<PrintItem>.Enumerator _printItemEnumerator;
+			private readonly ReadOnlyCollection<IPrintItem> _printItems;
+			private readonly IEnumerator<IPrintItem> _printItemEnumerator;
 
-			public FilmSession(List<PrintItem> printItems, CreateFilmBoxDelegate createFilmBoxCallback)
+			public FilmSession(List<IPrintItem> printItems, CreateFilmBoxDelegate createFilmBoxCallback)
 			{
 				_createFilmBoxCallback = createFilmBoxCallback;
 				_filmBoxes = new List<FilmBox>();
 
-				_printItems = printItems;
+				_printItems = printItems.AsReadOnly();
 				_printItemEnumerator = _printItems.GetEnumerator();
 				_printItemEnumerator.MoveNext();
 			}
+
+			internal DicomUid SopInstanceUid { get; set; }
+			internal PrintScu PrintScu { get; set; }
+
+			public ReadOnlyCollection<IPrintItem> PrintItems { get { return _printItems; } }
 
 			public ReadOnlyCollection<FilmBox> FilmBoxes
 			{
@@ -106,8 +122,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 				// start setting the first imageBox
 				_currentFilmBox.SetImageBoxes(imageBoxes);
 				var imageBoxToSet = _currentFilmBox.GetNextImageBox();
-				imageBoxToSet.OnSet(this.PrintScu.ColorMode);
+				imageBoxToSet.BeforeSet(this.PrintScu.ColorMode);
 				this.PrintScu.SetImageBox(imageBoxToSet);
+				imageBoxToSet.AfterSet();
 			}
 
 			internal void OnImageBoxSet(DicomUid imageBoxUid)
@@ -120,8 +137,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 				}
 				else
 				{
-					imageBoxToSet.OnSet(this.PrintScu.ColorMode);
+					imageBoxToSet.BeforeSet(this.PrintScu.ColorMode);
 					this.PrintScu.SetImageBox(imageBoxToSet);
+					imageBoxToSet.AfterSet();
 				}
 			}
 
@@ -214,7 +232,6 @@ namespace ClearCanvas.Dicom.Network.Scu
 				_imageBoxes = imageBoxes;
 				_imageBoxEnumerator = _imageBoxes.GetEnumerator();
 			}
-
 		}
 
 		public class ImageBox : ImageBoxPixelModuleIod
@@ -222,9 +239,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 			internal DicomUid SopInstanceUid;
 
 			public FilmBox FilmBox { get; private set; }
-			public PrintItem PrintItem { get; private set; }
+			public IPrintItem PrintItem { get; private set; }
 
-			public ImageBox(FilmBox filmBox, PrintItem printItem)
+			public ImageBox(FilmBox filmBox, IPrintItem printItem)
 			{
 				this.FilmBox = filmBox;
 				this.PrintItem = printItem;
@@ -239,7 +256,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				get
 				{
 					var filmPixelSpacing = LengthInMillimeter.Inch / this.FilmBox.FilmDPI;
-					return this.SizeInPixel.Width * filmPixelSpacing;
+					return this.SizeInPixels.Width * filmPixelSpacing;
 				}
 			}
 
@@ -247,7 +264,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			/// Get the size in pixel.  The value depends on the image position, filmBox size, filmBox orentation and filmDPI.
 			/// This property assumes that the spacing for each rows/columns of imageBoxes on a film are evenly divided.
 			/// </summary>
-			public Size SizeInPixel
+			public Size SizeInPixels
 			{
 				get
 				{
@@ -297,7 +314,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				}
 			}
 
-			internal void OnSet(ColorMode colorMode)
+			internal void BeforeSet(ColorMode colorMode)
 			{
 				byte[] pixelData;
 				ushort rows;
@@ -317,7 +334,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 							HighBit = 7
 						};
 
-					this.PrintItem.GetPixelDataCallback.Invoke(this, colorMode, out rows, out columns, out pixelData);
+					this.PrintItem.GetPixelData(this, colorMode, out rows, out columns, out pixelData);
 					image.PixelData = pixelData;
 					image.Rows = rows;
 					image.Columns = columns;
@@ -337,13 +354,20 @@ namespace ClearCanvas.Dicom.Network.Scu
 							HighBit = 7
 						};
 
-					this.PrintItem.GetPixelDataCallback.Invoke(this, colorMode, out rows, out columns, out pixelData);
+					this.PrintItem.GetPixelData(this, colorMode, out rows, out columns, out pixelData);
 					image.PixelData = pixelData;
 					image.Rows = rows;
 					image.Columns = columns;
 
 					this.BasicGrayscaleImageSequenceList.Add(image);
 				}
+			}
+
+			internal void AfterSet()
+			{
+				//Free up the pixel data immediately, rather than keeping it around in the data set.
+				//Otherwise, we end up keeping *all* images around until the print session ends.
+				this.BasicGrayscaleImageSequenceList.Clear();
 			}
 
 			#region Private helper methods

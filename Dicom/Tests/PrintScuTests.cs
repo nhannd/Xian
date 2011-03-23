@@ -93,13 +93,13 @@ namespace ClearCanvas.Dicom.Tests
 			// Layout is 2x4, meaning 2 columns, 4 rows.
 			// ImageBoxes are ordered top->bottom, left->right
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.SizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 8;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
@@ -121,13 +121,13 @@ namespace ClearCanvas.Dicom.Tests
 			// Layout is 2x4, meaning 2 columns, 4 rows.
 			// ImageBoxes are ordered top->bottom, left->right
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.SizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 8;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 4);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
@@ -148,19 +148,19 @@ namespace ClearCanvas.Dicom.Tests
 
 			// Layout is Row 1,2, meaning 1 column in top row and 2 columns in bottom row
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.SizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 2;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 3;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
@@ -181,19 +181,19 @@ namespace ClearCanvas.Dicom.Tests
 
 			// Layout is Row 1,2, meaning 1 column in top row and 2 columns in bottom row
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.SizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 2;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 3;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
@@ -214,19 +214,19 @@ namespace ClearCanvas.Dicom.Tests
 
 			// Layout is Column 1,2, meaning 1 row in the left column and 2 rows in the right column
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.SizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 2;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 3;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(8 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
@@ -247,19 +247,19 @@ namespace ClearCanvas.Dicom.Tests
 
 			// Layout is Column 1,2, meaning 1 row in the left column and 2 rows in the right column
 			imageBox.ImageBoxPosition = 1;
-			var imageBoxSize = imageBox.SizeInPixel;
+			var imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 2;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
 
 			imageBox.ImageBoxPosition = 3;
-			imageBoxSize = imageBox.SizeInPixel;
+			imageBoxSize = imageBox.SizeInPixels;
 			Assert.AreEqual(imageBoxSize.Width, filmBoxSize.Width / 2);
 			Assert.AreEqual(imageBoxSize.Height, filmBoxSize.Height / 2);
 			Assert.AreEqual(Math.Round(imageBox.PhysicalWidth, _floatingPointDigits), Math.Round(10 * LengthInMillimeter.Inch / 2, _floatingPointDigits));
