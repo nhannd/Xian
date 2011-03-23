@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Common
 			private bool _needMoreMemory;
 
 			private readonly RetryableCommand _retryableCommand;
+			//TODO (CR March 2011): Use Environment.TickCount.
 			private readonly TimeSpan _maxWaitTime;
 			private DateTime _startTime;
 			private TimeSpan _waitTimeRemaining;
