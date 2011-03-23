@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using NHibernate;
 using ClearCanvas.Enterprise.Core;
@@ -105,7 +106,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 		{
 			_interceptor = new UpdateContextInterceptor(_validator);
 			_interceptor.AddChangeTracker(_validationChangeTracker);
-			return this.PersistentStore.SessionFactory.OpenSession(_interceptor);
+			return PersistentStore.SessionFactory.OpenSession(_interceptor);
 		}
 
 		protected override void LockCore(DomainObject obj, DirtyState dirtyState)
@@ -113,14 +114,14 @@ namespace ClearCanvas.Enterprise.Hibernate
 			switch (dirtyState)
 			{
 				case DirtyState.Dirty:
-					this.Session.Update(obj);
+					Session.Update(obj);
 					break;
 				case DirtyState.New:
 					CheckRequiredFields(obj);
-					this.Session.Save(obj);
+					Session.Save(obj);
 					break;
 				case DirtyState.Clean:
-					this.Session.Lock(obj, LockMode.None);
+					Session.Lock(obj, LockMode.None);
 					break;
 			}
 		}
@@ -182,7 +183,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// flush first
 			// this will apply low-level validation from within the interceptor callbacks prior to writing to db
 			// and it will ensure that the _validationChangeTracker is up to date
-			this.Session.Flush();
+			Session.Flush();
 
 			// _validationChangeTracker is used to determine which entities need high-level validation
 			// apply high-level validation to modified entities (excluding those that have been deleted)
@@ -207,7 +208,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			if (_changeSetRecorder != null)
 			{
 				// write to the "ChangeSet" audit log
-				var auditLog = new AuditLog(null, "ChangeSet");
+				var auditLog = new AuditLog(ProductInformation.Component, "ChangeSet");
 				_changeSetRecorder.WriteLogEntry(_interceptor.FullChangeSet, auditLog);
 			}
 		}
