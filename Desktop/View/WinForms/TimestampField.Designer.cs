@@ -35,6 +35,7 @@
             // 
             // _datePicker
             // 
+            this._datePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this._datePicker.Location = new System.Drawing.Point(3, 18);
             this._datePicker.Name = "_datePicker";
             this._datePicker.ShowCheckBox = true;
@@ -45,7 +46,7 @@
             // 
             // _timePicker
             // 
-            this._timePicker.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this._timePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this._timePicker.Location = new System.Drawing.Point(153, 18);
             this._timePicker.Name = "_timePicker";
             this._timePicker.ShowUpDown = true;
