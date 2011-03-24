@@ -98,7 +98,7 @@
     </Compile>
     <Compile Include="DatabaseVersion.cs" />
     <Compile Include="DatabaseVersion.gen.cs" />
-    <Compile Include="DataValidation.cs" />
+    <Compile Include="DataLengthValidation.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Device.gen.cs" />
     <Compile Include="DevicePreferredTransferSyntax.cs" />
