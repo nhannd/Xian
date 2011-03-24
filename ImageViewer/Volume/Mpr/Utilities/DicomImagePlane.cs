@@ -29,7 +29,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 	{
 		#region Private Fields
 
-		private static readonly DicomImagePlaneDataCache _imagePlaneDataCache = new DicomImagePlaneDataCache();
+		[ThreadStatic]
+		private static DicomImagePlaneDataCache _imagePlaneDataCache;
+		[ThreadStatic]
 		private static int _referenceCount = 0;
 
 		private IPresentationImage _sourceImage;
@@ -46,7 +48,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		#endregion
 
-		private DicomImagePlane() {}
+		private DicomImagePlane()
+		{
+		}
+
+		private static DicomImagePlaneDataCache ImagePlaneDataCache
+		{
+			get
+			{
+				if (_imagePlaneDataCache == null)
+					_imagePlaneDataCache = new DicomImagePlaneDataCache();
+				return _imagePlaneDataCache;
+			}
+		}
 
 		public static void InitializeCache()
 		{
@@ -59,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 				--_referenceCount;
 
 			if (_referenceCount == 0)
-				_imagePlaneDataCache.Clear();
+				ImagePlaneDataCache.Clear();
 		}
 
 		#region Factory Method
@@ -101,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		private static SpatialTransform GetSpatialTransform(IPresentationImage image)
 		{
 			if (image is ISpatialTransformProvider)
-				return ((ISpatialTransformProvider) image).SpatialTransform as SpatialTransform;
+				return ((ISpatialTransformProvider)image).SpatialTransform as SpatialTransform;
 
 			return null;
 		}
@@ -109,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		private static Frame GetFrame(IPresentationImage image)
 		{
 			if (image is IImageSopProvider)
-				return ((IImageSopProvider) image).Frame;
+				return ((IImageSopProvider)image).Frame;
 
 			return null;
 		}
@@ -119,15 +133,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			string key = String.Format("{0}:{1}", frame.ParentImageSop.SopInstanceUid, frame.FrameNumber);
 
 			DicomImagePlane cachedData;
-			if (_imagePlaneDataCache.ContainsKey(key))
+			if (ImagePlaneDataCache.ContainsKey(key))
 			{
-				cachedData = _imagePlaneDataCache[key];
+				cachedData = ImagePlaneDataCache[key];
 			}
 			else
 			{
 				cachedData = CreateFromFrame(frame);
 				if (cachedData != null)
-					_imagePlaneDataCache[key] = cachedData;
+					ImagePlaneDataCache[key] = cachedData;
 			}
 
 			if (cachedData != null)
@@ -150,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			plane.PositionPatientTopRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width, 0));
 			plane.PositionPatientBottomLeft = frame.ImagePlaneHelper.ConvertToPatient(new PointF(0, height));
 			plane.PositionPatientBottomRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width, height));
-			plane.PositionPatientCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width/2F, height/2F));
+			plane.PositionPatientCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width / 2F, height / 2F));
 
 			plane.Normal = frame.ImagePlaneHelper.GetNormalVector();
 
@@ -221,12 +235,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		public float Thickness
 		{
-			get { return (float) _sourceFrame.SliceThickness; }
+			get { return (float)_sourceFrame.SliceThickness; }
 		}
 
 		public float Spacing
 		{
-			get { return (float) _sourceFrame.SpacingBetweenSlices; }
+			get { return (float)_sourceFrame.SpacingBetweenSlices; }
 		}
 
 		public Vector3D Normal
@@ -292,7 +306,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		public PointF ConvertToImage(PointF positionMillimetres)
 		{
-			return (PointF) _sourceFrame.ImagePlaneHelper.ConvertToImage(positionMillimetres);
+			return (PointF)_sourceFrame.ImagePlaneHelper.ConvertToImage(positionMillimetres);
 		}
 
 		public bool IsInSameFrameOfReference(DicomImagePlane other)
@@ -327,10 +341,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			Vector3D[,] lineSegmentsImagePlaneBounds = new Vector3D[,]
 				{
 					// Bounding line segments of this (reference) image plane.
-					{PositionPatientTopLeft, PositionPatientTopRight},
-					{PositionPatientTopLeft, PositionPatientBottomLeft},
-					{PositionPatientBottomRight, PositionPatientTopRight},
-					{PositionPatientBottomRight, PositionPatientBottomLeft}
+					{ PositionPatientTopLeft, PositionPatientTopRight },
+					{ PositionPatientTopLeft, PositionPatientBottomLeft },
+					{ PositionPatientBottomRight, PositionPatientTopRight  },
+					{ PositionPatientBottomRight, PositionPatientBottomLeft}
 				};
 
 			List<Vector3D> planeIntersectionPoints = new List<Vector3D>();
@@ -339,8 +353,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			{
 				// Intersect the bounding line segments of the reference image with the plane of the target image.
 				Vector3D intersectionPoint = Vector3D.GetLinePlaneIntersection(other.Normal, other.PositionPatientCenterOfImage,
-				                                                               lineSegmentsImagePlaneBounds[i, 0],
-				                                                               lineSegmentsImagePlaneBounds[i, 1], true);
+																		lineSegmentsImagePlaneBounds[i, 0],
+																		lineSegmentsImagePlaneBounds[i, 1], true);
 				if (intersectionPoint != null)
 					planeIntersectionPoints.Add(intersectionPoint);
 			}
