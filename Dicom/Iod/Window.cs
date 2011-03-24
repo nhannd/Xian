@@ -53,8 +53,8 @@ namespace ClearCanvas.Dicom.Iod
 			List<Window> windowValues = new List<Window>();
 			DicomAttribute windowWidthAttribute;
 			DicomAttribute windowCenterAttribute;
-
-			windowCenterAttribute = provider[DicomTags.WindowCenter];
+            if (!provider.TryGetAttribute(DicomTags.WindowCenter,out windowCenterAttribute))
+                return windowValues;
 			if (windowCenterAttribute.IsNull || windowCenterAttribute.IsEmpty)
 				return windowValues;
 
