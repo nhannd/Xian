@@ -14,8 +14,30 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.DuplicateSopDialog"
     Codebehind="DuplicateSopDialog.ascx.cs" %>
+<%@ Import Namespace="Resources"%>
     
 <script type="text/javascript">
+    Sys.Application.add_load(function() {
+        var useDuplicateRadioButtonRadio = $("#<%= UseDuplicateRadioButton.ClientID %>");
+        var replaceAsIsRadioButton = $("#<%= ReplaceAsIsRadioButton.ClientID %>");
+        
+        useDuplicateRadioButtonRadio.click(function() {
+            CheckDataTruncation();
+        });
+        replaceAsIsRadioButton.click(function() {
+            CheckDataTruncation();
+        });
+
+        function CheckDataTruncation() {
+            var field = $("#<%= FieldsMayTruncate.ClientID %>");
+            var maytruncate = field.val() == "true";
+            if (maytruncate) {
+                alert("<%= SR.SIQ_DataMayBeTruncated %>");
+            }
+        }
+
+    });
+    
     Sys.Application.add_load(function()
         {
             var okButton = $find("<%= OKButton.ClientID %>");
@@ -85,7 +107,9 @@
 </script>
 
 <ccAsp:ModalDialog ID="DuplicateSopReconcileModalDialog" runat="server" Title="<%$ Resources:Titles, ReconcileDuplicateSOPDialog %>">
-    <ContentTemplate>       
+    <ContentTemplate>      
+        <asp:HiddenField runat="server" ID="FieldsMayTruncate" />
+         
         <aspAjax:TabContainer runat="server" ID="TabContainer"  Width="950px" ActiveTabIndex="0" CssClass="DialogTabControl">
             <aspAjax:TabPanel runat="server" id="OverviewTab" HeaderText="<%$Resources: Titles, SIQ_ReconcileDialog_OverviewTabTitle %>" Height="100%" CssClass="DialogTabControl">
                 <ContentTemplate>                

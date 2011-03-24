@@ -751,4 +751,7 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="SessionTimeoutCountdownMessage" xml:space="preserve">
     <value>No activity is detected. For security reasons, this session will end in {0} seconds.</value>
   </data>
+  <data name="SIQ_DataMayBeTruncated" xml:space="preserve">
+    <value>Conflicting images contain information which is too long and will be truncated</value>
+  </data>
 </root>

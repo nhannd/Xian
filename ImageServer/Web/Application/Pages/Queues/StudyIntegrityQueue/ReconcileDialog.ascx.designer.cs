@@ -12,7 +12,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     
     
     public partial class ReconcileDialog {
-        
+
+        protected global::System.Web.UI.WebControls.HiddenField FieldsMayTruncate;
+
         /// <summary>
         /// ReconcileItemModalDialog control.
         /// </summary>

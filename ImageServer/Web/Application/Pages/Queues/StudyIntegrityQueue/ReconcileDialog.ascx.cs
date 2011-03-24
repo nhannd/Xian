@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -22,6 +23,7 @@ using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using SR=Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
@@ -47,6 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         private Model.StudyIntegrityQueue _item;
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
         protected internal bool CanReconcile { get; set; }
+        private List<uint> _tagsMustBeTruncated = new List<uint>();
 
         #endregion
 
@@ -80,7 +83,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         public ReconcileDetails ReconcileDetails { get; set; }
 
+
+        public bool DataWillBeTruncated { get { return _tagsMustBeTruncated.Count > 0; } }
+
         #endregion // public members
+
 
         #region Events
 
@@ -158,6 +165,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             HighlightDifferences();
             Page.Validate();
             TabContainer.ActiveTabIndex = 0;
+
+            CheckDataForPossibleTruncation();
             ReconcileItemModalDialog.Show();
         }
 
@@ -186,6 +195,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             base.DataBind();
         }
 
+        private void CheckDataForPossibleTruncation()
+        {
+            _tagsMustBeTruncated  = DataLengthValidation.CheckDataLength(ReconcileDetails.ConflictingStudyInfo);
+            FieldsMayTruncate.Value = _tagsMustBeTruncated.Count>0 ? "true" : "false";
+        }
+
         private void HighlightDifferences()
         {
             if (ReconcileDetails != null)
@@ -212,14 +227,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             }
         }
 
-        private void Highlight(WebControl control, bool highlight)
-        {
-            if (highlight)
-                HtmlUtility.AddCssClass(control, HighlightCssClass);
-            else
-                HtmlUtility.RemoveCssClass(control, HighlightCssClass);
-        }
-
         private static void Compare(string value1, string value2, ComparisonCallback del)
         {
             if (!StringUtils.AreEqual(value1, value2, StringComparison.InvariantCultureIgnoreCase))
@@ -238,5 +245,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         }
 
         #endregion Public methods
+
+        private static void Highlight(WebControl control, bool highlight)
+        {
+            if (highlight)
+                HtmlUtility.AddCssClass(control, HighlightCssClass);
+            else
+                HtmlUtility.RemoveCssClass(control, HighlightCssClass);
+        }
     }
 }

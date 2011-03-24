@@ -134,6 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             _consistentData = true;
             HighlightDifferences();
             Page.Validate();
+            CheckDataForPossibleTruncation();
             DuplicateSopReconcileModalDialog.Show();
         }
 
@@ -153,6 +154,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             ComparisonResultGridView.DataSource = DuplicateEntryDetails.QueueData.ComparisonResults;
             base.DataBind();
+        }
+
+        private void CheckDataForPossibleTruncation()
+        {
+            List<uint> tagsMustBeTruncated = DataLengthValidation.CheckDataLength(DuplicateEntryDetails.ConflictingStudyInfo);
+            FieldsMayTruncate.Value = tagsMustBeTruncated.Count > 0 ? "true" : "false";
         }
 
         private void HighlightDifferences()

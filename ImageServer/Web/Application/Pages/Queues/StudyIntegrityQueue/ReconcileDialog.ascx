@@ -12,11 +12,38 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.ReconcileDialog"
     Codebehind="ReconcileDialog.ascx.cs" %>
+<%@ Import Namespace="Resources"%>
 
+<script type="text/javascript">
+    Sys.Application.add_load(function() {
+        var mergeUsingConflictRadio = $("#<%= MergeUsingConflictingStudy.ClientID %>");
+        var createNewStudyRadio = $("#<%= CreateNewStudy.ClientID %>");
+        var processAsIsRadio = $("#<%= IgnoreConflict.ClientID %>");
 
+        mergeUsingConflictRadio.click(function() {
+            CheckDataTruncation();
+        });
+        createNewStudyRadio.click(function() {
+            CheckDataTruncation();
+        });
+        processAsIsRadio.click(function() {
+            CheckDataTruncation();
+        });
+
+        function CheckDataTruncation() {
+            var field = $("#<%= FieldsMayTruncate.ClientID %>");
+            var maytruncate = field.val() == "true";
+            if (maytruncate) {
+                alert("<%= SR.SIQ_DataMayBeTruncated %>");
+            }
+        }
+
+    });
+</script>
 
 <ccAsp:ModalDialog ID="ReconcileItemModalDialog" runat="server" Width="900px" Title='<%$ Resources:Titles, ReconcileStudyDialog %>'>
     <ContentTemplate> 
+        <asp:HiddenField runat="server" ID="FieldsMayTruncate" />
         <asp:Panel CssClass="StudyDetailsMessage" runat="server" ID="MessagePanel" Visible="false">
                 <asp:Label ID="AlertMessage" runat="Server" Text="" />
             </asp:Panel>
@@ -217,7 +244,7 @@
                 </ContentTemplate>
             </aspAjax:TabPanel>
         </aspAjax:TabContainer>
-                <table cellpadding="0" cellspacing="0" width="100%">
+        <table cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                         <td align="right">
                             <asp:Panel runat="server" CssClass="DefaultModalDialogButtonPanel">

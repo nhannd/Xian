@@ -12,7 +12,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     
     
     public partial class DuplicateSopDialog {
-        
+
+        protected global::System.Web.UI.WebControls.HiddenField FieldsMayTruncate;
+
+
         /// <summary>
         /// DuplicateSopReconcileModalDialog control.
         /// </summary>

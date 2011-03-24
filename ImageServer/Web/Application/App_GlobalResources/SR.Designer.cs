@@ -1424,6 +1424,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Conflicting images contain information which is too long and will be truncated.
+        /// </summary>
+        internal static string SIQ_DataMayBeTruncated {
+            get {
+                return ResourceManager.GetString("SIQ_DataMayBeTruncated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WARNING: Duplicates contain information which does not match the existing study. The information in the study (and all existing images) will be replaced..
         /// </summary>
         internal static string SIQ_ReconcileDuplicateDialog_UseDuplicateWarning {
