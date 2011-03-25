@@ -139,7 +139,7 @@
     <value>User ID</value>
   </data>
   <data name="ColumnUserName" xml:space="preserve">
-    <value>Name</value>
+    <value>Display Name</value>
   </data>
   <data name="ExceptionSaveAuthorityGroup" xml:space="preserve">
     <value>Unable to save Authority Group</value>
