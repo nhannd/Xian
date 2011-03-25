@@ -76,7 +76,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 long now = Environment.TickCount;
 
                 // TimeSpan used to deal with roll over of TickCount
-                if (TimeSpan.FromTicks(now - ApplicationActivityMonitor.Instance.LastActivityTick) < TimeSpan.FromMilliseconds(MinPollDelaySinceLastActivity))
+                // Note: Environment.TickCount unit is in ms
+                if (TimeSpan.FromMilliseconds(now - ApplicationActivityMonitor.Instance.LastActivityTick) < TimeSpan.FromMilliseconds(MinPollDelaySinceLastActivity))
                 {
                     Thread.Sleep(50);
                     continue;
