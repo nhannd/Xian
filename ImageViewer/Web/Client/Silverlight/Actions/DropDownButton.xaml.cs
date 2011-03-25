@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             StackPanelVerticalComponent.MouseEnter += ButtonComponent_MouseEnter;
             StackPanelVerticalComponent.MouseLeave += ButtonComponent_MouseLeave;
 
-			Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;
+			Visibility = _actionItem.Visible && _actionItem.Available ? Visibility.Visible : Visibility.Collapsed;
 
 			ButtonComponent.IsEnabled = _actionItem.Enabled;
 			DropButtonComponent.IsEnabled = _actionItem.Enabled;
@@ -120,7 +120,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
 		public void Update(PropertyChangedEvent e)
 		{
-			if (e.PropertyName.Equals("Visible"))
+            if (e.PropertyName.Equals("Available"))
+            {
+                _actionItem.Visible = (bool)e.Value;
+                Visibility = _actionItem.Available ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else if (e.PropertyName.Equals("Visible"))
 			{
 				_actionItem.Visible = (bool)e.Value;
 				Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;

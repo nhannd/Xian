@@ -100,7 +100,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
 		public void Update(PropertyChangedEvent e)
 		{
-			if (e.PropertyName.Equals("Visible"))
+            if (e.PropertyName.Equals("Available"))
+            {
+                _actionItem.Visible = (bool)e.Value;
+                Visibility = _actionItem.Available ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else if (e.PropertyName.Equals("Visible"))
 			{
 				_actionItem.Visible = (bool)e.Value;
 

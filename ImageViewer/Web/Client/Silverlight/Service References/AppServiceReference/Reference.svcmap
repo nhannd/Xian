@@ -20,17 +20,17 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost/ImageServerTrunk/Services/ApplicationService.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:3523/Services/ApplicationService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ApplicationService.xsd" MetadataType="Schema" ID="f2a9e25d-8e7d-4ca7-b2c8-594c2edac748" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd3" />
-    <MetadataFile FileName="ApplicationService1.xsd" MetadataType="Schema" ID="f7243991-0b44-4a73-a7f7-4014b9df530b" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd2" />
-    <MetadataFile FileName="ApplicationService.wsdl" MetadataType="Wsdl" ID="0968cb48-4fe9-4885-8a44-8b8ee2aa6f6f" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?wsdl" />
-    <MetadataFile FileName="ApplicationService.disco" MetadataType="Disco" ID="d77acadb-d2a4-4085-8640-941eeabe32db" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?disco" />
-    <MetadataFile FileName="ApplicationService2.xsd" MetadataType="Schema" ID="7ec3bd7d-6479-48ce-83e8-3ce58b43b3bd" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd4" />
-    <MetadataFile FileName="ApplicationService1.wsdl" MetadataType="Wsdl" ID="c41237c6-d0d2-4919-b59c-15da4bd18d4e" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?wsdl=wsdl0" />
-    <MetadataFile FileName="ApplicationService3.xsd" MetadataType="Schema" ID="dc6da0b1-213c-4db0-9a17-07150180bc2d" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd1" />
-    <MetadataFile FileName="ApplicationService4.xsd" MetadataType="Schema" ID="5808f5bf-a41f-42de-87db-e50790863cb8" SourceId="1" SourceUrl="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?xsd=xsd0" />
+    <MetadataFile FileName="ApplicationService11.disco" MetadataType="Disco" ID="ca526926-ed10-4765-8318-fe2df2b22209" SourceId="1" SourceUrl="http://localhost:3523/Services/ApplicationService.svc?disco" />
+    <MetadataFile FileName="ApplicationService22.wsdl" MetadataType="Wsdl" ID="7964c4a0-6d37-4662-9d7d-bb53e0638a40" SourceId="1" SourceUrl="http://localhost:3523/Services/ApplicationService.svc?wsdl" />
+    <MetadataFile FileName="ApplicationService55.xsd" MetadataType="Schema" ID="0daf32e5-29de-4fee-b2e3-20c4c2001607" SourceId="1" SourceUrl="http://localhost:3523/Services/ApplicationService.svc?xsd=xsd4" />
+    <MetadataFile FileName="ApplicationService56.xsd" MetadataType="Schema" ID="03d74a95-022a-45fd-85c6-dbf4d2a39a38" SourceId="1" SourceUrl="http://localhost:3523/Services/ApplicationService.svc?xsd=xsd3" />
+    <MetadataFile FileName="ApplicationService57.xsd" MetadataType="Schema" ID="461030b2-2acf-4350-9167-00a873d23234" SourceId="1" SourceUrl="http://localhost:3523/Services/ApplicationService.svc?xsd=xsd1" />
+    <MetadataFile FileName="ApplicationService58.xsd" MetadataType="Schema" ID="1d4c7d2e-d035-4edd-aba6-1cef7f8fb2b6" SourceId="1" SourceUrl="http://localhost:3523/Services/ApplicationService.svc?xsd=xsd0" />
+    <MetadataFile FileName="ApplicationService23.wsdl" MetadataType="Wsdl" ID="76988a60-55d4-4d51-97fd-ac7242cd7a54" SourceId="1" SourceUrl="http://localhost:3523/Services/ApplicationService.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="ApplicationService59.xsd" MetadataType="Schema" ID="b820384e-c3a7-48a2-92a6-007fe27cb5f1" SourceId="1" SourceUrl="http://localhost:3523/Services/ApplicationService.svc?xsd=xsd2" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

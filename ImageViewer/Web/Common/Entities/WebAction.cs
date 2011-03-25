@@ -59,19 +59,19 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
     public class WebActionNode : Entity
     {
         [DataMember(IsRequired = true)]
+        public bool Available { get; set; }
+
+        [DataMember(IsRequired = true)]
         public string LocalizedText { get; set; }
 
         [DataMember(IsRequired = false)]
         public WebActionNode[] Children { get; set; }
     }
 
+    //TODO: Why do we need to seperate WebAction and WebActionNode?
 	[DataContract(Namespace = ViewerNamespace.Value)]
 	public class WebAction : WebActionNode
 	{
-		public WebAction()
-		{
-		}
-
 		[DataMember(IsRequired = true)]
 		public bool Visible { get; set; }
 
@@ -96,10 +96,6 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 	[DataContract(Namespace = ViewerNamespace.Value)]
 	public class WebClickAction : WebAction
 	{
-		public WebClickAction()
-		{
-		}
-
 		[DataMember(IsRequired = true)]
 		public bool IsCheckAction { get; set; }
 
@@ -110,9 +106,6 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 	[DataContract(Namespace = ViewerNamespace.Value)]
 	public class WebDropDownButtonAction : WebClickAction
 	{
-		public WebDropDownButtonAction()
-		{}
-
 		[DataMember(IsRequired = false)]
 		public WebActionNode[] DropDownActions { get; set; }		
 	}
@@ -120,9 +113,6 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
     [DataContract(Namespace = ViewerNamespace.Value)]
     public class WebDropDownAction : WebAction
     {
-        public WebDropDownAction()
-        { }
-
         [DataMember(IsRequired = false)]
         public WebActionNode[] DropDownActions { get; set; }
     }
@@ -130,9 +120,6 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
     [DataContract(Namespace = ViewerNamespace.Value)]
     public class WebLayoutChangerAction : WebAction
     {
-        public WebLayoutChangerAction()
-        { }
-
         [DataMember(IsRequired = true)]
         public int MaxRows { get; set; }
 

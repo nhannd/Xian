@@ -8,7 +8,7 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
-  <wsdl:import namespace="http://www.clearcanvas.ca/web/application" location="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?wsdl=wsdl0" />
+  <wsdl:import namespace="http://www.clearcanvas.ca/web/application" location="http://localhost:3523/Services/ApplicationService.svc?wsdl=wsdl0" />
   <wsdl:types />
   <wsdl:binding name="CustomBinding_IApplicationService" type="i0:IApplicationService">
     <wsp:PolicyReference URI="#CustomBinding_IApplicationService_policy" />
@@ -79,9 +79,9 @@
   </wsdl:binding>
   <wsdl:service name="ApplicationService">
     <wsdl:port name="CustomBinding_IApplicationService" binding="tns:CustomBinding_IApplicationService">
-      <soap12:address location="http://thanh/ImageServerTrunk/Services/ApplicationService.svc/basicHttp" />
+      <soap12:address location="http://localhost:3523/Services/ApplicationService.svc/basicHttp" />
       <wsa10:EndpointReference>
-        <wsa10:Address>http://thanh/ImageServerTrunk/Services/ApplicationService.svc/basicHttp</wsa10:Address>
+        <wsa10:Address>http://localhost:3523/Services/ApplicationService.svc/basicHttp</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

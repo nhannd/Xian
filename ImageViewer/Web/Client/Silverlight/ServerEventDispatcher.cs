@@ -648,11 +648,21 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         string msg;
                         if (ev is PropertyChangedEvent)
                         {
+                            var propChangedEvent = ev as PropertyChangedEvent;
                             StringBuilder sb = new StringBuilder();
-                            sb.AppendLine(String.Format("EventID:{0}", ev.Identifier));
-                            sb.AppendLine(String.Format("Source: {0} [ID={1}]", ev.Sender, ev.SenderId));
-                            sb.AppendLine(String.Format("Property: {0}", (ev as PropertyChangedEvent).PropertyName));
-                            sb.AppendLine(String.Format("Value: {0}", (ev as PropertyChangedEvent).Value));
+                            sb.AppendLine(String.Format("EventID:{0}", propChangedEvent.Identifier));
+                            sb.AppendLine(String.Format("Source: {0} [ID={1}]", propChangedEvent.Sender, propChangedEvent.SenderId));
+                            sb.AppendLine(String.Format("Property: {0}", propChangedEvent.PropertyName));
+                            sb.AppendLine(String.Format("Value: {0}", propChangedEvent.Value));
+
+                            if (propChangedEvent.DebugInfo != null)
+                            {
+                                sb.AppendLine("--------------------------------------");
+                                foreach (string m in propChangedEvent.DebugInfo)
+                                {
+                                    sb.AppendLine(m);
+                                }
+                            }
                             msg = sb.ToString();
                         }
                         else

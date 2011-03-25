@@ -110,11 +110,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
                     if (subNode.Children == null || subNode.Children.Count == 0)
                     {
                         MenuItem menuItem = BuildActionMenuItem(subNode, dispatcher);
-                        if (menuItem.IsChecked)
-                            thisMenu.IsChecked = true;
 
                         if (menuItem != null)
-                            thisMenu.Items.Add(menuItem);
+                        {
+                            if (menuItem.IsChecked)
+                                thisMenu.IsChecked = true;
+
+                            if (menuItem != null)
+                                thisMenu.Items.Add(menuItem);
+                        }
+                        
                     }
                     else
                     {
@@ -148,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             {
                 IsEnabled = actionNode.Enabled,
                 IsChecked = (actionNode is WebClickAction) && (actionNode as WebClickAction).Checked,
-                Visibility = actionNode.Visible ? Visibility.Visible : Visibility.Collapsed
+                Visibility = actionNode.Visible && actionNode.Available ? Visibility.Visible : Visibility.Collapsed
             };
 
             var binding = new MenuItemBinding(actionNode, dispatcher, item);
@@ -208,7 +213,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 
 		public void Update(PropertyChangedEvent e)
         {
-            if (e.PropertyName.Equals("Visible"))
+            if (e.PropertyName.Equals("Available"))
+            {
+                _actionItem.Visible = (bool)e.Value;
+                Item.Visibility = _actionItem.Available ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else if (e.PropertyName.Equals("Visible"))
             {
 				_actionItem.Visible = (bool)e.Value;
 				Item.Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;
