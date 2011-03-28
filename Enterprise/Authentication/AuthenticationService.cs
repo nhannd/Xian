@@ -294,10 +294,29 @@ namespace ClearCanvas.Enterprise.Authentication
 				if (_settings == null)
 				{
 					_settings = new AuthenticationSettings();
+
+				    VerifySettings();
 				}
 				return _settings;
 			}
 		}
+
+        /// <summary>
+        /// Verify the settings are ok
+        /// </summary>
+        private void VerifySettings()
+        {
+            if (_settings.SessionTokenCachingEnabled)
+            {
+                // User session cache duration must be less than the session timeout duration so that client apps can renew the session.
+                if (TimeSpan.FromSeconds(_settings.SessionTokenCachingTimeToLiveSeconds)>=TimeSpan.FromMinutes(_settings.UserSessionTimeoutMinutes))
+                {
+                    string message = SR.ExceptionIncorrectApplicationSettings_CacheDuration;
+                    Platform.Log(LogLevel.Error, message);
+                    throw new Exception(message);
+                }
+            }
+        }
 
 
 	}
