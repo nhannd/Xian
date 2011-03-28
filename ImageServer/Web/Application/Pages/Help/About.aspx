@@ -1143,6 +1143,12 @@ Canada
 <p>
   <span style="color: #999999; font-size: 12px; font-weight: bold;">Current Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %></span><br />
 </p>
+<p>
+  <span style="color: #999999; font-size: 12px; font-weight: bold;">
+    <% LicenseInformation.Reset(); %>
+    License Key: <%= LicenseInformation.LicenseKey %>
+  </span>
+</p>
 
 <p style="font-weight: bold;">
 <a style="color: #205F87" href="http://www.clearcanvas.ca" target=_blank>www.clearcanvas.ca</a><br />
