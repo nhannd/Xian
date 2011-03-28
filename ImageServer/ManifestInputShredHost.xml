@@ -4,10 +4,10 @@
     <File name="scripts" ignore="true" />
     <File name="ClearCanvas.ImageServer.Executable.exe" checksum="true" />
     <File name="ClearCanvas.ImageServer.Executable.exe.config" config="true" />
-    <File name="ClearCanvas.ImageServer.Executable.exe.critical.config" checksum="true" />
+    <File name="ClearCanvas.ImageServer.Executable.exe.critical.config" checksum="true" config="true" />
     <File name="ClearCanvas.ImageServer.ShredHostService.exe" checksum="true" />
     <File name="ClearCanvas.ImageServer.ShredHostService.exe.config" config="true" />
-    <File name="ClearCanvas.ImageServer.ShredHostService.exe.critical.config" checksum="true" />
+    <File name="ClearCanvas.ImageServer.ShredHostService.exe.critical.config" checksum="true" config="true" />
     <File name="License.rtf" />
     <File name="Logging.config" />
     <File name="logs\" ignore="true" />
