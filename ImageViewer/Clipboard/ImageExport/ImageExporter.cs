@@ -204,6 +204,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			{
 				var srcPixelSpacing = ((IImageSopProvider)image).Frame.NormalizedPixelSpacing;
 
+				//TODO (CR March 2011) - High: -90 is not a valid value!  It should be 270.
 				// Need to account for 90 degree rotation for images with non-square pixels.
 				var srcDPI = transform.RotationXY == 90 || transform.RotationXY == -90
 					? 25.4f / srcPixelSpacing.Row

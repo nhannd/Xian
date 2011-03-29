@@ -18,6 +18,7 @@ using System;
 
 namespace ClearCanvas.Dicom.Tests
 {
+	//TODO (CR March 2011): Move to Iod.Modules.Tests
 	[TestFixture]
 	public class FilmBoxTests
 	{
