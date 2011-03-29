@@ -12,7 +12,7 @@
     <File name="Web\web.config" config="true" />
     <File name="Web\Web.sitemap" />
     <File name="Web\App_Themes\Default\Global.skin" />
-   
+	<File name="Web\logs" ignore="true"/>
     <File name="Web\App_Themes\Default\images\AboutBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Background.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\blank.gif" checksum="true" />
@@ -237,7 +237,8 @@
     <File name="Web\bin\ClearCanvas.Dicom.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Enterprise.Common.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Enterprise.Core.dll" checksum="true" />
-    <File name="Web\bin\ClearCanvas.ImageServer.Common.dll" checksum="true" />
+	<File name="Web\bin\ClearCanvas.Enterprise.Common.License.dll" checksum="true" />
+	<File name="Web\bin\ClearCanvas.ImageServer.Common.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Core.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Enterprise.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Enterprise.SqlServer.dll" checksum="true" />
@@ -315,6 +316,7 @@
     <File name="Web\Images\favicon.ico" checksum="true" />
     <File name="Web\Images\ImageServerLogo.png" checksum="true" />
     <File name="Web\Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
+	<File name="Web\Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <File name="Web\Pages\Admin\Alerts\AlertsGridPanel.ascx" />
     <File name="Web\Pages\Admin\Alerts\AlertsPanel.ascx" />
     <File name="Web\Pages\Admin\Alerts\AlertsPanel.js" />
@@ -397,6 +399,7 @@
     <File name="Web\Pages\Error\ErrorPageMaster.Master" />
     <File name="Web\Pages\Error\JavascriptRequired.aspx" />
 	<File name="Web\Pages\Error\LicenseErrorPage.aspx" />
+	<File name="Web\Pages\Error\SoftwareExpiredErrorPage.aspx" />
 	<File name="Web\Pages\Error\TimeoutErrorPage.aspx" />
     <File name="Web\Pages\Error\WebViewerAuthorizationErrorPage.aspx" />
     <File name="Web\Pages\Error\WebViewerErrorPage.aspx" />
@@ -557,7 +560,6 @@
     <File name="Web\Services\FilesystemInfoService.asmx" />
     <File name="Web\Services\ValidationServices.asmx" />
     <File name="Web\Services\webservice.htc" />
-    <File name="Web\Test\speedtest_big.bin" ignore="true" />
     <File name="Web\Test\speedtest_small.bin" ignore="true" />
     <File name="Web\Test\speedtest_tiny.bin" ignore="true" />
   </Files>
