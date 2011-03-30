@@ -87,7 +87,14 @@ namespace ClearCanvas.Web.Services
 
     public enum MessageBatchMode
     {
+        /// <summary>
+        /// Allow only one single message of the same type to be sent in a batch
+        /// </summary>
         PerType,
+        
+        /// <summary>
+        /// Allow messages of the same type to be sent in the same batch if they are sent by different entities.
+        /// </summary>
         PerTarget
     }
 
@@ -125,7 +132,7 @@ namespace ClearCanvas.Web.Services
 
 		protected Application()
 		{
-            // TODO (CR 3-22-2011), set BatchMode?
+		    BatchMode = MessageBatchMode.PerTarget;
 
 		    Identifier = Guid.NewGuid();
 			_incomingMessageQueue = new IncomingMessageQueue(
