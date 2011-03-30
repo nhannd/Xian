@@ -24,7 +24,7 @@
                     <asp:BoundField DataField="UserName" HeaderText="<%$Resources: ColumnHeaders, UserID %>" HeaderStyle-HorizontalAlign="Left" >
                         <itemstyle width="200px" />
                     </asp:BoundField>
-                    <asp:BoundField DataField="DisplayName" HeaderText="<%$Resources: ColumnHeaders, UserID %>" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:BoundField DataField="DisplayName" HeaderText="<%$Resources: ColumnHeaders, UserDisplayName %>" HeaderStyle-HorizontalAlign="Left" />
                     <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, UserGroups %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:TextBox ID="UserGroupTextBox" runat="server" TextMode="multiline" rows="2" columns="35" CssClass="UserGroupTextArea" ReadOnly="true"></asp:TextBox>

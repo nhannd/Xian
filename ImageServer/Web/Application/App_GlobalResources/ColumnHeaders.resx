@@ -443,4 +443,7 @@
   <data name="UserName" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="UserDisplayName" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
 </root>

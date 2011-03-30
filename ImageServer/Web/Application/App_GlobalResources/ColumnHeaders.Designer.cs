@@ -952,6 +952,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display Name.
+        /// </summary>
+        internal static string UserDisplayName {
+            get {
+                return ResourceManager.GetString("UserDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User Groups.
         /// </summary>
         internal static string UserGroups {
