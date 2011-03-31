@@ -117,6 +117,10 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	/// </summary>
 	public enum ExportOption
 	{
+		// TODO CR (Mar 11): TrueSize doesn't belong here, it is more of a SizeMode than an Export Option
+		// TODO CR (Mar 11): in fact, a lot of possible ExportOption/SizeMode combinations don't make a whole lot of sense
+		// this adds more credence to the previous CR notes that there should be different ImageExporters with different option sets!!
+
 		/// <summary>
 		/// Indicates that only the visible area of the image (including any rotations and/or flips) should be exported.
 		/// </summary>

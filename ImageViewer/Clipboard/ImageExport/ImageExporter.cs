@@ -196,26 +196,57 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
+		private static double Magnitude(double x, double y)
+		{
+			return Math.Sqrt(x*x + y*y);
+		}
+
 		private static Bitmap DrawTrueSizeImageToBitmap(IPresentationImage image, Size outputSize, float dpi)
 		{
+			const double mmPerInch = 25.4;
+			const int pxLength = 100;
+
 			var transform = (ImageSpatialTransform) ((ISpatialTransformProvider) image).SpatialTransform;
 			var restoreMemento = transform.CreateMemento();
 			try
 			{
-				var srcPixelSpacing = ((IImageSopProvider)image).Frame.NormalizedPixelSpacing;
+				var frame = ((IImageSopProvider) image).Frame;
+				var pixelSpacing = frame.NormalizedPixelSpacing;
 
-				// Need to account for 90 degree rotation for images with non-square pixels.
-				var srcDPI = transform.RotationXY == 90 || transform.RotationXY == -90
-					? 25.4f / srcPixelSpacing.Row
-					: 25.4f / srcPixelSpacing.Column;
+				// to compute the correct transform scale for true size export at the specified DPI (i.e. pixel spacing)
+				// we need to determine the current effective pixel spacing of the destination (post-transform) image
+				// then you can compute the value by which to further adjust the transform scale
+				// so that the destination image achieves the desired pixel spacing
+				// for a mathematical proof of this algorithm, see jasper
 
-				var scaleForTrueSize = dpi / srcDPI;
-
-				// Apply scale transformation
+				// we start by turning off scale to fit and fix the scale so it's not too small that it introduces floating point error
 				transform.ScaleToFit = false;
-				transform.Scale = (float)scaleForTrueSize;
+				transform.Scale = 1;
 
-				return ImageDrawToBitmap(image, outputSize.Width, outputSize.Height, dpi);
+				// choose an arbitrary non-trivial vector in the current destination image
+				var dstVector = new SizeF(pxLength, 0);
+
+				// now convert it back to source coordinates
+				var srcVector = transform.ConvertToSource(dstVector);
+
+				// compute the physical length of the vector
+				var mmLength = Magnitude(srcVector.Width*pixelSpacing.Column, srcVector.Height*pixelSpacing.Row);
+
+				// since we know the length of the vector in destination pixels, we can compute the effective pixel spacing
+				// a single value will suffice because the destination image has the pixel aspect ratio normalized to be isotropic!
+				var effectivePixelSpacing = mmLength/pxLength;
+
+				// thus the effective DPI of the destination image right now is...
+				var effectiveDpi = (float) (mmPerInch/effectivePixelSpacing);
+
+				// since, at the current scale, the transform gives you effective DPI,
+				// you can adjust the scale by DPI / effective DPI to achieve the desired DPI
+				transform.Scale *= dpi/effectiveDpi;
+
+				// we also want to constrain the output to not render any unnecessary padding
+				var imageBounds = transform.ConvertToDestination(new SizeF(frame.Columns, frame.Rows));
+				var imageSize = Size.Ceiling(new SizeF(Math.Abs(imageBounds.Width), Math.Abs(imageBounds.Height)));
+				return ImageDrawToBitmap(image, Math.Min(imageSize.Width, outputSize.Width), Math.Min(imageSize.Height, outputSize.Height), dpi);
 			}
 			finally
 			{

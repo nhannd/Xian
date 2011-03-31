@@ -328,7 +328,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 							PhotometricInterpretation = PhotometricInterpretation.Rgb,
 							PixelRepresentation = 0,
 							PixelAspectRatio = new PixelAspectRatio(1, 1),
-							PlanarConfiguration = 1,
+							PlanarConfiguration = 0,
 							BitsStored = 8,
 							BitsAllocated = 8,
 							HighBit = 7

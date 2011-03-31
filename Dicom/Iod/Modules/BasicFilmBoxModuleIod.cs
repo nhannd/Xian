@@ -19,6 +19,9 @@ using System.Xml.Serialization;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
+	//TODO (CR March 2011): Just generally, it might be better to use regular expressions
+	//for a lot of the parsing that's done in these classes.
+
     /// <summary>
     /// Basic Film Box Presentation and Relationship Module as per Part 3, C.13-3 (pg 862) and C.13.4 (pg 869)
     /// </summary>
@@ -288,6 +291,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         }
         #endregion
     }
+
+	//TODO (CR March 2011): Useful as a class in Common (eventually)?
 
 	/// <summary>
 	/// Defines various length in millimeters.
