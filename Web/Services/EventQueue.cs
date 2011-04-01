@@ -24,7 +24,7 @@ namespace ClearCanvas.Web.Services
       	private readonly object _syncLock = new object();
 		private readonly Queue<Event> _queue;
 		private int _nextEventSetNumber = 1;
-
+        
 		public EventQueue(Application application)
         {
 		    Platform.CheckForNullReference(application, "application");
@@ -50,80 +50,114 @@ namespace ClearCanvas.Web.Services
         /// <returns></returns>
         internal EventSet GetPendingEvent(int wait)
         {
+            bool debugging = Platform.IsLogLevelEnabled(LogLevel.Debug);
+
             lock (_syncLock)
             {
+                if (debugging)
+                    Platform.Log(LogLevel.Debug, "Polling Request received.. {0} in the queue", _queue.Count);
+
                 if (_queue.Count == 0)
                 {
                     if (wait == 0)
+                    {
                         return null;
+                    }
+
+                    if (debugging)
+                        Platform.Log(LogLevel.Debug, "Nothing in the queue... waiting for {0} ms", wait);
 
                     //TODO: What happens if the browser is closed while waiting?
                     if (!Monitor.Wait(_syncLock, wait))
+                    {
+                        if (debugging)
+                            Platform.Log(LogLevel.Debug, "Waiting ends. Still nothing in the queue");
+
                         return null;
+                    }
                 }
 
-                // only has effect if we decide to use multiple threads on the client.
+
                 const int maxBatchSize = 20;
                 Dictionary<Guid, List<Event>> markedEvents = new Dictionary<Guid, List<Event>>();
 
                 List<Event> events = new List<Event>();
-
-                while (_queue.Count > 0 && events.Count < maxBatchSize)
+                try
                 {
-                    Event @event = _queue.Peek();
-
-                    // In theory this should never happen
-                    if (@event == null)
-                        break;
-
-                    if (!@event.AllowSendInBatch)
+                    while (_queue.Count > 0 && events.Count < maxBatchSize)
                     {
-                        List<Event> speciallyMarkedEvents;
-                        Event theEvent = @event;
+                        Event @event = _queue.Peek();
 
-                        // TODO CR 3-22-2011, This code was added but the BatchMode is never
-                        // set in Application, so we default to PerType.  The implication is that
-                        // when doing sync stacking the Tile event is sent in separate batches, 
-                        // slowing things down.  Should change default and test to make sure it works
-                        // properly with sync stacking.
-                        if (_application.BatchMode == MessageBatchMode.PerType)
+
+                        // In theory this should never happen
+                        if (@event == null)
                         {
-                            // Only include the event if there's no other event of the same type to be sent.
-                            if (events.Exists(i => i.GetType().Equals(theEvent.GetType())))
-                                break;                         
+                            break;
                         }
-                        else if (_application.BatchMode == MessageBatchMode.PerTarget)
+
+                        if (!@event.AllowSendInBatch)
                         {
-                            // Note: We can send messages of the same type but targetted to different
-                            // entities in the same response instead of separated ones to improve performance. 
-                            // One example in the web station is during sync stacking
-                            if (markedEvents.TryGetValue(@event.SenderId, out speciallyMarkedEvents))
+                            List<Event> speciallyMarkedEvents;
+                            Event theEvent = @event;
+
+                            // TODO CR 3-22-2011, This code was added but the BatchMode is never
+                            // set in Application, so we default to PerType.  The implication is that
+                            // when doing sync stacking the Tile event is sent in separate batches, 
+                            // slowing things down.  Should change default and test to make sure it works
+                            // properly with sync stacking.
+                            if (_application.BatchMode == MessageBatchMode.PerType)
                             {
-                                if (speciallyMarkedEvents.Find(i => i.GetType() == @theEvent.GetType()) != null)
+                                // Only include the event if there's no other event of the same type to be sent.
+                                if (events.Exists(i => i.GetType().Equals(theEvent.GetType())))
                                     break;
-
-                                markedEvents[@event.SenderId].Add(@event);
                             }
-                            else
+                            else if (_application.BatchMode == MessageBatchMode.PerTarget)
                             {
-                                markedEvents.Add(@event.SenderId, new List<Event>(new[] {@event}));
+                                // Note: We can send messages of the same type but targetted to different
+                                // entities in the same response instead of separated ones to improve performance. 
+                                // One example in the web station is during sync stacking
+                                if (markedEvents.TryGetValue(@event.SenderId, out speciallyMarkedEvents))
+                                {
+                                    if (speciallyMarkedEvents.Find(i => i.GetType() == @theEvent.GetType()) != null)
+                                        break;
+
+                                    markedEvents[@event.SenderId].Add(@event);
+                                }
+                                else
+                                {
+                                    markedEvents.Add(@event.SenderId, new List<Event>(new[] {@event}));
+                                }
                             }
                         }
-                    }
 
-                    @event = _queue.Dequeue();
-                    events.Add(@event);
+                        @event = _queue.Dequeue();
+                        events.Add(@event);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex);
                 }
 
+                if (debugging)
+                {
+                    Platform.Log(LogLevel.Debug, "Sending Polling Response with {0} events", events.Count);
+
+                    foreach(var e in events)
+                    {
+                        Platform.Log(LogLevel.Debug, "Event Sent: {0} [{1}]", 
+                            e.GetType().Name, e.ToString());
+                    }
+                }
                 if (events.Count > 0)
                 {
                     return new EventSet
-                               {
-                                   Events = events.ToArray(),
-                                   ApplicationId = _application.Identifier,
-                                   Number = _nextEventSetNumber++,
-                                   HasMorePending = _queue.Count > 0,
-                               };
+                    {
+                        Events = events.ToArray(),
+                        ApplicationId = _application.Identifier,
+                        Number = _nextEventSetNumber++,
+                        HasMorePending = _queue.Count > 0,
+                    };
 
                 }
             }

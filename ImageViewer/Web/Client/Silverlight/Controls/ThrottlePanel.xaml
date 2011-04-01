@@ -15,10 +15,10 @@
     mc:Ignorable="d"
     xmlns:toolkitinput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
     xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
-    xmlns:local="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls"
+    xmlns:local="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls" 
     >
 
-    <toolkit:WrapPanel>
+    <toolkit:WrapPanel Name="LayoutRoot">
         <StackPanel>
             <StackPanel.Resources>
                 <local:EnumValuesConverter x:Name="enumConverter"/>
@@ -33,29 +33,30 @@
             </StackPanel>
 
             <StackPanel Margin="10">
-                <TextBlock Text="Mouse Move Msg" Foreground="Black"/>
-                <ComboBox x:Name="Strategies" ItemsSource="{Binding Strategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
-                          SelectedItem="{Binding Strategy, Mode=TwoWay}" IsEnabled="False"/>
+                <TextBlock Text="Mouse Move Msg" Foreground="White"/>
+                <ComboBox x:Name="Strategies" Foreground="Black" ItemsSource="{Binding Strategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
+                          SelectedItem="{Binding Strategy, Mode=TwoWay}" IsEnabled="False">
+                </ComboBox>
             </StackPanel>
             <StackPanel x:Name="RTTWithOffsetPanel"  Margin="10" Visibility="Collapsed" >
-                <TextBlock Text="Offset (ms)" Foreground="Black"/>
+                <TextBlock Text="Offset (ms)" Foreground="White"/>
                 <toolkitinput:NumericUpDown  Foreground="White" Minimum="-200" Maximum="200" Value="{Binding MouseMoveOffset, Mode=TwoWay}"  Increment="10"/>
             </StackPanel>
             <StackPanel Margin="10">
-                <TextBlock Text="Max Pending MouseMoveMsg RESPs" Foreground="Black"/>
+                <TextBlock Text="Max Pending MouseMoveMsg RESPs" Foreground="White"/>
                 <toolkitinput:NumericUpDown  Foreground="White" Minimum="1" Maximum="20" Value="{Binding MaxPendingMouseMoveMsgAllowed, Mode=TwoWay}"  Increment="1"/>
             </StackPanel>
 
             <StackPanel Margin="10" >
-                <TextBlock Text="Lag Detection" Foreground="Black"/>
-                <ComboBox x:Name="LagDetectionStrategies" ItemsSource="{Binding LagDetectionStrategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
+                <TextBlock Text="Lag Detection" Foreground="White"/>
+                <ComboBox x:Name="LagDetectionStrategies" Foreground="Black" ItemsSource="{Binding LagDetectionStrategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
                           SelectedItem="{Binding LagDetectionStrategy, Mode=TwoWay}" IsEnabled="False">
                                         
                 </ComboBox>
             </StackPanel>
 
             <StackPanel Margin="10" >
-                <CheckBox Content="Enable Dynamic Image Quality" Foreground="Black" IsChecked="{Binding EnableDynamicImageQuality, Mode=TwoWay}"/>
+                <CheckBox Content="Enable Dynamic Image Quality" Foreground="White" IsChecked="{Binding EnableDynamicImageQuality, Mode=TwoWay}"/>
             </StackPanel>
         </StackPanel>
     </toolkit:WrapPanel>

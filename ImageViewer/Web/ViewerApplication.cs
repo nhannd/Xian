@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
@@ -26,8 +27,7 @@ using ClearCanvas.ImageViewer.Web.EntityHandlers;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
 using Application=ClearCanvas.Desktop.Application;
 using ClearCanvas.Common.Utilities;
-using System.Threading;
-using System.Globalization;
+using Message=ClearCanvas.Web.Common.Message;
 
 namespace ClearCanvas.ImageViewer.Web
 {
@@ -92,6 +92,11 @@ namespace ClearCanvas.ImageViewer.Web
 		}
 	}
 
+    internal class RemoteClientInformation
+    {
+        public string IPAddress {get;set;}
+    }
+
 	[Application(typeof(StartViewerApplicationRequest))]
 	[ExtensionOf(typeof(ApplicationExtensionPoint))]
 	public class ViewerApplication : ClearCanvas.Web.Services.Application
@@ -100,6 +105,28 @@ namespace ClearCanvas.ImageViewer.Web
 		private Common.ViewerApplication _app;
 		private ImageViewerComponent _viewer;
 		private EntityHandler _viewerHandler;
+
+	    private readonly RemoteClientInformation _client;
+        
+        public  ViewerApplication()
+        {
+            _client = new RemoteClientInformation
+                          {
+                              IPAddress = GetClientAddress(OperationContext.Current)
+                          };
+
+        }
+
+        public override string InstanceName
+        {
+            get
+            {
+                return String.Format("WebStation (user={0}, ip={1})",
+                                         Principal != null ? Principal.Identity.Name : "Unknown",
+                                         _client.IPAddress);   
+
+            }
+        }
 
 		private static IList<StudyRootStudyIdentifier> FindStudies(StartViewerApplicationRequest request)
 		{
@@ -230,6 +257,7 @@ namespace ClearCanvas.ImageViewer.Web
 
             return _context.GetPendingOutboundEvent(wait);
 	    }
+
 
 	    protected override ProcessMessagesResult OnProcessMessageEnd(MessageSet messageSet, bool messageWasProcessed)
 	    {
@@ -371,6 +399,18 @@ namespace ClearCanvas.ImageViewer.Web
 			return _app;
 		}
 
+
+        private static string GetClientAddress(OperationContext context)
+        {
+            if (context == null)
+                return "Unknonw";
+
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint =
+                prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+
+            return endpoint != null ? endpoint.Address : "Unknown";
+        }
         
 	}
 

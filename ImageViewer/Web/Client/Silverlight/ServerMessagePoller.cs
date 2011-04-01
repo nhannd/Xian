@@ -79,13 +79,19 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 // Note: Environment.TickCount unit is in ms
                 if (TimeSpan.FromMilliseconds(now - ApplicationActivityMonitor.Instance.LastActivityTick) < TimeSpan.FromMilliseconds(MinPollDelaySinceLastActivity))
                 {
-                    Thread.Sleep(50);
-                    continue;
+                    lock (_syncLock)
+                    {
+                        Monitor.Wait(_syncLock, 50);
+                        continue;
+                    }
                 }
 
                 if (!DoPoll())
                 {
-                    Thread.Sleep(50);
+                    lock (_syncLock)
+                    {
+                        Monitor.Wait(_syncLock, 50);
+                    }
                 }
             }
         }
@@ -123,28 +129,31 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             if (_pendingPollingCount == 0 && _service != null)
             {
-                lock (_syncLock)
+                Interlocked.Increment(ref _pendingPollingCount);
+
+                int maxWaitTime = 10000; //ms
+
+                try
                 {
-                    Interlocked.Increment(ref _pendingPollingCount);
+                    
+                    // TODO: the client may have disconnected
+                    // Note: do not call this inside a lock statement. It can cause deadlock
+                    _service.GetPendingEventAsync(new GetPendingEventRequest() { ApplicationId = ApplicationContext.Current.ID, MaxWaitTime = maxWaitTime });
 
-                    int maxWaitTime = 10000; //ms
-
-                    try
+                    lock (_syncLock)
                     {
-                        // TODO: the client may have disconnected
-                        _service.GetPendingEventAsync(new GetPendingEventRequest() { ApplicationId = ApplicationContext.Current.ID, MaxWaitTime = maxWaitTime });
-
                         Monitor.Wait(_syncLock, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
-                    }
-                    catch (Exception)
-                    {
-                        // catch exception to prevent crashing
-                    }
-                    finally
-                    {
-                        _lastPollTick = Environment.TickCount;
-                    }
+                    } 
                 }
+                catch (Exception)
+                {
+                    // catch exception to prevent crashing
+                }
+                finally
+                {
+                    _lastPollTick = Environment.TickCount;
+                }
+                
                 return true;
             }
 
@@ -155,9 +164,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void Dispose()
         {
+            _stop = true;
             if (_pollingThread != null)
             {
-                _stop = true;
                 _service.GetPendingEventCompleted -= OnGetPendingEventCompleted;
 
                 lock (_syncLock)

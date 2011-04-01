@@ -736,9 +736,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void Disconnect(string reason)
         {
-            if (_proxy != null)
+            if (_poller != null)
             {
-                //TODO (CR May 2010): we don't sync the proxy anywhere else.
                 lock (_sync)
                 {
                     if (_poller != null)
@@ -746,6 +745,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         _poller.Dispose();
                         _poller = null;
                     }
+                }
+            }
+
+            if (_proxy != null)
+            {
+                //TODO (CR May 2010): we don't sync the proxy anywhere else.
+                lock (_sync)
+                {                   
 
                     if (_proxy != null)
                     {

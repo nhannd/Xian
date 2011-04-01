@@ -74,15 +74,45 @@ namespace ClearCanvas.Web.Services
 		IPrincipal Principal { get; }
 		IApplicationContext Context { get; }
 
-		void Start(StartApplicationRequest request);
+        /// <summary>
+        /// Starts the application
+        /// </summary>
+        void Start(StartApplicationRequest request);
+
+        /// <summary>
+        /// Processes the specific <see cref="MessageSet"/>
+        /// </summary>
         ProcessMessagesResult ProcessMessages(MessageSet messages);
-		void Stop();
-		void Stop(string message);
+
+        /// <summary>
+        /// Stops the application. <see cref="Shutdown"/> will be called later
+        /// </summary>
+        void Stop();
+
+        /// <summary>
+        /// Stops the application. <see cref="Shutdown"/> will be called later
+        /// </summary>
+        void Stop(string message);
+
+        /// <summary>
+        /// Gets pending events
+        /// </summary>
 	    EventSet GetPendingOutboundEvent(int wait);
 
-	    void SetProperty(string key, object value);
+        /// <summary>
+        /// Updates property
+        /// </summary>
+        void SetProperty(string key, object value);
 
+        /// <summary>
+        /// Shuts down the application
+        /// </summary>
         void Shutdown();
+
+        /// <summary>
+        /// Name of the application instance for logging purpose.
+        /// </summary>
+        string InstanceName { get; }
 	}
 
     public enum MessageBatchMode
@@ -124,6 +154,7 @@ namespace ClearCanvas.Web.Services
 		private static readonly TimeSpan TimerInterval = TimeSpan.FromSeconds(5);
 		private System.Threading.Timer _timer;
 		private bool _timerMethodExecuting;
+
         public CultureInfo Culture
         {
             private set;
@@ -162,6 +193,9 @@ namespace ClearCanvas.Web.Services
 		public IPrincipal Principal { get; private set; }
 
 		private bool IsSessionShared { get; set; }
+
+
+        public abstract string InstanceName { get;  }
 
         public MessageBatchMode BatchMode { get; protected set; }
 
@@ -322,6 +356,7 @@ namespace ClearCanvas.Web.Services
             //TODO: Remove from cache immediately?
         }
 
+
 	    public void Stop(string message)
 		{
 			lock (_syncLock)
@@ -359,7 +394,7 @@ namespace ClearCanvas.Web.Services
 
 	    internal void Stop(Exception e)
 		{
-            Platform.Log(LogLevel.Error, e);
+            Platform.Log(LogLevel.Error, e, "An error has occurred and the application is stopping");
 			Stop(ExceptionTranslator.Translate(e));
 		}
 
@@ -385,11 +420,11 @@ namespace ClearCanvas.Web.Services
 
                 var stopMessage = String.IsNullOrEmpty(message) ? "<none>" : message;
                 if (_session == null)
-                    ConsoleHelper.Log(LogLevel.Info, ConsoleColor.Red, "Application {0} has stopped (message={1}).",
-                                      Identifier, stopMessage);
+                {
+                    Platform.Log(LogLevel.Info, "Application {0} has stopped (message={1}).", Identifier, stopMessage);
+                }
                 else
-                    ConsoleHelper.Log(LogLevel.Info, ConsoleColor.Red,
-                                      "Application {0} has stopped (user={1}, session={2}, message={3}).",
+                    Platform.Log(LogLevel.Info, "Application {0} has stopped (user={1}, session={2}, message={3}).",
                                       Identifier, _userName, _session.SessionToken.Id, stopMessage);
             }
 		}
@@ -398,6 +433,11 @@ namespace ClearCanvas.Web.Services
 		{
 			try
 			{
+                if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
+                {
+                    Thread.CurrentThread.Name = String.Format("{0} [{1}]", InstanceName, Thread.CurrentThread.ManagedThreadId);
+                }
+
 				lock (_syncLock)
 				{
 					if (_stop || _timerMethodExecuting)
@@ -579,7 +619,13 @@ namespace ClearCanvas.Web.Services
 
 		public static Application Find(Guid identifier)
 		{
-			return Cache.Instance.Find(identifier);
+            var application = Cache.Instance.Find(identifier);
+            if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
+            {
+                Thread.CurrentThread.Name = String.Format("{0} [{1}]", application.InstanceName, Thread.CurrentThread.ManagedThreadId);
+            }
+
+		    return application;
 		}
 
 		public static void StopAll(string message)

@@ -51,8 +51,7 @@ namespace ClearCanvas.Web.Services
 				    return true;
 				}
 
-                Platform.Log(LogLevel.Error, "Received message set out of order (received:{0}, expected:{1})",
-                                                  messageSet.Number, NextMessageSetNumber);
+                Platform.Log(LogLevel.Warn, "Received message set out of order (received:{0}, expected:{1})", messageSet.Number, NextMessageSetNumber);
                      
 			    _messageSets[messageSet.Number] = messageSet;
 			    return false;
