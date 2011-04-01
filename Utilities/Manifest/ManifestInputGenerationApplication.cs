@@ -120,7 +120,7 @@ namespace ClearCanvas.Utilities.Manifest
 
             if (input.Name.EndsWith("critical.config"))
             {
-                input.Config = true;
+                input.Config = false;
                 input.Checksum = true;
             }
 
