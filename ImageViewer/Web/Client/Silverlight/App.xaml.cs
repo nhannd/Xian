@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     // TODO: Should we continue if the speed is too low? It won't be useful for the user anyway.
                     if (result.SpeedInMbps < 1)
                     {
-                        PopupHelper.PopupMessage(DialogTitles.Warning, SR.SlowConnection, Labels.ButtonContinue);
+                        PopupHelper.PopupMessage(DialogTitles.Warning, SR.SlowConnection, Labels.ButtonContinue, false);
                     }
 
                     SelectThrottleSettings(result);
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 }
                 else
                 {
-                    PopupHelper.PopupMessage(DialogTitles.Warning, SR.SpeedTestFailed, Labels.ButtonContinue);
+                    PopupHelper.PopupMessage(DialogTitles.Warning, SR.SpeedTestFailed, Labels.ButtonContinue, false);
                 }
 
             });

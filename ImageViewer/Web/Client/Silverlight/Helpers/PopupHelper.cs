@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
                 foreach (Button b in buttons)
                 {
                     b.Click += (s, e) => { msgBox.Close(); };
-                    panel.Children.Add(b);
+                    buttonPanel.Children.Add(b);
                 }
 
             }
@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             return msgBox;
         }
 
-        public static ChildWindow PopupMessage(string title, string message, string closeButtonLabel)
+        public static ChildWindow PopupMessage(string title, string message, string closeButtonLabel, bool closeWindow)
         {
             var msgBox = new ChildWindow();
             CurrentPopup = msgBox;
@@ -153,7 +153,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             content.Children.Add(new TextBlock() { Text = message, Margin = new Thickness(20), Foreground = new SolidColorBrush(Colors.White), FontSize = 14, HorizontalAlignment=HorizontalAlignment.Center });
 
             Button closeButton = new Button() { Content = closeButtonLabel, FontSize = 14, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(20) };
-            closeButton.Click += (s, o) => { msgBox.Close(); };
+            closeButton.Click += (s, o) => { 
+                msgBox.Close();
+                if (closeWindow)
+                {
+                    BrowserWindow.Close();
+                }
+            };
             content.Children.Add(closeButton);
             msgBox.Content = content;
             msgBox.IsTabStop = true;

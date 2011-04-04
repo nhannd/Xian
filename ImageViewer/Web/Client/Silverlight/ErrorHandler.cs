@@ -36,7 +36,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     OnCriticalError(null, EventArgs.Empty);
 
                 var window= PopupHelper.PopupMessage(DialogTitles.Error, string.Format(message, args));
-                window.Closed += (s, e) => { CloseWindow(); };
             });
         }
 
@@ -47,14 +46,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 if (OnCriticalError != null)
                     OnCriticalError(null, EventArgs.Empty);
 
-                var window = PopupHelper.PopupMessage(DialogTitles.Error, ex.Message, Labels.ButtonClose);
-                window.Closed += (s, e) => { CloseWindow(); };
+                var window = PopupHelper.PopupMessage(DialogTitles.Error, ex.Message);
             });
-        }
-
-        private static void CloseWindow()
-        {
-            BrowserWindow.Close();
         }
     }
 }

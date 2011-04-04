@@ -117,11 +117,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     Shutdown();
 
                     ApplicationStoppedEvent @event = e.ServerEvent as ApplicationStoppedEvent;
-                    List<Button> buttons = new List<Button>();
-                    
-                    Button closeButton = new Button { Content = Labels.ButtonClose, Margin = new Thickness(5) };
-                    closeButton.Click += (s, ev) => { BrowserWindow.Close(); };
-                    buttons.Add(closeButton);
 
                     String title= @event.IsTimedOut? DialogTitles.Timeout: DialogTitles.Error;
                     String mesage = @event.Message;
