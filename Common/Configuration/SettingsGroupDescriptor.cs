@@ -76,10 +76,13 @@ namespace ClearCanvas.Common.Configuration
 			if (attribute.ProviderTypeName == typeof(ExtendedLocalFileSettingsProvider).AssemblyQualifiedName)
 				return true;
 
-			if (attribute.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName && StandardSettingsProvider.IsLocal)
+            if (attribute.ProviderTypeName == typeof(ApplicationCriticalSettingsProvider).AssemblyQualifiedName)
 				return true;
 
-			return false;
+            if (attribute.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName && StandardSettingsProvider.IsLocal)
+				return true;
+            
+            return false;
 		}
 
 		private static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(Predicate<Type> includePredicate)
