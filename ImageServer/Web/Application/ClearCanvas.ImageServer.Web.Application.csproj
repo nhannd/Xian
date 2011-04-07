@@ -1521,26 +1521,26 @@
     <Content Include="Pages\WebViewer\Images\Searching.gif" />
     <Content Include="Pages\WebViewer\JQuery.ascx" />
     <Content Include="Pages\WebViewer\SearchPanel.ascx" />
-    <Content Include="App_GlobalResources\ColumnHeaders.resx">
+    <EmbeddedResource Include="App_GlobalResources\ColumnHeaders.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>ColumnHeaders.Designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\InputLabels.resx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\InputLabels.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>InputLabels.Designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\SearchFieldLabels.resx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\SearchFieldLabels.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>SearchFieldLabels.Designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\InputValidation.resx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\InputValidation.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>InputValidation.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\DetailedViewFieldLabels.resx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\DetailedViewFieldLabels.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>DetailedViewFieldLabels.Designer.cs</LastGenOutput>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pages\WebViewer\SearchPanel.js" />
     <Content Include="Pages\WebViewer\SessionTimeout.ascx" />
     <Content Include="Pages\WebViewer\StudyList.aspx" />
@@ -1692,11 +1692,11 @@
     <Content Include="App_Themes\Default\StyleSheets\Controls\Calendar.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Dialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Tabs.css" />
-    <Content Include="App_GlobalResources\ErrorMessages.resx">
+    <EmbeddedResource Include="App_GlobalResources\ErrorMessages.resx">
       <SubType>Designer</SubType>
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
-    </Content>
+    </EmbeddedResource>
     <Content Include="App_Themes\Default\images\Indicators\checked.png" />
     <Content Include="App_Themes\Default\images\Indicators\unchecked.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-left.png" />
@@ -1715,11 +1715,11 @@
     <Content Include="Controls\GridPager.ascx" />
     <Content Include="Controls\InvalidInputIndicator.ascx" />
     <Content Include="Controls\ModalDialog.ascx" />
-    <Content Include="App_GlobalResources\Tooltips.resx">
+    <EmbeddedResource Include="App_GlobalResources\Tooltips.resx">
       <SubType>Designer</SubType>
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Tooltips.Designer.cs</LastGenOutput>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\PersonNameInputPanel.js" />
     <Content Include="Controls\PersonNameInputPanel.ascx" />
     <Content Include="Controls\SectionPanel.ascx" />
@@ -1847,16 +1847,16 @@
     <Content Include="Pages\Admin\Configure\Devices\Default.aspx" />
     <Content Include="Pages\Admin\Configure\Devices\DevicePanel.ascx" />
     <Content Include="Pages\Admin\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
-    <Content Include="App_GlobalResources\GridPager.resx">
+    <EmbeddedResource Include="App_GlobalResources\GridPager.resx">
       <SubType>Designer</SubType>
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>GridPager.Designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\Titles.resx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Titles.resx">
       <SubType>Designer</SubType>
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Titles.Designer.cs</LastGenOutput>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Labels.resx">
       <SubType>Designer</SubType>
       <Generator>GlobalResourceProxyGenerator</Generator>
@@ -1981,11 +1981,11 @@
     <Content Include="PersistantImage.ashx" />
     <None Include="Scripts\CodeMirror\LICENSE" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
-    <Content Include="App_GlobalResources\SR.resx">
+    <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
       <Generator>GlobalResourceProxyGenerator</Generator>
-    </Content>
+    </EmbeddedResource>
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
     <Content Include="Services\webservice.htc" />
