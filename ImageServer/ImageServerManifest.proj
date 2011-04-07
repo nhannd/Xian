@@ -50,6 +50,7 @@
   <ItemGroup>
     <ManifestFiles Include="$(TrunkDirectory)\ImageServer\ManifestInputShredHost.xml" />
     <ManifestFiles Include="$(TrunkDirectory)\ImageServer\ManifestInputWeb.xml" />
+    <ManifestFiles Include="$(TrunkDirectory)\ImageServer\ManifestInputCommunity.xml" />
   </ItemGroup>
   
   <Target Name="Create ImageServer Manifest">
