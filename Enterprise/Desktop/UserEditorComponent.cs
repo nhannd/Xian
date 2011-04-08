@@ -141,7 +141,10 @@ namespace ClearCanvas.Enterprise.Desktop
                 {
                     if (_isNew)
                     {
-                        _userDetail = new UserDetail();
+                        _userDetail = new UserDetail() { 
+                        	// Force users to change the password when they log in
+                        	PasswordExpiryTime = Platform.Time 
+                         };
                     }
                     else
                     {
