@@ -25,11 +25,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	{
         public List<UserRowData> GetAllUsers()
         {
-            List<UserRowData> data = null;
+            List<UserRowData> data;
             
             using(UserManagement service = new UserManagement())
             {
-                data = CollectionUtils.Map<UserSummary, UserRowData>(
+                data = CollectionUtils.Map(
                     service.FindUsers(new ListUsersRequest()),
                     delegate(UserSummary summary)
                     {
@@ -49,13 +49,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 try
                 {
-                    UserDetail newUser = new UserDetail();
+                    UserDetail newUser = new UserDetail
+                                             {
+                                                 UserName = user.UserName,
+                                                 DisplayName = user.DisplayName,
+                                                 Enabled = user.Enabled,
+                                                 CreationTime = Platform.Time,
+                                                 PasswordExpiryTime = Platform.Time,
+                                                 ResetPassword = true // TODO: Why do we need to reset password here?
+                                             };
 
-                    newUser.UserName = user.UserName;
-                    newUser.DisplayName = user.DisplayName;
-                    newUser.Enabled = user.Enabled;
-                    newUser.CreationTime = Platform.Time;
-                    newUser.ResetPassword = true;
 
                     List<AuthorityGroupSummary> groups = new List<AuthorityGroupSummary>();
 
@@ -65,7 +68,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     }
 
                     newUser.AuthorityGroups = groups;
-
                     service.AddUser(newUser);
                     success = true;
 
@@ -74,7 +76,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                 	Platform.Log(LogLevel.Error, ex, "Unexpected exception adding user: {0}", user.DisplayName);
                 }
-            };
+            }
 
             return success;
         }
@@ -87,11 +89,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 try
                 {
-                    UserDetail updateUser = new UserDetail();
-
-                    updateUser.UserName = user.UserName;
-                    updateUser.DisplayName = user.DisplayName;
-                    updateUser.Enabled = user.Enabled;
+                    UserDetail updateUser = new UserDetail
+                                                {
+                                                    UserName = user.UserName,
+                                                    DisplayName = user.DisplayName,
+                                                    Enabled = user.Enabled
+                                                };
 
                     List<AuthorityGroupSummary> groups = new List<AuthorityGroupSummary>();
 
@@ -109,7 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                 	Platform.Log(LogLevel.Error, ex, "Unexpected exception updating user: {0}", user.DisplayName);
                 }
-            };
+            }
 
             return success;
         }
@@ -130,7 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                     exists = true;
                 }
-            };
+            }
 
             return exists;
         }
@@ -151,7 +154,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 	Platform.Log(LogLevel.Error, ex, "Unexpected exception resetting password for user: {0}",
                 	             user.DisplayName);
                 }
-            };
+            }
 
             return success;
         }
@@ -172,7 +175,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user: {0}",
 								 user.DisplayName);
                 }
-            };
+            }
 
             return success;
         }
@@ -196,14 +199,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         }
                     }
                 }
-            };
+            }
 
             return exists;
         }
 
         public bool AddUserGroup(UserGroupRowData userGroup)
         {
-            bool success = false;
+            bool success;
 
             using(AuthorityManagement service = new AuthorityManagement())
             {
@@ -216,22 +219,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                 service.AddAuthorityGroup(userGroup.Name, tokens);
                 success = true;
-            };
+            }
 
+            //TODO: Catch exception?
             return success;
         }
 
         public bool UpdateUserGroup(UserGroupRowData userGroup)
         {
-            bool success = false;
+            bool success;
 
             using(AuthorityManagement service = new AuthorityManagement())
         
             {
-                AuthorityGroupDetail detail = new AuthorityGroupDetail();
-                detail.AuthorityGroupRef = new EntityRef(userGroup.Ref);
-                detail.Name = userGroup.Name;
-                
+                AuthorityGroupDetail detail = new AuthorityGroupDetail
+                                                  {
+                                                      AuthorityGroupRef = new EntityRef(userGroup.Ref),
+                                                      Name = userGroup.Name
+                                                  };
+
                 foreach(TokenSummary token in userGroup.Tokens)
                 {
                     detail.AuthorityTokens.Add(new AuthorityTokenSummary(token.Name, token.Description));
@@ -239,8 +245,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                 service.UpdateAuthorityGroup(detail);
                 success = true;
-            };
+            }
 
+            //TODO: Catch exception?
             return success;
         }
 
@@ -259,14 +266,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                 	Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user group: {0}.", userGroup.Name);
                 }
-            };
+            }
 
             return success;
         }
 
         public bool UpdateTokens(List<TokenRowData> tokens)
         {
-            bool success = false;
+            bool success;
 
             using(AuthorityManagement service = new AuthorityManagement())
             {
@@ -279,8 +286,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                    service.ImportAuthorityTokens(tokenList);
                    success = true;
-            };
-
+            }
+            
+            //TODO: Catch exception?
             return success;
         }
     }
