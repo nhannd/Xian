@@ -204,6 +204,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
                     {
                         partitionCriteria.AeTitle.EqualTo(initParams.AeTitle);
                         IList<ServerPartition> partitions = partitionAdapter.GetServerPartitions(partitionCriteria);
+
+                        //TODO: What if the AE Title is invalid?
+                        
                         if(partitions.Count == 1)
                         {
                             partition = partitions[0];
