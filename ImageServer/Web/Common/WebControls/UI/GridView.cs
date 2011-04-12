@@ -68,6 +68,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             set { _selectUsingDataKeys = value; }
         }
 
+        // TODO: a lot of classes check this property before calling Databind.
+        // We should just override the Databind method in this class. 
         public bool IsDataBound
         {
             get { return _isDataBound;  }

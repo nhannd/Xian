@@ -38,7 +38,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
             SetPageTitle(Titles.DeletedStudiesPageTitle);
 
-            DataBind();
+            if (Page.IsPostBack)
+            {
+            	// Reload the data on post-back
+            	// Note: databinding also happens on initial rendering because the grid pager 
+            	// does so on Page_Load.
+                DataBind();
+            }
         }
 
         #endregion

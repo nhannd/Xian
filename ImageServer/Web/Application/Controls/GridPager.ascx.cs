@@ -105,21 +105,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // TODO: this is a very odd way to initialize the control, the "child" is subscribing to databound events on the "parent". 
+            // Yet, it is forcing the parent to load the data on initial rendering. Decision to load or not to load data 
+            // should belong to the target gridview or page control (by overriding the DataBind() method).
+            // In addition, here DataBind is called BEFORE databound event is attached.
+            //
             if (!IsPostBack)
             {
+                //TODO: Override GridView.Databind method and move this code into there?
                 if(!Target.IsDataBound)
                 {
-                    Target.DataBind();    
+                    Target.DataBind();
                 }
-            }
-            Target.DataBound += DataBoundHandler;
-            UpdateUI();
-         }
 
-        public override void DataBind()
-        {
-            base.DataBind();
-            UpdateUI();
+                // TODO: UpdateUI may fail if the DataBind has not been called on the target. 
+                // Should this be moved inside IsDataBound condition?
+                UpdateUI();
+            }
+            
+            // Listens to DataBound event. When DataBind is called
+            // on the target, the pager will refresh its UI contents.
+            Target.DataBound += DataBoundHandler;
         }
 
         protected override void OnInit(EventArgs e)
@@ -219,76 +225,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         #region Public methods
 
-        /// <summary>
-        /// Update the UI contents
-        /// </summary>
-        public void UpdateUI()
-        {
-            if (_target != null && _target.DataSource != null)
-            {
-                ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);            
-
-                CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
-                EnableCurrentPage(_target.PageCount > 1);
-
-                PageCountLabel.Text =
-                    string.Format(" {0} {1}", Resources.GridPager.PageOf, AdjustCurrentPageForDisplay(_target.PageCount));
-
-                SetPageContainerWidth(_target.PageCount);
-               
-                if (_target.PageIndex > 0)
-                {
-                    PrevPageButton.Enabled = true;
-                    PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousEnabled;
-
-                    FirstPageButton.Enabled = true;
-                    FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstEnabled;
-                }
-                else
-                {
-                    PrevPageButton.Enabled = false;
-                    PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
-
-                    FirstPageButton.Enabled = false;
-                    FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
-                }
-
-
-                if (_target.PageIndex < _target.PageCount - 1)
-                {
-                    NextPageButton.Enabled = true;
-                    NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextEnabled;
-
-                    LastPageButton.Enabled = true;
-                    LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastEnabled;
-                }
-                else
-                {
-                    NextPageButton.Enabled = false;
-                    NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
-
-                    LastPageButton.Enabled = false;
-                    LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
-
-                }
-            } else
-            {
-                ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
-                CurrentPage.Text = "0";
-                EnableCurrentPage(false);
-                PageCountLabel.Text = string.Format(" of 0");
-                PrevPageButton.Enabled = false;
-                PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
-                NextPageButton.Enabled = false;
-                NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
-
-                FirstPageButton.Enabled = false;
-                FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
-                LastPageButton.Enabled = false;
-                LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
-
-            }
-        }
+        
 
         public void InitializeGridPager(string singleItemLabel, string multipleItemLabel, GridView grid, GetRecordCountMethodDelegate recordCount, ImageServerConstants.GridViewPagerPosition position)
         {
@@ -337,6 +274,78 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         #endregion Public methods
 
         #region Private Methods
+
+        /// <summary>
+        /// Update the UI contents
+        /// </summary>
+        private void UpdateUI()
+        {
+            if (_target != null && _target.DataSource != null)
+            {
+                ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);
+
+                CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
+                EnableCurrentPage(_target.PageCount > 1);
+
+                PageCountLabel.Text =
+                    string.Format(" {0} {1}", Resources.GridPager.PageOf, AdjustCurrentPageForDisplay(_target.PageCount));
+
+                SetPageContainerWidth(_target.PageCount);
+
+                if (_target.PageIndex > 0)
+                {
+                    PrevPageButton.Enabled = true;
+                    PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousEnabled;
+
+                    FirstPageButton.Enabled = true;
+                    FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstEnabled;
+                }
+                else
+                {
+                    PrevPageButton.Enabled = false;
+                    PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
+
+                    FirstPageButton.Enabled = false;
+                    FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
+                }
+
+
+                if (_target.PageIndex < _target.PageCount - 1)
+                {
+                    NextPageButton.Enabled = true;
+                    NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextEnabled;
+
+                    LastPageButton.Enabled = true;
+                    LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastEnabled;
+                }
+                else
+                {
+                    NextPageButton.Enabled = false;
+                    NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
+
+                    LastPageButton.Enabled = false;
+                    LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
+
+                }
+            }
+            else
+            {
+                ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
+                CurrentPage.Text = "0";
+                EnableCurrentPage(false);
+                PageCountLabel.Text = string.Format(" of 0");
+                PrevPageButton.Enabled = false;
+                PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
+                NextPageButton.Enabled = false;
+                NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
+
+                FirstPageButton.Enabled = false;
+                FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
+                LastPageButton.Enabled = false;
+                LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
+
+            }
+        }
 
         private void SetPageContainerWidth(int pageCount)
         {
