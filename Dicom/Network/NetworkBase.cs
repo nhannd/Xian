@@ -1737,6 +1737,9 @@ namespace ClearCanvas.Dicom.Network
                 // the error reported to them through the OnNetworkError routine, and throwing an exception here
                 // might cause us to call OnNetworkError a second time, because the exception may be caught at a higher
                 // level
+                // Note, when fixing defect #8184, realized that throwing an exception here would cause
+                // failures in the ImageServer, because there are places where we wouldn't catch the 
+                // exception.  Should be careful if this is ever introduced back in.
                 //throw new DicomException("Unexpected exception when sending a DIMSE message",e);
             }
         }
