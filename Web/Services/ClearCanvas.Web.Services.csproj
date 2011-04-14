@@ -55,7 +55,6 @@
     <Compile Include="ApplicationCache.cs" />
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="ApplicationService.cs" />
-    <Compile Include="ApplicationServiceHost.cs" />
     <Compile Include="ConsoleHelper.cs" />
     <Compile Include="EntityHandler.cs" />
     <Compile Include="EntityHandlerStore.cs" />

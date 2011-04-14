@@ -47,8 +47,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 		
         private void SetImageBoxesParentSize()
 		{
-			foreach (ImageBoxView boxView in _imageBoxViews)
-				boxView.SetParentSize(new System.Windows.Size(StudyViewCanvas.ActualWidth, StudyViewCanvas.ActualHeight));
+            if (_imageBoxViews != null)
+            {
+                foreach (ImageBoxView boxView in _imageBoxViews)
+                    boxView.SetParentSize(new System.Windows.Size(StudyViewCanvas.ActualWidth, StudyViewCanvas.ActualHeight));
+            }
 		}
 
 		private void DestroyImageBoxViews()

@@ -491,7 +491,7 @@ namespace ClearCanvas.Web.Services
 		}
 
 
-	    private void DisposeMembers()
+	    internal void DisposeMembers()
 		{
 			//NOTE: This class has purposely been designed such that this method (and these members) do not need to be synchronized.
             //If you were to synchronize this method, it could deadlock with the other objects that can call

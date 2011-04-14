@@ -53,68 +53,96 @@ namespace ClearCanvas.Web.Services
 
 			return application;
 		}
+
+        /// <summary>
+        /// Ensure number of applicatin
+        /// </summary>
+        private static void CheckNumberOfApplications()
+        {
+            ApplicationServiceSettings settings = new ApplicationServiceSettings();
+            if (settings.MaximumSimultaneousApplications <= 0)
+                return;
+
+            Cache cache = Cache.Instance;
+            lock (cache.SyncLock)
+            {
+                // Note: because app is added into the cache ONLY when it has successfully started, there's a small chance that 
+                // this check will fail and # of app actually will exceed the max allowed. Decided to live with it for now.
+                if (cache.Count >= settings.MaximumSimultaneousApplications)
+                {
+                    Platform.Log(LogLevel.Warn, "Refuse to start: Max # of Simultaneous Applications ({0}) has been reached.", settings.MaximumSimultaneousApplications);
+                    throw new FaultException<OutOfResourceFault>(new OutOfResourceFault { ErrorMessage = SR.MessageMaxApplicationsAllowedExceeded });
+                }
+            }
+        }
         
-        public StartApplicationRequestResponse StartApplication(StartApplicationRequest request)
+        private static void CheckMemoryAvailable()
         {
             ApplicationServiceSettings settings = new ApplicationServiceSettings();
 
-        	//TODO (CR May 2010): should we be checking the max# of applications?
-            bool memoryAvailable = settings.MinimumFreeMemoryMB <= 0
-                                   ||
-                                   SystemResources.GetAvailableMemory(SizeUnits.Megabytes) >
-                                   settings.MinimumFreeMemoryMB;
+            if (settings.MinimumFreeMemoryMB <= 0)
+                return;
 
-            if (memoryAvailable)
+            bool memoryAvailable = SystemResources.GetAvailableMemory(SizeUnits.Megabytes) > settings.MinimumFreeMemoryMB;
+
+            if (!memoryAvailable)
             {
-                try
-                {
-					OperationContext operationContext = OperationContext.Current;
-					// 5 minute timeout, mostly for debugging.
-					operationContext.Channel.OperationTimeout = TimeSpan.FromMinutes(5);
+                string error = String.Format(
+                    "Application server out of resources.  Minimum free memory not available ({0}MB required, {1}MB available).",
+                    settings.MinimumFreeMemoryMB,
+                    SystemResources.GetAvailableMemory(SizeUnits.Megabytes));
 
-					Application application = Application.Start(request);
-                    
-					//TODO: when we start allowing application recovery, remove these lines.
-                    // NOTE: These events are fired only if the underlying connection is permanent (eg, duplex http or net tcp).
-					
-                    // Commented out per CR 3/22/2011, don't want the contenxt to reference the application
-                    //operationContext.Channel.Closed += delegate { application.Stop(); };
-					//operationContext.Channel.Faulted += delegate { application.Stop(); };
-
-                    return new StartApplicationRequestResponse { AppIdentifier = application.Identifier };
-                }
-                catch(Enterprise.Common.InvalidUserSessionException ex)
-                {
-                    throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
-                }
-                catch (Enterprise.Common.PasswordExpiredException ex)
-                {
-                    throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
-                }
-                catch (Enterprise.Common.UserAccessDeniedException ex)
-                {
-                    throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
-                }
-                catch (Enterprise.Common.RequestValidationException ex)
-                {
-                    throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
-                }
-                catch (Exception ex)
-                {
-                    throw new FaultException(ExceptionTranslator.Translate(ex));
-                } 
+                Platform.Log(LogLevel.Warn, error);
+                throw new FaultException<OutOfResourceFault>(new OutOfResourceFault { ErrorMessage = error });
             }
-
-            string error = String.Format(
-                "Application server out of resources.  Minimum free memory not available ({0}MB expected, {1}MB available).",
-                settings.MinimumFreeMemoryMB,
-                SystemResources.GetAvailableMemory(SizeUnits.Megabytes));
-                
-            Platform.Log(LogLevel.Warn, error);
-
-            throw new FaultException(error);
         }
 
+        public StartApplicationRequestResponse StartApplication(StartApplicationRequest request)
+        {
+            CheckNumberOfApplications();
+            CheckMemoryAvailable();
+
+            try
+            {
+                OperationContext operationContext = OperationContext.Current;
+                // 5 minute timeout, mostly for debugging.
+                operationContext.Channel.OperationTimeout = TimeSpan.FromMinutes(5);
+
+                Application application = Application.Start(request);
+
+                //TODO: when we start allowing application recovery, remove these lines.
+                // NOTE: These events are fired only if the underlying connection is permanent (eg, duplex http or net tcp).
+
+                // Commented out per CR 3/22/2011, don't want the contenxt to reference the application
+                //operationContext.Channel.Closed += delegate { application.Stop(); };
+                //operationContext.Channel.Faulted += delegate { application.Stop(); };
+
+                return new StartApplicationRequestResponse { AppIdentifier = application.Identifier };
+            }
+            catch (Enterprise.Common.InvalidUserSessionException ex)
+            {
+                throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
+            }
+            catch (Enterprise.Common.PasswordExpiredException ex)
+            {
+                throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
+            }
+            catch (Enterprise.Common.UserAccessDeniedException ex)
+            {
+                throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
+            }
+            catch (Enterprise.Common.RequestValidationException ex)
+            {
+                throw new FaultException<SessionValidationFault>(new SessionValidationFault { ErrorMessage = ExceptionTranslator.Translate(ex) });
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ExceptionTranslator.Translate(ex));
+            } 
+
+            
+        }
+        
         //TODO (CR 3-22-2011) Change return value to EventSet and eliminate ProcessMessageResult
         public ProcessMessagesResult ProcessMessages(MessageSet messageSet)
 		{

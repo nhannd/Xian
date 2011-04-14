@@ -319,21 +319,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AppManifest.xml" />
-    <None Include="Service References\AppServiceReference\ApplicationService22.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService23.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService55.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService56.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService1.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService57.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService58.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService59.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService4.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet.datasource">
@@ -351,7 +351,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService11.disco" />
+    <None Include="Service References\AppServiceReference\ApplicationService.disco" />
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>

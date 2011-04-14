@@ -70,6 +70,15 @@ namespace ClearCanvas.Web.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximum number of simultaneous connections has been reached. Please try again later..
+        /// </summary>
+        internal static string MessageMaxApplicationsAllowedExceeded {
+            get {
+                return ResourceManager.GetString("MessageMaxApplicationsAllowedExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No communication has been received from the client since {0}.
         /// </summary>
         internal static string MessageNoCommunicationFromClientError {

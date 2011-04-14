@@ -128,7 +128,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
  
         private void OnError(Exception exception)
         {
-            if (exception is CommunicationException)
+            if (exception is FaultException<SessionValidationFault>)
+            {
+                FaultException<SessionValidationFault> fault = exception as FaultException<SessionValidationFault>;
+                DisplayFaulted(DialogTitles.Error, fault.Detail.ErrorMessage);
+            }
+            else if (exception is FaultException<OutOfResourceFault>)
+            {
+                FaultException<OutOfResourceFault> fault = exception as FaultException<OutOfResourceFault>;
+                DisplayFaulted(DialogTitles.Error, fault.Detail.ErrorMessage);
+            }
+            else if (exception is CommunicationException)
             {
                 if (!NetworkInterface.GetIsNetworkAvailable())
                     DisplayFaulted(DialogTitles.Error, ErrorMessages.ConnectionLost);
@@ -150,11 +160,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     DisplayFaulted(DialogTitles.Error, sb.ToString());
                 }
             }
-            else if (exception is FaultException<SessionValidationFault>)
-            {
-                FaultException<SessionValidationFault> fault = exception as FaultException<SessionValidationFault>;
-                DisplayFaulted(DialogTitles.Error, fault.Detail.ErrorMessage);
-            }
+            
             else
             {
                 StringBuilder sb = new StringBuilder();

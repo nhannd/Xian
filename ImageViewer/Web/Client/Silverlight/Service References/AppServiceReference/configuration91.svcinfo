@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="ZJKghl5AfLQG5Qrl6JyEh8jcAYw=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="Od+zvxRud5SR3tEy8xnKshFL2OU=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="customBinding" name="CustomBinding_IApplicationService">
       <properties>
@@ -115,10 +115,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="CustomBinding_IApplicationService" contract="AppServiceReference.IApplicationService" bindingType="customBinding" address="http://localhost:3523/Services/ApplicationService.svc/basicHttp" bindingConfiguration="CustomBinding_IApplicationService">
+    <endpoint name="CustomBinding_IApplicationService" contract="AppServiceReference.IApplicationService" bindingType="customBinding" address="http://localhost:3243/Services/ApplicationService.svc/basicHttp" bindingConfiguration="CustomBinding_IApplicationService">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://localhost:3523/Services/ApplicationService.svc/basicHttp</serializedValue>
+          <serializedValue>http://localhost:3243/Services/ApplicationService.svc/basicHttp</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

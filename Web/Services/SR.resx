@@ -120,6 +120,9 @@
   <data name="MessageAccessDenied" xml:space="preserve">
     <value>You are not authorized to view images.</value>
   </data>
+  <data name="MessageMaxApplicationsAllowedExceeded" xml:space="preserve">
+    <value>Maximum number of simultaneous connections has been reached. Please try again later.</value>
+  </data>
   <data name="MessageNoCommunicationFromClientError" xml:space="preserve">
     <value>No communication has been received from the client since {0}</value>
   </data>

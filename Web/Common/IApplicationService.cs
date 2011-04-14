@@ -73,6 +73,7 @@ namespace ClearCanvas.Web.Common
     {
 		[OperationContract(IsOneWay = false)]
         [FaultContract(typeof(SessionValidationFault))]
+        [FaultContract(typeof(OutOfResourceFault))]
         StartApplicationRequestResponse StartApplication(StartApplicationRequest request);
 
 		[OperationContract(IsOneWay = false)]

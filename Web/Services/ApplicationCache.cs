@@ -16,9 +16,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Web.Services
 {
-	public abstract partial class Application
-	{
-		private class Cache
+	internal class Cache
 		{
 		    private const int CheckIntervalInSeconds = 15;
             private const int ApplicationShutdownDelayInSeconds = 5;
@@ -36,6 +34,20 @@ namespace ClearCanvas.Web.Services
 		    
             private Timer _cleanupTimer;
 
+		    internal object SyncLock
+		    {
+                get { return _syncLock; }
+		    }
+
+		    internal int Count
+		    {
+		        get{
+                    lock (_syncLock)
+                    {
+                        return _applications.Count;
+                    }
+		        }
+		    }
 
             private Cache()
             {
@@ -65,6 +77,7 @@ namespace ClearCanvas.Web.Services
 
                             if (removalList.Count > 0)
                             {
+                                string appInstanceName = null;
                                 foreach (Guid appId in removalList)
                                 {
                                     Application app = null;
@@ -72,6 +85,7 @@ namespace ClearCanvas.Web.Services
                                     {
 
                                         app = _applications[appId];
+                                        appInstanceName = app.InstanceName;
                                         _applications.Remove(appId);
                                         _appsToBeRemoved.Remove(appId);
                                     }
@@ -81,8 +95,7 @@ namespace ClearCanvas.Web.Services
                                         {
                                             app.DisposeMembers();
                                         }
-                                        Platform.Log(LogLevel.Info,
-                                                     "Application {0} removed from cache.", appId);
+                                        Platform.Log(LogLevel.Info, "{0} removed from cache.", appInstanceName);
                                     }
                                 }
                             }
@@ -141,6 +154,5 @@ namespace ClearCanvas.Web.Services
 					_applications.Clear();
 				}
 			}
-		}
-	}
+		}	
 }
