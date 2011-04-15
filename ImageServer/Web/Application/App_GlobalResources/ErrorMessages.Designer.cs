@@ -90,15 +90,6 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to Delete User Group &quot;{0}&quot; because there are users who are a part of this group..
-        /// </summary>
-        internal static string AdminUserGroups_DeleteUserGroupFailed {
-            get {
-                return ResourceManager.GetString("AdminUserGroups_DeleteUserGroupFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to delete this alert item..
         /// </summary>
         internal static string AlertDeleteFailed {
@@ -230,6 +221,24 @@ namespace Resources {
         internal static string ErrorShowStackTraceMessage {
             get {
                 return ResourceManager.GetString("ErrorShowStackTraceMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are currently {1} users belonging to this group..
+        /// </summary>
+        internal static string ExceptionAuthorityGroupIsNotEmpty_MultipleUsers {
+            get {
+                return ResourceManager.GetString("ExceptionAuthorityGroupIsNotEmpty_MultipleUsers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is currently one user belonging to this group..
+        /// </summary>
+        internal static string ExceptionAuthorityGroupIsNotEmpty_OneUser {
+            get {
+                return ResourceManager.GetString("ExceptionAuthorityGroupIsNotEmpty_OneUser", resourceCulture);
             }
         }
         

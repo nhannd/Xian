@@ -15,13 +15,11 @@ using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Authentication.Imex;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 {
@@ -113,11 +111,20 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 			IAuthorityGroupBroker broker = PersistenceContext.GetBroker<IAuthorityGroupBroker>();
             AuthorityGroup authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupRef, EntityLoadFlags.Proxy);
 
-			// before we can delete an authority group, first need to remove all tokens and users
-			authorityGroup.AuthorityTokens.Clear();
-			authorityGroup.RemoveAllUsers();
+            if (request.DeleteOnlyWhenEmpty)
+            {
+                int count = GetUserCountForGroup(authorityGroup);
+                if (count > 0)
+                    throw new AuthorityGroupIsNotEmptyException(authorityGroup.Name, count);
+            }
+            else
+            {
+                // before we can delete an authority group, first need to remove all tokens and users
+                authorityGroup.AuthorityTokens.Clear();
+                authorityGroup.RemoveAllUsers();
+            }
 
-			// delete group
+		    // delete group
 			broker.Delete(authorityGroup);
 
 			PersistenceContext.SynchState();
@@ -125,7 +132,8 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 			return new DeleteAuthorityGroupResponse();
 		}
 
-    	[UpdateOperation]
+
+	    [UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
 		public ImportAuthorityTokensResponse ImportAuthorityTokens(ImportAuthorityTokensRequest request)
 		{
@@ -172,5 +180,15 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 		}
 
     	#endregion
+
+        #region Helper Methods
+
+        private int GetUserCountForGroup(AuthorityGroup group)
+        {
+            IAuthorityGroupBroker broker = base.PersistenceContext.GetBroker<IAuthorityGroupBroker>();
+            return broker.GetUserCountForGroup(group);
+        }
+
+        #endregion
     }
 }

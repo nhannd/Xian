@@ -227,6 +227,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Are you sure you want to delete this group?.
+        /// </summary>
+        internal static string AdminUserGroup_DeleteNonEmptyGroupDialog_AreYouSure {
+            get {
+                return ResourceManager.GetString("AdminUserGroup_DeleteNonEmptyGroupDialog_AreYouSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure to delete user &quot;{0}&quot; ({1})?.
         /// </summary>
         internal static string AdminUser_DeleteDialog_AreYouSure {

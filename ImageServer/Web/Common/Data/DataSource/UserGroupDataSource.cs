@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Enterprise.Admin;
 
@@ -92,7 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                     filteredList, delegate(AuthorityGroupSummary group)
                               {
                                   UserGroupRowData row =
-                                      new UserGroupRowData(service.LoadAuthorityGroupDetail(group));
+                                      new UserGroupRowData(service.LoadAuthorityGroupDetail(group.AuthorityGroupRef));
                                   return row;
                               });
 

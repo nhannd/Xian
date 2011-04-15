@@ -754,4 +754,8 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="SIQ_DataMayBeTruncated" xml:space="preserve">
     <value>Conflicting images contain information which is too long and will be truncated</value>
   </data>
+  <data name="AdminUserGroup_DeleteNonEmptyGroupDialog_AreYouSure" xml:space="preserve">
+    <value>{0} Are you sure you want to delete this group?</value>
+    <comment>{0} is a reason for the message. For eg: the group contains one or more users.</comment>
+  </data>
 </root>

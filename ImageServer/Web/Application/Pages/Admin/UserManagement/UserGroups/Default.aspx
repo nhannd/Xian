@@ -29,5 +29,6 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="DialogsPlaceHolder" runat="server">
     <localAsp:AddEditUserGroupsDialog ID="AddEditUserGroupsDialog" runat="server" />
     <ccAsp:MessageBox ID="DeleteConfirmation" runat="server" />    
+    <ccAsp:MessageBox ID="DeleteNonEmptyGroupConfirmation" runat="server" />  
     <ccAsp:MessageBox ID="DeleteErrorMessage" runat="server" />    
 </asp:Content>

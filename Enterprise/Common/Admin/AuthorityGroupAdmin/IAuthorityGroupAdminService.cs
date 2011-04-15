@@ -55,6 +55,7 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 		/// <returns><see cref="DeleteAuthorityGroupResponse"/></returns>
 		[OperationContract]
 		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(AuthorityGroupIsNotEmptyException))]
 		[FaultContract(typeof(RequestValidationException))]
 		DeleteAuthorityGroupResponse DeleteAuthorityGroup(DeleteAuthorityGroupRequest request);
 

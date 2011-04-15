@@ -47,21 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         private IList<UserGroupRowData> _userGroupRows;
         #endregion Private members
 
-        private static void CustomizeTokensColumn(GridViewRowEventArgs e)
-        {
-            TextBox textBox = ((TextBox) e.Row.FindControl("TokensTextBox"));
-            UserGroupRowData rowData = e.Row.DataItem as UserGroupRowData;
-
-            if (rowData != null)
-            {
-                string tokenList = string.Empty;
-                foreach (TokenSummary token in rowData.Tokens)
-                {
-                    tokenList += token.Description + "\n";
-                }
-                textBox.Text = tokenList;
-            }
-        }
+        
         
         /// <summary>
         /// Retrieve reference to the grid control being used to display the devices.
@@ -163,10 +149,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
+                    
                     CustomizeTokensColumn(e);
                 }
             }
 
+        }
+
+        private static void CustomizeTokensColumn(GridViewRowEventArgs e)
+        {
+            TextBox textBox = ((TextBox)e.Row.FindControl("TokensTextBox"));
+            UserGroupRowData rowData = e.Row.DataItem as UserGroupRowData;
+
+            if (rowData != null)
+            {
+                string tokenList = string.Empty;
+                foreach (TokenSummary token in rowData.Tokens)
+                {
+                    tokenList += token.Description + "\n";
+                }
+                textBox.Text = tokenList;
+            }
         }
 
         protected void DisposeUserGroupsDataSource(object sender, ObjectDataSourceDisposingEventArgs e)

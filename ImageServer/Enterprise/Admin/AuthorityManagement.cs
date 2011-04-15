@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
@@ -62,9 +63,24 @@ namespace ClearCanvas.ImageServer.Enterprise.Admin
             _service.UpdateAuthorityGroup(new UpdateAuthorityGroupRequest(detail));
         }
 
-        public void DeleteAuthorityGroup(EntityRef entityRef)
+        public void DeleteAuthorityGroup(EntityRef entityRef, bool checkIfGroupIsEmpty)
         {
-            _service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(entityRef));
+            try
+            {
+                _service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(entityRef) { DeleteOnlyWhenEmpty = checkIfGroupIsEmpty });
+            }
+            catch(FaultException<ConcurrentModificationException> ex)
+            {
+                throw ex.Detail;
+            }
+            catch (FaultException<AuthorityGroupIsNotEmptyException> ex)
+            {
+                throw ex.Detail;
+            }
+            catch (FaultException<RequestValidationException> ex)
+            {
+                throw ex.Detail;
+            }
         }
 
         public void ImportAuthorityTokens(List<AuthorityTokenSummary> tokens)
@@ -72,11 +88,9 @@ namespace ClearCanvas.ImageServer.Enterprise.Admin
             _service.ImportAuthorityTokens(new ImportAuthorityTokensRequest(tokens));
         }
 
-        public AuthorityGroupDetail LoadAuthorityGroupDetail(AuthorityGroupSummary group)
+        public AuthorityGroupDetail LoadAuthorityGroupDetail(EntityRef entityRef)
         {
-            return
-                _service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(group.AuthorityGroupRef)).
-                    AuthorityGroupDetail;
+            return _service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(entityRef)).AuthorityGroupDetail;
         }
 
         public IList<AuthorityTokenSummary> ListAuthorityTokens()

@@ -10,7 +10,9 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -251,24 +253,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return success;
         }
 
-        public bool DeleteUserGroup(UserGroupRowData userGroup)
+        public void DeleteUserGroup(UserGroupRowData userGroup, bool checkIfGroupIsEmpty)
         {
-            bool success = false;
-
-            using(AuthorityManagement service = new AuthorityManagement())
+            using (AuthorityManagement service = new AuthorityManagement())
             {
                 try
                 {
-                    service.DeleteAuthorityGroup(new EntityRef(userGroup.Ref));
-                    success = true;
+                    EntityRef entityRef = new EntityRef(userGroup.Ref);
+                    service.DeleteAuthorityGroup(entityRef, checkIfGroupIsEmpty);
                 }
                 catch (Exception ex)
                 {
-                	Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user group: {0}.", userGroup.Name);
+                    Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user group: {0}.", userGroup.Name);
+                    throw;
                 }
             }
-
-            return success;
         }
 
         public bool UpdateTokens(List<TokenRowData> tokens)

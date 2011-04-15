@@ -128,9 +128,6 @@
 
 Please check the log file or contact the server administrator.</value>
   </data>
-  <data name="AdminUserGroups_DeleteUserGroupFailed" xml:space="preserve">
-    <value>Unable to Delete User Group "{0}" because there are users who are a part of this group.</value>
-  </data>
   <data name="AlertDeleteFailed" xml:space="preserve">
     <value>Unable to delete this alert item.</value>
   </data>
@@ -175,6 +172,12 @@ Please check the log file or contact the server administrator.</value>
   </data>
   <data name="ErrorShowStackTraceMessage" xml:space="preserve">
     <value>To include the ImageServer's error message, click here.</value>
+  </data>
+  <data name="ExceptionAuthorityGroupIsNotEmpty_MultipleUsers" xml:space="preserve">
+    <value>There are currently {1} users belonging to this group.</value>
+  </data>
+  <data name="ExceptionAuthorityGroupIsNotEmpty_OneUser" xml:space="preserve">
+    <value>There is currently one user belonging to this group.</value>
   </data>
   <data name="GeneralErrorMessage" xml:space="preserve">
     <value>This message is being displayed because the ClearCanvas ImageServer encountered a situation that was unexpected. The resulting error has been recorded for future analysis. 

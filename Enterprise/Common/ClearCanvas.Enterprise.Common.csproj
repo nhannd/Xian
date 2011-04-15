@@ -115,6 +115,7 @@
     <Compile Include="Authentication\TerminateSessionResponse.cs" />
     <Compile Include="Authentication\ValidateSessionRequest.cs" />
     <Compile Include="Authentication\ValidateSessionResponse.cs" />
+    <Compile Include="AuthorityGroupIsNotEmptyException.cs" />
     <Compile Include="Caching\Cache.cs" />
     <Compile Include="Caching\CacheClientLoggingDecorator.cs" />
     <Compile Include="Caching\CacheException.cs" />
