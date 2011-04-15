@@ -822,11 +822,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				throw new DicomException("Unable to remove overlay with 16 Bits Stored and 16 Bits Allocated");
 
 			int frameSize = pd.UncompressedFrameSize;
-			int overlaySize = frameSize/pd.BitsAllocated;
-			if (frameSize%pd.BitsAllocated > 0)
-				overlaySize++;
-
-			int numValues = frameSize/pd.BytesAllocated;
+			int overlaySize = (int)Math.Ceiling((frameSize * pd.NumberOfFrames)/(pd.BitsAllocated*1d));			
+        	int numValues = frameSize/pd.BytesAllocated;
 
 			byte[] overlay = new byte[overlaySize];
 			int overlayOffset = 0;
