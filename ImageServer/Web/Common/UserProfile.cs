@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Web.Common
             if (SessionManager.Current.User.IsInRole(ImageServerAuthorityTokens.Study.Search))
                 return ImageServerConstants.PageURLs.SearchPage;
 
-            if (SessionManager.Current.User.IsInRole(AuthorityTokens.Admin.System.Configuration))
+            if (SessionManager.Current.User.IsInRole(AuthorityTokens.Admin.Security.User))
                 return ImageServerConstants.PageURLs.AdminUserPage;
             
             if (SessionManager.Current.User.IsInRole(ImageServerAuthorityTokens.WorkQueue.Search))
