@@ -11,12 +11,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Desktop;
 
@@ -241,16 +243,14 @@ namespace ClearCanvas.Enterprise.Desktop
 
 			foreach (AuthorityGroupSummary item in items)
 			{
-				try
+			    try
 				{
-					Platform.GetService<IAuthorityGroupAdminService>(
-						delegate(IAuthorityGroupAdminService service)
-						{
-							service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(item.AuthorityGroupRef));
-						});
-
-					deletedItems.Add(item);
-				}
+				    bool cancel;
+                    if (DoDeleteAuthorityGroup(item, out cancel))
+					    deletedItems.Add(item);
+                    else if (cancel)
+                        break;
+                }
 				catch (Exception e)
 				{
 					failureMessage = e.Message;
@@ -259,6 +259,68 @@ namespace ClearCanvas.Enterprise.Desktop
 
 			return deletedItems.Count > 0;
 		}
+
+        /// <summary>
+        /// Deletes the specified user group and prompt user for confirmation if the group is not empty
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="cancel"></param>
+        /// <returns></returns>
+        private bool DoDeleteAuthorityGroup(AuthorityGroupSummary group,  out bool cancel)
+        {
+            cancel = false;
+            try
+            {
+                DeleteGroupHelper(group, true);
+                return true;
+            }
+            catch (AuthorityGroupIsNotEmptyException ex)
+            {
+                string message = ex.UserCount > 1
+                                         ? string.Format(SR.ExceptionAuthorityGroupIsNotEmpty_MultitpleUsers, ex.UserCount, ex.GroupName)
+                                         : string.Format(SR.ExceptionAuthorityGroupIsNotEmpty_OneUser, ex.GroupName);
+
+                DialogBoxAction action = this.Host.ShowMessageBox(message, MessageBoxActions.YesNoCancel);
+
+                switch (action)
+                {
+                    case DialogBoxAction.Cancel:
+                            cancel = true;
+                            return false; // not deleted, don't continue
+
+                    case DialogBoxAction.No:
+                        return false;  // not deleted, continue
+
+                    case DialogBoxAction.Yes:
+                        
+                        DeleteGroupHelper(group, false); // note: exceptions will be handled by caller
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static void DeleteGroupHelper(AuthorityGroupSummary group, bool checkIfEmpty)
+        {
+            try
+            {
+                Platform.GetService<IAuthorityGroupAdminService>(
+                    service => service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(group.AuthorityGroupRef) { DeleteOnlyWhenEmpty = checkIfEmpty }));
+            }
+            catch (FaultException<RequestValidationException> ex)
+            {
+                throw ex.Detail;
+            }
+            catch (FaultException<ConcurrentModificationException> ex)
+            {
+                throw ex.Detail;
+            }
+            catch (FaultException<AuthorityGroupIsNotEmptyException> ex)
+            {
+                throw ex.Detail;
+            }
+        }
 
 		/// <summary>
 		/// Compares two items to see if they represent the same item.

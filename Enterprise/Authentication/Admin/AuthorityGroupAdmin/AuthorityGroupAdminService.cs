@@ -117,12 +117,10 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
                 if (count > 0)
                     throw new AuthorityGroupIsNotEmptyException(authorityGroup.Name, count);
             }
-            else
-            {
-                // before we can delete an authority group, first need to remove all tokens and users
-                authorityGroup.AuthorityTokens.Clear();
-                authorityGroup.RemoveAllUsers();
-            }
+
+            // before we can delete an authority group, first need to remove all tokens and users
+            authorityGroup.AuthorityTokens.Clear();
+            authorityGroup.RemoveAllUsers();
 
 		    // delete group
 			broker.Delete(authorityGroup);

@@ -141,6 +141,12 @@
   <data name="ColumnUserName" xml:space="preserve">
     <value>Display Name</value>
   </data>
+  <data name="ExceptionAuthorityGroupIsNotEmpty_MultitpleUsers" xml:space="preserve">
+    <value>There are currently {0} users in '{1}' user group. Are you sure you want to delete this group?</value>
+  </data>
+  <data name="ExceptionAuthorityGroupIsNotEmpty_OneUser" xml:space="preserve">
+    <value>There is currently one user in '{0}' user group. Are you sure you want to delete this group?</value>
+  </data>
   <data name="ExceptionSaveAuthorityGroup" xml:space="preserve">
     <value>Unable to save Authority Group</value>
   </data>
