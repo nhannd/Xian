@@ -366,7 +366,7 @@
     <value>Show Analysis</value>
   </data>
   <data name="MessageContactPacsAdmin" xml:space="preserve">
-    <value>Please contact your PACS administrator, or check the log.</value>
+    <value>Please contact your PACS administrator for assistance.</value>
   </data>
   <data name="MessageErrorCloningDisplaySet" xml:space="preserve">
     <value>An error has occured while attempting to clone a display set.  Please check the log for more details.</value>
@@ -417,7 +417,7 @@
     <value>No renderer plugins exist; defaulting to GDI renderer.</value>
   </data>
   <data name="MessageNoVisibleDisplaySets" xml:space="preserve">
-    <value>No images could be found to display.  The viewer cannot be opened.</value>
+    <value>No images could be loaded for display.</value>
   </data>
   <data name="MessageOneStudyIncomplete" xml:space="preserve">
     <value>One study was only partially loaded.</value>
@@ -453,17 +453,14 @@ Please check the log for more details.</value>
   <data name="MessageStudyInUse" xml:space="preserve">
     <value>The study is currently in use and cannot be loaded.  Try waiting a few minutes and load the study again.</value>
   </data>
-  <data name="MessageStudyNearline" xml:space="preserve">
-    <value>The study is nearline and cannot be loaded.  If your PACS is a ClearCanvas ImageServer, try waiting a few minutes and load the study again.  Otherwise, the study must be restored by a PACS administrator.</value>
+  <data name="MessageStudyNearlineNoRestore" xml:space="preserve">
+    <value>The study is nearline and cannot be restored at this time.  Please contact your PACS administrator to restore the study.</value>
   </data>
   <data name="MessageStudyNotFound" xml:space="preserve">
     <value>The study could not be found.</value>
   </data>
   <data name="MessageStudyOffline" xml:space="preserve">
-    <value>The study is offline and cannot be loaded until it has been restored by a PACS administrator.</value>
-  </data>
-  <data name="MessageStudyUnavailable" xml:space="preserve">
-    <value>The study is unavailable.</value>
+    <value>The study cannot be loaded because it is offline. Please contact your PACS administrator to restore the study.</value>
   </data>
   <data name="NamePrefetchingStrategyVisibleDisplaySet" xml:space="preserve">
     <value>Visible Display Set</value>
@@ -526,5 +523,8 @@ Please check the log for more details.</value>
     <value>One or more overlays
 cannot be displayed.
 Use image with caution.</value>
+  </data>
+  <data name="MessageStudyNearline" xml:space="preserve">
+    <value>The study is currently being restored from archive.  Please try loading it again in a few minutes.</value>
   </data>
 </root>

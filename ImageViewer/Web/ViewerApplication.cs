@@ -36,20 +36,25 @@ namespace ClearCanvas.ImageViewer.Web
 	[ExtensionOf(typeof(ExceptionTranslatorExtensionPoint))]
 	internal class ExceptionTranslator : IExceptionTranslator
 	{
-		
-
 		#region IExceptionTranslator Members
 
 		public string Translate(Exception e)
 		{
+			//TODO (CR April 2011): Figure out how to share the Exception Policies for these messages ...
+			//Current ExceptionHandler/Policy design just doesn't work for this at all.
 			if (e.GetType().Equals(typeof(InUseLoadStudyException)))
-				return SR.MessageStudyIsInUse;
+				return ImageViewer.SR.MessageStudyInUse;
 			if (e.GetType().Equals(typeof(NearlineLoadStudyException)))
-				return SR.MessageStudyNearline;
+			{
+				return ((NearlineLoadStudyException)e).IsStudyBeingRestored
+					? ImageViewer.SR.MessageStudyNearline
+					: String.Format("{0}  {1}", ImageViewer.SR.MessageStudyNearlineNoRestore, ImageViewer.SR.MessageContactPacsAdmin);
+			}
 			if (e.GetType().Equals(typeof(OfflineLoadStudyException)))
-				return SR.MessageStudyOffline;
+				return ImageViewer.SR.MessageStudyOffline;
 			if (e.GetType().Equals(typeof(NotFoundLoadStudyException)))
-                return SR.MessageStudyNotFound;
+				return ImageViewer.SR.MessageStudyNotFound;
+
 			if (e.GetType().Equals(typeof(PatientStudiesNotFoundException)))
 				return SR.MessagePatientStudiesNotFound;
 			if (e.GetType().Equals(typeof(AccessionStudiesNotFoundException)))

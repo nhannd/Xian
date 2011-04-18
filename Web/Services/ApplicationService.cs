@@ -139,8 +139,6 @@ namespace ClearCanvas.Web.Services
             {
                 throw new FaultException(ExceptionTranslator.Translate(ex));
             } 
-
-            
         }
         
         //TODO (CR 3-22-2011) Change return value to EventSet and eliminate ProcessMessageResult
