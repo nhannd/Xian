@@ -18,13 +18,9 @@ namespace ClearCanvas.Enterprise.Authentication.Hibernate.Brokers
     {
         public int GetUserCountForGroup(AuthorityGroup group)
         {
-            HqlQuery query = new HqlQuery("select count(*) from User u join u.AuthorityGroups g");
-
-            AuthorityGroupSearchCriteria whereGroup = new AuthorityGroupSearchCriteria();
-            whereGroup.OID.EqualTo(group.OID);
-            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("g", whereGroup));
-            IList<long> results = ExecuteHql<long>(query);
-            return results.Count == 0 ? 0 : (int)results[0];
+			var q = new HqlQuery("select count(elements(g.Users)) from AuthorityGroup g");
+			q.Conditions.Add(new HqlCondition("g = ?", group));
+        	return (int)ExecuteHqlUnique<long>(q);
         }
     }
 }
