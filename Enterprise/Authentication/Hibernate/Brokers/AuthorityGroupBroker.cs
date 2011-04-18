@@ -9,18 +9,17 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 
 namespace ClearCanvas.Enterprise.Authentication.Hibernate.Brokers
 {
-    public partial class AuthorityGroupBroker
-    {
-        public int GetUserCountForGroup(AuthorityGroup group)
-        {
+	public partial class AuthorityGroupBroker
+	{
+		public int GetUserCountForGroup(AuthorityGroup group)
+		{
 			var q = new HqlQuery("select count(elements(g.Users)) from AuthorityGroup g");
 			q.Conditions.Add(new HqlCondition("g = ?", group));
-        	return (int)ExecuteHqlUnique<long>(q);
-        }
-    }
+			return (int)ExecuteHqlUnique<long>(q);
+		}
+	}
 }
