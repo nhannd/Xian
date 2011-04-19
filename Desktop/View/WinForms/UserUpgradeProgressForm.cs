@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.ComponentModel;
 using Crownwood.DotNetMagic.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
@@ -25,6 +26,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_progressBar.Step = 1;
 		}
 
+		[Localizable(true)]
 		public string Message
 		{
 			get { return _message.Text; }

@@ -108,7 +108,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 // Show ContextMenu when right click anywhere on the TreeView
                 Point mousePoint = PointToScreen(new Point(e.X, e.Y));
-                contextMenuStrip1.Show(mousePoint.X + _detailTree.Left, mousePoint.Y + _detailTree.Top);
+                _contextMenu.Show(mousePoint.X + _detailTree.Left, mousePoint.Y + _detailTree.Top);
             }
         }
 
@@ -130,9 +130,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _detailButton.Text = _detailButton.Text.Replace("<", ">");
 
             // Shrink the user control
-            Rectangle thisBounds = Bounds;
-            thisBounds.Height = _quitButton.Bounds.Bottom - thisBounds.Top + 10;
-            Bounds = thisBounds;
+			Height -= _detailTree.Height;
         }
 
         private void ShowDetails()
@@ -141,9 +139,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _detailButton.Text = _detailButton.Text.Replace(">", "<");
 
             // Expand the user control
-            Rectangle thisBounds = Bounds;
-            thisBounds.Height = _detailTree.Bounds.Bottom - thisBounds.Top + 10;
-            Bounds = thisBounds;
+			Height += _detailTree.Height;
         }
 
         private void BuildTreeFromException(TreeNode thisNode, Exception e)

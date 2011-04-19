@@ -230,6 +230,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		[Category("Appearance")]
 		[Description("The separator used to delimit individual modifiers and the pressed key in the textbox display.")]
 		[DefaultValue("+")]
+		[Localizable(true)]
 		public virtual string KeySeparator
 		{
 			get { return _keySeparator; }
@@ -342,6 +343,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		[Category("Appearance")]
 		[Description("The alignment of text in the textbox.")]
 		[DefaultValue(HorizontalAlignment.Center)]
+		[Localizable(true)]
 		public virtual HorizontalAlignment TextAlign
 		{
 			get { return _textBox.TextAlign; }

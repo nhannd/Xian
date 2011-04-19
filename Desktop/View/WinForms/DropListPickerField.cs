@@ -103,6 +103,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _nullItem = value; }
 	    }
 
+		[Localizable(true)]
 		public string LabelText
 		{
 			get { return _label.Text; }

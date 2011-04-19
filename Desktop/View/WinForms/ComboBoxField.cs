@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
@@ -41,6 +42,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			remove { _comboBox.Format -= value; }
 		}
 
+		[Localizable(true)]
 		public string LabelText
 		{
 			get { return _label.Text; }

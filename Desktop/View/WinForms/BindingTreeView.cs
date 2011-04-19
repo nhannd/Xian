@@ -376,6 +376,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		[DefaultValue(100)]
+		[Localizable(true)]
 		public int SearchTextBoxWidth
 		{
 			get { return _searchTextBox.Width; }

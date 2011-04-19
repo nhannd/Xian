@@ -147,6 +147,9 @@
     <Compile Include="KeyStrokeCaptureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="LocalizableUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="WorkspaceDialogBoxForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -553,6 +556,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\RenameNodeComponentControl.resx">
       <DependentUpon>RenameNodeComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExceptionDialogControl.resx">
+      <DependentUpon>ExceptionDialogControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>

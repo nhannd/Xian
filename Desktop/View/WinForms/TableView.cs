@@ -105,6 +105,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DefaultValue(100)]
+		[Localizable(true)]
         public int FilterTextBoxWidth
         {
             get { return _filterTextBox.Width; }
@@ -224,6 +225,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
 		[DefaultValue("Sort By")]
+		[Localizable(true)]
 		public string SortButtonTooltip
 		{
 			get { return _sortButtonTooltipBase; }
@@ -231,6 +233,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		[DefaultValue("Sort By")]
+		[Localizable(true)]
 		public string ColumnHeaderTooltip
 		{
 			get { return _columnHeaderTooltipBase; }
@@ -303,6 +306,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Localizable(true)]
         public string StatusText
         {
             get { return _statusLabel.Text; }

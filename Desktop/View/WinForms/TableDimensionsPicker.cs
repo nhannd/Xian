@@ -579,6 +579,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Localizable(true)]
 		public override RightToLeft RightToLeft
 		{
 			get { return base.RightToLeft; }
