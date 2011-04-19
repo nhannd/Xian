@@ -119,12 +119,14 @@ namespace ClearCanvas.Common
 
     	private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
 
+		private const string _localesSubFolder = "locales";
 		private static string _pluginSubFolder = "plugins";
         private static string _commonSubFolder = "common";
         private static string _logSubFolder = "logs";
         private static string _manifestSubFolder = "manifest";
 
 		private static volatile string _installDirectory = null;
+		private static volatile string _localesDirectory = null;
 		private static volatile string _pluginsDirectory = null;
         private static volatile string _commonDirectory = null;
         private static volatile string _logDirectory = null;
@@ -266,6 +268,31 @@ namespace ClearCanvas.Common
                 }
 
                 return _pluginsDirectory;
+			}
+		}
+
+		/// <summary>
+		/// Gets the full path to the directory containing localization assemblies.
+		/// </summary>
+		/// <remarks>
+		/// This method is thread-safe.
+		/// </remarks>
+		public static string LocalesDirectory
+		{
+			get
+			{
+				if (_localesDirectory == null)
+				{
+					lock (_syncRoot)
+					{
+						if (_localesDirectory == null)
+						{
+							var localesDirectory = Path.Combine(InstallDirectory, _localesSubFolder);
+							_localesDirectory = Directory.Exists(localesDirectory) ? localesDirectory : InstallDirectory;
+						}
+					}
+				}
+				return _localesDirectory;
 			}
 		}
 

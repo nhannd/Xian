@@ -355,6 +355,13 @@ namespace ClearCanvas.Desktop
             return _application.CreateDesktopWindowView(this);
         }
 
+    	protected override void OnCurrentUICultureChanged()
+    	{
+    		base.OnCurrentUICultureChanged();
+
+    		UpdateView();
+    	}
+
         #endregion
 
         #region Helpers

@@ -11,13 +11,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using System.Threading;
-using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Desktop
 {
@@ -211,6 +211,24 @@ namespace ClearCanvas.Desktop
             remove { _instance._quitting -= value; }
         }
 
+    	/// <summary>
+    	/// Gets or sets the current application UI culture.
+    	/// </summary>
+    	public static CultureInfo CurrentUICulture
+    	{
+    		get { return _instance != null ? _instance.CurrentUICultureCore : CultureInfo.InstalledUICulture; }
+    		set { if (_instance != null) _instance.CurrentUICultureCore = value; }
+    	}
+
+    	/// <summary>
+    	/// Fired when the value of <see cref="CurrentUICulture"/> changes.
+    	/// </summary>
+    	public static event EventHandler CurrentUICultureChanged
+    	{
+    		add { if (_instance != null) _instance._currentUiCultureChanged += value; }
+    		remove { if (_instance != null) _instance._currentUiCultureChanged -= value; }
+    	}
+
         #endregion
 
         #region ApplicationToolContext
@@ -270,6 +288,11 @@ namespace ClearCanvas.Desktop
     	private QuitState _quitState;
 		private event EventHandler<QuittingEventArgs> _quitting;
 		private volatile SynchronizationContext _synchronizationContext;
+
+		// i18n support
+		private readonly object _currentUICultureSyncLock = new object();
+		private event EventHandler _currentUiCultureChanged;
+		private CultureInfo _currentUICulture;
 
 		/// <summary>
         /// Default constructor, for internal framework use only.
@@ -370,6 +393,14 @@ namespace ClearCanvas.Desktop
         }
 
     	/// <summary>
+    	/// Raises the <see cref="CurrentUICultureChanged"/> event.
+    	/// </summary>
+    	protected virtual void OnCurrentUICultureCoreChanged(EventArgs e)
+    	{
+    		EventsHelper.Fire(_currentUiCultureChanged, this, e);
+    	}
+
+    	/// <summary>
     	/// Gets the display name for the application. Override this method to provide a custom display name.
     	/// </summary>
     	protected virtual string GetName()
@@ -436,6 +467,34 @@ namespace ClearCanvas.Desktop
         {
             get { return _view; }
         }
+
+    	/// <summary>
+    	/// Gets or sets the current application UI culture.
+    	/// </summary>
+    	protected CultureInfo CurrentUICultureCore
+    	{
+    		get
+    		{
+    			lock (_currentUICultureSyncLock)
+    			{
+    				return _currentUICulture ?? CultureInfo.InstalledUICulture;
+    			}
+    		}
+    		set
+    		{
+    			if (_currentUICulture != value)
+    			{
+    				lock (_currentUICultureSyncLock)
+    				{
+    					if (_currentUICulture != value)
+    					{
+    						_currentUICulture = value;
+    						OnCurrentUICultureCoreChanged(EventArgs.Empty);
+    					}
+    				}
+    			}
+    		}
+    	}
 
         #endregion
 
