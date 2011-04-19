@@ -355,6 +355,9 @@ namespace ClearCanvas.Desktop
             return _application.CreateDesktopWindowView(this);
         }
 
+    	/// <summary>
+    	/// Called when the current application UI culture has changed.
+    	/// </summary>
     	protected override void OnCurrentUICultureChanged()
     	{
     		base.OnCurrentUICultureChanged();
