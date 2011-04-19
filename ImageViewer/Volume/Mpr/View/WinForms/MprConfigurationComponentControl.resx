@@ -117,4 +117,151 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_txtProportionalSliceSpacing.Location" type="System.Drawing.Point, System.Drawing">
+    <value>25, 65</value>
+  </data>
+  <data name="_txtProportionalSliceSpacing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>54, 20</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_txtProportionalSliceSpacing.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;_txtProportionalSliceSpacing.Name" xml:space="preserve">
+    <value>_txtProportionalSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_txtProportionalSliceSpacing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_txtProportionalSliceSpacing.Parent" xml:space="preserve">
+    <value>_grpSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_txtProportionalSliceSpacing.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_lblProportionalSliceSpacing.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_lblProportionalSliceSpacing.Location" type="System.Drawing.Point, System.Drawing">
+    <value>85, 68</value>
+  </data>
+  <data name="_lblProportionalSliceSpacing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>95, 13</value>
+  </data>
+  <data name="_lblProportionalSliceSpacing.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="_lblProportionalSliceSpacing.Text" xml:space="preserve">
+    <value>times pixel spacing</value>
+  </data>
+  <data name="&gt;&gt;_lblProportionalSliceSpacing.Name" xml:space="preserve">
+    <value>_lblProportionalSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_lblProportionalSliceSpacing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lblProportionalSliceSpacing.Parent" xml:space="preserve">
+    <value>_grpSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_lblProportionalSliceSpacing.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_radAutomaticSliceSpacing.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_radAutomaticSliceSpacing.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="_radAutomaticSliceSpacing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>157, 17</value>
+  </data>
+  <data name="_radAutomaticSliceSpacing.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="_radAutomaticSliceSpacing.Text" xml:space="preserve">
+    <value>Use automatic slice spacing</value>
+  </data>
+  <data name="&gt;&gt;_radAutomaticSliceSpacing.Name" xml:space="preserve">
+    <value>_radAutomaticSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_radAutomaticSliceSpacing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_radAutomaticSliceSpacing.Parent" xml:space="preserve">
+    <value>_grpSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_radAutomaticSliceSpacing.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="_radProportionalSliceSpacing.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_radProportionalSliceSpacing.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 42</value>
+  </data>
+  <data name="_radProportionalSliceSpacing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>269, 17</value>
+  </data>
+  <data name="_radProportionalSliceSpacing.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="_radProportionalSliceSpacing.Text" xml:space="preserve">
+    <value>Use a slice spacing proportional to the pixel spacing</value>
+  </data>
+  <data name="&gt;&gt;_radProportionalSliceSpacing.Name" xml:space="preserve">
+    <value>_radProportionalSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_radProportionalSliceSpacing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_radProportionalSliceSpacing.Parent" xml:space="preserve">
+    <value>_grpSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_radProportionalSliceSpacing.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="_grpSliceSpacing.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 10</value>
+  </data>
+  <data name="_grpSliceSpacing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>310, 99</value>
+  </data>
+  <data name="_grpSliceSpacing.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="_grpSliceSpacing.Text" xml:space="preserve">
+    <value>Slice Spacing</value>
+  </data>
+  <data name="&gt;&gt;_grpSliceSpacing.Name" xml:space="preserve">
+    <value>_grpSliceSpacing</value>
+  </data>
+  <data name="&gt;&gt;_grpSliceSpacing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_grpSliceSpacing.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_grpSliceSpacing.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>10, 10, 10, 10</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>334, 128</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>MprConfigurationComponentControl</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>ClearCanvas.Desktop.View.WinForms.ApplicationComponentUserControl, ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
 </root>

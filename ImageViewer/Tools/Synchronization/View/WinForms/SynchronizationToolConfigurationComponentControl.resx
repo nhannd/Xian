@@ -123,10 +123,169 @@
   <metadata name="_lblToleranceAngle.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_lblToleranceAngle.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_lblToleranceAngle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>18, 15</value>
+  </data>
+  <data name="_lblToleranceAngle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>254, 13</value>
+  </data>
+  <data name="_lblToleranceAngle.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="_lblToleranceAngle.Text" xml:space="preserve">
+    <value>Tolerance angle for planes to be considered parallel:</value>
+  </data>
+  <data name="&gt;&gt;_lblToleranceAngle.Name" xml:space="preserve">
+    <value>_lblToleranceAngle</value>
+  </data>
+  <data name="&gt;&gt;_lblToleranceAngle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lblToleranceAngle.Parent" xml:space="preserve">
+    <value>_flowSynchroTools</value>
+  </data>
+  <data name="&gt;&gt;_lblToleranceAngle.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_txtToleranceAngle.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_txtToleranceAngle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_txtToleranceAngle.MaxLength" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="_txtToleranceAngle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>74, 20</value>
+  </data>
+  <data name="_txtToleranceAngle.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;_txtToleranceAngle.Name" xml:space="preserve">
+    <value>_txtToleranceAngle</value>
+  </data>
+  <data name="&gt;&gt;_txtToleranceAngle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_txtToleranceAngle.Parent" xml:space="preserve">
+    <value>_pnlToleranceAngleControl</value>
+  </data>
+  <data name="&gt;&gt;_txtToleranceAngle.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="_lblToleranceUnits.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <data name="_lblToleranceUnits.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="_lblToleranceUnits.Location" type="System.Drawing.Point, System.Drawing">
+    <value>74, 0</value>
+  </data>
+  <data name="_lblToleranceUnits.Size" type="System.Drawing.Size, System.Drawing">
+    <value>53, 25</value>
+  </data>
+  <data name="_lblToleranceUnits.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="_lblToleranceUnits.Text" xml:space="preserve">
+    <value>degrees</value>
+  </data>
+  <data name="_lblToleranceUnits.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;_lblToleranceUnits.Name" xml:space="preserve">
+    <value>_lblToleranceUnits</value>
+  </data>
+  <data name="&gt;&gt;_lblToleranceUnits.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lblToleranceUnits.Parent" xml:space="preserve">
+    <value>_pnlToleranceAngleControl</value>
+  </data>
+  <data name="&gt;&gt;_lblToleranceUnits.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_pnlToleranceAngleControl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>18, 31</value>
+  </data>
+  <data name="_pnlToleranceAngleControl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 25</value>
+  </data>
+  <data name="_pnlToleranceAngleControl.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;_pnlToleranceAngleControl.Name" xml:space="preserve">
+    <value>_pnlToleranceAngleControl</value>
+  </data>
+  <data name="&gt;&gt;_pnlToleranceAngleControl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_pnlToleranceAngleControl.Parent" xml:space="preserve">
+    <value>_flowSynchroTools</value>
+  </data>
+  <data name="&gt;&gt;_pnlToleranceAngleControl.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_flowSynchroTools.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_flowSynchroTools.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
+  <data name="_flowSynchroTools.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_flowSynchroTools.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>15, 15, 15, 15</value>
+  </data>
+  <data name="_flowSynchroTools.Size" type="System.Drawing.Size, System.Drawing">
+    <value>449, 250</value>
+  </data>
+  <data name="_flowSynchroTools.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;_flowSynchroTools.Name" xml:space="preserve">
+    <value>_flowSynchroTools</value>
+  </data>
+  <data name="&gt;&gt;_flowSynchroTools.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_flowSynchroTools.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_flowSynchroTools.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="_errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>449, 250</value>
+  </data>
+  <data name="&gt;&gt;_errorProvider.Name" xml:space="preserve">
+    <value>_errorProvider</value>
+  </data>
+  <data name="&gt;&gt;_errorProvider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>SynchronizationToolConfigurationComponentControl</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

@@ -66,26 +66,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			// _contentPanel
 			// 
-			this._contentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._contentPanel.Location = new System.Drawing.Point(0, 0);
-			this._contentPanel.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._contentPanel, "_contentPanel");
 			this._contentPanel.Name = "_contentPanel";
-			this._contentPanel.Size = new System.Drawing.Size(782, 173);
-			this._contentPanel.TabIndex = 0;
 			// 
 			// ReindexLocalDataStoreDialogForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(782, 173);
 			this.Controls.Add(this._contentPanel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Margin = new System.Windows.Forms.Padding(2);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ReindexLocalDataStoreDialogForm";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this.ResumeLayout(false);
 

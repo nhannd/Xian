@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportProgressControl));
 			this._statusLabel = new System.Windows.Forms.Label();
 			this._processedCount = new System.Windows.Forms.Label();
 			this._processedProgress = new System.Windows.Forms.ProgressBar();
@@ -73,111 +74,62 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			// _statusLabel
 			// 
-			this._statusLabel.AutoSize = true;
-			this._statusLabel.Location = new System.Drawing.Point(23, 15);
+			resources.ApplyResources(this._statusLabel, "_statusLabel");
 			this._statusLabel.Name = "_statusLabel";
-			this._statusLabel.Size = new System.Drawing.Size(40, 13);
-			this._statusLabel.TabIndex = 0;
-			this._statusLabel.Text = "Status:";
-			this._statusLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// _processedCount
 			// 
-			this._processedCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this._processedCount, "_processedCount");
 			this._processedCount.AutoEllipsis = true;
-			this._processedCount.Location = new System.Drawing.Point(338, 47);
 			this._processedCount.Name = "_processedCount";
-			this._processedCount.Size = new System.Drawing.Size(40, 23);
-			this._processedCount.TabIndex = 4;
-			this._processedCount.Text = "0";
-			this._processedCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// _processedProgress
 			// 
-			this._processedProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._processedProgress.Location = new System.Drawing.Point(69, 48);
+			resources.ApplyResources(this._processedProgress, "_processedProgress");
 			this._processedProgress.Name = "_processedProgress";
-			this._processedProgress.Size = new System.Drawing.Size(263, 20);
-			this._processedProgress.TabIndex = 3;
 			// 
 			// _failedLabel
 			// 
-			this._failedLabel.AutoSize = true;
-			this._failedLabel.Location = new System.Drawing.Point(25, 126);
+			resources.ApplyResources(this._failedLabel, "_failedLabel");
 			this._failedLabel.Name = "_failedLabel";
-			this._failedLabel.Size = new System.Drawing.Size(38, 13);
-			this._failedLabel.TabIndex = 7;
-			this._failedLabel.Text = "Failed:";
-			this._failedLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// _processedLabel
 			// 
-			this._processedLabel.AutoSize = true;
-			this._processedLabel.Location = new System.Drawing.Point(3, 52);
+			resources.ApplyResources(this._processedLabel, "_processedLabel");
 			this._processedLabel.Name = "_processedLabel";
-			this._processedLabel.Size = new System.Drawing.Size(60, 13);
-			this._processedLabel.TabIndex = 2;
-			this._processedLabel.Text = "Processed:";
-			this._processedLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// _availableLabel
 			// 
-			this._availableLabel.AutoSize = true;
-			this._availableLabel.Location = new System.Drawing.Point(10, 92);
+			resources.ApplyResources(this._availableLabel, "_availableLabel");
 			this._availableLabel.Name = "_availableLabel";
-			this._availableLabel.Size = new System.Drawing.Size(53, 13);
-			this._availableLabel.TabIndex = 5;
-			this._availableLabel.Text = "Available:";
-			this._availableLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// _failedCount
 			// 
-			this._failedCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this._failedCount, "_failedCount");
 			this._failedCount.AutoEllipsis = true;
-			this._failedCount.Location = new System.Drawing.Point(69, 126);
 			this._failedCount.Name = "_failedCount";
-			this._failedCount.Size = new System.Drawing.Size(85, 23);
-			this._failedCount.TabIndex = 8;
-			this._failedCount.Text = "0";
 			// 
 			// _statusMessage
 			// 
-			this._statusMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this._statusMessage, "_statusMessage");
 			this._statusMessage.AutoEllipsis = true;
-			this._statusMessage.Location = new System.Drawing.Point(69, 15);
 			this._statusMessage.Name = "_statusMessage";
-			this._statusMessage.Size = new System.Drawing.Size(263, 23);
-			this._statusMessage.TabIndex = 1;
-			this._statusMessage.Text = "Pending ...";
 			// 
 			// _availableCount
 			// 
-			this._availableCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this._availableCount, "_availableCount");
 			this._availableCount.AutoEllipsis = true;
-			this._availableCount.Location = new System.Drawing.Point(69, 87);
 			this._availableCount.Name = "_availableCount";
-			this._availableCount.Size = new System.Drawing.Size(85, 23);
-			this._availableCount.TabIndex = 6;
-			this._availableCount.Text = "0";
-			this._availableCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// _button
 			// 
-			this._button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._button.Location = new System.Drawing.Point(257, 121);
+			resources.ApplyResources(this._button, "_button");
 			this._button.Name = "_button";
-			this._button.Size = new System.Drawing.Size(75, 23);
-			this._button.TabIndex = 9;
-			this._button.Text = "Cancel";
 			this._button.UseVisualStyleBackColor = true;
 			// 
 			// ImportProgressControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._button);
 			this.Controls.Add(this._availableCount);
@@ -190,7 +142,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this.Controls.Add(this._processedCount);
 			this.Controls.Add(this._statusLabel);
 			this.Name = "ImportProgressControl";
-			this.Size = new System.Drawing.Size(385, 170);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

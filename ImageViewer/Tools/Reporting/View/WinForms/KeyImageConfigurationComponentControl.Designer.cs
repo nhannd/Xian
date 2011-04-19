@@ -59,9 +59,10 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KeyImageConfigurationComponentControl));
 			this._publishingGroup = new System.Windows.Forms.GroupBox();
-			this._publishToDefaultServers = new System.Windows.Forms.CheckBox();
 			this._publishLocalToSourceAE = new System.Windows.Forms.CheckBox();
+			this._publishToDefaultServers = new System.Windows.Forms.CheckBox();
 			this._publishingGroup.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -69,40 +70,28 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			// 
 			this._publishingGroup.Controls.Add(this._publishLocalToSourceAE);
 			this._publishingGroup.Controls.Add(this._publishToDefaultServers);
-			this._publishingGroup.Location = new System.Drawing.Point(12, 17);
+			resources.ApplyResources(this._publishingGroup, "_publishingGroup");
 			this._publishingGroup.Name = "_publishingGroup";
-			this._publishingGroup.Size = new System.Drawing.Size(315, 69);
-			this._publishingGroup.TabIndex = 0;
 			this._publishingGroup.TabStop = false;
-			this._publishingGroup.Text = "Publishing";
-			// 
-			// _publishToDefaultServers
-			// 
-			this._publishToDefaultServers.AutoSize = true;
-			this._publishToDefaultServers.Location = new System.Drawing.Point(6, 19);
-			this._publishToDefaultServers.Name = "_publishToDefaultServers";
-			this._publishToDefaultServers.Size = new System.Drawing.Size(144, 17);
-			this._publishToDefaultServers.TabIndex = 0;
-			this._publishToDefaultServers.Text = "Publish to default servers";
-			this._publishToDefaultServers.UseVisualStyleBackColor = true;
 			// 
 			// _publishLocalToSourceAE
 			// 
-			this._publishLocalToSourceAE.AutoSize = true;
-			this._publishLocalToSourceAE.Location = new System.Drawing.Point(6, 42);
+			resources.ApplyResources(this._publishLocalToSourceAE, "_publishLocalToSourceAE");
 			this._publishLocalToSourceAE.Name = "_publishLocalToSourceAE";
-			this._publishLocalToSourceAE.Size = new System.Drawing.Size(247, 17);
-			this._publishLocalToSourceAE.TabIndex = 1;
-			this._publishLocalToSourceAE.Text = "For local studies, publish back to source server";
 			this._publishLocalToSourceAE.UseVisualStyleBackColor = true;
+			// 
+			// _publishToDefaultServers
+			// 
+			resources.ApplyResources(this._publishToDefaultServers, "_publishToDefaultServers");
+			this._publishToDefaultServers.Name = "_publishToDefaultServers";
+			this._publishToDefaultServers.UseVisualStyleBackColor = true;
 			// 
 			// KeyImageConfigurationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._publishingGroup);
 			this.Name = "KeyImageConfigurationComponentControl";
-			this.Size = new System.Drawing.Size(344, 105);
 			this._publishingGroup.ResumeLayout(false);
 			this._publishingGroup.PerformLayout();
 			this.ResumeLayout(false);

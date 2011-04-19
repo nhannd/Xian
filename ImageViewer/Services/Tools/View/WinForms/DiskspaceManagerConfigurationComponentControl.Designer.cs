@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DiskspaceManagerConfigurationComponentControl));
 			this._tbLowWatermark = new System.Windows.Forms.TrackBar();
 			this._tbHighWatermark = new System.Windows.Forms.TrackBar();
 			this._pbUsedSpace = new System.Windows.Forms.ProgressBar();
@@ -98,225 +99,137 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// _tbLowWatermark
 			// 
 			this._tbLowWatermark.LargeChange = 10000;
-			this._tbLowWatermark.Location = new System.Drawing.Point(83, 144);
-			this._tbLowWatermark.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._tbLowWatermark, "_tbLowWatermark");
 			this._tbLowWatermark.Maximum = 100000;
 			this._tbLowWatermark.Name = "_tbLowWatermark";
-			this._tbLowWatermark.Size = new System.Drawing.Size(171, 45);
 			this._tbLowWatermark.SmallChange = 10;
-			this._tbLowWatermark.TabIndex = 13;
 			this._tbLowWatermark.TickFrequency = 10000;
 			this._tbLowWatermark.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
 			// 
 			// _tbHighWatermark
 			// 
 			this._tbHighWatermark.LargeChange = 10000;
-			this._tbHighWatermark.Location = new System.Drawing.Point(83, 62);
-			this._tbHighWatermark.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._tbHighWatermark, "_tbHighWatermark");
 			this._tbHighWatermark.Maximum = 100000;
 			this._tbHighWatermark.Name = "_tbHighWatermark";
-			this._tbHighWatermark.Size = new System.Drawing.Size(171, 45);
 			this._tbHighWatermark.SmallChange = 10;
-			this._tbHighWatermark.TabIndex = 3;
 			this._tbHighWatermark.TickFrequency = 10000;
 			// 
 			// _pbUsedSpace
 			// 
-			this._pbUsedSpace.Location = new System.Drawing.Point(90, 108);
-			this._pbUsedSpace.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._pbUsedSpace, "_pbUsedSpace");
 			this._pbUsedSpace.Name = "_pbUsedSpace";
-			this._pbUsedSpace.Size = new System.Drawing.Size(159, 19);
-			this._pbUsedSpace.TabIndex = 8;
 			// 
 			// _txtUsedSpace
 			// 
-			this._txtUsedSpace.Location = new System.Drawing.Point(259, 108);
-			this._txtUsedSpace.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._txtUsedSpace, "_txtUsedSpace");
 			this._txtUsedSpace.Name = "_txtUsedSpace";
 			this._txtUsedSpace.ReadOnly = true;
-			this._txtUsedSpace.Size = new System.Drawing.Size(65, 20);
-			this._txtUsedSpace.TabIndex = 9;
 			// 
 			// label1
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(23, 63);
-			this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label1, "label1");
 			this.label1.MaximumSize = new System.Drawing.Size(60, 0);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(59, 26);
-			this.label1.TabIndex = 2;
-			this.label1.Text = "High Watermark";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label2
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(44, 104);
-			this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label2, "label2");
 			this.label2.MaximumSize = new System.Drawing.Size(45, 0);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(38, 26);
-			this.label2.TabIndex = 7;
-			this.label2.Text = "Used Space";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label3
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(23, 145);
-			this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label3, "label3");
 			this.label3.MaximumSize = new System.Drawing.Size(60, 0);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(59, 26);
-			this.label3.TabIndex = 12;
-			this.label3.Text = "Low Watermark";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label4
 			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(326, 69);
-			this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label4, "label4");
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(15, 13);
-			this.label4.TabIndex = 5;
-			this.label4.Text = "%";
 			// 
 			// label5
 			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(326, 111);
-			this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label5, "label5");
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(15, 13);
-			this.label5.TabIndex = 10;
-			this.label5.Text = "%";
 			// 
 			// label6
 			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(326, 151);
-			this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label6, "label6");
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(15, 13);
-			this.label6.TabIndex = 15;
-			this.label6.Text = "%";
 			// 
 			// label8
 			// 
-			this.label8.AutoSize = true;
-			this.label8.Location = new System.Drawing.Point(50, 39);
-			this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label8, "label8");
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(32, 13);
-			this.label8.TabIndex = 0;
-			this.label8.Text = "Drive";
-			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label9
 			// 
-			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point(40, 184);
-			this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label9, "label9");
 			this.label9.MaximumSize = new System.Drawing.Size(60, 0);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(42, 26);
-			this.label9.TabIndex = 17;
-			this.label9.Text = "Check Interval";
-			this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// _tbFrequency
 			// 
 			this._tbFrequency.LargeChange = 1;
-			this._tbFrequency.Location = new System.Drawing.Point(83, 184);
-			this._tbFrequency.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._tbFrequency, "_tbFrequency");
 			this._tbFrequency.Minimum = 1;
 			this._tbFrequency.Name = "_tbFrequency";
-			this._tbFrequency.Size = new System.Drawing.Size(171, 45);
-			this._tbFrequency.TabIndex = 18;
 			this._tbFrequency.Value = 1;
 			// 
 			// _txtFrequency
 			// 
-			this._txtFrequency.Location = new System.Drawing.Point(259, 188);
-			this._txtFrequency.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._txtFrequency, "_txtFrequency");
 			this._txtFrequency.Name = "_txtFrequency";
 			this._txtFrequency.ReadOnly = true;
-			this._txtFrequency.Size = new System.Drawing.Size(65, 20);
-			this._txtFrequency.TabIndex = 19;
 			// 
 			// label10
 			// 
-			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point(326, 191);
-			this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label10, "label10");
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(24, 13);
-			this.label10.TabIndex = 20;
-			this.label10.Text = "Min";
 			// 
 			// _bnRefresh
 			// 
-			this._bnRefresh.Location = new System.Drawing.Point(345, 245);
-			this._bnRefresh.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._bnRefresh, "_bnRefresh");
 			this._bnRefresh.Name = "_bnRefresh";
-			this._bnRefresh.Size = new System.Drawing.Size(68, 23);
-			this._bnRefresh.TabIndex = 22;
-			this._bnRefresh.Text = "Refresh";
 			this._bnRefresh.UseVisualStyleBackColor = true;
 			// 
 			// _txtDriveName
 			// 
-			this._txtDriveName.Location = new System.Drawing.Point(90, 36);
-			this._txtDriveName.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._txtDriveName, "_txtDriveName");
 			this._txtDriveName.Name = "_txtDriveName";
 			this._txtDriveName.ReadOnly = true;
-			this._txtDriveName.Size = new System.Drawing.Size(159, 20);
-			this._txtDriveName.TabIndex = 1;
 			// 
 			// _txtHighWatermarkBytesDisplay
 			// 
-			this._txtHighWatermarkBytesDisplay.Location = new System.Drawing.Point(345, 67);
-			this._txtHighWatermarkBytesDisplay.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._txtHighWatermarkBytesDisplay, "_txtHighWatermarkBytesDisplay");
 			this._txtHighWatermarkBytesDisplay.Name = "_txtHighWatermarkBytesDisplay";
 			this._txtHighWatermarkBytesDisplay.ReadOnly = true;
-			this._txtHighWatermarkBytesDisplay.Size = new System.Drawing.Size(68, 20);
-			this._txtHighWatermarkBytesDisplay.TabIndex = 6;
 			// 
 			// _txtUsedSpaceBytesDisplay
 			// 
-			this._txtUsedSpaceBytesDisplay.Location = new System.Drawing.Point(345, 108);
-			this._txtUsedSpaceBytesDisplay.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._txtUsedSpaceBytesDisplay, "_txtUsedSpaceBytesDisplay");
 			this._txtUsedSpaceBytesDisplay.Name = "_txtUsedSpaceBytesDisplay";
 			this._txtUsedSpaceBytesDisplay.ReadOnly = true;
-			this._txtUsedSpaceBytesDisplay.Size = new System.Drawing.Size(68, 20);
-			this._txtUsedSpaceBytesDisplay.TabIndex = 11;
 			// 
 			// _txtLowWatermarkBytesDisplay
 			// 
-			this._txtLowWatermarkBytesDisplay.Location = new System.Drawing.Point(345, 149);
-			this._txtLowWatermarkBytesDisplay.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._txtLowWatermarkBytesDisplay, "_txtLowWatermarkBytesDisplay");
 			this._txtLowWatermarkBytesDisplay.Name = "_txtLowWatermarkBytesDisplay";
 			this._txtLowWatermarkBytesDisplay.ReadOnly = true;
-			this._txtLowWatermarkBytesDisplay.Size = new System.Drawing.Size(68, 20);
-			this._txtLowWatermarkBytesDisplay.TabIndex = 16;
 			// 
 			// _upDownHighWatermark
 			// 
 			this._upDownHighWatermark.DecimalPlaces = 3;
-			this._upDownHighWatermark.Location = new System.Drawing.Point(259, 67);
+			resources.ApplyResources(this._upDownHighWatermark, "_upDownHighWatermark");
 			this._upDownHighWatermark.Name = "_upDownHighWatermark";
-			this._upDownHighWatermark.Size = new System.Drawing.Size(65, 20);
-			this._upDownHighWatermark.TabIndex = 4;
 			// 
 			// _upDownLowWatermark
 			// 
 			this._upDownLowWatermark.DecimalPlaces = 3;
-			this._upDownLowWatermark.Location = new System.Drawing.Point(259, 149);
+			resources.ApplyResources(this._upDownLowWatermark, "_upDownLowWatermark");
 			this._upDownLowWatermark.Name = "_upDownLowWatermark";
-			this._upDownLowWatermark.Size = new System.Drawing.Size(65, 20);
-			this._upDownLowWatermark.TabIndex = 14;
 			// 
 			// _studyLimitGroup
 			// 
@@ -324,26 +237,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._studyLimitGroup.Controls.Add(this._studyLimit);
 			this._studyLimitGroup.Controls.Add(this._studyCount);
 			this._studyLimitGroup.Controls.Add(this._enforceStudyLimit);
-			this._studyLimitGroup.Location = new System.Drawing.Point(14, 228);
+			resources.ApplyResources(this._studyLimitGroup, "_studyLimitGroup");
 			this._studyLimitGroup.Name = "_studyLimitGroup";
-			this._studyLimitGroup.Size = new System.Drawing.Size(326, 49);
-			this._studyLimitGroup.TabIndex = 21;
 			this._studyLimitGroup.TabStop = false;
 			// 
 			// label7
 			// 
-			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(5, 19);
-			this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			resources.ApplyResources(this.label7, "label7");
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(65, 13);
-			this.label7.TabIndex = 0;
-			this.label7.Text = "Study Count";
-			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// _studyLimit
 			// 
-			this._studyLimit.Location = new System.Drawing.Point(245, 17);
+			resources.ApplyResources(this._studyLimit, "_studyLimit");
 			this._studyLimit.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -355,8 +260,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
             0,
             0});
 			this._studyLimit.Name = "_studyLimit";
-			this._studyLimit.Size = new System.Drawing.Size(66, 20);
-			this._studyLimit.TabIndex = 3;
 			this._studyLimit.Value = new decimal(new int[] {
             100,
             0,
@@ -365,28 +268,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			// _studyCount
 			// 
-			this._studyCount.Location = new System.Drawing.Point(76, 17);
-			this._studyCount.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._studyCount, "_studyCount");
 			this._studyCount.Name = "_studyCount";
 			this._studyCount.ReadOnly = true;
-			this._studyCount.Size = new System.Drawing.Size(66, 20);
-			this._studyCount.TabIndex = 1;
 			// 
 			// _enforceStudyLimit
 			// 
-			this._enforceStudyLimit.AutoSize = true;
-			this._enforceStudyLimit.Location = new System.Drawing.Point(178, 19);
+			resources.ApplyResources(this._enforceStudyLimit, "_enforceStudyLimit");
 			this._enforceStudyLimit.Name = "_enforceStudyLimit";
-			this._enforceStudyLimit.Size = new System.Drawing.Size(62, 17);
-			this._enforceStudyLimit.TabIndex = 20;
-			this._enforceStudyLimit.Text = "Limit to:";
 			this._enforceStudyLimit.UseVisualStyleBackColor = true;
 			// 
 			// DiskspaceManagerConfigurationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
 			this.Controls.Add(this._studyLimitGroup);
 			this.Controls.Add(this._upDownLowWatermark);
 			this.Controls.Add(this._upDownHighWatermark);
@@ -410,9 +305,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this.Controls.Add(this._pbUsedSpace);
 			this.Controls.Add(this._tbHighWatermark);
 			this.Controls.Add(this._tbLowWatermark);
-			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "DiskspaceManagerConfigurationComponentControl";
-			this.Size = new System.Drawing.Size(430, 296);
 			((System.ComponentModel.ISupportInitialize)(this._tbLowWatermark)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._tbHighWatermark)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._tbFrequency)).EndInit();

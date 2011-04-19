@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CineApplicationComponentControl));
 			this._cineSpeed = new System.Windows.Forms.TrackBar();
 			this._minLabel = new System.Windows.Forms.Label();
 			this._fastestLabel = new System.Windows.Forms.Label();
@@ -71,68 +72,48 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// _cineSpeed
 			// 
 			this._cineSpeed.LargeChange = 10;
-			this._cineSpeed.Location = new System.Drawing.Point(6, 41);
+			resources.ApplyResources(this._cineSpeed, "_cineSpeed");
 			this._cineSpeed.Maximum = 100;
 			this._cineSpeed.Name = "_cineSpeed";
-			this._cineSpeed.Size = new System.Drawing.Size(186, 56);
-			this._cineSpeed.TabIndex = 3;
 			this._cineSpeed.TickFrequency = 10;
 			// 
 			// _minLabel
 			// 
-			this._minLabel.AutoSize = true;
-			this._minLabel.Location = new System.Drawing.Point(11, 74);
+			resources.ApplyResources(this._minLabel, "_minLabel");
 			this._minLabel.Name = "_minLabel";
-			this._minLabel.Size = new System.Drawing.Size(44, 13);
-			this._minLabel.TabIndex = 4;
-			this._minLabel.Text = "Slowest";
 			// 
 			// _fastestLabel
 			// 
-			this._fastestLabel.AutoSize = true;
-			this._fastestLabel.Location = new System.Drawing.Point(148, 74);
+			resources.ApplyResources(this._fastestLabel, "_fastestLabel");
 			this._fastestLabel.Name = "_fastestLabel";
-			this._fastestLabel.Size = new System.Drawing.Size(41, 13);
-			this._fastestLabel.TabIndex = 5;
-			this._fastestLabel.Text = "Fastest";
 			// 
 			// _startReverseButton
 			// 
-			this._startReverseButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			resources.ApplyResources(this._startReverseButton, "_startReverseButton");
 			this._startReverseButton.Image = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.PlayReverse;
-			this._startReverseButton.Location = new System.Drawing.Point(14, 7);
 			this._startReverseButton.Name = "_startReverseButton";
-			this._startReverseButton.Size = new System.Drawing.Size(44, 31);
-			this._startReverseButton.TabIndex = 0;
 			this._startReverseButton.UseVisualStyleBackColor = true;
 			this._startReverseButton.Click += new System.EventHandler(this.StartReverseButtonClicked);
 			// 
 			// _startForwardButton
 			// 
-			this._startForwardButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			resources.ApplyResources(this._startForwardButton, "_startForwardButton");
 			this._startForwardButton.Image = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.Play;
-			this._startForwardButton.Location = new System.Drawing.Point(140, 7);
 			this._startForwardButton.Name = "_startForwardButton";
-			this._startForwardButton.Size = new System.Drawing.Size(44, 31);
-			this._startForwardButton.TabIndex = 2;
 			this._startForwardButton.UseVisualStyleBackColor = true;
 			this._startForwardButton.Click += new System.EventHandler(this.StartForwardButtonClicked);
 			// 
 			// _stopButton
 			// 
-			this._stopButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this._stopButton.Enabled = false;
+			resources.ApplyResources(this._stopButton, "_stopButton");
 			this._stopButton.Image = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.Stop;
-			this._stopButton.Location = new System.Drawing.Point(77, 7);
 			this._stopButton.Name = "_stopButton";
-			this._stopButton.Size = new System.Drawing.Size(44, 31);
-			this._stopButton.TabIndex = 1;
 			this._stopButton.UseVisualStyleBackColor = true;
 			this._stopButton.Click += new System.EventHandler(this.StopButtonClicked);
 			// 
 			// CineApplicationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._startForwardButton);
 			this.Controls.Add(this._fastestLabel);
@@ -141,7 +122,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this.Controls.Add(this._stopButton);
 			this.Controls.Add(this._startReverseButton);
 			this.Name = "CineApplicationComponentControl";
-			this.Size = new System.Drawing.Size(208, 112);
 			((System.ComponentModel.ISupportInitialize)(this._cineSpeed)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
