@@ -71,8 +71,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._clearButton = new System.Windows.Forms.Button();
 			this._searchTodayButton = new System.Windows.Forms.Button();
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
-			this._modalityPicker = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker();
 			this._referringPhysiciansName = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._modalityPicker = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker();
 			this.SuspendLayout();
 			// 
 			// _patientID
@@ -157,18 +157,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._titleBar.Name = "_titleBar";
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			// 
-			// _modalityPicker
-			// 
-			resources.ApplyResources(this._modalityPicker, "_modalityPicker");
-			this._modalityPicker.LabelText = "Modality";
-			this._modalityPicker.Name = "_modalityPicker";
-			// 
 			// _referringPhysiciansName
 			// 
 			resources.ApplyResources(this._referringPhysiciansName, "_referringPhysiciansName");
 			this._referringPhysiciansName.Name = "_referringPhysiciansName";
 			this._referringPhysiciansName.ToolTip = null;
 			this._referringPhysiciansName.Value = null;
+			// 
+			// _modalityPicker
+			// 
+			resources.ApplyResources(this._modalityPicker, "_modalityPicker");
+			this._modalityPicker.Name = "_modalityPicker";
 			// 
 			// SearchPanelComponentControl
 			// 

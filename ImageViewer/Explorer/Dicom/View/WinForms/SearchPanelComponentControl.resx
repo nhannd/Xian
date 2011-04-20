@@ -323,6 +323,9 @@
         vEZ5iXR9e5/y7364He6PQyokrQXGc7z2X//IApGeNhgK+pX2P76fpXwltdkLTh4AAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="_searchButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="_searchButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>710, 63</value>
   </data>
@@ -369,6 +372,9 @@
         RK5CYII=
 </value>
   </data>
+  <data name="_searchLastWeekButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="_searchLastWeekButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>806, 93</value>
   </data>
@@ -412,6 +418,9 @@
         euCAW/YSWVGHBtRhEWQsC0COGnrg8N3Ln/IfRVjD/bCkwqbFwlArs/2/v6f4OhbZUMD+tv8RvwH2Bi4d
         yDduvQAAAABJRU5ErkJggg==
 </value>
+  </data>
+  <data name="_clearButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="_clearButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>710, 93</value>
@@ -459,6 +468,9 @@
         AAAASUVORK5CYII=
 </value>
   </data>
+  <data name="_searchTodayButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="_searchTodayButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>806, 63</value>
   </data>
@@ -496,7 +508,7 @@
     <value>0, 0</value>
   </data>
   <data name="_titleBar.Size" type="System.Drawing.Size, System.Drawing">
-    <value>925, 30</value>
+    <value>923, 30</value>
   </data>
   <data name="_titleBar.TabIndex" type="System.Int32, mscorlib">
     <value>20</value>
@@ -515,33 +527,6 @@
   </data>
   <data name="&gt;&gt;_titleBar.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="_modalityPicker.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_modalityPicker.Location" type="System.Drawing.Point, System.Drawing">
-    <value>530, 95</value>
-  </data>
-  <data name="_modalityPicker.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="_modalityPicker.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 41</value>
-  </data>
-  <data name="_modalityPicker.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;_modalityPicker.Name" xml:space="preserve">
-    <value>_modalityPicker</value>
-  </data>
-  <data name="&gt;&gt;_modalityPicker.Type" xml:space="preserve">
-    <value>ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker, ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;_modalityPicker.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_modalityPicker.ZOrder" xml:space="preserve">
-    <value>8</value>
   </data>
   <data name="_referringPhysiciansName.LabelText" xml:space="preserve">
     <value>Referring Physician</value>
@@ -576,6 +561,36 @@
   <data name="&gt;&gt;_referringPhysiciansName.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="_modalityPicker.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_modalityPicker.LabelText" xml:space="preserve">
+    <value>Modality</value>
+  </data>
+  <data name="_modalityPicker.Location" type="System.Drawing.Point, System.Drawing">
+    <value>530, 95</value>
+  </data>
+  <data name="_modalityPicker.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="_modalityPicker.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 41</value>
+  </data>
+  <data name="_modalityPicker.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;_modalityPicker.Name" xml:space="preserve">
+    <value>_modalityPicker</value>
+  </data>
+  <data name="&gt;&gt;_modalityPicker.Type" xml:space="preserve">
+    <value>ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker, ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;_modalityPicker.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_modalityPicker.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -583,7 +598,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>925, 151</value>
+    <value>923, 149</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SearchPanelComponentControl</value>

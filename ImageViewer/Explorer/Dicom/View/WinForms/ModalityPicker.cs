@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 		}
 
+		[Localizable(true)]
 		public string LabelText
 		{
 			get { return _label.Text; }
