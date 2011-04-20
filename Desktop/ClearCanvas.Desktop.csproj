@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -184,6 +184,12 @@
     <Compile Include="IWorkspaceDialogBoxView.cs" />
     <Compile Include="IPagingController.cs" />
     <Compile Include="Configuration\IUserUpgradeProgressDialogView.cs" />
+    <Compile Include="LocaleSettings.cs" />
+    <Compile Include="LocaleSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LocaleSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ModifierFlags.cs" />
     <Compile Include="ModifierFlagsConverter.cs" />
     <Compile Include="PagingActionModel.cs" />
@@ -455,6 +461,10 @@
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ClassDiagrams\Tools.cd" />
+    <None Include="LocaleSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LocaleSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ToolStripSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>ToolStripSettings.Designer.cs</LastGenOutput>
