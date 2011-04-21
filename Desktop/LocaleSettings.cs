@@ -18,6 +18,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -38,25 +39,27 @@ namespace ClearCanvas.Desktop
 	{
 		private const string _elementLocale = "Locale";
 		private const string _attributeCulture = "Culture";
+		private const string _attributeDefault = "Default";
 		private const string _attributeDisplayName = "DisplayName";
 
 		private readonly List<Locale> _installedLocales = new List<Locale>();
+		private string _defaultLocale;
 
 		/// <summary>
-		/// Gets a <see cref="Locale"/> representing the default invariant locale.
+		/// Gets a <see cref="Locale"/> representing the invariant locale.
 		/// </summary>
-		public static readonly Locale InvariantLocale = new Locale(string.Empty, "English");
+		public static readonly Locale InvariantLocale = new Locale(string.Empty, null);
 
 		/// <summary>
 		/// Gets the default instance of <see cref="InstalledLocales"/> from the application settings.
 		/// </summary>
-		public static InstalledLocales Default
+		public static InstalledLocales Instance
 		{
 			get { return LocaleSettings.Default.InstalledLocales ?? new InstalledLocales(); }
 		}
 
 		/// <summary>
-		/// Gets the count of installed localizations other than the <see cref="InvariantLocale"/>.
+		/// Gets the count of installed localizations.
 		/// </summary>
 		public int Count
 		{
@@ -64,23 +67,27 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Enumerates the installed localizations, including the <see cref="InvariantLocale"/> if there is at least one installed locale.
+		/// Gets the default <see cref="Locale"/> of the installed localizations.
 		/// </summary>
-		public IEnumerable<Locale> Enumerate()
+		public Locale Default
 		{
-			return Enumerate(Count > 0);
+			get { return (Find(_defaultLocale) ?? CollectionUtils.FirstElement(_installedLocales)) ?? InvariantLocale; }
 		}
 
 		/// <summary>
 		/// Enumerates the installed localizations.
 		/// </summary>
-		/// <param name="includeInvariantLocale">A value indicating whether or not the <see cref="InvariantLocale"/> should be included in the enumeration.</param>
-		public IEnumerable<Locale> Enumerate(bool includeInvariantLocale)
+		public IEnumerable<Locale> Locales
 		{
-			if (includeInvariantLocale)
-				yield return InvariantLocale;
-			foreach (var locale in _installedLocales)
-				yield return locale;
+			get { return _installedLocales; }
+		}
+
+		/// <summary>
+		/// Finds an installed localization with the specified culture code.
+		/// </summary>
+		public Locale Find(string culture)
+		{
+			return CollectionUtils.SelectFirst(_installedLocales, x => string.Equals(culture, x.Culture, StringComparison.InvariantCultureIgnoreCase));
 		}
 
 		#region IXmlSerializable Members
@@ -91,8 +98,9 @@ namespace ClearCanvas.Desktop
 				throw new InvalidOperationException();
 
 			var emptyCollection = reader.IsEmptyElement; // check if container element is empty
-			var locales = new List<Locale>();
+			var locales = new Dictionary<string, Locale>();
 
+			_defaultLocale = reader.GetAttribute(_attributeDefault);
 			reader.ReadStartElement(); // consume the container element tag
 			if (!emptyCollection)
 			{
@@ -142,13 +150,14 @@ namespace ClearCanvas.Desktop
 						}
 					}
 
-					if (locale != null)
-						locales.Add(locale);
+					// ignore duplicate entries
+					if (locale != null && !locales.ContainsKey(locale.Culture.ToLowerInvariant()))
+						locales.Add(locale.Culture.ToLowerInvariant(), locale);
 				}
 			}
 
 			_installedLocales.Clear();
-			_installedLocales.AddRange(locales);
+			_installedLocales.AddRange(locales.Values);
 			_installedLocales.Sort((x, y) => string.Compare(x.DisplayName, y.DisplayName, StringComparison.InvariantCultureIgnoreCase));
 		}
 
@@ -202,8 +211,8 @@ namespace ClearCanvas.Desktop
 
 			internal Locale(string culture, string displayName)
 			{
-				var cultureInfo = CultureInfo.GetCultureInfo(culture ?? string.Empty);
-				Culture = culture;
+				var cultureInfo = !string.IsNullOrEmpty(culture) ? CultureInfo.GetCultureInfo(culture) : CultureInfo.InvariantCulture;
+				Culture = cultureInfo.Name;
 				Name = cultureInfo.NativeName;
 				InvariantName = cultureInfo.EnglishName;
 				DisplayName = !string.IsNullOrEmpty(displayName) ? displayName : Name;
