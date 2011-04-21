@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to open images..
+        /// </summary>
+        public static string MessageUnableToOpenImages {
+            get {
+                return ResourceManager.GetString("MessageUnableToOpenImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My Computer.
         /// </summary>
         public static string MyComputer {

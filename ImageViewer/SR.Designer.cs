@@ -882,6 +882,24 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to open the selected images..
+        /// </summary>
+        public static string MessageFailedToOpenImages {
+            get {
+                return ResourceManager.GetString("MessageFailedToOpenImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to open the selected studies..
+        /// </summary>
+        public static string MessageFailedToOpenStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ClearCanvas was only able to load {0} of the {1} images you requested..
         /// </summary>
         public static string MessageFormatLoadStudyIncomplete {

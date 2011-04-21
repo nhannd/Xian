@@ -527,4 +527,10 @@ Use image with caution.</value>
   <data name="MessageStudyNearline" xml:space="preserve">
     <value>The study is currently being restored from archive.  Please try loading it again in a few minutes.</value>
   </data>
+  <data name="MessageFailedToOpenImages" xml:space="preserve">
+    <value>Failed to open the selected images.</value>
+  </data>
+  <data name="MessageFailedToOpenStudy" xml:space="preserve">
+    <value>Failed to open the selected studies.</value>
+  </data>
 </root>

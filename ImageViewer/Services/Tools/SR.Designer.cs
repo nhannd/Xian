@@ -106,24 +106,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to retrieve the Dicom Server configuration.  Please ensure the service is running and try again..
-        /// </summary>
-        internal static string ExceptionDicomServerConfigurationRefreshFailed {
-            get {
-                return ResourceManager.GetString("ExceptionDicomServerConfigurationRefreshFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to update the Dicom Server configuration.  Please ensure the service is running and try again..
-        /// </summary>
-        internal static string ExceptionDicomServerConfigurationUpdateFailed {
-            get {
-                return ResourceManager.GetString("ExceptionDicomServerConfigurationUpdateFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The identifiers must match..
         /// </summary>
         internal static string ExceptionIdentifiersMustMatch {
@@ -468,6 +450,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete the selected items..
+        /// </summary>
+        internal static string MessageFailedToDeleteStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to initiate an import of the selected items..
         /// </summary>
         internal static string MessageFailedToImportSelection {
@@ -504,11 +495,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to open the selected study..
+        /// </summary>
+        internal static string MessageFailedToOpenStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to restart service. Please check the logs for more details..
         /// </summary>
         internal static string MessageFailedToRestartService {
             get {
                 return ResourceManager.GetString("MessageFailedToRestartService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again..
+        /// </summary>
+        internal static string MessageFailedToRetrieveDicomServerConfiguration {
+            get {
+                return ResourceManager.GetString("MessageFailedToRetrieveDicomServerConfiguration", resourceCulture);
             }
         }
         
@@ -563,6 +572,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageFailedToStopService {
             get {
                 return ResourceManager.GetString("MessageFailedToStopService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again..
+        /// </summary>
+        internal static string MessageFailedToUpdateDicomServerConfiguration {
+            get {
+                return ResourceManager.GetString("MessageFailedToUpdateDicomServerConfiguration", resourceCulture);
             }
         }
         

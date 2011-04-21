@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+				ExceptionHandler.Report(ex, SR.MessageActionModelUpdateFailure, Context.DesktopWindow);
 			}
 		}
 	}

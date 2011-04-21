@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			catch (Exception e)
 			{
 				if (!cancelled) // silence any exceptions if the operation was cancelled
-					ExceptionHandler.Report(e, desktopWindow);
+					ExceptionHandler.Report(e, SR.MessageFailedToOpenImages, desktopWindow);
 			}
 
 			if (cancelled || (!AnySopsLoaded(viewer) && !AllowEmptyViewer))

@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageExportFailed, Context.DesktopWindow);
 			}
 		}
 	}
