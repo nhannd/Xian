@@ -70,6 +70,15 @@ namespace ClearCanvas.Desktop.Help {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string LabelClose {
+            get {
+                return ResourceManager.GetString("LabelClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not find license file..
         /// </summary>
         public static string LicenseNotFound {

@@ -13,21 +13,27 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
 	/// <summary>
 	/// Base <see cref="UserControl"/> class providing runtime localization update functionality for localized controls.
 	/// </summary>
-	public abstract class LocalizableUserControl : UserControl
+	public class LocalizableUserControl : UserControl
 	{
+		private readonly MethodInvoker _onCurrentUICultureChangedMethod;
+
 		/// <summary>
 		/// Initializes a new instance of a <see cref="LocalizableUserControl"/>.
 		/// </summary>
-		protected LocalizableUserControl()
+		public LocalizableUserControl()
 		{
 			if (!DesignMode)
+			{
 				Application.CurrentUICultureChanged += Application_CurrentUICultureChanged;
+				_onCurrentUICultureChangedMethod = OnCurrentUICultureChanged;
+			}
 		}
 
 		/// <summary>
@@ -36,14 +42,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="disposing">True if the <see cref="LocalizableUserControl"/> is being disposed; False if it is being finalized.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (!DesignMode && disposing)
+			if (disposing)
 				Application.CurrentUICultureChanged -= Application_CurrentUICultureChanged;
 			base.Dispose(disposing);
 		}
 
 		private void Application_CurrentUICultureChanged(object sender, EventArgs e)
 		{
-			OnCurrentUICultureChanged();
+			if (_onCurrentUICultureChangedMethod != null)
+			{
+				if (InvokeRequired)
+					Invoke(_onCurrentUICultureChangedMethod);
+				else
+					_onCurrentUICultureChangedMethod.Invoke();
+			}
 		}
 
 		/// <summary>
@@ -51,22 +63,33 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		protected virtual void OnCurrentUICultureChanged()
 		{
-			SuspendLayout();
+			ApplyControlResources(this);
+		}
+
+		/// <summary>
+		/// Convenience helper method to apply component resources for a top-level <see cref="UserControl"/>
+		/// or <see cref="Form"/> and its descendants using the current application UI culture.
+		/// </summary>
+		/// <param name="control">A top-level <see cref="Control"/> that has an associated resource (RESX) file.</param>
+		public static void ApplyControlResources(Control control)
+		{
+			Platform.CheckForNullReference(control, "control");
+			control.SuspendLayout();
 			try
 			{
-				// since we are the top level user control, use the resource manager associated with this class
-				var resourceManager = new ComponentResourceManager(GetType());
+				// use the resource manager associated with the control class
+				var resourceManager = new ComponentResourceManager(control.GetType());
 				var cultureInfo = Application.CurrentUICulture;
 
 				// apply any resources to child controls first
-				ApplyChildControlResources(resourceManager, cultureInfo, this);
+				ApplyChildControlResources(resourceManager, cultureInfo, control);
 
 				// apply the resources associated with ourself using the special key "$this"
-				resourceManager.ApplyResources(this, "$this", cultureInfo);
+				resourceManager.ApplyResources(control, "$this", cultureInfo);
 			}
 			finally
 			{
-				ResumeLayout(true);
+				control.ResumeLayout(true);
 			}
 		}
 

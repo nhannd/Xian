@@ -117,164 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_closeButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_closeButton.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="_closeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>626, 9</value>
-  </data>
-  <data name="_closeButton.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
-    <value>No</value>
-  </data>
-  <data name="_closeButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>33, 13</value>
-  </data>
-  <data name="_closeButton.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="_closeButton.Text" xml:space="preserve">
-    <value>Close</value>
-  </data>
-  <data name="_closeButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
-  </data>
-  <data name="&gt;&gt;_closeButton.Name" xml:space="preserve">
-    <value>_closeButton</value>
-  </data>
-  <data name="&gt;&gt;_closeButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_closeButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_closeButton.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="_version.Location" type="System.Drawing.Point, System.Drawing">
-    <value>447, 309</value>
-  </data>
-  <data name="_version.Size" type="System.Drawing.Size, System.Drawing">
-    <value>214, 14</value>
-  </data>
-  <data name="_version.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="_version.Text" xml:space="preserve">
-    <value>Version</value>
-  </data>
-  <data name="&gt;&gt;_version.Name" xml:space="preserve">
-    <value>_version</value>
-  </data>
-  <data name="&gt;&gt;_version.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_version.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_version.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="_copyright.Location" type="System.Drawing.Point, System.Drawing">
-    <value>375, 353</value>
-  </data>
-  <data name="_copyright.Size" type="System.Drawing.Size, System.Drawing">
-    <value>286, 14</value>
-  </data>
-  <data name="_copyright.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="_copyright.Text" xml:space="preserve">
-    <value>Copyright</value>
-  </data>
-  <data name="&gt;&gt;_copyright.Name" xml:space="preserve">
-    <value>_copyright</value>
-  </data>
-  <data name="&gt;&gt;_copyright.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_copyright.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_copyright.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="_license.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_license.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt</value>
-  </data>
-  <data name="_license.Location" type="System.Drawing.Point, System.Drawing">
-    <value>617, 33</value>
-  </data>
-  <data name="_license.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 13</value>
-  </data>
-  <data name="_license.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="_license.Text" xml:space="preserve">
-    <value>License</value>
-  </data>
-  <data name="_license.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
-  </data>
-  <data name="_license.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;_license.Name" xml:space="preserve">
-    <value>_license</value>
-  </data>
-  <data name="&gt;&gt;_license.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_license.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_license.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="_manifest.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_manifest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>447, 331</value>
-  </data>
-  <data name="_manifest.Size" type="System.Drawing.Size, System.Drawing">
-    <value>217, 13</value>
-  </data>
-  <data name="_manifest.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="_manifest.Text" xml:space="preserve">
-    <value>Warning: This installation has been modified.</value>
-  </data>
-  <data name="&gt;&gt;_manifest.Name" xml:space="preserve">
-    <value>_manifest</value>
-  </data>
-  <data name="&gt;&gt;_manifest.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_manifest.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_manifest.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
   <data name="$this.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAqEAAAGBCAYAAABW5mj1AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOvwAA
-        Dr8BOAVTJAAA/3lJREFUeF7s/Xd0JNeVrwuqZ/6YdWfWW+vNnTczb9bcd29fSSSl7n6tbqn7zb1Xht57
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOvgAA
+        Dr4B6kKxwAAA/3lJREFUeF7s/Xd0JNeVrwuqZ/6YdWfWW+vNnTczb9bcd29fSSSl7n6tbqn7zb1Xht57
         I1J0kihLUq2WpZEo0XtX3pASq4oSWXQFoAzLAihvUQ6uvPfe0pNVdWZ/+8SOPBnIRCZQKFQCOLUYzERm
         mBM7IiO++G33N2ee9Xn3OfnnTvzN5/7mb/7mc845fe34v/9TssiJ5LXU39ktlJo/+31cPt8C0X7eHvH8
         83YodT7E30/8/YQWKHW+xOtv/vUl/n7i7yf+fnIW6Nz1w/2N3K+BUOc+k+m4O3HiWMFXvis9ySz6z+Yt
@@ -1894,20 +1742,5 @@
         /oN8x2//5ssXBuMg9v+B7f82z0j7yLzDPPTv/+a/SXt8WdvFt83fuv/1b/6r+3d/e77unP0clbuu99/Z
         vjAc+m+cb307xvE2sOMt1m+s36GdD/08f6EA0K+4/13W3f8f9m5HJM7m+qQAAAAASUVORK5CYII=
 </value>
-  </data>
-  <data name="$this.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Center</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>673, 385</value>
-  </data>
-  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>CenterParent</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>AboutForm</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

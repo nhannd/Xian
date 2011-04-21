@@ -64,6 +64,14 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
+		/// Enumerates the installed localizations, including the <see cref="InvariantLocale"/> if there is at least one installed locale.
+		/// </summary>
+		public IEnumerable<Locale> Enumerate()
+		{
+			return Enumerate(Count > 0);
+		}
+
+		/// <summary>
 		/// Enumerates the installed localizations.
 		/// </summary>
 		/// <param name="includeInvariantLocale">A value indicating whether or not the <see cref="InvariantLocale"/> should be included in the enumeration.</param>
@@ -207,6 +215,11 @@ namespace ClearCanvas.Desktop
 			public CultureInfo GetCultureInfo()
 			{
 				return CultureInfo.GetCultureInfo(Culture);
+			}
+
+			public override string ToString()
+			{
+				return DisplayName;
 			}
 
 			public override int GetHashCode()
