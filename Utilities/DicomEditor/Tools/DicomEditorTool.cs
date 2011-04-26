@@ -81,7 +81,6 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 		/// <summary>
 		/// Called by the framework to allow the tool to initialize itself.
 		/// </summary>
-		/// <remarks>
 		public override void Initialize()
 		{
 			base.Initialize();

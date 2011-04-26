@@ -25,7 +25,8 @@ namespace ClearCanvas.Dicom.Network.Scu
     {
         #region Public Events/Delegates
 
-        /// Event called when an image has completed being moved.
+        /// <summary>
+		/// Event called when an image has completed being moved.
         /// </summary>
         /// <remarks>
         /// </remarks>

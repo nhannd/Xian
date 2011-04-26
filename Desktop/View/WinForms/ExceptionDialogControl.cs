@@ -49,6 +49,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					throw new ArgumentException("Ok method must be supplied", "ok");
 
 				_okButton.Click += okClick;
+				_continueButton.Dispose();
 				_quitButton.Dispose();
 			}
 			else if (buttonActions == ExceptionDialogActions.Quit)
@@ -59,6 +60,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_quitButton.Click += quitClick;
 				AcceptButton = _quitButton;
 				CancelButton = _quitButton;
+				_continueButton.Dispose();
 				_okButton.Dispose();
 			}
 			else
@@ -68,9 +70,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 				if (quit == null)
 					throw new ArgumentException("Quit method must be supplied", "quit");
 
-				_okButton.Click += okClick;
-				_okButton.Text = "&Continue";
+				_continueButton.Click += okClick;
 				_quitButton.Click += quitClick;
+				AcceptButton = _continueButton;
+				CancelButton = _continueButton;
+				_okButton.Dispose();
 			}
 
 			if (_exception != null)

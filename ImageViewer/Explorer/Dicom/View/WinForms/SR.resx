@@ -123,6 +123,9 @@
   <data name="ErrorCannotResetModalities" xml:space="preserve">
     <value>The control cannot have its modalities set multiple times.</value>
   </data>
+  <data name="FormatListSeparator" xml:space="preserve">
+    <value>, </value>
+  </data>
   <data name="ItemClear" xml:space="preserve">
     <value>Clear</value>
   </data>

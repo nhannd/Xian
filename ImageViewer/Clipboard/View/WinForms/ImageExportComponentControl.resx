@@ -279,18 +279,6 @@
   <data name="_checkOptionCompleteImage.Text" xml:space="preserve">
     <value>Complete Image</value>
   </data>
-  <data name="&gt;&gt;_checkOptionCompleteImage.Name" xml:space="preserve">
-    <value>_checkOptionCompleteImage</value>
-  </data>
-  <data name="&gt;&gt;_checkOptionCompleteImage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_checkOptionCompleteImage.Parent" xml:space="preserve">
-    <value>_groupFieldOfView</value>
-  </data>
-  <data name="&gt;&gt;_checkOptionCompleteImage.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="_checkOptionWysiwyg.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -305,18 +293,6 @@
   </data>
   <data name="_checkOptionWysiwyg.Text" xml:space="preserve">
     <value>WYSIWYG</value>
-  </data>
-  <data name="&gt;&gt;_checkOptionWysiwyg.Name" xml:space="preserve">
-    <value>_checkOptionWysiwyg</value>
-  </data>
-  <data name="&gt;&gt;_checkOptionWysiwyg.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_checkOptionWysiwyg.Parent" xml:space="preserve">
-    <value>_groupFieldOfView</value>
-  </data>
-  <data name="&gt;&gt;_checkOptionWysiwyg.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="_scale.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -367,18 +343,6 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;_pnlDialogButtons.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;_lblScalePercent.Name" xml:space="preserve">
-    <value>_lblScalePercent</value>
-  </data>
-  <data name="&gt;&gt;_lblScalePercent.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_lblScalePercent.Parent" xml:space="preserve">
-    <value>_pnlScale</value>
-  </data>
-  <data name="&gt;&gt;_lblScalePercent.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="_pnlScale.Location" type="System.Drawing.Point, System.Drawing">

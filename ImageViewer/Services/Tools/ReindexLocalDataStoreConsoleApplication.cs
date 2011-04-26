@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				if (millisecondsSinceLastProgressReport > 1000 || percentComplete == 100)
 				{
 					_lastProgressReportTicks = Environment.TickCount;
-					Console.WriteLine("... {0:F1}%", percentComplete);
+					Console.WriteLine(SR.FormatProgressUpdate, percentComplete);
 				}
 			}
 		}

@@ -115,6 +115,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ... {0:F1}%.
+        /// </summary>
+        internal static string FormatProgressUpdate {
+            get {
+                return ResourceManager.GetString("FormatProgressUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} days ago.
         /// </summary>
         internal static string FormatXDaysAgo {

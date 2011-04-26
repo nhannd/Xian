@@ -674,7 +674,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <returns>
 		/// An ordered pair of type <see cref="Size"/> representing the width and height of a rectangle.
 		/// </returns>
-		/// <param name="proposedSize">The custom-sized area for a control.
+		/// <param name="proposedSize">The custom-sized area for a control.</param>
 		public override Size GetPreferredSize(Size proposedSize)
 		{
 			return _textBox.GetPreferredSize(proposedSize);

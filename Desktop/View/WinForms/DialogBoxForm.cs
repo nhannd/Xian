@@ -63,7 +63,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="dialogBox"></param>
 		/// <param name="content"></param>
 		public DialogBoxForm(DialogBox dialogBox, Control content)
-			: this(dialogBox.Title, content, dialogBox.Size, dialogBox.DialogSizeHint, dialogBox.AllowUserResize)
+			: this(dialogBox.Title, content, dialogBox.Size, dialogBox.SizeHint, dialogBox.AllowUserResize)
 		{
 		}
 

@@ -46,7 +46,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		public abstract ITable SummaryTable { get; }
 
 		/// <summary>
-		/// Gets the summary table selection as an <cref="ISelection"/>.
+		/// Gets the summary table selection as an <see cref="ISelection"/>.
 		/// </summary>
 		public abstract ISelection SummarySelection { get; set; }
 
@@ -294,7 +294,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		}
 
 		/// <summary>
-		/// Gets the summary table selection as an <cref="ISelection"/>.
+		/// Gets the summary table selection as an <see cref="ISelection"/>.
 		/// </summary>
 		public override ISelection SummarySelection
 		{

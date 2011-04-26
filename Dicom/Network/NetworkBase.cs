@@ -472,17 +472,17 @@ namespace ClearCanvas.Dicom.Network
         /// Defines an event handler  when an association has been aborted.
         /// </summary>
         /// <param name="assoc"></param>
-        /// <param name="reason></param>
+        /// <param name="reason"></param>
         public delegate void AssociationAbortedEventHandler(AssociationParameters assoc, DicomAbortReason reason);
 
         /// <summary>
         /// Defines an event handler  when a Dimse message is being sent.
         /// </summary>
-        /// <param name="assoc>"</param>
-        /// <param name="presentationContextID>"</param>
-        /// <param name="command>"</param>
-        /// <param name="dataset>"</param>
-        /// <param name="tranferStats>"</param>
+        /// <param name="assoc"></param>
+        /// <param name="presentationContextID"></param>
+        /// <param name="command"></param>
+        /// <param name="dataset"></param>
+        /// <param name="tranferStats"></param>
         public delegate void DimseMessageSendingEventHandler(
             AssociationParameters assoc, byte presentationContextID, DicomAttributeCollection command,
             DicomAttributeCollection dataset);
@@ -490,36 +490,36 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Defines an event handler  when a Dimse message is being received.
         /// </summary>
-        /// <param name="assoc>"</param>
-        /// <param name="presentationContextID>"</param>
-        /// <param name="tranferStats>"</param>
+        /// <param name="assoc"></param>
+        /// <param name="presentationContextID"></param>
+        /// <param name="tranferStats"></param>
         public delegate void DimseMessageReceivingEventHandler(AssociationParameters assoc, byte presentationContextID);
 
         /// <summary>
         /// Defines an event handler  when a Dicom message has been sent.
         /// </summary>
-        /// <param name="assoc>"</param>
+        /// <param name="assoc"></param>
         /// <param name="msg"/>
         public delegate void MessageSentEventHandler(AssociationParameters assoc, DicomMessage msg);
 
         /// <summary>
         /// Defines an event handler  when a Dicom message has been received.
         /// </summary>
-        /// <param name="assoc>"</param>
+        /// <param name="assoc"></param>
         /// <param name="msg"/>
         public delegate void MessageReceivedEventHandler(AssociationParameters assoc, DicomMessage msg);
 
         /// <summary>
         /// Defines an event handler  when the network stream has been closed.
         /// </summary>
-        /// <param name="assoc>"</param>
+        /// <param name="assoc"></param>
         /// <param name="data"></param>
         public delegate void NetworkClosedEventHandler(object data);
 
         /// <summary>
         /// Defines an event handler  when a network error occurs
         /// </summary>
-        /// <param name="assoc>"</param>
+        /// <param name="assoc"></param>
         /// <param name="data"/>
         public delegate void NetworkErrorEventHandler(object data);
 

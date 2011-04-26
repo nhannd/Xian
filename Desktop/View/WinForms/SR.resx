@@ -190,4 +190,7 @@
   <data name="MessageEmptySearchTree" xml:space="preserve">
     <value>Enter text here to search tree</value>
   </data>
+  <data name="FormatListSeparator" xml:space="preserve">
+    <value>, </value>
+  </data>
 </root>

@@ -156,6 +156,42 @@
   <data name="&gt;&gt;_detailButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="_continueButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="_continueButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_continueButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="_continueButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>274, 3</value>
+  </data>
+  <data name="_continueButton.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>No</value>
+  </data>
+  <data name="_continueButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="_continueButton.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="_continueButton.Text" xml:space="preserve">
+    <value>&amp;Continue</value>
+  </data>
+  <data name="&gt;&gt;_continueButton.Name" xml:space="preserve">
+    <value>_continueButton</value>
+  </data>
+  <data name="&gt;&gt;_continueButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_continueButton.Parent" xml:space="preserve">
+    <value>_flowLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;_continueButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="_okButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
@@ -163,7 +199,7 @@
     <value>True</value>
   </data>
   <data name="_okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>274, 3</value>
+    <value>193, 3</value>
   </data>
   <data name="_okButton.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>No</value>
@@ -187,7 +223,7 @@
     <value>_flowLayoutPanel</value>
   </data>
   <data name="&gt;&gt;_okButton.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="_quitButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -196,7 +232,7 @@
     <value>True</value>
   </data>
   <data name="_quitButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>193, 3</value>
+    <value>112, 3</value>
   </data>
   <data name="_quitButton.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>No</value>
@@ -220,7 +256,7 @@
     <value>_flowLayoutPanel</value>
   </data>
   <data name="&gt;&gt;_quitButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="_flowLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
