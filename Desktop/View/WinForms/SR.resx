@@ -193,4 +193,16 @@
   <data name="FormatListSeparator" xml:space="preserve">
     <value>, </value>
   </data>
+  <data name="FormatExceptionDetails" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="MenuContinue" xml:space="preserve">
+    <value>&amp;Continue</value>
+  </data>
+  <data name="MenuHideDetails" xml:space="preserve">
+    <value>&amp;Details &lt;&lt;</value>
+  </data>
+  <data name="MenuShowDetails" xml:space="preserve">
+    <value>&amp;Details &gt;&gt;</value>
+  </data>
 </root>

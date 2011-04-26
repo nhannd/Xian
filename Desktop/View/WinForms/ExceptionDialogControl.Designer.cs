@@ -63,7 +63,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExceptionDialogControl));
 			this._flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._detailButton = new System.Windows.Forms.Button();
-			this._continueButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
 			this._quitButton = new System.Windows.Forms.Button();
 			this._description = new System.Windows.Forms.TextBox();
@@ -82,10 +81,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			resources.ApplyResources(this._flowLayoutPanel, "_flowLayoutPanel");
 			this._flowLayoutPanel.Controls.Add(this._detailButton);
-			this._flowLayoutPanel.Controls.Add(this._continueButton);
 			this._flowLayoutPanel.Controls.Add(this._okButton);
 			this._flowLayoutPanel.Controls.Add(this._quitButton);
-			this._flowLayoutPanel.MinimumSize = new System.Drawing.Size(432, 32);
 			this._flowLayoutPanel.Name = "_flowLayoutPanel";
 			// 
 			// _detailButton
@@ -94,12 +91,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._detailButton.Name = "_detailButton";
 			this._detailButton.UseVisualStyleBackColor = true;
 			this._detailButton.Click += new System.EventHandler(this._detailButton_Click);
-			// 
-			// _continueButton
-			// 
-			resources.ApplyResources(this._continueButton, "_continueButton");
-			this._continueButton.Name = "_continueButton";
-			this._continueButton.UseVisualStyleBackColor = true;
 			// 
 			// _okButton
 			// 
@@ -129,9 +120,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _detailTree
 			// 
+			this._detailTree.ContextMenuStrip = this._contextMenu;
 			resources.ApplyResources(this._detailTree, "_detailTree");
 			this._detailTree.Name = "_detailTree";
-			this._detailTree.MouseDown += new System.Windows.Forms.MouseEventHandler(this._detailTree_MouseDown);
 			// 
 			// _contextMenu
 			// 
@@ -184,7 +175,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
 		private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.Panel _messagePane;
-		private System.Windows.Forms.Button _continueButton;
 
 
     }

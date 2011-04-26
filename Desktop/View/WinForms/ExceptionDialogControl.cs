@@ -10,7 +10,7 @@
 #endregion
 
 using System;
-using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Actions;
 
@@ -49,7 +49,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 					throw new ArgumentException("Ok method must be supplied", "ok");
 
 				_okButton.Click += okClick;
-				_continueButton.Dispose();
 				_quitButton.Dispose();
 			}
 			else if (buttonActions == ExceptionDialogActions.Quit)
@@ -60,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_quitButton.Click += quitClick;
 				AcceptButton = _quitButton;
 				CancelButton = _quitButton;
-				_continueButton.Dispose();
 				_okButton.Dispose();
 			}
 			else
@@ -70,11 +68,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 				if (quit == null)
 					throw new ArgumentException("Quit method must be supplied", "quit");
 
-				_continueButton.Click += okClick;
+				_okButton.Click += okClick;
+				_okButton.Text = SR.MenuContinue;
 				_quitButton.Click += quitClick;
-				AcceptButton = _continueButton;
-				CancelButton = _continueButton;
-				_okButton.Dispose();
 			}
 
 			if (_exception != null)
@@ -106,20 +102,10 @@ namespace ClearCanvas.Desktop.View.WinForms
                 ShowDetails();
         }
 
-        private void _detailTree_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                // Show ContextMenu when right click anywhere on the TreeView
-                Point mousePoint = PointToScreen(new Point(e.X, e.Y));
-                _contextMenu.Show(mousePoint.X + _detailTree.Left, mousePoint.Y + _detailTree.Top);
-            }
-        }
-
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Copy exception details to clipboard
-			string clipboardMessage = SR.ExceptionHandlerMessagePrefix + _description.Text + "\r\n\r\n";
+			string clipboardMessage = SR.ExceptionHandlerMessagePrefix + _description.Text + Environment.NewLine + Environment.NewLine;
             clipboardMessage += BuildMessageFromException(_exception);
             Clipboard.SetText(clipboardMessage);
         }
@@ -131,7 +117,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void HideDetails()
         {
             _detailTree.Hide();
-            _detailButton.Text = _detailButton.Text.Replace("<", ">");
+        	_detailButton.Text = SR.MenuShowDetails;
 
             // Shrink the user control
 			Height -= _detailTree.Height;
@@ -140,7 +126,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void ShowDetails()
         {
             _detailTree.Show();
-            _detailButton.Text = _detailButton.Text.Replace(">", "<");
+			_detailButton.Text = SR.MenuHideDetails;
 
             // Expand the user control
 			Height += _detailTree.Height;
@@ -157,7 +143,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (e.StackTrace != null)
             {
                 // Add a new node for each level of StackTrace
-                const string lineBreak = "\r\n";
+                string lineBreak = Environment.NewLine;
                 int prevIndex = 0;
                 int startIndex = e.StackTrace.IndexOf(lineBreak, prevIndex);
                 while (startIndex != -1)
@@ -179,20 +165,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private static string BuildMessageFromException(Exception e)
         {
-            string message = "";
+        	var sb = new StringBuilder();
 
-            message += e.Source + ": " + e.Message + "\r\n";
-            message += e.StackTrace + "\r\n";
+			sb.AppendLine(!string.IsNullOrEmpty(e.Source) ? string.Format(SR.FormatExceptionDetails, e.Source, e.Message) : e.Message);
+        	sb.AppendLine(e.StackTrace);
 
             // Recursively add inner exception to the message
             if (e.InnerException != null)
             {
-                message += "\r\n";
-				message += SR.ExceptionHandlerInnerExceptionText + "\r\n";
-                message += BuildMessageFromException(e.InnerException);
+            	sb.AppendLine();
+				sb.AppendLine(SR.ExceptionHandlerInnerExceptionText);
+            	sb.AppendLine(BuildMessageFromException(e.InnerException));
             }
 
-            return message;
+            return sb.ToString();
         }
 
         #endregion

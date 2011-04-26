@@ -139,7 +139,7 @@
     <value>75, 23</value>
   </data>
   <data name="_detailButton.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="_detailButton.Text" xml:space="preserve">
     <value>&amp;Details &gt;&gt;</value>
@@ -156,42 +156,6 @@
   <data name="&gt;&gt;_detailButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="_continueButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="_continueButton.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_continueButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="_continueButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>274, 3</value>
-  </data>
-  <data name="_continueButton.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
-    <value>No</value>
-  </data>
-  <data name="_continueButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="_continueButton.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="_continueButton.Text" xml:space="preserve">
-    <value>&amp;Continue</value>
-  </data>
-  <data name="&gt;&gt;_continueButton.Name" xml:space="preserve">
-    <value>_continueButton</value>
-  </data>
-  <data name="&gt;&gt;_continueButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_continueButton.Parent" xml:space="preserve">
-    <value>_flowLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;_continueButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="_okButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
@@ -199,7 +163,7 @@
     <value>True</value>
   </data>
   <data name="_okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>193, 3</value>
+    <value>274, 3</value>
   </data>
   <data name="_okButton.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>No</value>
@@ -208,7 +172,7 @@
     <value>75, 23</value>
   </data>
   <data name="_okButton.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="_okButton.Text" xml:space="preserve">
     <value>&amp;OK</value>
@@ -223,7 +187,7 @@
     <value>_flowLayoutPanel</value>
   </data>
   <data name="&gt;&gt;_okButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="_quitButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -232,7 +196,7 @@
     <value>True</value>
   </data>
   <data name="_quitButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>112, 3</value>
+    <value>193, 3</value>
   </data>
   <data name="_quitButton.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>No</value>
@@ -256,19 +220,19 @@
     <value>_flowLayoutPanel</value>
   </data>
   <data name="&gt;&gt;_quitButton.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="_flowLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
   </data>
   <data name="_flowLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 121</value>
+    <value>5, 124</value>
   </data>
   <data name="_flowLayoutPanel.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>Yes</value>
   </data>
   <data name="_flowLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>433, 32</value>
+    <value>433, 29</value>
   </data>
   <data name="_flowLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -295,10 +259,10 @@
     <value>True</value>
   </data>
   <data name="_description.Size" type="System.Drawing.Size, System.Drawing">
-    <value>384, 106</value>
+    <value>384, 109</value>
   </data>
   <data name="_description.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>0</value>
   </data>
   <data name="_description.Text" xml:space="preserve">
     <value>Add description here</value>
@@ -322,7 +286,7 @@
     <value>5, 5</value>
   </data>
   <data name="_warningIcon.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 106</value>
+    <value>39, 109</value>
   </data>
   <data name="_warningIcon.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -338,6 +302,24 @@
   </data>
   <data name="&gt;&gt;_warningIcon.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <metadata name="_contextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="copyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 22</value>
+  </data>
+  <data name="copyToolStripMenuItem.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="_contextMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 26</value>
+  </data>
+  <data name="&gt;&gt;_contextMenu.Name" xml:space="preserve">
+    <value>_contextMenu</value>
+  </data>
+  <data name="&gt;&gt;_contextMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_detailTree.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
@@ -366,24 +348,6 @@
   <data name="&gt;&gt;_detailTree.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <metadata name="_contextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="copyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>99, 22</value>
-  </data>
-  <data name="copyToolStripMenuItem.Text" xml:space="preserve">
-    <value>Copy</value>
-  </data>
-  <data name="_contextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 26</value>
-  </data>
-  <data name="&gt;&gt;_contextMenu.Name" xml:space="preserve">
-    <value>_contextMenu</value>
-  </data>
-  <data name="&gt;&gt;_contextMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="_messagePane.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -394,10 +358,10 @@
     <value>5, 5, 5, 5</value>
   </data>
   <data name="_messagePane.Size" type="System.Drawing.Size, System.Drawing">
-    <value>433, 116</value>
+    <value>433, 119</value>
   </data>
   <data name="_messagePane.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
+    <value>2</value>
   </data>
   <data name="&gt;&gt;_messagePane.Name" xml:space="preserve">
     <value>_messagePane</value>

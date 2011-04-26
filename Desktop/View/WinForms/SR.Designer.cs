@@ -136,6 +136,15 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        internal static string FormatExceptionDetails {
+            get {
+                return ResourceManager.GetString("FormatExceptionDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to , .
         /// </summary>
         internal static string FormatListSeparator {
@@ -168,6 +177,33 @@ namespace ClearCanvas.Desktop.View.WinForms {
         internal static string MenuBar {
             get {
                 return ResourceManager.GetString("MenuBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Continue.
+        /// </summary>
+        internal static string MenuContinue {
+            get {
+                return ResourceManager.GetString("MenuContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Details &lt;&lt;.
+        /// </summary>
+        internal static string MenuHideDetails {
+            get {
+                return ResourceManager.GetString("MenuHideDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Details &gt;&gt;.
+        /// </summary>
+        internal static string MenuShowDetails {
+            get {
+                return ResourceManager.GetString("MenuShowDetails", resourceCulture);
             }
         }
         
