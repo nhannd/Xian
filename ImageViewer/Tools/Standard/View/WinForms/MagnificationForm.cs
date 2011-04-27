@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			{
 				Platform.Log(LogLevel.Error, ex, "An error has occured while refreshing the magnified contents of the tile.");
 
-				var exceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
+				var exceptionMessage = ex is RenderingException ? ((RenderingException) ex).UserMessage : ex.Message;
 
 				// we cannot simply pass the Graphics because we haven't released its hDC yet
 				// if we do, we'll get a "Object is currently in use elsewhere" exception
@@ -363,7 +363,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 					Platform.Log(LogLevel.Error, ex, "An error has occured while rendering the magnified contents of the tile.");
 
 					// a rendering exception was encountered, so set the message field
-					_lastRenderExceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
+					_lastRenderExceptionMessage = ex is RenderingException ? ((RenderingException) ex).UserMessage : ex.Message;
 
 					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
 					// if we do, we'll get a "Object is currently in use elsewhere" exception

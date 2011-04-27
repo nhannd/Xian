@@ -533,4 +533,10 @@ Use image with caution.</value>
   <data name="MessageFailedToOpenStudy" xml:space="preserve">
     <value>Failed to open the selected studies.</value>
   </data>
+  <data name="FormatReason" xml:space="preserve">
+    <value>Reason: {0}</value>
+  </data>
+  <data name="MessageRenderingPipelineFailure" xml:space="preserve">
+    <value>An error has occurred in the rendering pipeline.</value>
+  </data>
 </root>
