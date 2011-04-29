@@ -334,6 +334,7 @@
     <Compile Include="Configuration\ISharedApplicationSettingsProvider.cs" />
     <Compile Include="Configuration\IMigrateSettings.cs" />
     <Compile Include="Configuration\ExtendedLocalFileSettingsProvider.cs" />
+    <Compile Include="Configuration\SettingsException.cs" />
     <Compile Include="Configuration\SettingsPropertyExtensions.cs" />
     <Compile Include="Configuration\Setup\ImportLocalSharedSettingsApplication.cs" />
     <Compile Include="Configuration\SystemConfigurationHelper.cs" />

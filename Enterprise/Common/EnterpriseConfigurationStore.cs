@@ -13,16 +13,38 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Enterprise.Common.Caching;
 using ClearCanvas.Enterprise.Common.Configuration;
+using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common
 {
+	[ExtensionPoint]
+	public class EnterpriseConfigurationStoreOfflineCacheExtensionPoint : ExtensionPoint<IOfflineCache<ConfigurationDocumentKey, string>>
+	{
+	}
+
 	/// <summary>
 	/// Enterprise implementation of <see cref="IConfigurationStore"/>.
 	/// </summary>
 	[ExtensionOf(typeof(ConfigurationStoreExtensionPoint))]
 	public class EnterpriseConfigurationStore : IConfigurationStore
 	{
+		private readonly IOfflineCache<ConfigurationDocumentKey, string> _offlineCache;
+
+		public EnterpriseConfigurationStore()
+		{
+			try
+			{
+				_offlineCache = (IOfflineCache<ConfigurationDocumentKey, string>)(new EnterpriseConfigurationStoreOfflineCacheExtensionPoint()).CreateExtension();
+			}
+			catch (NotSupportedException)
+			{
+				Platform.Log(LogLevel.Debug, SR.ExceptionOfflineCacheNotFound);
+				_offlineCache = new NullOfflineCache<ConfigurationDocumentKey, string>();
+			}
+		}
+
 		#region IConfigurationStore Members
 
 		/// <summary>
@@ -37,10 +59,25 @@ namespace ClearCanvas.Enterprise.Common
 
 			var service = (IApplicationConfigurationReadService)Platform.GetService(serviceContract);
 			using (service as IDisposable)
+			using (var offlineCacheClient = _offlineCache.CreateClient())
 			{
-				var content = service.GetConfigurationDocument(
-				   new GetConfigurationDocumentRequest(
-					   new ConfigurationDocumentKey(name, version, user, instanceKey))).Content;
+				var documentKey = new ConfigurationDocumentKey(name, version, user, instanceKey);
+				string content;
+				try
+				{
+					content = service.GetConfigurationDocument(new GetConfigurationDocumentRequest(documentKey)).Content;
+
+					// keep offline cache up to date
+					offlineCacheClient.Put(documentKey, content);
+				}
+				catch (EndpointNotFoundException e)
+				{
+					Platform.Log(LogLevel.Debug, e);
+
+					// get most recent version from offline cache
+					content = offlineCacheClient.Get(documentKey);
+				}
+
 				if (content == null)
 					throw new ConfigurationDocumentNotFoundException(name, version, user, instanceKey);
 
@@ -54,9 +91,22 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		public void PutDocument(string name, Version version, string user, string instanceKey, TextReader content)
 		{
-			Platform.GetService<IConfigurationService>(
-				service => service.SetConfigurationDocument(new SetConfigurationDocumentRequest(
-								new ConfigurationDocumentKey(name, version, user, instanceKey), content.ReadToEnd())));
+			using (var offlineCacheClient = _offlineCache.CreateClient())
+			{
+				var documentKey = new ConfigurationDocumentKey(name, version, user, instanceKey);
+				var document = content.ReadToEnd();
+				Platform.GetService<IConfigurationService>(
+						service => service.SetConfigurationDocument(
+								new SetConfigurationDocumentRequest(documentKey, document))
+					);
+
+				// note: we don't catch exceptions here.  If we're offline, the app should not
+				// be allowing the user to attempt to put documents to the server, hence this
+				// method shouldn't even be called
+
+				// keep offline cache up to date
+				offlineCacheClient.Put(documentKey, document);
+			}
 		}
 
 		#endregion

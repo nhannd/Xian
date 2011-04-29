@@ -67,7 +67,7 @@ namespace ClearCanvas.Enterprise.Common.Setup
 			}
         }
 
-		private void MigrateSharedSettings(string previousExeConfigFilename)
+		private static void MigrateSharedSettings(string previousExeConfigFilename)
 		{
 			foreach (SettingsGroupDescriptor group in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
 				SettingsMigrator.MigrateSharedSettings(group, previousExeConfigFilename);
@@ -81,7 +81,15 @@ namespace ClearCanvas.Enterprise.Common.Setup
         private static void ImportSettingsGroups()
         {
             List<SettingsGroupDescriptor> groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
-            Platform.GetService<Configuration.IConfigurationService>(
+
+			if (groups!=null)
+			{
+            	foreach(var g in groups)
+            	{
+                	Platform.Log(LogLevel.Info, "Import settings group {0}, Version={1}, Type={2}", g.Name, g.Version.ToString(), g.AssemblyQualifiedTypeName);
+            	}
+            	
+            	Platform.GetService(
                 delegate(Configuration.IConfigurationService service)
                 {
                     foreach (SettingsGroupDescriptor group in groups)
@@ -91,6 +99,9 @@ namespace ClearCanvas.Enterprise.Common.Setup
                             new Configuration.ImportSettingsGroupRequest(group, props));
                     }
                 });
+        	}
+
+            
         }
 
 		/// <summary>
@@ -98,22 +109,15 @@ namespace ClearCanvas.Enterprise.Common.Setup
 		/// </summary>
 		private static void ImportAuthorityTokens(string sysAdminGroup)
 		{
-			string[] addToGroups = string.IsNullOrEmpty(sysAdminGroup) ? new string[] { } : new string[] { sysAdminGroup };
+			string[] addToGroups = string.IsNullOrEmpty(sysAdminGroup) ? new string[] { } : new[] { sysAdminGroup };
 
 			AuthorityTokenDefinition[] tokens = AuthorityGroupSetup.GetAuthorityTokens();
 
-			List<AuthorityTokenSummary> summaries = CollectionUtils.Map<AuthorityTokenDefinition, AuthorityTokenSummary>(tokens,
-								delegate(AuthorityTokenDefinition t)
-								{
-									return new AuthorityTokenSummary(t.Token, t.Description);
-								});
+			List<AuthorityTokenSummary> summaries = CollectionUtils.Map(tokens,(AuthorityTokenDefinition t) =>
+			                                                            new AuthorityTokenSummary(t.Token, t.Description));
 
-			Platform.GetService<IAuthorityGroupAdminService>(
-				delegate(IAuthorityGroupAdminService service)
-				{
-					service.ImportAuthorityTokens(
-						new ImportAuthorityTokensRequest(summaries, new List<string>(addToGroups)));
-				});
+			Platform.GetService((IAuthorityGroupAdminService service) => service.ImportAuthorityTokens(
+			                                                 new ImportAuthorityTokensRequest(summaries, new List<string>(addToGroups))));
 		}
 
 		/// <summary>
@@ -123,19 +127,9 @@ namespace ClearCanvas.Enterprise.Common.Setup
 		{
 			AuthorityGroupDefinition[] groups = AuthorityGroupSetup.GetDefaultAuthorityGroups();
 
-			Platform.GetService<IAuthorityGroupAdminService>(
-				delegate(IAuthorityGroupAdminService service)
-				{
-					service.ImportAuthorityGroups(
-						new ImportAuthorityGroupsRequest(
-							CollectionUtils.Map<AuthorityGroupDefinition, AuthorityGroupDetail>(groups,
-								delegate(AuthorityGroupDefinition g)
-								{
-									return new AuthorityGroupDetail(null, g.Name,
-										CollectionUtils.Map<string, AuthorityTokenSummary>(g.Tokens,
-											delegate(string t) { return new AuthorityTokenSummary(t, null); }));
-								})));
-				});
+			Platform.GetService((IAuthorityGroupAdminService service) 
+                => service.ImportAuthorityGroups(new ImportAuthorityGroupsRequest(
+                        CollectionUtils.Map(groups, (AuthorityGroupDefinition g) => new AuthorityGroupDetail(null, g.Name,CollectionUtils.Map(g.Tokens, (string t) => new AuthorityTokenSummary(t, null)))))));
 		}
     }
 }

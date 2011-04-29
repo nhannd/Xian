@@ -99,6 +99,7 @@
     <Compile Include="Admin\UserAdmin\UpdateUserResponse.cs" />
     <Compile Include="Admin\UserAdmin\UserDetail.cs" />
     <Compile Include="Admin\UserAdmin\UserSummary.cs" />
+    <Compile Include="Audit\AuditException.cs" />
     <Compile Include="Audit\AuditSink.cs" />
     <Compile Include="Audit\IAuditService.cs" />
     <Compile Include="Audit\WriteEntryRequest.cs" />
@@ -133,10 +134,14 @@
     <Compile Include="Configuration\ImportSettingsGroupRequest.cs" />
     <Compile Include="Configuration\ImportSettingsGroupResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />
+    <Compile Include="FailedEndpointThrottleClientAdvice.cs" />
     <Compile Include="FailoverClientAdvice.cs" />
     <Compile Include="IChannelProvider.cs" />
+    <Compile Include="IOfflineCache.cs" />
     <Compile Include="ListRequestBase.cs" />
+    <Compile Include="NullOfflineCache.cs" />
     <Compile Include="PagedDataContractBase.cs" />
+    <Compile Include="Ping\IPingService.cs" />
     <Compile Include="ResponseCachingAdviceBase.cs" />
     <Compile Include="ResponseCachingClientSideAdvice.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
@@ -167,6 +172,7 @@
     <Compile Include="Configuration\IConfigurationService.cs" />
     <Compile Include="ICoreServiceLayer.cs" />
     <Compile Include="ResponseCachingDirective.cs" />
+    <Compile Include="ServiceConfiguration\Server\CertificateSearchDirective.cs" />
     <Compile Include="Setup\SetupApplication.cs" />
     <Compile Include="Setup\SetupCommandLine.cs" />
     <Compile Include="StaticChannelProvider.cs" />

@@ -121,7 +121,7 @@
     <value>The value must be between 1 and 100</value>
   </data>
   <data name="AdminPartitionArchive_InvalidDelay" xml:space="preserve">
-    <value>This field must be numerical</value>
+    <value>This field must be a positive integer</value>
   </data>
   <data name="AdminUserGroups_UserGroupAlreadyExists" xml:space="preserve">
     <value>This user group already exists.</value>
@@ -181,7 +181,7 @@
     <value>Invalid Person Name. Each field may contain up to 64 characters.</value>
   </data>
   <data name="SIQ_ReconcileDialog_PatientSexOverriddenOnMerge" xml:space="preserve">
-    <value>The value used for merged study will be Other (O).</value>
+    <value>Invalid value for Patient's Sex.  If you choose to use data in these images, Patient's Sex of the study will be set to Other. Howerver, you can still edit the study after the reconciliation has completed.</value>
   </data>
   <data name="ThisFieldIsRequired" xml:space="preserve">
     <value>This field is required</value>

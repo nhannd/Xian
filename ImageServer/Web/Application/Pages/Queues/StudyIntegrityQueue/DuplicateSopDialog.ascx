@@ -222,41 +222,42 @@
                                                  <table>
                                                     <tr>
                                                         <td width="130px" class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.PatientName %></asp:Label></td>
-                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingNameLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name)? "Not Specified": DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name%>' /></td>
+                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingNameLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name)? SR.NotSpecified: DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name%>' /></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.PatientID%></asp:Label></td>
                                                         <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientIDLabel" CssClass="StudyField" Text='<%# DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId %>' /></td>
                                                     <tr>
                                                         <td class="DialogLabelBackground"><asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.PatientBirthdate %></asp:Label></td>
-                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientBirthDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate)? "Not Specified":DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate %>' /></td>
+                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientBirthDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate)? SR.NotSpecified:DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate %>' /></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="DialogLabelBackground"><asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.AccessionNumber %></asp:Label></td>
-                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingAccessionNumberLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.AccessionNumber)?"Not Specified":DuplicateEntryDetails.ConflictingImageSet.StudyInfo.AccessionNumber %>' /></td>
+                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingAccessionNumberLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.AccessionNumber)? SR.NotSpecified:DuplicateEntryDetails.ConflictingImageSet.StudyInfo.AccessionNumber %>' /></td>
                                                      </tr>
                                                      <tr>
                                                         <td class="DialogLabelBackground"><asp:Label ID="Label6" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.PatientSex %></asp:Label></td>
                                                         <td>
-                                                            <table cellpadding="0" cellspacing="0">
-                                                                <tr><td><asp:textbox ID="ConflictingPatientSex" runat="server" CssClass="StudyInfoField" BorderWidth="0" ReadOnly="true" Width="95" ValidationGroup="DuplicateSOPValidationGroup" BorderStyle="None" BackColor="Transparent" Font-Size="14px" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex)?"Not Specified":DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex %>'></asp:textbox></td>
-                                                                <td><ccAsp:InvalidInputIndicator ID="UnknownSex" runat="server" SkinID="InvalidInputIndicator" />
-                                                                    <ccValidator:RegularExpressionFieldValidator ID="PatientSexValidator" runat="server" 
-                                                                        ControlToValidate="ConflictingPatientSex" ValidationGroup="DuplicateSOPValidationGroup" InvalidInputIndicatorID="UnknownSex"
-                                                                        ValidationExpression="M$|m$|F$|f$|O$" Text="<$Resource: InputValidation, SIQ_ReconcileDialog_PatientSexOverriddenOnMerge%>" Display="None">
-                                                                    </ccValidator:RegularExpressionFieldValidator>
-                                                                </td>
+                                                            <table>
+                                                                <tr>
+                                                                    <td>
+                                                                        <asp:textbox ID="ConflictingPatientSex" runat="server" CssClass="StudyInfoField" BorderWidth="0" ReadOnly="true" Width="95" ValidationGroup="DuplicateSOPValidationGroup" BorderStyle="None" BackColor="Transparent" Font-Size="14px" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex)? SR.NotSpecified:DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex %>'></asp:textbox>
+                                                                    </td>
+                                                                    <td>
+                                                                        <ccUI:Warning runat="server" ID="UnknownSexWarning" SkinID="<%$ Image : Warning %>"  
+                                                                                Message="<%$Resources: InputValidation, SIQ_ReconcileDialog_PatientSexOverriddenOnMerge%>"/>
+                                                                    </td>
                                                                 </tr>
                                                             </table>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td class="DialogLabelBackground"><asp:Label ID="Label8" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.IssuerOfPatientID %></asp:Label></td>
-                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientIssuerOfPatientID" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId)? "Not Specified":DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId %>' /></td>
+                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientIssuerOfPatientID" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId)? SR.NotSpecified:DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId %>' /></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="DialogLabelBackground"><asp:Label ID="Label9" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.StudyDate %></asp:Label></td>
-                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingStudyDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.StudyDate)?"Not Specified":DuplicateEntryDetails.ConflictingImageSet.StudyInfo.StudyDate %>' /></td>
+                                                        <td><ccUI:PreformattedLabel runat="server" ID="ConflictingStudyDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.StudyDate)? SR.NotSpecified:DuplicateEntryDetails.ConflictingImageSet.StudyInfo.StudyDate %>' /></td>
                                                     </tr>
                                                 </table>
                                                 </div>

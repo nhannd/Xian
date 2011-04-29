@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
-using System.Resources;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Enterprise
@@ -32,11 +31,10 @@ namespace ClearCanvas.ImageServer.Enterprise
         #region Static private members
 		
         static readonly object _syncLock = new object();
-    	private static bool _loaded = false;
+    	private static bool _loaded;
         static List<TEnum> _list = new List<TEnum>();
         static readonly Dictionary<short, TEnum> _dict = new Dictionary<short, TEnum>();
-        private static readonly IServerEnumExtension _extension;
-        
+
         #endregion Static private members
 
         #region Constructors
@@ -52,11 +50,12 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
             try
             {
-                _extension = new ServerEnumExtensionPoint().CreateExtension() as IServerEnumExtension;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Platform.Log(LogLevel.Warn, "Unable to instantiate ServerEnum Description transatlor: {0}", ex.Message);
 
+                Platform.Log(LogLevel.Warn, "Use default server enum description translator");
             }
         }
 
@@ -118,60 +117,13 @@ namespace ClearCanvas.ImageServer.Enterprise
 
             dest.Enum = enumValue.Enum;
             dest.Lookup = enumValue.Lookup;
-            dest.Description = GetLocalizedDescription(enumValue.Name, enumValue.Lookup);
-            dest.LongDescription = GetLocalizedLongDescription(enumValue.Name, enumValue.Lookup);
+            dest.Description = enumValue.Description;
+            dest.LongDescription = enumValue.LongDescription;
         }
 
         #endregion Public methods
 
-        #region Private Methods
-
-
-        static public string GetDescriptionResKey(string enumName, string enumLookupValue)
-        {
-            return string.Format("{0}_{1}_Description", enumName, enumLookupValue);
-        }
-        static public string GetLongDescriptionResKey(string enumName, string enumLookupValue)
-        {
-            return string.Format("{0}_{1}_LongDescription", enumName, enumLookupValue);
-        }
-
-        static private string GetLocalizedDescription(string enumName, string enumLookupValue)
-        {
-            string key = GetDescriptionResKey(enumName, enumLookupValue);
-            string desc = GetLocalizedText(key);
-            return string.IsNullOrEmpty(desc) ? key : desc;
-        }
-
-        static private string GetLocalizedLongDescription(string enumName, string enumLookupValue)
-        {
-            string key = GetLongDescriptionResKey(enumName, enumLookupValue);
-            string desc = GetLocalizedText(key);
-            return string.IsNullOrEmpty(desc) ? key : desc;
-        }
-
-        static private string GetLocalizedText(string key)
-        {
-            if (_extension == null)
-                return null;
-
-            return _extension.GetLocalizedText(key);
-        }
-
-        #endregion
 
     }
-    
-    public interface IServerEnumExtension
-    {
-        string GetLocalizedText(string key);
-    }
-
-    [ExtensionPoint]
-    public class ServerEnumExtensionPoint:ExtensionPoint<IServerEnumExtension>
-    {
-        
-    }
-
     
 }

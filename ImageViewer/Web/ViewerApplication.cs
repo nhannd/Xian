@@ -54,6 +54,13 @@ namespace ClearCanvas.ImageViewer.Web
 				return ImageViewer.SR.MessageStudyOffline;
 			if (e.GetType().Equals(typeof(NotFoundLoadStudyException)))
 				return ImageViewer.SR.MessageStudyNotFound;
+			if (e.GetType().Equals(typeof(LoadStudyException)))
+				return SR.MessageStudyCouldNotBeLoaded;
+			if (e is LoadMultipleStudiesException)
+				return ((LoadMultipleStudiesException)e).GetUserMessage();
+
+			if (e.GetType().Equals(typeof(NoVisibleDisplaySetsException)))
+				return ImageViewer.SR.MessageNoVisibleDisplaySets;
 
 			if (e.GetType().Equals(typeof(PatientStudiesNotFoundException)))
 				return SR.MessagePatientStudiesNotFound;
@@ -61,12 +68,6 @@ namespace ClearCanvas.ImageViewer.Web
 				return SR.MessageAccessionStudiesNotFound;
 			if (e.GetType().Equals(typeof(InvalidRequestException)))
 				return e.Message;
-			if (e is LoadMultipleStudiesException)
-				return ((LoadMultipleStudiesException)e).GetUserMessage();
-			if (e.GetType().Equals(typeof(LoadStudyException)))
-                return SR.MessageStudyCouldNotBeLoaded;
-			if (e.GetType().Equals(typeof(NoVisibleDisplaySetsException)))
-				return SR.MessageNoImages;
 			return null;
 		}
 
@@ -422,7 +423,12 @@ namespace ClearCanvas.ImageViewer.Web
     [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
     public class StandardSettingsProvider : ISettingsStore
     {
-        public bool SupportsImport
+		public bool IsOnline
+		{
+			get { return true; }
+		}
+		
+		public bool SupportsImport
         {
             get { return false; }
         }

@@ -35,19 +35,21 @@
                             </tr>
                             <tr>
                                 <td><asp:Label ID="Label2" runat="server" Text="<%$Resources: InputLabels, PartitionArchiveArchiveDelay%>" CssClass="DialogTextBoxLabel" /></td>
-                                <td><asp:TextBox ID="ArchiveDelay" runat="server" ValidationGroup="AddEditPartitionValidationGroup" MaxLength="4" Width="30" CssClass="DialogTextBox"></asp:TextBox> <%= SR.Hours %>
+                                <td colspan="2">
+                                    <table>
+                                        <tr>
+                                            <td><asp:TextBox ID="ArchiveDelay" runat="server" ValidationGroup="AddEditPartitionValidationGroup" MaxLength="4" Width="30" CssClass="DialogTextBox"></asp:TextBox> <%= Resources.SR.Hours %></td>
+                                            <td><ccAsp:InvalidInputIndicator ID="ArchiveDelayHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>                                    
+                                                <ccValidator:RegularExpressionFieldValidator ID="ArchiveDelayValidator"
+                                                     runat="server" ControlToValidate="ArchiveDelay" InvalidInputCSS="DialogTextBoxInvalidInput"
+                                                     IgnoreEmptyValue="false" ValidationGroup="AddEditPartitionValidationGroup" ValidationExpression="^[+]?[1-9]([0-9]*)$"
+                                                     Text="<%$Resources: InputValidation, AdminPartitionArchive_InvalidDelay %>" 
+                                                     Display="None" InvalidInputIndicatorID="ArchiveDelayHelp"></ccValidator:RegularExpressionFieldValidator> 
+                                             </td>
+                                        </tr>
+                                    </table>
                                 </td>
-                                <td>                                   
-                                <ccAsp:InvalidInputIndicator ID="ArchiveDelayHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
-                                    <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator2"
-                                         runat="server" ControlToValidate="ArchiveDelay" InvalidInputCSS="DialogTextBoxInvalidInput"
-                                         ValidationGroup="AddEditPartitionValidationGroup"
-                                         Text="<%$Resources: InputValidation, ThisFieldIsRequired %>" InvalidInputIndicatorID="ArchiveDelayHelp"
-                                         Display="None"></ccValidator:ConditionalRequiredFieldValidator>
-                                    <ccValidator:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
-                                         runat="server" ControlToValidate="ArchiveDelay" InvalidInputCSS="DialogTextBoxInvalidInput"
-                                         IgnoreEmptyValue="true" ValidationGroup="AddEditPartitionValidationGroup" ValidationExpression="^([0-9]+)"
-                                         Text="<%$Resources: InputValidation, AdminPartitionArchive_InvalidDelay %>" Display="None" InvalidInputIndicatorID="ArchiveDelayHelp"></ccValidator:RegularExpressionFieldValidator>                                         
+                                <td>                                         
                                  </td>
                             </tr>
                             <tr>
@@ -60,8 +62,14 @@
                             <tr>
                                 <td valign="top"><asp:Label ID="Label3" runat="server" Text="<%$Resources: InputLabels, PartitionArchiveConfigurationXML%>" CssClass="DialogTextBoxLabel" /></td>
                                 <td><asp:TextBox ID="ConfigurationXML" TextMode="MultiLine" runat="server" ValidationGroup="AddEditPartitionValidationGroup" MaxLength="4" Width="300" CssClass="DialogTextBox" Rows="5"></asp:TextBox></td>
-                                <td>                                   
-                                    
+                                <td>      
+                                    <ccAsp:InvalidInputIndicator ID="ConfigurationXMLHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>                                    
+                                    <ccValidator:ConditionalRequiredFieldValidator ID="ConfigurationXMLValidator" runat="server"
+                                                        ControlToValidate="ConfigurationXML" Display="None" EnableClientScript="true" 
+                                                        Text="<%$Resources:InputValidation, ThisFieldIsRequired %>"
+                                                        IgnoreEmptyValue="false" InvalidInputCSS="DialogTextBoxInvalidInput" 
+                                                        ValidationGroup="AddEditPartitionValidationGroup" InvalidInputIndicatorID="ConfigurationXMLHelp" />
+                                                    
                                  </td>
                             </tr>
                             <tr>

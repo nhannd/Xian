@@ -15,6 +15,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         protected global::System.Web.UI.WebControls.HiddenField FieldsMayTruncate;
 
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.Warning UnknownSexWarning;
+
+
 
         /// <summary>
         /// DuplicateSopReconcileModalDialog control.

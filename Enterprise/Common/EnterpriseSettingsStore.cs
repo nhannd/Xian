@@ -15,9 +15,16 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Enterprise.Common.Configuration;
 using ClearCanvas.Common.Utilities;
+using System.ServiceModel;
+using ClearCanvas.Enterprise.Common.Ping;
 
 namespace ClearCanvas.Enterprise.Common
 {
+	[ExtensionPoint]
+	public class EnterpriseSettingsStoreOfflineCacheExtensionPoint : ExtensionPoint<IOfflineCache<ConfigurationDocumentKey, string>>
+	{
+	}
+
 	/// <summary>
 	/// This class is an implementation of <see cref="ISettingsStore"/> that uses a <see cref="IConfigurationService"/>
 	/// as a back-end storage.
@@ -25,8 +32,19 @@ namespace ClearCanvas.Enterprise.Common
 	[ExtensionOf(typeof(SettingsStoreExtensionPoint))]
 	public class EnterpriseSettingsStore : ISettingsStore
 	{
+		private readonly IOfflineCache<ConfigurationDocumentKey, string> _offlineCache;
+
 		public EnterpriseSettingsStore()
 		{
+			try
+			{
+				_offlineCache = (IOfflineCache<ConfigurationDocumentKey, string>)(new EnterpriseSettingsStoreOfflineCacheExtensionPoint()).CreateExtension();
+			}
+			catch (NotSupportedException)
+			{
+				Platform.Log(LogLevel.Debug, SR.ExceptionOfflineCacheNotFound);
+				_offlineCache = new NullOfflineCache<ConfigurationDocumentKey, string>();
+			}
 		}
 
 		#region ISettingsStore Members
@@ -35,17 +53,16 @@ namespace ClearCanvas.Enterprise.Common
 		{
 			var serviceContract = !String.IsNullOrEmpty(user) ?
 				typeof(IConfigurationService) : typeof(IApplicationConfigurationReadService);
-
 			var service = (IApplicationConfigurationReadService)Platform.GetService(serviceContract);
+
 			using (service as IDisposable)
 			{
+				var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
+				var document = GetConfigurationDocument(service, documentKey);
+
 				var values = new Dictionary<string, string>();
 				var parser = new SettingsParser();
-
-				var userDocument = service.GetConfigurationDocument(
-					new GetConfigurationDocumentRequest(
-									new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey))).Content;
-				parser.FromXml(userDocument, values);
+				parser.FromXml(document, values);
 				return values;
 			}
 		}
@@ -59,47 +76,57 @@ namespace ClearCanvas.Enterprise.Common
 			// the default settings (as specified by the settings group meta-data) and the modified settings,
 			// and store that document in the configuration store
 
-			Platform.GetService(delegate(IConfigurationService service)
+			var service = Platform.GetService<IConfigurationService>();
+			using(service as IDisposable)
+			using (var offlineCacheClient = _offlineCache.CreateClient())
+			{
+				// first obtain the meta-data for the settings group properties
+				var properties = ListSettingsProperties(group, service);
+
+				// next we obtain any previously stored configuration document for this settings group
+				var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
+				var document = GetConfigurationDocument(service, documentKey);
+
+				// parse document
+				var parser = new SettingsParser();
+				var values = new Dictionary<string, string>();
+				parser.FromXml(document, values);
+
+				// update the values that have changed
+				foreach (var kvp in dirtyValues)
+					values[kvp.Key] = kvp.Value;
+
+				// now remove any values that are identical to the default values
+				foreach (var property in properties)
 				{
-					// first obtain the meta-data for the settings group properties
-					var properties = ListSettingsProperties(group, service);
+					string value;
+					if (values.TryGetValue(property.Name, out value) && Equals(value, property.DefaultValue))
+						values.Remove(property.Name);
+				}
 
-					var parser = new SettingsParser();
-					var values = new Dictionary<string, string>();
-
-					var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
-
-					// next we obtain any previously stored configuration document for this settings group
-					var document = service.GetConfigurationDocument(new GetConfigurationDocumentRequest(documentKey)).Content;
-					parser.FromXml(document, values);
-
-					// update the values that have changed
-					foreach (var kvp in dirtyValues)
-						values[kvp.Key] = kvp.Value;
-
-					// now remove any values that are identical to the default values
-					foreach (var property in properties)
-					{
-						string value;
-						if (values.TryGetValue(property.Name, out value))
-						{
-							if (Equals(value, property.DefaultValue))
-								values.Remove(property.Name);
-						}
-					}
-
+				try
+				{
 					if (values.Count > 0)
 					{
-						// generate the document and save it
+						// generate the document, update local cache and server
 						document = parser.ToXml(values);
+						offlineCacheClient.Put(documentKey, document);
 						service.SetConfigurationDocument(new SetConfigurationDocumentRequest(documentKey, document));
 					}
 					else
 					{
 						// every value is the same as the default, so the document can be removed
+						// update local cache and server
+						offlineCacheClient.Remove(documentKey);
 						service.RemoveConfigurationDocument(new RemoveConfigurationDocumentRequest(documentKey));
 					}
-				});
+
+				}
+				catch (EndpointNotFoundException e)
+				{
+					Platform.Log(LogLevel.Debug, e, "Unable to save settings to configuration service.");
+				}
+			}
 		}
 
 		public void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
@@ -107,6 +134,14 @@ namespace ClearCanvas.Enterprise.Common
 			Platform.CheckForNullReference(user, "user");
 
 			var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
+			
+			// remove from offline cache
+			using(var offlineCacheClient = _offlineCache.CreateClient())
+			{
+				offlineCacheClient.Remove(documentKey);
+			}
+
+			// remove from server
 			Platform.GetService((IConfigurationService service) => service.RemoveConfigurationDocument(new RemoveConfigurationDocumentRequest(documentKey)));
 		}
 
@@ -151,6 +186,27 @@ namespace ClearCanvas.Enterprise.Common
 			return properties;
 		}
 
+		public bool IsOnline
+		{
+			get
+			{
+				try
+				{
+					Platform.GetService<IPingService>((service) => service.Ping(new PingRequest()));
+					return true;
+				}
+				catch (EndpointNotFoundException)
+				{
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Debug, e, "Enterprise settings store may be experiencing some problems.");
+				}
+
+				return false;
+			}	
+		}
+
 		public bool SupportsImport
 		{
 			get { return true; }
@@ -170,7 +226,40 @@ namespace ClearCanvas.Enterprise.Common
 		}
 		private static IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group, IApplicationConfigurationReadService service)
 		{
-			return service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
+			try
+			{
+				// try to get the information from the local plugins
+				return SettingsPropertyDescriptor.ListSettingsProperties(group);
+			}
+			catch (SettingsException)
+			{
+				// guess it's not a local group, so use the configuration service to obtain the properties
+				return service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
+			}
 		}
+
+		private string GetConfigurationDocument(IApplicationConfigurationReadService service, ConfigurationDocumentKey documentKey)
+		{
+			using(var offlineCacheClient = _offlineCache.CreateClient())
+			{
+				try
+				{
+					var document = service.GetConfigurationDocument(new GetConfigurationDocumentRequest(documentKey)).Content;
+
+					// keep offline cache up to date
+					offlineCacheClient.Put(documentKey, document);
+
+					return document;
+				}
+				catch (EndpointNotFoundException e)
+				{
+					Platform.Log(LogLevel.Debug, e, "Unable to retreive settings from configuration service.");
+
+					// get most recent version from offline cache
+					return offlineCacheClient.Get(documentKey);
+				}
+			}
+		}
+
 	}
 }

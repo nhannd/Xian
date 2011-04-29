@@ -1,3 +1,17 @@
+/* License
+ *
+ * Copyright (c) 2011, ClearCanvas Inc.
+ * All rights reserved.
+ * http://www.clearcanvas.ca
+ *
+ * This software is licensed under the Open Software License v3.0.
+ * For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+ *
+ */
+
+/*
+
+
 // This script defines the client-side validator extension class @@CLIENTID@@_ClientSideEvaludator
 // to validate an input against a regular expression.
 //
@@ -27,8 +41,6 @@ function @@CLIENTID@@_ClientSideEvaluator()
     );
     
     this.regex = new RegExp('@@REGULAR_EXPRESSION@@');
-    
-    this.isRequired = @@REQUIRED@@;
 }
 
 // override BaseClientValidator.OnEvaludate() 
@@ -42,52 +54,24 @@ function @@CLIENTID@@_ClientSideEvaluator()
         return result;
     }
     
-    if (this.input.value=='' && this.isRequired)
+    if (this.input.value.match(this.regex)) 
     {
+        result.OK = true;
+    } else {
         result.OK = false;
-        result.Message = 'Required';
     }
-    
-    else{
-        if (this.input.value.match(this.regex)) {
-            result.OK = true;
-        } else {
-            result.OK = false;
-        }
 
-        if (result.OK == false)
+    if (result.OK == false)
+    {
+        if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
         {
-            if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
-            {
-                result.Message = 'Invalid format';
-            }
-            else
-                result.Message = '@@ERROR_MESSAGE@@';
-            
-        }  
+            result.Message = 'Invalid format';
+        }
+        else
+            result.Message = '@@ERROR_MESSAGE@@';
+        
     }
-    
- 
     
     return result;
 };
-
-//@@CLIENTID@@_ClientSideEvaluator.prototype.OnValidationPassed = function()
-//{
-//    //alert('Length validator: input is valid');
-//    BaseClientValidator.prototype.OnValidationPassed.call(this);
-//}
-
-//@@CLIENTID@@_ClientSideEvaluator.prototype.OnValidationFailed = function(error)
-//{
-//    //alert('Length validator: input is valid : ' + error);
-//    BaseClientValidator.prototype.OnValidationFailed.call(this, error);
-//        
-//}
-
-//@@CLIENTID@@_ClientSideEvaluator.prototype.SetErrorMessage = function(result)
-//{
-//    BaseClientValidator.prototype.SetErrorMessage.call(this, result);
-//    alert(result.Message);
-//}
 

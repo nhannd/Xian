@@ -16,20 +16,43 @@
 
 <script type="text/javascript">
     Sys.Application.add_load(function() {
+        var okButton = $find("<%= OKButton.ClientID %>");
+        var mergeUsingExistingRadio = $("#<%= MergeUsingExistingStudy.ClientID %>");
         var mergeUsingConflictRadio = $("#<%= MergeUsingConflictingStudy.ClientID %>");
         var createNewStudyRadio = $("#<%= CreateNewStudy.ClientID %>");
         var processAsIsRadio = $("#<%= IgnoreConflict.ClientID %>");
+        var discardRadio = $("#<%= DiscardStudy.ClientID %>");
 
+        okButton.set_enable(false);
+        mergeUsingExistingRadio.attr("checked", false);
+        mergeUsingConflictRadio.attr("checked", false);
+        createNewStudyRadio.attr("checked", false);
+        processAsIsRadio.attr("checked", false);
+        discardRadio.attr("checked", false);
+
+        mergeUsingExistingRadio.click(function() {
+            okButton.set_enable(true);
+            CheckDataTruncation();
+        });
+        
         mergeUsingConflictRadio.click(function() {
+            okButton.set_enable(true);                    
             CheckDataTruncation();
         });
         createNewStudyRadio.click(function() {
+            okButton.set_enable(true); 
             CheckDataTruncation();
         });
         processAsIsRadio.click(function() {
+            okButton.set_enable(true);
             CheckDataTruncation();
         });
 
+        discardRadio.click(function() {
+            okButton.set_enable(true);
+            CheckDataTruncation();
+        });
+        
         function CheckDataTruncation() {
             var field = $("#<%= FieldsMayTruncate.ClientID %>");
             var maytruncate = field.val() == "true";
@@ -154,11 +177,9 @@
                                             <td>
                                                 <table cellpadding="0" cellspacing="0">
                                                     <tr><td><asp:textbox ID="ConflictingPatientSex" runat="server" CssClass="StudyInfoField" BorderWidth="0" ReadOnly="true" Width="95" ValidationGroup="ReconcileValidationGroup" BorderStyle="None" BackColor="Transparent" Font-Size="14px" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Sex)?"Not Specified":ReconcileDetails.ConflictingStudyInfo.Patient.Sex %>'></asp:textbox></td>
-                                                    <td><ccAsp:InvalidInputIndicator ID="UnknownSex" runat="server" SkinID="InvalidInputIndicator" />
-                                                        <ccValidator:RegularExpressionFieldValidator ID="PatientSexValidator" runat="server" 
-                                                            ControlToValidate="ConflictingPatientSex" ValidationGroup="ReconcileValidationGroup" InvalidInputIndicatorID="UnknownSex"
-                                                            ValidationExpression="M$|m$|F$|f$|O$" Text="The value used for Merge Study<br/>will be Other (O)." Display="None">
-                                                        </ccValidator:RegularExpressionFieldValidator>
+                                                    <td>
+                                                        <ccUI:Warning runat="server" ID="UnknownSexWarning" SkinID="<%$ Image : Warning %>"  
+                                                                                Message="<%$Resources: InputValidation, SIQ_ReconcileDialog_PatientSexOverriddenOnMerge%>"/>
                                                     </td>
                                                     </tr>
                                                 </table>
@@ -198,12 +219,22 @@
                             <asp:TableRow runat="server" ID="OptionRow">
                                 <asp:TableCell style="padding: 0px 10px 10px 10px;">
                                     <table cellpadding="0" cellspacing="0" width="100%" class="ReconcileButtonsTable">
-                                        <tr><td style="padding-left: 5px; padding-top: 5px;"><asp:radiobutton runat="server" ID="MergeUsingExistingStudy" Text="<%$Resources: Labels, SIQ_ReconcileDialog_MergeUsingExistingStudy %>" GroupName="ReconcileStudy" Checked="true"/></td>
-                                        <td><asp:radiobutton runat="server" ID="CreateNewStudy" Text="<%$Resources: Labels, SIQ_ReconcileDialog_CreateNewStudy %>" GroupName="ReconcileStudy" CssClass="ReconcileRadioButton"/></td>
+                                        <tr>
+                                            <td style="padding-left: 5px; padding-top: 5px;">
+                                                <asp:radiobutton runat="server" ID="MergeUsingExistingStudy" Text="<%$Resources: Labels, SIQ_ReconcileDialog_MergeUsingExistingStudy %>" GroupName="ReconcileStudy" Checked="true"/></td>
+                                            <td>
+                                                <asp:radiobutton runat="server" ID="CreateNewStudy" Text="<%$Resources: Labels, SIQ_ReconcileDialog_CreateNewStudy %>" GroupName="ReconcileStudy" CssClass="ReconcileRadioButton"/></td>
                                         </tr>
-                                        <tr><td style="padding-left: 5px;"><asp:radiobutton runat="server" ID="MergeUsingConflictingStudy" Text="<%$Resources: Labels, SIQ_ReconcileDialog_MergeUsingConflictingStudy %>" GroupName="ReconcileStudy"/></td>
-                                        <td><asp:radiobutton runat="server" ID="DiscardStudy" Text="<%$Resources: Labels, SIQ_ReconcileDialog_DiscardStudy %>" GroupName="ReconcileStudy"/></td></tr>
-                                        <tr><td style="padding-left: 5px;"></td><td><asp:radiobutton runat="server" ID="IgnoreConflict" Text="<%$Resources: Labels, SIQ_ReconcileDialog_ProcessAsIs %>" GroupName="ReconcileStudy"/></td>
+                                        <tr>
+                                            <td style="padding-left: 5px;">
+                                                <asp:radiobutton runat="server" ID="MergeUsingConflictingStudy" Text="<%$Resources: Labels, SIQ_ReconcileDialog_MergeUsingConflictingStudy %>" GroupName="ReconcileStudy"/></td>
+                                            <td>
+                                                <asp:radiobutton runat="server" ID="DiscardStudy" Text="<%$Resources: Labels, SIQ_ReconcileDialog_DiscardStudy %>" GroupName="ReconcileStudy"/></td>
+                                         </tr>
+                                         <tr>
+                                            <td style="padding-left: 5px;"></td>
+                                            <td>
+                                                <asp:radiobutton runat="server" ID="IgnoreConflict" Text="<%$Resources: Labels, SIQ_ReconcileDialog_ProcessAsIs %>" GroupName="ReconcileStudy"/></td>
                                         </tr>
                                         <tr><td colspan="2">&nbsp;</td></tr>
                                     </table>                                        

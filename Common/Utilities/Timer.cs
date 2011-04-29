@@ -66,6 +66,11 @@ namespace ClearCanvas.Common.Utilities
 		{
 		}
 
+		public Timer(TimerDelegate elapsedDelegate, object stateObject, TimeSpan interval)
+			: this(elapsedDelegate, stateObject, (int)interval.TotalMilliseconds)
+		{
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>

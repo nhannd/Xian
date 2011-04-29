@@ -241,6 +241,7 @@
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DicomValueValidator.cs" />
     <Compile Include="Helpers\ExceptionTranslator.cs" />
     <Compile Include="Helpers\SearchHelper.cs" />
     <Compile Include="KeepSessionAlive.aspx.cs">

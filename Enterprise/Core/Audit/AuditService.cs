@@ -31,6 +31,7 @@ namespace ClearCanvas.Enterprise.Core.Audit
 
 			AuditLogEntryAssembler assembler = new AuditLogEntryAssembler();
 			AuditLogEntry logEntry = assembler.CreateAuditLogEntry(request.LogEntry);
+			logEntry.ServerReceivedTimeStamp = Platform.Time;
 
 			// save the log entry
 			PersistenceContext.Lock(logEntry, DirtyState.New);

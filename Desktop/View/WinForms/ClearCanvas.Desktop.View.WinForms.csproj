@@ -81,6 +81,13 @@
       <DependentUpon>ClickActionKeystrokePropertyComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\ClickActionKeystrokePropertyComponentView.cs" />
+    <Compile Include="Configuration\ConfigurationDialogComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationDialogComponentControl.Designer.cs">
+      <DependentUpon>ConfigurationDialogComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationDialogComponentView.cs" />
     <Compile Include="Configuration\RenameNodeComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -147,6 +154,7 @@
     <Compile Include="KeyStrokeCaptureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WinFormsApplicationComponentView.cs" />
     <Compile Include="LocalizableUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -553,6 +561,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\ClickActionKeystrokePropertyComponentControl.resx">
       <DependentUpon>ClickActionKeystrokePropertyComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ConfigurationDialogComponentControl.resx">
+      <DependentUpon>ConfigurationDialogComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\RenameNodeComponentControl.resx">
       <DependentUpon>RenameNodeComponentControl.cs</DependentUpon>

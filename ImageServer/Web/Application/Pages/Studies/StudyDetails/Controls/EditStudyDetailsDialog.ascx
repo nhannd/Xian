@@ -10,6 +10,7 @@
 --%>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditStudyDetailsDialog.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.EditStudyDetailsDialog" %>
+<%@ Import Namespace="Resources"%>
 <%@ Import Namespace="System.Globalization"%>
 
 
@@ -130,7 +131,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="PatientAgeValidator" runat="server" ControlToValidate="PatientAge"
                                                         InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientAgeHelp"
-                                                        ValidationExpression="^[^-][0-9]*$" Text="<%Resources: InputValidation , EditStudyDialog_InvalidPatientAge %>" IgnoreEmptyValue="true" Display="None">
+                                                        ValidationExpression="^[^-][0-9]*$" Text="<%$Resources: InputValidation,EditStudyDialog_InvalidPatientAge %>" IgnoreEmptyValue="true" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td></tr>
                                     </table>

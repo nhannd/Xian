@@ -31,9 +31,16 @@ namespace ClearCanvas.Common.Configuration
 		/// Returns a list of <see cref="SettingsPropertyDescriptor"/> objects describing each property belonging
 		/// to a settings group.
 		/// </summary>
+		/// <remarks>
+		/// The specified group must refer to a locally installed settings class.
+		/// </remarks>
 		public static List<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
 		{
-			Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
+			Platform.CheckForNullReference(group, "group");
+
+			var settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
+			if(settingsClass == null)
+				throw new SettingsException(string.Format("{0} is not a locally installed settings group.", group.Name));
 
 			return CollectionUtils.Map(SettingsClassMetaDataReader.GetSettingsProperties(settingsClass),
 									   (PropertyInfo property) => new SettingsPropertyDescriptor(property));

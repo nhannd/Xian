@@ -140,6 +140,7 @@
       <DependentUpon>ConfigurationDialogSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Configuration\SettingsManagementComponent.cs" />
+    <Compile Include="Configuration\SettingsStoreWatcher.cs" />
     <Compile Include="Configuration\Standard\CustomDateFormatSettings.cs" />
     <Compile Include="Configuration\Standard\CustomDateFormatSettings.designer.cs">
       <DependentUpon>CustomDateFormatSettings.settings</DependentUpon>
@@ -206,7 +207,7 @@
     <Compile Include="GalleryComponent.cs" />
     <Compile Include="IGalleryToolContext.cs" />
     <Compile Include="IGuiToolkit.cs" />
-    <Compile Include="ISessionManager.cs" />
+    <Compile Include="SessionManager.cs" />
     <Compile Include="IShelfHost.cs" />
     <Compile Include="ISuggestionProvider.cs" />
     <Compile Include="IWorkspaceHost.cs" />

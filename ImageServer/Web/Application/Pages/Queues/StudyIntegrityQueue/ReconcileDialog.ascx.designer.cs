@@ -14,6 +14,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     public partial class ReconcileDialog {
 
         protected global::System.Web.UI.WebControls.HiddenField FieldsMayTruncate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.Warning UnknownSexWarning;
 
         /// <summary>
         /// ReconcileItemModalDialog control.

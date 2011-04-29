@@ -15,6 +15,7 @@ using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using System.Security.Principal;
 
 namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
@@ -759,16 +760,30 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		public static ILocalDataStoreEventBroker CreatEventBroker(bool useSynchronizationContext)
 		{
+			return CreatEventBroker(useSynchronizationContext, true);
+		}
+
+		public static ILocalDataStoreEventBroker CreatEventBroker(bool useSynchronizationContext, bool useCurrentThreadPrincipal)
+		{
 			SynchronizationContext synchronizationContext = null;
+			IPrincipal principal = null;
+
 			if (useSynchronizationContext)
 				synchronizationContext = SynchronizationContext.Current;
+			if (useCurrentThreadPrincipal)
+				principal = Thread.CurrentPrincipal;
 
-			return CreatEventBroker(synchronizationContext);
+			return CreatEventBroker(synchronizationContext, principal);
 		}
 
 		public static ILocalDataStoreEventBroker CreatEventBroker(SynchronizationContext synchronizationContext)
 		{
-			return new LocalDataStoreEventBroker(synchronizationContext);
+			return CreatEventBroker(synchronizationContext, null);
+		}
+
+		public static ILocalDataStoreEventBroker CreatEventBroker(SynchronizationContext synchronizationContext, IPrincipal threadPrincipal)
+		{
+			return new LocalDataStoreEventBroker(synchronizationContext, threadPrincipal);
 		}
 
 		#endregion

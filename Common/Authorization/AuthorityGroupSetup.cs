@@ -53,6 +53,8 @@ namespace ClearCanvas.Common.Authorization
 
 							tokens.Add(new AuthorityTokenDefinition(token, description));
 
+                            Platform.Log(LogLevel.Info, "Importing token '{0}' from {1}", token, type.AssemblyQualifiedName);
+
 						}
 					}
 				}
@@ -74,7 +76,18 @@ namespace ClearCanvas.Common.Authorization
             List<AuthorityGroupDefinition> groupDefs = new List<AuthorityGroupDefinition>();
             foreach (IDefineAuthorityGroups groupDefiner in new DefineAuthorityGroupsExtensionPoint().CreateExtensions())
             {
-                groupDefs.AddRange(groupDefiner.GetAuthorityGroups());
+                Platform.Log(LogLevel.Info, "Importing default groups using {0}", groupDefiner.GetType().AssemblyQualifiedName);
+
+                var groups = groupDefiner.GetAuthorityGroups();
+                if (groups!=null)
+                {
+                    groupDefs.AddRange(groups);
+                    foreach (var g in groups)
+                    {
+                        Platform.Log(LogLevel.Info, "Group: {0}", g);
+                    }
+                }
+                
             }
             return groupDefs.ToArray();
         }

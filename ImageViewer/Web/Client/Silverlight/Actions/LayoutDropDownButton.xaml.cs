@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             LayoutDropDownButton.MouseEnter += ButtonComponent_MouseEnter;
             LayoutDropDownButton.MouseLeave += ButtonComponent_MouseLeave;
 
-			Visibility = _actionItem.Visible && _actionItem.Available ? Visibility.Visible : Visibility.Collapsed;
+            Visibility = _actionItem.DesiredVisiblility;
 
 			ButtonComponent.IsEnabled = _actionItem.Enabled;
 
@@ -105,13 +105,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 		{
             if (e.PropertyName.Equals("Available"))
             {
-                _actionItem.Visible = (bool)e.Value;
-                Visibility = _actionItem.Available ? Visibility.Visible : Visibility.Collapsed;
+                _actionItem.Available = (bool)e.Value;
+                Visibility = _actionItem.DesiredVisiblility;
             }
 			else if (e.PropertyName.Equals("Visible"))
 			{
 				_actionItem.Visible = (bool)e.Value;
-				Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;
+                Visibility = _actionItem.DesiredVisiblility;
 			}
 			else if (e.PropertyName.Equals("Enabled"))
 			{

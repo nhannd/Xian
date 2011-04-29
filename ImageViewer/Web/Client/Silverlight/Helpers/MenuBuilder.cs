@@ -133,12 +133,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
                         }
                     }
                 }
+
+                // Don't show the menu if it has no children
+                thisMenu.Visibility = node.DesiredVisiblility;
             }
             else
             {
                 WebAction actionNode = node as WebAction;
-
-                // Skip those that aren't visible
                 thisMenu = BuildActionMenuItem(actionNode, dispatcher);
             }
 
@@ -153,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             {
                 IsEnabled = actionNode.Enabled,
                 IsChecked = (actionNode is WebClickAction) && (actionNode as WebClickAction).Checked,
-                Visibility = actionNode.Visible && actionNode.Available ? Visibility.Visible : Visibility.Collapsed
+                Visibility = actionNode.DesiredVisiblility
             };
 
             var binding = new MenuItemBinding(actionNode, dispatcher, item);
@@ -215,13 +216,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
         {
             if (e.PropertyName.Equals("Available"))
             {
-                _actionItem.Visible = (bool)e.Value;
-                Item.Visibility = _actionItem.Available ? Visibility.Visible : Visibility.Collapsed;
+                _actionItem.Available = (bool)e.Value;
+                Item.Visibility = _actionItem.DesiredVisiblility;
             }
             else if (e.PropertyName.Equals("Visible"))
             {
 				_actionItem.Visible = (bool)e.Value;
-				Item.Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;
+                Item.Visibility = _actionItem.DesiredVisiblility;
             }
             else if (e.PropertyName.Equals("Enabled"))
             {

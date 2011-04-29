@@ -385,6 +385,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (Offline) Values shown may not be accurate, and changes may not be saved..
+        /// </summary>
+        public static string LabelConfigurationWarningOffline {
+            get {
+                return ResourceManager.GetString("LabelConfigurationWarningOffline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string LabelEdit {
@@ -705,6 +714,15 @@ namespace ClearCanvas.Desktop {
         public static string MessageSaveSettingFailed {
             get {
                 return ResourceManager.GetString("MessageSaveSettingFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The settings store is currently offline.  Please try again later..
+        /// </summary>
+        public static string MessageSettingsStoreOffline {
+            get {
+                return ResourceManager.GetString("MessageSettingsStoreOffline", resourceCulture);
             }
         }
         

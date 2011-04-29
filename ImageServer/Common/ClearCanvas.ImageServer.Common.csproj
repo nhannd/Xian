@@ -142,6 +142,7 @@
     <Compile Include="Utilities\StringUtils.cs" />
     <Compile Include="Utilities\Test\DicomNameUtilsTest.cs" />
     <Compile Include="Utilities\XmlUtils.cs" />
+    <Compile Include="WindowsErrorCodes.cs" />
     <Compile Include="WSHttpConfiguration.cs" />
     <Compile Include="WebServicesSettings.Designer.cs">
       <AutoGen>True</AutoGen>

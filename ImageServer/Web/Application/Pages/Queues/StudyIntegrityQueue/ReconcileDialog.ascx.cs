@@ -13,10 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
 using Resources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common;
@@ -224,6 +224,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 Compare(ReconcileDetails.ExistingStudy.AccessionNumber,
                         ReconcileDetails.ConflictingStudyInfo.AccessionNumber,
                         different => Highlight(ConflictingAccessionNumberLabel, different));
+
+                UnknownSexWarning.Visible = !DicomValueValidator.IsValidDicomPatientSex(ReconcileDetails.ConflictingStudyInfo.Patient.Sex);
             }
         }
 

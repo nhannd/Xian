@@ -8,7 +8,7 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
-  <wsdl:import namespace="http://www.clearcanvas.ca/web/application" location="http://localhost:3243/Services/ApplicationService.svc?wsdl=wsdl0" />
+  <wsdl:import namespace="http://www.clearcanvas.ca/web/application" location="http://localhost:1281/Services/ApplicationService.svc?wsdl=wsdl0" />
   <wsdl:types />
   <wsdl:binding name="CustomBinding_IApplicationService" type="i0:IApplicationService">
     <wsp:PolicyReference URI="#CustomBinding_IApplicationService_policy" />
@@ -21,11 +21,11 @@
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="SessionValidationFaultFault">
-        <soap12:fault use="literal" name="SessionValidationFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="OutOfResourceFaultFault">
         <soap12:fault use="literal" name="OutOfResourceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="SessionValidationFaultFault">
+        <soap12:fault use="literal" name="SessionValidationFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
     <wsdl:operation name="StopApplication">
@@ -82,9 +82,9 @@
   </wsdl:binding>
   <wsdl:service name="ApplicationService">
     <wsdl:port name="CustomBinding_IApplicationService" binding="tns:CustomBinding_IApplicationService">
-      <soap12:address location="http://localhost:3243/Services/ApplicationService.svc/basicHttp" />
+      <soap12:address location="http://localhost:1281/Services/ApplicationService.svc/basicHttp" />
       <wsa10:EndpointReference>
-        <wsa10:Address>http://localhost:3243/Services/ApplicationService.svc/basicHttp</wsa10:Address>
+        <wsa10:Address>http://localhost:1281/Services/ApplicationService.svc/basicHttp</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

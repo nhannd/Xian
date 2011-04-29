@@ -15,14 +15,6 @@ using System.Configuration;
 namespace ClearCanvas.Common.Configuration
 {
 	/// <summary>
-	/// An extension point for <see cref="ISettingsStore"/>s.
-	/// </summary>
-	[ExtensionPoint]
-	public sealed class SettingsStoreExtensionPoint : ExtensionPoint<ISettingsStore>
-	{
-	}
-
-	/// <summary>
 	/// This class is the standard settings provider that should be used by all settings classes that operate
 	/// within the ClearCanvas framework.
 	/// </summary>
@@ -45,13 +37,6 @@ namespace ClearCanvas.Common.Configuration
 			// according to MSDN recommendation, use the name of the executing assembly here
 			_appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 		}
-
-		static StandardSettingsProvider()
-		{
-			IsLocal = new SettingsStoreExtensionPoint().ListExtensions().Length == 0;
-		}
-
-		internal static bool IsLocal { get; private set; }
 
 		#region SettingsProvider overrides
 
@@ -83,8 +68,8 @@ namespace ClearCanvas.Common.Configuration
 				// obtain a source provider
 				try
 				{
-					ISettingsStore ecs = (ISettingsStore)(new SettingsStoreExtensionPoint()).CreateExtension();
-					_sourceProvider = new SettingsStoreSettingsProvider(ecs);
+					ISettingsStore store = SettingsStore.Create();
+					_sourceProvider = new SettingsStoreSettingsProvider(store);
 				}
 				catch (NotSupportedException)
 				{

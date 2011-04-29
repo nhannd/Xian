@@ -59,9 +59,6 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
     public class WebActionNode : Entity
     {
         [DataMember(IsRequired = true)]
-        public bool Available { get; set; }
-
-        [DataMember(IsRequired = true)]
         public string LocalizedText { get; set; }
 
         [DataMember(IsRequired = false)]
@@ -72,6 +69,9 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 	[DataContract(Namespace = ViewerNamespace.Value)]
 	public class WebAction : WebActionNode
 	{
+        [DataMember(IsRequired = true)]
+        public bool Available { get; set; }
+
 		[DataMember(IsRequired = true)]
 		public bool Visible { get; set; }
 

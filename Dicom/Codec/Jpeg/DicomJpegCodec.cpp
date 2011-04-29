@@ -99,8 +99,10 @@ namespace Jpeg {
 	
 void DicomJpegCodec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressedPixelData^ newPixelData, DicomCodecParameters^ parameters)
 {
-	if (parameters == nullptr || parameters->GetType() != DicomJpegParameters::typeid)
-		throw gcnew DicomCodecException("Invalid codec parameters");
+	if (parameters == nullptr) parameters = gcnew DicomJpegParameters();
+
+	if (parameters->GetType() != DicomJpegParameters::typeid)
+        throw gcnew DicomCodecException("Invalid codec parameters");
 
 	DicomJpegParameters^ jparams = (DicomJpegParameters^)parameters;
 
@@ -143,7 +145,9 @@ void DicomJpegCodec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompr
 
 void DicomJpegCodec::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressedPixelData^ newPixelData, DicomCodecParameters^ parameters)
 {
-	if (parameters == nullptr || parameters->GetType() != DicomJpegParameters::typeid)
+	if (parameters == nullptr) parameters = gcnew DicomJpegParameters();
+
+	if (parameters->GetType() != DicomJpegParameters::typeid)
 		throw gcnew DicomCodecException("Invalid codec parameters");
 
 	DicomJpegParameters^ jparams = (DicomJpegParameters^)parameters;
@@ -173,7 +177,9 @@ void DicomJpegCodec::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompr
 
 void DicomJpegCodec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelData, DicomUncompressedPixelData^ newPixelData, DicomCodecParameters^ parameters)
 {
-	if (parameters == nullptr || parameters->GetType() != DicomJpegParameters::typeid)
+	if (parameters == nullptr) parameters = gcnew DicomJpegParameters();
+
+	if (parameters->GetType() != DicomJpegParameters::typeid)
 		throw gcnew DicomCodecException("Invalid codec parameters");
 
 	DicomJpegParameters^ jparams = (DicomJpegParameters^)parameters;

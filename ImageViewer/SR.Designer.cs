@@ -1117,7 +1117,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study is currently in use and cannot be loaded.  Try waiting a few minutes and load the study again..
+        ///   Looks up a localized string similar to The study is being processed by the server and cannot be loaded at this time.  Please try again later..
         /// </summary>
         public static string MessageStudyInUse {
             get {
@@ -1126,7 +1126,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study is currently being restored from archive.  Please try loading it again in a few minutes..
+        ///   Looks up a localized string similar to The study is currently being restored from archive and cannot be loaded at this time.  Please try again later..
         /// </summary>
         public static string MessageStudyNearline {
             get {

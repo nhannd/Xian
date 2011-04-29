@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://www.clearcanvas.ca/web/application/viewer" elementFormDefault="qualified" targetNamespace="http://www.clearcanvas.ca/web/application/viewer" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:3243/Services/ApplicationService.svc?xsd=xsd1" namespace="http://www.clearcanvas.ca/web/application" />
-  <xs:import schemaLocation="http://localhost:3243/Services/ApplicationService.svc?xsd=xsd0" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-  <xs:import schemaLocation="http://localhost:3243/Services/ApplicationService.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://localhost:1281/Services/ApplicationService.svc?xsd=xsd1" namespace="http://www.clearcanvas.ca/web/application" />
+  <xs:import schemaLocation="http://localhost:1281/Services/ApplicationService.svc?xsd=xsd0" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://localhost:1281/Services/ApplicationService.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:complexType name="ContextMenuEvent">
     <xs:complexContent mixed="false">
       <xs:extension xmlns:q1="http://www.clearcanvas.ca/web/application" base="q1:Event">
@@ -17,7 +17,6 @@
     <xs:complexContent mixed="false">
       <xs:extension xmlns:q2="http://www.clearcanvas.ca/web/application" base="q2:Entity">
         <xs:sequence>
-          <xs:element name="Available" type="xs:boolean" />
           <xs:element minOccurs="0" name="Children" nillable="true" type="tns:ArrayOfWebActionNode" />
           <xs:element name="LocalizedText" nillable="true" type="xs:string" />
         </xs:sequence>
@@ -335,6 +334,7 @@
     <xs:complexContent mixed="false">
       <xs:extension base="tns:WebActionNode">
         <xs:sequence>
+          <xs:element name="Available" type="xs:boolean" />
           <xs:element name="Enabled" type="xs:boolean" />
           <xs:element minOccurs="0" name="IconSet" nillable="true" type="tns:WebIconSet" />
           <xs:element minOccurs="0" name="Label" nillable="true" type="xs:string" />

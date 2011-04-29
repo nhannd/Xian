@@ -173,6 +173,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>UISettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="WebControls\UI\Warning.cs" />
     <Compile Include="WebControls\Validators\BaseValidator.cs" />
     <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
     <Compile Include="WebControls\Validators\DeviceValidator.cs" />

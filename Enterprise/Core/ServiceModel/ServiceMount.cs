@@ -20,6 +20,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using System.IdentityModel.Selectors;
 using Castle.Core.Interceptor;
+using ClearCanvas.Enterprise.Common.ServiceConfiguration.Server;
 
 namespace ClearCanvas.Enterprise.Core.ServiceModel
 {
@@ -40,6 +41,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		private bool _enablePerformanceLogging;
 		private int _maxReceivedMessageSize = 1000000;
 		private InstanceContextMode _instanceMode = InstanceContextMode.PerCall;
+		private CertificateSearchDirective _certificateSearchDirective;
 
 
 
@@ -55,6 +57,9 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		{
 			_baseAddress = baseAddress;
 			_configuration = configuration;
+
+			// establish default certificate search parameters consistent with behaviour prior to #8219
+			_certificateSearchDirective = new CertificateSearchDirective { FindValue = _baseAddress.Host };
 		}
 
 		/// <summary>
@@ -92,6 +97,16 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		{
 			get { return _configuration; }
 			set { _configuration = value; }
+
+		}
+
+		/// <summary>
+		/// Gets or sets the parameters used to find the certificate to host the service
+		/// </summary>
+		public CertificateSearchDirective CertificateSearchDirective
+		{
+			get { return _certificateSearchDirective; }
+			set { _certificateSearchDirective = value; }
 		}
 
 		/// <summary>
@@ -277,7 +292,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			if (contractAttribute == null)
 				throw new ServiceMountException(string.Format("Unknown contract for service {0}", serviceClass.Name));
 
-			
+
 			// determine if service requires authentication
 			var authenticationAttribute = AttributeUtils.GetAttribute<AuthenticationAttribute>(contractAttribute.ServiceContract);
 			var authenticated = authenticationAttribute == null ? true : authenticationAttribute.AuthenticationRequired;
@@ -285,8 +300,8 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			// create service URI
 			var uri = new Uri(_baseAddress, contractAttribute.ServiceContract.FullName);
 
-            Platform.Log(LogLevel.Info, "Mounting {0} on URI {1}", 
-                contractAttribute.ServiceContract.Name, uri);
+			Platform.Log(LogLevel.Info, "Mounting {0} on URI {1}",
+				contractAttribute.ServiceContract.Name, uri);
 
 			// create service host
 			var host = new ServiceHost(serviceClass, uri);
@@ -312,7 +327,8 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 				new ServiceHostConfigurationArgs(
 					contractAttribute.ServiceContract,
 					uri, authenticated,
-					_maxReceivedMessageSize));
+					_maxReceivedMessageSize,
+					_certificateSearchDirective));
 
 			// add behaviour to inject AOP proxy service factory
 			host.Description.Behaviors.Add(new ServiceFactoryInjectionServiceBehavior(contractAttribute.ServiceContract, serviceFactory));

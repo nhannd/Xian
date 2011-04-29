@@ -18,6 +18,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
+using System.Threading;
 
 namespace ClearCanvas.Desktop
 {
@@ -101,10 +103,36 @@ namespace ClearCanvas.Desktop
     {
 		private static Application _instance;
 		
+		#region UI Thread Synchronization
+
 		internal static SynchronizationContext SynchronizationContext
 		{
 			get { return _instance._synchronizationContext; }
 		}
+
+		/// <summary>
+		/// Marshals a delegate over to the UI thread for execution.
+		/// </summary>
+		/// <remarks>
+		/// If the current thread is not the UI thread, the delegate is "posted" to the UI thread
+		/// for execution, otherwise it is executed immediately.
+		/// </remarks>
+		/// <returns>True, if the delegate was (or will be) executed.</returns>
+		internal static bool MarshalDelegate(Delegate del, params object[] args)
+		{
+			var syncContext = SynchronizationContext;
+			if (syncContext == null)
+				return false;
+
+			if (Equals(syncContext, SynchronizationContext.Current))
+				del.DynamicInvoke(args);
+			else
+				syncContext.Post(ignore => del.DynamicInvoke(args), null);
+
+			return true;
+		}
+
+		#endregion
 
 		#region Public Static Members
 
@@ -115,6 +143,17 @@ namespace ClearCanvas.Desktop
         {
             get { return _instance; }
         }
+
+    	public static SessionStatus SessionStatus
+    	{
+			get { return SessionManager.Current.SessionStatus; }
+    	}
+
+		public static event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged
+		{
+			add { SessionManager.Current.SessionStatusChanged += value; }
+			remove { SessionManager.Current.SessionStatusChanged -= value; }	
+		}
 
         /// <summary>
         /// Gets the toolkit ID of the currently loaded GUI <see cref="IGuiToolkit"/>,
@@ -243,32 +282,6 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
-        #region Default Session Manager Implementation
-
-        private class DefaultSessionManager : ISessionManager
-        {
-			public DefaultSessionManager()
-			{
-			}
-
-        	#region ISessionManager Members
-
-            public bool InitiateSession()
-            {
-                // do nothing
-                return true;
-            }
-			
-            public void TerminateSession()
-            {
-                // do nothing
-            }
-
-            #endregion
-        }
-
-        #endregion
-
 		private enum QuitState
 		{
 			NotQuitting,
@@ -282,7 +295,6 @@ namespace ClearCanvas.Desktop
         private IApplicationView _view;
         private DesktopWindowCollection _windows;
         private ToolSet _toolSet;
-        private ISessionManager _sessionManager;
 
 		private volatile bool _initialized;  // flag to be set when initialization is complete
     	private QuitState _quitState;
@@ -631,7 +643,7 @@ namespace ClearCanvas.Desktop
 
     		try
 			{
-				_sessionManager.TerminateSession();
+				SessionManager.Current.TerminateSession();
 			}
 			catch (Exception e)
 			{
@@ -669,22 +681,11 @@ namespace ClearCanvas.Desktop
         /// Initializes the session manager, using an extension if one is provided.
         /// </summary>
         /// <returns></returns>
-        private bool InitializeSessionManager()
+        private static bool InitializeSessionManager()
         {
             try
             {
-                _sessionManager = (ISessionManager)(new SessionManagerExtensionPoint()).CreateExtension();
-                Platform.Log(LogLevel.Info, string.Format("Using session manager extension: {0}", _sessionManager.GetType().FullName));
-            }
-            catch (NotSupportedException)
-            {
-                _sessionManager = new DefaultSessionManager();
-                Platform.Log(LogLevel.Info, "No session manager extension found");
-            }
-
-            try
-            {
-                return _sessionManager.InitiateSession();
+				return SessionManager.Current.InitiateSession();
             }
             catch (Exception ex)
             {

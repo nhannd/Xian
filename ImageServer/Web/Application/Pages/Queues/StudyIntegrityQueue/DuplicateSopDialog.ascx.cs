@@ -16,6 +16,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
 using Resources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common;
@@ -168,26 +169,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             {
                 Compare(DuplicateEntryDetails.ExistingStudy.Patient.Name,
                         DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name,
-                        delegate(bool different) { Highlight(ConflictingNameLabel, different); });
+                        different => Highlight(ConflictingNameLabel, different));
 
                 Compare(DuplicateEntryDetails.ExistingStudy.Patient.PatientID,
                         DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
-                        delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
+                        different => Highlight(ConflictingPatientIDLabel, different));
                 Compare(DuplicateEntryDetails.ExistingStudy.Patient.IssuerOfPatientID,
                         DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
-                        delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
+                        different => Highlight(ConflictingPatientIssuerOfPatientID, different));
                 Compare(DuplicateEntryDetails.ExistingStudy.Patient.BirthDate,
                         DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
-                        delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
+                        different => Highlight(ConflictingPatientBirthDate, different));
                 Compare(DuplicateEntryDetails.ExistingStudy.Patient.Sex,
                         DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex,
-                        delegate(bool different) { Highlight(ConflictingPatientSex, different); });
+                        different => Highlight(ConflictingPatientSex, different));
                 Compare(DuplicateEntryDetails.ExistingStudy.StudyDate,
                         DuplicateEntryDetails.ConflictingImageSet.StudyInfo.StudyDate,
-                        delegate(bool different) { Highlight(ConflictingStudyDate, different); });
+                        different => Highlight(ConflictingStudyDate, different));
                 Compare(DuplicateEntryDetails.ExistingStudy.AccessionNumber,
                         DuplicateEntryDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
-                        delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
+                        different => Highlight(ConflictingAccessionNumberLabel, different));
+
+                UnknownSexWarning.Visible = !DicomValueValidator.IsValidDicomPatientSex(DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex);
             }
         }
 

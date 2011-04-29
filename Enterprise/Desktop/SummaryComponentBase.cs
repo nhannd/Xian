@@ -698,15 +698,17 @@ namespace ClearCanvas.Enterprise.Desktop
 		private void ListItems(int firstRow, int maxRows, Action<IList<TSummary>> resultHandler)
 		{
 			IList<TSummary> results = null;
-			Async.Invoke(this,
-				delegate
-				{
-					results = ListItems(firstRow, maxRows);
-				},
-				delegate
-				{
-					resultHandler(results);
-				});
+			//TODO (CR April 2011): Not sure about this idea.  Inheritors may not realize
+			//the call to ListItems is being made on a worker thread, and may try to catch exceptions
+			//and show errors to the user on the worker thread ... that's actually how I found this issue.
+			Async.Invoke(this, 
+				() => results = ListItems(firstRow, maxRows), 
+				() => resultHandler(results), 
+				delegate(Exception e)
+					{
+						resultHandler.Invoke(new List<TSummary>());
+						ExceptionHandler.Report(e, Host.DesktopWindow);
+					});
 		}
 	}
 

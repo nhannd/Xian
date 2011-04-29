@@ -34,7 +34,7 @@ namespace ClearCanvas.Utilities.Manifest
                         string reason;
                         _verificationStatus = verifier.Verify(out reason);
                         if (!_verificationStatus)
-                            Platform.Log(LogLevel.Info, "Application failed verification: {0}", reason);
+                            Platform.Log(LogLevel.Debug, "Application failed verification: {0}", reason);
 
                         _verificationRun = true;
                     }

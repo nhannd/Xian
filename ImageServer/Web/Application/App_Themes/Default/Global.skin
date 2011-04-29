@@ -87,4 +87,5 @@
 <ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="~/App_Themes/Default/images/Indicators/HelpSmall.png" Visible="true" />
 <ccUI:GridView runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView" CaptionAlign="Top" Width="100%" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#d6f2ce" GridLines="Horizontal" BackColor="White" AllowSorting="True" PageSize="1" CellPadding="0" CellSpacing="0" AllowPaging="True" BorderWidth="0px" HorizontalAlign="left" />
 <ccUI:GridView SkinID="WebViewerMultipleStudiesGridView" runat="server" AutoGenerateColumns="False" CssClass="WebViewerGridView" CaptionAlign="Top" Width="100%" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#666666" GridLines="Horizontal" BackColor="Black" AllowSorting="True" PageSize="1" CellPadding="0" CellSpacing="0" AllowPaging="True" BorderWidth="0px" HorizontalAlign="left" />
+<ccUI:Warning runat="server" SkinID="Warning" ImageUrl="images/Indicators/Warning.png" />
 

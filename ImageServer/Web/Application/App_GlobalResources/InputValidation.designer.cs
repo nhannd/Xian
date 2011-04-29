@@ -70,7 +70,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This field must be numerical.
+        ///   Looks up a localized string similar to This field must be a positive integer.
         /// </summary>
         internal static string AdminPartitionArchive_InvalidDelay {
             get {
@@ -250,7 +250,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value used for merged study will be Other (O)..
+        ///   Looks up a localized string similar to Invalid value for Patient&apos;s Sex.  If you choose to use data in these images, Patient&apos;s Sex of the study will be set to Other. Howerver, you can still edit the study after the reconciliation has completed..
         /// </summary>
         internal static string SIQ_ReconcileDialog_PatientSexOverriddenOnMerge {
             get {

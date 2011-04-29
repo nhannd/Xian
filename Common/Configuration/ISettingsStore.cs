@@ -9,11 +9,66 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 
 namespace ClearCanvas.Common.Configuration
 {
+	/// <summary>
+	/// An extension point for <see cref="ISettingsStore"/>s.
+	/// </summary>
+	[ExtensionPoint]
+	public sealed class SettingsStoreExtensionPoint : ExtensionPoint<ISettingsStore>
+	{
+	}
+
+	public abstract class SettingsStore : ISettingsStore
+	{
+		private static readonly SettingsStoreExtensionPoint _extensionPoint = new SettingsStoreExtensionPoint();
+
+		static SettingsStore()
+		{
+			IsSupported = _extensionPoint.ListExtensions().Length > 0;
+		}
+
+		public static bool IsSupported { get; private set; }
+
+		public static bool IsStoreOnline
+		{
+			get
+			{
+				try
+				{
+					return IsSupported && Create().IsOnline;
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+			}
+		}
+
+		public static ISettingsStore Create()
+		{
+			return (ISettingsStore)new SettingsStoreExtensionPoint().CreateExtension();
+		}
+
+		#region Implementation of ISettingsStore
+
+		public abstract bool IsOnline { get; }
+		public abstract bool SupportsImport { get; }
+		public abstract IList<SettingsGroupDescriptor> ListSettingsGroups();
+		public abstract SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor group);
+		public abstract IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group);
+		public abstract void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties);
+		public abstract Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey);
+		public abstract void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues);
+		public abstract void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey);
+
+		#endregion
+	}
+
 	/// <summary>
 	/// Defines the interface to a mechanism for the storage of application and user settings.
 	/// </summary>
@@ -24,6 +79,11 @@ namespace ClearCanvas.Common.Configuration
 	/// </remarks>
 	public interface ISettingsStore
 	{
+		/// <summary>
+		/// Gets whether or not the settings store is online, and can be used.
+		/// </summary>
+		bool IsOnline { get; }
+
 		/// <summary>
 		/// Gets a value indicating whether this store supports importing of meta-data.
 		/// </summary>
