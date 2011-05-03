@@ -17,13 +17,11 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Configuration;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
 	[SettingsGroupDescription("Configures the installed localizations available for use in the application.")]
-	[SettingsProvider(typeof (StandardSettingsProvider))]
 	internal sealed partial class LocaleSettings
 	{
 		public LocaleSettings()
@@ -55,7 +53,19 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		public static InstalledLocales Instance
 		{
-			get { return LocaleSettings.Default.InstalledLocales ?? new InstalledLocales(); }
+			get
+			{
+				InstalledLocales instance = null;
+				try
+				{
+					instance = LocaleSettings.Default.InstalledLocales;
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Debug, ex, "Unexpected error reading {0}", typeof (LocaleSettings));
+				}
+				return instance ?? new InstalledLocales();
+			}
 		}
 
 		/// <summary>

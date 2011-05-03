@@ -76,15 +76,16 @@ namespace ClearCanvas.Common.Configuration
         }
 
         private SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection properties, bool returnPrevious)
-		{
-			Type settingsClass = (Type)context["SettingsClassType"];
-			string settingsKey = (string)context["SettingsKey"];
-			string user = Thread.CurrentPrincipal.Identity.Name;
+        {
+        	bool anyUserScopedSettings = AnyUserScoped(properties);
+        	Type settingsClass = (Type) context["SettingsClassType"];
+        	string settingsKey = (string) context["SettingsKey"];
+        	string user = anyUserScopedSettings ? Thread.CurrentPrincipal.Identity.Name : null;
 
 			var group = new SettingsGroupDescriptor(settingsClass);
 			if (returnPrevious)
 			    group = _store.GetPreviousSettingsGroup(group);
-			else if (AnyUserScoped(properties))
+			else if (anyUserScopedSettings)
 				SettingsMigrator.MigrateUserSettings(group);
 
 			var storedValues = new Dictionary<string, string>();
@@ -94,8 +95,11 @@ namespace ClearCanvas.Common.Configuration
 				foreach (var userDefault in _store.GetSettingsValues(group, null, settingsKey))
 					storedValues[userDefault.Key] = userDefault.Value;
 
-				foreach (var userValue in _store.GetSettingsValues(group, user, settingsKey))
-					storedValues[userValue.Key] = userValue.Value;
+				if (anyUserScopedSettings)
+				{
+					foreach (var userValue in _store.GetSettingsValues(group, user, settingsKey))
+						storedValues[userValue.Key] = userValue.Value;
+				}
 			}
 
 		    return GetSettingsValues(properties, storedValues);
