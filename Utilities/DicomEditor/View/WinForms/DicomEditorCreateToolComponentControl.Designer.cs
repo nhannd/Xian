@@ -110,27 +110,21 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			// _value
 			// 
 			resources.ApplyResources(this._value, "_value");
-			this._value.Mask = "";
 			this._value.Name = "_value";
-			this._value.PasswordChar = '\0';
 			this._value.ToolTip = null;
 			this._value.Value = null;
 			// 
 			// _vr
 			// 
 			resources.ApplyResources(this._vr, "_vr");
-			this._vr.Mask = "";
 			this._vr.Name = "_vr";
-			this._vr.PasswordChar = '\0';
 			this._vr.ToolTip = null;
 			this._vr.Value = null;
 			// 
 			// _tagName
 			// 
 			resources.ApplyResources(this._tagName, "_tagName");
-			this._tagName.Mask = "";
 			this._tagName.Name = "_tagName";
-			this._tagName.PasswordChar = '\0';
 			this._tagName.ToolTip = null;
 			this._tagName.Value = null;
 			// 

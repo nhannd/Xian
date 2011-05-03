@@ -285,6 +285,12 @@
   <data name="_value.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
+  <data name="_value.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <data name="_value.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
+  </data>
   <data name="_value.Size" type="System.Drawing.Size, System.Drawing">
     <value>456, 41</value>
   </data>
@@ -311,6 +317,12 @@
   </data>
   <data name="_vr.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
+  </data>
+  <data name="_vr.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <data name="_vr.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
   </data>
   <data name="_vr.Size" type="System.Drawing.Size, System.Drawing">
     <value>36, 41</value>
@@ -341,6 +353,12 @@
   </data>
   <data name="_tagName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
+  </data>
+  <data name="_tagName.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <data name="_tagName.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
   </data>
   <data name="_tagName.Size" type="System.Drawing.Size, System.Drawing">
     <value>323, 41</value>

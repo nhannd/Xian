@@ -128,10 +128,16 @@
   <data name="_studyDescription.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
+  <data name="_studyDescription.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_studyDescription.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
+  </data>
   <data name="_studyDescription.Size" type="System.Drawing.Size, System.Drawing">
     <value>229, 41</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_studyDescription.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
@@ -155,6 +161,12 @@
   </data>
   <data name="_patientId.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
+  </data>
+  <data name="_patientId.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <data name="_patientId.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
   </data>
   <data name="_patientId.Size" type="System.Drawing.Size, System.Drawing">
     <value>229, 41</value>
@@ -183,6 +195,12 @@
   <data name="_accessionNumber.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
+  <data name="_accessionNumber.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <data name="_accessionNumber.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
+  </data>
   <data name="_accessionNumber.Size" type="System.Drawing.Size, System.Drawing">
     <value>150, 41</value>
   </data>
@@ -209,6 +227,12 @@
   </data>
   <data name="_patientsName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
+  </data>
+  <data name="_patientsName.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <data name="_patientsName.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
   </data>
   <data name="_patientsName.Size" type="System.Drawing.Size, System.Drawing">
     <value>229, 41</value>
@@ -338,6 +362,12 @@
   </data>
   <data name="_studyId.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
+  </data>
+  <data name="_studyId.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <data name="_studyId.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
   </data>
   <data name="_studyId.Size" type="System.Drawing.Size, System.Drawing">
     <value>229, 41</value>

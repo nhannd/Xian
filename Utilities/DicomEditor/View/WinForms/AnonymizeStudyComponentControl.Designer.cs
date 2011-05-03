@@ -106,36 +106,28 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			// _patientsName
 			// 
 			resources.ApplyResources(this._patientsName, "_patientsName");
-			this._patientsName.Mask = "";
 			this._patientsName.Name = "_patientsName";
-			this._patientsName.PasswordChar = '\0';
 			this._patientsName.ToolTip = null;
 			this._patientsName.Value = null;
 			// 
 			// _accessionNumber
 			// 
 			resources.ApplyResources(this._accessionNumber, "_accessionNumber");
-			this._accessionNumber.Mask = "";
 			this._accessionNumber.Name = "_accessionNumber";
-			this._accessionNumber.PasswordChar = '\0';
 			this._accessionNumber.ToolTip = null;
 			this._accessionNumber.Value = null;
 			// 
 			// _patientId
 			// 
 			resources.ApplyResources(this._patientId, "_patientId");
-			this._patientId.Mask = "";
 			this._patientId.Name = "_patientId";
-			this._patientId.PasswordChar = '\0';
 			this._patientId.ToolTip = null;
 			this._patientId.Value = null;
 			// 
 			// _studyDescription
 			// 
 			resources.ApplyResources(this._studyDescription, "_studyDescription");
-			this._studyDescription.Mask = "";
 			this._studyDescription.Name = "_studyDescription";
-			this._studyDescription.PasswordChar = '\0';
 			this._studyDescription.ToolTip = null;
 			this._studyDescription.Value = null;
 			// 

@@ -72,9 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// _nameField
 			// 
 			resources.ApplyResources(this._nameField, "_nameField");
-			this._nameField.Mask = "";
 			this._nameField.Name = "_nameField";
-			this._nameField.PasswordChar = '\0';
 			this._nameField.ToolTip = null;
 			this._nameField.Value = null;
 			// 

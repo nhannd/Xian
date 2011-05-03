@@ -279,7 +279,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderView.AutoWaitCursor = false;
 			this._folderView.ContextMenuStrip = this._folderViewContextMenu;
 			resources.ApplyResources(this._folderView, "_folderView");
-			this._folderView.FileSizeFormat = ClearCanvas.Controls.WinForms.FileSizeFormat.LegacyOctets;
 			this._folderView.FolderCoordinator = this._folderCoordinator;
 			this._folderView.Name = "_folderView";
 			this._folderView.EndBrowse += new System.EventHandler(this._folderControl_EndBrowse);

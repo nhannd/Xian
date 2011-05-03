@@ -128,10 +128,16 @@
   <data name="_nameField.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
+  <data name="_nameField.Mask" xml:space="preserve">
+    <value />
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_nameField.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value />
+  </data>
   <data name="_nameField.Size" type="System.Drawing.Size, System.Drawing">
     <value>235, 41</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_nameField.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
