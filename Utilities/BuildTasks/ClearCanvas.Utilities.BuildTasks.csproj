@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddMetadata.cs" />
     <Compile Include="CombineAppConfigs.cs" />
     <Compile Include="CombineStrings.cs" />
     <Compile Include="FileReplaceText.cs" />
