@@ -96,6 +96,11 @@ namespace ClearCanvas.Utilities.BuildTasks
 		public string Name { get; set; }
 
 		/// <summary>
+		/// The XML namespace URI for the new attribute or element nodes to be created. Ignored if <see cref="Type"/> is not &quot;Attribute&quot; or &quot;Element&quot;.
+		/// </summary>
+		public string Namespace { get; set; }
+
+		/// <summary>
 		/// The type of the new nodes to be created. Must be one of the values of <see cref="XmlNodeType"/>.
 		/// </summary>
 		public string Type { get; set; }
@@ -205,10 +210,10 @@ namespace ClearCanvas.Utilities.BuildTasks
 			switch (GetNodeType())
 			{
 				case XmlNodeType.Attribute:
-					newXmlNode = XmlDocument.CreateAttribute(Name);
+					newXmlNode = XmlDocument.CreateAttribute(Name, Namespace ?? string.Empty);
 					break;
 				case XmlNodeType.Element:
-					newXmlNode = XmlDocument.CreateElement(Name);
+					newXmlNode = XmlDocument.CreateElement(Name, Namespace ?? string.Empty);
 					break;
 				case XmlNodeType.CData:
 					newXmlNode = XmlDocument.CreateCDataSection(string.Empty);

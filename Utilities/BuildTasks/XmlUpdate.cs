@@ -44,7 +44,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 	}
 
 	/// <summary>
-	/// Base class for MSBuild <see cref="Task"/>s that update nodes in XML documents.
+	/// Base class for <see cref="XmlTaskBase"/>s that update nodes in XML documents.
 	/// </summary>
 	public abstract class XmlUpdateTaskBase : XmlTaskBase
 	{
@@ -62,6 +62,11 @@ namespace ClearCanvas.Utilities.BuildTasks
 		/// The attribute names with which to update the nodes. Must be used in conjunction with <see cref="Value"/>.
 		/// </summary>
 		public string[] Attribute { get; set; }
+
+		/// <summary>
+		/// The XML namespace URI for the attribute names with which to update the nodes. Must be used in conjunction with <see cref="Attribute"/> and <see cref="Value"/>.
+		/// </summary>
+		public string[] AttributeNamespace { get; set; }
 
 		/// <summary>
 		/// A value indicating whether or not empty elements should be condensed into the empty tag format.
@@ -87,8 +92,13 @@ namespace ClearCanvas.Utilities.BuildTasks
 				{
 					if (Attribute.Length > 1 && Attribute.Length != Value.Length)
 						throw new ArgumentException("Attribute must have only 1 item or be in 1:1 correspondance with Value");
+
+					var namespaceUri = !IsNullOrEmpty(AttributeNamespace) ? AttributeNamespace : new[] {""};
+					if (namespaceUri.Length > 1 && namespaceUri.Length != Attribute.Length)
+						throw new ArgumentException("AttributeNamespace must have only 1 item or be in 1:1 correspondance with Attribute");
+
 					for (int n = 0; n < Value.Length; n++)
-						ops[n] = new SetAttributeOperation(Value[n], Attribute.Length == 1 ? Attribute[0] : Attribute[n]);
+						ops[n] = new SetAttributeOperation(Value[n], Attribute.Length == 1 ? Attribute[0] : Attribute[n], namespaceUri.Length == 1 ? namespaceUri[0] : namespaceUri[n]);
 				}
 				else
 				{
@@ -236,11 +246,13 @@ namespace ClearCanvas.Utilities.BuildTasks
 		{
 			private readonly string _value;
 			private readonly string _attribute;
+			private readonly string _namespaceUri;
 
-			public SetAttributeOperation(string value, string attribute)
+			public SetAttributeOperation(string value, string attribute, string namespaceUri)
 			{
 				_value = value ?? string.Empty;
 				_attribute = attribute;
+				_namespaceUri = namespaceUri ?? string.Empty;
 			}
 
 			public void Update(XmlNode xmlNode)
@@ -250,7 +262,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 					var attribute = xmlNode.Attributes[_attribute];
 					if (attribute == null && xmlNode.OwnerDocument != null)
 					{
-						attribute = xmlNode.OwnerDocument.CreateAttribute(_attribute);
+						attribute = xmlNode.OwnerDocument.CreateAttribute(_attribute, _namespaceUri);
 						xmlNode.Attributes.Append(attribute);
 					}
 

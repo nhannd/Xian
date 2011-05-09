@@ -44,6 +44,11 @@ namespace ClearCanvas.Utilities.BuildTasks
 		public string XPath { get; set; }
 
 		/// <summary>
+		/// Gets or sets any XML namespace declarations used in <see cref="XPath"/> as semicolon-separated list of PREFIX=URI declaration pairs.
+		/// </summary>
+		public string XPathNamespaces { get; set; }
+
+		/// <summary>
 		/// Gets or sets a value indicating whether or not it is an error if the nodes selected by <see cref="XPath"/> do not exist. The default value is True.
 		/// </summary>
 		public bool ErrorIfNotExists { get; set; }
@@ -55,6 +60,14 @@ namespace ClearCanvas.Utilities.BuildTasks
 		/// This property is only available while an <see cref="XmlTaskBase"/> is being executed.
 		/// </remarks>
 		protected XmlDocument XmlDocument { get; private set; }
+
+		/// <summary>
+		/// Gets the declared XML namespaces used in <see cref="XPath"/>.
+		/// </summary>
+		/// <remarks>
+		/// This property is only available while an <see cref="XmlTaskBase"/> is being executed.
+		/// </remarks>
+		private XmlNamespaceManager XPathNamespaceManager { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether or not any changes were made to <see cref="XmlDocument"/>.
@@ -116,6 +129,29 @@ namespace ClearCanvas.Utilities.BuildTasks
 					return false;
 				}
 
+				XPathNamespaceManager = new XmlNamespaceManager(XmlDocument.NameTable);
+				if (!string.IsNullOrEmpty(XPathNamespaces))
+				{
+					foreach (var declaration in XPathNamespaces.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries))
+					{
+						var index = declaration.IndexOf('=');
+						if (index < 0)
+						{
+							Log.LogError("XML namespace declarations should be formatted as a semicolon-delimited list of PREFIX=URI entries");
+							return false;
+						}
+
+						var prefix = declaration.Substring(0, index);
+						var uri = declaration.Substring(index + 1);
+						if (XPathNamespaceManager.HasNamespace(prefix))
+						{
+							Log.LogError("Duplicate declaration for XML namespace prefix {0}", prefix);
+							return false;
+						}
+						XPathNamespaceManager.AddNamespace(prefix, uri);
+					}
+				}
+
 				// perform the task
 				var result = PerformTask();
 				if (result && Modified)
@@ -135,6 +171,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 #endif
 			finally
 			{
+				XPathNamespaceManager = null;
 				XmlDocument = null;
 				Modified = false;
 			}
@@ -174,7 +211,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 		{
 			try
 			{
-				var xmlNodes = XmlDocument.SelectNodes(XPath) ?? new EmptyXmlNodeList();
+				var xmlNodes = XmlDocument.SelectNodes(XPath, XPathNamespaceManager) ?? new EmptyXmlNodeList();
 				if (ErrorIfNotExists && xmlNodes.Count == 0)
 				{
 					Log.LogError("No results for XPath expression {0}", XPath);
