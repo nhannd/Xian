@@ -77,7 +77,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 				name[n] = xmlNodes[n].Name;
 				innerXml[n] = xmlNodes[n].InnerXml;
 				outerXml[n] = xmlNodes[n].OuterXml;
-				value[n] = xmlNodes[n].Value;
+				value[n] = xmlNodes[n] is XmlElement ? xmlNodes[n].InnerText : xmlNodes[n].Value;
 			}
 
 			Name = name;

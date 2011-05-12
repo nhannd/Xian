@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddMetadata.cs" />
+    <Compile Include="ChangeCase.cs" />
     <Compile Include="CombineAppConfigs.cs" />
     <Compile Include="CombineStrings.cs" />
     <Compile Include="FileReplaceText.cs" />
