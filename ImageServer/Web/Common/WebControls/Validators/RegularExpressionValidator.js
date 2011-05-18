@@ -9,8 +9,6 @@
  *
  */
 
-/*
-
 
 // This script defines the client-side validator extension class @@CLIENTID@@_ClientSideEvaludator
 // to validate an input against a regular expression.

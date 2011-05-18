@@ -65,8 +65,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
             if (!string.IsNullOrEmpty(value))
             {
-                if (value.Length > dicomTag.VR.MaximumLength)
-                    value = value.Substring(0, (int)dicomTag.VR.MaximumLength);
+                int maxLength = dicomTag.VR.Equals(DicomVr.PNvr) ? 64 : (int)dicomTag.VR.MaximumLength;
+                if (value.Length > maxLength)
+                    value = value.Substring(0, maxLength);
             }
 
 		    UpdateEntry.Value = value;

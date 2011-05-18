@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
-				if (!SettingsStore.IsStoreOnline)
+				if (SettingsStore.IsSupported && !SettingsStore.IsStoreOnline)
 				{
 					base.Context.DesktopWindow.ShowMessageBox(Desktop.SR.MessageSettingsStoreOffline, MessageBoxActions.Ok);
 					return;

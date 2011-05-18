@@ -141,7 +141,6 @@ namespace ClearCanvas.Web.Services
             } 
         }
         
-        //TODO (CR 3-22-2011) Change return value to EventSet and eliminate ProcessMessageResult
         public ProcessMessagesResult ProcessMessages(MessageSet messageSet)
 		{
             IApplication application = FindApplication(messageSet.ApplicationId);
@@ -200,12 +199,19 @@ namespace ClearCanvas.Web.Services
             PerformanceMonitor.Report(data);
         }
 
-        public EventSet GetPendingEvent(GetPendingEventRequest request)
+        public GetPendingEventRequestResponse GetPendingEvent(GetPendingEventRequest request)
         {
             IApplication application = Application.Find(request.ApplicationId);
 
             if (application!=null)
-                return application.GetPendingOutboundEvent(Math.Max(0, request.MaxWaitTime));
+            {
+                var response = new GetPendingEventRequestResponse()
+                                   {
+                                       ApplicationId = application.Identifier,
+                                       EventSet = application.GetPendingOutboundEvent(Math.Max(0, request.MaxWaitTime))
+                                   };
+                return response;
+            }
 
             // Without a permanent connection, there's a chance the client is polling even when the application has stopped on the server.
             // Throw fault exception to tell the client to stop.

@@ -45,7 +45,12 @@ namespace ClearCanvas.ImageServer.Model
 
         static void AddDicomLength(uint tag)
         {
-            _maxLengths.Add(tag, DicomTagDictionary.GetDicomTag(tag).VR.MaximumLength);
+            DicomTag dTag = DicomTagDictionary.GetDicomTag(tag);
+            // For PN VR tags, we're only storing 64 bit lengths, whereas the max length is 64.
+            if (dTag.VR.Equals(DicomVr.PNvr))
+                _maxLengths.Add(tag, 64);
+            else
+                _maxLengths.Add(tag, dTag.VR.MaximumLength);
         }
 
         public static uint GetMaxLength(uint tag)

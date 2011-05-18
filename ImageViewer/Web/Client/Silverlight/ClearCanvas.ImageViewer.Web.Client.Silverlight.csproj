@@ -320,24 +320,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AppManifest.xml" />
-    <None Include="Service References\AppServiceReference\ApplicationService2.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService21.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService5.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService51.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService1.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService52.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService53.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService54.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet.datasource">
+    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ProcessMessagesResult.datasource">
@@ -352,7 +352,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService1.disco" />
+    <None Include="Service References\AppServiceReference\ApplicationService.disco" />
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>

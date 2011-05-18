@@ -422,6 +422,7 @@
     <Compile Include="ServiceModel\Streaming\StudyIsNearlineFault.cs" />
     <Compile Include="Tests\AttributeCollectionTest.cs" />
     <Compile Include="Tests\DicomOverlayTestHelper.cs" />
+    <Compile Include="Tests\DicomPixelDataTests.cs" />
     <Compile Include="Tests\FilmSizeTests.cs" />
     <Compile Include="Tests\GlobalizedCultureAttributeTests.cs" />
     <Compile Include="Tests\DicomDirectoryTests.cs" />

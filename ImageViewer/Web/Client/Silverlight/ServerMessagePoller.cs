@@ -114,11 +114,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             {
                 if (e.Result != null)
                 {
-                    if (e.Result.Events != null)
+                    if (e.Result.EventSet != null)
                     {
                         if (MessageReceived != null)
                         {
-                            MessageReceived(this, new MessagePollerEventReceivedEventArgs { EventSet = e.Result });
+                            MessageReceived(this, new MessagePollerEventReceivedEventArgs { EventSet = e.Result.EventSet });
                         }
                     }
                 }

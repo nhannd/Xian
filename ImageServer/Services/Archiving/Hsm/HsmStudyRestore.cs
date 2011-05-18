@@ -155,6 +155,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                                         ? string.Empty : _location.StudyInstanceUid) 
                                         : _studyStorage.StudyInstanceUid);
                         // Just "Fail", the directory is not found.
+                        queueItem.FailureDescription = string.Format("Directory not found for file, cannot restore: {0}", zipFile);
                         _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed,
                                                        Platform.Time);
                         return;

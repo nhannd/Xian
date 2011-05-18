@@ -43,7 +43,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Shreds
 			public PartitionArchive PartitionArchive
 			{
 				get { return _partitionArchive; }
-				set { _partitionArchive = value; }
+                set
+                {
+                    _partitionArchive = value;
+                    _archive.PartitionArchive = value;
+                }
 			}
 
 			public IImageServerArchivePlugin ArchivePlugin

@@ -67,6 +67,16 @@ namespace ClearCanvas.Web.Common
         public int MaxWaitTime { get; set; }
 	}
 
+    [DataContract(Namespace = Namespace.Value)]
+    public class GetPendingEventRequestResponse
+    {
+        [DataMember(IsRequired = true)]
+        public Guid ApplicationId { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public EventSet EventSet { get; set; }
+    }
+
     [ServiceContract(Namespace = Namespace.Value)]
 	[ServiceKnownType("GetKnownTypes", typeof(ServiceKnownTypeExtensionPoint))]
 	public interface IApplicationService
@@ -86,7 +96,7 @@ namespace ClearCanvas.Web.Common
         
         [OperationContract(IsOneWay = false)]
         [FaultContract(typeof(InvalidOperationFault))]
-        EventSet GetPendingEvent(GetPendingEventRequest request);
+        GetPendingEventRequestResponse GetPendingEvent(GetPendingEventRequest request);
 
         [OperationContract(IsOneWay = true)]
         void ReportPerformance(PerformanceData data);

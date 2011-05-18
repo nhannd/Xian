@@ -11,15 +11,13 @@
 
 using System;
 using System.Runtime.Serialization;
-using ClearCanvas.Web.Common;
 
-namespace ClearCanvas.Web.Services
+namespace ClearCanvas.Web.Common.Events
 {
-	//TODO (CR May 2010): move to Web.Common
     [DataContract(Namespace = Namespace.Value)]
     public class SessionUpdatedEvent : Event
     {
-    	//TODO (CR May 2010): IsRequired?
+        //TODO (CR May 2010): IsRequired?
         [DataMember]
         public string Username { get; set; }
         [DataMember]

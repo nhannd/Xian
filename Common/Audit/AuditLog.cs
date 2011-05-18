@@ -11,6 +11,7 @@
 
 using System;
 using System.Net;
+using System.Security.Principal;
 using System.Threading;
 
 namespace ClearCanvas.Common.Audit
@@ -112,7 +113,15 @@ namespace ClearCanvas.Common.Audit
 		private static string GetUserName()
 		{
 			var p = Thread.CurrentPrincipal;
-			return (p != null && p.Identity != null) ? p.Identity.Name : null;
+
+            if (p == null || p.Identity==null)
+                return null;
+
+            // Check if it's being called in a service.
+            if (p.Identity is WindowsIdentity)
+                return null;
+
+		    return p.Identity.Name;
 		}
 
 		/// <summary>

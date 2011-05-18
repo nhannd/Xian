@@ -62,7 +62,6 @@
     <Compile Include="ExceptionTranslator.cs" />
     <Compile Include="IncomingMessageQueue.cs" />
     <Compile Include="PerformanceMonitor.cs" />
-    <Compile Include="SessionUpdatedEvent.cs" />
     <Compile Include="SilverlightFaultBehavior.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

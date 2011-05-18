@@ -82,7 +82,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(ExecutableBuild)">
-	<PluginFiles Include="$(XianTrunkDirectory)\Utilities\bin\$(Configuration)\ClearCanvas.Utilities.dll" />
     <PluginFiles Include="$(XianTrunkDirectory)\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
 
@@ -175,7 +174,7 @@
 
     <Copy SourceFiles="$(XianTrunkDirectory)\Docs\ImageServer\UsersGuide\CCImageServerUsersGuide.chm" DestinationFolder="$(DistributionDirectory)"  />
 
-    <Copy SourceFiles="$(XianTrunkDirectory)\Docs\Privacy.rtf" DestinationFolder="$(DistributionDirectory)"  />
+    <Copy SourceFiles="$(XianTrunkDirectory)\Docs\PrivacyNotice.rtf" DestinationFolder="$(DistributionDirectory)"  />
 
     <Copy SourceFiles="@(UtilBatchFiles)" DestinationFolder="$(UtilitiesDirectory)" />
 

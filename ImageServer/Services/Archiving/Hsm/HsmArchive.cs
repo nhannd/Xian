@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 	[ExtensionOf(typeof(ImageServerArchiveExtensionPoint))]
 	public class HsmArchive : ImageServerArchiveBase
 	{
+        private readonly object _syncLock = new object();
 		private HsmArchiveService _archiveService;
 		private HsmRestoreService _restoreService;
 		
@@ -61,15 +62,35 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 		public string HsmPath
 		{
-			get { return _hsmPath; }
+			get { lock (_syncLock) return _hsmPath; }
+            private set { lock (_syncLock) _hsmPath = value; }
 		}
 
 		/// <summary>
 		/// The <see cref="PartitionArchive"/> associated with the HsmArchive.
 		/// </summary>
-		public PartitionArchive PartitionArchive
+		public override PartitionArchive PartitionArchive
 		{
-			get { return _partitionArchive; }
+            get { lock (_syncLock) return _partitionArchive; }
+            set
+            {
+                lock (_syncLock)
+                {
+                    _partitionArchive = value;
+
+                    //Hsm Archive specific Xml data.
+                    XmlElement element = _partitionArchive.ConfigurationXml.DocumentElement;
+                    if (element != null)
+                        foreach (XmlElement node in element.ChildNodes)
+                            if (node.Name.Equals("RootDir"))
+                                if (!HsmPath.Equals(node.InnerText))
+                                {
+                                    HsmPath = node.InnerText;
+                                    Platform.Log(LogLevel.Info, "HSM Path has changed for PartitionArchive {0} to {1}",
+                                                 _partitionArchive.Description, HsmPath);
+                                }
+                }
+            }
 		}
 
 		/// <summary>
@@ -135,24 +156,25 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <param name="archive">The <see cref="PartitionArchive"/> to start.</param>
 		public override void Start(PartitionArchive archive)
 		{
-			_partitionArchive = archive;
+            HsmPath = string.Empty;
+            
+            PartitionArchive = archive;
 
 			LoadServerPartition();
-		
-			_hsmPath = string.Empty;
-
+				
 			//Hsm Archive specific Xml data.
 			XmlElement element = archive.ConfigurationXml.DocumentElement;
-			foreach (XmlElement node in element.ChildNodes)
-				if (node.Name.Equals("RootDir"))
-					_hsmPath = node.InnerText;
+            if (element!=null)
+			    foreach (XmlElement node in element.ChildNodes)
+				    if (node.Name.Equals("RootDir"))
+					    HsmPath = node.InnerText;
 			
 			// Start the restore service
 			_restoreService = new HsmRestoreService("HSM Restore", this);
 			_restoreService.StartService();
 
 			// If not "readonly", start the archive service.
-			if (!_partitionArchive.ReadOnly)
+			if (!PartitionArchive.ReadOnly)
 			{
 				_archiveService = new HsmArchiveService("HSM Archive", this);	
 				_archiveService.StartService();

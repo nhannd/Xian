@@ -100,11 +100,6 @@ namespace ClearCanvas.Web.Services
                             List<Event> speciallyMarkedEvents;
                             Event theEvent = @event;
 
-                            // TODO CR 3-22-2011, This code was added but the BatchMode is never
-                            // set in Application, so we default to PerType.  The implication is that
-                            // when doing sync stacking the Tile event is sent in separate batches, 
-                            // slowing things down.  Should change default and test to make sure it works
-                            // properly with sync stacking.
                             if (_application.BatchMode == MessageBatchMode.PerType)
                             {
                                 // Only include the event if there's no other event of the same type to be sent.

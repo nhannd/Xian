@@ -130,7 +130,15 @@ namespace ClearCanvas.Common.Actions
                 xmlReaderSettings.Schemas = new XmlSchemaSet();
 				if (!_schemas.ContainsKey(schemaContext))
 				{
-					_schemas.Add(schemaContext, CreateSchema(schemaContext));
+				    XmlSchema s = CreateSchema(schemaContext);
+					_schemas.Add(schemaContext, s);
+
+                    //using (StringWriter sw2 = new StringWriter())
+                    //{
+                    //    s.Write(sw);
+                    //    string t = sw2.ToString();
+                    //    Platform.Log(LogLevel.Info, sw);
+                    //}
 				}
 				xmlReaderSettings.Schemas.Add(_schemas[schemaContext]);
                 xmlReaderSettings.ValidationType = ValidationType.Schema;

@@ -84,10 +84,9 @@ namespace ClearCanvas.Common.Authorization
                     groupDefs.AddRange(groups);
                     foreach (var g in groups)
                     {
-                        Platform.Log(LogLevel.Info, "Group: {0}", g);
+                        Platform.Log(LogLevel.Info, "Group: {0}", g.Name);
                     }
-                }
-                
+                }                
             }
             return groupDefs.ToArray();
         }
