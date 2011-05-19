@@ -10,6 +10,7 @@
 --%>
 
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TimeoutErrorPage.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.TimeoutErrorPage" %>
+<%@ Import Namespace="Resources"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
 <%@ Import namespace="System.Threading"%>
 

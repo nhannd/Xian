@@ -10,6 +10,7 @@
 --%>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyIntegrityQueueSummary.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.StudyIntegrityQueueSummary" %>
+<%@ Import Namespace="Resources"%>
 
 
 <table cellpadding="2" width="100%">

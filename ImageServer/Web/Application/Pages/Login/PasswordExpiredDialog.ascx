@@ -13,6 +13,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="PasswordExpiredDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.PasswordExpiredDialog" %>
+<%@ Import Namespace="Resources"%>
 
 
 

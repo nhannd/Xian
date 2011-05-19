@@ -1,5 +1,5 @@
 <%-- License
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -8,6 +8,7 @@
 --%>
 
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebViewerTimeoutErrorPage.aspx.cs" MasterPageFile="WebViewerErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.WebViewerTimeoutErrorPage" %>
+<%@ Import Namespace="Resources"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
 <%@ Import namespace="System.Threading"%>
 

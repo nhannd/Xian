@@ -12,6 +12,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ChangePasswordDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.ChangePasswordDialog" %>
+<%@ Import Namespace="Resources"%>
 
 
 

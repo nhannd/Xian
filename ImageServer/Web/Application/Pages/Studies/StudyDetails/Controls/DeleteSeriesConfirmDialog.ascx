@@ -18,6 +18,7 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.Helpers" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeleteSeriesConfirmDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteSeriesConfirmDialog" %>
+<%@ Import Namespace="Resources"%>
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="<%$ Resources:Titles, DeleteSeriesConfirmDialogTitle %>" Width="800px">
     <ContentTemplate>

@@ -15,6 +15,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Import Namespace="ClearCanvas.ImageServer.Common.CommandProcessor" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ReconcileHistoryDetailsColumn.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.ReconcileHistoryDetailsColumn" %>
+<%@ Import Namespace="Resources"%>
 
 <script type="text/javascript">
 

@@ -10,6 +10,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ArchivePanel.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.ArchivePanel" %>
+<%@ Import Namespace="Resources"%>
 
 
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">

@@ -15,6 +15,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DuplicateProcessChangeLog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DuplicateProcessChangeLog" %>
+<%@ Import Namespace="Resources"%>
 
 <script type="text/javascript">
 

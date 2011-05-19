@@ -10,6 +10,7 @@
 --%>
 
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.Default" %>
+<%@ Import Namespace="Resources"%>
 
 
 

@@ -10,6 +10,7 @@
 --%>
 
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="JavascriptRequired.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.JavascriptRequired" %>
+<%@ Import Namespace="Resources"%>
 
 
 <asp:Content ID="Content2" runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">
