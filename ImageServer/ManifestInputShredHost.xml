@@ -8,7 +8,6 @@
     <File name="ClearCanvas.ImageServer.ShredHostService.exe" checksum="true" />
     <File name="ClearCanvas.ImageServer.ShredHostService.exe.config" config="true" />
     <File name="ClearCanvas.ImageServer.ShredHostService.exe.critical.config" checksum="true" config="true" />
-    <File name="License.rtf" />
     <File name="PrivacyNotice.rtf" />
     <File name="Logging.config" />
     <File name="logs\" ignore="true" />
