@@ -11,8 +11,10 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
@@ -48,18 +50,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				if (this.Context.SelectedItems.Count != 2)
+				if(DowntimeRecovery.InDowntimeRecoveryMode)
+					return false;
+
+				if (this.Context.SelectedItems.Count < 2)
 					return false;
 
 				var list = new List<TItem>(this.Context.SelectedItems);
 
 				// Obvious cases where merging should not be allowed.
-				// Cannot merge the same order.
-				if (list[0].AccessionNumber == list[1].AccessionNumber)
+				// Cannot merge the same order.  If Unique list has the same number as the original list, every item in the list is unique.
+				var sameOrder = CollectionUtils.TrueForAll(list, item => item.AccessionNumber.Equals(list[0].AccessionNumber));
+				if (sameOrder)
 					return false;
 
 				// Cannot merge orders from different patient
-				if (!list[0].PatientRef.Equals(list[1].PatientRef, true))
+				var differentPatient = CollectionUtils.Contains(list, item => !item.PatientRef.Equals(list[0].PatientRef, true));
+				if (differentPatient)
 					return false;
 
 				// Return true, let the server decide how to inform user of more complicated error.
@@ -70,10 +77,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
 			var list = new List<TItem>(this.Context.SelectedItems);
-			var component = new MergeOrdersComponent(list[0].OrderRef, list[1].OrderRef);
+			var orderRefs = CollectionUtils.Map<TItem, EntityRef>(list, x => x.OrderRef);
+			var component = new MergeOrdersComponent(orderRefs);
 
 			string failureReason;
-			if (!component.ValidateMergeRequest(out failureReason))
+			if (!ValidateMergeRequest(orderRefs, out failureReason))
 			{
 				this.Context.DesktopWindow.ShowMessageBox(failureReason, MessageBoxActions.Ok);
 				return false;
@@ -85,6 +93,30 @@ namespace ClearCanvas.Ris.Client.Workflow
 			InvalidateFolders();
 
 			return true;
+		}
+
+		private static bool ValidateMergeRequest(IList<EntityRef> orderRefs, out string failureReason)
+		{
+			var destinationOrderRef = orderRefs[0];
+			var sourceOrderRefs = new List<EntityRef>(orderRefs);
+			sourceOrderRefs.Remove(destinationOrderRef);
+
+			try
+			{
+				Platform.GetService(
+					delegate(IOrderEntryService service)
+					{
+						var request = new MergeOrderRequest(sourceOrderRefs, destinationOrderRef) { ValidationOnly = true };
+						service.MergeOrder(request);
+					});
+				failureReason = null;
+				return true;
+			}
+			catch (RequestValidationException e)
+			{
+				failureReason = e.Message;
+				return false;
+			}
 		}
 	}
 

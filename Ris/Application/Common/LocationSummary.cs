@@ -15,38 +15,34 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
+	[DataContract]
 	public class LocationSummary : DataContractBase, IEquatable<LocationSummary>
-    {
-        public LocationSummary(EntityRef locationRef,
+	{
+		public LocationSummary(EntityRef locationRef,
 			string id,
 			string name,
-            FacilitySummary facility,
-            string building,
-            string floor,
-            string pointOfCare,
-            string room,
-            string bed, 
+			FacilitySummary facility,
+			string building,
+			string floor,
+			string pointOfCare,
 			bool deactivated)
-        {
-            this.LocationRef = locationRef;
-        	this.Id = id;
-        	this.Name = name;
-            this.Facility = facility;
-            this.Building = building;
-            this.Floor = floor;
-            this.PointOfCare = pointOfCare;
-            this.Room = room;
-            this.Bed = bed;
-        	this.Deactivated = deactivated;
-        }
+		{
+			this.LocationRef = locationRef;
+			this.Id = id;
+			this.Name = name;
+			this.Facility = facility;
+			this.Building = building;
+			this.Floor = floor;
+			this.PointOfCare = pointOfCare;
+			this.Deactivated = deactivated;
+		}
 
-        public LocationSummary()
-        {
-        }
+		public LocationSummary()
+		{
+		}
 
-        [DataMember]
-        public EntityRef LocationRef;
+		[DataMember]
+		public EntityRef LocationRef;
 
 		[DataMember]
 		public string Id;
@@ -55,22 +51,16 @@ namespace ClearCanvas.Ris.Application.Common
 		public string Name;
 
 		[DataMember]
-        public FacilitySummary Facility;
+		public FacilitySummary Facility;
 
-        [DataMember]
-        public string Building;
+		[DataMember]
+		public string Building;
 
-        [DataMember]
-        public string Floor;
+		[DataMember]
+		public string Floor;
 
-        [DataMember]
-        public string PointOfCare;
-
-        [DataMember]
-        public string Room;
-
-        [DataMember]
-        public string Bed;
+		[DataMember]
+		public string PointOfCare;
 
 		[DataMember]
 		public bool Deactivated;

@@ -22,12 +22,13 @@ namespace ClearCanvas.Healthcare
 	/// <summary>
 	/// Procedure entity
 	/// </summary>
-	[Validation(HighLevelRulesProviderMethod="GetValidationRules")]
+	[Validation(HighLevelRulesProviderMethod = "GetValidationRules")]
 	public partial class Procedure
 	{
-		public Procedure(ProcedureType type)
+		public Procedure(ProcedureType type, string procedureNumber)
 		{
 			_type = type;
+			_number = procedureNumber;
 			_procedureSteps = new HashedSet<ProcedureStep>();
 			_procedureCheckIn = new ProcedureCheckIn();
 			_reports = new HashedSet<Report>();
@@ -98,26 +99,24 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Gets the protocol procedure steps.
-		/// </summary>
-		public virtual List<ProtocolProcedureStep> ProtocolProcedureSteps
-		{
-			get
-			{
-				return CollectionUtils.Map<ProcedureStep, ProtocolProcedureStep>(
-					CollectionUtils.Select(this.ProcedureSteps, ps => ps.Is<ProtocolProcedureStep>()),
-					ps => ps.As<ProtocolProcedureStep>());
-			}
-		}
-
-		/// <summary>
 		/// Gets a value indicating whether this procedure is in a terminal state.
 		/// </summary>
 		public virtual bool IsTerminated
 		{
 			get
 			{
-				return _status == ProcedureStatus.CM || _status == ProcedureStatus.CA || _status == ProcedureStatus.DC;
+				return _status == ProcedureStatus.CM || _status == ProcedureStatus.CA || _status == ProcedureStatus.DC || _status == ProcedureStatus.GH;
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this procedure is in a defunct state - that is, cancelled, discontinued, or ghost.
+		/// </summary>
+		public virtual bool IsDefunct
+		{
+			get
+			{
+				return _status == ProcedureStatus.CA || _status == ProcedureStatus.DC || _status == ProcedureStatus.GH;
 			}
 		}
 
@@ -369,7 +368,7 @@ namespace ClearCanvas.Healthcare
 		public virtual void Cancel()
 		{
 			if (_status != ProcedureStatus.SC)
-				throw new WorkflowException("Only procedures in the SC status can be cancelled");
+				throw new WorkflowException("Only procedures in the SC status can be cancelled.");
 
 			// update the status prior to cancelling the procedure steps
 			// (otherwise cancelling the steps will cause them to try and update the procedure status)
@@ -400,12 +399,26 @@ namespace ClearCanvas.Healthcare
 		/// <returns></returns> 
 		public virtual Procedure CreateGhostCopy()
 		{
-			return new Procedure(this.Order, this.Type, this.Index, new HashedSet<ProcedureStep>(),
-								this.ScheduledStartTime, this.SchedulingCode, this.StartTime, this.EndTime, ProcedureStatus.GH,
-								this.PerformingFacility, this.PerformingDepartment,
-								this.Laterality, this.Portable, this.ProcedureCheckIn, this.ImageAvailability,
-								this.DowntimeRecoveryMode,
-								new HashedSet<Report>(), new HashedSet<Protocol>());
+			return new Procedure(
+				_order,
+				_type,
+				_number,
+				new HashedSet<ProcedureStep>(),
+				_scheduledStartTime,
+				_schedulingCode,
+				_startTime,
+				_endTime,
+				ProcedureStatus.GH,
+				_performingFacility,
+				_performingDepartment,
+				_laterality,
+				_portable,
+				new ProcedureCheckIn(),
+				_imageAvailability,
+				_downtimeRecoveryMode,
+				new HashedSet<Report>(),
+				new HashedSet<Protocol>(),
+				this);
 		}
 
 		/// <summary>
@@ -605,42 +618,32 @@ namespace ClearCanvas.Healthcare
 
 		private static IValidationRuleSet GetValidationRules()
 		{
+			var sameInformationAuthorityRule = new ValidationRule<Procedure>(
+				procedure => OrderRules.VisitAndPerformingFacilitiesHaveSameInformationAuthority(procedure.Order));
+
 			var samePerformingFacilityRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var hasSameFacility = CollectionUtils.TrueForAll(procedure.Order.Procedures, p => Equals(p.PerformingFacility, procedure.PerformingFacility));
-					return new TestResult(hasSameFacility, SR.MessageValidateOrderPerformingFacilities);
-				});
+				procedure => OrderRules.AllNonDefunctProceduresHaveSamePerformingFacility(procedure.Order));
 
 			var samePerformingDepartmentRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var hasSameDepartment = CollectionUtils.TrueForAll(procedure.Order.Procedures, p => Equals(p.PerformingDepartment, procedure.PerformingDepartment));
-					return new TestResult(hasSameDepartment, SR.MessageValidateOrderPerformingDepartments);
-				});
+				procedure => OrderRules.AllNonDefunctProceduresHaveSamePerformingDepartment(procedure.Order));
 
+			// performing department must be associated with performing facility
 			var performingDepartmentIsInPerformingFacilityRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var performingDepartmentIsInPerformingFacility = procedure.PerformingDepartment == null
-						|| procedure.PerformingFacility == procedure.PerformingDepartment.Facility;
-					return new TestResult(performingDepartmentIsInPerformingFacility, SR.MessageValidateProcedurePerformingFacilityAndDepartment);
-				});
+				OrderRules.PerformingDepartmentAlignsWithPerformingFacility);
 
+			// patient must have a profile at the performing facility
 			var patientProfileExistsForPerformingFacilityRule = new ValidationRule<Procedure>(
-				delegate(Procedure procedure)
-				{
-					var patientProfileExists = procedure.PatientProfile != null;
-					return new TestResult(patientProfileExists, SR.MessageValidateProcedurePatientProfile);
-				});
+				OrderRules.PatientProfileExistsForPerformingFacility);
 
 			return new ValidationRuleSet(new[]
 			{
+				sameInformationAuthorityRule,
 				samePerformingFacilityRule, 
 				samePerformingDepartmentRule, 
 				performingDepartmentIsInPerformingFacilityRule, 
 				patientProfileExistsForPerformingFacilityRule
 			});
 		}
+
 	}
 }

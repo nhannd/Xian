@@ -16,6 +16,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -23,8 +24,8 @@ namespace ClearCanvas.Ris.Client
 	{
 		private ExternalPractitionerMergeSelectedDuplicateComponent _selectedDuplicateComponent;
 		private ExternalPractitionerMergePropertiesComponent _mergePropertiesComponent;
-		private ExternalPractitionerMergeSelectedContactPointsComponent _selectContactPointsComponent;
-		private ExternalPractitionerMergeAffectedOrdersComponent _affectedOrdersComponent;
+		private ExternalPractitionerSelectDisabledContactPointsComponent _selectContactPointsComponent;
+		private ExternalPractitionerReplaceDisabledContactPointsComponent _replaceContactPointsComponent;
 		private ExternalPractitionerOverviewComponent _confirmationComponent;
 
 		private readonly EntityRef _originalPractitionerRef;
@@ -55,8 +56,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			this.Pages.Add(new NavigatorPage(SR.TitleSelectDuplicate, _selectedDuplicateComponent = new ExternalPractitionerMergeSelectedDuplicateComponent(_specifiedDuplicatePractitionerRef)));
 			this.Pages.Add(new NavigatorPage(SR.TitleResolvePropertyConflicts, _mergePropertiesComponent = new ExternalPractitionerMergePropertiesComponent()));
-			this.Pages.Add(new NavigatorPage(SR.TitleSelectActiveContactPoints, _selectContactPointsComponent = new ExternalPractitionerMergeSelectedContactPointsComponent()));
-			this.Pages.Add(new NavigatorPage(SR.TitleCorrectAffectedOrders, _affectedOrdersComponent = new ExternalPractitionerMergeAffectedOrdersComponent()));
+			this.Pages.Add(new NavigatorPage(SR.TitleSelectActiveContactPoints, _selectContactPointsComponent = new ExternalPractitionerSelectDisabledContactPointsComponent()));
+			this.Pages.Add(new NavigatorPage(SR.TitleReplaceInactiveContactPoints, _replaceContactPointsComponent = new ExternalPractitionerReplaceDisabledContactPointsComponent()));
 			this.Pages.Add(new NavigatorPage(SR.TitlePreviewMergedPractitioner, _confirmationComponent = new ExternalPractitionerOverviewComponent()));
 			this.ValidationStrategy = new AllComponentsValidationStrategy();
 
@@ -88,26 +89,38 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
-			if (DialogBoxAction.Cancel == this.Host.ShowMessageBox(SR.MessageConfirmMergePractitioners, MessageBoxActions.OkCancel))
-				return;
-
 			try
 			{
-				Platform.GetService(
-					delegate(IExternalPractitionerAdminService service)
-					{
-						var request = new MergeExternalPractitionerRequest
-						{
-							MergedPractitioner = _mergedPractitioner,
-							DuplicatePractitionerRef = _selectedDuplicate.PractitionerRef,
-							ContactPointReplacements = _affectedOrdersComponent.ContactPointReplacementMap
-						};
+				// build request
+				var defaultContactPoint = CollectionUtils.SelectFirst(_mergedPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint);
+				var deactivatedContactPoints = CollectionUtils.Select(_mergedPractitioner.ContactPoints, cp => cp.Deactivated);
+				var request = new MergeExternalPractitionerRequest
+				{
+					RightPractitionerRef = _mergedPractitioner.PractitionerRef,
+					LeftPractitionerRef = _selectedDuplicate.PractitionerRef,
+					Name = _mergedPractitioner.Name,
+					LicenseNumber = _mergedPractitioner.LicenseNumber,
+					BillingNumber = _mergedPractitioner.BillingNumber,
+					ExtendedProperties = _mergedPractitioner.ExtendedProperties,
+					DefaultContactPointRef = defaultContactPoint == null ? null : defaultContactPoint.ContactPointRef,
+					DeactivatedContactPointRefs = CollectionUtils.Map(deactivatedContactPoints, (ExternalPractitionerContactPointDetail cp) => cp.ContactPointRef),
+					ContactPointReplacements = _replaceContactPointsComponent.ContactPointReplacements
+				};
 
-						service.MergeExternalPractitioner(request);
-					});
+				var cost = CalculateMergeCost(request);
 
-				this.ExitCode = ApplicationComponentExitCode.Accepted;
-				this.Host.Exit();
+				var msg = string.Format("Merge operation will affect {0} orders and/or visits.", cost);
+				msg += "\n\nPress 'Cancel' to cancel the operation.\nPress 'OK' to continue. The merge operation cannot be undone.";
+				var action = this.Host.ShowMessageBox(msg, MessageBoxActions.OkCancel);
+				if (action == DialogBoxAction.Cancel)
+				{
+					return;
+				}
+
+				// perform the merge
+				PerformMergeOperation(request);
+
+				Exit(ApplicationComponentExitCode.Accepted);
 			}
 			catch (Exception e)
 			{
@@ -118,12 +131,34 @@ namespace ClearCanvas.Ris.Client
 		protected override void MoveTo(int index)
 		{
 			var previousIndex = this.CurrentPageIndex;
+
+			if (CanMoveTo(index) == false)
+				return;
+
 			base.MoveTo(index);
 
 			if (previousIndex < 0 || index > previousIndex)
 				OnMovedForward();
 			else
 				OnMovedBackward();
+		}
+
+		private bool CanMoveTo(int index)
+		{
+			// don't prevent moving to first page during initialization
+			if (this.CurrentPageIndex < 0)
+				return true;
+
+			// Moving forward
+			if (index > this.CurrentPageIndex)
+				if(this.CurrentPage.Component == _replaceContactPointsComponent && _replaceContactPointsComponent.HasValidationErrors)
+				{
+					_replaceContactPointsComponent.ShowValidation(true);
+					return false;
+				}
+
+			// Moving back
+			return true;
 		}
 
 		private void OnMovedForward()
@@ -152,17 +187,20 @@ namespace ClearCanvas.Ris.Client
 			{
 				_selectContactPointsComponent.DuplicatePractitioner = _selectedDuplicate;
 			}
-			else if (currentComponent == _affectedOrdersComponent)
+			else if (currentComponent == _replaceContactPointsComponent)
 			{
-				_affectedOrdersComponent.ActiveContactPoints = _selectContactPointsComponent.ActiveContactPoints;
-				_affectedOrdersComponent.DeactivatedContactPoints = _selectContactPointsComponent.DeactivatedContactPoints;
+				_replaceContactPointsComponent.ActiveContactPoints = _selectContactPointsComponent.ActiveContactPoints;
+				_replaceContactPointsComponent.DeactivatedContactPoints = _selectContactPointsComponent.DeactivatedContactPoints;
+
+				if (_replaceContactPointsComponent.DeactivatedContactPoints.Count == 0)
+					Forward();
 			}
 			else if (currentComponent == _confirmationComponent)
 			{
 				_mergedPractitioner.PractitionerRef = _originalPractitionerRef;
 				_mergePropertiesComponent.Save(_mergedPractitioner);
 				_selectContactPointsComponent.Save(_mergedPractitioner);
-				_affectedOrdersComponent.Save();
+				_replaceContactPointsComponent.Save();
 				_confirmationComponent.PractitionerDetail = _mergedPractitioner;
 
 				// The accept is enabled only on the very last page.
@@ -174,6 +212,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			// The accept is enabled only on the very last page.  Nothing else to do when moving backward.
 			this.AcceptEnabled = false;
+
+			if (this.CurrentPage.Component == _replaceContactPointsComponent)
+			{
+				if (_replaceContactPointsComponent.DeactivatedContactPoints.Count == 0)
+					Back();
+			}
 		}
 
 		private static ExternalPractitionerDetail LoadPractitionerDetail(EntityRef practitionerRef)
@@ -192,6 +236,47 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return detail;
+		}
+
+		private long CalculateMergeCost(MergeExternalPractitionerRequest request)
+		{
+			request.EstimateCostOnly = true;
+			return ShowProgress("Calculating number of records affected...",
+					  service => service.MergeExternalPractitioner(request).CostEstimate);
+		}
+
+		private static void PerformMergeOperation(MergeExternalPractitionerRequest request)
+		{
+			request.EstimateCostOnly = false;
+			Platform.GetService<IExternalPractitionerAdminService>(
+					service => service.MergeExternalPractitioner(request));
+		}
+
+		private T ShowProgress<T>(
+			string message,
+			Converter<IExternalPractitionerAdminService, T> action)
+		{
+			var result = default(T);
+			var task = new BackgroundTask(
+				delegate(IBackgroundTaskContext context)
+				{
+					context.ReportProgress(new BackgroundTaskProgress(0, message));
+
+					try
+					{
+						Platform.GetService<IExternalPractitionerAdminService>(service =>
+						{
+							result = action(service);
+						});
+					}
+					catch (Exception e)
+					{
+						context.Error(e);
+					}
+				}, false);
+
+			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
+			return result;
 		}
 	}
 }

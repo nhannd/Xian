@@ -9,10 +9,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -48,19 +46,13 @@ namespace ClearCanvas.Healthcare.Imex
 
 			[DataMember]
 			public string PointOfCare;
-
-			[DataMember]
-			public string Room;
-
-			[DataMember]
-			public string Bed;
 		}
 
 		#region Overrides
 
 		protected override IList<Location> GetItemsForExport(IReadContext context, int firstRow, int maxRows)
 		{
-			LocationSearchCriteria where = new LocationSearchCriteria();
+			var where = new LocationSearchCriteria();
 			where.Id.SortAsc(0);
 
 			return context.GetBroker<ILocationBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
@@ -68,35 +60,33 @@ namespace ClearCanvas.Healthcare.Imex
 
 		protected override LocationData Export(Location entity, IReadContext context)
 		{
-			LocationData data = new LocationData();
-			data.Deactivated = entity.Deactivated;
-			data.Id = entity.Id;
-			data.Name = entity.Name;
-			data.Description = entity.Description;
-			data.FacilityCode = entity.Facility.Code;
-			data.Building = entity.Building;
-			data.Floor = entity.Floor;
-			data.PointOfCare = entity.PointOfCare;
-			data.Room = entity.Room;
-			data.Bed = entity.Bed;
+			var data = new LocationData
+						{
+							Deactivated = entity.Deactivated,
+							Id = entity.Id,
+							Name = entity.Name,
+							Description = entity.Description,
+							FacilityCode = entity.Facility.Code,
+							Building = entity.Building,
+							Floor = entity.Floor,
+							PointOfCare = entity.PointOfCare
+						};
 
 			return data;
 		}
 
 		protected override void Import(LocationData data, IUpdateContext context)
 		{
-			FacilitySearchCriteria facilityCriteria = new FacilitySearchCriteria();
+			var facilityCriteria = new FacilitySearchCriteria();
 			facilityCriteria.Code.EqualTo(data.FacilityCode);
-			Facility facility = context.GetBroker<IFacilityBroker>().FindOne(facilityCriteria);
+			var facility = context.GetBroker<IFacilityBroker>().FindOne(facilityCriteria);
 
-			Location l = LoadOrCreateLocation(data.Id, data.Name, facility, context);
-			l.Deactivated = data.Deactivated;
-			l.Description = data.Description;
-			l.Building = data.Building;
-			l.Floor = data.Floor;
-			l.PointOfCare = data.PointOfCare;
-			l.Room = data.Room;
-			l.Bed = data.Bed;
+			var location = LoadOrCreateLocation(data.Id, data.Name, facility, context);
+			location.Deactivated = data.Deactivated;
+			location.Description = data.Description;
+			location.Building = data.Building;
+			location.Floor = data.Floor;
+			location.PointOfCare = data.PointOfCare;
 		}
 
 		#endregion
@@ -107,14 +97,14 @@ namespace ClearCanvas.Healthcare.Imex
 			try
 			{
 				// see if already exists in db
-				LocationSearchCriteria where = new LocationSearchCriteria();
+				var where = new LocationSearchCriteria();
 				where.Id.EqualTo(id);
 				l = context.GetBroker<ILocationBroker>().FindOne(where);
 			}
 			catch (EntityNotFoundException)
 			{
 				// create it
-				l = new Location(id, name, null, facility, null, null, null, null, null);
+				l = new Location(id, name, null, facility, null, null, null);
 				context.Lock(l, DirtyState.New);
 			}
 

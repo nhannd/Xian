@@ -63,21 +63,15 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DialogBoxForm));
 			this._contentPanel = new System.Windows.Forms.Panel();
-			this._delayedCloseTimer = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
 			// 
 			// _contentPanel
 			// 
 			resources.ApplyResources(this._contentPanel, "_contentPanel");
 			this._contentPanel.Name = "_contentPanel";
-			// 
-			// _delayedCloseTimer
-			// 
-			this._delayedCloseTimer.Interval = 50;
-			this._delayedCloseTimer.Tick += new System.EventHandler(this._delayedCloseTimer_Tick);
+
 			// 
 			// DialogBoxForm
 			// 
@@ -97,7 +91,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         #endregion
 
         private System.Windows.Forms.Panel _contentPanel;
-        private System.Windows.Forms.Timer _delayedCloseTimer;
         private System.ComponentModel.IContainer components;
     }
 }

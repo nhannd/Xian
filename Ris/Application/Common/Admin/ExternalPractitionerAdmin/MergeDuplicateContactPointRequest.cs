@@ -17,23 +17,25 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	[DataContract]
 	public class MergeDuplicateContactPointRequest : DataContractBase
 	{
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="duplicate">The duplicate contact point to remove.</param>
-		/// <param name="original">The original contact point to keep.</param>
 		public MergeDuplicateContactPointRequest(
-			ExternalPractitionerContactPointSummary duplicate, 
-			ExternalPractitionerContactPointSummary original)
+			EntityRef retained,
+			EntityRef replaced)
 		{
-			this.Duplicate = duplicate;
-			this.Original = original;
+			this.RetainedContactPointRef = retained;
+			this.ReplacedContactPointRef = replaced;
 		}
 
 		[DataMember]
-		public ExternalPractitionerContactPointSummary Duplicate;
+		public EntityRef RetainedContactPointRef;
 
 		[DataMember]
-		public ExternalPractitionerContactPointSummary Original;
+		public EntityRef ReplacedContactPointRef;
+
+		/// <summary>
+		/// If true, no merge will actually be performed.  Instead, the server will return some estimated
+		/// measures of the cost of the merge operation if it were to be performed.
+		/// </summary>
+		[DataMember]
+		public bool EstimateCostOnly;
 	}
 }

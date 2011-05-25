@@ -70,8 +70,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
 			this._visit = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._visitSummaryButton = new System.Windows.Forms.Button();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this._lowerLeftTabControl = new System.Windows.Forms.TabControl();
+			this._proceduresTab = new System.Windows.Forms.TabPage();
 			this._proceduresTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._orderNotesTab = new System.Windows.Forms.TabPage();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -99,8 +99,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.splitContainer1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
 			this.tableLayoutPanel4.SuspendLayout();
-			this.tabControl1.SuspendLayout();
-			this.tabPage1.SuspendLayout();
+			this._lowerLeftTabControl.SuspendLayout();
+			this._proceduresTab.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
@@ -191,7 +191,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 16F));
 			this.tableLayoutPanel3.Controls.Add(this._orderingPractitionerContactPoint, 0, 3);
 			this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 5);
-			this.tableLayoutPanel3.Controls.Add(this.tabControl1, 0, 7);
+			this.tableLayoutPanel3.Controls.Add(this._lowerLeftTabControl, 0, 7);
 			this.tableLayoutPanel3.Controls.Add(this._schedulingRequestTime, 1, 6);
 			this.tableLayoutPanel3.Controls.Add(this._diagnosticService, 0, 1);
 			this.tableLayoutPanel3.Controls.Add(this._schedulingRequestDate, 0, 6);
@@ -275,31 +275,31 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._visitSummaryButton.UseVisualStyleBackColor = true;
 			this._visitSummaryButton.Click += new System.EventHandler(this._visitSummaryButton_Click);
 			// 
-			// tabControl1
+			// _lowerLeftTabControl
 			// 
-			this.tableLayoutPanel3.SetColumnSpan(this.tabControl1, 2);
-			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this._orderNotesTab);
-			this.tabControl1.Controls.Add(this.tabPage2);
-			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tabControl1.Location = new System.Drawing.Point(4, 324);
-			this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 2, 2, 2);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(488, 309);
-			this.tabControl1.TabIndex = 10;
+			this.tableLayoutPanel3.SetColumnSpan(this._lowerLeftTabControl, 2);
+			this._lowerLeftTabControl.Controls.Add(this._proceduresTab);
+			this._lowerLeftTabControl.Controls.Add(this._orderNotesTab);
+			this._lowerLeftTabControl.Controls.Add(this.tabPage2);
+			this._lowerLeftTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._lowerLeftTabControl.Location = new System.Drawing.Point(4, 324);
+			this._lowerLeftTabControl.Margin = new System.Windows.Forms.Padding(4, 2, 2, 2);
+			this._lowerLeftTabControl.Name = "_lowerLeftTabControl";
+			this._lowerLeftTabControl.SelectedIndex = 0;
+			this._lowerLeftTabControl.Size = new System.Drawing.Size(488, 309);
+			this._lowerLeftTabControl.TabIndex = 10;
 			// 
-			// tabPage1
+			// _proceduresTab
 			// 
-			this.tabPage1.Controls.Add(this._proceduresTableView);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
-			this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(6, 6, 21, 6);
-			this.tabPage1.Size = new System.Drawing.Size(480, 283);
-			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "Procedures";
-			this.tabPage1.UseVisualStyleBackColor = true;
+			this._proceduresTab.Controls.Add(this._proceduresTableView);
+			this._proceduresTab.Location = new System.Drawing.Point(4, 22);
+			this._proceduresTab.Margin = new System.Windows.Forms.Padding(2);
+			this._proceduresTab.Name = "_proceduresTab";
+			this._proceduresTab.Padding = new System.Windows.Forms.Padding(6, 6, 21, 6);
+			this._proceduresTab.Size = new System.Drawing.Size(480, 283);
+			this._proceduresTab.TabIndex = 0;
+			this._proceduresTab.Text = "Procedures";
+			this._proceduresTab.UseVisualStyleBackColor = true;
 			// 
 			// _proceduresTableView
 			// 
@@ -608,9 +608,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.ResumeLayout(false);
 			this.tableLayoutPanel3.PerformLayout();
 			this.tableLayoutPanel4.ResumeLayout(false);
-			this.tabControl1.ResumeLayout(false);
-			this.tabPage1.ResumeLayout(false);
-			this.tabPage1.PerformLayout();
+			this._lowerLeftTabControl.ResumeLayout(false);
+			this._proceduresTab.ResumeLayout(false);
+			this._proceduresTab.PerformLayout();
 			this.tabPage2.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
@@ -624,8 +624,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ClearCanvas.Desktop.View.WinForms.TableView _proceduresTableView;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabControl _lowerLeftTabControl;
+        private System.Windows.Forms.TabPage _proceduresTab;
         private System.Windows.Forms.TabPage _orderNotesTab;
         private System.Windows.Forms.TabPage tabPage2;
         private ClearCanvas.Desktop.View.WinForms.TableView _recipientsTableView;

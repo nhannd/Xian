@@ -10,6 +10,7 @@
 #endregion
 
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
@@ -17,19 +18,25 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 	[DataContract]
 	public class MergeOrderRequest : DataContractBase
 	{
-		public MergeOrderRequest(EntityRef sourceOrderRef, EntityRef destinationOrderRef)
+		public MergeOrderRequest(List<EntityRef> sourceOrderRefs, EntityRef destinationOrderRef)
 		{
-			this.SourceOrderRef = sourceOrderRef;
+			this.SourceOrderRefs = sourceOrderRefs;
 			this.DestinationOrderRef = destinationOrderRef;
 		}
 
 		[DataMember]
-		public EntityRef SourceOrderRef;
+		public List<EntityRef> SourceOrderRefs;
 
 		[DataMember]
 		public EntityRef DestinationOrderRef;
 
 		[DataMember]
 		public bool DryRun;
+
+		/// <summary>
+		/// Validation will always be performed for dry-run.  But if only validation is needed, set this flag to true.  The DryRun flag will then be ignored.
+		/// </summary>
+		[DataMember]
+		public bool ValidationOnly;
 	}
 }

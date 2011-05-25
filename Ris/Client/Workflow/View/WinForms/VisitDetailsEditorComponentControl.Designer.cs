@@ -73,6 +73,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._admissionType = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._currentLocation = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._facility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._currentBed = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._currentRoom = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.SuspendLayout();
 			// 
 			// _visitNumber
@@ -136,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._dischargeDisposition.AutoSize = true;
 			this._dischargeDisposition.LabelText = "Discharge Disposition";
-			this._dischargeDisposition.Location = new System.Drawing.Point(5, 181);
+			this._dischargeDisposition.Location = new System.Drawing.Point(5, 221);
 			this._dischargeDisposition.Margin = new System.Windows.Forms.Padding(2);
 			this._dischargeDisposition.Mask = "";
 			this._dischargeDisposition.Name = "_dischargeDisposition";
@@ -163,7 +165,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _vip
 			// 
 			this._vip.AutoSize = true;
-			this._vip.Location = new System.Drawing.Point(328, 228);
+			this._vip.Location = new System.Drawing.Point(328, 268);
 			this._vip.Name = "_vip";
 			this._vip.Padding = new System.Windows.Forms.Padding(0, 16, 0, 0);
 			this._vip.Size = new System.Drawing.Size(49, 33);
@@ -220,7 +222,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._ambulatoryStatus.DisplayMember = "";
 			this._ambulatoryStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._ambulatoryStatus.LabelText = "Ambulatory Status";
-			this._ambulatoryStatus.Location = new System.Drawing.Point(5, 225);
+			this._ambulatoryStatus.Location = new System.Drawing.Point(5, 265);
 			this._ambulatoryStatus.Margin = new System.Windows.Forms.Padding(2);
 			this._ambulatoryStatus.Name = "_ambulatoryStatus";
 			this._ambulatoryStatus.Size = new System.Drawing.Size(313, 41);
@@ -266,10 +268,38 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._facility.TabIndex = 9;
 			this._facility.Value = null;
 			// 
+			// _currentBed
+			// 
+			this._currentBed.LabelText = "Bed";
+			this._currentBed.Location = new System.Drawing.Point(313, 181);
+			this._currentBed.Margin = new System.Windows.Forms.Padding(2);
+			this._currentBed.Mask = "";
+			this._currentBed.Name = "_currentBed";
+			this._currentBed.PasswordChar = '\0';
+			this._currentBed.Size = new System.Drawing.Size(140, 41);
+			this._currentBed.TabIndex = 15;
+			this._currentBed.ToolTip = null;
+			this._currentBed.Value = null;
+			// 
+			// _currentRoom
+			// 
+			this._currentRoom.LabelText = "Room";
+			this._currentRoom.Location = new System.Drawing.Point(159, 181);
+			this._currentRoom.Margin = new System.Windows.Forms.Padding(2);
+			this._currentRoom.Mask = "";
+			this._currentRoom.Name = "_currentRoom";
+			this._currentRoom.PasswordChar = '\0';
+			this._currentRoom.Size = new System.Drawing.Size(140, 41);
+			this._currentRoom.TabIndex = 14;
+			this._currentRoom.ToolTip = null;
+			this._currentRoom.Value = null;
+			// 
 			// VisitDetailsEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._currentBed);
+			this.Controls.Add(this._currentRoom);
 			this.Controls.Add(this._vip);
 			this.Controls.Add(this._currentLocation);
 			this.Controls.Add(this._ambulatoryStatus);
@@ -285,7 +315,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.Controls.Add(this._patientClass);
 			this.Controls.Add(this._patientType);
 			this.Name = "VisitDetailsEditorComponentControl";
-			this.Size = new System.Drawing.Size(476, 275);
+			this.Size = new System.Drawing.Size(476, 313);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -307,5 +337,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _admissionType;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _currentLocation;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _facility;
+		private ClearCanvas.Desktop.View.WinForms.TextField _currentBed;
+		private ClearCanvas.Desktop.View.WinForms.TextField _currentRoom;
     }
 }

@@ -9,12 +9,20 @@
 
 #endregion
 
+
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
 	public partial interface IVisitBroker
 	{
-		IList<Visit> FindByPractitioner(ExternalPractitioner practitioner);
+		IList<Visit> FindByVisitPractitioner(VisitSearchCriteria visitSearchCriteria,
+											 VisitPractitionerSearchCriteria practitionerSearchCriteria);
+		IList<Visit> FindByVisitPractitioner(VisitSearchCriteria visitSearchCriteria,
+											 VisitPractitionerSearchCriteria practitionerSearchCriteria, SearchResultPage page);
+
+		long CountByVisitPractitioner(VisitSearchCriteria visitSearchCriteria,
+									  VisitPractitionerSearchCriteria practitionerSearchCriteria);
 	}
 }

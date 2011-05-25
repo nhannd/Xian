@@ -69,6 +69,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._category = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._description = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
+			this._includeDeactivatedItems = new System.Windows.Forms.CheckBox();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -129,6 +130,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this._includeDeactivatedItems);
 			this.groupBox1.Controls.Add(this._procedureTypesSelector);
 			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.groupBox1.Location = new System.Drawing.Point(3, 127);
@@ -140,13 +142,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _procedureTypesSelector
 			// 
+			this._procedureTypesSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._procedureTypesSelector.AutoSize = true;
 			this._procedureTypesSelector.AvailableItemsTable = null;
-			this._procedureTypesSelector.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._procedureTypesSelector.Location = new System.Drawing.Point(3, 16);
+			this._procedureTypesSelector.Location = new System.Drawing.Point(3, 35);
 			this._procedureTypesSelector.Name = "_procedureTypesSelector";
+			this._procedureTypesSelector.ReadOnly = false;
 			this._procedureTypesSelector.SelectedItemsTable = null;
-			this._procedureTypesSelector.Size = new System.Drawing.Size(648, 382);
+			this._procedureTypesSelector.Size = new System.Drawing.Size(648, 363);
 			this._procedureTypesSelector.TabIndex = 0;
 			// 
 			// tableLayoutPanel2
@@ -214,6 +219,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._description.TabIndex = 2;
 			this._description.Value = null;
 			// 
+			// _includeDeactivatedItems
+			// 
+			this._includeDeactivatedItems.AutoSize = true;
+			this._includeDeactivatedItems.Location = new System.Drawing.Point(6, 19);
+			this._includeDeactivatedItems.Name = "_includeDeactivatedItems";
+			this._includeDeactivatedItems.Size = new System.Drawing.Size(180, 17);
+			this._includeDeactivatedItems.TabIndex = 1;
+			this._includeDeactivatedItems.Text = "Include inactive procedure types";
+			this._includeDeactivatedItems.UseVisualStyleBackColor = true;
+			// 
 			// ProcedureTypeGroupEditorComponentControl
 			// 
 			this.AcceptButton = this._acceptButton;
@@ -247,5 +262,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _category;
         private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _procedureTypesSelector;
+		private System.Windows.Forms.CheckBox _includeDeactivatedItems;
     }
 }

@@ -12,14 +12,14 @@
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
 	/// <summary>
 	/// Implementation of <see cref="IOrderBroker"/>. See OrderBroker.hbm.xml for queries.
 	/// </summary>
-	public partial class OrderBroker : IOrderBroker
+	public partial class OrderBroker
 	{
 		#region IOrderBroker Members
 
@@ -27,17 +27,31 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			var q = this.GetNamedHqlQuery("documentOrderOwner");
 			q.SetParameter(0, document);
-			return (Order) q.UniqueResult(); 
+			return (Order)q.UniqueResult();
 		}
 
-		public IList<Order> FindByOrderingPractitioner(ExternalPractitioner practitioner)
+		public IList<Order> FindByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria)
 		{
-			var q = this.GetNamedHqlQuery("ordersForOrderingPractitioner");
-			q.SetParameter(0, practitioner);
-			return CollectionUtils.Unique(q.List<Order>());
+			return FindByResultRecipient(orderSearchCriteria, recipientSearchCriteria, new SearchResultPage());
 		}
 
-		public IList<Order> FindByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria, OrderSearchCriteria orderSearchCriteria)
+		public IList<Order> FindByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria, SearchResultPage page)
+		{
+			var query = GetBaseResultRecipientQuery(orderSearchCriteria, recipientSearchCriteria);
+			query.Page = page;
+			return ExecuteHql<Order>(query);
+		}
+
+		public long CountByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria)
+		{
+			var query = GetBaseResultRecipientQuery(orderSearchCriteria, recipientSearchCriteria);
+			query.Selects.Add(new HqlSelect("count(*)"));
+			return ExecuteHqlUnique<long>(query);
+		}
+
+		#endregion
+
+		private static HqlProjectionQuery GetBaseResultRecipientQuery(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria)
 		{
 			var hqlFrom = new HqlFrom(typeof(Order).Name, "o");
 			hqlFrom.Joins.Add(new HqlJoin("o.ResultRecipients", "rr"));
@@ -45,9 +59,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			var query = new HqlProjectionQuery(hqlFrom);
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rr", recipientSearchCriteria));
 			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", orderSearchCriteria));
-			return ExecuteHql<Order>(query);
+			return query;
 		}
-
-		#endregion
 	}
 }

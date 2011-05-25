@@ -27,7 +27,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private static Dictionary<int, System.Windows.Forms.MessageBoxButtons> _buttonMap;
         private static Dictionary<DialogResult, int> _resultMap;
 
-        static MessageBox() {
+        static MessageBox()
+        {
 
             _buttonMap = new Dictionary<int, System.Windows.Forms.MessageBoxButtons>();
             _buttonMap.Add((int)MessageBoxActions.Ok, MessageBoxButtons.OK);

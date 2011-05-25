@@ -17,16 +17,21 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	[DataContract]
 	public class MergeExternalPractitionerResponse : DataContractBase
 	{
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="updatedOriginal">The updated data for the original record.</param>
-		public MergeExternalPractitionerResponse(ExternalPractitionerSummary updatedOriginal)
+
+		public MergeExternalPractitionerResponse(ExternalPractitionerSummary mergedPractitioner)
 		{
-			this.UpdatedOriginal = updatedOriginal;
+			MergedPractitioner = mergedPractitioner;
+		}
+
+		public MergeExternalPractitionerResponse(long costEstimate)
+		{
+			this.CostEstimate = costEstimate;
 		}
 
 		[DataMember]
-		public ExternalPractitionerSummary UpdatedOriginal;
+		public ExternalPractitionerSummary MergedPractitioner;
+
+		[DataMember]
+		public long CostEstimate;
 	}
 }

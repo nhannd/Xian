@@ -257,6 +257,10 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			// exception logging occurs outside of the main persistence context
 			interceptors.Add(new ExceptionLoggingAdvice());
 
+			// deadlock recovery occurs outside of persistence context,
+			// since each retry should be done in a new persistence context
+			interceptors.Add(new DeadlockRetryAdvice());
+
 			// add persistence context advice, that controls the persistence context for the main transaction
 			interceptors.Add(new PersistenceContextAdvice());
 

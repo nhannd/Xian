@@ -486,7 +486,14 @@ namespace ClearCanvas.Enterprise.Desktop
 		public override void Accept()
 		{
 			if (!_hostedMode)
+			{
+				if (this.HasValidationErrors)
+				{
+					ShowValidation(true);
+					return;
+				}
 				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
 		}
 
 		public override void Cancel()

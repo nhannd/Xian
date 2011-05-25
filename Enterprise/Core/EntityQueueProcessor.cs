@@ -73,13 +73,27 @@ namespace ClearCanvas.Enterprise.Core
 		/// <param name="error"></param>
 		protected abstract void OnItemFailed(TItem item, Exception error);
 
+		/// <summary>
+		/// Called after the item processing transaction has committed.
+		/// </summary>
+		/// <remarks>
+		/// This method is intended to allow subclasses to perform actions that should occur
+		/// only after the transaction has been safely committed.
+		/// Any exceptions thrown from this method will be logged and ignored.
+		/// </remarks>
+		/// <param name="item"></param>
+		protected virtual void OnTransactionCommitted(TItem item)
+		{
+			// Do nothing by default
+		}
+
 		#region Override Methods
 
 		protected override IList<TItem> GetNextBatch(int batchSize)
 		{
-			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
+			using (var scope = new PersistenceScope(PersistenceContextType.Read))
 			{
-				IList<TItem> items = GetNextEntityBatch(batchSize);
+				var items = GetNextEntityBatch(batchSize);
 
 				scope.Complete();
 				return items;
@@ -89,9 +103,9 @@ namespace ClearCanvas.Enterprise.Core
 		protected override void ProcessItem(TItem item)
 		{
 			Exception error = null;
-			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+			using (var scope = new PersistenceScope(PersistenceContextType.Update))
 			{
-				IUpdateContext context = (IUpdateContext)PersistenceScope.CurrentContext;
+				var context = (IUpdateContext)PersistenceScope.CurrentContext;
 				context.ChangeSetRecorder.OperationName = this.GetType().FullName;
 
 				// need to lock the item in context, to allow loading of extended properties collection by subclass
@@ -119,17 +133,32 @@ namespace ClearCanvas.Enterprise.Core
 				}
 			}
 
-			if (error != null)
+			// exceptions thrown upon exiting the using block are intentionally not caught here,
+			// allow them to be caught by the calling method
+
+			// post-processing
+			if(error == null)
 			{
-				// use a new scope to mark the item as failed
-				using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
+				AfterCommit(item);
+			}
+			else
+			{
+				UpdateQueueItemOnError(item, error);
+			}
+		}
+
+		#endregion
+
+		private void UpdateQueueItemOnError(TItem item, Exception error)
+			{
+			// use a new scope to mark the item as failed, because we don't want to commit any changes made in the outer scope
+			using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
 				{
-					IUpdateContext failContext = (IUpdateContext)PersistenceScope.CurrentContext;
+				var failContext = (IUpdateContext)PersistenceScope.CurrentContext;
 					failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
 					
-					// Reload the TItem in this scope;  using the existing item results in NHibernate throwing a lazy loading exception for 
-					// some TItem.  See: ticket #7191 
-					var itemForThisScope = failContext.Load<TItem>(item.GetRef());
+				// bug #7191 : Reload the TItem in this scope;  using the existing item results in NHibernate throwing a lazy loading exception
+				var itemForThisScope = failContext.Load<TItem>(item.GetRef(), EntityLoadFlags.None);
 
 					// lock item into this context
 					failContext.Lock(itemForThisScope);
@@ -141,9 +170,21 @@ namespace ClearCanvas.Enterprise.Core
 					scope.Complete();
 				}
 			}
+
+		private void AfterCommit(TItem item)
+		{
+			try
+			{
+				OnTransactionCommitted(item);
+		}
+			catch (Exception e)
+			{
+				// Swallow exception on purpose.  We don't care if the resources failed to get cleanup.
+				ExceptionLogger.Log(this.GetType().FullName + ".ProcessItem", e);
+			}
 		}
 
-		#endregion
+
 
 	}
 }

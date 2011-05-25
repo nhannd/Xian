@@ -1171,6 +1171,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unsupported Image Type: {0}.
+        /// </summary>
+        public static string MessageUnsupportedImageType {
+            get {
+                return ResourceManager.GetString("MessageUnsupportedImageType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Visible Display Set.
         /// </summary>
         public static string NamePrefetchingStrategyVisibleDisplaySet {

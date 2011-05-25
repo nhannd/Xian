@@ -130,6 +130,13 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
+		/// Gets the explicit size of the dialog, if specified.
+		/// </summary>
+		public Size Size
+		{
+			get { return _size; }
+		}
+		/// <summary>
 		/// Gets a value indicating whether or not the user should be allowed to resize the dialog.
 		/// </summary>
     	public bool AllowUserResize

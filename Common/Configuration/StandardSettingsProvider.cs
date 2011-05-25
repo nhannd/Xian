@@ -38,6 +38,13 @@ namespace ClearCanvas.Common.Configuration
 			_appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 		}
 
+		static StandardSettingsProvider()
+		{
+			IsLocal = new SettingsStoreExtensionPoint().ListExtensions().Length == 0;
+		}
+
+		internal static bool IsLocal { get; private set; }
+
 		#region SettingsProvider overrides
 
 		/// <summary>

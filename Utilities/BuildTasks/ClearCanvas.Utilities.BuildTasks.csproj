@@ -48,6 +48,7 @@
     <Compile Include="NUnitLogParser.cs" />
     <Compile Include="RegexIsMatch.cs" />
     <Compile Include="RelativeBuildDateTime.cs" />
+    <Compile Include="SendEmail.cs" />
     <Compile Include="SplitString.cs" />
     <Compile Include="XmlDelete.cs" />
     <Compile Include="XmlInsert.cs" />
@@ -59,6 +60,9 @@
     <Compile Include="VersionWebFiles.cs" />
     <Compile Include="XmlReplaceValue.cs" />
     <Compile Include="XmlUpdate.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClearCanvas.Utilities.BuildTasks.Targets" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
