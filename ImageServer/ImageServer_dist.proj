@@ -128,7 +128,12 @@
   <ItemGroup>
     <ConfigFiles Include="$(XianTrunkDirectory)\ImageServer\Executable\Logging.config" />
   </ItemGroup>
-
+  
+  <!-- License files -->
+  <ItemGroup>
+    <LicenseFiles Include="$(XianTrunkDirectory)\License.rtf" />
+  </ItemGroup>
+  
   <!-- Setup build tasks for combining app config files -->
   <Target Name="Build BuildTasks">
     <MSBuild Projects="$(XianTrunkDirectory)\Utilities\BuildTasks\ClearCanvas.Utilities.BuildTasks.csproj" Properties="Configuration=$(Configuration);Platform=Any CPU;OutputPath=$(XianTrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)"/>
@@ -171,6 +176,9 @@
 
     <!-- Copy logging.config -->
     <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
+
+    <!-- Copy License.rtf -->
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
     <Copy SourceFiles="$(XianTrunkDirectory)\Docs\ImageServer\UsersGuide\CCImageServerUsersGuide.chm" DestinationFolder="$(DistributionDirectory)"  />
 

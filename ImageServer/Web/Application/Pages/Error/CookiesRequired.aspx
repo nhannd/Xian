@@ -10,6 +10,7 @@
 --%>
 
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CookiesRequired.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.CookiesRequired" %>
+<%@ Import Namespace="Resources"%>
 
 
 <asp:Content runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">

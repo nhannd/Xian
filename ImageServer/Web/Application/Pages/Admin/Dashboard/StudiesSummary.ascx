@@ -10,6 +10,7 @@
 --%>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudiesSummary.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.StudiesSummary" %>
+<%@ Import Namespace="Resources"%>
 
 
 <asp:DataList ID="StudiesDataList" runat="server" Width="100%" OnItemDataBound="Item_DataBound">

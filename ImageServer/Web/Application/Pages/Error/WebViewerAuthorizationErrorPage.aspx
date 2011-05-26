@@ -1,5 +1,5 @@
 <%-- License
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -7,6 +7,7 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebViewerAuthorizationErrorPage.aspx.cs" MasterPageFile="WebViewerErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.WebViewerAuthorizationErrorPage" %>
+<%@ Import Namespace="Resources"%>
 <%@ Import namespace="System.Threading"%>
 
 

@@ -13,6 +13,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="HistoryPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.HistoryPanel" %>
+<%@ Import Namespace="Resources"%>
 <%@ Register Src="StudyHistoryChangeDescPanel.ascx" TagName="StudyHistoryChangeDescPanel" TagPrefix="localAsp" %>
 
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">

@@ -1,5 +1,5 @@
 <%-- License
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -7,6 +7,8 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LicenseErrorPage.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.LicenseErrorPage" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
+<%@ Import Namespace="Resources"%>
 <%@ Import namespace="System.Threading"%>
 
 <asp:Content runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">

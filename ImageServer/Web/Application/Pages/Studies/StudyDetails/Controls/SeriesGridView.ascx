@@ -10,6 +10,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SeriesGridView.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.SeriesGridView" %>
+<%@ Import Namespace="Resources"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Model" %>
 
 
