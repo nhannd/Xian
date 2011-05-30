@@ -156,12 +156,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <LicenseFiles Include="$(TrunkDirectory)\Docs\Workstation\EULA.rtf" />
-    <LicenseFiles Include="$(TrunkDirectory)\Docs\PrivacyNotice.rtf" />
+    <LicenseFiles Include="$(TrunkDirectory)\..\Docs\Workstation\EULA.rtf" />
+    <LicenseFiles Include="$(TrunkDirectory)\..\Docs\PrivacyNotice.rtf" />
   </ItemGroup>
 
   <ItemGroup>
-    <HelpFiles Include="$(TrunkDirectory)\Docs\Workstation\UsersGuide\CCWorkstationCommunityUsersGuide.chm" />
+    <HelpFiles Include="$(TrunkDirectory)\..\Docs\Workstation\UsersGuide\CCWorkstationCommunityUsersGuide.chm" />
   </ItemGroup>
 
   <ItemGroup>
