@@ -157,7 +157,7 @@
 
   <ItemGroup>
     <LicenseFiles Include="$(TrunkDirectory)\..\Docs\Workstation\EULA.rtf" />
-    <LicenseFiles Include="$(TrunkDirectory)\..\Docs\PrivacyNotice.rtf" />
+    <LicenseFiles Include="$(TrunkDirectory)\Docs\PrivacyNotice.rtf" />
   </ItemGroup>
 
   <ItemGroup>

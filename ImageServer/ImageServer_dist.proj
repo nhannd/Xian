@@ -182,7 +182,7 @@
 
     <Copy SourceFiles="$(XianTrunkDirectory)\..\Docs\ImageServer\UsersGuide\CCImageServerUsersGuide.chm" DestinationFolder="$(DistributionDirectory)"  />
 
-    <Copy SourceFiles="$(XianTrunkDirectory)\..\Docs\PrivacyNotice.rtf" DestinationFolder="$(DistributionDirectory)"  />
+    <Copy SourceFiles="$(XianTrunkDirectory)\Docs\PrivacyNotice.rtf" DestinationFolder="$(DistributionDirectory)"  />
 
     <Copy SourceFiles="@(UtilBatchFiles)" DestinationFolder="$(UtilitiesDirectory)" />
 
