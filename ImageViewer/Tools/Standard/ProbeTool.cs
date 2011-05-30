@@ -158,16 +158,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			bool showModalityValue = isCT || settings.ShowNonCTModPixelValue;
 			bool showVoiValue = settings.ShowVOIPixelValue;
 
-			string probeString = String.Format("LOC: x={0}, y={1}", SR.LabelNotApplicable, SR.LabelNotApplicable);
-			string pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, SR.LabelNotApplicable);
-			string modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, SR.LabelNotApplicable);
-			string voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, SR.LabelNotApplicable);
+			string probeString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, SR.LabelNotApplicable, SR.LabelNotApplicable));
+			string pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelPixelValue, SR.LabelNotApplicable);
+			string modalityLutString = String.Format(SR.FormatProbeInfo, SR.LabelModalityLut, SR.LabelNotApplicable);
+			string voiLutString = String.Format(SR.FormatProbeInfo, SR.LabelVOILut, SR.LabelNotApplicable);
 
 			try
 			{
 				if (_selectedImageGraphic.HitTest(destinationPoint))
 				{
-					probeString = String.Format("LOC: x={0}, y={1}", sourcePointRounded.X, sourcePointRounded.Y);
+					probeString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, sourcePointRounded.X, sourcePointRounded.Y));
 
 					if (_selectedImageGraphic is GrayscaleImageGraphic)
 					{
@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 						ColorImageGraphic image = _selectedImageGraphic as ColorImageGraphic;
 						Color color = image.PixelData.GetPixelAsColor(sourcePointRounded.X, sourcePointRounded.Y);
 						string rgbFormatted = String.Format(SR.FormatRGB, color.R, color.G, color.B);
-						pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
+						pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelPixelValue, rgbFormatted);
 					}
 					else
 					{
@@ -200,11 +200,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				}
 
 				if (showPixelValue)
-					probeString += "\n" + pixelValueString;
+					probeString += Environment.NewLine + pixelValueString;
 				if (showModalityValue)
-					probeString += "\n" + modalityLutString;
+					probeString += Environment.NewLine + modalityLutString;
 				if (showVoiValue)
-					probeString += "\n" + voiLutString;
+					probeString += Environment.NewLine + voiLutString;
 			}
 			catch (Exception e)
 			{
@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			ref string pixelValueString)
 		{
 			pixelValue = grayscaleImage.PixelData.GetPixel(sourcePointRounded.X, sourcePointRounded.Y);
-			pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, pixelValue);
+			pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelPixelValue, pixelValue);
 		}
 
 		private void GetModalityLutValue(
@@ -234,13 +234,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (grayscaleImage.ModalityLut != null)
 			{
 				modalityLutValue = grayscaleImage.ModalityLut[pixelValue];
-				modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, modalityLutValue);
 
-				if (_selectedImageSop != null)
-				{
-					if (String.Compare(_selectedImageSop.Modality, "CT", true) == 0)
-						modalityLutString += String.Format(" ({0})", SR.LabelHounsfieldUnitsAbbreviation);
-				}
+				var modalityLutValueDisplay = modalityLutValue.ToString();
+				if (_selectedImageSop != null && string.Compare(_selectedImageSop.Modality, "CT", true) == 0)
+					modalityLutValueDisplay = string.Format(SR.FormatValueUnits, modalityLutValueDisplay, SR.LabelHounsfieldUnitsAbbreviation);
+
+				modalityLutString = String.Format(SR.FormatProbeInfo, SR.LabelModalityLut, modalityLutValueDisplay);
 			}
 		}
 
@@ -253,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (grayscaleImage.VoiLut != null)
 			{
 				voiLutValue = grayscaleImage.VoiLut[modalityLutValue];
-				voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, voiLutValue);
+				voiLutString = String.Format(SR.FormatProbeInfo, SR.LabelVOILut, voiLutValue);
 			}
 		}
 
