@@ -18,6 +18,7 @@ syntax: glob
 *.lib
 *.sbr
 *.scc
+*.gen.cs
 [Bb]in
 [Dd]ebug*/
 obj/
@@ -35,3 +36,6 @@ _[Uu]pgradeReport_Files*/
 [Pp]ackage/*
 ASPNETDB.MDF
 aspnetdb_log.ldf
+*.SR.resources
+ClearCanvas.Common.xml
+ClearCanvas.Desktop.xml
