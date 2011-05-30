@@ -114,7 +114,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		[Browsable(false)]
 		public CultureInfo SelectedCulture
 		{
-			get { return SelectedLocale.GetCultureInfo(); }
+			get { return SelectedLocale != null ? SelectedLocale.GetCultureInfo() : null; }
 			set
 			{
 				if (value != null)
