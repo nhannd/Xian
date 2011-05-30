@@ -39,3 +39,15 @@ aspnetdb_log.ldf
 *.SR.resources
 ClearCanvas.Common.xml
 ClearCanvas.Desktop.xml
+ImageViewer/ClearCanvas.ImageViewer.xml
+
+# Viewer local datastore files
+dicom_datastore/*.sdf
+
+# ImageServer files generated and copied by build scripts
+ImageServer/Web/Application/App_Themes/Default/images/LoginSplash.png
+ImageServer/Web/Application/ClientBin/Silverlight.xap
+ImageServer/Web/Application/ClientBin/Silverlight.*.xap
+ImageServer/Web/Application/Logging.config
+ImageServer/Web/Application/Web.config
+ImageServer/Web/Application/critical.config
