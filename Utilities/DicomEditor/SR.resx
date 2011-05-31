@@ -144,9 +144,6 @@
   <data name="MenuDicomEditor" xml:space="preserve">
     <value>DICOM Editor</value>
   </data>
-  <data name="MenuDumpFiles" xml:space="preserve">
-    <value>Dump Files</value>
-  </data>
   <data name="MenuNext" xml:space="preserve">
     <value>Next</value>
   </data>
