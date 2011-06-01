@@ -14,38 +14,19 @@ using System;
 namespace ClearCanvas.Desktop
 {
 	/// <summary>
-	/// Enumeration for different standard icon sizes.
+	/// Defines possible icon schemes.
 	/// </summary>
-	public enum IconSize
+	[Flags]
+	public enum IconScheme
 	{
 		/// <summary>
-		/// Small icon.
+		/// Colour icons.
 		/// </summary>
-		Small, 
-		/// <summary>
-		/// Medium icon.
-		/// </summary>
-		Medium, 
-		/// <summary>
-		/// Large icon.
-		/// </summary>
-		Large
-	};
+		Colour,
 
-	/// <summary>
-    /// Defines possible icon schemes.
-    /// </summary>
-    [Flags]
-    public enum IconScheme
-    {
-        /// <summary>
-        /// Colour icons.
-        /// </summary>
-        Colour,
-
-        /// <summary>
-        /// Monochrome icons.
-        /// </summary>
-        Monochrome
-    }
+		/// <summary>
+		/// Monochrome icons.
+		/// </summary>
+		Monochrome
+	}
 }

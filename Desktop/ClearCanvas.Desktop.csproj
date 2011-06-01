@@ -180,6 +180,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>FormatSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="IconSize.cs" />
     <Compile Include="IWorkspaceDialogBox.cs" />
     <Compile Include="IWorkspaceDialogBoxHost.cs" />
     <Compile Include="IWorkspaceDialogBoxView.cs" />

@@ -442,4 +442,19 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="MessageSettingsStoreOffline" xml:space="preserve">
     <value>The settings store is currently offline.  Please try again later.</value>
   </data>
+  <data name="LabelColor" xml:space="preserve">
+    <value>Colour</value>
+  </data>
+  <data name="LabelLarge" xml:space="preserve">
+    <value>Large</value>
+  </data>
+  <data name="LabelMedium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="LabelMonochrome" xml:space="preserve">
+    <value>Monochrome</value>
+  </data>
+  <data name="LabelSmall" xml:space="preserve">
+    <value>Small</value>
+  </data>
 </root>

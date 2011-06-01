@@ -9,11 +9,8 @@
 
 #endregion
 
-using System.Drawing;
-using System.ComponentModel;
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -22,5 +19,11 @@ namespace ClearCanvas.Desktop
 	/// </summary>
 	[SettingsGroupDescription("Stores general settings for toolbars and menus.")]
 	[SettingsProvider(typeof (StandardSettingsProvider))]
-	public sealed partial class ToolStripSettings {}
+	public sealed partial class ToolStripSettings
+	{
+		private ToolStripSettings()
+		{
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
+	}
 }
