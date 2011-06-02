@@ -11,6 +11,8 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
+using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -432,9 +434,23 @@ namespace ClearCanvas.Common.Utilities
         {
             add { _terminated += value; }
             remove { _terminated -= value; }
-        }
+		}
 
-        #region IDisposable Members
+		#region Thread Culture Support
+
+		/// <summary>
+		/// Gets or sets the culture for the background task. If NULL, the culture will not be modified.
+		/// </summary>
+    	public CultureInfo ThreadCulture { get; set; }
+
+		/// <summary>
+		/// Gets or sets the culture used by the Resource Manager to look up culture-specific resources for the background task. If NULL, the culture will not be modified.
+		/// </summary>
+    	public CultureInfo ThreadUICulture { get; set; }
+
+		#endregion
+
+		#region IDisposable Members
 
 		/// <summary>
 		/// Disposes of the task.
@@ -445,12 +461,29 @@ namespace ClearCanvas.Common.Utilities
         }
 
         #endregion
-        
-        private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
-        {
-            // execute the operation
-            _method(new BackgroundTaskContext(this, e));
-        }
+
+    	private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
+    	{
+    		var thread = Thread.CurrentThread;
+    		var oldCulture = thread.CurrentCulture;
+    		var oldUICulture = thread.CurrentUICulture;
+
+    		if (ThreadCulture != null)
+    			thread.CurrentCulture = ThreadCulture;
+    		if (ThreadUICulture != null)
+    			thread.CurrentUICulture = ThreadUICulture;
+
+    		try
+    		{
+    			// execute the operation
+    			_method.Invoke(new BackgroundTaskContext(this, e));
+    		}
+    		finally
+    		{
+    			thread.CurrentCulture = oldCulture;
+    			thread.CurrentUICulture = oldUICulture;
+    		}
+    	}
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {

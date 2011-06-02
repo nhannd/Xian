@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
@@ -332,7 +333,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						return true;
 					}
 
-					_volumeLoaderTask = new BackgroundTask(c => this.LoadVolume(c), false, null);
+					_volumeLoaderTask = new BackgroundTask(c => this.LoadVolume(c), false, null) {ThreadUICulture = Application.CurrentUICulture};
 					_volumeLoaderTask.Run();
 					_volumeLoaderTask.Terminated += OnVolumeLoaderTaskTerminated;
 				}
