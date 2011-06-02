@@ -106,6 +106,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient^Anonymous.
+        /// </summary>
+        internal static string DefaultAnonymousPatientName {
+            get {
+                return ResourceManager.GetString("DefaultAnonymousPatientName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Anonymize.
         /// </summary>
         internal static string MenuAnonymizeStudy {
@@ -403,6 +412,24 @@ namespace ClearCanvas.Utilities.DicomEditor {
         internal static string MessageUnknownDataSource {
             get {
                 return ResourceManager.GetString("MessageUnknownDataSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value cannot be empty..
+        /// </summary>
+        internal static string MessageValueCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("MessageValueCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value conflicts with the original value..
+        /// </summary>
+        internal static string MessageValueConflictsWithOriginal {
+            get {
+                return ResourceManager.GetString("MessageValueConflictsWithOriginal", resourceCulture);
             }
         }
         
