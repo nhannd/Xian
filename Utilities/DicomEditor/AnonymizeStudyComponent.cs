@@ -64,13 +64,13 @@ namespace ClearCanvas.Utilities.DicomEditor
 					if (failure.PropertyName == _property && _validationReason == failure.Reason)
 					{
 						if (failure.Reason == ValidationFailureReason.EmptyValue)
-							return new ValidationResult(false, "The value cannot be empty.");
+							return new ValidationResult(false, SR.MessageValueCannotBeEmpty);
 						else
-							return new ValidationResult(false, "The value conflicts with the original value.");
+							return new ValidationResult(false, SR.MessageValueConflictsWithOriginal);
 					}
 				}
 
-				return new ValidationResult(true, "");
+				return new ValidationResult(true, string.Empty);
 			}
 
 			#endregion
@@ -201,7 +201,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 		public override void Start()
 		{
-			_anonymized.PatientsNameRaw = "Patient^Anonymous";
+			_anonymized.PatientsNameRaw = SR.DefaultAnonymousPatientName;
 			_anonymized.PatientId = "12345678";
 			_anonymized.StudyDate = Platform.Time;
 			_anonymized.AccessionNumber = "00000001";
