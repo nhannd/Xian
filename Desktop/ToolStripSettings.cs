@@ -21,7 +21,7 @@ namespace ClearCanvas.Desktop
 	[SettingsProvider(typeof (StandardSettingsProvider))]
 	public sealed partial class ToolStripSettings
 	{
-		private ToolStripSettings()
+		public ToolStripSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
