@@ -1,0 +1,31 @@
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+namespace ClearCanvas.ImageViewer.Layout
+{
+	/// <summary>
+	/// Defines the base interface to an HP "contributor".  A contributor is an object that contributes
+	/// to a hanging protocol.
+	/// </summary>
+	interface IHpContributor : IHpSerializableElement
+	{
+		/// <summary>
+		/// Gets a GUID identifying this class of contributor (must return a constant value) for serialization purposes.
+		/// </summary>
+		string ClassId { get; }
+
+		/// <summary>
+		/// Called by the user-interface to obtain the set of properties that can be edited by the user.
+		/// </summary>
+		/// <returns></returns>
+		IHpProperty[] GetProperties();
+	}
+}

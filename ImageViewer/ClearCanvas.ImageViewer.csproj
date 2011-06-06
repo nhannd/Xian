@@ -165,6 +165,14 @@
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
     <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
+    <Compile Include="Layout\HpExtensionPoints.cs" />
+    <Compile Include="Layout\HpMatchScore.cs" />
+    <Compile Include="Layout\IHpContributor.cs" />
+    <Compile Include="Layout\IHpImageBoxDefinitionContributor.cs" />
+    <Compile Include="Layout\IHpLayoutDefinitionContributor.cs" />
+    <Compile Include="Layout\IHpMatchCriteriaContributor.cs" />
+    <Compile Include="Layout\IHpProperty.cs" />
+    <Compile Include="Layout\IHpSerializableElement.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
