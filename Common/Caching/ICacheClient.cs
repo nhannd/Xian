@@ -10,10 +10,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
     /// <summary>
     /// Defines an interface to an object that acts as a client of a cache.

@@ -13,7 +13,7 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
 using ClearCanvas.Enterprise.Common.Configuration;
 using System.ServiceModel;
 

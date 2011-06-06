@@ -9,7 +9,7 @@
 
 #endregion
 
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
 	/// <summary>
 	/// Encapsulates options for the <see cref="ICacheClient.Remove"/> method.

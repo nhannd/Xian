@@ -11,10 +11,9 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
 	/// <summary>
 	/// Defines an extension point for implementations of <see cref="ICacheProvider"/>.

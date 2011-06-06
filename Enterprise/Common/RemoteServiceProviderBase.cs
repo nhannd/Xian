@@ -308,7 +308,7 @@ namespace ClearCanvas.Enterprise.Common
 			// because Dispose() is not a service operation
 			interceptors.Add(new DisposableInterceptor());
 
-			if (Caching.Cache.IsSupported() && IsResponseCachingEnabled(serviceType))
+			if (ClearCanvas.Common.Caching.Cache.IsSupported() && IsResponseCachingEnabled(serviceType))
 			{
 				// add response-caching client-side advice
 				interceptors.Add(_responseCachingAdvice);
