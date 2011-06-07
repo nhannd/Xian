@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Layout
 	/// Defines an extension point for match-criteria contributors.
 	/// </summary>
 	[ExtensionPoint]
-	class HpMatchCriteriaContributorExtensionPoint : ExtensionPoint<IHpMatchCriteriaContributor>
+	public class HpMatchCriteriaContributorExtensionPoint : ExtensionPoint<IHpMatchCriteriaContributor>
 	{
 	}
 
@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Layout
 	/// Defines an extension point for layout definition contributors.
 	/// </summary>
 	[ExtensionPoint]
-	class HpLayoutDefinitionContributorExtensionPoint : ExtensionPoint<IHpLayoutDefinitionContributor>
+	public class HpLayoutDefinitionContributorExtensionPoint : ExtensionPoint<IHpLayoutDefinitionContributor>
 	{
 	}
 
@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Layout
 	/// Defines an extension point for imagebox definition contributors.
 	/// </summary>
 	[ExtensionPoint]
-	class HpImageBoxDefinitionContributorExtensionPoint : ExtensionPoint<IHpImageBoxDefinitionContributor>
+	public class HpImageBoxDefinitionContributorExtensionPoint : ExtensionPoint<IHpImageBoxDefinitionContributor>
 	{
 	}
 }

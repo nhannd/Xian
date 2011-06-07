@@ -11,7 +11,7 @@
 
 namespace ClearCanvas.ImageViewer.Layout
 {
-	class HpMatchScore
+	public class HpMatchScore
 	{
 		private readonly int _value;
 

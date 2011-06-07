@@ -13,7 +13,10 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
-	interface IHpSerializableElement
+	/// <summary>
+	/// Defines the interface to an object that is serializable as part of a hanging protocol.
+	/// </summary>
+	public interface IHpSerializableElement
 	{
 		/// <summary>
 		/// Gets the class of the data-contract used to persist this element's state.

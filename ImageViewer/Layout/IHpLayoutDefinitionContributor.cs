@@ -11,14 +11,15 @@
 
 namespace ClearCanvas.ImageViewer.Layout
 {
-	interface IHpLayoutDefinitionContext
+	public interface IHpLayoutDefinitionContext
 	{
+		IPhysicalWorkspace PhysicalWorkspace { get; }
 	}
 
 	/// <summary>
 	/// Defines the interface to a "layout definition" contributor.
 	/// </summary>
-	interface IHpLayoutDefinitionContributor : IHpContributor
+	public interface IHpLayoutDefinitionContributor : IHpContributor
 	{
 		/// <summary>
 		/// Captures the state from the specified context.

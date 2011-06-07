@@ -167,6 +167,7 @@
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
     <Compile Include="Layout\HpExtensionPoints.cs" />
     <Compile Include="Layout\HpMatchScore.cs" />
+    <Compile Include="Layout\HpProperty.cs" />
     <Compile Include="Layout\IHpContributor.cs" />
     <Compile Include="Layout\IHpImageBoxDefinitionContributor.cs" />
     <Compile Include="Layout\IHpLayoutDefinitionContributor.cs" />

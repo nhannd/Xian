@@ -9,17 +9,20 @@
 
 #endregion
 
+using ClearCanvas.ImageViewer.StudyManagement;
+
 namespace ClearCanvas.ImageViewer.Layout
 {
-	interface IHpMatchCriteriaContext
+	public interface IHpMatchCriteriaContext
 	{
+		Study Study { get; }
 	}
 
 
 	/// <summary>
 	/// Defines the interface to a "match criteria" contributor.
 	/// </summary>
-	interface IHpMatchCriteriaContributor : IHpContributor
+	public interface IHpMatchCriteriaContributor : IHpContributor
 	{
 		/// <summary>
 		/// Captures the state from the specified context.

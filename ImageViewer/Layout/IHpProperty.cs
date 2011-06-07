@@ -16,43 +16,42 @@ namespace ClearCanvas.ImageViewer.Layout
 	/// <summary>
 	/// Defines the interface to a single HP "property", displayed in one of the HP editor property tables.
 	/// </summary>
-	interface IHpProperty
+	public interface IHpProperty
 	{
 		/// <summary>
-		/// Gets the display name for the property - the name that appears in the property table.
+		/// Gets the display name of this property for display in the user-interface.
 		/// </summary>
 		string DisplayName { get; }
 
 		/// <summary>
-		/// Gets the description for the property - the description appears in the property table to aid the user's understanding.
+		/// Gets the description of this property for display in the user-interface.
 		/// </summary>
 		string Description { get; }
 
 		/// <summary>
-		/// Gets the value of the property as a string, for display in the property table.
+		/// Gets string representation of this property for display in the user-interface.
 		/// </summary>
 		/// <returns></returns>
 		string GetStringValue();
 
 		/// <summary>
-		/// Sets the value of the property from a string, assuming this property supports string parsing.
-		/// <see cref="CanParseStringValue"/>
+		/// Sets the value of this property from a string representation, if this property supports parsing.
 		/// </summary>
 		/// <param name="value"></param>
 		void SetStringValue(string value);
 
 		/// <summary>
-		/// Gets a value indicating whether this property supports string parsing.
+		/// Gets a value indicating whether string parsing is supported.
 		/// </summary>
 		bool CanParseStringValue { get; }
 
 		/// <summary>
-		/// Gets a valud indicating whether this property can be edited by a custom dialog box.
+		/// Gets a value indicating whether this property can be edited by a custom dialog box.
 		/// </summary>
 		bool HasEditor { get; }
 
 		/// <summary>
-		/// Gets the application component that provides editing of this property.
+		/// Gets the application component that provides editing of this property, if <see cref="HasEditor"/> returns true.
 		/// </summary>
 		/// <returns></returns>
 		IApplicationComponent GetEditorComponent();

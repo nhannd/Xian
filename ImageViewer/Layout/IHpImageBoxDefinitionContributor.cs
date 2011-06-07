@@ -11,14 +11,14 @@
 
 namespace ClearCanvas.ImageViewer.Layout
 {
-	interface IHpImageBoxDefinitionContext : IHpLayoutDefinitionContext // probably inherit everything from layout level context
+	public interface IHpImageBoxDefinitionContext : IHpLayoutDefinitionContext // probably inherit everything from layout level context
 	{
 	}
 
 	/// <summary>
 	/// Defines the interface to an "imagebox definition" contributor.
 	/// </summary>
-	interface IHpImageBoxDefinitionContributor : IHpContributor
+	public interface IHpImageBoxDefinitionContributor : IHpContributor
 	{
 		/// <summary>
 		/// Captures the state from the specified context.

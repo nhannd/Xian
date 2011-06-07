@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Layout
 	/// Defines the base interface to an HP "contributor".  A contributor is an object that contributes
 	/// to a hanging protocol.
 	/// </summary>
-	interface IHpContributor : IHpSerializableElement
+	public interface IHpContributor : IHpSerializableElement
 	{
 		/// <summary>
 		/// Gets a GUID identifying this class of contributor (must return a constant value) for serialization purposes.
