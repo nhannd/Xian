@@ -25,61 +25,27 @@ namespace ClearCanvas.ImageViewer.Layout
 	/// <typeparam name="TProperty"></typeparam>
 	public class HpProperty<TProperty> : IHpProperty
 	{
-		private TProperty _value;
-		private Converter<TProperty, string> _formatter;
-		private Converter<string, TProperty> _parser;
+		public delegate TProperty ValueGetter();
+		public delegate void ValueSetter(TProperty value);
+
+		private readonly ValueGetter _getter;
+		private readonly ValueSetter _setter;
+
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="description"></param>
-		public HpProperty(string name, string description)
+		/// <param name="getter"></param>
+		/// <param name="setter"></param>
+		public HpProperty(string name, string description, ValueGetter getter, ValueSetter setter)
 		{
 			DisplayName = name;
 			Description = description;
-
-			// default formatter
-			Formatter = ((TProperty value) => (string)Convert.ChangeType(value, typeof(string)));
-
-			if (typeof(IConvertible).IsAssignableFrom(typeof(TProperty)))
-			{
-				// specify a default parser, which will work for simple convertible types
-				Parser = ((string value) => (TProperty)Convert.ChangeType(value, typeof(TProperty)));
-			}
+			_getter = getter;
+			_setter = setter;
 		}
-
-		/// <summary>
-		/// Gets or sets a function that formats this property for display as a string value in the user-interface.
-		/// </summary>
-		public Converter<TProperty, string> Formatter
-		{
-			get { return _formatter; }
-			set { _formatter = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a function that parses this property from a string value.
-		/// </summary>
-		public Converter<string, TProperty> Parser
-		{
-			get { return _parser; }
-			set
-			{
-				_parser = value;
-				CanParseStringValue = (_parser != null);
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the value of this property.
-		/// </summary>
-		public TProperty Value
-		{
-			get { return _value; }
-			set { _value = value; }
-		}
-
 
 		#region Implementation of IHpProperty
 
@@ -99,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// <returns></returns>
 		public string GetStringValue()
 		{
-			return Formatter(_value);
+			return Format(this.Value);
 		}
 
 		/// <summary>
@@ -110,14 +76,17 @@ namespace ClearCanvas.ImageViewer.Layout
 		{
 			if (CanParseStringValue)
 			{
-				_value = Parser(value);
+				this.Value = Parse(value);
 			}
 		}
 
 		/// <summary>
 		/// Gets a value indicating whether string parsing is supported.
 		/// </summary>
-		public bool CanParseStringValue { get; private set; }
+		public virtual bool CanParseStringValue
+		{
+			get { return true; }
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether this property can be edited by a custom dialog box.
@@ -137,5 +106,37 @@ namespace ClearCanvas.ImageViewer.Layout
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Override this method to control formatting of value for display in property user-interface.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		protected virtual string Format(TProperty value)
+		{
+			return (string)Convert.ChangeType(value, typeof(string));
+		}
+
+		/// <summary>
+		/// Override this method to control parsing of value entered through property user-interface.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		protected virtual TProperty Parse(string value)
+		{
+			if(!CanParseStringValue)
+				throw new NotSupportedException("This property does not support string parsing.");
+
+			return (TProperty)Convert.ChangeType(value, typeof(TProperty));
+		}
+
+		/// <summary>
+		/// Gets or sets the value associated with this property.
+		/// </summary>
+		protected TProperty Value
+		{
+			get { return _getter(); }
+			set { _setter(value); }
+		}
 	}
 }
