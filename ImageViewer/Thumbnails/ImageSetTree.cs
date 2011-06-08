@@ -17,7 +17,6 @@ using ClearCanvas.Desktop;
 using System.Collections.ObjectModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Comparers;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {

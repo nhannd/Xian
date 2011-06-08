@@ -55,9 +55,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="ThumbnailCache.cs" />
     <Compile Include="ThumbnailComponent.cs" />
     <Compile Include="ShowThumbnailsTool.cs" />
-    <Compile Include="Thumbnail.cs" />
+    <Compile Include="ThumbnailDescriptor.cs" />
+    <Compile Include="ThumbnailData.cs" />
+    <Compile Include="ThumbnailFactory.cs" />
+    <Compile Include="ThumbnailGallery.cs" />
+    <Compile Include="ThumbnailGalleryItem.cs" />
+    <Compile Include="ThumbnailLoader.cs" />
+    <Compile Include="ThumbnailRepository.cs" />
+    <Compile Include="ThumbnailSizes.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
