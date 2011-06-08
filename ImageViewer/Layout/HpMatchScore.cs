@@ -9,10 +9,24 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.ImageViewer.Layout
 {
 	public class HpMatchScore
 	{
+		public static HpMatchScore Sum(IEnumerable<HpMatchScore> scores)
+		{
+			var sum = 0;
+			foreach (var score in scores)
+			{
+				sum += score.Value;
+			}
+			return new HpMatchScore(sum);
+		}
+
+
 		private readonly int _value;
 
 		public HpMatchScore(int value)
