@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
@@ -16,6 +17,7 @@ using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -70,6 +72,13 @@ namespace ClearCanvas.ImageViewer
 			_frameReference = frameReference;
 			_dicomVoiLuts = new DicomVoiLuts(this);
 			base.PresentationState = PresentationState.DicomDefault;
+
+			if (ImageSop.Modality == "MG")
+			{
+				// use a special image spatial transform for digital mammography
+				CompositeImageGraphic.SpatialTransform = new MammographyImageSpatialTransform(CompositeImageGraphic, Frame.Rows, Frame.Columns, Frame.NormalizedPixelSpacing.Column, Frame.NormalizedPixelSpacing.Row, Frame.PixelAspectRatio.Column, Frame.PixelAspectRatio.Row, Frame.PatientOrientation, ImageSop.ImageLaterality);
+			}
+
 			Initialize();
 		}
 
@@ -218,6 +227,22 @@ namespace ClearCanvas.ImageViewer
 		protected override IAnnotationLayout CreateAnnotationLayout()
 		{
 			return DicomAnnotationLayoutFactory.CreateLayout(this);
+		}
+
+		public override void Draw(DrawArgs drawArgs)
+		{
+			if (SpatialTransform is MammographyImageSpatialTransform)
+			{
+				string effectiveRowOrientation, effectiveColumnOrientation;
+				((MammographyImageSpatialTransform) SpatialTransform).GetEffectivePosteriorPatientOrientation(out effectiveRowOrientation, out effectiveColumnOrientation);
+				var filterCandidates = new List<KeyValuePair<string, string>>();
+				filterCandidates.Add(new KeyValuePair<string, string>("Modality", ImageSop.Modality));
+				filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Row", effectiveRowOrientation));
+				filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", effectiveColumnOrientation));
+				AnnotationLayout = DicomAnnotationLayoutFactory.CreateLayout(filterCandidates);
+			}
+
+			base.Draw(drawArgs);
 		}
 
 		/// <summary>

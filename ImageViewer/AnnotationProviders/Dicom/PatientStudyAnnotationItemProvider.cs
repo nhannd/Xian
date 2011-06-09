@@ -97,6 +97,45 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						}
 					)
 				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.PatientStudy.Composite.PatientsAgeSex",
+						resolver,
+						delegate(Frame frame)
+						{
+							var nil = SR.ValueNil;
+							var age = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsAge) ? frame.ParentImageSop.PatientsAge : nil;
+							var sex = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsSex) ? frame.ParentImageSop.PatientsSex : nil;
+							if (age == nil && sex == nil)
+								return nil;
+							return string.Format(SR.FormatPatientsAgeSex, age, sex);
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.PatientStudy.Composite.PatientsAgeSexBirthDate",
+						resolver,
+						delegate(Frame frame)
+						{
+							var nil = SR.ValueNil;
+							var age = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsAge) ? frame.ParentImageSop.PatientsAge : nil;
+							var sex = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsSex) ? frame.ParentImageSop.PatientsSex : nil;
+							var dob = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsBirthDate) ? DicomDataFormatHelper.DateFormat(frame.ParentImageSop.PatientsBirthDate) : nil;
+							if (age == nil && sex == nil && dob == nil)
+								return nil;
+							return string.Format(SR.FormatPatientsAgeSexBirthDate, age, sex, dob);
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
