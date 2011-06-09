@@ -14,6 +14,7 @@ using System.Drawing;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
@@ -62,8 +63,13 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 				if (associatedDicom != null && associatedTransform != null)
 				{
 					SpatialTransform spatialTransform = associatedTransform.SpatialTransform as SpatialTransform;
-					if (spatialTransform != null && associatedDicom.Frame.ImageOrientationPatient != null)
-						markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.Frame.ImageOrientationPatient);
+					if (spatialTransform != null)
+					{
+						if (associatedDicom.Frame.ImageOrientationPatient != null && !associatedDicom.Frame.ImageOrientationPatient.IsNull)
+							markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.Frame.ImageOrientationPatient);
+						else if (associatedDicom.Frame.PatientOrientation != null && !associatedDicom.Frame.PatientOrientation.IsEmpty)
+							markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.Frame.PatientOrientation);
+					}
 				}
 			}
 
@@ -88,6 +94,26 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 
 			//get the marker for the appropriate (source) image edge.
 			return GetMarker(transformedEdge, imageOrientationPatient);
+		}
+
+		/// <summary>
+		/// Called by GetAnnotationText (and also by Unit Test code).  Making this function internal simply makes it easier
+		/// to write unit tests for this class (don't have to implement a fake PresentationImage).
+		/// </summary>
+		/// <param name="imageTransform">the image transform</param>
+		/// <param name="patientOrientation">the patient orientation</param>
+		/// <returns></returns>
+		internal string GetAnnotationTextInternal(SpatialTransform imageTransform, PatientOrientation patientOrientation)
+		{
+			SizeF[] imageEdgeVectors = new SizeF[4];
+			for (int i = 0; i < 4; ++i)
+				imageEdgeVectors[i] = imageTransform.ConvertToDestination(_edgeVectors[i]);
+
+			//find out which source image edge got transformed to coincide with this viewport edge.
+			ImageEdge transformedEdge = GetTransformedEdge(imageEdgeVectors);
+
+			//get the marker for the appropriate (source) image edge.
+			return GetMarker(transformedEdge, patientOrientation);
 		}
 
 		/// <summary>
@@ -180,6 +206,81 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			}
 
 			return "";
+		}
+
+		/// <summary>
+		/// Determines the (untransformed) marker for a particular image edge.
+		/// </summary>
+		/// <param name="imageEdge">the edge (image coordinates)</param>
+		/// <param name="patientOrientation">the orientation of the patient in the image</param>
+		/// <returns>a string representation of the direction (a 'marker')</returns>
+		private string GetMarker(ImageEdge imageEdge, PatientOrientation patientOrientation)
+		{
+			bool negativeDirection = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Top);
+			bool rowValues = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Right);
+
+			string markerText = "";
+
+			if (rowValues)
+			{
+				ImageOrientationPatient.Directions primary = GetDirection(patientOrientation.Row, true, negativeDirection);
+				ImageOrientationPatient.Directions secondary = GetDirection(patientOrientation.Row, false, negativeDirection);
+				markerText += GetMarkerText(primary);
+				markerText += GetMarkerText(secondary);
+			}
+			else
+			{
+				ImageOrientationPatient.Directions primary = GetDirection(patientOrientation.Column, true, negativeDirection);
+				ImageOrientationPatient.Directions secondary = GetDirection(patientOrientation.Column, false, negativeDirection);
+				markerText += GetMarkerText(primary);
+				markerText += GetMarkerText(secondary);
+			}
+
+			return markerText;
+		}
+
+		/// <summary>
+		/// Converts a direction character to a marker string.
+		/// </summary>
+		/// <param name="directionString">the direction string</param>
+		/// <param name="primary">whether the primary or secondary direction is returned</param>
+		/// <param name="invert">whether or not to invert the direction</param>
+		/// <returns>marker text</returns>
+		private ImageOrientationPatient.Directions GetDirection(string directionString, bool primary, bool invert)
+		{
+			if (string.IsNullOrEmpty(directionString))
+				return ImageOrientationPatient.Directions.None;
+
+			char direction = '\0';
+			if (primary && directionString.Length >= 1)
+				direction = directionString[0];
+			else if (!primary && directionString.Length >= 2)
+				direction = directionString[1];
+
+			var result = 0;
+			switch (direction)
+			{
+				case 'L':
+					result = (int) ImageOrientationPatient.Directions.Left;
+					break;
+				case 'R':
+					result = (int) ImageOrientationPatient.Directions.Right;
+					break;
+				case 'H':
+					result = (int) ImageOrientationPatient.Directions.Head;
+					break;
+				case 'F':
+					result = (int) ImageOrientationPatient.Directions.Foot;
+					break;
+				case 'A':
+					result = (int) ImageOrientationPatient.Directions.Anterior;
+					break;
+				case 'P':
+					result = (int) ImageOrientationPatient.Directions.Posterior;
+					break;
+			}
+
+			return (ImageOrientationPatient.Directions) (result*(invert ? -1 : 1));
 		}
 	}
 }
