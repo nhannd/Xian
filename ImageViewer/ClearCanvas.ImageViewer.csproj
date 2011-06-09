@@ -163,6 +163,7 @@
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
+    <Compile Include="Graphics\MammographyImageSpatialTransform.cs" />
     <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />

@@ -134,17 +134,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 #pragma warning restore 1591
-		private int SourceWidth
+		protected int SourceWidth
 		{
 			get { return _columns; }
 		}
 
-		private int SourceHeight
+		protected int SourceHeight
 		{
 			get { return _rows; }
 		}
 
-		private float AdjustedSourceHeight
+		protected float AdjustedSourceHeight
 		{
 			get { return this.SourceHeight * this.PixelAspectRatio; }
 		}
