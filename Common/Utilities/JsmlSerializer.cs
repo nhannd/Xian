@@ -49,22 +49,36 @@ namespace ClearCanvas.Common.Utilities
 	public interface IJsmlSerializationContext
 	{
 		/// <summary>
-		/// Gets the object being serialized.
-		/// </summary>
-		object Data { get; }
-
-		/// <summary>
-		/// Gets the name of the object for serialization.
-		/// </summary>
-		string NodeName { get; }
-
-		/// <summary>
 		/// Gets the XML writer that is being used to perform serialization.
 		/// </summary>
 		/// <remarks>
 		/// The hook may use this object to write XML directly.
 		/// </remarks>
 		XmlWriter XmlWriter { get; }
+
+		/// <summary>
+		/// Gets or sets the object being serialized.
+		/// </summary>
+		/// <remarks>
+		/// The hook may set this to a different object.
+		/// </remarks>
+		object Data { get; set; }
+
+		/// <summary>
+		/// Gets or sets the name of the object for serialization.
+		/// </summary>
+		/// <remarks>
+		/// The hook may modify the name.
+		/// </remarks>
+		string Name { get; set; }
+
+		/// <summary>
+		/// Gets the collection of attributes that will be serialized along with this object.
+		/// </summary>
+		/// <remarks>
+		/// The hook may add to this collection.
+		/// </remarks>
+		IDictionary<string, string> Attributes { get; }
 
 		/// <summary>
 		/// Allows the hook to call back into the JSML serializer.
@@ -81,14 +95,17 @@ namespace ClearCanvas.Common.Utilities
 	public interface IJsmlDeserializationContext
 	{
 		/// <summary>
-		/// Gets the data-type of the object being deserialized.
-		/// </summary>
-		Type DataType { get; }
-
-		/// <summary>
 		/// Gets the XML element containing the serialized representation.
 		/// </summary>
 		XmlElement XmlElement { get; }
+
+		/// <summary>
+		/// Gets or sets the data-type of the object being deserialized.
+		/// </summary>
+		/// <remarks>
+		/// The hook may set this property to modify the data type.
+		/// </remarks>
+		Type DataType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the object that results from deserialization.
@@ -379,25 +396,29 @@ namespace ClearCanvas.Common.Utilities
 		{
 			private class SerializationContext : IJsmlSerializationContext
 			{
-				public SerializationContext(Serializer owner, object data, string nodeName)
+				public SerializationContext(Serializer owner, object data, string nodeName, IDictionary<string, string> attributes)
 				{
 					this.Owner = owner;
 					this.Data = data;
-					this.NodeName = nodeName;
+					this.Name = nodeName;
+					this.Attributes = new Dictionary<string, string>(attributes);
 				}
 
-				private Serializer Owner { get; set; }
-				public object Data { get; private set; }
-				public string NodeName { get; private set; }
 				public XmlWriter XmlWriter
 				{
 					get { return this.Owner._writer; }
 				}
 
+				public object Data { get; set; }
+				public string Name { get; set; }
+				public IDictionary<string, string> Attributes { get; private set; }
+
 				public void Serialize(object obj, string objectName, IDictionary<string, string> attributes)
 				{
 					this.Owner.Do(obj, objectName, attributes);
 				}
+
+				private Serializer Owner { get; set; }
 			}
 
 			private readonly XmlWriter _writer;
@@ -415,7 +436,7 @@ namespace ClearCanvas.Common.Utilities
 			/// <param name="objectName"></param>
 			internal void Do(object obj, string objectName)
 			{
-				Do(obj, objectName, null);
+				Do(obj, objectName, new Dictionary<string, string>());
 			}
 			/// <summary>
 			/// Serializes the specified object, enclosing it with the specified name.
@@ -423,23 +444,25 @@ namespace ClearCanvas.Common.Utilities
 			/// <param name="obj"></param>
 			/// <param name="objectName"></param>
 			/// <param name="attributes"></param>
-			internal void Do(object obj, string objectName, IDictionary<string, string> attributes)
+			private void Do(object obj, string objectName, IDictionary<string, string> attributes)
 			{
 				// hooks get first chance
-				var sctx = new SerializationContext(this, obj, objectName);
+				var sctx = new SerializationContext(this, obj, objectName, attributes);
 				if (DoHooks(h => h.Serialize(sctx)))
 					return;
+
+				// hooks may have modified these args
+				obj = sctx.Data;
+				objectName = sctx.Name;
+				attributes = sctx.Attributes;
 
 				if (obj == null)
 					return;
 
 				_writer.WriteStartElement(objectName);
-				if(attributes != null)
+				foreach (var kvp in attributes)
 				{
-					foreach (var kvp in attributes)
-					{
-						_writer.WriteAttributeString(kvp.Key, kvp.Value);
-					}
+					_writer.WriteAttributeString(kvp.Key, kvp.Value);
 				}
 
 				if (this.Options.DataContractTest(obj.GetType()))
@@ -470,23 +493,23 @@ namespace ClearCanvas.Common.Utilities
 				}
 				else if (obj is Enum)
 				{
-					_writer.WriteString(obj.ToString());
+					_writer.WriteValue(obj.ToString());
 				}
 				else if (obj is string)
 				{
-					_writer.WriteString(obj.ToString());
+					_writer.WriteValue(obj.ToString());
 				}
 				else if (obj is DateTime)
 				{
-					_writer.WriteString(DateTimeUtils.FormatISO((DateTime)obj));
+					_writer.WriteValue(DateTimeUtils.FormatISO((DateTime)obj));
 				}
 				else if (obj is DateTime?)
 				{
-					_writer.WriteString(DateTimeUtils.FormatISO(((DateTime?)obj).Value));
+					_writer.WriteValue(DateTimeUtils.FormatISO(((DateTime?)obj).Value));
 				}
 				else if (obj is bool)
 				{
-					_writer.WriteString((bool)obj ? "true" : "false");
+					_writer.WriteValue((bool)obj ? "true" : "false");
 				}
 				else if (obj is IList)
 				{
@@ -509,7 +532,7 @@ namespace ClearCanvas.Common.Utilities
 				}
 				else
 				{
-					_writer.WriteString(obj.ToString());
+					_writer.WriteValue(obj.ToString());
 				}
 				_writer.WriteEndElement();
 			}
@@ -530,15 +553,15 @@ namespace ClearCanvas.Common.Utilities
 					this.XmlElement = element;
 				}
 
-				private Deserializer Owner { get; set; }
-				public Type DataType { get; private set; }
 				public XmlElement XmlElement { get; private set; }
+				public Type DataType { get; set; }
 				public object Data { get; set; }
 
 				public object Deserialize(Type dataType, XmlElement xmlElement)
 				{
 					return this.Owner.Do(dataType, xmlElement);
 				}
+				private Deserializer Owner { get; set; }
 			}
 
 			public Deserializer(DeserializeOptions options)
@@ -558,6 +581,9 @@ namespace ClearCanvas.Common.Utilities
 				var dctx = new DeserializationContext(this, dataType, xmlElement);
 				if (DoHooks(h => h.Deserialize(dctx)))
 					return dctx.Data;
+
+				// hooks may have modified these args
+				dataType = dctx.DataType;
 
 				if (this.Options.DataContractTest(dataType))
 				{

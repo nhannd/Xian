@@ -23,7 +23,7 @@ namespace ClearCanvas.Enterprise.Common
 		{
 			if (context.Data is EntityRef)
 			{
-				context.XmlWriter.WriteElementString(context.NodeName, ((EntityRef)context.Data).Serialize());
+				context.XmlWriter.WriteElementString(context.Name, ((EntityRef)context.Data).Serialize());
 				return true;
 			}
 			return false;
