@@ -11,48 +11,75 @@
 
 using System;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
     public class ThumbnailDescriptor
     {
-        public ThumbnailDescriptor(IDisplaySet displaySet, IPresentationImage referenceImage)
+        public ThumbnailDescriptor(string identifier, IPresentationImage referenceImage)
         {
-            DisplaySet = displaySet;
+            Platform.CheckForEmptyString(identifier, "identifier");
+            Platform.CheckForNullReference(referenceImage, "referenceImage");
+            Identifier = identifier;
             ReferenceImage = referenceImage;
         }
 
-        public IDisplaySet DisplaySet { get; private set; }
+        public string Identifier { get; private set; }
         public IPresentationImage ReferenceImage { get; private set; }
 
-        public string Identifier
-        { 
-            get
-            {
-                var referenceImageUid = GetReferenceImageUid();
-                if (String.IsNullOrEmpty(referenceImageUid))
-                    return DisplaySet.Uid;
-
-                return String.Format("{0}/{1}", DisplaySet.Uid, referenceImageUid);
-            }
+        public static ThumbnailDescriptor Create(IDisplaySet displaySet)
+        {
+            return Create(displaySet, false);
         }
 
-        private string GetReferenceImageUid()
+        public static ThumbnailDescriptor Create(IDisplaySet displaySet, bool copyImage)
         {
-            if (ReferenceImage == null)
+            return Create(displaySet, GetMiddlePresentationImage(displaySet), copyImage);
+        }
+
+        public static ThumbnailDescriptor Create(IDisplaySet displaySet, IPresentationImage image)
+        {
+            return Create(displaySet, image, false);
+        }
+
+        public static ThumbnailDescriptor Create(IDisplaySet displaySet, IPresentationImage image, bool copyImage)
+        {
+            if (displaySet == null || image == null)
+                return null;
+
+            string identifier = GetIdentifier(displaySet, image);
+            if (String.IsNullOrEmpty(identifier))
+                return null;
+
+            return new ThumbnailDescriptor(identifier, copyImage ? image.CreateFreshCopy() : image);
+        }
+
+        private static string GetIdentifier(IDisplaySet displaySet, IPresentationImage image)
+        {
+            var referenceImageUid = GetReferenceImageUid(image);
+            if (String.IsNullOrEmpty(referenceImageUid))
+                return displaySet.Uid;
+
+            return String.Format("{0}/{1}", displaySet.Uid, referenceImageUid);
+        }
+
+        private static string GetReferenceImageUid(IPresentationImage referenceImage)
+        {
+            if (referenceImage == null)
                 return String.Empty;
 
- 	        if (!String.IsNullOrEmpty(ReferenceImage.Uid))
- 	            return ReferenceImage.Uid;
+            if (!String.IsNullOrEmpty(referenceImage.Uid))
+                return referenceImage.Uid;
 
-            if (!(ReferenceImage is IImageSopProvider))
+            if (!(referenceImage is IImageSopProvider))
                 return String.Empty;
 
-            var frame = ((IImageSopProvider) ReferenceImage).Frame;
+            var frame = ((IImageSopProvider)referenceImage).Frame;
             return String.Format("{0}:{1}", frame.SopInstanceUid, frame.FrameNumber);
         }
 
-        internal static IPresentationImage GetMiddlePresentationImage(IDisplaySet displaySet)
+        public static IPresentationImage GetMiddlePresentationImage(IDisplaySet displaySet)
         {
             if (displaySet.PresentationImages.Count == 0)
                 return null;

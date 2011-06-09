@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
@@ -23,12 +24,18 @@ namespace ClearCanvas.ImageViewer.Thumbnails
     {
         public LoadThumbnailResult(ThumbnailDescriptor descriptor, Image image)
         {
+            Platform.CheckForNullReference(descriptor, "descriptor");
+            Platform.CheckForNullReference(image, "image");
+
             Descriptor = descriptor;
             Image = image;
         }
 
         public LoadThumbnailResult(ThumbnailDescriptor descriptor, Exception error)
         {
+            Platform.CheckForNullReference(descriptor, "descriptor");
+            Platform.CheckForNullReference(error, "error");
+
             Descriptor = descriptor;
             Error = error;
         }
@@ -41,9 +48,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
     public interface IThumbnailLoader
     {
         Bitmap GetDummyThumbnail(string message, Size size);
+        bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out Bitmap thumbnail);
 
-        bool TryLoadThumbnail(ThumbnailDescriptor descriptor, Size size, out Bitmap thumbnail);
-        void LoadThumbnail(LoadThumbnailRequest request);
+        void LoadThumbnailAsync(LoadThumbnailRequest request);
         void Reset();
     }
 
@@ -55,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         private bool _isLoading;
 
         public ThumbnailLoader()
-            : this(new LegacyRepository())
+            : this(ThumbnailRepository.Create())
         {
         }
 
@@ -71,21 +78,21 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             return _repository.GetDummyThumbnail(message, size);
         }
 
-        public bool TryLoadThumbnail(ThumbnailDescriptor descriptor, Size size, out Bitmap bitmap)
+        public bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out Bitmap bitmap)
         {
             return _repository.TryGetThumbnail(descriptor, size, out bitmap);
         }
 
-        public void LoadThumbnail(LoadThumbnailRequest request)
+        public void LoadThumbnailAsync(LoadThumbnailRequest request)
         {
             lock (_syncLock)
             {
                 _pendingRequests.Enqueue(request);
-                if (!_isLoading)
-                {
-                    _isLoading = true;
-                    ThreadPool.QueueUserWorkItem(Load, null);
-                }
+                if (_isLoading)
+                    return;
+
+                _isLoading = true;
+                ThreadPool.QueueUserWorkItem(Load, null);
             }
         }
 
@@ -94,8 +101,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             lock(_syncLock)
             {
                 _pendingRequests.Clear();
-                if (_isLoading)
-                    Monitor.Wait(_syncLock);
             }
         }
 
@@ -111,11 +116,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                     if (_pendingRequests.Count == 0)
                     {
                         _isLoading = false;
-                        Monitor.Pulse(_syncLock);
                         break;
                     }
 
-                    _isLoading = true;
                     request = _pendingRequests.Dequeue();
                 }
 

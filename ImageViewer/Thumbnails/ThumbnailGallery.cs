@@ -4,101 +4,78 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public class ThumbnailGallery : IDisposable
+    public class ThumbnailGallery<T> : IDisposable where T : class
     {
-        private IImageSet _imageSet;
+        private readonly IThumbnailGalleryItemManager _thumbnailManager;
+        private readonly Size _thumbnailSize;
+        private IObservableList<T> _sourceItems;
         private int _lastChangedIndex = -1;
 
-        private readonly Size _thumbnailSize;
-
-        private readonly IThumbnailLoader _loader;
-        private readonly SynchronizationContext _synchronizationContext;
-
         public ThumbnailGallery()
-            : this(new ThumbnailLoader(), ThumbnailSizes.Medium)
+            : this(new ThumbnailGalleryItemManager(), ThumbnailSizes.Medium)
         {
         }
 
-        public ThumbnailGallery(Size thumbnailSize)
-            : this(new ThumbnailLoader(), thumbnailSize)
+        public ThumbnailGallery(IThumbnailGalleryItemManager thumbnailManager, Size thumbnailSize)
         {
-        }
+            Platform.CheckForNullReference(thumbnailManager, "thumbnailManager");
 
-        public ThumbnailGallery(IThumbnailLoader loader, Size thumbnailSize)
-        {
-            _synchronizationContext = SynchronizationContext.Current;
-            if (_synchronizationContext == null)
-                throw new InvalidOperationException("It is expected that the gallery will be instantiated on and accessed from a UI thread.");
-
-            _loader = loader;
-
+            _thumbnailManager = thumbnailManager;
             _thumbnailSize = thumbnailSize;
             Thumbnails = new BindingList<IGalleryItem>();
         }
 
-        public Size ThumbnailSize { get { return _thumbnailSize; } }
+        public BindingList<IGalleryItem> Thumbnails { get; private set; }
 
-        public BindingList<IGalleryItem> Thumbnails;
-
-        public IImageSet ImageSet
+        public IObservableList<T> SourceItems
         {
-            get { return _imageSet; }
+            get { return _sourceItems; }
             set
             {
-                if (Equals(_imageSet, value))
+                if (Equals(_sourceItems, value))
                     return;
 
-                if (_imageSet != null)
+                if (_sourceItems != null)
                 {
-                    _imageSet.DisplaySets.ItemAdded -= OnDisplaySetAdded;
-                    _imageSet.DisplaySets.ItemChanging -= OnDisplaySetChanging;
-                    _imageSet.DisplaySets.ItemChanged -= OnDisplaySetChanged;
-                    _imageSet.DisplaySets.ItemRemoved -= OnDisplaySetRemoved;
+                    _sourceItems.ItemAdded -= OnSourceItemAdded;
+                    _sourceItems.ItemChanging -= OnSourceItemChanging;
+                    _sourceItems.ItemChanged -= OnSourceItemChanged;
+                    _sourceItems.ItemRemoved -= OnSourceItemRemoved;
                 }
 
-                _imageSet = value;
-                _loader.Reset();
+                _sourceItems = value;
+                _thumbnailManager.Reset();
 
                 foreach (ThumbnailGalleryItem thumbnail in Thumbnails)
                     DisposeThumbnail(thumbnail);
 
                 Thumbnails.Clear();
 
-                if (_imageSet == null)
+                if (_sourceItems == null)
                     return;
 
-                _imageSet.DisplaySets.ItemAdded += OnDisplaySetAdded;
-                _imageSet.DisplaySets.ItemChanging += OnDisplaySetChanging;
-                _imageSet.DisplaySets.ItemChanged += OnDisplaySetChanged;
-                _imageSet.DisplaySets.ItemRemoved += OnDisplaySetRemoved;
+                _sourceItems.ItemAdded += OnSourceItemAdded;
+                _sourceItems.ItemChanging += OnSourceItemChanging;
+                _sourceItems.ItemChanged += OnSourceItemChanged;
+                _sourceItems.ItemRemoved += OnSourceItemRemoved;
 
-                foreach (var displaySet in _imageSet.DisplaySets)
+                foreach (var displaySet in _sourceItems)
                     Thumbnails.Add(CreateNew(displaySet));
             }
         }
 
-        private static void DisposeThumbnail(ThumbnailGalleryItem thumbnail)
+        protected virtual void OnThumbnailItemUpdated(ThumbnailGalleryItem thumbnail, int index)
         {
-            if (thumbnail.Descriptor.ReferenceImage != null)
-                thumbnail.Descriptor.ReferenceImage.Dispose();
-
-            thumbnail.Dispose();
+            Thumbnails.ResetItem(index);
         }
-
-        private string LoadingMessage { get { return SR.MessageLoading; } }
-        private string LoadFailedMessage { get { return SR.MessageLoadFailed; } }
-        private string NoImagesMessage { get { return SR.MessageNoImages; } }
 
         private void Dispose(bool disposing)
         {
-            if (!disposing)
-                return;
-
-            ImageSet = null;
+            if (disposing)
+                SourceItems = null;
         }
 
         #region Implementation of IDisposable
@@ -117,18 +94,17 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         #endregion
 
-        private void OnDisplaySetAdded(object sender, ListEventArgs<IDisplaySet> e)
+        private void OnSourceItemAdded(object sender, ListEventArgs<T> e)
         {
-            var thumbnail = CreateNew(e.Item);
-            Thumbnails.Add(thumbnail);
+            Thumbnails.Add(CreateNew(e.Item));
         }
 
-        private void OnDisplaySetChanging(object sender, ListEventArgs<IDisplaySet> e)
+        private void OnSourceItemChanging(object sender, ListEventArgs<T> e)
         {
             _lastChangedIndex = IndexOf(e.Item);
         }
 
-        private void OnDisplaySetChanged(object sender, ListEventArgs<IDisplaySet> e)
+        private void OnSourceItemChanged(object sender, ListEventArgs<T> e)
         {
             if (_lastChangedIndex >= 0)
             {
@@ -136,32 +112,32 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                 var newThumbnail = CreateNew(e.Item);
                 Thumbnails[_lastChangedIndex] = newThumbnail;
                 DisposeThumbnail(oldThumbnail);
-                Thumbnails.ResetItem(_lastChangedIndex);
+                OnThumbnailItemUpdated(newThumbnail, _lastChangedIndex);
             }
             else
             {
-                var thumbnail = CreateNew(e.Item);
-                Thumbnails.Add(thumbnail);
+                //This is really an error condition, but it'll never happen anyway.
+                Thumbnails.Add(CreateNew(e.Item));
             }
         }
 
-        private void OnDisplaySetRemoved(object sender, ListEventArgs<IDisplaySet> e)
+        private void OnSourceItemRemoved(object sender, ListEventArgs<T> e)
         {
             var index = IndexOf(e.Item);
             if (index < 0)
                 return;
 
-            var thumbnail = (IDisposable)Thumbnails[index];
+            var thumbnail = (ThumbnailGalleryItem)Thumbnails[index];
             Thumbnails.RemoveAt(index);
-            thumbnail.Dispose();
+            DisposeThumbnail(thumbnail);
         }
 
-        private int IndexOf(IDisplaySet displaySet)
+        private int IndexOf(T item)
         {
             int i = 0;
-            foreach(IThumbnailGalleryItem thumbnail in Thumbnails)
+            foreach(ThumbnailGalleryItem thumbnail in Thumbnails)
             {
-                if (thumbnail.DisplaySet == displaySet)
+                if (thumbnail.Item == item)
                     return i;
                 ++i;
             }
@@ -169,59 +145,29 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             return -1;
         }
 
-        private IThumbnailGalleryItem CreateNew(IDisplaySet displaySet)
+        private ThumbnailGalleryItem CreateNew(T item)
         {
-            var referenceImage = ThumbnailDescriptor.GetMiddlePresentationImage(displaySet);
-            if (referenceImage != null)
-                referenceImage = referenceImage.CreateFreshCopy();
-
-            var descriptor = new ThumbnailDescriptor(displaySet, referenceImage);
-            var item = new ThumbnailGalleryItem(descriptor);
-            if (referenceImage == null)
-            {
-                item.Image = _loader.GetDummyThumbnail(NoImagesMessage, _thumbnailSize);
-            }
-            else
-            {
-                Bitmap image;
-                if (_loader.TryLoadThumbnail(descriptor, _thumbnailSize, out image))
-                {
-                    item.Image = image;
-                }
-                else
-                {
-                    item.Image = _loader.GetDummyThumbnail(LoadingMessage, _thumbnailSize);
-                    _loader.LoadThumbnail(new LoadThumbnailRequest(descriptor, _thumbnailSize, OnThumbnailLoaded));
-                }
-            }
-
-            return item;
+            var thumbnail = new ThumbnailGalleryItem(item);
+            _thumbnailManager.InitializeThumbnail(thumbnail, _thumbnailSize);
+            thumbnail.PropertyChanged += OnThumbnailPropertyChanged;
+            return thumbnail;
         }
 
-        private void OnThumbnailLoaded(LoadThumbnailResult result)
+        private void DisposeThumbnail(ThumbnailGalleryItem thumbnail)
         {
-            if (!_synchronizationContext.Equals(SynchronizationContext.Current))
-            {
-                _synchronizationContext.Post(ignore => OnThumbnailLoaded(result), null);
-            }
-            else
-            {
-                //We created it as a fresh copy, so now we have to dispose it ... unconditionally.
-                int index = IndexOf(result.Descriptor.DisplaySet);
-                if (index < 0)
-                {
-                    if (result.Image != null) //Make sure it gets disposed.
-                        result.Image.Dispose();
-                }
-                else
-                {
-                    var thumbnail = (ThumbnailGalleryItem)Thumbnails[index];
-                    thumbnail.Image = result.Error != null 
-                        ? _loader.GetDummyThumbnail(LoadFailedMessage, _thumbnailSize) 
-                        : result.Image;
-                    Thumbnails.ResetItem(index);
-                }
-            }
+            thumbnail.PropertyChanged -= OnThumbnailPropertyChanged;
+            _thumbnailManager.ThumbnailDisposed(thumbnail);
+            thumbnail.Dispose();
+        }
+
+        private void OnThumbnailPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var thumbnail = (ThumbnailGalleryItem) sender;
+            int index = Thumbnails.IndexOf(thumbnail);
+            if (index < 0)
+                return;
+
+            OnThumbnailItemUpdated(thumbnail, index);
         }
     }
 }

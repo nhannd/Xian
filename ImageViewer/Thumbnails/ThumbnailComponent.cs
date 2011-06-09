@@ -37,14 +37,14 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		private readonly ImageSetTreeInfo _dummyTreeInfo;
 		private ImageSetTreeInfo _currentTreeInfo;
-        private ThumbnailGallery _thumbnailGallery;
+        private ThumbnailGallery<IDisplaySet> _thumbnailGallery;
 	
 		public ThumbnailComponent(IDesktopWindow desktopWindow)
 		{
 			_desktopWindow = desktopWindow;
 			_dummyTreeInfo = new ImageSetTreeInfo(new ObservableList<IImageSet>(), null);
 			_currentTreeInfo = _dummyTreeInfo;
-            _thumbnailGallery = new ThumbnailGallery();
+            _thumbnailGallery = new ThumbnailGallery<IDisplaySet>();
 		}
 
 		#region Presentation Model
@@ -183,9 +183,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			_desktopWindow.Workspaces.ItemClosed -= OnWorkspaceClosed;
 
 			SetImageViewer(null);
-			ClearThumbnails();
 
-			base.Stop();
+            _thumbnailGallery.Dispose();
+		    _thumbnailGallery = null;
+			
+            base.Stop();
 		}
 
 		private void OnActiveWorkspaceChanged(object sender, ItemEventArgs<Workspace> e)
@@ -250,12 +252,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			if (imageSetItem == null)
 				return;
 
-            _thumbnailGallery.ImageSet = imageSetItem.ImageSet;
+		    _thumbnailGallery.SourceItems = imageSetItem.ImageSet.DisplaySets;
         }
 
         private void ClearThumbnails()
         {
-            _thumbnailGallery.ImageSet = null;
+            _thumbnailGallery.SourceItems = null;
         }
 
 	    private static string GetPrimaryStudyInstanceUid(StudyTree studyTree)

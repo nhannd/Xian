@@ -14,46 +14,16 @@ using ClearCanvas.Common.Caching;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    internal interface IThumbnailCache
+    public interface IThumbnailCache
     {
-        TimeSpan Expiration { get; set; }
-        bool UseSlidingExpiration { get; set; }
-
         void Put(string key, IThumbnailData thumbnail);
         IThumbnailData Get(string key);
         void Remove(string key);
         void Clear();
     }
 
-    internal class ThumbnailCache : IThumbnailCache
+    public class ThumbnailCache : IThumbnailCache
     {
-        private class Dummy : IThumbnailCache
-        {
-            public TimeSpan Expiration { get; set; }
-            public bool UseSlidingExpiration { get; set; }
-            
-            #region IThumbnailCache Members
-
-            public void Put(string key, IThumbnailData item)
-            {
-            }
-
-            public IThumbnailData Get(string key)
-            {
-                return null;
-            }
-
-            public void Remove(string key)
-            {
-            }
-
-            public void Clear()
-            {
-            }
-
-            #endregion
-        }
-
         private const string _defaultRegionId = "default";
 
         private readonly string _cacheId;
@@ -83,7 +53,10 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         public static IThumbnailCache Create(string cacheId, string regionId)
         {
-            return IsSupported ? (IThumbnailCache)new ThumbnailCache(cacheId, regionId) : new Dummy();
+            if (!IsSupported)
+                throw new NotSupportedException("Caching is not currently supported.");
+
+            return new ThumbnailCache(cacheId, regionId);
         }
 
         public void Put(string key, IThumbnailData thumbnail)

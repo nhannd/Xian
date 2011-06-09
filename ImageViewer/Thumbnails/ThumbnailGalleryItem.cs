@@ -2,33 +2,22 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public interface IThumbnailGalleryItem : IGalleryItem, IDisposable
-    {
-        IDisplaySet DisplaySet { get; }
-    }
-
-    public class ThumbnailGalleryItem : IThumbnailGalleryItem
+    public class ThumbnailGalleryItem : IGalleryItem, INotifyPropertyChanged, IDisposable
     {
         private Image _image;
-
-        public ThumbnailGalleryItem(ThumbnailDescriptor descriptor)
+        private string _name;
+        
+        internal ThumbnailGalleryItem(object item)
         {
-            Descriptor = descriptor;
+            Platform.CheckForNullReference(item, "item");
+            Item = item;
+            _name = String.Empty;
         }
-
-        public ThumbnailDescriptor Descriptor { get; set; }
-
-        #region Implementation of IThumbnailGalleryItem
-
-        public IDisplaySet DisplaySet
-        {
-            get { return Descriptor.DisplaySet; }
-        }
-
-        #endregion
 
         #region Implementation of IGalleryItem
 
@@ -37,6 +26,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             get { return _image; }
             set
             {
+                if (IsDisposed)
+                    throw new ObjectDisposedException("Thumbnail gallery item has been disposed.");
+
                 if (Equals(_image, value))
                     return;
 
@@ -44,27 +36,23 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                     _image.Dispose();
 
                 _image = value;
+                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("Image"));
             }
         }
 
-        public virtual string Name
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
         {
-            get
-            {
-                string name = DisplaySet.Name;
-                name = name.Replace("\r\n", " ");
-                name = name.Replace("\r", " ");
-                name = name.Replace("\n", " ");
-
-                int number = DisplaySet.PresentationImages.Count;
-                if (number <= 1)
-                    return String.Format(SR.FormatThumbnailName1Image, name);
-
-                return String.Format(SR.FormatThumbnailName, number, name);
-            }
+            get { return _name; }
             set
             {
-                throw new NotSupportedException("The name of thumbnails cannot be changed.");
+                value = value ?? String.Empty;
+                if (value.Equals(_name))
+                    return;
+
+                _name = value;
+                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("Name"));
             }
         }
 
@@ -73,18 +61,18 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             get { return String.Empty; }
         }
 
-        public object Item
-        {
-            get { return DisplaySet; }
-        }
+        public object Item { get; private set; }
 
         #endregion
+
+        public bool IsDisposed { get; private set; }
 
         private void Dispose(bool disposing)
         {
             if (!disposing)
                 return;
 
+            IsDisposed = true;
             if (Image == null)
                 return;
 
