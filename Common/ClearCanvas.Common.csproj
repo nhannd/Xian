@@ -403,6 +403,8 @@
     <Compile Include="Utilities\IRemoteFileTransfer.cs" />
     <Compile Include="Utilities\HttpFileTransfer.cs" />
     <Compile Include="Utilities\EnvironmentUtilities.cs" />
+    <Compile Include="Utilities\JsmlSerializer.cs" />
+    <Compile Include="Utilities\Tests\JsmlSerializerTests.cs" />
     <Compile Include="Utilities\UnitTestExtensionFactory.cs" />
   </ItemGroup>
   <ItemGroup>

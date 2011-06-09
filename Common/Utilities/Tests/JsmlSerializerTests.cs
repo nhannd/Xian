@@ -28,14 +28,11 @@ namespace ClearCanvas.Enterprise.Common.Tests
 	{
 		public enum TestEnum { Enum1, Enum2 }
 
-		/// <summary>
-		/// This data contract is for testing EntityRef within a data contract.  Also test when a data contract has all its properties as null.
-		/// </summary>
 		[DataContract]
-		class TestContract1 : DataContractBase
+		class TestContract1
 		{
 			[DataMember]
-			public EntityRef EntityRef;
+			public string Foo;
 
 			public string Jsml
 			{
@@ -43,11 +40,11 @@ namespace ClearCanvas.Enterprise.Common.Tests
 				{
 					var builder = new StringBuilder();
 
-					if (this.EntityRef != null)
+					if (this.Foo != null)
 					{
 						builder.Append("<Tag type=\"hash\">");
 						builder.Append("\r\n  ");
-						builder.AppendFormat("<EntityRef>{0}</EntityRef>", this.EntityRef.Serialize());
+						builder.AppendFormat("<Foo>{0}</Foo>", this.Foo);
 						builder.Append("\r\n</Tag>");
 					}
 					else
@@ -67,7 +64,7 @@ namespace ClearCanvas.Enterprise.Common.Tests
 			public override bool Equals(object obj)
 			{
 				var other = obj as TestContract1;
-				return Equals(this.EntityRef, other.EntityRef);
+				return Equals(this.Foo, other.Foo);
 			}
 		}
 
@@ -75,7 +72,7 @@ namespace ClearCanvas.Enterprise.Common.Tests
 		/// This class is for testing multiple data members.  Also test when a particular data member is filtered out by <see cref="JsmlSerializer.SerializeOptions"/>.
 		/// </summary>
 		[DataContract]
-		class TestContract2 : DataContractBase
+		class TestContract2
 		{
 			[DataMember]
 			public Double Double;
@@ -151,7 +148,7 @@ namespace ClearCanvas.Enterprise.Common.Tests
 
 		/// </summary>
 		[DataContract]
-		class TestContract3 : DataContractBase
+		class TestContract3
 		{
 			// used by deserializer
 			private TestContract3()
@@ -443,37 +440,6 @@ namespace ClearCanvas.Enterprise.Common.Tests
 		}
 
 		[Test]
-		public void Test_EntityRef()
-		{
-			var guidEntityRef = new EntityRef("ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:G:0fa8fdae-4678-40d7-bc54-9ca700e646d9:0");
-			SerializeHelper(guidEntityRef, "<Tag>ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:G:0fa8fdae-4678-40d7-bc54-9ca700e646d9:0</Tag>");
-			DeserializeHelper(guidEntityRef, "<Tag>ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:G:0fa8fdae-4678-40d7-bc54-9ca700e646d9:0</Tag>");
-
-			var stringEntityRef = new EntityRef("ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:S:0fa8fdae-4678-40d7-bc54-9ca700e646d9:1");
-			SerializeHelper(stringEntityRef, "<Tag>ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:S:0fa8fdae-4678-40d7-bc54-9ca700e646d9:1</Tag>");
-			DeserializeHelper(stringEntityRef, "<Tag>ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:S:0fa8fdae-4678-40d7-bc54-9ca700e646d9:1</Tag>");
-
-			var intEntityRef = new EntityRef("ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:I:123456:2");
-			SerializeHelper(intEntityRef, "<Tag>ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:I:123456:2</Tag>");
-			DeserializeHelper(intEntityRef, "<Tag>ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:I:123456:2</Tag>");
-
-			var longEntityRef = new EntityRef("ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:L:12345678901234567:3");
-			SerializeHelper(longEntityRef, "<Tag>ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:L:12345678901234567:3</Tag>");
-			DeserializeHelper(longEntityRef, "<Tag>ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:L:12345678901234567:3</Tag>");
-
-			// Null EntityRef is acceptable.
-			DeserializeHelper<EntityRef>(null, "");
-		}
-
-		[Test]
-		[ExpectedException(typeof(SerializationException))]
-		public void Test_EntityRef_EmptyTag()
-		{
-			// We always expect EntityRef jsml to contain something.  An empty EntityRef is not allowed.
-			JsmlSerializer.Deserialize<EntityRef>("<Tag />");
-		}
-
-		[Test]
 		public void Test_DataContract()
 		{
 			var contract1 = new TestContract1();
@@ -481,7 +447,7 @@ namespace ClearCanvas.Enterprise.Common.Tests
 			DeserializeHelper(contract1, contract1.Jsml);
 			DeserializeHelper(contract1, contract1.LegacyJsml);
 
-			contract1.EntityRef = new EntityRef("ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:G:0fa8fdae-4678-40d7-bc54-9ca700e646d9:2");
+			contract1.Foo = "ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare:G:0fa8fdae-4678-40d7-bc54-9ca700e646d9:2";
 			SerializeHelper(contract1, contract1.Jsml);
 			DeserializeHelper(contract1, contract1.Jsml);
 			DeserializeHelper(contract1, contract1.LegacyJsml);
@@ -513,7 +479,7 @@ namespace ClearCanvas.Enterprise.Common.Tests
 		public void Test_SerializeOptions()
 		{
 			var now = DateTime.Now;
-			var options = new JsmlSerializer.SerializeOptions { MemberFilter = (m => m.Name != "Double") }; 
+			var options = new JsmlSerializer.SerializeOptions { DataMemberTest = (m => AttributeUtils.HasAttribute<DataMemberAttribute>(m) && m.Name != "Double") }; 
 			var contract2 = new TestContract2
 					{
 						Double = 5.0,

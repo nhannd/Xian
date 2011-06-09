@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// <summary>
 		/// Gets a GUID identifying this class of contributor (must return a constant value) for serialization purposes.
 		/// </summary>
-		string ClassId { get; }
+		string ContributorId { get; }
 
 		/// <summary>
 		/// Called by the user-interface to obtain the set of properties that can be edited by the user.
