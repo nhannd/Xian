@@ -13,6 +13,9 @@ namespace ClearCanvas.ImageViewer.Layout
 {
 	public interface IHpLayoutDefinitionContext
 	{
+		/// <summary>
+		/// Gets the relevant physical workspace.
+		/// </summary>
 		IPhysicalWorkspace PhysicalWorkspace { get; }
 	}
 
