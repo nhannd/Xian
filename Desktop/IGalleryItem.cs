@@ -9,11 +9,14 @@
 
 #endregion
 
-using System.Drawing;
-
 namespace ClearCanvas.Desktop
 {
-	/// <summary>
+	public interface IGalleryItem<T> : IGalleryItem where T : class
+	{
+        new T Image { get; }    
+	}
+
+    /// <summary>
 	/// An item for display in a gallery-style view.
 	/// </summary>
 	public interface IGalleryItem
@@ -21,7 +24,7 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// The image/icon to display.
 		/// </summary>
-		Image Image { get; }
+		object Image { get; }
 
 		/// <summary>
 		/// The name of the object.

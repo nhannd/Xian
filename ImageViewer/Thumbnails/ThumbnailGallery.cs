@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
@@ -7,30 +8,70 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public class ThumbnailGallery<T> : IDisposable where T : class
+    public interface IThumbnailGallery : IDisposable
+    {
+        bool IsVisible { get; set; }
+        IList<IGalleryItem> Thumbnails { get; }
+    }
+
+    public class BindingListThumbnailGallery<TSourceItem> : ThumbnailGallery<TSourceItem> where TSourceItem : class
+    {
+        public BindingListThumbnailGallery()
+            : base(new BindingList<IGalleryItem>(), new ThumbnailGalleryItemManager(), ThumbnailSizes.Medium)
+        {
+        }
+
+        public BindingListThumbnailGallery(IThumbnailGalleryItemManager thumbnailManager, Size thumbnailSize)
+            : base(new BindingList<IGalleryItem>(), thumbnailManager, thumbnailSize)
+        {
+        }
+
+        protected override void OnThumbnailItemUpdated(ThumbnailGalleryItem thumbnail, int index)
+        {
+            ((BindingList<IGalleryItem>)Thumbnails).ResetItem(index);
+        }
+    }
+
+    public class ThumbnailGallery<TSourceItem> : IThumbnailGallery where TSourceItem : class
     {
         private readonly IThumbnailGalleryItemManager _thumbnailManager;
         private readonly Size _thumbnailSize;
-        private IObservableList<T> _sourceItems;
+        private IObservableList<TSourceItem> _sourceItems;
         private int _lastChangedIndex = -1;
+        private bool _isVisible;
 
-        public ThumbnailGallery()
-            : this(new ThumbnailGalleryItemManager(), ThumbnailSizes.Medium)
+        public ThumbnailGallery(IList<IGalleryItem> thumbnails)
+            : this(thumbnails, new ThumbnailGalleryItemManager(), ThumbnailSizes.Medium)
         {
         }
 
-        public ThumbnailGallery(IThumbnailGalleryItemManager thumbnailManager, Size thumbnailSize)
+        public ThumbnailGallery(IList<IGalleryItem> thumbnails, IThumbnailGalleryItemManager thumbnailManager, Size thumbnailSize)
         {
             Platform.CheckForNullReference(thumbnailManager, "thumbnailManager");
+            Platform.CheckForNullReference(thumbnails, "thumbnails");
 
             _thumbnailManager = thumbnailManager;
             _thumbnailSize = thumbnailSize;
-            Thumbnails = new BindingList<IGalleryItem>();
+            Thumbnails = thumbnails;
         }
 
-        public BindingList<IGalleryItem> Thumbnails { get; private set; }
+        public bool IsVisible
+        {
+            get { return _isVisible; }
+            set
+            {
+                if (value == _isVisible)
+                    return;
 
-        public IObservableList<T> SourceItems
+                _isVisible = value;
+                foreach (ThumbnailGalleryItem thumbnail in Thumbnails)
+                    thumbnail.IsVisible = value;
+            }
+        }
+
+        public IList<IGalleryItem> Thumbnails { get; private set; }
+
+        public IObservableList<TSourceItem> SourceItems
         {
             get { return _sourceItems; }
             set
@@ -47,7 +88,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                 }
 
                 _sourceItems = value;
-                _thumbnailManager.Reset();
 
                 foreach (ThumbnailGalleryItem thumbnail in Thumbnails)
                     DisposeThumbnail(thumbnail);
@@ -62,14 +102,13 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                 _sourceItems.ItemChanged += OnSourceItemChanged;
                 _sourceItems.ItemRemoved += OnSourceItemRemoved;
 
-                foreach (var displaySet in _sourceItems)
-                    Thumbnails.Add(CreateNew(displaySet));
+                foreach (var sourceItem in _sourceItems)
+                    Thumbnails.Add(CreateNew(sourceItem));
             }
         }
 
         protected virtual void OnThumbnailItemUpdated(ThumbnailGalleryItem thumbnail, int index)
         {
-            Thumbnails.ResetItem(index);
         }
 
         private void Dispose(bool disposing)
@@ -94,17 +133,17 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         #endregion
 
-        private void OnSourceItemAdded(object sender, ListEventArgs<T> e)
+        private void OnSourceItemAdded(object sender, ListEventArgs<TSourceItem> e)
         {
             Thumbnails.Add(CreateNew(e.Item));
         }
 
-        private void OnSourceItemChanging(object sender, ListEventArgs<T> e)
+        private void OnSourceItemChanging(object sender, ListEventArgs<TSourceItem> e)
         {
             _lastChangedIndex = IndexOf(e.Item);
         }
 
-        private void OnSourceItemChanged(object sender, ListEventArgs<T> e)
+        private void OnSourceItemChanged(object sender, ListEventArgs<TSourceItem> e)
         {
             if (_lastChangedIndex >= 0)
             {
@@ -121,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             }
         }
 
-        private void OnSourceItemRemoved(object sender, ListEventArgs<T> e)
+        private void OnSourceItemRemoved(object sender, ListEventArgs<TSourceItem> e)
         {
             var index = IndexOf(e.Item);
             if (index < 0)
@@ -132,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             DisposeThumbnail(thumbnail);
         }
 
-        private int IndexOf(T item)
+        private int IndexOf(TSourceItem item)
         {
             int i = 0;
             foreach(ThumbnailGalleryItem thumbnail in Thumbnails)
@@ -145,10 +184,10 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             return -1;
         }
 
-        private ThumbnailGalleryItem CreateNew(T item)
+        private ThumbnailGalleryItem CreateNew(TSourceItem item)
         {
             var thumbnail = new ThumbnailGalleryItem(item);
-            _thumbnailManager.InitializeThumbnail(thumbnail, _thumbnailSize);
+            _thumbnailManager.Initialize(thumbnail, _thumbnailSize);
             thumbnail.PropertyChanged += OnThumbnailPropertyChanged;
             return thumbnail;
         }
@@ -156,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         private void DisposeThumbnail(ThumbnailGalleryItem thumbnail)
         {
             thumbnail.PropertyChanged -= OnThumbnailPropertyChanged;
-            _thumbnailManager.ThumbnailDisposed(thumbnail);
+            _thumbnailManager.Destroy(thumbnail);
             thumbnail.Dispose();
         }
 

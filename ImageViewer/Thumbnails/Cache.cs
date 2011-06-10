@@ -14,22 +14,22 @@ using ClearCanvas.Common.Caching;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public interface IThumbnailCache
+    public interface ICache<T> where T : class
     {
-        void Put(string key, IThumbnailData thumbnail);
-        IThumbnailData Get(string key);
+        void Put(string key, T buffer);
+        T Get(string key);
         void Remove(string key);
         void Clear();
     }
 
-    public class ThumbnailCache : IThumbnailCache
+    public class Cache<T> : ICache<T> where T : class 
     {
         private const string _defaultRegionId = "default";
 
         private readonly string _cacheId;
         private readonly string _regionId;
         
-        private ThumbnailCache(string cacheId, string regionId)
+        private Cache(string cacheId, string regionId)
         {
             _cacheId = cacheId;
             _regionId = regionId;
@@ -46,28 +46,28 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             get { return Cache.IsSupported(); }
         }
 
-        public static IThumbnailCache Create(string cacheId)
+        public static ICache<T> Create(string cacheId)
         {
             return Create(cacheId, _defaultRegionId);
         }
 
-        public static IThumbnailCache Create(string cacheId, string regionId)
+        public static ICache<T> Create(string cacheId, string regionId)
         {
             if (!IsSupported)
                 throw new NotSupportedException("Caching is not currently supported.");
 
-            return new ThumbnailCache(cacheId, regionId);
+            return new Cache<T>(cacheId, regionId);
         }
 
-        public void Put(string key, IThumbnailData thumbnail)
+        public void Put(string key, T buffer)
         {
-            WithCacheClient(client => client.Put(key, thumbnail, new CachePutOptions(_regionId, Expiration, UseSlidingExpiration)));
+            WithCacheClient(client => client.Put(key, buffer, new CachePutOptions(_regionId, Expiration, UseSlidingExpiration)));
         }
 
-        public IThumbnailData Get(string key)
+        public T Get(string key)
         {
-            IThumbnailData thumb = null;
-            WithCacheClient(client => thumb = client.Get(key, new CacheGetOptions(_regionId)) as IThumbnailData);
+            T thumb = null;
+            WithCacheClient(client => thumb = client.Get(key, new CacheGetOptions(_regionId)) as T);
             return thumb;
         }
 

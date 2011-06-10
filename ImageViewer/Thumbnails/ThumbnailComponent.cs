@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			_desktopWindow = desktopWindow;
 			_dummyTreeInfo = new ImageSetTreeInfo(new ObservableList<IImageSet>(), null);
 			_currentTreeInfo = _dummyTreeInfo;
-            _thumbnailGallery = new ThumbnailGallery<IDisplaySet>();
+		    _thumbnailGallery = new BindingListThumbnailGallery<IDisplaySet>();
 		}
 
 		#region Presentation Model
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		public BindingList<IGalleryItem> Thumbnails
 		{
-            get { return _thumbnailGallery.Thumbnails; }
+            get { return (BindingList<IGalleryItem>)_thumbnailGallery.Thumbnails; }
 		}
 
 		#endregion

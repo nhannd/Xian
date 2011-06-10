@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
@@ -7,11 +6,18 @@ using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public class ThumbnailGalleryItem : IGalleryItem, INotifyPropertyChanged, IDisposable
+    public interface IThumbnailGalleryItem : IGalleryItem, INotifyPropertyChanged, IDisposable
     {
-        private Image _image;
+        bool IsVisible { get; set; }
+        IThumbnailData ImageData { get; }
+    }
+
+    public class ThumbnailGalleryItem : IThumbnailGalleryItem
+    {
+        private IThumbnailData _imageData;
         private string _name;
-        
+        private bool _isVisible;
+
         internal ThumbnailGalleryItem(object item)
         {
             Platform.CheckForNullReference(item, "item");
@@ -19,25 +25,41 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             _name = String.Empty;
         }
 
-        #region Implementation of IGalleryItem
-
-        public Image Image
+        public bool IsVisible
         {
-            get { return _image; }
+            get { return _isVisible; }
             set
             {
-                if (IsDisposed)
-                    throw new ObjectDisposedException("Thumbnail gallery item has been disposed.");
-
-                if (Equals(_image, value))
+                if (value == _isVisible)
                     return;
 
-                if (_image != null)
-                    _image.Dispose();
+                _isVisible = value;
+                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("IsVisible"));
+            }
+        }
 
-                _image = value;
+        public IThumbnailData ImageData
+        {
+            get { return _imageData; }
+            set
+            {
+                if (Equals(_imageData, value))
+                    return;
+
+                if (_imageData != null)
+                    _imageData.Dispose();
+
+                _imageData = value;
+                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("ImageData"));
                 EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("Image"));
             }
+        }
+
+        #region Implementation of IGalleryItem
+
+        public object Image
+        {
+            get { return _imageData.Image; }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -48,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             set
             {
                 value = value ?? String.Empty;
-                if (value.Equals(_name))
+                if (value == _name)
                     return;
 
                 _name = value;
@@ -65,19 +87,18 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         #endregion
 
-        public bool IsDisposed { get; private set; }
+        public object State { get; set; }
 
         private void Dispose(bool disposing)
         {
             if (!disposing)
                 return;
 
-            IsDisposed = true;
-            if (Image == null)
+            if (_imageData == null)
                 return;
 
-            Image.Dispose();
-            Image = null;
+            _imageData.Dispose();
+            _imageData = null;
         }
 
         #region Implementation of IDisposable

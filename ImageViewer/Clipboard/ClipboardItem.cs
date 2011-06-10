@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			get { return _item; }
 		}
 
-		public Image Image
+		public object Image
 		{
 			get { return _image; }
 		}

@@ -12,11 +12,11 @@
 using System.Threading;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.Common
 {
 	//TODO: this could be exposed in Common later, but for now we'll just keep it here.
 
-	internal class ReferenceCountedObjectWrapper
+	public class ReferenceCountedObjectWrapper
 	{
 		private readonly object _item;
 		private int _referenceCount;
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 	
-	internal class ReferenceCountedObjectWrapper<T> : ReferenceCountedObjectWrapper
+	public class ReferenceCountedObjectWrapper<T> : ReferenceCountedObjectWrapper
 	{
 		public ReferenceCountedObjectWrapper(T item)
 			: base(item)

@@ -6,20 +6,20 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 {
     public interface IThumbnailRepository
     {
-        Bitmap GetDummyThumbnail(string message, Size size);
+        IThumbnailData GetDummyThumbnail(string message, Size size);
 
-        bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out Bitmap thumbnail);
-        Bitmap GetThumbnail(ThumbnailDescriptor descriptor, Size size);
+        bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IThumbnailData thumbnail);
+        IThumbnailData GetThumbnail(ThumbnailDescriptor descriptor, Size size);
     }
 
     public abstract class ThumbnailRepository : IThumbnailRepository
     {
         #region IThumbnailRepository Members
 
-        public abstract Bitmap GetDummyThumbnail(string message, Size size);
+        public abstract IThumbnailData GetDummyThumbnail(string message, Size size);
 
-        public abstract bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out Bitmap thumbnail);
-        public abstract Bitmap GetThumbnail(ThumbnailDescriptor descriptor, Size size);
+        public abstract bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IThumbnailData thumbnail);
+        public abstract IThumbnailData GetThumbnail(ThumbnailDescriptor descriptor, Size size);
 
         #endregion
 
@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         private readonly IThumbnailFactory _factory;
 
         public CachelessThumbnailRepository()
-            : this(new ThumbnailFactory())
+            : this(new BitmapThumbnailFactory())
         {
         }
         public CachelessThumbnailRepository(IThumbnailFactory factory)
@@ -47,18 +47,18 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             _factory = factory;
         }
 
-        public override bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out Bitmap thumbnail)
+        public override bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IThumbnailData thumbnail)
         {
             thumbnail = null;
             return false;
         }
 
-        public override Bitmap GetThumbnail(ThumbnailDescriptor descriptor, Size size)
+        public override IThumbnailData GetThumbnail(ThumbnailDescriptor descriptor, Size size)
         {
             return _factory.CreateThumbnail(descriptor.ReferenceImage, size);
         }
 
-        public override Bitmap GetDummyThumbnail(string message, Size size)
+        public override IThumbnailData GetDummyThumbnail(string message, Size size)
         {
             return _factory.CreateDummy(message, size);
         }
@@ -66,15 +66,15 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
     public class CachingThumbnailRepository : ThumbnailRepository
     {
-        private readonly IThumbnailCache _cache;
+        private readonly ICache<IThumbnailData> _cache;
         private readonly IThumbnailFactory _factory;
 
-        internal CachingThumbnailRepository(IThumbnailCache cache)
-            : this(new ThumbnailFactory(), cache)
+        internal CachingThumbnailRepository(ICache<IThumbnailData> cache)
+            : this(new BitmapThumbnailFactory(), cache)
         {
         }
 
-        public CachingThumbnailRepository(IThumbnailFactory factory, IThumbnailCache cache)
+        public CachingThumbnailRepository(IThumbnailFactory factory, ICache<IThumbnailData> cache)
         {
             Platform.CheckForNullReference(factory, "factory");
             Platform.CheckForNullReference(cache, "cache");
@@ -83,42 +83,39 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             _cache = cache;
         }
 
-        public override Bitmap GetDummyThumbnail(string message, Size size)
+        public override IThumbnailData GetDummyThumbnail(string message, Size size)
         {
             //TODO: bother caching these, seeing as we end up creating copies of them anyway?
             return _factory.CreateDummy(message, size);
         }
 
-        public override bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out Bitmap thumbnail)
+        public override bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IThumbnailData thumbnail)
         {
             string key = descriptor.Identifier;
             if (!String.IsNullOrEmpty(key))
             {
-                var thumbnailData = _cache.Get(key);
-                if (thumbnailData != null)
-                {
-                    thumbnail = thumbnailData.ToBitmap();
+                thumbnail = _cache.Get(key);
+                if (thumbnail != null)
                     return true;
-                }
             }
 
             thumbnail = null;
             return false;
         }
 
-        public override Bitmap GetThumbnail(ThumbnailDescriptor descriptor, Size size)
+        public override IThumbnailData GetThumbnail(ThumbnailDescriptor descriptor, Size size)
         {
             string key = descriptor.Identifier;
             if (String.IsNullOrEmpty(key))
                 throw new ArgumentException("Thumbnail descriptor must have a unique identifier.");
 
-            var thumbnailData = _cache.Get(key);
-            if (thumbnailData != null)
-                return thumbnailData.ToBitmap();
+            var thumbnail = _cache.Get(key);
+            if (thumbnail != null)
+                return thumbnail;
 
-            var image = _factory.CreateThumbnail(descriptor.ReferenceImage, size);
-            _cache.Put(key, ThumbnailData.FromBitmap(image));
-            return image;
+            thumbnail = _factory.CreateThumbnail(descriptor.ReferenceImage, size);
+            _cache.Put(key, thumbnail);
+            return thumbnail;
         }
     }
 }

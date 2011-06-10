@@ -15,7 +15,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public class ThumbnailDescriptor
+    public class ThumbnailDescriptor : IEquatable<ThumbnailDescriptor>
     {
         public ThumbnailDescriptor(string identifier, IPresentationImage referenceImage)
         {
@@ -27,6 +27,35 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         public string Identifier { get; private set; }
         public IPresentationImage ReferenceImage { get; private set; }
+
+        public override string ToString()
+        {
+            return Identifier;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ThumbnailDescriptor)
+                return Equals((ThumbnailDescriptor)obj);
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return 0x178F ^ Identifier.GetHashCode();
+        }
+
+        #region IEquatable<ThumbnailDescriptor> Members
+
+        public bool Equals(ThumbnailDescriptor other)
+        {
+            return other != null && other.Identifier == Identifier;
+        }
+
+        #endregion
+
+        #region Static Helpers
 
         public static ThumbnailDescriptor Create(IDisplaySet displaySet)
         {
@@ -89,5 +118,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
             return displaySet.PresentationImages[displaySet.PresentationImages.Count / 2];
         }
+
+        #endregion
     }
 }

@@ -11,6 +11,8 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Annotations.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
@@ -20,22 +22,53 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 {
     public interface IThumbnailFactory
     {
-        Bitmap CreateDummy(string message, Size size);
-        Bitmap CreateThumbnail(IPresentationImage image, Size size);
+        IThumbnailData CreateDummy(string message, Size size);
+        IThumbnailData CreateThumbnail(IPresentationImage image, Size size);
     }
 
-    public class ThumbnailFactory : IThumbnailFactory
+    public class StreamThumbnailFactory : IThumbnailFactory
     {
-        public Bitmap CreateDummy(string message, Size size)
+        private static IThumbnailData FromImage(Image bitmap)
         {
-            return CreateDummy(message, size.Width, size.Height);
+            var stream = new MemoryStream();
+            bitmap.Save(stream, ImageFormat.Png);
+            return new ThumbnailData<MemoryStream>(stream);
         }
 
-        public Bitmap CreateThumbnail(IPresentationImage image, Size size)
+        public IThumbnailData CreateDummy(string message, Size size)
         {
-            return CreateThumbnail(image, size.Width, size.Height);
+            using (var bitmap = ThumbnailFactory.CreateDummy(message, size.Width, size.Height))
+            {
+                return FromImage(bitmap);
+            }
         }
 
+        public IThumbnailData CreateThumbnail(IPresentationImage image, Size size)
+        {
+            using (var bitmap = ThumbnailFactory.CreateThumbnail(image, size.Width, size.Height))
+            {
+                return FromImage(bitmap);
+            }
+        }
+    }
+
+    public class BitmapThumbnailFactory : IThumbnailFactory
+    {
+        public IThumbnailData CreateDummy(string message, Size size)
+        {
+            var bitmap = ThumbnailFactory.CreateDummy(message, size.Width, size.Height);
+            return new ThumbnailData<Bitmap>(bitmap);
+        }
+
+        public IThumbnailData CreateThumbnail(IPresentationImage image, Size size)
+        {
+            var bitmap = ThumbnailFactory.CreateThumbnail(image, size.Width, size.Height);
+            return new ThumbnailData<Bitmap>(bitmap);
+        }
+    }
+
+    public static class ThumbnailFactory
+    {
         public static Bitmap CreateDummy(string message, int width, int height)
         {
             var bmp = new Bitmap(width, height);

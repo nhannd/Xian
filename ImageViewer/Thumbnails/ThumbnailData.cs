@@ -9,72 +9,117 @@
 
 #endregion
 
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
+using System;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public interface IThumbnailData
+    public interface IThumbnailData<T> : IThumbnailData
     {
-        int Width { get; }
-        int Height { get; }
-        int Stride { get; }
-        PixelFormat PixelFormat { get; }
-        byte[] PixelData { get; }
-
-        Bitmap ToBitmap();
+        new T Image { get; }    
     }
 
-    public class ThumbnailData : IThumbnailData
+    public interface IThumbnailData : IDisposable
     {
-        public ThumbnailData(int width, int height, int stride, PixelFormat pixelFormat, byte[] pixelData)
+        object Image { get; }
+        IThumbnailData Clone();
+    }
+
+    internal class ThumbnailDataProxy<T> : IThumbnailData<T> where T : class
+    {
+        private ReferenceCountedObjectWrapper<IThumbnailData<T>> _real;
+
+        public ThumbnailDataProxy(IThumbnailData<T> real)
         {
-            Width = width;
-            Height = height;
-            Stride = stride;
-            PixelFormat = pixelFormat;
-            PixelData = pixelData;
+            _real = new ReferenceCountedObjectWrapper<IThumbnailData<T>>(real);
+            _real.IncrementReferenceCount();
         }
 
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public int Stride { get; private set; }
-        public PixelFormat PixelFormat { get; private set; }
-        public byte[] PixelData { get; private set; }
+        #region IThumbnailData Members
 
-        public Bitmap ToBitmap()
+        public T Image { get { return _real.Item.Image; } }
+        object IThumbnailData.Image { get { return _real.Item.Image; } }
+
+        public IThumbnailData Clone()
         {
-            var bitmap = new Bitmap(Width, Height, PixelFormat);
-            var bounds = new Rectangle(Point.Empty, bitmap.Size);
-            var bitmapData = bitmap.LockBits(bounds, ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            _real.IncrementReferenceCount();
+            return this;
+        }
 
+        #endregion
+
+        protected virtual void DisposeReal()
+        {
+            _real.Item.Dispose();
+            _real = null;
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (_real == null)
+                return;
+
+            _real.DecrementReferenceCount();
+            if (_real.ReferenceCount <= 0)
+                DisposeReal();
+        }
+
+        #endregion
+    }
+
+    public class ThumbnailData<T> : IThumbnailData<T> where T : class, IDisposable
+    {
+        public ThumbnailData(T image)
+        {
+            Image = image;
+        }
+
+        #region IBitmapThumbnailData Members
+
+        public T Image { get; private set; }
+
+        #endregion
+
+        #region IThumbnailData Members
+
+        object IThumbnailData.Image { get { return Image; } }
+
+        public IThumbnailData Clone()
+        {
+            if (typeof(ICloneable).IsAssignableFrom(typeof(T)))
+                return new ThumbnailData<T>((T) ((ICloneable) Image).Clone());
+            
+            throw new NotSupportedException();
+        }
+
+        #endregion
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposing || Image == null)
+                return;
+
+            Image.Dispose();
+            Image = null;
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
             try
             {
-                Marshal.Copy(PixelData, 0, bitmapData.Scan0, PixelData.Length);
-                return bitmap;
+                Dispose(true);
             }
-            finally
+            catch (Exception e)
             {
-                bitmap.UnlockBits(bitmapData);
+                Platform.Log(LogLevel.Debug, e);
             }
         }
 
-        public static IThumbnailData FromBitmap(Bitmap bitmap)
-        {
-            var bounds = new Rectangle(Point.Empty, bitmap.Size);
-            var bitmapData = bitmap.LockBits(bounds, ImageLockMode.ReadOnly, bitmap.PixelFormat);
-
-            try
-            {
-                var pixelData = new byte[bitmapData.Stride * bitmapData.Height];
-                Marshal.Copy(bitmapData.Scan0, pixelData, 0, pixelData.Length);
-                return new ThumbnailData(bitmapData.Width, bitmapData.Height, bitmapData.Stride, bitmap.PixelFormat, pixelData);
-            }
-            finally
-            {
-                bitmap.UnlockBits(bitmapData);
-            }
-        }
+        #endregion
     }
 }
