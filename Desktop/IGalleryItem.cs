@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.ComponentModel;
 using System.Drawing;
 
 namespace ClearCanvas.Desktop
@@ -16,12 +17,12 @@ namespace ClearCanvas.Desktop
 	/// <summary>
 	/// An item for display in a gallery-style view.
 	/// </summary>
-	public interface IGalleryItem
+    public interface IGalleryItem : INotifyPropertyChanged
 	{
 		/// <summary>
 		/// The image/icon to display.
 		/// </summary>
-		Image Image { get; }
+        byte[] ImageBuffer { get; }
 
 		/// <summary>
 		/// The name of the object.
