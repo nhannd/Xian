@@ -46,6 +46,37 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				scale.Visible = visible;
 		}
 
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			var x = true;
+			if (Context.Viewer != null && Context.Viewer.StudyTree != null)
+			{
+				var patient = CollectionUtils.FirstElement(Context.Viewer.StudyTree.Patients);
+				if (patient != null)
+				{
+					var study = CollectionUtils.FirstElement(patient.Studies);
+					if (study != null)
+					{
+						var mammogramModalities = new[] {"MG", "SR", "KO", "PR"};
+						var onlyMG = CollectionUtils.TrueForAll(study.ModalitiesInStudy, modality => Contains(mammogramModalities, modality));
+						Checked = !onlyMG; // if the study contains only mammogram images, disable scale by default
+					}
+				}
+			}
+		}
+
+		private static bool Contains(string[] array, string itemToFind)
+		{
+			foreach (var item in array)
+			{
+				if (item == itemToFind)
+					return true;
+			}
+			return false;
+		}
+
 		private static CompositeScaleGraphic GetCompositeScaleGraphic(IPresentationImage image, bool createIfNull)
 		{
 			if (image is IApplicationGraphicsProvider)
