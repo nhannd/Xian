@@ -23,7 +23,7 @@ using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
-    [MenuAction("launch", "global-menus/Admin/Authority Groups", "Launch")]
+    [MenuAction("launch", "global-menus/MenuAdmin/MenuAuthorityGroups", "Launch")]
     [ActionPermission("launch", AuthorityTokens.Admin.Security.AuthorityGroup)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]

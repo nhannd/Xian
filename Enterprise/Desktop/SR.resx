@@ -153,6 +153,15 @@
   <data name="ExceptionSaveUser" xml:space="preserve">
     <value>Unable to save User</value>
   </data>
+  <data name="MenuAdmin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="MenuAuthorityGroups" xml:space="preserve">
+    <value>Authority Groups</value>
+  </data>
+  <data name="MenuUsers" xml:space="preserve">
+    <value>Users</value>
+  </data>
   <data name="MessageConfirmDeleteSelectedItems" xml:space="preserve">
     <value>Are you sure you want to delete the selected item(s)?</value>
   </data>
