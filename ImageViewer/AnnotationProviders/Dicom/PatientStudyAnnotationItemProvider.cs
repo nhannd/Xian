@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							var age = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsAge) ? frame.ParentImageSop.PatientsAge : nil;
 							var sex = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsSex) ? frame.ParentImageSop.PatientsSex : nil;
 							if (age == nil && sex == nil)
-								return nil;
+								return string.Empty;
 							return string.Format(SR.FormatPatientsAgeSex, age, sex);
 						},
 						DicomDataFormatHelper.RawStringFormat
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							var sex = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsSex) ? frame.ParentImageSop.PatientsSex : nil;
 							var dob = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsBirthDate) ? DicomDataFormatHelper.DateFormat(frame.ParentImageSop.PatientsBirthDate) : nil;
 							if (age == nil && sex == nil && dob == nil)
-								return nil;
+								return string.Empty;
 							return string.Format(SR.FormatPatientsAgeSexBirthDate, age, sex, dob);
 						},
 						DicomDataFormatHelper.RawStringFormat
