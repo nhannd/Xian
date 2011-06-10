@@ -457,4 +457,7 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="LabelSmall" xml:space="preserve">
     <value>Small</value>
   </data>
+  <data name="MenuAdmin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
 </root>

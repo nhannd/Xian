@@ -85,11 +85,11 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			base.InitializeActionModel(model);
 
-			model.AddAction("duplicate", "Duplicate","Icons.DuplicateSmall.png", "Duplicate the selected authority group",
+			model.AddAction("duplicate", SR.TitleDuplicate, "Icons.DuplicateSmall.png", SR.TooltipDuplicateAuthorityGroup,
 								DuplicateSelectedItem,
 								AuthorityTokens.Admin.Security.AuthorityGroup);
 
-			model.AddAction("import", "Import", "Icons.ImportAuthorityTokensSmall.png", "Import authority tokens and groups from local plugins",
+			model.AddAction("import", SR.TitleImport, "Icons.ImportAuthorityTokensSmall.png", SR.TooltipImportAuthorityGroup,
 								Import,
 								AuthorityTokens.Admin.Security.AuthorityGroup);
 

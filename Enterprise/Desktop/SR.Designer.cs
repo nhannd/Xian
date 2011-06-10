@@ -241,6 +241,24 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate.
+        /// </summary>
+        public static string TitleDuplicate {
+            get {
+                return ResourceManager.GetString("TitleDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        public static string TitleImport {
+            get {
+                return ResourceManager.GetString("TitleImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reset Password.
         /// </summary>
         public static string TitleResetPassword {
@@ -273,6 +291,24 @@ namespace ClearCanvas.Enterprise.Desktop {
         public static string TitleUser {
             get {
                 return ResourceManager.GetString("TitleUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate the selected authority group.
+        /// </summary>
+        public static string TooltipDuplicateAuthorityGroup {
+            get {
+                return ResourceManager.GetString("TooltipDuplicateAuthorityGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import authority tokens and groups from local plugins.
+        /// </summary>
+        public static string TooltipImportAuthorityGroup {
+            get {
+                return ResourceManager.GetString("TooltipImportAuthorityGroup", resourceCulture);
             }
         }
     }
