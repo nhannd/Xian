@@ -229,8 +229,10 @@ namespace ClearCanvas.ImageViewer
 			return DicomAnnotationLayoutFactory.CreateLayout(this);
 		}
 
-		public override void Draw(DrawArgs drawArgs)
+		protected override void OnDrawing()
 		{
+			base.OnDrawing();
+
 			if (SpatialTransform is MammographyImageSpatialTransform)
 			{
 				string effectiveRowOrientation, effectiveColumnOrientation;
@@ -241,8 +243,6 @@ namespace ClearCanvas.ImageViewer
 				filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", effectiveColumnOrientation));
 				AnnotationLayout = DicomAnnotationLayoutFactory.CreateLayout(filterCandidates);
 			}
-
-			base.Draw(drawArgs);
 		}
 
 		/// <summary>
