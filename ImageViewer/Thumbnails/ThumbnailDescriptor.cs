@@ -10,8 +10,8 @@
 #endregion
 
 using System;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         public static IPresentationImage GetMiddlePresentationImage(IDisplaySet displaySet)
         {
             if (displaySet.PresentationImages.Count == 0)
-                return null;
+                throw new ArgumentException("Display set must have at least one image.");
 
             if (displaySet.PresentationImages.Count <= 2)
                 return displaySet.PresentationImages[0];

@@ -15,60 +15,68 @@ using System.Drawing.Imaging;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Annotations.Utilities;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public interface IThumbnailFactory
-    {
-        IThumbnailData CreateDummy(string message, Size size);
-        IThumbnailData CreateThumbnail(IPresentationImage image, Size size);
-    }
+    #region Bitmap Converter
 
-    public class StreamThumbnailFactory : IThumbnailFactory
+    public delegate IImageData BitmapConverter(Bitmap bitmap);
+
+    public class BitmapConverters
     {
-        private static IThumbnailData FromImage(Image bitmap)
+        public static BitmapConverter Null = bitmap => new CloneableImageData<Bitmap>(bitmap);
+        public static BitmapConverter MemoryStream = ToMemoryStreamImageData;
+
+        private static IImageData ToMemoryStreamImageData(Bitmap bitmap)
         {
             var stream = new MemoryStream();
             bitmap.Save(stream, ImageFormat.Png);
-            return new ThumbnailData<MemoryStream>(stream);
-        }
-
-        public IThumbnailData CreateDummy(string message, Size size)
-        {
-            using (var bitmap = ThumbnailFactory.CreateDummy(message, size.Width, size.Height))
-            {
-                return FromImage(bitmap);
-            }
-        }
-
-        public IThumbnailData CreateThumbnail(IPresentationImage image, Size size)
-        {
-            using (var bitmap = ThumbnailFactory.CreateThumbnail(image, size.Width, size.Height))
-            {
-                return FromImage(bitmap);
-            }
+            return new MemoryStreamImageData(stream);
         }
     }
 
-    public class BitmapThumbnailFactory : IThumbnailFactory
-    {
-        public IThumbnailData CreateDummy(string message, Size size)
-        {
-            var bitmap = ThumbnailFactory.CreateDummy(message, size.Width, size.Height);
-            return new ThumbnailData<Bitmap>(bitmap);
-        }
+    #endregion
 
-        public IThumbnailData CreateThumbnail(IPresentationImage image, Size size)
-        {
-            var bitmap = ThumbnailFactory.CreateThumbnail(image, size.Width, size.Height);
-            return new ThumbnailData<Bitmap>(bitmap);
-        }
+    #region Thumbnail Factory
+
+    public interface IThumbnailFactory<T> where T : class
+    {
+        IImageData CreateDummy(string message, Size size);
+        IImageData CreateImage(T sourceItem, Size size);
+        IImageData CreateError(Size size);
     }
 
-    public static class ThumbnailFactory
+    public class ThumbnailFactory : IThumbnailFactory<IPresentationImage>
     {
+        private readonly BitmapConverter _converter;
+
+        public ThumbnailFactory()
+            : this(BitmapConverters.Null)
+        {
+        }
+
+        public ThumbnailFactory(BitmapConverter converter)
+        {
+            Platform.CheckForNullReference(converter, "converter");
+            _converter = converter;
+        }
+
+        public IImageData CreateDummy(string message, Size size)
+        {
+            return _converter(CreateDummy(message, size.Width, size.Height));
+        }
+
+        public IImageData CreateImage(IPresentationImage image, Size size)
+        {
+            return _converter(CreateThumbnail(image, size.Width, size.Height));
+        }
+
+        public IImageData CreateError(Size size)
+        {
+            return _converter(CreateError(size.Width, size.Height));
+        }
+
         public static Bitmap CreateDummy(string message, int width, int height)
         {
             var bmp = new Bitmap(width, height);
@@ -96,7 +104,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             visibilityHelper.Hide();
 
             var bitmap = CreateThumbnailImage(image, width, height);
-
             using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap))
             {
                 DrawBorder(graphics, width, height);
@@ -108,65 +115,47 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             return bitmap;
         }
 
-        private static Bitmap CreateThumbnailImage(IPresentationImage image, int width, int height)
+        public static Bitmap CreateError(int width, int height)
         {
-            //TODO (CR June 2011): Not sure why this is so complicated ... doesn't need to be, that's for sure.
-            const int rasterResolution = 256;
-
             var bitmap = new Bitmap(width, height);
             using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
             {
-                try
-                {
-                    var imageAspectRatio = 1f;
-                    var thumbnailAspectRatio = (float)height / width;
-                    var thumbnailBounds = new RectangleF(0, 0, width, height);
-
-                    if (image is IImageGraphicProvider)
-                    {
-                        var imageGraphic = ((IImageGraphicProvider)image).ImageGraphic;
-                        imageAspectRatio = (float)imageGraphic.Rows / imageGraphic.Columns;
-                    }
-                    if (image is IImageSopProvider)
-                    {
-                        var ig = ((IImageSopProvider)image).Frame;
-                        if (!ig.PixelAspectRatio.IsNull)
-                            imageAspectRatio *= ig.PixelAspectRatio.Value;
-                        else if (!ig.PixelSpacing.IsNull)
-                            imageAspectRatio *= (float)ig.PixelSpacing.AspectRatio;
-                    }
-
-                    if (thumbnailAspectRatio >= imageAspectRatio)
-                    {
-                        thumbnailBounds.Width = width;
-                        thumbnailBounds.Height = width * imageAspectRatio;
-                        thumbnailBounds.Y = (height - thumbnailBounds.Height) / 2;
-                    }
-                    else
-                    {
-                        thumbnailBounds.Width = height / imageAspectRatio;
-                        thumbnailBounds.Height = height;
-                        thumbnailBounds.X = (width - thumbnailBounds.Width) / 2;
-                    }
-
-                    // rasterize any invariant vector graphics at a semi-normal image box resolution first before rendering as a thumbnail
-                    using (var raster = image.DrawToBitmap(rasterResolution, (int)(rasterResolution * imageAspectRatio)))
-                    {
-                        graphics.DrawImage(raster, thumbnailBounds);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // rendering the error text to a 100x100 icon is useless, so we'll just paint a placeholder error icon and log the icon error
-                    Platform.Log(LogLevel.Warn, ex, "Failed to render thumbnail with dimensions {0}x{1}", width, height);
-
-                    graphics.FillRectangle(Brushes.Black, 0, 0, width, height);
-                    graphics.DrawLine(Pens.WhiteSmoke, 0, 0, width, height);
-                    graphics.DrawLine(Pens.WhiteSmoke, 0, height, width, 0);
-                }
+                graphics.FillRectangle(Brushes.Black, 0, 0, width, height);
+                graphics.DrawLine(Pens.WhiteSmoke, 0, 0, width, height);
+                graphics.DrawLine(Pens.WhiteSmoke, 0, height, width, 0);
             }
-
             return bitmap;
+        }
+
+        private static Bitmap CreateThumbnailImage(IPresentationImage presentationImage, int width, int height)
+        {
+			if (!(presentationImage is PresentationImage))
+				return presentationImage.DrawToBitmap(width, height);
+
+			var image = (PresentationImage) presentationImage;
+			var bmp = new Bitmap(width, height);
+
+			var graphics = System.Drawing.Graphics.FromImage(bmp);
+			var contextId = graphics.GetHdc();
+			try
+			{
+				using (var surface = image.ImageRenderer.GetRenderingSurface(IntPtr.Zero, bmp.Width, bmp.Height))
+				{
+					surface.ContextID = contextId;
+					surface.ClipRectangle = new Rectangle(0, 0, bmp.Width, bmp.Height);
+
+					var drawArgs = new DrawArgs(surface, null, DrawMode.Render) {Dpi = 256};
+					image.Draw(drawArgs);
+					drawArgs = new DrawArgs(surface, null, DrawMode.Refresh) {Dpi = 256};
+					image.Draw(drawArgs);
+				}
+			}
+			finally
+			{
+				graphics.ReleaseHdc(contextId);
+				graphics.Dispose();
+			}
+			return bmp;
         }
 
         private static void DrawBorder(System.Drawing.Graphics graphics, int width, int height)
@@ -177,4 +166,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             }
         }
     }
+
+    #endregion
 }

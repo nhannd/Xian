@@ -1,44 +1,26 @@
 using System;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
 using System.ComponentModel;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    public interface IThumbnailGalleryItem : IGalleryItem, INotifyPropertyChanged, IDisposable
+    public class GalleryItem : IGalleryItem
     {
-        bool IsVisible { get; set; }
-        IThumbnailData ImageData { get; }
-    }
-
-    public class ThumbnailGalleryItem : IThumbnailGalleryItem
-    {
-        private IThumbnailData _imageData;
+        private IImageData _imageData;
         private string _name;
-        private bool _isVisible;
+        private string _description;
 
-        internal ThumbnailGalleryItem(object item)
+        internal GalleryItem(object item)
         {
             Platform.CheckForNullReference(item, "item");
             Item = item;
             _name = String.Empty;
+            _description = String.Empty;
         }
 
-        public bool IsVisible
-        {
-            get { return _isVisible; }
-            set
-            {
-                if (value == _isVisible)
-                    return;
-
-                _isVisible = value;
-                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("IsVisible"));
-            }
-        }
-
-        public IThumbnailData ImageData
+        public virtual IImageData ImageData
         {
             get { return _imageData; }
             set
@@ -59,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         public object Image
         {
-            get { return _imageData.Image; }
+            get { return ImageData == null ? null : ImageData.Image; }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -80,14 +62,21 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         public string Description
         {
-            get { return String.Empty; }
+            get { return _description; }
+            set
+            {
+                value = value ?? String.Empty;
+                if (value == _name)
+                    return;
+
+                _description = value;
+                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("Description"));
+            }
         }
 
         public object Item { get; private set; }
 
         #endregion
-
-        public object State { get; set; }
 
         private void Dispose(bool disposing)
         {

@@ -9,12 +9,12 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Desktop.Trees;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System.Collections.ObjectModel;
+using ClearCanvas.Desktop.Trees;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Comparers;
 

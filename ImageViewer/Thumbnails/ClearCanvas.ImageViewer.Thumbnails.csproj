@@ -49,7 +49,6 @@
       <DependentUpon>ThumbnailsSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Configuration\ThumbnailsConfigurationComponent.cs" />
-    <Compile Include="ThumbnailGalleryItemManager.cs" />
     <Compile Include="ImageSetTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
@@ -60,10 +59,13 @@
     <Compile Include="ThumbnailComponent.cs" />
     <Compile Include="ShowThumbnailsTool.cs" />
     <Compile Include="ThumbnailDescriptor.cs" />
-    <Compile Include="ThumbnailData.cs" />
+    <Compile Include="ImageData.cs" />
     <Compile Include="ThumbnailFactory.cs" />
+    <Compile Include="Gallery.cs" />
+    <Compile Include="GalleryItem.cs" />
     <Compile Include="ThumbnailGallery.cs" />
     <Compile Include="ThumbnailGalleryItem.cs" />
+    <Compile Include="ThumbnailGalleryItemFactory.cs" />
     <Compile Include="ThumbnailLoader.cs" />
     <Compile Include="ThumbnailRepository.cs" />
     <Compile Include="ThumbnailSizes.cs" />

@@ -52,11 +52,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
     public class LoadThumbnailResult
     {
-        public LoadThumbnailResult(ThumbnailDescriptor descriptor, IThumbnailData thumbnailData)
+        public LoadThumbnailResult(ThumbnailDescriptor descriptor, IImageData thumbnailData, Size size)
         {
             Platform.CheckForNullReference(descriptor, "descriptor");
             Platform.CheckForNullReference(thumbnailData, "thumbnailData");
 
+            Size = size;
             Descriptor = descriptor;
             ThumbnailData = thumbnailData;
         }
@@ -71,14 +72,15 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         }
 
         public readonly ThumbnailDescriptor Descriptor;
-        public readonly IThumbnailData ThumbnailData;
+        public readonly Size Size;
+        public readonly IImageData ThumbnailData;
         public readonly Exception Error;
     }
 
     public interface IThumbnailLoader
     {
-        IThumbnailData GetDummyThumbnail(string message, Size size);
-        bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IThumbnailData thumbnail);
+        IImageData GetDummyThumbnail(string message, Size size);
+        bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IImageData thumbnail);
 
         void LoadThumbnailAsync(LoadThumbnailRequest request);
         void Cancel(LoadThumbnailRequest request);
@@ -92,11 +94,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         private readonly List<LoadThumbnailRequest> _pendingRequests = new List<LoadThumbnailRequest>();
         private bool _isLoading;
 
-        public ThumbnailLoader()
-            : this(ThumbnailRepository.Create())
-        {
-        }
-
         public ThumbnailLoader(IThumbnailRepository repository)
         {
             _repository = repository;
@@ -104,12 +101,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         #region IThumbnailLoader Members
 
-        public IThumbnailData GetDummyThumbnail(string message, Size size)
+        public IImageData GetDummyThumbnail(string message, Size size)
         {
             return _repository.GetDummyThumbnail(message, size);
         }
 
-        public bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IThumbnailData bitmap)
+        public bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IImageData bitmap)
         {
             return _repository.TryGetThumbnail(descriptor, size, out bitmap);
         }
@@ -168,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                 try
                 {
                     var image = _repository.GetThumbnail(request.Descriptor, request.Size);
-                    result = new LoadThumbnailResult(request.Descriptor, image);
+                    result = new LoadThumbnailResult(request.Descriptor, image, request.Size);
                 }
                 catch (Exception e)
                 {

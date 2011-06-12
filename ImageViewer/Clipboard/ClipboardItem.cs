@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
 using ClearCanvas.Desktop;
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		void Unlock();
 	}
 
-	internal class ClipboardItem : IClipboardItem, IGalleryItem, IDisposable
+	internal class ClipboardItem : IClipboardItem, IGalleryItem
 	{
 		private object _item;
 		private Image _image;
@@ -132,5 +133,14 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		}
 
 		#endregion
+
+	    #region Implementation of INotifyPropertyChanged
+
+        /// <summary>
+        /// Unused.
+        /// </summary>
+	    public event PropertyChangedEventHandler PropertyChanged;
+
+	    #endregion
 	}
 }

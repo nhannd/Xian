@@ -12,10 +12,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -37,14 +36,14 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		private readonly ImageSetTreeInfo _dummyTreeInfo;
 		private ImageSetTreeInfo _currentTreeInfo;
-        private ThumbnailGallery<IDisplaySet> _thumbnailGallery;
+        private ThumbnailGallery _thumbnailGallery;
 	
 		public ThumbnailComponent(IDesktopWindow desktopWindow)
 		{
 			_desktopWindow = desktopWindow;
 			_dummyTreeInfo = new ImageSetTreeInfo(new ObservableList<IImageSet>(), null);
 			_currentTreeInfo = _dummyTreeInfo;
-		    _thumbnailGallery = new BindingListThumbnailGallery<IDisplaySet>();
+		    _thumbnailGallery = new ThumbnailGallery();
 		}
 
 		#region Presentation Model
@@ -62,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		public BindingList<IGalleryItem> Thumbnails
 		{
-            get { return (BindingList<IGalleryItem>)_thumbnailGallery.Thumbnails; }
+            get { return (BindingList<IGalleryItem>)_thumbnailGallery.GalleryItems; }
 		}
 
 		#endregion
