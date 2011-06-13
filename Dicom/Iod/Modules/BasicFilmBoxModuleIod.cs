@@ -677,7 +677,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
     /// <summary>
     /// Film size identification.
     /// </summary>
-    [TypeConverter(typeof(FilmSize.DisplayValueConverter))]
+    [TypeConverter(typeof(DisplayValueConverter))]
     public class FilmSize
 	{
 		#region TypeConverter
@@ -730,29 +730,31 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		}
 
 		// Predefined formats
-    	public static FilmSize Dimension_8in_x_10in = FromDicomString("8INX10IN");
-		public static FilmSize Dimension_8_5in_x_11in = FromDicomString("8_5INX11IN");
-		public static FilmSize Dimension_10in_x_12in = FromDicomString("10INX12IN");
-		public static FilmSize Dimension_10in_x_14in = FromDicomString("10INX14IN"); //  corresponds with 25.7CMX36.4CM
-		public static FilmSize Dimension_11in_x_14in = FromDicomString("11INX14IN");
-		public static FilmSize Dimension_11in_x_17in = FromDicomString("11INX17IN");
-		public static FilmSize Dimension_14in_x_14in = FromDicomString("14INX14IN");
-		public static FilmSize Dimension_14in_x_17in = FromDicomString("14INX17IN");
-		public static FilmSize Dimension_24cm_x_24cm = FromDicomString("24CMX24CM");
-		public static FilmSize Dimension_24cm_x_30cm = FromDicomString("24CMX30CM");
-		public static FilmSize A3 = FromDicomString("A3");	// 297mm x 420mm
-		public static FilmSize A4 = FromDicomString("A4");	// 210mm x 297mm
+		public static readonly FilmSize Dimension_8in_x_10in = FromDicomString("8INX10IN");
+		public static readonly FilmSize Dimension_8_5in_x_11in = FromDicomString("8_5INX11IN");
+		public static readonly FilmSize Dimension_10in_x_12in = FromDicomString("10INX12IN");
+		public static readonly FilmSize Dimension_10in_x_14in = FromDicomString("10INX14IN"); //  corresponds with 25.7CMX36.4CM
+		public static readonly FilmSize Dimension_11in_x_14in = FromDicomString("11INX14IN");
+		public static readonly FilmSize Dimension_11in_x_17in = FromDicomString("11INX17IN");
+		public static readonly FilmSize Dimension_14in_x_14in = FromDicomString("14INX14IN");
+		public static readonly FilmSize Dimension_14in_x_17in = FromDicomString("14INX17IN");
+		public static readonly FilmSize Dimension_24cm_x_24cm = FromDicomString("24CMX24CM");
+		public static readonly FilmSize Dimension_24cm_x_30cm = FromDicomString("24CMX30CM");
+		public static readonly FilmSize A3 = FromDicomString("A3");	// 297mm x 420mm
+		public static readonly FilmSize A4 = FromDicomString("A4");	// 210mm x 297mm
 
-		// A list of standard film sizes that is defined by the DICOM Standard
-		public static List<FilmSize> StandardFilmSizes = new List<FilmSize>
-            {
-    			Dimension_8in_x_10in, Dimension_8_5in_x_11in,
-    			Dimension_10in_x_12in, Dimension_10in_x_14in,
-    			Dimension_11in_x_14in, Dimension_11in_x_17in,
-    			Dimension_14in_x_14in, Dimension_14in_x_17in,
-    			Dimension_24cm_x_24cm, Dimension_24cm_x_30cm,
-    			A3, A4
-            };
+    	/// <summary>
+    	/// Gets a list of standard film sizes defined in the DICOM Standard.
+    	/// </summary>
+    	public static readonly IList<FilmSize> StandardFilmSizes = new List<FilmSize>
+    	                                                           	{
+    	                                                           		Dimension_8in_x_10in, Dimension_8_5in_x_11in,
+    	                                                           		Dimension_10in_x_12in, Dimension_10in_x_14in,
+    	                                                           		Dimension_11in_x_14in, Dimension_11in_x_17in,
+    	                                                           		Dimension_14in_x_14in, Dimension_14in_x_17in,
+    	                                                           		Dimension_24cm_x_24cm, Dimension_24cm_x_30cm,
+    	                                                           		A3, A4
+    	                                                           	}.AsReadOnly();
 
 		public static FilmSize FromDicomString(string dicomString)
 		{
@@ -870,6 +872,22 @@ namespace ClearCanvas.Dicom.Iod.Modules
                 ? ConvertToInches(_width)
                 : ConvertToCentimeters(_width);
 		}
+
+    	public override int GetHashCode()
+    	{
+    		var hashCode = 0x126F24A2;
+    		var dicomString = DicomString;
+    		if (!string.IsNullOrEmpty(dicomString))
+    			hashCode ^= dicomString.GetHashCode();
+    		return hashCode;
+    	}
+
+    	public override bool Equals(object obj)
+    	{
+    		if (obj is FilmSize)
+    			return Equals(DicomString, ((FilmSize) obj).DicomString);
+    		return false;
+    	}
 
 		#endregion
 
