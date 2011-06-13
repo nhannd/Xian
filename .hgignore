@@ -53,9 +53,3 @@ ImageServer/Web/Application/ClientBin/Silverlight.*.xap
 ImageServer/Web/Application/Logging.config
 ImageServer/Web/Application/Web.config
 ImageServer/Web/Application/critical.config
-
-#My own local changes
-/Desktop/Executable/logging.config
-/ImageServer/Executable/logging.config
-/ImageServer/Services/WorkQueue/app.config
-/ImageViewer/ImageViewer_Shreds_dist.config
