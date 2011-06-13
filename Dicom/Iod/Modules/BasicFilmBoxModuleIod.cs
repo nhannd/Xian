@@ -889,6 +889,11 @@ namespace ClearCanvas.Dicom.Iod.Modules
     		return false;
     	}
 
+    	public override string ToString()
+    	{
+    		return DicomString;
+    	}
+
 		#endregion
 
 		#region Private Methods
