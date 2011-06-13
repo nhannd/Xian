@@ -11,6 +11,7 @@
 
 #if UNIT_TESTS
 
+using System.Collections.Generic;
 using NUnit.Framework;
 using ClearCanvas.Dicom.Iod.Modules;
 
@@ -38,7 +39,7 @@ namespace ClearCanvas.Dicom.Tests
 		public void Supported_FilmSizes_Test()
 		{
 			var supportedFilmSizes = FilmSize.StandardFilmSizes;
-			Assert.IsNotEmpty(supportedFilmSizes);
+			Assert.IsNotEmpty(new List<FilmSize>(supportedFilmSizes));
 		}
 
 		[Test]
