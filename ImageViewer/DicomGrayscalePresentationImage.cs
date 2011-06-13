@@ -9,7 +9,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
@@ -17,7 +16,6 @@ using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
-using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -98,6 +96,9 @@ namespace ClearCanvas.ImageViewer
 		{
 			_dicomGraphics = CollectionUtils.SelectFirst(base.CompositeImageGraphic.Graphics,
 				delegate(IGraphic test) { return test.Name == "DICOM"; }) as CompositeGraphic;
+
+			if (AnnotationLayout is MammogramAnnotationLayoutProxy)
+				((MammogramAnnotationLayoutProxy) AnnotationLayout).OwnerImage = this;
 
 			Initialize();
 		}
@@ -226,23 +227,9 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>
 		protected override IAnnotationLayout CreateAnnotationLayout()
 		{
+			if (ImageSop.Modality == "MG")
+				return new MammogramAnnotationLayoutProxy {OwnerImage = this};
 			return DicomAnnotationLayoutFactory.CreateLayout(this);
-		}
-
-		protected override void OnDrawing()
-		{
-			base.OnDrawing();
-
-			if (SpatialTransform is MammographyImageSpatialTransform)
-			{
-				string effectiveRowOrientation, effectiveColumnOrientation;
-				((MammographyImageSpatialTransform) SpatialTransform).GetEffectivePosteriorPatientOrientation(out effectiveRowOrientation, out effectiveColumnOrientation);
-				var filterCandidates = new List<KeyValuePair<string, string>>();
-				filterCandidates.Add(new KeyValuePair<string, string>("Modality", ImageSop.Modality));
-				filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Row", effectiveRowOrientation));
-				filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", effectiveColumnOrientation));
-				AnnotationLayout = DicomAnnotationLayoutFactory.CreateLayout(filterCandidates);
-			}
 		}
 
 		/// <summary>
