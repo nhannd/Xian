@@ -40,7 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cache.cs" />
     <Compile Include="Configuration\ConfigurationPageProvider.cs" />
     <Compile Include="Configuration\ThumbnailsSettings.cs" />
     <Compile Include="Configuration\ThumbnailsSettings.Designer.cs">

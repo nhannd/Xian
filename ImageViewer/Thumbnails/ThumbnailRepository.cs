@@ -31,25 +31,25 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             //if (ThumbnailCache.IsSupported)
             //    return new CachingThumbnailRepository(ThumbnailCache.Create("viewer-display-sets"));
 
-            return new CachelessThumbnailRepository();
+            return new NullThumbnailRepository();
         }
     }
 
-    internal class CachelessThumbnailRepository : ThumbnailRepository
+    internal class NullThumbnailRepository : ThumbnailRepository
     {
         private readonly IThumbnailFactory<IPresentationImage> _factory;
 
-        public CachelessThumbnailRepository()
+        public NullThumbnailRepository()
             : this(new ThumbnailFactory())
         {
         }
 
-        public CachelessThumbnailRepository(BitmapConverter bitmapConverter)
+        public NullThumbnailRepository(BitmapConverter bitmapConverter)
             : this(new ThumbnailFactory(bitmapConverter))
         {
         }
 
-        public CachelessThumbnailRepository(IThumbnailFactory<IPresentationImage> factory)
+        public NullThumbnailRepository(IThumbnailFactory<IPresentationImage> factory)
         {
             Platform.CheckForNullReference(factory, "factory");
             _factory = factory;
@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         }
     }
 
+/*
     internal class CachingThumbnailRepository : ThumbnailRepository
     {
         private readonly ICache<IImageData> _cache;
@@ -152,4 +153,5 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             return _factory.CreateError(size);
         }
     }
+ */
 }

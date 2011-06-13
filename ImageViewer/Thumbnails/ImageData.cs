@@ -80,6 +80,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         #region IImageData Members
 
         object IImageData.Image { get { return Image; } }
+
         IImageData IImageData.Clone()
         {
             return Clone();

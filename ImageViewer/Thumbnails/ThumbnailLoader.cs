@@ -80,11 +80,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
     public interface IThumbnailLoader
     {
         IImageData GetDummyThumbnail(string message, Size size);
+        IImageData GetErrorThumbnail(Size size);
         bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IImageData thumbnail);
 
         void LoadThumbnailAsync(LoadThumbnailRequest request);
         void Cancel(LoadThumbnailRequest request);
-        void Cancel(IEnumerable<LoadThumbnailRequest> requests);
     }
 
     public class ThumbnailLoader : IThumbnailLoader
@@ -104,6 +104,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         public IImageData GetDummyThumbnail(string message, Size size)
         {
             return _repository.GetDummyThumbnail(message, size);
+        }
+
+        public IImageData GetErrorThumbnail(Size size)
+        {
+            return _repository.GetErrorThumbnail(size);
         }
 
         public bool TryGetThumbnail(ThumbnailDescriptor descriptor, Size size, out IImageData bitmap)
@@ -128,16 +133,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         {
             lock(_syncLock)
             {
-                _pendingRequests.Remove(request);
-            }
-        }
-
-        public void Cancel(IEnumerable<LoadThumbnailRequest> requests)
-        {
-            lock (_syncLock)
-            {
-                foreach(var request in requests)
-                _pendingRequests.Remove(request);
+                while (true)
+                {
+                    if (!_pendingRequests.Remove(request))
+                        break;
+                }
             }
         }
 

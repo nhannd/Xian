@@ -1,11 +1,10 @@
 using System;
-using System.Drawing;
 using System.Threading;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
-    internal partial class ThumbnailGalleryItemFactory : IGalleryItemFactory<IDisplaySet>, IDisposable
+    internal partial class ThumbnailGalleryItemFactory : IGalleryItemFactory<IDisplaySet>
     {
         private readonly GetThumbnailLoader _getLoader;
         private readonly SynchronizationContext _synchronizationContext;
@@ -22,19 +21,17 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         public IThumbnailLoader Loader { get { return _getLoader(); } }
 
         private string LoadingMessage { get { return SR.MessageLoading; } }
-        private string LoadFailedMessage { get { return SR.MessageLoadFailed; } }
         private string NoImagesMessage { get { return SR.MessageNoImages; } }
 
         #region IGalleryItemFactory<IDisplaySet> Members
 
         public IGalleryItem Create(IDisplaySet displaySet)
         {
-            var newItem = new ThumbnailGalleryItem(this, displaySet);
-            return newItem;
+            return new ThumbnailGalleryItem(this, displaySet);
         }
 
         #endregion
-    
+
         private static string GetDisplaySetName(IDisplaySet displaySet)
         {
             string name = displaySet.Name;
@@ -48,14 +45,5 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
             return String.Format(SR.FormatThumbnailName, number, name);
         }
-
-        #region IDisposable
-
-        public void Dispose()
-        {
-        }
-
-        #endregion
-
     }
 }

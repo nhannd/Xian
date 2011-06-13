@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using System;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
@@ -21,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         IGalleryItem Create(TSourceItem sourceItem);
     }
 
-    public class Gallery<TSourceItem> : IGallery<TSourceItem> where TSourceItem : class
+    public class Gallery<TSourceItem> : IGallery<TSourceItem> where TSourceItem : class, IDisposable
     {
         private IObservableList<TSourceItem> _sourceItems;
         private int _lastChangedIndex = -1;
@@ -62,11 +64,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
                 _sourceItems = value;
 
-                foreach (var item in GalleryItems)
-                    OnItemRemoved(item);
-
-                GalleryItems.Clear();
-
+                Clear();
                 if (_sourceItems == null)
                     return;
 
@@ -154,6 +152,37 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         protected virtual void OnItemRemoved(IGalleryItem item)
         {
+            item.Dispose();
         }
+
+        private void Clear()
+        {
+            foreach (var item in GalleryItems)
+                OnItemRemoved(item);
+
+            GalleryItems.Clear();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                Clear();
+        }
+
+        #region Implementation of IDisposable
+
+        public void Dispose()
+        {
+            try
+            {
+                Dispose(true);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Debug, e);
+            }
+        }
+
+        #endregion
     }
 }

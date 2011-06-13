@@ -80,21 +80,22 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         public static Bitmap CreateDummy(string message, int width, int height)
         {
             var bmp = new Bitmap(width, height);
-            System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bmp);
-
-            Brush brush = new SolidBrush(Color.WhiteSmoke);
-            var font = new Font("Arial", 10.0f);
-
-            var format = new StringFormat {Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center};
-
-            graphics.DrawString(message, font, brush, new Rectangle(0, 0, width, height), format);
-            DrawBorder(graphics, width, height);
-            graphics.Dispose();
-
-            format.Dispose();
-            font.Dispose();
-            brush.Dispose();
-
+            using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bmp))
+            {
+                using (Brush brush = new SolidBrush(Color.WhiteSmoke))
+                {
+                    var fontSize = Math.Min(width, height)/10f;
+                    //naively, assume message should be 1/10th the size of the thumbnail.
+                    using (var font = new Font("Arial", fontSize))
+                    {
+                        using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                        {
+                            graphics.DrawString(message, font, brush, new Rectangle(0, 0, width, height), format);
+                            DrawBorder(graphics, width, height);
+                        }
+                    }
+                }
+            }
             return bmp;
         }
 
@@ -105,13 +106,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
             var bitmap = CreateThumbnailImage(image, width, height);
             using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap))
-            {
                 DrawBorder(graphics, width, height);
 
-                image.Dispose();
-                graphics.Dispose();
-            }
-
+            visibilityHelper.Restore();
             return bitmap;
         }
 
@@ -135,26 +132,29 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			var image = (PresentationImage) presentationImage;
 			var bmp = new Bitmap(width, height);
 
-			var graphics = System.Drawing.Graphics.FromImage(bmp);
-			var contextId = graphics.GetHdc();
-			try
+			using (var graphics = System.Drawing.Graphics.FromImage(bmp))
 			{
-				using (var surface = image.ImageRenderer.GetRenderingSurface(IntPtr.Zero, bmp.Width, bmp.Height))
-				{
-					surface.ContextID = contextId;
-					surface.ClipRectangle = new Rectangle(0, 0, bmp.Width, bmp.Height);
+			    var contextId = graphics.GetHdc();
+			    var dpi = 512/Math.Min(width, height); //Assume 512 corresponds to "normal" screen dpi
 
-					var drawArgs = new DrawArgs(surface, null, DrawMode.Render) {Dpi = 256};
-					image.Draw(drawArgs);
-					drawArgs = new DrawArgs(surface, null, DrawMode.Refresh) {Dpi = 256};
-					image.Draw(drawArgs);
-				}
-			}
-			finally
-			{
-				graphics.ReleaseHdc(contextId);
-				graphics.Dispose();
-			}
+			    try
+			    {
+			        using (var surface = image.ImageRenderer.GetRenderingSurface(IntPtr.Zero, bmp.Width, bmp.Height))
+			        {
+			            surface.ContextID = contextId;
+			            surface.ClipRectangle = new Rectangle(0, 0, bmp.Width, bmp.Height);
+
+			            var drawArgs = new DrawArgs(surface, null, DrawMode.Render) {Dpi = dpi};
+			            image.Draw(drawArgs);
+			            drawArgs = new DrawArgs(surface, null, DrawMode.Refresh) {Dpi = dpi};
+			            image.Draw(drawArgs);
+			        }
+			    }
+                finally
+                {
+                    graphics.ReleaseHdc(contextId);
+                }
+            }
 			return bmp;
         }
 

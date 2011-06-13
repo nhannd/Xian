@@ -111,12 +111,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         public static IPresentationImage GetMiddlePresentationImage(IDisplaySet displaySet)
         {
             if (displaySet.PresentationImages.Count == 0)
-                throw new ArgumentException("Display set must have at least one image.");
+                return null;
 
-            if (displaySet.PresentationImages.Count <= 2)
-                return displaySet.PresentationImages[0];
-
-            return displaySet.PresentationImages[displaySet.PresentationImages.Count / 2];
+            return displaySet.PresentationImages.Count <= 2 
+                ? displaySet.PresentationImages[0] 
+                : displaySet.PresentationImages[displaySet.PresentationImages.Count / 2];
         }
 
         #endregion

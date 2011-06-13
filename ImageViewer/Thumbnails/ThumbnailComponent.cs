@@ -166,6 +166,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			UpdateTreeInfo();
 			
 			base.Start();
+		    _thumbnailGallery.IsVisible = true;
 		}
 
 		public override void Stop()
@@ -182,12 +183,10 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			_desktopWindow.Workspaces.ItemClosed -= OnWorkspaceClosed;
 
 			SetImageViewer(null);
-
             _thumbnailGallery.Dispose();
-		    _thumbnailGallery = null;
-			
+
             base.Stop();
-		}
+        }
 
 		private void OnActiveWorkspaceChanged(object sender, ItemEventArgs<Workspace> e)
 		{

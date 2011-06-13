@@ -146,6 +146,7 @@
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\BufferCache.cs" />
+    <Compile Include="Common\Cache.cs" />
     <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Common\Diagnostics.cs" />
     <Compile Include="Common\LargeObjectContainer.cs" />

@@ -6,6 +6,8 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
+    //NOTE: could move the generic part(s) of this down to Desktop later.
+
     public class GalleryItem : IGalleryItem
     {
         private IImageData _imageData;
@@ -20,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             _description = String.Empty;
         }
 
-        public virtual IImageData ImageData
+        public IImageData ImageData
         {
             get { return _imageData; }
             set
@@ -32,8 +34,8 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                     _imageData.Dispose();
 
                 _imageData = value;
-                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("ImageData"));
                 EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("Image"));
+                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("ImageData"));
             }
         }
 
@@ -78,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         #endregion
 
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposing)
                 return;

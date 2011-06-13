@@ -12,11 +12,11 @@
 using System;
 using ClearCanvas.Common.Caching;
 
-namespace ClearCanvas.ImageViewer.Thumbnails
+namespace ClearCanvas.ImageViewer.Common
 {
     public interface ICache<T> where T : class
     {
-        void Put(string key, T buffer);
+        void Put(string key, T item);
         T Get(string key);
         void Remove(string key);
         void Clear();
