@@ -9,11 +9,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
     /// <summary>
     /// Defines an interfaces to an object that provides a cache implementation.

@@ -9,7 +9,7 @@
 
 #endregion
 
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
 	/// <summary>
 	/// Implementation of <see cref="ICacheClient"/> for <see cref="DefaultCacheProvider"/>.

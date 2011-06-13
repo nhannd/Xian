@@ -43,6 +43,8 @@ ImageViewer/ClearCanvas.ImageViewer.xml
 
 # Viewer local datastore files
 dicom_datastore/*.sdf
+*.dcm
+*studyXml.xml
 
 # ImageServer files generated and copied by build scripts
 ImageServer/Web/Application/App_Themes/Default/images/LoginSplash.png
@@ -51,3 +53,9 @@ ImageServer/Web/Application/ClientBin/Silverlight.*.xap
 ImageServer/Web/Application/Logging.config
 ImageServer/Web/Application/Web.config
 ImageServer/Web/Application/critical.config
+
+#My own local changes
+/Desktop/Executable/logging.config
+/ImageServer/Executable/logging.config
+/ImageServer/Services/WorkQueue/app.config
+/ImageViewer/ImageViewer_Shreds_dist.config

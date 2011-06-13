@@ -9,16 +9,12 @@
 
 #endregion
 
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
 	/// <summary>
-	/// Encapsulates options for the <see cref="ICacheClient.Get"/> method.
+	/// Encapsulates arguments to the <see cref="ICacheProvider.Initialize"/> methods.
 	/// </summary>
-	public class CacheGetOptions : CacheOptionsBase
+	public class CacheProviderInitializationArgs
 	{
-		public CacheGetOptions(string region)
-			: base(region)
-		{
-		}
 	}
 }

@@ -11,7 +11,7 @@
 
 using Castle.Core.Interceptor;
 using System.ServiceModel;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Common
 {

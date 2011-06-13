@@ -9,8 +9,7 @@
 
 #endregion
 
-using ClearCanvas.Common;
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
 	public abstract class CacheOptionsBase
 	{
