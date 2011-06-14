@@ -146,6 +146,7 @@
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\BufferCache.cs" />
+    <Compile Include="Common\Cache.cs" />
     <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Common\Diagnostics.cs" />
     <Compile Include="Common\LargeObjectContainer.cs" />
@@ -481,7 +482,7 @@
     <Compile Include="Mathematics\Vector3D.cs" />
     <Compile Include="PriorStudyFinder.cs" />
     <Compile Include="PriorStudyLoader.cs" />
-    <Compile Include="ReferenceCountedObjectWrapper.cs" />
+    <Compile Include="Common\ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\BackBuffer.cs" />

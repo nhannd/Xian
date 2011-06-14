@@ -9,12 +9,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
 	internal class CacheClientLoggingDecorator : ICacheClient
 	{

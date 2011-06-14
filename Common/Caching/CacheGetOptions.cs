@@ -9,17 +9,16 @@
 
 #endregion
 
-namespace ClearCanvas.Enterprise.Common.Caching
+namespace ClearCanvas.Common.Caching
 {
 	/// <summary>
-	/// Defines an interface to allow a class to define its own custom cache key string.
+	/// Encapsulates options for the <see cref="ICacheClient.Get"/> method.
 	/// </summary>
-	public interface IDefinesCacheKey
+	public class CacheGetOptions : CacheOptionsBase
 	{
-		/// <summary>
-		/// Gets the cache key defined by this instance.
-		/// </summary>
-		/// <returns></returns>
-		string GetCacheKey();
+		public CacheGetOptions(string region)
+			: base(region)
+		{
+		}
 	}
 }

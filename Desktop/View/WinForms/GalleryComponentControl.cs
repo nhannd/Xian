@@ -177,7 +177,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
 			if (item.Image != null)
-				_listView.LargeImageList.Images[keyIndex] = item.Image;
+				_listView.LargeImageList.Images[keyIndex] = (Image)item.Image;
 			else
 				_listView.LargeImageList.Images.RemoveAt(keyIndex);
 
@@ -194,7 +194,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			IGalleryItem galleryItem = CastToGalleryItem(item);
 
 			string imageKey = Guid.NewGuid().ToString();
-			_listView.LargeImageList.Images.Add(imageKey, galleryItem.Image);
+			_listView.LargeImageList.Images.Add(imageKey, (Image)galleryItem.Image);
 			ListViewItem lvi = new ListViewItem(galleryItem.Name, imageKey);
 
 			AddSubItems(lvi, galleryItem);
