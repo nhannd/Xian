@@ -27,6 +27,7 @@ namespace ClearCanvas.Desktop.Actions
     {
         private IResourceResolver _resolver;
         private Dictionary<object, ClickAction> _actions;
+		private int _separatorCount;
 
 		/// <summary>
 		/// Constructor.
@@ -112,6 +113,12 @@ namespace ClearCanvas.Desktop.Actions
 		public ClickAction AddAction(object key, string displayName, string icon, string tooltip, ClickHandlerDelegate clickHandler, ISpecification permissionSpec)
 		{
 			return AddActionHelper(key, displayName, icon, tooltip, clickHandler, permissionSpec);
+		}
+
+		public void AddSeparator()
+		{
+			var name = string.Format("sep{0}", _separatorCount++);
+			this.InsertSeparator(new ActionPath(string.Format("root/{0}", name), _resolver));
 		}
 		
 		private ClickAction AddActionHelper(object key, string displayName, string icon, string tooltip, ClickHandlerDelegate clickHandler, ISpecification permissionSpec)

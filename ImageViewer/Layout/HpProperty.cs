@@ -10,9 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
@@ -97,12 +94,13 @@ namespace ClearCanvas.ImageViewer.Layout
 		}
 
 		/// <summary>
-		/// Gets the application component that provides editing of this property, if <see cref="IHpProperty.HasEditor"/> returns true.
+		/// Called to invoke custom editing of this property, if <see cref="IHpProperty.HasEditor"/> returns true. 
 		/// </summary>
+		/// <param name="context"></param>
 		/// <returns></returns>
-		public virtual IApplicationComponent GetEditorComponent()
+		public virtual bool EditProperty(IHpPropertyEditContext context)
 		{
-			return null;
+			return false;
 		}
 
 		#endregion

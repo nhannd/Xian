@@ -13,6 +13,11 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
+	public interface IHpPropertyEditContext
+	{
+		ApplicationComponentExitCode ShowModalEditor(IApplicationComponent editorComponent);
+	}
+
 	/// <summary>
 	/// Defines the interface to a single HP "property", displayed in one of the HP editor property tables.
 	/// </summary>
@@ -51,9 +56,10 @@ namespace ClearCanvas.ImageViewer.Layout
 		bool HasEditor { get; }
 
 		/// <summary>
-		/// Gets the application component that provides editing of this property, if <see cref="HasEditor"/> returns true.
+		/// Called to invoke custom editing of this property, if <see cref="HasEditor"/> returns true. 
 		/// </summary>
+		/// <param name="context"></param>
 		/// <returns></returns>
-		IApplicationComponent GetEditorComponent();
+		bool EditProperty(IHpPropertyEditContext context);
 	}
 }
