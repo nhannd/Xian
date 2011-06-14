@@ -214,7 +214,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to C-Find failed: identifier does not match Sop Class..
+        ///   Looks up a localized string similar to C-Find failed: identifier does not match SOP Class..
         /// </summary>
         public static string ExceptionFindFailedIdentifierDoesNotMatchSOPClass {
             get {
@@ -250,7 +250,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to C-Find refused: Sop Class not supported..
+        ///   Looks up a localized string similar to C-Find refused: SOP Class not supported..
         /// </summary>
         public static string ExceptionFindRefusedSOPClassNotSupported {
             get {
@@ -277,7 +277,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The object passed is is not of the right type for Equals comparison..
+        ///   Looks up a localized string similar to The object passed is not of the right type for Equals comparison..
         /// </summary>
         public static string ExceptionGeneralEqualsWrongType {
             get {
@@ -466,7 +466,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Series instance UID must not be empty..
+        ///   Looks up a localized string similar to SeriesInstanceUID must not be empty..
         /// </summary>
         public static string ExceptionInvalidSeriesInstanceUID {
             get {
@@ -484,7 +484,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SOP instance UID must not be empty..
+        ///   Looks up a localized string similar to SOPInstanceUID must not be empty..
         /// </summary>
         public static string ExceptionInvalidSOPInstanceUID {
             get {
@@ -493,7 +493,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Study instance UID must not be empty..
+        ///   Looks up a localized string similar to StudyInstanceUID must not be empty..
         /// </summary>
         public static string ExceptionInvalidStudyInstanceUID {
             get {
@@ -502,7 +502,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Transfer Syntax UID cannot be empty..
+        ///   Looks up a localized string similar to The TransferSyntaxUID cannot be empty..
         /// </summary>
         public static string ExceptionInvalidTransferUID {
             get {
@@ -529,7 +529,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to C-Move failed: Identifier does not match Sop Class..
+        ///   Looks up a localized string similar to C-Move failed: Identifier does not match SOP Class..
         /// </summary>
         public static string ExceptionMoveFailedIdentifierDoesNotMatchSOPClass {
             get {
@@ -556,7 +556,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to C-Move failed: Sop Class not supported..
+        ///   Looks up a localized string similar to C-Move failed: SOP Class not supported..
         /// </summary>
         public static string ExceptionMoveFailedSopClassNotSupported {
             get {
@@ -601,7 +601,7 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Poorly formatted Dicom date range {0}..
+        ///   Looks up a localized string similar to Poorly formatted DICOM date range {0}..
         /// </summary>
         public static string ExceptionPoorlyFormattedDateRange {
             get {
