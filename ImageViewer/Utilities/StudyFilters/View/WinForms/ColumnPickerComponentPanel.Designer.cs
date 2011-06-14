@@ -33,7 +33,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			System.Windows.Forms.GroupBox _grpSpecialColumns;
 			System.Windows.Forms.GroupBox _grpSelectedColumns;
 			this._btnAddDicomColumn = new System.Windows.Forms.Button();
-			this._icons = new System.Windows.Forms.ImageList(this.components);
 			this._lstDicomColumns = new System.Windows.Forms.ListBox();
 			this._txtFilterDicomColumns = new System.Windows.Forms.TextBox();
 			this._splitSpecialColumnsResizer = new System.Windows.Forms.Splitter();
@@ -87,20 +86,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _btnAddDicomColumn
 			// 
 			resources.ApplyResources(this._btnAddDicomColumn, "_btnAddDicomColumn");
-			this._btnAddDicomColumn.ImageList = this._icons;
 			this._btnAddDicomColumn.Name = "_btnAddDicomColumn";
 			this._tooltips.SetToolTip(this._btnAddDicomColumn, resources.GetString("_btnAddDicomColumn.ToolTip"));
 			this._btnAddDicomColumn.UseVisualStyleBackColor = true;
 			this._btnAddDicomColumn.Click += new System.EventHandler(this.OnAddDicomColumnClick);
-			// 
-			// _icons
-			// 
-			this._icons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_icons.ImageStream")));
-			this._icons.TransparentColor = System.Drawing.Color.Magenta;
-			this._icons.Images.SetKeyName(0, "BuilderAdd.bmp");
-			this._icons.Images.SetKeyName(1, "BuilderDelete.bmp");
-			this._icons.Images.SetKeyName(2, "BuilderMoveDown.bmp");
-			this._icons.Images.SetKeyName(3, "BuilderMoveUp.bmp");
 			// 
 			// _lstDicomColumns
 			// 
@@ -142,7 +131,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _btnAddDicomTag
 			// 
 			resources.ApplyResources(this._btnAddDicomTag, "_btnAddDicomTag");
-			this._btnAddDicomTag.ImageList = this._icons;
 			this._btnAddDicomTag.Name = "_btnAddDicomTag";
 			this._tooltips.SetToolTip(this._btnAddDicomTag, resources.GetString("_btnAddDicomTag.ToolTip"));
 			this._btnAddDicomTag.UseVisualStyleBackColor = true;
@@ -184,7 +172,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _btnAddSpecialColumn
 			// 
 			resources.ApplyResources(this._btnAddSpecialColumn, "_btnAddSpecialColumn");
-			this._btnAddSpecialColumn.ImageList = this._icons;
 			this._btnAddSpecialColumn.Name = "_btnAddSpecialColumn";
 			this._tooltips.SetToolTip(this._btnAddSpecialColumn, resources.GetString("_btnAddSpecialColumn.ToolTip"));
 			this._btnAddSpecialColumn.UseVisualStyleBackColor = true;
@@ -214,7 +201,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _btnMoveColumnDown
 			// 
 			resources.ApplyResources(this._btnMoveColumnDown, "_btnMoveColumnDown");
-			this._btnMoveColumnDown.ImageList = this._icons;
 			this._btnMoveColumnDown.Name = "_btnMoveColumnDown";
 			this._tooltips.SetToolTip(this._btnMoveColumnDown, resources.GetString("_btnMoveColumnDown.ToolTip"));
 			this._btnMoveColumnDown.UseVisualStyleBackColor = true;
@@ -223,7 +209,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _btnMoveColumnUp
 			// 
 			resources.ApplyResources(this._btnMoveColumnUp, "_btnMoveColumnUp");
-			this._btnMoveColumnUp.ImageList = this._icons;
 			this._btnMoveColumnUp.Name = "_btnMoveColumnUp";
 			this._tooltips.SetToolTip(this._btnMoveColumnUp, resources.GetString("_btnMoveColumnUp.ToolTip"));
 			this._btnMoveColumnUp.UseVisualStyleBackColor = true;
@@ -232,7 +217,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// _btnDelColumn
 			// 
 			resources.ApplyResources(this._btnDelColumn, "_btnDelColumn");
-			this._btnDelColumn.ImageList = this._icons;
 			this._btnDelColumn.Name = "_btnDelColumn";
 			this._tooltips.SetToolTip(this._btnDelColumn, resources.GetString("_btnDelColumn.ToolTip"));
 			this._btnDelColumn.UseVisualStyleBackColor = true;
@@ -294,7 +278,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 		private System.Windows.Forms.Button _btnMoveColumnDown;
 		private System.Windows.Forms.Button _btnMoveColumnUp;
 		private System.Windows.Forms.Button _btnDelColumn;
-		private System.Windows.Forms.ImageList _icons;
 		private System.Windows.Forms.ToolTip _tooltips;
 	}
 }

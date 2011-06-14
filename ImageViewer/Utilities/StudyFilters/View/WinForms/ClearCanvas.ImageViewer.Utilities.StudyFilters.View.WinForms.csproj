@@ -172,18 +172,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BuilderAdd.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\BuilderMoveDown.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\BuilderMoveUp.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\BuilderDelete.bmp" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Resources\BuilderAdd.png" />
+    <None Include="Resources\BuilderMoveDown.png" />
+    <None Include="Resources\BuilderMoveUp.png" />
+    <None Include="Resources\BuilderDelete.png" />
     <None Include="Resources\FilterHeaderCellGlyph.png" />
   </ItemGroup>
   <ItemGroup>
