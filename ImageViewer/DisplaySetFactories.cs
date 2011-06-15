@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer
 	#region Default
 
 	[Cloneable(false)]
-	internal class SeriesDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SeriesDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		public SeriesDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImageFactory presentationImageFactory)
 			: base(sourceSeries, presentationImageFactory)

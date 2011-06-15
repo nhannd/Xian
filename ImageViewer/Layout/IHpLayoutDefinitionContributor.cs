@@ -17,7 +17,12 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// Gets the relevant physical workspace.
 		/// </summary>
 		IPhysicalWorkspace PhysicalWorkspace { get; }
-	}
+
+        /// <summary>
+        /// Gets the relevant logical workspace.
+        /// </summary>
+        ILogicalWorkspace LogicalWorkspace { get; }
+    }
 
 	/// <summary>
 	/// Defines the interface to a "layout definition" contributor.
