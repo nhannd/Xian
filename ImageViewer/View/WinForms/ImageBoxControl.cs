@@ -15,7 +15,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -148,7 +147,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			e.Graphics.Clear(Color.Black);
+			//e.Graphics.Clear(Color.Black);
 
 			DrawImageBoxBorder(e);
 			DrawTileBorders(e);

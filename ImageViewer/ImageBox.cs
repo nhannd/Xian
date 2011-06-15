@@ -10,6 +10,8 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -26,7 +28,32 @@ namespace ClearCanvas.ImageViewer
 	{
 	}
 
-	/// <summary>
+    /// <summary>
+    /// An extension point for ImageBox "tools" 
+    /// </summary>
+    [ExtensionPoint]
+    public sealed class ImageBoxExtensionPoint:ExtensionPoint<IImageBoxExtension>
+    {}
+
+    public interface IImageBoxExtension:IDisposable
+    {
+        /// <summary>
+        /// Name of the extension
+        /// </summary>
+        string Name { get; }
+
+        ///<summary>
+        /// Sets the associated ImageBox
+        ///</summary>
+        IImageBox ImageBox { set; }
+
+        ///<summary>
+        /// Gets the view of the plugin
+        ///</summary>
+        IView View { get; }
+    }
+
+    /// <summary>
 	/// A container for <see cref="ITile"/> objects.
 	/// </summary>
 	[AssociateView(typeof(ImageBoxViewExtensionPoint))]
@@ -48,8 +75,9 @@ namespace ClearCanvas.ImageViewer
 		private static int _insetWidth = 5;
 		private static Color _selectedColor = Color.Orange;
 		private static Color _unselectedColor = Color.DarkGray;
+        private IList<IImageBoxExtension> _extensions;
 
-		private event EventHandler _drawingEvent;
+        private event EventHandler _drawingEvent;
 		private event EventHandler<ItemEventArgs<IImageBox>> _selectionChangedEvent;
 		private event EventHandler<DisplaySetChangedEventArgs> _displaySetChangedEvent;
 		private event EventHandler<ItemEventArgs<ITile>> _tileAddedEvent;
@@ -65,7 +93,9 @@ namespace ClearCanvas.ImageViewer
 		{
 			this.Tiles.ItemAdded += OnTileAdded;
 			this.Tiles.ItemRemoved += OnTileRemoved;
+
 		}
+
 
 		#region Public properties
 
@@ -459,7 +489,20 @@ namespace ClearCanvas.ImageViewer
 			set { _enabled = value; }
 		}
 
-		#endregion
+        ///<summary>
+        /// Gets a list of plugins for the image box that implementing <see cref="IImageBoxExtension"/>
+        ///</summary>
+        public IEnumerable<IImageBoxExtension> Extensions
+        {
+            get 
+            {
+
+                LoadExtensions();
+                return _extensions;
+            }
+        }
+
+        #endregion
 
 		#region Public events
 
@@ -552,11 +595,30 @@ namespace ClearCanvas.ImageViewer
 			if (disposing)
 			{
 				DisposeTiles();
+			    DisposeExtensions();
 				_tiles = null;
 			}
 		}
 
-		private void DisposeTiles()
+        private void DisposeExtensions()
+        {
+            if (_extensions!=null)
+            {
+                foreach(var ext in _extensions)
+                {
+                    try
+                    {
+                        ext.Dispose();
+                    }
+                    catch(Exception ex)
+                    {
+                        Platform.Log(LogLevel.Warn, "Error occurred while disposing {0} ImageBox extension", ext.Name);
+                    }
+                }
+            }
+        }
+
+        private void DisposeTiles()
 		{
 			if (this.Tiles == null)
 				return;
@@ -740,6 +802,20 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		#region Internal/private methods
+
+        private void LoadExtensions()
+        {
+            if (_extensions == null)
+            {
+                _extensions = new List<IImageBoxExtension>();
+                foreach (IImageBoxExtension extension in new ImageBoxExtensionPoint().CreateExtensions())
+                {
+                    extension.ImageBox = this;
+                    _extensions.Add(extension);
+                }
+            }
+
+        }
 
 		internal void Deselect()
 		{
