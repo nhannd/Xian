@@ -37,7 +37,7 @@
   <td class="SeriesDetailsContent">
     <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
         <tr>
-            <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Studies</td>
+            <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,Studies%>" /></td>
             <td align="right" valign="bottom">
                 <asp:Panel CssClass="ToolbarButtons" style="padding-right: 4px;" runat="server">
                     <ccUI:ToolbarButton runat="server" SkinID="<%$Image:MoveButton%>" ID="MoveButton" onClick="MoveButton_Click" />
