@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
@@ -112,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// <returns></returns>
 		protected virtual string Format(TProperty value)
 		{
-			return (string)Convert.ChangeType(value, typeof(string));
+		    return TypeDescriptor.GetConverter(typeof (TProperty)).ConvertToString(value);
 		}
 
 		/// <summary>
@@ -125,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Layout
 			if(!CanParseStringValue)
 				throw new NotSupportedException("This property does not support string parsing.");
 
-			return (TProperty)Convert.ChangeType(value, typeof(TProperty));
+		    return (TProperty)TypeDescriptor.GetConverter(typeof (TProperty)).ConvertFromString(value);
 		}
 
 		/// <summary>
