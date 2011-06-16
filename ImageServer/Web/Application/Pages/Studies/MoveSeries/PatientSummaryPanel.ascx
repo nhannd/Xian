@@ -23,7 +23,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
             </td>
             <td>
                 <asp:Label ID="Label3" runat="server" Text="<%$ Resources: Labels, PatientSummary_DOB %>" CssClass="PatientInfo"></asp:Label>
-                <ccUI:DALabel ID="PatientDOB" runat="server" EmptyValueText="Unknown" CssClass="PatientInfo"></ccUI:DALabel>
+                <ccUI:DALabel ID="PatientDOB" runat="server" EmptyValueText="<%$Resources: SR, Unknown %>" CssClass="PatientInfo"></ccUI:DALabel>
             </td>
             <td>
                 <asp:Label ID="Label4" runat="server" Text="<%$ Resources: Labels, PatientSummary_Age %>" CssClass="PatientInfo"></asp:Label>

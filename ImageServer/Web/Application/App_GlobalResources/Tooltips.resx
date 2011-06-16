@@ -209,4 +209,7 @@ Low Watermark  : {2}%</value>
   <data name="SearchByType" xml:space="preserve">
     <value>Search by type</value>
   </data>
+  <data name="ShowOtherNameFormats" xml:space="preserve">
+    <value>Show name in other formats</value>
+  </data>
 </root>

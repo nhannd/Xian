@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             get
             {
-                return InputFormat.Replace("?", CultureInfo.CurrentUICulture.DateTimeFormat.DateSeparator);
+                return InputFormat.Replace("?", CultureInfo.CurrentCulture.DateTimeFormat.DateSeparator);
             }
         }
 
