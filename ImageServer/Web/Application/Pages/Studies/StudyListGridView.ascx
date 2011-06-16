@@ -48,14 +48,13 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 							ItemStyle-HorizontalAlign="Center" />							
 						<asp:TemplateField HeaderText="<%$ Resources: ColumnHeaders, StudyStatus %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
-                            <asp:Label ID="StudyStatusEnum" runat="server" Text='<%# Eval("StudyStatusEnum.Description") %>' ></asp:Label>
-							<asp:Label ID="QueueSeparatorLabel" runat="server" Text="- " />
-							<asp:LinkButton runat="server" ID="QueueLinkButton" CssClass="ReconcileLink" />							
-							<asp:Label ID="SeparatorLabel" runat="server" Text="- " />
-							<asp:LinkButton runat="server" ID="ReconcileLinkButton" Text="<%$Resources: Labels, ReconcileLink %>" CssClass="ReconcileLink" />
-                        </itemtemplate>
-						</asp:TemplateField>							
-
+								<asp:Label ID="StudyStatusEnum" runat="server"></asp:Label>
+								<asp:Label ID="QueueSeparatorLabel" runat="server" Text="- " />
+								<asp:LinkButton runat="server" ID="QueueLinkButton" CssClass="ReconcileLink" />
+								<asp:Label ID="SeparatorLabel" runat="server" Text="- " />
+								<asp:LinkButton runat="server" ID="ReconcileLinkButton" Text="<%$Resources: Labels, ReconcileLink %>" CssClass="ReconcileLink" />
+							</itemtemplate>
+						</asp:TemplateField>
 					</Columns>
 					<EmptyDataTemplate>				    
                         <ccAsp:EmptySearchResultsMessage runat="server" ID="EmptySearchResultsMessage" />
