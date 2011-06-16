@@ -499,16 +499,15 @@ namespace ClearCanvas.ImageViewer
 	#region MR Echo
 
 	[Cloneable(false)]
-	internal class MREchoDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class MREchoDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
-		private readonly int _echoNumber;
 		private readonly string _suffix;
 
 		public MREchoDisplaySetDescriptor(ISeriesIdentifier sourceSeries, int echoNumber, IPresentationImageFactory presentationImageFactory)
 			: base(sourceSeries, presentationImageFactory)
 		{
 			Platform.CheckForNullReference(presentationImageFactory, "presentationImageFactory");
-			_echoNumber = echoNumber;
+			EchoNumber = echoNumber;
 			_suffix = String.Format(SR.SuffixFormatMREchoDisplaySet, echoNumber);
 		}
 
@@ -517,6 +516,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			context.CloneFields(source, this);
 		}
+
+        public int EchoNumber { get; private set; }
 
 		protected override string GetName()
 		{
@@ -537,7 +538,7 @@ namespace ClearCanvas.ImageViewer
 
 		protected override string GetUid()
 		{
-			return String.Format("{0}:Echo{1}", SourceSeries.SeriesInstanceUid, _echoNumber);
+			return String.Format("{0}:Echo{1}", SourceSeries.SeriesInstanceUid, EchoNumber);
 		}
 
 		internal override bool ShouldAddSop(Sop sop)
@@ -548,7 +549,7 @@ namespace ClearCanvas.ImageViewer
 				if (!echoAttribute.IsEmpty)
 				{
 					int echoNumber = echoAttribute.GetInt32(0, 0);
-					return echoNumber == _echoNumber;
+					return echoNumber == EchoNumber;
 				}
 			}
 
