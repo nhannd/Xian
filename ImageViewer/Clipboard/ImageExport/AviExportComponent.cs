@@ -443,7 +443,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 						ReportProgress(context, message, number);
 					}
 
-					IPresentationImage image = DisplaySet.PresentationImages[i].Clone();
+					IPresentationImage image = ImageExporter.ClonePresentationImage(DisplaySet.PresentationImages[i]);
 					imagesToDispose.Add(image);
 
 					using (Bitmap bitmap = ImageExporter.DrawToBitmap(image, exportParams))

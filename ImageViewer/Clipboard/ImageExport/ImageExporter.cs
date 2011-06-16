@@ -337,5 +337,44 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			image.Save(filePath, encoder, encoderParameters);
 		}
+
+		/// <summary>
+		/// Creates a clone of a <see cref="IPresentationImage"/> suitable for static export.
+		/// </summary>
+		/// <remarks>
+		/// Functionally, this method is similar to <see cref="IPresentationImage.Clone"/>.
+		/// However, this method also fills the <see cref="IPresentationImage.ParentDisplaySet"/>
+		/// property with a static <see cref="IDisplaySet"/> instance whose properties are a snapshot
+		/// of the source image's parent display set at the time the clone was created.
+		/// This makes the resulting images suitable for export with features like annotation overlay
+		/// enabled, as certain items (specifically, display set description and number) depend on
+		/// this information.
+		/// </remarks>
+		/// <param name="presentationImage">The source image to be cloned.</param>
+		/// <returns>A clone of the source image.</returns>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="presentationImage"/> is null.</exception>
+		public static IPresentationImage ClonePresentationImage(IPresentationImage presentationImage)
+		{
+			Platform.CheckForNullReference(presentationImage, "presentationImage");
+			var imageClone = presentationImage.Clone();
+			try
+			{
+				var parentDisplaySet = presentationImage.ParentDisplaySet;
+				if (parentDisplaySet != null)
+				{
+					var descriptor = parentDisplaySet.Descriptor;
+					if (descriptor != null)
+						parentDisplaySet = new DisplaySet(new BasicDisplaySetDescriptor {Description = descriptor.Description, Name = descriptor.Name, Number = descriptor.Number, Uid = descriptor.Uid});
+					else
+						parentDisplaySet = new DisplaySet(parentDisplaySet.Name, parentDisplaySet.Uid);
+					parentDisplaySet.PresentationImages.Add(imageClone);
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, "Failed to create a dummy parent display set for the cloned presentation image");
+			}
+			return imageClone;
+		}
 	}
 }
