@@ -32,6 +32,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		private Point _startPointTile;
 		private Point _startPointDesktop;
 
+		private PointF _sourcePointOfInterest;
+		private bool _firstRender;
+
 		public MagnificationForm(float magnificationFactor, PresentationImage sourceImage, Point startPointTile)
 		{
 			InitializeComponent();
@@ -48,6 +51,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			MagnificationFactor = magnificationFactor;
 			SourceImage = sourceImage;
 
+			_sourcePointOfInterest = ((ImageSpatialTransform) ((ISpatialTransformProvider) sourceImage).SpatialTransform).ConvertToSource(startPointTile);
 			_startPointTile = startPointTile;
 			_startPointDesktop = Centre = Cursor.Position;
 		}
@@ -94,6 +98,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 				DisposeImage();
 
 				_sourceImage = value;
+				_firstRender = true;
 				_magnificationImage = (PresentationImage)_sourceImage.Clone();
 				_renderingSurface = _magnificationImage.ImageRenderer.GetRenderingSurface(Handle, Width, Height);
 
@@ -170,6 +175,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		public void UpdateMousePosition(Point positionTile)
 		{
+			_sourcePointOfInterest = ((ImageSpatialTransform) ((ISpatialTransformProvider) _sourceImage).SpatialTransform).ConvertToSource(positionTile);
 
 			Size offsetFromStartTile = new Size(positionTile.X - _startPointTile.X, positionTile.Y - _startPointTile.Y);
 			Point pointDesktop = _startPointDesktop;
@@ -323,6 +329,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			if (!Visible)
 				return;
 
+			if (_firstRender)
+			{
+				// the first time we try to render a freshly cloned image, we need to draw it twice
+				// this is to make sure the client rectangle is updated when we try to compute the correct point of interest
+				_firstRender = false;
+				RenderImage();
+			}
+
 			using (System.Drawing.Graphics graphics = base.CreateGraphics())
 			{
 				_renderingSurface.WindowID = Handle;
@@ -332,24 +346,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 				try
 				{
+					ImageSpatialTransform sourceTransform = (ImageSpatialTransform) ((ISpatialTransformProvider) _sourceImage).SpatialTransform;
+					ImageSpatialTransform transform = (ImageSpatialTransform) ((ISpatialTransformProvider) _magnificationImage).SpatialTransform;
 
-				ImageSpatialTransform sourceTransform = (ImageSpatialTransform)((ISpatialTransformProvider)_sourceImage).SpatialTransform;
-				ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)_magnificationImage).SpatialTransform;
-
-				PointF centerTile = new PointF(_sourceImage.ClientRectangle.Width /2F, _sourceImage.ClientRectangle.Height / 2F);
-				SizeF deltaDesktop = new SizeF(Centre.X - _startPointDesktop.X, Centre.Y - _startPointDesktop.Y);
-				SizeF startDeltaTile = new SizeF(_startPointTile.X - centerTile.X, _startPointTile.Y - centerTile.Y);
-
-				SizeF renderingOffsetDestination = deltaDesktop + startDeltaTile;
-				SizeF renderingOffsetSource = sourceTransform.ConvertToSource(renderingOffsetDestination);
-
-				float scale = sourceTransform.Scale * _magnificationFactor;
-				float translationX = sourceTransform.TranslationX - renderingOffsetSource.Width;
-				float translationY = sourceTransform.TranslationY - renderingOffsetSource.Height;
+					float scale = sourceTransform.Scale*_magnificationFactor;
 					transform.ScaleToFit = false;
 					transform.Scale = scale;
-					transform.TranslationX = translationX;
-					transform.TranslationY = translationY;
+					transform.TranslationX = 0;
+					transform.TranslationY = 0;
+
+					// compute translation required to move the point of interest on the magnified image to the centre of the client area
+					var translation = transform.ConvertToSource(new PointF(ClientSize.Width/2f, ClientSize.Height/2f)) - new SizeF(_sourcePointOfInterest);
+					transform.TranslationX = translation.X;
+					transform.TranslationY = translation.Y;
 
 					WinFormsScreenProxy screen = new WinFormsScreenProxy(Screen.FromControl(this));
 					DrawArgs args = new DrawArgs(_renderingSurface, screen, ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
