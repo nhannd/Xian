@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	[Cloneable(false)]
-	internal class SingleImageDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SingleImageDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
 		private readonly string _seriesInstanceUid;

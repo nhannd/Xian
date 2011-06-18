@@ -11,6 +11,7 @@
 
 using System;
 using System.ComponentModel;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
@@ -125,8 +126,16 @@ namespace ClearCanvas.ImageViewer.Layout
 		{
 			if(!CanParseStringValue)
 				throw new NotSupportedException("This property does not support string parsing.");
+		    try
+		    {
+                return (TProperty)TypeDescriptor.GetConverter(typeof(TProperty)).ConvertFromString(value);
+		    }
+		    catch (Exception e)
+		    {
+                Platform.Log(LogLevel.Info, e);
+		    }
 
-		    return (TProperty)TypeDescriptor.GetConverter(typeof (TProperty)).ConvertFromString(value);
+		    return default(TProperty);
 		}
 
 		/// <summary>
