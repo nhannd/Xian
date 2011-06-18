@@ -42,6 +42,7 @@ namespace ClearCanvas.ImageViewer
         /// </summary>
         string Name { get; }
 
+
         ///<summary>
         /// Sets the associated ImageBox
         ///</summary>
@@ -51,7 +52,14 @@ namespace ClearCanvas.ImageViewer
         /// Gets the view of the plugin
         ///</summary>
         IView View { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the extension wants to hide current images in the image box
+        /// when it shows up
+        /// </summary>
+        bool HideImages { get; }
     }
+
 
     /// <summary>
 	/// A container for <see cref="ITile"/> objects.

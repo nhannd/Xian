@@ -57,6 +57,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                             {
                                 ctrl.Dock = DockStyle.Fill;
                                 _imageBoxControl.Controls.Add(ctrl);
+
+                                if (extension.HideImages)
+                                {
+                                    _imageBoxControl.HideImages();
+                                }
                             }
                         }
                     }

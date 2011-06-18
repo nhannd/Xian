@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private bool _imageScrollerVisible;
 		private CompositeUndoableCommand _historyCommand;
 		private MemorableUndoableCommand _imageBoxCommand;
+        private bool _hideImages;
 
         /// <summary>
         /// Constructor
@@ -111,10 +112,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void DoDraw()
 		{
-			foreach (TileControl control in this.TileControls)
-				control.Draw();
-			
-			Invalidate();
+            if (!_hideImages)
+            {
+                foreach (TileControl control in this.TileControls)
+                    control.Draw();
+
+                Invalidate();
+            }
 		}
 
 		#region Protected methods
@@ -422,6 +426,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void UpdateImageScroller()
 		{
+            if (_hideImages)
+            {
+                ImageScrollerVisible = false;
+                return;
+            }
+
 			//This method can be called repeatedly and will essentially be a no-op if nothing needs to change.
 			//In tiled mode, it could be a little inefficient to call repeatedly, but it's the lesser of the evils.
 			//Otherwise, we're subscribing to a multitude of events and updating different things at different times.
@@ -463,5 +473,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		}
 
 		#endregion
-	}
+
+        public void HideScrollBar()
+        {
+            ImageScrollerVisible  = false;
+        }
+
+        public void HideImages()
+        {
+            _hideImages = true;
+        }
+    }
 }
