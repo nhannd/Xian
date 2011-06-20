@@ -19,9 +19,7 @@ using System.Xml;
 using System.Text;
 using NUnit.Framework;
 
-using ClearCanvas.Common.Utilities;
-
-namespace ClearCanvas.Enterprise.Common.Tests
+namespace ClearCanvas.Common.Utilities.Tests
 {
 	[TestFixture]
 	public class JsmlSerializerTests
