@@ -50,10 +50,15 @@
     </Otherwise>
   </Choose>
 
+  <Target Name="GetDefaultManifestInputs" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputDesktop.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
  
   <Target Name="Create Desktop Manifest">
     
-    <Exec Command="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe ClearCanvas.Utilities.Manifest.ManifestGenerationApplication /d=$(DistributionDirectory) /m=Manifest.xml /c=$(Certificate) /pw=%22$(Password)%22 $(TrunkDirectory)\ImageViewer\ManifestInputDesktop.xml @(ManifestFiles)" WorkingDirectory="$(DistributionDirectory)"/>
+    <Exec Command="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe ClearCanvas.Utilities.Manifest.ManifestGenerationApplication /d=$(DistributionDirectory) /m=Manifest.xml /c=$(Certificate) /pw=&quot;$(Password)&quot; &quot;@(ManifestFiles)&quot;" WorkingDirectory="$(DistributionDirectory)"/>
 
     <Delete Files="$(DistributionDirectory)\logs\*"/>
   </Target>
@@ -223,6 +228,8 @@
       <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpFiles" />
     </RegexIsMatch>
     <CallTarget Targets="HelpFiles" Condition ="!$(ExcludeHelpFiles)"/>
+    
+    <CallTarget Targets="GetDefaultManifestInputs" />
 
     <!-- Create the base manifest -->
     <CallTarget Targets="Create Desktop Manifest" />
