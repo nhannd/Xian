@@ -634,7 +634,7 @@ namespace ClearCanvas.Common.Utilities
 					return Enum.Parse(dataType, xmlElement.InnerText);
 				}
 
-				if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
+				if (dataType == typeof(DateTime))
 				{
 					return DateTimeUtils.ParseISO(xmlElement.InnerText);
 				}
@@ -642,6 +642,12 @@ namespace ClearCanvas.Common.Utilities
 				if (dataType == typeof(bool))
 				{
 					return xmlElement.InnerText.Equals("true") ? true : false;
+				}
+
+				if(dataType.IsGenericType && dataType.GetGenericTypeDefinition() == typeof(Nullable<>))
+				{
+					// recur using the generic argument type in place of the nullable wrapper type
+					return Do(dataType.GetGenericArguments()[0], xmlElement);
 				}
 
 				if (dataType.GetInterface("IList") == typeof(IList))

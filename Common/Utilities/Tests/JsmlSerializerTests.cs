@@ -276,6 +276,26 @@ namespace ClearCanvas.Enterprise.Common.Tests
 		}
 
 		[Test]
+		public void Test_NullableInt()
+		{
+			int? n = null;
+			SerializeHelper(n, null);
+			DeserializeHelper(n, null);
+
+			n = 0;
+			SerializeHelper(n, "<Tag>0</Tag>");
+			DeserializeHelper(n, "<Tag>0</Tag>");
+
+			n = 1;
+			SerializeHelper(n, "<Tag>1</Tag>");
+			DeserializeHelper(n, "<Tag>1</Tag>");
+
+			n = -1;
+			SerializeHelper(n, "<Tag>-1</Tag>");
+			DeserializeHelper(n, "<Tag>-1</Tag>");
+		}
+
+		[Test]
 		public void Test_Double()
 		{
 			SerializeHelper(0.00, "<Tag>0</Tag>");
@@ -305,6 +325,24 @@ namespace ClearCanvas.Enterprise.Common.Tests
 		}
 
 		[Test]
+		public void Test_NullableDouble()
+		{
+			double? n = null;
+			SerializeHelper(n, null);
+			DeserializeHelper(n, null);
+
+			n = 0;
+			SerializeHelper(n, "<Tag>0</Tag>");
+			DeserializeHelper(n, "<Tag>0</Tag>");
+			DeserializeHelper(n, "<Tag>0.0</Tag>");
+			DeserializeHelper(n, "<Tag>0.000</Tag>");
+
+			n = 5.1;
+			SerializeHelper(n, "<Tag>5.1</Tag>");
+			DeserializeHelper(n, "<Tag>5.1</Tag>");
+		}
+
+		[Test]
 		public void Test_Bool()
 		{
 			SerializeHelper(true, "<Tag>true</Tag>");
@@ -322,6 +360,22 @@ namespace ClearCanvas.Enterprise.Common.Tests
 
 			SerializeHelper(TestEnum.Enum2, string.Format("<Tag>{0}</Tag>", TestEnum.Enum2));
 			DeserializeHelper(TestEnum.Enum2, string.Format("<Tag>{0}</Tag>", TestEnum.Enum2));
+		}
+
+		[Test]
+		public void Test_NullableEnum()
+		{
+			TestEnum? v = null;
+			SerializeHelper(v, null);
+			DeserializeHelper(v, null);
+
+			v = TestEnum.Enum1;
+			SerializeHelper(v, string.Format("<Tag>{0}</Tag>", TestEnum.Enum1));
+			DeserializeHelper(v, string.Format("<Tag>{0}</Tag>", TestEnum.Enum1));
+
+			v = TestEnum.Enum2;
+			SerializeHelper(v, string.Format("<Tag>{0}</Tag>", TestEnum.Enum2));
+			DeserializeHelper(v, string.Format("<Tag>{0}</Tag>", TestEnum.Enum2));
 		}
 
 		[Test]
