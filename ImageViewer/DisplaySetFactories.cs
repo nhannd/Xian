@@ -19,7 +19,6 @@ using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer
 {
