@@ -126,6 +126,13 @@ namespace ClearCanvas.ImageViewer.Layout
 		{
 			if(!CanParseStringValue)
 				throw new NotSupportedException("This property does not support string parsing.");
+
+			// trim
+			if(!string.IsNullOrEmpty(value))
+			{
+				value = value.Trim();
+			}
+
 		    try
 		    {
                 return (TProperty)TypeDescriptor.GetConverter(typeof(TProperty)).ConvertFromString(value);
