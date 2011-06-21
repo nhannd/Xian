@@ -35,6 +35,8 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 		{
 			var criteria = new AuthorityGroupSearchCriteria();
 			criteria.Name.SortAsc(0);
+            if (request.DataGroup.HasValue)
+                criteria.DataGroup.EqualTo(request.DataGroup.Value);
 
 			var assembler = new AuthorityGroupAssembler();
 			var authorityGroups = CollectionUtils.Map(
@@ -157,7 +159,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 				importer.Import(
 					CollectionUtils.Map(request.AuthorityGroups,
 										(AuthorityGroupDetail g) =>
-											new AuthorityGroupDefinition(g.Name,
+											new AuthorityGroupDefinition(g.Name, g.Description, g.DataGroup,
 												CollectionUtils.Map(g.AuthorityTokens, (AuthorityTokenSummary s) => s.Name).ToArray())),
 					(IUpdateContext)PersistenceContext);
 

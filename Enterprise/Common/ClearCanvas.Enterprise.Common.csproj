@@ -87,6 +87,7 @@
     <Compile Include="Admin\AuthorityGroupAdmin\IAuthorityGroupAdminService.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\AddAuthorityGroupRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\AddAuthorityGroupResponse.cs" />
+    <Compile Include="Admin\AuthorityGroupAdmin\IAuthorityGroupReadService.cs" />
     <Compile Include="Admin\UserAdmin\AddUserRequest.cs" />
     <Compile Include="Admin\UserAdmin\AddUserResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\AuthorityGroupDetail.cs" />

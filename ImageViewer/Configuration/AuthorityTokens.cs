@@ -24,30 +24,40 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return new AuthorityGroupDefinition[]
             {
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
+                    DefaultAuthorityGroups.HealthcareAdministrators,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
 				   }),
 
 				new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
+                    DefaultAuthorityGroups.Technologists,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
+                    DefaultAuthorityGroups.Radiologists,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
+                    DefaultAuthorityGroups.RadiologyResidents,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
+                    DefaultAuthorityGroups.EmergencyPhysicians,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
