@@ -273,6 +273,34 @@
     <Compile Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx.designer.cs">
       <DependentUpon>WorkQueueAlertContextDataView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx.cs">
+      <DependentUpon>AddEditDataRuleDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx.designer.cs">
+      <DependentUpon>AddEditDataRuleDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\DataRuleGridView.ascx.cs">
+      <DependentUpon>DataRuleGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\DataRuleGridView.ascx.designer.cs">
+      <DependentUpon>DataRuleGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\DataRulePanel.ascx.cs">
+      <DependentUpon>DataRulePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\DataRulePanel.ascx.designer.cs">
+      <DependentUpon>DataRulePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx.cs">
       <DependentUpon>ThrottleSettingsTab.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1517,6 +1545,11 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
     <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
     <Content Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
+    <Content Include="Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx" />
+    <Content Include="Pages\Admin\Configure\DataRules\DataRuleGridView.ascx" />
+    <Content Include="Pages\Admin\Configure\DataRules\DataRulePanel.ascx" />
+    <EmbeddedResource Include="Pages\Admin\Configure\DataRules\DataRulePanel.js" />
+    <Content Include="Pages\Admin\Configure\DataRules\Default.aspx" />
     <Content Include="Pages\Error\SoftwareExpiredErrorPage.aspx" />
     <Content Include="Pages\Error\LicenseErrorPage.aspx" />
     <Content Include="Pages\WebViewer\GridPager.ascx" />
@@ -1982,6 +2015,7 @@
     </None>
     <Content Include="PersistantImage.ashx" />
     <None Include="Scripts\CodeMirror\LICENSE" />
+    <Content Include="Web.config" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>

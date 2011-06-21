@@ -411,4 +411,10 @@
   <data name="LabelNotForDiagnosticUse" xml:space="preserve">
     <value>Not for Diagnostic Use</value>
   </data>
+  <data name="DataRules" xml:space="preserve">
+    <value>Data Rules</value>
+  </data>
+  <data name="DataRulesPageTitle" xml:space="preserve">
+    <value>Data Rules | {0}</value>
+  </data>
 </root>
