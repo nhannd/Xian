@@ -29,39 +29,6 @@ namespace ClearCanvas.ImageViewer
 	}
 
     /// <summary>
-    /// An extension point for ImageBox "tools" 
-    /// </summary>
-    [ExtensionPoint]
-    public sealed class ImageBoxExtensionPoint:ExtensionPoint<IImageBoxExtension>
-    {}
-
-    public interface IImageBoxExtension:IDisposable
-    {
-        /// <summary>
-        /// Name of the extension
-        /// </summary>
-        string Name { get; }
-
-
-        ///<summary>
-        /// Sets the associated ImageBox
-        ///</summary>
-        IImageBox ImageBox { set; }
-
-        ///<summary>
-        /// Gets the view of the plugin
-        ///</summary>
-        IView View { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether the extension wants to hide current images in the image box
-        /// when it shows up
-        /// </summary>
-        bool HideImages { get; }
-    }
-
-
-    /// <summary>
 	/// A container for <see cref="ITile"/> objects.
 	/// </summary>
 	[AssociateView(typeof(ImageBoxViewExtensionPoint))]

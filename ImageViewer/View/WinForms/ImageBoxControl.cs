@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
@@ -54,6 +55,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_imageBox.Drawing += OnDrawing;
 			_imageBox.SelectionChanged += OnImageBoxSelectionChanged;
 			_imageBox.LayoutCompleted += OnLayoutCompleted;
+
+
+            foreach (var extension in ImageBox.Extensions)
+            {
+                AttachExtension(extension);
+            }
         }
 
 		internal ImageBox ImageBox
@@ -201,6 +208,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void PerformDispose()
 		{
+            if (_imageBox.Extensions!=null)
+            {
+                foreach(IImageBoxExtension extension in _imageBox.Extensions)
+                {
+                    DetachExtension(extension);
+                }
+            }
+
 			if (_imageBox != null)
 			{
 				_imageBox.Drawing -= OnDrawing;
@@ -474,14 +489,74 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		#endregion
 
+        void AttachExtension(IImageBoxExtension extension)
+        {
+            if (extension.Visible)
+            {
+                Control ctrl = extension.View.GuiElement as Control;
+                if (ctrl != null)
+                {
+                    Controls.Add(ctrl);
+
+                    if (extension.HideImagesOnVisible)
+                    {
+                        HideImages(true);
+                    }
+                }
+            }
+            extension.VisibilityChanged += Extension_VisibilityChanged;
+        }
+
+        void DetachExtension(IImageBoxExtension extension)
+        {
+            extension.VisibilityChanged -= Extension_VisibilityChanged;
+        }
+
+        void Extension_VisibilityChanged(object sender, ImageBoxExtensionVisiblityChangedEventArg e)
+        {
+            Platform.CheckForNullReference(e.Extension, "e.Extension");
+
+            if (e.Extension.View != null)
+            {
+                if (e.Visible)
+                {
+                    Control ctrl = e.Extension.View.GuiElement as Control;
+                    if (ctrl != null)
+                    {
+                        Controls.Add(ctrl);
+
+                        if (e.Extension.HideImagesOnVisible)
+                        {
+                            HideImages(true);
+                        }
+                    }
+                }
+                else
+                {
+                    Control ctrl = e.Extension.View.GuiElement as Control;
+                    if (ctrl!=null)
+                    {
+                        Controls.Remove(ctrl);   
+                    }
+
+                    if (e.Extension.HideImagesOnVisible)
+                    {
+                        HideImages(false);
+                    }
+                }
+            }
+        }
+
         public void HideScrollBar()
         {
             ImageScrollerVisible  = false;
         }
 
-        public void HideImages()
+        public void HideImages(bool hide)
         {
-            _hideImages = true;
+            _hideImages = hide;
         }
+
+        
     }
 }
