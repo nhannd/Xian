@@ -1,40 +1,41 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
-//
+
 // This software is licensed under the Open Software License v3.0.
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
 
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows.Forms;
-using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	public class DropDownToolbarItem : ToolStripDropDownButton
+	class TextBoxToolbarItem : ToolStripTextBox
 	{
-		private IDropDownAction _action;
-		private EventHandler _actionEnabledChangedHandler;
-		private EventHandler _actionVisibleChangedHandler;
-		private EventHandler _actionAvailableChangedHandler;
-		private EventHandler _actionLabelChangedHandler;
-		private EventHandler _actionTooltipChangedHandler;
-		private EventHandler _actionIconSetChangedHandler;
+		private ITextBoxAction _action;
+		private readonly EventHandler _actionEnabledChangedHandler;
+		private readonly EventHandler _actionVisibleChangedHandler;
+		private readonly EventHandler _actionAvailableChangedHandler;
+		private readonly EventHandler _actionLabelChangedHandler;
+		private readonly EventHandler _actionTooltipChangedHandler;
+		private readonly EventHandler _actionIconSetChangedHandler;
+		private readonly EventHandler _actionTextBoxValueChangedHandler;
 
 		private IconSize _iconSize;
 
-		public DropDownToolbarItem(IDropDownAction action)
+		public TextBoxToolbarItem(ITextBoxAction action)
 			: this(action, IconSize.Medium)
 		{
 		}
 
-		public DropDownToolbarItem(IDropDownAction action, IconSize iconSize)
+		public TextBoxToolbarItem(ITextBoxAction action, IconSize iconSize)
 		{
 			_action = action;
 
@@ -44,6 +45,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_actionLabelChangedHandler = new EventHandler(OnActionLabelChanged);
 			_actionTooltipChangedHandler = new EventHandler(OnActionTooltipChanged);
 			_actionIconSetChangedHandler = new EventHandler(OnActionIconSetChanged);
+			_actionTextBoxValueChangedHandler = new EventHandler(OnActionTextBoxValueChanged);
 
 			_action.EnabledChanged += _actionEnabledChangedHandler;
 			_action.VisibleChanged += _actionVisibleChangedHandler;
@@ -51,23 +53,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_action.LabelChanged += _actionLabelChangedHandler;
 			_action.TooltipChanged += _actionTooltipChangedHandler;
 			_action.IconSetChanged += _actionIconSetChangedHandler;
+			_action.TextValueChanged += _actionTextBoxValueChangedHandler;
 
 			_iconSize = iconSize;
 
-			this.Text = _action.Label;
+			this.Text = _action.TextValue;
 			this.Enabled = _action.Enabled;
-			this.Visible = _action.Visible;
-			this.ToolTipText = _action.Tooltip;
+			SetTooltipText();
 
 			UpdateVisibility();
 			UpdateEnablement();
 			UpdateIcon();
 
-			this.ShowDropDownArrow = true;
-
-			this.DropDown = new ContextMenuStrip();
-			this.DropDown.ImageScalingSize = StandardIconSizes.Small;
-			this.DropDownOpening += new EventHandler(OnDropDownOpening);
 		}
 
 		public IconSize IconSize
@@ -83,13 +80,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-		private void OnDropDownOpening(object sender, EventArgs e)
+		protected override void OnTextChanged(EventArgs e)
 		{
-			ToolStripBuilder.Clear(this.DropDownItems);
-
-			ActionModelNode model = (_action).DropDownMenuModel;
-			if (model != null)
-				ToolStripBuilder.BuildMenu(this.DropDownItems, model.ChildNodes);
+			_action.TextValue = this.Text;
+			base.OnTextChanged(e);
 		}
 
 		private void OnActionEnabledChanged(object sender, EventArgs e)
@@ -115,7 +109,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnActionTooltipChanged(object sender, EventArgs e)
 		{
-			this.ToolTipText = _action.Tooltip;
+			SetTooltipText();
 		}
 
 		private void OnActionIconSetChanged(object sender, EventArgs e)
@@ -123,12 +117,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 			UpdateIcon();
 		}
 
+		private void OnActionTextBoxValueChanged(object sender, EventArgs e)
+		{
+			if(_action.TextValue != this.Text)
+			{
+				this.Text = _action.TextValue;
+			}
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && _action != null)
 			{
-				ToolStripBuilder.Clear(this.DropDownItems);
-
 				// VERY IMPORTANT: instances of this class will be created and discarded frequently
 				// throughout the lifetime of the application
 				// therefore is it extremely important that the event handlers are disconnected
@@ -141,6 +141,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_action.LabelChanged -= _actionLabelChangedHandler;
 				_action.TooltipChanged -= _actionTooltipChangedHandler;
 				_action.IconSetChanged -= _actionIconSetChangedHandler;
+				_action.TextValueChanged -= _actionTextBoxValueChangedHandler;
 
 				_action = null;
 			}
@@ -160,6 +161,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void UpdateIcon()
 		{
 			ActionViewUtils.SetIcon(this, _action, _iconSize);
+		}
+
+		private void SetTooltipText()
+		{
+			ActionViewUtils.SetTooltipText(this, _action);
 		}
 	}
 }
