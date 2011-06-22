@@ -127,59 +127,15 @@
   <data name="_btnAddDicomColumn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="_btnAddDicomColumn.ImageKey" xml:space="preserve">
-    <value>BuilderAdd.bmp</value>
-  </data>
-  <metadata name="_icons.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="_icons.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_btnAddDicomColumn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
-        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
-        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAa
-        CQAAAk1TRnQBSQFMAgEBBAEAAQkBAAEEAQABEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
-        AwABQAMAASADAAEBAQABCAYAAQgYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHA
-        AQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEAAykBAANVAQADTQEAA0IBAAM5
-        AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMA
-        AWYDAAGZAwABzAIAATMDAAIzAgABMwFmAgABMwGZAgABMwHMAgABMwH/AgABZgMAAWYBMwIAAmYCAAFm
-        AZkCAAFmAcwCAAFmAf8CAAGZAwABmQEzAgABmQFmAgACmQIAAZkBzAIAAZkB/wIAAcwDAAHMATMCAAHM
-        AWYCAAHMAZkCAALMAgABzAH/AgAB/wFmAgAB/wGZAgAB/wHMAQABMwH/AgAB/wEAATMBAAEzAQABZgEA
-        ATMBAAGZAQABMwEAAcwBAAEzAQAB/wEAAf8BMwIAAzMBAAIzAWYBAAIzAZkBAAIzAcwBAAIzAf8BAAEz
-        AWYCAAEzAWYBMwEAATMCZgEAATMBZgGZAQABMwFmAcwBAAEzAWYB/wEAATMBmQIAATMBmQEzAQABMwGZ
-        AWYBAAEzApkBAAEzAZkBzAEAATMBmQH/AQABMwHMAgABMwHMATMBAAEzAcwBZgEAATMBzAGZAQABMwLM
-        AQABMwHMAf8BAAEzAf8BMwEAATMB/wFmAQABMwH/AZkBAAEzAf8BzAEAATMC/wEAAWYDAAFmAQABMwEA
-        AWYBAAFmAQABZgEAAZkBAAFmAQABzAEAAWYBAAH/AQABZgEzAgABZgIzAQABZgEzAWYBAAFmATMBmQEA
-        AWYBMwHMAQABZgEzAf8BAAJmAgACZgEzAQADZgEAAmYBmQEAAmYBzAEAAWYBmQIAAWYBmQEzAQABZgGZ
-        AWYBAAFmApkBAAFmAZkBzAEAAWYBmQH/AQABZgHMAgABZgHMATMBAAFmAcwBmQEAAWYCzAEAAWYBzAH/
-        AQABZgH/AgABZgH/ATMBAAFmAf8BmQEAAWYB/wHMAQABzAEAAf8BAAH/AQABzAEAApkCAAGZATMBmQEA
-        AZkBAAGZAQABmQEAAcwBAAGZAwABmQIzAQABmQEAAWYBAAGZATMBzAEAAZkBAAH/AQABmQFmAgABmQFm
-        ATMBAAGZATMBZgEAAZkBZgGZAQABmQFmAcwBAAGZATMB/wEAApkBMwEAApkBZgEAA5kBAAKZAcwBAAKZ
-        Af8BAAGZAcwCAAGZAcwBMwEAAWYBzAFmAQABmQHMAZkBAAGZAswBAAGZAcwB/wEAAZkB/wIAAZkB/wEz
-        AQABmQHMAWYBAAGZAf8BmQEAAZkB/wHMAQABmQL/AQABzAMAAZkBAAEzAQABzAEAAWYBAAHMAQABmQEA
-        AcwBAAHMAQABmQEzAgABzAIzAQABzAEzAWYBAAHMATMBmQEAAcwBMwHMAQABzAEzAf8BAAHMAWYCAAHM
-        AWYBMwEAAZkCZgEAAcwBZgGZAQABzAFmAcwBAAGZAWYB/wEAAcwBmQIAAcwBmQEzAQABzAGZAWYBAAHM
-        ApkBAAHMAZkBzAEAAcwBmQH/AQACzAIAAswBMwEAAswBZgEAAswBmQEAA8wBAALMAf8BAAHMAf8CAAHM
-        Af8BMwEAAZkB/wFmAQABzAH/AZkBAAHMAf8BzAEAAcwC/wEAAcwBAAEzAQAB/wEAAWYBAAH/AQABmQEA
-        AcwBMwIAAf8CMwEAAf8BMwFmAQAB/wEzAZkBAAH/ATMBzAEAAf8BMwH/AQAB/wFmAgAB/wFmATMBAAHM
-        AmYBAAH/AWYBmQEAAf8BZgHMAQABzAFmAf8BAAH/AZkCAAH/AZkBMwEAAf8BmQFmAQAB/wKZAQAB/wGZ
-        AcwBAAH/AZkB/wEAAf8BzAIAAf8BzAEzAQAB/wHMAWYBAAH/AcwBmQEAAf8CzAEAAf8BzAH/AQAC/wEz
-        AQABzAH/AWYBAAL/AZkBAAL/AcwBAAJmAf8BAAFmAf8BZgEAAWYC/wEAAf8CZgEAAf8BZgH/AQAC/wFm
-        AQABIQEAAaUBAANfAQADdwEAA4YBAAOWAQADywEAA7IBAAPXAQAD3QEAA+MBAAPqAQAD8QEAA/gBAAHw
-        AfsB/wEAAaQCoAEAA4ADAAH/AgAB/wMAAv8BAAH/AwAB/wEAAf8BAAL/AgAD//8A/wD/AP8AYwAB/zUA
-        Af8TAAEHHAABXwEKAa4BpwwAAf8HAAH/CQABBwEAAQcNAAMHCwABCgEAARABrgGnCwAB/wYAAf8JAAEH
-        AwABBwsAAQcDAAEHCgABhQEKAQABEAGuAacLAAH/BQAB/wgAAQcFAAEHCgABBwMAAQcLAAGFAQoBAAEQ
-        Aa4BpwsAAf8DAAH/CAABBwcAAQcJAAEHAwABBwwAAYUBCgEAARABrgGnDQAB/wgAAQcJAAEHCAABBwMA
-        AQcMAAGFAQoBAAEQAW0BzwwAAf8MAAEHAwABBwgAAQcJAAEHCAABhQEKAQABEAFtAc8OAAH/CwABBwMA
-        AQcJAAEHBwABBwgAAYUBCgEAAQ8BbQHPDAAB/wIAAf8LAAEHAwABBwoAAQcFAAEHCQABCgEAAQ8BbQHP
-        DAAB/wUAAf8JAAEHAwABBwsAAQcDAAEHCgABXwEKAa4BpwwAAf8HAAH/CQADBw0AAQcBAAEHGQAB/woA
-        Af8ZAAEHhwABQgFNAT4HAAE+AwABKAMAAUADAAEgAwABAQEAAQEGAAEBFgAD/4EAC/8B+Qb/AecC/wF/
-        Av8B+AF/AcMB8wH+AT8B/gE/AfgBPwHDAecB/AEfAfwBHwH4AR8B4QHHAfgBDwH8AR8B/AEPAfABjwHw
-        AQcB/AEfAf4BBwH4AR8B4AEDAfwBHwH+AQcB/AE/AfwBHwHgAQMB/AEPAfgBHwH8AR8B8AEHAfgBHwHw
-        AZ8B/AEfAfgBDwH4AT8BwQHHAfwBHwH8AR8B+AF/AYMB4wH+AT8B/gE/Av8BjwHxA/8BfxD/Cw==
+        iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwgAA
+        DsIBFShKgAAAAFRJREFUOE+1UskNACAI0/2XYjNEE3/SYo0mvExP6O7e5DfB6sjA5fikGjFmFjez+M6d
+        QTAjSG1vdUQAMzMCWhgi+KPMLNNVSW0/7bl6rrTt6wurKg+RVUcruro4qgAAAABJRU5ErkJggg==
 </value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_btnAddDicomColumn.Location" type="System.Drawing.Point, System.Drawing">
     <value>288, 19</value>
   </data>
@@ -316,8 +272,13 @@
   <data name="_btnAddDicomTag.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="_btnAddDicomTag.ImageKey" xml:space="preserve">
-    <value>BuilderAdd.bmp</value>
+  <data name="_btnAddDicomTag.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwgAA
+        DsIBFShKgAAAAFRJREFUOE+1UskNACAI0/2XYjNEE3/SYo0mvExP6O7e5DfB6sjA5fikGjFmFjez+M6d
+        QTAjSG1vdUQAMzMCWhgi+KPMLNNVSW0/7bl6rrTt6wurKg+RVUcruro4qgAAAABJRU5ErkJggg==
+</value>
   </data>
   <data name="_btnAddDicomTag.Location" type="System.Drawing.Point, System.Drawing">
     <value>288, 19</value>
@@ -484,8 +445,13 @@
   <data name="_btnAddSpecialColumn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="_btnAddSpecialColumn.ImageIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="_btnAddSpecialColumn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwQAA
+        DsEBuJFr7QAAAFRJREFUOE+1UskNACAI0/2XYjNEE3/SYo0mvExP6O7e5DfB6sjA5fikGjFmFjez+M6d
+        QTAjSG1vdUQAMzMCWhgi+KPMLNNVSW0/7bl6rrTt6wurKg+RVUcruro4qgAAAABJRU5ErkJggg==
+</value>
   </data>
   <data name="_btnAddSpecialColumn.Location" type="System.Drawing.Point, System.Drawing">
     <value>288, 19</value>
@@ -595,8 +561,14 @@
   <data name="_btnMoveColumnDown.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="_btnMoveColumnDown.ImageKey" xml:space="preserve">
-    <value>BuilderMoveDown.bmp</value>
+  <data name="_btnMoveColumnDown.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwgAA
+        DsIBFShKgAAAAGBJREFUOE9j/M/wn4EiADKAEkiRZrDr8dl+4MCB/zCMSx1OA0AagWEDxyA+NkOGmwHo
+        /kYOA1zhgREGhAxBD0ysgYjLEGwxQbtYAMU5zCW40gDBlAgzBF9qpW1eICaXAgDeftbqsKU3fwAAAABJ
+        RU5ErkJggg==
+</value>
   </data>
   <data name="_btnMoveColumnDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>293, 167</value>
@@ -625,8 +597,14 @@
   <data name="_btnMoveColumnUp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="_btnMoveColumnUp.ImageKey" xml:space="preserve">
-    <value>BuilderMoveUp.bmp</value>
+  <data name="_btnMoveColumnUp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwgAA
+        DsIBFShKgAAAAF1JREFUOE/N08sNACAIA1Ddfyk2Q3vg4IdiJCbquU9BqVq0pBaAzA7DIqLsAAog3MtT
+        hriAhQEwZAvMYYYsgBf2kAGIwjvkTQ/wbKkm/gHYLVDK1Uc6nY9wFiIoDTQlbdbqZD+pLwAAAABJRU5E
+        rkJggg==
+</value>
   </data>
   <data name="_btnMoveColumnUp.Location" type="System.Drawing.Point, System.Drawing">
     <value>293, 130</value>
@@ -655,8 +633,14 @@
   <data name="_btnDelColumn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="_btnDelColumn.ImageKey" xml:space="preserve">
-    <value>BuilderDelete.bmp</value>
+  <data name="_btnDelColumn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwgAA
+        DsIBFShKgAAAAHRJREFUOE+tk9sOgCAMQ/H/P3oCyUypu3CbiQ/CDu2ojxQpR9UAJ09vrtVe0ivB8d4B
+        kIGs9e88XfQg7neWjCC1FNkzHbOaZQAONhvufQXeDDwlgwKrWYec3kLUjBAOm5mDKJFs5WdhJs6Yna0f
+        CVVsAVDBCwHn1TpYRhhoAAAAAElFTkSuQmCC
+</value>
   </data>
   <data name="_btnDelColumn.Location" type="System.Drawing.Point, System.Drawing">
     <value>293, 93</value>
@@ -795,12 +779,6 @@
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
     <value>667, 442</value>
-  </data>
-  <data name="&gt;&gt;_icons.Name" xml:space="preserve">
-    <value>_icons</value>
-  </data>
-  <data name="&gt;&gt;_icons.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_tooltips.Name" xml:space="preserve">
     <value>_tooltips</value>

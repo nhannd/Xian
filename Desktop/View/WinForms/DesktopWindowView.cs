@@ -284,6 +284,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				content.LoadContentFromStream(shelfRestoreStream);
 
+				// #4183 - the shelf restore stream includes the shelf title, which is supposed to be determined by the model/localization and not persisted
+				content.Title = content.FullTitle = title;
+
 				_form.DockingManager.ShowContent(content);
 				if (content.IsAutoHidden && hint != ShelfDisplayHint.HideOnWorkspaceOpen)
 					_form.DockingManager.BringAutoHideIntoView(content);

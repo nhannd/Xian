@@ -153,6 +153,15 @@
   <data name="ExceptionSaveUser" xml:space="preserve">
     <value>Unable to save User</value>
   </data>
+  <data name="MenuAdmin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="MenuAuthorityGroups" xml:space="preserve">
+    <value>Authority Groups</value>
+  </data>
+  <data name="MenuUsers" xml:space="preserve">
+    <value>Users</value>
+  </data>
   <data name="MessageConfirmDeleteSelectedItems" xml:space="preserve">
     <value>Are you sure you want to delete the selected item(s)?</value>
   </data>
@@ -168,6 +177,12 @@
   <data name="TitleAuthorityGroup" xml:space="preserve">
     <value>Authority Group Admin</value>
   </data>
+  <data name="TitleDuplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="TitleImport" xml:space="preserve">
+    <value>Import</value>
+  </data>
   <data name="TitleResetPassword" xml:space="preserve">
     <value>Reset Password</value>
   </data>
@@ -179,5 +194,11 @@
   </data>
   <data name="TitleUser" xml:space="preserve">
     <value>User Admin</value>
+  </data>
+  <data name="TooltipDuplicateAuthorityGroup" xml:space="preserve">
+    <value>Duplicate the selected authority group</value>
+  </data>
+  <data name="TooltipImportAuthorityGroup" xml:space="preserve">
+    <value>Import authority tokens and groups from local plugins</value>
   </data>
 </root>

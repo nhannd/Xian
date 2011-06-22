@@ -206,6 +206,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                             row.Attributes.Add("canviewimagesreason", reason);
                         }
 
+                        var status = (Label) row.FindControl("StudyStatusEnum");
+                        status.Text = ServerEnumDescription.GetLocalizedDescription(study.StudyStatusEnum);
 
                         LinkButton button = (LinkButton) row.FindControl("ReconcileLinkButton");
                         Label label = (Label)row.FindControl("SeparatorLabel");
@@ -236,7 +238,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 														 "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
 									                     study.ThePartition.Key;
 									button.Visible = true;
-									button.Text = study.QueueStudyStateEnum.Description;
+									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
 									label.Visible = true;
 								}								
 							}
@@ -248,7 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 														 "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
 														 study.ThePartition.Key;
 									button.Visible = true;
-									button.Text = study.QueueStudyStateEnum.Description;
+									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
 									label.Visible = true;									
 								}
 							}
@@ -260,7 +262,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 									                     "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
 									                     study.ThePartition.Key;
 									button.Visible = true;
-									button.Text = study.QueueStudyStateEnum.Description;
+									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
 									label.Visible = true;
 								}
 							}

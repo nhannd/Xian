@@ -340,7 +340,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 			else
 			{
-				BackgroundTask task = new BackgroundTask(ExportImages, true);
+				BackgroundTask task = new BackgroundTask(ExportImages, true) {ThreadUICulture = Application.CurrentUICulture};
 
 				_clipboardItem.Lock();
 

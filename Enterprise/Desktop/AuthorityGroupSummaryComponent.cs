@@ -23,7 +23,7 @@ using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
-    [MenuAction("launch", "global-menus/Admin/Authority Groups", "Launch")]
+    [MenuAction("launch", "global-menus/MenuAdmin/MenuAuthorityGroups", "Launch")]
     [ActionPermission("launch", AuthorityTokens.Admin.Security.AuthorityGroup)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
@@ -85,11 +85,11 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			base.InitializeActionModel(model);
 
-			model.AddAction("duplicate", "Duplicate","Icons.DuplicateSmall.png", "Duplicate the selected authority group",
+			model.AddAction("duplicate", SR.TitleDuplicate, "Icons.DuplicateSmall.png", SR.TooltipDuplicateAuthorityGroup,
 								DuplicateSelectedItem,
 								AuthorityTokens.Admin.Security.AuthorityGroup);
 
-			model.AddAction("import", "Import", "Icons.ImportAuthorityTokensSmall.png", "Import authority tokens and groups from local plugins",
+			model.AddAction("import", SR.TitleImport, "Icons.ImportAuthorityTokensSmall.png", SR.TooltipImportAuthorityGroup,
 								Import,
 								AuthorityTokens.Admin.Security.AuthorityGroup);
 

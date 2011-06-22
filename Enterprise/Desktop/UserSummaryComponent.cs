@@ -21,7 +21,7 @@ using ClearCanvas.Enterprise.Desktop;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
-    [MenuAction("launch", "global-menus/Admin/Users", "Launch")]
+    [MenuAction("launch", "global-menus/MenuAdmin/MenuUsers", "Launch")]
     [ActionPermission("launch", ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class UserSummaryTool : Tool<IDesktopToolContext>

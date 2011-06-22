@@ -26,45 +26,19 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ToolbarConfigurationComponentControl));
 			this._flowToolbarPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this._toolStripSizePanel = new System.Windows.Forms.Panel();
-			this._toolbarSize = new System.Windows.Forms.ComboBox();
-			this.label1 = new System.Windows.Forms.Label();
 			this._wrapPanel = new System.Windows.Forms.Panel();
 			this._wrapToolbars = new System.Windows.Forms.CheckBox();
+			this._toolbarSize = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._flowToolbarPanel.SuspendLayout();
-			this._toolStripSizePanel.SuspendLayout();
 			this._wrapPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _flowToolbarPanel
 			// 
-			this._flowToolbarPanel.Controls.Add(this._toolStripSizePanel);
+			this._flowToolbarPanel.Controls.Add(this._toolbarSize);
 			this._flowToolbarPanel.Controls.Add(this._wrapPanel);
 			resources.ApplyResources(this._flowToolbarPanel, "_flowToolbarPanel");
 			this._flowToolbarPanel.Name = "_flowToolbarPanel";
-			// 
-			// _toolStripSizePanel
-			// 
-			this._toolStripSizePanel.Controls.Add(this._toolbarSize);
-			this._toolStripSizePanel.Controls.Add(this.label1);
-			resources.ApplyResources(this._toolStripSizePanel, "_toolStripSizePanel");
-			this._toolStripSizePanel.Name = "_toolStripSizePanel";
-			// 
-			// _toolbarSize
-			// 
-			this._toolbarSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._toolbarSize.FormattingEnabled = true;
-			this._toolbarSize.Items.AddRange(new object[] {
-            resources.GetString("_toolbarSize.Items"),
-            resources.GetString("_toolbarSize.Items1"),
-            resources.GetString("_toolbarSize.Items2")});
-			resources.ApplyResources(this._toolbarSize, "_toolbarSize");
-			this._toolbarSize.Name = "_toolbarSize";
-			// 
-			// label1
-			// 
-			resources.ApplyResources(this.label1, "label1");
-			this.label1.Name = "label1";
 			// 
 			// _wrapPanel
 			// 
@@ -78,6 +52,15 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			this._wrapToolbars.Name = "_wrapToolbars";
 			this._wrapToolbars.UseVisualStyleBackColor = true;
 			// 
+			// _toolbarSize
+			// 
+			resources.ApplyResources(this._toolbarSize, "_toolbarSize");
+			this._toolbarSize.DataSource = null;
+			this._toolbarSize.DisplayMember = "";
+			this._toolbarSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._toolbarSize.Name = "_toolbarSize";
+			this._toolbarSize.Value = null;
+			// 
 			// ToolbarConfigurationComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
@@ -85,8 +68,7 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			this.Controls.Add(this._flowToolbarPanel);
 			this.Name = "ToolbarConfigurationComponentControl";
 			this._flowToolbarPanel.ResumeLayout(false);
-			this._toolStripSizePanel.ResumeLayout(false);
-			this._toolStripSizePanel.PerformLayout();
+			this._flowToolbarPanel.PerformLayout();
 			this._wrapPanel.ResumeLayout(false);
 			this._wrapPanel.PerformLayout();
 			this.ResumeLayout(false);
@@ -97,9 +79,7 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 
 		private System.Windows.Forms.CheckBox _wrapToolbars;
 		private System.Windows.Forms.Panel _wrapPanel;
-		private System.Windows.Forms.Panel _toolStripSizePanel;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox _toolbarSize;
 		private System.Windows.Forms.FlowLayoutPanel _flowToolbarPanel;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _toolbarSize;
 	}
 }

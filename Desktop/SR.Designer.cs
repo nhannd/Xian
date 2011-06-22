@@ -385,6 +385,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Colour.
+        /// </summary>
+        public static string LabelColor {
+            get {
+                return ResourceManager.GetString("LabelColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (Offline) Values shown may not be accurate, and changes may not be saved..
         /// </summary>
         public static string LabelConfigurationWarningOffline {
@@ -408,6 +417,33 @@ namespace ClearCanvas.Desktop {
         public static string LabelImport {
             get {
                 return ResourceManager.GetString("LabelImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Large.
+        /// </summary>
+        public static string LabelLarge {
+            get {
+                return ResourceManager.GetString("LabelLarge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Medium.
+        /// </summary>
+        public static string LabelMedium {
+            get {
+                return ResourceManager.GetString("LabelMedium", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monochrome.
+        /// </summary>
+        public static string LabelMonochrome {
+            get {
+                return ResourceManager.GetString("LabelMonochrome", resourceCulture);
             }
         }
         
@@ -466,11 +502,29 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Small.
+        /// </summary>
+        public static string LabelSmall {
+            get {
+                return ResourceManager.GetString("LabelSmall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         public static string MenuAbout {
             get {
                 return ResourceManager.GetString("MenuAbout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Admin.
+        /// </summary>
+        public static string MenuAdmin {
+            get {
+                return ResourceManager.GetString("MenuAdmin", resourceCulture);
             }
         }
         

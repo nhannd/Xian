@@ -183,7 +183,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private struct NMHDR
 		{
 			public IntPtr hwndFrom;
-			public uint idFrom;
+			public IntPtr idFrom;
 			public uint code;
 		}
 

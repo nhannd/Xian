@@ -435,7 +435,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             // (the MaskedEditExtender will use the date separator set in the current UICulture)
             PatientBirthDateMaskExtender.Mask =
                 pattern.Replace("d", "9").Replace("M", "9").Replace("y", "9").Replace(
-                    CultureInfo.CurrentUICulture.DateTimeFormat.DateSeparator, "/");
+                    CultureInfo.CurrentCulture.DateTimeFormat.DateSeparator, "/");
             PatientBirthDateCalendarExtender.Format = pattern;
             StudyDateCalendarExtender.Format = pattern;
         }
