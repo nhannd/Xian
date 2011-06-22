@@ -9,19 +9,25 @@
 
 #endregion
 
+using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Layout
 {
 	public interface IHpLayoutDefinitionContext
 	{
-		/// <summary>
-		/// Gets the relevant physical workspace.
-		/// </summary>
-		IPhysicalWorkspace PhysicalWorkspace { get; }
+        /// <summary>
+        /// Gets the study tree.
+        /// </summary>
+        StudyTree StudyTree { get; }
 
         /// <summary>
         /// Gets the relevant logical workspace.
         /// </summary>
         ILogicalWorkspace LogicalWorkspace { get; }
+        
+        /// <summary>
+		/// Gets the relevant physical workspace.
+		/// </summary>
+		IPhysicalWorkspace PhysicalWorkspace { get; }
     }
 
 	/// <summary>
