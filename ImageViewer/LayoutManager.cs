@@ -137,8 +137,7 @@ namespace ClearCanvas.ImageViewer
 
 			BuildLogicalWorkspace();
 			ValidateLogicalWorkspace();
-			LayoutPhysicalWorkspace();
-			FillPhysicalWorkspace();
+			LayoutAndFillPhysicalWorkspace();
 			
 			// Now, only after showing the "primary study", sort the image sets according to study order. (yes, this calls SortStudies)
 			SortImageSets();
@@ -205,6 +204,19 @@ namespace ClearCanvas.ImageViewer
 
 			if (!AllowEmptyViewer)
 				throw new NoVisibleDisplaySetsException("The Layout operation has resulted in no images to be displayed.");
+		}
+
+		/// <summary>
+		/// Performs layout and fill of the physical workspace.
+		/// </summary>
+		/// <remarks>
+		/// Default implementation simply calls <see cref="LayoutPhysicalWorkspace"/> followed
+		/// by <see cref="FillPhysicalWorkspace"/>.
+		/// </remarks>
+		protected virtual void LayoutAndFillPhysicalWorkspace()
+		{
+			LayoutPhysicalWorkspace();
+			FillPhysicalWorkspace();
 		}
 
 		/// <summary>

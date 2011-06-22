@@ -14,6 +14,14 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Layout
 {
 	/// <summary>
+	/// Defines an extension point for a layout hook.
+	/// </summary>
+	[ExtensionPoint]
+	public class HpLayoutHookExtensionPoint : ExtensionPoint<IHpLayoutHook>
+	{
+	}
+
+	/// <summary>
 	/// Defines an extension point for match-criteria contributors.
 	/// </summary>
 	[ExtensionPoint]
