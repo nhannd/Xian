@@ -22,6 +22,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
 	[SettingsGroupDescription("Configures the installed localizations available for use in the application.")]
+	[SettingsProvider(typeof (LocalFileSettingsProvider))]
 	internal sealed partial class LocaleSettings
 	{
 		public LocaleSettings()
@@ -82,6 +83,46 @@ namespace ClearCanvas.Desktop
 		public Locale Default
 		{
 			get { return (Find(_defaultLocale) ?? CollectionUtils.FirstElement(_installedLocales)) ?? InvariantLocale; }
+		}
+
+		/// <summary>
+		/// Gets or sets the selected <see cref="Locale"/> for the current system user.
+		/// </summary>
+		/// <remarks>
+		/// This value only persists in the local configuration file for the system user and not for the login user as defined by the application
+		/// because the availability of locales is determined by the installation, and never by a central settings store.
+		/// </remarks>
+		public Locale Selected
+		{
+			get
+			{
+				try
+				{
+					var selected = LocaleSettings.Default.SelectedLocale;
+					if (!string.IsNullOrEmpty(selected))
+						return Find(selected) ?? Default;
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Debug, ex, "Unable to read SelectedLocale from settings");
+				}
+				return Default;
+			}
+			set
+			{
+				try
+				{
+					var selected = Default.Culture;
+					if (value != null)
+						selected = value.Culture;
+					LocaleSettings.Default.SelectedLocale = selected;
+					LocaleSettings.Default.Save();
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Debug, ex, "Unable to save SelectedLocale to settings");
+				}
+			}
 		}
 
 		/// <summary>
