@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer
 			}
 			else
 			{
-				//this is a referenced image (e.g. key iamge).
+				//this is a referenced image (e.g. key image).
 				if (lateralityViewPosition != null)
 					_suffix = String.Format(SR.SuffixFormatSingleReferencedImageDisplaySetWithLateralityViewPosition, 
 						lateralityViewPosition, imageSop.SeriesNumber, imageSop.InstanceNumber);
