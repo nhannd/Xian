@@ -331,6 +331,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted By.
+        /// </summary>
+        internal static string DeletedBy {
+            get {
+                return ResourceManager.GetString("DeletedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         internal static string DeviceDescription {

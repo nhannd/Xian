@@ -455,4 +455,7 @@
   <data name="DicomTagName" xml:space="preserve">
     <value>Tag</value>
   </data>
+  <data name="DeletedBy" xml:space="preserve">
+    <value>Deleted By</value>
+  </data>
 </root>
