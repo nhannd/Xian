@@ -246,7 +246,7 @@
                                        <tr>
                                           <td style="padding-left: 10px; padding-right: 10px;">
                                              <div class="SeriesTitle">
-                                                Dicom Tags</div>
+                                                <%= Titles.DicomTagsTitle %>Dicom Tags</div>
                                           </td>
                                        </tr>
                                     </table>
@@ -259,9 +259,9 @@
                                                       Width="100%" BackColor="white" GridLines="Horizontal" BorderColor="Transparent"
                                                       AutoGenerateColumns="false">
                                                       <Columns>
-                                                         <asp:BoundField HeaderText="Tag" DataField="TagName" HeaderStyle-HorizontalAlign="Left"
+                                                         <asp:BoundField HeaderText="<%$Resources:ColumnHeaders,DicomTagName %>" DataField="TagName" HeaderStyle-HorizontalAlign="Left"
                                                             ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" ItemStyle-VerticalAlign="Top" />
-                                                         <asp:BoundField HeaderText="Details" DataField="Details" HeaderStyle-HorizontalAlign="Left"
+                                                         <asp:BoundField HeaderText="<%$Resources:ColumnHeaders,DicomTagDetails %>" DataField="Details" HeaderStyle-HorizontalAlign="Left"
                                                             ItemStyle-HorizontalAlign="Left" />
                                                       </Columns>
                                                       <RowStyle CssClass="ReconcileComparisonResultGridViewRow" />

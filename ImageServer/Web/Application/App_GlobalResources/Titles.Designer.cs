@@ -475,6 +475,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DICOM Tags.
+        /// </summary>
+        internal static string DicomTagsTitle {
+            get {
+                return ResourceManager.GetString("DicomTagsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Partition Archive.
         /// </summary>
         internal static string EditPartitionArchiveTitle {

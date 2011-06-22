@@ -449,4 +449,10 @@
   <data name="ServerRuleType" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="DicomTagDetails" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="DicomTagName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
 </root>
