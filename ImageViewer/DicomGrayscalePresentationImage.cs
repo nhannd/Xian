@@ -70,6 +70,13 @@ namespace ClearCanvas.ImageViewer
 			_frameReference = frameReference;
 			_dicomVoiLuts = new DicomVoiLuts(this);
 			base.PresentationState = PresentationState.DicomDefault;
+
+			if (ImageSop.Modality == "MG")
+			{
+				// use a special image spatial transform for digital mammography
+				CompositeImageGraphic.SpatialTransform = new MammographyImageSpatialTransform(CompositeImageGraphic, Frame.Rows, Frame.Columns, Frame.NormalizedPixelSpacing.Column, Frame.NormalizedPixelSpacing.Row, Frame.PixelAspectRatio.Column, Frame.PixelAspectRatio.Row, Frame.PatientOrientation, ImageSop.ImageLaterality);
+			}
+
 			Initialize();
 		}
 
@@ -89,6 +96,9 @@ namespace ClearCanvas.ImageViewer
 		{
 			_dicomGraphics = CollectionUtils.SelectFirst(base.CompositeImageGraphic.Graphics,
 				delegate(IGraphic test) { return test.Name == "DICOM"; }) as CompositeGraphic;
+
+			if (AnnotationLayout is MammogramAnnotationLayoutProxy)
+				((MammogramAnnotationLayoutProxy) AnnotationLayout).OwnerImage = this;
 
 			Initialize();
 		}
@@ -217,6 +227,8 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>
 		protected override IAnnotationLayout CreateAnnotationLayout()
 		{
+			if (ImageSop.Modality == "MG")
+				return new MammogramAnnotationLayoutProxy {OwnerImage = this};
 			return DicomAnnotationLayoutFactory.CreateLayout(this);
 		}
 

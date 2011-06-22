@@ -133,6 +133,7 @@
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutFactory.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
+    <Compile Include="Annotations\MammogramAnnotationLayoutProxy.cs" />
     <Compile Include="BaseTools\GraphicTool.cs" />
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="BaseTools\MouseButtonIconSet.cs" />
@@ -164,6 +165,8 @@
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
+    <Compile Include="Graphics\MammographyImageSpatialTransform.cs" />
+    <Compile Include="Graphics\Tests\MammographyImageSpatialTransformTest.cs" />
     <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
     <Compile Include="Layout\HpDataContractAttribute.cs" />
