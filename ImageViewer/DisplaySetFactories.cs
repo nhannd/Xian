@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	[Cloneable(false)]
-	internal class SingleFrameDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SingleFrameDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
 		private readonly string _seriesInstanceUid;
@@ -643,7 +643,7 @@ namespace ClearCanvas.ImageViewer
 	#region Mixed Multi-frame
 
 	[Cloneable(false)]
-	internal class MultiframeDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class MultiframeDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _sopInstanceUid;
 		private readonly string _suffix;
