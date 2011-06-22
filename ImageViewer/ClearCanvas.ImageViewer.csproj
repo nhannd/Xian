@@ -176,6 +176,7 @@
     <Compile Include="Layout\IHpContributor.cs" />
     <Compile Include="Layout\IHpImageBoxDefinitionContributor.cs" />
     <Compile Include="Layout\IHpLayoutDefinitionContributor.cs" />
+    <Compile Include="Layout\IHpLayoutHook.cs" />
     <Compile Include="Layout\IHpMatchCriteriaContributor.cs" />
     <Compile Include="Layout\IHpProperty.cs" />
     <Compile Include="Layout\IHpSerializableElement.cs" />

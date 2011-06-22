@@ -25,6 +25,20 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[ExtensionOf(typeof(LayoutManagerExtensionPoint))]
 	public class LayoutManager : ImageViewer.LayoutManager
 	{
+		#region LayoutHookContext
+
+		class LayoutHookContext : IHpLayoutHookContext
+		{
+			public LayoutHookContext(IImageViewer viewer)
+			{
+				this.ImageViewer = viewer;
+			}
+
+			public IImageViewer ImageViewer { get; private set; }
+		}
+
+		#endregion
+
 		private class DisplaySetFactory : ImageViewer.DisplaySetFactory
 		{
 			private readonly StoredDisplaySetCreationSetting _creationSetting;
@@ -182,6 +196,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		}
 
 		#endregion
+
+		protected override void LayoutAndFillPhysicalWorkspace()
+		{
+			var hookContext = new LayoutHookContext(this.ImageViewer);
+			foreach (IHpLayoutHook hook in new HpLayoutHookExtensionPoint().CreateExtensions())
+			{
+				if(hook.HandleLayout(hookContext))
+					return;
+			}
+
+			// hooks did not handle it, so call base class
+			base.LayoutAndFillPhysicalWorkspace();
+		}
 
 		protected override void LayoutPhysicalWorkspace()
 		{
