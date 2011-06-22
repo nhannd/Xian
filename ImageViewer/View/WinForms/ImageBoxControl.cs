@@ -56,7 +56,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_imageBox.SelectionChanged += OnImageBoxSelectionChanged;
 			_imageBox.LayoutCompleted += OnLayoutCompleted;
 
-
             foreach (var extension in ImageBox.Extensions)
             {
                 AttachExtension(extension);
@@ -119,16 +118,19 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void DoDraw()
 		{
-            if (!_hideImages)
-            {
-                foreach (TileControl control in this.TileControls)
-                    control.Draw();
-
-                Invalidate();
-            }
+            foreach (TileControl control in this.TileControls)
+                control.Draw(); 
+            Invalidate();
 		}
 
-		#region Protected methods
+        private void ClearImagebox()
+        {
+            DisposeControls(new List<TileControl>(this.TileControls));
+            ImageScrollerVisible = false;
+            Invalidate();
+        }
+
+        #region Protected methods
 
 		protected override void OnLoad(EventArgs e)
 		{
@@ -158,7 +160,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			//e.Graphics.Clear(Color.Black);
+			e.Graphics.Clear(Color.Black);
 
 			DrawImageBoxBorder(e);
 			DrawTileBorders(e);
@@ -504,15 +506,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     }
                 }
             }
-            extension.VisibilityChanged += Extension_VisibilityChanged;
+            extension.VisibilityChanged += OnExtension_VisibilityChanged;
         }
 
         void DetachExtension(IImageBoxExtension extension)
         {
-            extension.VisibilityChanged -= Extension_VisibilityChanged;
+            extension.VisibilityChanged -= OnExtension_VisibilityChanged;
         }
 
-        void Extension_VisibilityChanged(object sender, ImageBoxExtensionVisiblityChangedEventArg e)
+        void OnExtension_VisibilityChanged(object sender, ImageBoxExtensionVisiblityChangedEventArg e)
         {
             Platform.CheckForNullReference(e.Extension, "e.Extension");
 
@@ -525,6 +527,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     {
                         Controls.Add(ctrl);
 
+                        // make sure it's on top of the images or if the display set is empty, 
+                        // it's on top of the empty tiles
+                        ctrl.BringToFront(); 
                         if (e.Extension.HideImagesOnVisible)
                         {
                             HideImages(true);
@@ -545,11 +550,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     }
                 }
             }
-        }
-
-        public void HideScrollBar()
-        {
-            ImageScrollerVisible  = false;
         }
 
         public void HideImages(bool hide)
