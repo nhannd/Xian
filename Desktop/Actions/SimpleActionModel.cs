@@ -26,8 +26,8 @@ namespace ClearCanvas.Desktop.Actions
 	public class SimpleActionModel : ActionModelRoot
 	{
 		private readonly IResourceResolver _resolver;
-		private readonly Dictionary<object, ClickAction> _actions;
-		private int _separatorCount;
+		private readonly Dictionary<object, Action> _actions;
+		private int _anonymousItemCount;
 
 		/// <summary>
 		/// Constructor.
@@ -36,7 +36,7 @@ namespace ClearCanvas.Desktop.Actions
 		public SimpleActionModel(IResourceResolver resolver)
 		{
 			_resolver = resolver;
-			_actions = new Dictionary<object, ClickAction>();
+			_actions = new Dictionary<object, Action>();
 		}
 
 		/// <summary>
@@ -116,18 +116,43 @@ namespace ClearCanvas.Desktop.Actions
 		}
 
 		/// <summary>
+		/// Adds a <see cref="TextBoxAction"/> to this action model.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="tooltip"></param>
+		/// <param name="permissionSpec"></param>
+		/// <returns></returns>
+		public TextBoxAction AddTextBoxAction(object key, string tooltip, ISpecification permissionSpec)
+		{
+			Platform.CheckForNullReference(key, "key");
+
+			var actionId = MakeAnonymousId();
+			var action = new TextBoxAction(actionId, MakePath(actionId), _resolver) { Tooltip = tooltip };
+
+			if (permissionSpec != null)
+			{
+				action.SetPermissibility(permissionSpec);
+			}
+
+			this.InsertAction(action);
+
+			_actions[key] = action;
+
+			return action;
+		}
+
+		/// <summary>
 		/// Adds a separator at the current position.
 		/// </summary>
 		public void AddSeparator()
 		{
-			var name = string.Format("sep{0}", _separatorCount++);
-			this.InsertSeparator(new ActionPath(string.Format("root/{0}", name), _resolver));
+			this.InsertSeparator(MakePath(MakeAnonymousId()));
 		}
 
 		/// <summary>
 		/// Gets actions by key.
 		/// </summary>
-		public ClickAction this[object key]
+		public Action this[object key]
 		{
 			get { return _actions[key]; }
 		}
@@ -136,9 +161,11 @@ namespace ClearCanvas.Desktop.Actions
 		{
 			Platform.CheckForNullReference(key, "key");
 
-			var action = new ClickAction(displayName, new ActionPath(string.Format("root/{0}", displayName), _resolver), ClickActionFlags.None, _resolver);
-			action.Tooltip = tooltip;
-			action.Label = displayName;
+			var action = new ClickAction(displayName, MakePath(displayName), ClickActionFlags.None, _resolver)
+							{
+								Tooltip = tooltip,
+								Label = displayName
+							};
 			if (icon != null)
 				action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
 
@@ -158,5 +185,14 @@ namespace ClearCanvas.Desktop.Actions
 			return action;
 		}
 
+		private ActionPath MakePath(string itemName)
+		{
+			return new ActionPath(string.Format("root/{0}", itemName), _resolver);
+		}
+
+		private string MakeAnonymousId()
+		{
+			return string.Format("item{0}", _anonymousItemCount++);
+		}
 	}
 }
