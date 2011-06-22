@@ -190,7 +190,7 @@
       <LastGenOutput>DefaultPatientReconciliationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="DisplaySetCreationSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>DisplaySetCreationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="LayoutSettings.settings">
