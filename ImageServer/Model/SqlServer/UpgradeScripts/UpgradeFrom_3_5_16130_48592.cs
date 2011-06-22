@@ -16,13 +16,13 @@ using ClearCanvas.Enterprise.Core.Upgrade;
 namespace ClearCanvas.ImageServer.Model.SqlServer.UpgradeScripts
 {
     /// <summary>
-    /// Kirk Release upgrade script
+    /// TODO: This should be a Peso upgrade script, but its a McCoy one now
     /// </summary>
     [ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
-    public class UpgradeFrom_2_2_14734_44343 : BaseUpgradeScript
+    public class UpgradeFrom_3_5_16130_48592 : BaseUpgradeScript
     {
-        public UpgradeFrom_2_2_14734_44343()
-            : base(new Version(2, 2, 14734, 44343), new Version(3, 5, 16130, 48592), "UpgradeFrom_2_2_14734_44343.sql")
+        public UpgradeFrom_3_5_16130_48592()
+            : base(new Version(3, 5, 16130, 48592), null, "UpgradeFrom_3_5_16130_48592.sql")
         {
         }
     }

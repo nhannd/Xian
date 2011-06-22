@@ -96,6 +96,7 @@
     <Compile Include="CannedText.gen.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DataAccessGroup.gen.cs" />
     <Compile Include="DatabaseVersion.cs" />
     <Compile Include="DatabaseVersion.gen.cs" />
     <Compile Include="DataLengthValidation.cs" />
@@ -120,6 +121,8 @@
     <Compile Include="EntityBrokers\CannedTextUpdateColumns.gen.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EntityBrokers\DataAccessGroupSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\DataAccessGroupUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DatabaseVersionSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\DatabaseVersionUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxSelectCriteria.gen.cs" />
@@ -144,6 +147,7 @@
     <Compile Include="EntityBrokers\ICannedTextEntityBroker.gen.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EntityBrokers\IDataAccessGroupEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDatabaseVersionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDevicePreferredTransferSyntaxEntityBroker.gen.cs" />
@@ -173,6 +177,7 @@
     <Compile Include="EntityBrokers\IServiceLockEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServiceLockTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IFilesystemStudyStorageEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IStudyDataAccessEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyDeleteRecordEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyHistoryEntityBroker.gen.cs" />
@@ -216,6 +221,8 @@
     <Compile Include="EntityBrokers\ServiceLockUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemStudyStorageSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemStudyStorageUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\StudyDataAccessSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\StudyDataAccessUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\StudyDeleteRecordSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\StudyDeleteRecordUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\StudyHistorySelectCriteria.gen.cs" />
@@ -331,6 +338,7 @@
     <Compile Include="Parameters\PartitionSopClassQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
     <Compile Include="StudyAlertContextInfo.cs" />
+    <Compile Include="StudyDataAccess.gen.cs" />
     <Compile Include="StudyDeleteRecord.cs" />
     <Compile Include="StudyDeleteRecord.gen.cs" />
     <Compile Include="StudyHistory.gen.cs" />

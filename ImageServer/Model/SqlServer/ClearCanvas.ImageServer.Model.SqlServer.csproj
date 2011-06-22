@@ -91,6 +91,7 @@
     <Compile Include="EntityBrokers\ArchiveStudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\CannedTextEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\DataAccessGroupEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DatabaseVersionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxEntityBroker.gen.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="EntityBrokers\ServiceLockEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServiceLockTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemStudyStorageEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\StudyDataAccessEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyDeleteRecordEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyHistoryEntityBroker.gen.cs" />
@@ -154,6 +156,7 @@
     <Compile Include="UpgradeScripts\UpgradeFrom_2_0_12655_37768.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_2_2_13745_40623.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_2_2_14734_44343.cs" />
+    <Compile Include="UpgradeScripts\UpgradeFrom_3_5_16130_48592.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -186,6 +189,7 @@
     <None Include="Scripts\ImageServerDefaultData.sql" />
     <EmbeddedResource Include="Scripts\ImageServerStoredProcedures.sql" />
     <None Include="Scripts\ImageServerTables.sql" />
+    <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_3_5_16130_48592.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_2_2_13745_40623.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_2_2_14734_44343.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_2_0_12655_37768.sql" />
