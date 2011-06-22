@@ -70,6 +70,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 			base.SetBoundsCore(x, y, width, _dropDown.PreferredHeight, specified);
 		}
 
+		[Category("Appearance")]
+		public override Color BackColor
+		{
+			get { return base.BackColor; }
+			set { base.BackColor = value; }
+		}
+
+		private bool ShouldSerializeBackColor()
+		{
+			return base.BackColor != Color.Transparent;
+		}
+
+		public override void ResetBackColor()
+		{
+			base.BackColor = Color.Transparent;
+		}
+
 		/// <summary>
 		/// Gets a collection of installed locales.
 		/// </summary>
@@ -108,6 +125,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
+		private bool ShouldSerializeSelectedLocale()
+		{
+			return false;
+		}
+
 		/// <summary>
 		/// Gets or sets the culture associated with <see cref="SelectedLocale"/>.
 		/// </summary>
@@ -124,6 +146,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 						SelectedLocale = locale;
 				}
 			}
+		}
+
+		private bool ShouldSerializeSelectedCulture()
+		{
+			return false;
 		}
 
 		/// <summary>
