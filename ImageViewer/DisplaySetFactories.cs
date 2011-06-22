@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	[Cloneable(false)]
-	internal class SingleFrameDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SingleFrameDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
 		private readonly string _seriesInstanceUid;
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer
 			}
 			else
 			{
-				//this is a referenced image (e.g. key iamge).
+				//this is a referenced image (e.g. key image).
 				if (lateralityViewPosition != null)
 					_suffix = String.Format(SR.SuffixFormatSingleReferencedImageDisplaySetWithLateralityViewPosition, 
 						lateralityViewPosition, imageSop.SeriesNumber, imageSop.InstanceNumber);
@@ -643,7 +643,7 @@ namespace ClearCanvas.ImageViewer
 	#region Mixed Multi-frame
 
 	[Cloneable(false)]
-	internal class MultiframeDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class MultiframeDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _sopInstanceUid;
 		private readonly string _suffix;
@@ -684,7 +684,7 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	[Cloneable(false)]
-	internal class SingleImagesDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SingleImagesDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
 

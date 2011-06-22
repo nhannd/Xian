@@ -47,30 +47,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 if (_imageBoxControl == null)  
                 {
 					_imageBoxControl = new ImageBoxControl(this.ImageBox, this.ParentRectangle);
-
-                    foreach(var extension in ImageBox.Extensions)
-                    {
-                        if (extension.View!=null)
-                        {
-                            Control ctrl = extension.View.GuiElement as Control;
-                            if (ctrl != null)
-                            {
-                                ctrl.Dock = DockStyle.Fill;
-                                _imageBoxControl.Controls.Add(ctrl);
-
-                                if (extension.HideImages)
-                                {
-                                    _imageBoxControl.HideImages();
-                                }
-                            }
-                        }
-                    }
-                    
                 }
                 return _imageBoxControl;
             }
         }
+
+        
     }
-
-
 }
