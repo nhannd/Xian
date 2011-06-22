@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             catch (UserAccessDeniedException ex)
             {
                 Platform.Log(LogLevel.Error, ex, ex.Message);
-                ShowError(ex.Message);
+                ShowError(ErrorMessages.UserAccessDenied);
                 UserName.Focus();
 
                 UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
