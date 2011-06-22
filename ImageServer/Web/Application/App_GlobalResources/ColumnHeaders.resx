@@ -446,4 +446,7 @@
   <data name="UserDisplayName" xml:space="preserve">
     <value>Display Name</value>
   </data>
+  <data name="ServerRuleType" xml:space="preserve">
+    <value>Type</value>
+  </data>
 </root>
