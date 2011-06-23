@@ -353,4 +353,49 @@
   <data name="MessagePrinterError" xml:space="preserve">
     <value>Unexpected failure reported by the printer.</value>
   </data>
+  <data name="LabelFilmDensityBlack" xml:space="preserve">
+    <value>Black</value>
+  </data>
+  <data name="LabelFilmDensityWhite" xml:space="preserve">
+    <value>White</value>
+  </data>
+  <data name="LabelFilmDestinationBinN" xml:space="preserve">
+    <value>Bin {0}</value>
+  </data>
+  <data name="LabelFilmDestinationMagazine" xml:space="preserve">
+    <value>Magazine</value>
+  </data>
+  <data name="LabelFilmDestinationProcessor" xml:space="preserve">
+    <value>Processor</value>
+  </data>
+  <data name="LabelFilmMagnificationTypeBilinear" xml:space="preserve">
+    <value>Bilinear</value>
+  </data>
+  <data name="LabelFilmMagnificationTypeCubic" xml:space="preserve">
+    <value>Cubic</value>
+  </data>
+  <data name="LabelFilmMagnificationTypeReplicate" xml:space="preserve">
+    <value>Replicate</value>
+  </data>
+  <data name="LabelFilmOrientationLandscape" xml:space="preserve">
+    <value>Landscape</value>
+  </data>
+  <data name="LabelFilmOrientationPortrait" xml:space="preserve">
+    <value>Portrait</value>
+  </data>
+  <data name="LabelFilmRequestedResolutionHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="LabelFilmRequestedResolutionStandard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="LabelPrintPriorityHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="LabelPrintPriorityLow" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="LabelPrintPriorityMedium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
 </root>

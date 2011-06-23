@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod.Sequences;
 using System.ComponentModel;
@@ -911,60 +912,185 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		#endregion
 	}
 
-    public class BasicPrintEnumConverter<TEnumType> : TypeConverter
-    {
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            if (destinationType == typeof(string))
-                return true;
+	public class BasicPrintEnumConverter<TEnumType> : TypeConverter
+	{
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof (string))
+				return true;
 
-            return base.CanConvertTo(context, destinationType);
-        }
+			return base.CanConvertTo(context, destinationType);
+		}
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
-        {
-            if (value is TEnumType && destinationType == typeof(string))
-            {
-                if (value.ToString() == "None")
-                    return SR.LabelDefault;
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			if (value is TEnumType && destinationType == typeof (string))
+			{
+				if (value.ToString() == "None")
+					return SR.LabelDefault;
 
-                if (value is MediumType)
-                    return ConvertMediumType((MediumType)value);
+				if (value is PrintPriority)
+					return ConvertPrintPriority((PrintPriority) value);
 
-                if (value is FilmDestination)
-                    return ConvertFilmDestination((FilmDestination) value);
-            }
+				if (value is MagnificationType)
+					return ConvertMagnificationType((MagnificationType) value);
 
-            return base.ConvertTo(context, culture, value, destinationType);
-        }
+				if (value is EmptyImageDensity)
+					return ConvertEmptyImageDensity((EmptyImageDensity) value);
 
-        private static string ConvertMediumType(MediumType mediumType)
-        {
-            switch (mediumType)
-            {
-                case MediumType.Paper:
-                    return SR.LabelFilmMediumTypePaper;
-                case MediumType.ClearFilm:
-                    return SR.LabelFilmMediumTypeClearFilm;
-                case MediumType.BlueFilm:
-                    return SR.LabelFilmMediumTypeBlueFilm;
-                case MediumType.MammoClearFilm:
-                    return SR.LabelFilmMediumTypeMammoClearFilm;
-                case MediumType.MammoBlueFilm:
-                    return SR.LabelFilmMediumTypeMammoBlueFilm;
-                default:
-                    return mediumType.ToString();
-            }
-        }
+				if (value is BorderDensity)
+					return ConvertBorderDensity((BorderDensity) value);
 
-        private static string ConvertFilmDestination(FilmDestination filmDestination)
-        {
-            var destinationString = filmDestination.ToString();
-            return destinationString.StartsWith("Bin_")
-                ? destinationString.Replace('_', ' ')
-                : destinationString;
-        }
-    }
+				if (value is RequestedResolution)
+					return ConvertRequestedResolution((RequestedResolution) value);
+
+				if (value is MediumType)
+					return ConvertMediumType((MediumType) value);
+
+				if (value is FilmDestination)
+					return ConvertFilmDestination((FilmDestination) value);
+
+				if (value is FilmOrientation)
+					return ConvertFilmOrientation((FilmOrientation) value);
+			}
+
+			return base.ConvertTo(context, culture, value, destinationType);
+		}
+
+		private static string ConvertPrintPriority(PrintPriority printPriority)
+		{
+			switch (printPriority)
+			{
+				case PrintPriority.High:
+					return SR.LabelPrintPriorityHigh;
+				case PrintPriority.Med:
+					return SR.LabelPrintPriorityMedium;
+				case PrintPriority.Low:
+					return SR.LabelPrintPriorityLow;
+				default:
+					return printPriority.ToString();
+			}
+		}
+
+		private static string ConvertMagnificationType(MagnificationType magnificationType)
+		{
+			switch (magnificationType)
+			{
+				case MagnificationType.Bilinear:
+					return SR.LabelFilmMagnificationTypeBilinear;
+				case MagnificationType.Cubic:
+					return SR.LabelFilmMagnificationTypeCubic;
+				case MagnificationType.Replicate:
+					return SR.LabelFilmMagnificationTypeReplicate;
+				default:
+					return magnificationType.ToString();
+			}
+		}
+
+		private static string ConvertEmptyImageDensity(EmptyImageDensity emptyImageDensity)
+		{
+			switch (emptyImageDensity)
+			{
+				case EmptyImageDensity.Black:
+					return SR.LabelFilmDensityBlack;
+				case EmptyImageDensity.White:
+					return SR.LabelFilmDensityWhite;
+				default:
+					return emptyImageDensity.ToString();
+			}
+		}
+
+		private static string ConvertBorderDensity(BorderDensity borderDensity)
+		{
+			switch (borderDensity)
+			{
+				case BorderDensity.Black:
+					return SR.LabelFilmDensityBlack;
+				case BorderDensity.White:
+					return SR.LabelFilmDensityWhite;
+				default:
+					return borderDensity.ToString();
+			}
+		}
+
+		private static string ConvertRequestedResolution(RequestedResolution requestedResolution)
+		{
+			switch (requestedResolution)
+			{
+				case RequestedResolution.Standard:
+					return SR.LabelFilmRequestedResolutionStandard;
+				case RequestedResolution.High:
+					return SR.LabelFilmRequestedResolutionHigh;
+				default:
+					return requestedResolution.ToString();
+			}
+		}
+
+		private static string ConvertMediumType(MediumType mediumType)
+		{
+			switch (mediumType)
+			{
+				case MediumType.Paper:
+					return SR.LabelFilmMediumTypePaper;
+				case MediumType.ClearFilm:
+					return SR.LabelFilmMediumTypeClearFilm;
+				case MediumType.BlueFilm:
+					return SR.LabelFilmMediumTypeBlueFilm;
+				case MediumType.MammoClearFilm:
+					return SR.LabelFilmMediumTypeMammoClearFilm;
+				case MediumType.MammoBlueFilm:
+					return SR.LabelFilmMediumTypeMammoBlueFilm;
+				default:
+					return mediumType.ToString();
+			}
+		}
+
+		private static string ConvertFilmDestination(FilmDestination filmDestination)
+		{
+			switch (filmDestination)
+			{
+				case FilmDestination.Magazine:
+					return SR.LabelFilmDestinationMagazine;
+				case FilmDestination.Processor:
+					return SR.LabelFilmDestinationProcessor;
+				case FilmDestination.Bin_0:
+					return string.Format(SR.LabelFilmDestinationBinN, 0);
+				case FilmDestination.Bin_1:
+					return string.Format(SR.LabelFilmDestinationBinN, 1);
+				case FilmDestination.Bin_2:
+					return string.Format(SR.LabelFilmDestinationBinN, 2);
+				case FilmDestination.Bin_3:
+					return string.Format(SR.LabelFilmDestinationBinN, 3);
+				case FilmDestination.Bin_4:
+					return string.Format(SR.LabelFilmDestinationBinN, 4);
+				case FilmDestination.Bin_5:
+					return string.Format(SR.LabelFilmDestinationBinN, 5);
+				case FilmDestination.Bin_6:
+					return string.Format(SR.LabelFilmDestinationBinN, 6);
+				case FilmDestination.Bin_7:
+					return string.Format(SR.LabelFilmDestinationBinN, 7);
+				case FilmDestination.Bin_8:
+					return string.Format(SR.LabelFilmDestinationBinN, 8);
+				case FilmDestination.Bin_9:
+					return string.Format(SR.LabelFilmDestinationBinN, 9);
+				default:
+					return filmDestination.ToString();
+			}
+		}
+
+		private static string ConvertFilmOrientation(FilmOrientation filmOrientation)
+		{
+			switch (filmOrientation)
+			{
+				case FilmOrientation.Portrait:
+					return SR.LabelFilmOrientationPortrait;
+				case FilmOrientation.Landscape:
+					return SR.LabelFilmOrientationLandscape;
+				default:
+					return filmOrientation.ToString();
+			}
+		}
+	}
 
     #endregion
 
