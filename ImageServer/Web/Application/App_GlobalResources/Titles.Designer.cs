@@ -385,7 +385,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data Rules.
+        ///   Looks up a localized string similar to Data Access Rules.
         /// </summary>
         internal static string DataRules {
             get {
@@ -394,7 +394,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data Rules | {0}.
+        ///   Looks up a localized string similar to Data Access Rules | {0}.
         /// </summary>
         internal static string DataRulesPageTitle {
             get {

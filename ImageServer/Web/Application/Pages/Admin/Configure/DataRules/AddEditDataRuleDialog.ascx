@@ -42,30 +42,6 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 								</tr>
 								<tr>
 									<td colspan="2">
-										<table width="100%">
-											<tr>
-												<td>
-													<asp:Label ID="RuleTypeLabel" runat="server" Text="<%$Resources: InputLabels, ServerRuleType %>" CssClass="DialogTextBoxLabel"/><br />
-													<asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="125" CssClass="DialogDropDownList"/>
-												</td>
-											</tr>
-										</table>
-									</td>
-									<td colspan="2">
-										<table width="100%">
-											<tr>
-												<td>
-													<asp:Label ID="RuleApplyTimeLabel" runat="server" Text="<%$Resources: InputLabels, ServerRuleApplyTime %>" CssClass="DialogTextBoxLabel"/><br />
-													<asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" Width="50%" CssClass="DialogDropDownList"/>
-												</td>
-												<td></td>
-											</tr>
-										</table>
-									</td>
-									<td></td>
-								</tr>
-								<tr>
-									<td colspan="2">
 										<asp:CheckBox ID="EnabledCheckBox" runat="server" Text="<%$Resources: InputLabels, Enabled %>" Checked="true" ToolTip="Enable/Disable the rule" CssClass="DialogCheckBox"/>
 									</td>
 									<td>

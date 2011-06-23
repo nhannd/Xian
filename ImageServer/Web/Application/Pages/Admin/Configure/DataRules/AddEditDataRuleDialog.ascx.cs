@@ -107,8 +107,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
         private static Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> LoadRuleTypes(object[] extensions)
         {
+
+            IList<ISampleRule> list = new List<ISampleRule>();
+            foreach (ISampleRule rule in extensions)
+            {
+                if (rule.Type.Equals(ServerRuleTypeEnum.DataAccess))
+                {
+                    list.Add(rule);
+                }
+            }
+
             var ruleTypeList = new Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>>();
-            foreach (ISampleRule extension in extensions)
+            foreach (ISampleRule extension in list)
             {
                 if (!ruleTypeList.ContainsKey(extension.Type))
                     ruleTypeList.Add(extension.Type, extension.ApplyTimeList);
@@ -123,52 +133,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
             foreach (ISampleRule extension in extensions)
             {
-                if (extension.Type.Equals(typeEnum))
-                {
-                    sampleList +=
-                        String.Format(
-                            @"        myEle = document.createElement('option') ;
+                sampleList +=
+                    String.Format(
+                        @"        myEle = document.createElement('option') ;
                     myEle.value = '{0}';
                     myEle.text = '{1}' ;
                     if(navigator.appName == 'Microsoft Internet Explorer') sampleList.add(myEle);
                     else sampleList.add(myEle, null);",
-                            extension.Name, extension.Description);
-                }
+                        extension.Name, extension.Description);
             }
-            string enumList = string.Empty;
-
-            foreach (ISampleRule extension in extensions)
-            {
-                if (extension.Type.Equals(typeEnum))
-                {
-                    foreach (ServerRuleApplyTimeEnum applyTimeEnum in extension.ApplyTimeList)
-                    {
-                        enumList +=
-                            String.Format(
-                                @"myEle = document.createElement('option') ;
-                    myEle.value = '{0}';
-                    myEle.text = '{1}';
-                    if(navigator.appName == 'Microsoft Internet Explorer') applyTimeList.add(myEle);
-                    else applyTimeList.add(myEle, null);",
-                                applyTimeEnum.Lookup, applyTimeEnum.Description);
-                    }
-                    break;
-                }
-            }
-
+         
             return
                 String.Format(
                     @"if (val == '{0}')
                 {{
-					{1}
                     myEle = document.createElement('option') ;
                     myEle.value = '';
                     myEle.text = '' ;
                     if(navigator.appName == 'Microsoft Internet Explorer') sampleList.add(myEle);
                     else sampleList.add(myEle, null);
-                    {2}
+                    {1}
                 }}",
-                    typeEnum.Lookup, enumList, sampleList);
+                    typeEnum.Lookup, sampleList);
         }
 
         protected override void OnInit(EventArgs e)
@@ -176,20 +162,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             base.OnInit(e);
 
             var ep = new SampleRuleExtensionPoint();
-            object[] extensions = ep.CreateExtensions();
-
+            var extensions = ep.CreateExtensions();
+        
             ServerPartitionTabContainer.ActiveTabIndex = 0;
 
             Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
 
 
             SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");
-            RuleTypeDropDownList.Attributes.Add("onchange", "selectRuleType(this);");
-
-            RuleTypeDropDownList.TextChanged += delegate
-            {
-                DataRuleValidator.RuleTypeControl = RuleTypeDropDownList.SelectedValue;
-            };
 
             string javascript =
                 @"<script type='text/javascript'>
@@ -200,10 +180,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 @"');
                 params = new Array();
                 params.serverRule=escape(CodeMirrorEditor.getCode());
-				var oList = document.getElementById('" +
-                RuleTypeDropDownList.ClientID +
-                @"');
-				params.ruleType = oList.options[oList.selectedIndex].value;
+				params.ruleType = " + ServerRuleTypeEnum.DataAccess.Lookup + @";
                 return params;
             }
 
@@ -213,12 +190,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 var sampleList = document.getElementById('" +
                 SampleRuleDropDownList.ClientID +
                 @"');
-                var applyTimeList = document.getElementById('" +
-                RuleApplyTimeDropDownList.ClientID +
-                @"');
                 
                 for (var q=sampleList.options.length; q>=0; q--) sampleList.options[q]=null;
-                for (var q=applyTimeList.options.length; q>=0; q--) applyTimeList.options[q]=null;
 				";
 
             bool first = true;
@@ -361,26 +334,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
             _rule.RuleName = RuleNameTextBox.Text;
 
-            _rule.ServerRuleTypeEnum = ServerRuleTypeEnum.GetEnum(RuleTypeDropDownList.SelectedItem.Value);
-
-            var ep = new SampleRuleExtensionPoint();
-            object[] extensions = ep.CreateExtensions();
-
-            Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
-
-            if (ruleTypeList.ContainsKey(_rule.ServerRuleTypeEnum))
-            {
-                string val = Request[RuleApplyTimeDropDownList.UniqueID];
-                foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[_rule.ServerRuleTypeEnum])
-                {
-                    _rule.ServerRuleApplyTimeEnum = applyTime;
-                    if (val.Equals(applyTime.Lookup))
-                    {
-                        _rule.ServerRuleApplyTimeEnum = applyTime;
-                        break;
-                    }
-                }
-            }
+            _rule.ServerRuleTypeEnum = ServerRuleTypeEnum.DataAccess;
 
             _rule.Enabled = EnabledCheckBox.Checked;
             _rule.DefaultRule = DefaultCheckBox.Checked;
@@ -406,9 +360,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 return;
             }
 
-            // update the dropdown list
-            RuleApplyTimeDropDownList.Items.Clear();
-            RuleTypeDropDownList.Items.Clear();
             RuleXmlTabPanel.TabIndex = 0;
             ServerPartitionTabContainer.ActiveTabIndex = 0;
 
@@ -436,39 +387,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 SelectSampleRuleLabel.Visible = false;
 
                 // Fill in the drop down menus
-                RuleTypeDropDownList.Items.Add(new ListItem(
-                                                   ServerEnumDescription.GetLocalizedDescription(_rule.ServerRuleTypeEnum),
-                                                   _rule.ServerRuleTypeEnum.Lookup));
-
-                IList<ServerRuleApplyTimeEnum> list = new List<ServerRuleApplyTimeEnum>();
-
-
-                if (ruleTypeList.ContainsKey(_rule.ServerRuleTypeEnum))
-                    list = ruleTypeList[_rule.ServerRuleTypeEnum];
-
-                foreach (ServerRuleApplyTimeEnum applyTime in list)
-                    RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerEnumDescription.GetLocalizedDescription(applyTime),
-                                                            applyTime.Lookup));
-
-
-                if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.Lookup) != null)
-                    RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Lookup;
-
-                RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Lookup;
-
+                
 
                 // Fill in the Rule XML
                 var sw = new StringWriter();
 
-                var xmlSettings = new XmlWriterSettings();
-
-                xmlSettings.Encoding = Encoding.UTF8;
-                xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
-                xmlSettings.Indent = true;
-                xmlSettings.NewLineOnAttributes = false;
-                xmlSettings.CheckCharacters = true;
-                xmlSettings.IndentChars = "  ";
+                var xmlSettings = new XmlWriterSettings
+                                      {
+                                          Encoding = Encoding.UTF8,
+                                          ConformanceLevel = ConformanceLevel.Fragment,
+                                          Indent = true,
+                                          NewLineOnAttributes = false,
+                                          CheckCharacters = true,
+                                          IndentChars = "  "
+                                      };
 
                 XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
 
@@ -478,7 +410,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
                 RuleXmlTextBox.Text = sw.ToString();
 
-                DataRuleValidator.RuleTypeControl = RuleTypeDropDownList.SelectedValue;
+                DataRuleValidator.RuleTypeControl = ServerRuleTypeEnum.DataAccess.Lookup;
             }
             else
             {
@@ -521,18 +453,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                                 SampleRuleDropDownList.Items.Add(new ListItem(extension.Description, extension.Name));
                             }
                         }
-
-                        foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[type])
-                            RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                                    ServerEnumDescription.GetLocalizedDescription(applyTime),
-                                                                    applyTime.Lookup));
                     }
-
-                    RuleTypeDropDownList.Items.Add(new ListItem(
-                                                       ServerEnumDescription.GetLocalizedDescription(type), type.Lookup));
                 }
 
-                DataRuleValidator.RuleTypeControl = RuleTypeDropDownList.SelectedValue;
+                DataRuleValidator.RuleTypeControl = ServerRuleTypeEnum.DataAccess.Lookup;
             }
 
             ModalDialog.Show();

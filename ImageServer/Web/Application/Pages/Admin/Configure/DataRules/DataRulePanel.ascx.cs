@@ -69,8 +69,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
             // only query for rule in this partition
             criteria.ServerPartitionKey.EqualTo(ServerPartition.GetKey());
-            // TODO
-            criteria.ServerRuleTypeEnum.EqualTo(ServerRuleTypeEnum.SopCompress);
+            criteria.ServerRuleTypeEnum.EqualTo(ServerRuleTypeEnum.DataAccess);
 
             if (StatusFilter.SelectedIndex != 0)
             {

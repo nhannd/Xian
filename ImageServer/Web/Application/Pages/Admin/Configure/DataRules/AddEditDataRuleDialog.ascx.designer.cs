@@ -103,33 +103,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         protected global::System.Web.UI.WebControls.Label RuleTypeLabel;
 
         /// <summary>
-        /// RuleTypeDropDownList control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList RuleTypeDropDownList;
-
-        /// <summary>
-        /// RuleApplyTimeLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label RuleApplyTimeLabel;
-
-        /// <summary>
-        /// RuleApplyTimeDropDownList control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList RuleApplyTimeDropDownList;
-
-        /// <summary>
         /// EnabledCheckBox control.
         /// </summary>
         /// <remarks>
