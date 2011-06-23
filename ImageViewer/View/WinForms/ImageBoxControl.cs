@@ -502,6 +502,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         void DetachExtension(IImageBoxExtension extension)
         {
             extension.VisibilityChanged -= OnExtension_VisibilityChanged;
+            var view = extension.View;
+            if (view!=null)
+            {
+                Control ctrl = view.GuiElement as Control;
+                if (ctrl!=null)
+                {
+                    Controls.Remove(ctrl);
+                }
+            }
         }
 
         void OnExtension_VisibilityChanged(object sender, ImageBoxExtensionVisiblityChangedEventArg e)
@@ -533,8 +542,5 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 }
             }
         }
-
-
-        
     }
 }
