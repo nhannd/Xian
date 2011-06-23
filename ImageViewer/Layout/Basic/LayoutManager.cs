@@ -19,6 +19,7 @@ using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -53,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				_creationSetting = creationSetting;
 
-				PresentationState defaultPresentationState = new BasicDicomPresentationState 
+				PresentationState defaultPresentationState = new DicomPresentationState
 																{ ShowGrayscaleInverted = creationSetting.ShowGrayscaleInverted };
 
 				var imageFactory = (PresentationImageFactory)PresentationImageFactory;
