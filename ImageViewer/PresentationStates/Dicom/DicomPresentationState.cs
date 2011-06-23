@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
@@ -24,13 +25,34 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 	/// components from the image header.
 	/// </summary>
 	[Cloneable(true)]
-	internal sealed class DicomDefaultPresentationState : PresentationState
+    public sealed class DicomPresentationState : PresentationState
 	{
-		internal static readonly DicomDefaultPresentationState Instance = new DicomDefaultPresentationState();
+        public static readonly DicomPresentationState Default = new DicomPresentationState { _isReadOnly = true };
 
-		private DicomDefaultPresentationState() {}
+        private bool _showGrayscaleInverted;
+        private bool _isReadOnly;
+        
+        public DicomPresentationState()
+        {
+	        _isReadOnly = false;
+        }
 
-		private static void Deserialize(IDicomPresentationImage image)
+	    /// <summary>
+	    /// Specifies whether or not to show grayscale images inverted.
+	    /// </summary>
+	    public bool ShowGrayscaleInverted
+	    {
+	        get { return _showGrayscaleInverted; }
+	        set
+	        {
+                if (_isReadOnly)
+                    throw new InvalidOperationException("Cannot change the properties of a read-only presentation state.");
+
+	            _showGrayscaleInverted = value;
+	        }
+	    }
+
+	    private static void DeserializeHeader(IDicomPresentationImage image)
 		{
 			bool anyFailures = false;
 
@@ -109,12 +131,30 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				if (image is IDicomPresentationImage)
 				{
-					Deserialize((IDicomPresentationImage) image);
+					DeserializeHeader((IDicomPresentationImage) image);
+				    DeserializeInvert((IDicomPresentationImage) image);
 				}
 			}
 		}
 
-		public override void Clear(IEnumerable<IPresentationImage> image)
+        private void DeserializeInvert(IDicomPresentationImage image)
+        {
+            if (!ShowGrayscaleInverted)
+                return;
+
+            if (!(image.ImageGraphic.PixelData is GrayscalePixelData))
+                return;
+
+            if (!(image is IVoiLutProvider))
+                return;
+
+            IVoiLutManager manager = ((IVoiLutProvider) image).VoiLutManager;
+            //Invert can be true by default depending on photometric interpretation,
+            //so we'll just assume the current value is the default and flip it.
+            manager.Invert = !manager.Invert;
+        }
+
+	    public override void Clear(IEnumerable<IPresentationImage> image)
 		{
 		}
 	}

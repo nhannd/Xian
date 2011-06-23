@@ -312,7 +312,7 @@
     <Compile Include="IUndoableOperation.cs" />
     <Compile Include="LinkedImageEnumerator.cs" />
     <Compile Include="Mathematics\Tests\PolygonFTests.cs" />
-    <Compile Include="PresentationStates\Dicom\DicomDefaultPresentationState.cs" />
+    <Compile Include="PresentationStates\Dicom\DicomPresentationState.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\DecoratorGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\EllipseGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\PolylineGraphicAnnotationSerializer.cs" />

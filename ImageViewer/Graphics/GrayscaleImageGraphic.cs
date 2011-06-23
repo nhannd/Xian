@@ -472,7 +472,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 					lut = _voiLutFactory.CreateVoiLut(this);
 
 				if (lut == null)
-					lut = new IdentityVoiLinearLut();
+					lut = new IdentityVoiLinearLut(BitsStored);
 
 				(this as IVoiLutInstaller).InstallVoiLut(lut);
 			}
