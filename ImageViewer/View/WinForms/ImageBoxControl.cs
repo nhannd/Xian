@@ -443,11 +443,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void UpdateImageScroller()
 		{
-            if (_hideImages)
-            {
-                ImageScrollerVisible = false;
-                return;
-            }
 
 			//This method can be called repeatedly and will essentially be a no-op if nothing needs to change.
 			//In tiled mode, it could be a little inefficient to call repeatedly, but it's the lesser of the evils.
@@ -499,11 +494,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 if (ctrl != null)
                 {
                     Controls.Add(ctrl);
-
-                    if (extension.HideImagesOnVisible)
-                    {
-                        HideImages(true);
-                    }
                 }
             }
             extension.VisibilityChanged += OnExtension_VisibilityChanged;
@@ -530,10 +520,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                         // make sure it's on top of the images or if the display set is empty, 
                         // it's on top of the empty tiles
                         ctrl.BringToFront(); 
-                        if (e.Extension.HideImagesOnVisible)
-                        {
-                            HideImages(true);
-                        }
                     }
                 }
                 else
@@ -541,21 +527,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     Control ctrl = e.Extension.View.GuiElement as Control;
                     if (ctrl!=null)
                     {
-                        Controls.Remove(ctrl);   
-                    }
-
-                    if (e.Extension.HideImagesOnVisible)
-                    {
-                        HideImages(false);
+                        Controls.Remove(ctrl);
+                        Draw();
                     }
                 }
             }
         }
 
-        public void HideImages(bool hide)
-        {
-            _hideImages = hide;
-        }
 
         
     }
