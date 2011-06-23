@@ -151,6 +151,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Authority Groups.
+        /// </summary>
+        internal static string AuthorityGroups {
+            get {
+                return ResourceManager.GetString("AuthorityGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto Insert Devices.
         /// </summary>
         internal static string AutoInsertDevices {

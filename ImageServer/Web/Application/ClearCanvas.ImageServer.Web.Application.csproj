@@ -294,6 +294,10 @@
     <Compile Include="Pages\Admin\Configure\DataRules\DataRulePanel.ascx.designer.cs">
       <DependentUpon>DataRulePanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Configure\DataRules\DataRuleSamples.asmx.cs">
+      <DependentUpon>DataRuleSamples.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Pages\Admin\Configure\DataRules\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1549,6 +1553,7 @@
     <Content Include="Pages\Admin\Configure\DataRules\DataRuleGridView.ascx" />
     <Content Include="Pages\Admin\Configure\DataRules\DataRulePanel.ascx" />
     <EmbeddedResource Include="Pages\Admin\Configure\DataRules\DataRulePanel.js" />
+    <Content Include="Pages\Admin\Configure\DataRules\DataRuleSamples.asmx" />
     <Content Include="Pages\Admin\Configure\DataRules\Default.aspx" />
     <Content Include="Pages\Error\SoftwareExpiredErrorPage.aspx" />
     <Content Include="Pages\Error\LicenseErrorPage.aspx" />

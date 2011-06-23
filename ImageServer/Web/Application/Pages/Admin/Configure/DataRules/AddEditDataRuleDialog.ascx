@@ -12,6 +12,12 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AddEditDataRuleDialog.ascx.cs" 
 Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRules.AddEditDataRuleDialog" %>
 
+<asp:ScriptManagerProxy runat="server">
+	<Services>
+		<asp:ServiceReference Path="DataRuleSamples.asmx" />
+	</Services>
+</asp:ScriptManagerProxy>
+
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="800px">
 	<ContentTemplate>	
             <asp:ValidationSummary ID="EditDataRuleValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
@@ -23,11 +29,13 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 					<ContentTemplate>
 							<table id="Table1" runat="server" width="100%">
 								<tr>
-									<td colspan="5">
+								    <td valign="top">
+								    <asp:Label ID="RuleNameLabel" runat="server" Text="<%$Resources: InputLabels, ServerRuleName %>" CssClass="DialogTextBoxLabel"></asp:Label><br />
+								    </td>
+									<td colspan="4">
 										<table width="300">
 											<tr>
-												<td>
-													<asp:Label ID="RuleNameLabel" runat="server" Text="<%$Resources: InputLabels, ServerRuleName %>" CssClass="DialogTextBoxLabel"></asp:Label><br />
+												<td>													
 													<asp:TextBox ID="RuleNameTextBox" runat="server" Width="285" ValidationGroup="AddEditDataRuleValidationGroup" CssClass="DialogTextBox"></asp:TextBox>
 												</td>
 												<td valign="bottom" align="center">
@@ -41,7 +49,8 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 									</td>
 								</tr>
 								<tr>
-									<td colspan="2">
+								    <td></td>
+									<td>
 										<asp:CheckBox ID="EnabledCheckBox" runat="server" Text="<%$Resources: InputLabels, Enabled %>" Checked="true" ToolTip="Enable/Disable the rule" CssClass="DialogCheckBox"/>
 									</td>
 									<td>
@@ -53,6 +62,14 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 											ToolTip="Rule that specifies DICOM messages or studies that are exempt from the rule." CssClass="DialogCheckBox" />
 									</td>
 									<td></td>
+								</tr>
+								<tr>
+								    <td valign="top" class="DialogTextBoxLabel"><asp:Label ID="Label3" runat="server" Text="<%$Resources: InputLabels, AuthorityGroups %>" CssClass="DialogTextBoxLabel" /></td>
+                                    <td colspan="4">
+								        <div  class="DialogCheckBoxList">
+                                            <asp:CheckBoxList id="AuthorityGroupCheckBoxList" runat="server" TextAlign="Right" RepeatColumns="1"></asp:CheckBoxList>
+                                        </div>          
+								    </td>
 								</tr>
 							</table>
 					</ContentTemplate>

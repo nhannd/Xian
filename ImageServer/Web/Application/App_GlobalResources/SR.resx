@@ -758,4 +758,10 @@ At least one server partition is required. Please add a new server partition.</v
     <value>{0} Are you sure you want to delete this group?</value>
     <comment>{0} is a reason for the message. For eg: the group contains one or more users.</comment>
   </data>
+  <data name="DialogAddDataRuleTitle" xml:space="preserve">
+    <value>Add Data Access Rule</value>
+  </data>
+  <data name="DialogEditDataRuleTitle" xml:space="preserve">
+    <value>Edit Data Access Rule</value>
+  </data>
 </root>

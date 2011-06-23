@@ -282,4 +282,7 @@
   <data name="SIQ_ReconcileDuplicateDialog_UseExistingDemographics" xml:space="preserve">
     <value>Use Existing Demographics</value>
   </data>
+  <data name="AuthorityGroups" xml:space="preserve">
+    <value>Authority Groups</value>
+  </data>
 </root>

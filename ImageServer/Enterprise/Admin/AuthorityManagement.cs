@@ -50,6 +50,16 @@ namespace ClearCanvas.ImageServer.Enterprise.Admin
             return _service.ListAuthorityGroups(new ListAuthorityGroupsRequest()).AuthorityGroups;
         }
 
+        public IList<AuthorityGroupSummary> ListDataAccessAuthorityGroups()
+        {
+            ListAuthorityGroupsRequest rq = new ListAuthorityGroupsRequest
+                                                {
+                                                    DataGroup = true
+                                                };
+
+            return _service.ListAuthorityGroups(rq).AuthorityGroups;
+        }
+
         public void AddAuthorityGroup(string name, List<AuthorityTokenSummary> tokens)
         {
             AuthorityGroupDetail details = new AuthorityGroupDetail();

@@ -12,6 +12,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
     
     
     public partial class AddEditDataRuleDialog {
+        
         /// <summary>
         /// ModalDialog control.
         /// </summary>
@@ -20,16 +21,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog;
-
+        
         /// <summary>
-        /// EditServerRuleValidationSummary control.
+        /// EditDataRuleValidationSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ValidationSummary EditDataRuleValidationSummary;
-
+        
         /// <summary>
         /// ServerPartitionTabContainer control.
         /// </summary>
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::AjaxControlToolkit.TabContainer ServerPartitionTabContainer;
-
+        
         /// <summary>
         /// GeneralTabPanel control.
         /// </summary>
@@ -47,7 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::AjaxControlToolkit.TabPanel GeneralTabPanel;
-
+        
         /// <summary>
         /// Table1 control.
         /// </summary>
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlTable Table1;
-
+        
         /// <summary>
         /// RuleNameLabel control.
         /// </summary>
@@ -65,7 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label RuleNameLabel;
-
+        
         /// <summary>
         /// RuleNameTextBox control.
         /// </summary>
@@ -74,7 +75,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox RuleNameTextBox;
-
+        
         /// <summary>
         /// RuleNameHelp control.
         /// </summary>
@@ -83,7 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator RuleNameHelp;
-
+        
         /// <summary>
         /// RuleNameValidator control.
         /// </summary>
@@ -92,16 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator RuleNameValidator;
-
-        /// <summary>
-        /// RuleTypeLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label RuleTypeLabel;
-
+        
         /// <summary>
         /// EnabledCheckBox control.
         /// </summary>
@@ -110,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox EnabledCheckBox;
-
+        
         /// <summary>
         /// DefaultCheckBox control.
         /// </summary>
@@ -119,7 +111,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox DefaultCheckBox;
-
+        
         /// <summary>
         /// ExemptRuleCheckBox control.
         /// </summary>
@@ -128,7 +120,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox ExemptRuleCheckBox;
-
+        
+        /// <summary>
+        /// Label3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label3;
+        
+        /// <summary>
+        /// AuthorityGroupCheckBoxList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList AuthorityGroupCheckBoxList;
+        
         /// <summary>
         /// RuleXmlTabPanel control.
         /// </summary>
@@ -137,7 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::AjaxControlToolkit.TabPanel RuleXmlTabPanel;
-
+        
         /// <summary>
         /// SelectSampleRuleLabel control.
         /// </summary>
@@ -146,7 +156,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label SelectSampleRuleLabel;
-
+        
         /// <summary>
         /// SampleRuleDropDownList control.
         /// </summary>
@@ -155,7 +165,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList SampleRuleDropDownList;
-
+        
         /// <summary>
         /// RuleXmlTextBox control.
         /// </summary>
@@ -164,7 +174,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox RuleXmlTextBox;
-
+        
         /// <summary>
         /// InvalidRuleHint control.
         /// </summary>
@@ -173,16 +183,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator InvalidRuleHint;
-
+        
         /// <summary>
-        /// ServerRuleValidator control.
+        /// DataRuleValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ServerRuleValidator DataRuleValidator;
-
+        
         /// <summary>
         /// Panel3 control.
         /// </summary>
@@ -191,7 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Panel3;
-
+        
         /// <summary>
         /// UpdateButton control.
         /// </summary>
@@ -200,7 +210,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton UpdateButton;
-
+        
         /// <summary>
         /// OKButton control.
         /// </summary>
@@ -209,7 +219,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
-
+        
         /// <summary>
         /// CancelButton control.
         /// </summary>

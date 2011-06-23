@@ -16,7 +16,10 @@ using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Web.Application.Controls;
@@ -215,7 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             {
                 var type = oList.value;
              
-                ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRuleSamples.GetXml(type,
+                ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRules.DataRuleSamples.GetXml(type,
                     OnSucess, OnError);
             }
             function OnError(result)
@@ -275,7 +278,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Page.IsPostBack)
+            if (Page.IsPostBack == false)
+            {
+
+                using (AuthorityManagement service = new AuthorityManagement())
+                {
+                    IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
+                    IList<ListItem> items = CollectionUtils.Map<AuthorityGroupSummary, ListItem>(
+                                            tokens,
+                                            delegate(AuthorityGroupSummary group)
+                                            {
+                                                ListItem item =  new ListItem(group.Name, group.AuthorityGroupRef.ToString());
+                                                item.Attributes["title"] = group.Description;
+                                                return item;
+                                            });
+
+                    AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
+                };
+            }
+            else
             {
                 if (ViewState["_EditMode"] != null)
                     _editMode = (bool)ViewState["_EditMode"];
@@ -370,7 +391,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
             if (EditMode)
             {
-                ModalDialog.Title = SR.DialogEditServerRuleTitle;
+                ModalDialog.Title = SR.DialogEditDataRuleTitle;
                 OKButton.Visible = false;
                 UpdateButton.Visible = true;
 
@@ -414,7 +435,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             }
             else
             {
-                ModalDialog.Title = SR.DialogAddServerRuleTitle;
+                ModalDialog.Title = SR.DialogAddDataRuleTitle;
                 OKButton.Visible = false;
                 UpdateButton.Visible = true;
 
