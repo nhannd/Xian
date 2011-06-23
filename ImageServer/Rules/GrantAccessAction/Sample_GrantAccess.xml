@@ -1,0 +1,9 @@
+﻿<!-- 
+This conditional rule instructs the server to auto-route MR and CT studies 
+-->
+<condition expressionLanguage="dicom">
+	<or>
+		<equal  test="$Modality"	 refValue="MR" />
+		<equal  test="$Modality"	 refValue="CT" />
+	</or>
+</condition>

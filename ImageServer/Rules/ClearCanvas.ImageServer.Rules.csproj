@@ -43,6 +43,10 @@
     <Compile Include="AutoRouteAction\AutoRouteActionOperator.cs" />
     <Compile Include="AutoRouteAction\AutoRouteSamples.cs" />
     <Compile Include="AutoRouteAction\InsertAutoRouteCommand.cs" />
+    <Compile Include="GrantAccessAction\GrantAccessActionItem.cs" />
+    <Compile Include="GrantAccessAction\GrantAccessActionOperator.cs" />
+    <Compile Include="GrantAccessAction\GrantAccessSamples.cs" />
+    <Compile Include="GrantAccessAction\InsertStudyDataAccessCommand.cs" />
     <Compile Include="InsertFilesystemQueueCommand.cs" />
     <Compile Include="ISampleRule.cs" />
     <Compile Include="CompressSamples\CompressSamples.cs" />
@@ -142,6 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AutoRouteAction\Sample_AutoRouteSourceAe.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GrantAccessAction\Sample_GrantAccess.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
