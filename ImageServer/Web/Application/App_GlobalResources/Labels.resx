@@ -613,4 +613,7 @@
   <data name="ArchiveQueue_NoResults" xml:space="preserve">
     <value>No items found matching the provided criteria.</value>
   </data>
+  <data name="StudyDetails_History_Reconcile_StudySnapshot" xml:space="preserve">
+    <value>Study (Snapshot)</value>
+  </data>
 </root>

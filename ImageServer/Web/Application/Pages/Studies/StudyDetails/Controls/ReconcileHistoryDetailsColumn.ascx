@@ -15,6 +15,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Import Namespace="ClearCanvas.ImageServer.Common.CommandProcessor" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ReconcileHistoryDetailsColumn.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.ReconcileHistoryDetailsColumn" %>
+<%@ Import Namespace="ClearCanvas.Dicom"%>
 <%@ Import Namespace="Resources"%>
 
 <script type="text/javascript">
@@ -52,18 +53,18 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     <tr>
         <td style="border-bottom:none; padding-bottom:5px" valign="top">
             <table border="0" width="100%">
-                <tr><td class="HistoryDetailsLabel" style="border-bottom:dashed 1px #c0c0c0;">Study (Snapshot):</td></tr>
+                <tr><td class="HistoryDetailsLabel" style="border-bottom:dashed 1px #c0c0c0;"><%= Labels.StudyDetails_History_Reconcile_StudySnapshot %>Study (Snapshot):</td></tr>
                 <tr><td style="border:none">
                     <div>
                         <table cellpadding="0" cellspacing="0">
-                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_PatientID%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.PatientId %></pre></td></tr>
-                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_IssuerOfPatientID%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.IssuerOfPatientId %></pre></td></tr>
-                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_PatientName%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.Name %></pre></td></tr>
-                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_PatientBirthDate%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.PatientsBirthdate %></pre></td></tr>
-                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_PatientSex%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.Sex %></pre></td></tr>
-                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_AccessionNumber%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.AccessionNumber %></pre></td></tr>
-                            <tr><td style="border-bottom:none"><%= Labels.StudyDetails_History_Reconcile_StudyDate%></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.StudyDate %></pre></td></tr>
-                        </table>                    
+                            <tr><td style="border-bottom:none"><%= HtmlUtility.Encode(DicomTagDictionary.GetDicomTag(DicomTags.PatientId).Name) %></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.PatientId %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= HtmlUtility.Encode(DicomTagDictionary.GetDicomTag(DicomTags.IssuerOfPatientId).Name) %></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.IssuerOfPatientId %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= HtmlUtility.Encode(DicomTagDictionary.GetDicomTag(DicomTags.PatientsName).Name) %></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.Name %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= HtmlUtility.Encode(DicomTagDictionary.GetDicomTag(DicomTags.PatientsBirthDate).Name) %></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.PatientsBirthdate %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= HtmlUtility.Encode(DicomTagDictionary.GetDicomTag(DicomTags.PatientsSex).Name) %></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.PatientInfo.Sex %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= HtmlUtility.Encode(DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber).Name) %></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.AccessionNumber %></pre></td></tr>
+                            <tr><td style="border-bottom:none"><%= HtmlUtility.Encode(DicomTagDictionary.GetDicomTag(DicomTags.StudyDate).Name) %></td><td style="border-bottom:none"><pre style="padding-left:10px"><%# ReconcileHistory.ExistingStudy.StudyDate %></pre></td></tr>
+                        </table>
                     </div>
                 </td></tr>
             </table>

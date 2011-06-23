@@ -1393,6 +1393,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Study (Snapshot).
+        /// </summary>
+        internal static string StudyDetails_History_Reconcile_StudySnapshot {
+            get {
+                return ResourceManager.GetString("StudyDetails_History_Reconcile_StudySnapshot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Series deleted:.
         /// </summary>
         internal static string StudyDetails_History_SeriesDeleted {
