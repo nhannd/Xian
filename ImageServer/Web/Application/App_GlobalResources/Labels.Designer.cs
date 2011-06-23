@@ -673,6 +673,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not Specified.
+        /// </summary>
+        internal static string NotSpecified {
+            get {
+                return ResourceManager.GetString("NotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original Password.
         /// </summary>
         internal static string OriginalPassword {

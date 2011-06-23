@@ -158,7 +158,7 @@
                                      <table>
                                         <tr>
                                             <td width="130px" class="DialogLabelBackground"><asp:Label runat="server" CssClass="DialogTextBoxLabel"><%=Labels.PatientName %></asp:Label></td>
-                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingNameLabel" Width="300px" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Name)? "Not Specified": ReconcileDetails.ConflictingStudyInfo.Patient.Name%>' /></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingNameLabel" Width="300px" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Name) ? Labels.NotSpecified : ReconcileDetails.ConflictingStudyInfo.Patient.Name%>' /></td>
                                         </tr>
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.PatientID %></asp:Label></td>
@@ -166,17 +166,17 @@
                                         </tr>
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.PatientBirthdate %></asp:Label></td>
-                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientBirthDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.BirthDate)? "Not Specified":ReconcileDetails.ConflictingStudyInfo.Patient.BirthDate %>' /></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientBirthDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.BirthDate) ? Labels.NotSpecified : ReconcileDetails.ConflictingStudyInfo.Patient.BirthDate %>' /></td>
                                         </tr>
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.AccessionNumber %></asp:Label></td>
-                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingAccessionNumberLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.AccessionNumber)?"Not Specified":ReconcileDetails.ConflictingStudyInfo.AccessionNumber %>' /></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingAccessionNumberLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.AccessionNumber) ? Labels.NotSpecified : ReconcileDetails.ConflictingStudyInfo.AccessionNumber %>' /></td>
                                          </tr>
                                          <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.PatientSex %></asp:Label></td>
                                             <td>
                                                 <table cellpadding="0" cellspacing="0">
-                                                    <tr><td><asp:textbox ID="ConflictingPatientSex" runat="server" CssClass="StudyInfoField" BorderWidth="0" ReadOnly="true" Width="95" ValidationGroup="ReconcileValidationGroup" BorderStyle="None" BackColor="Transparent" Font-Size="14px" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Sex)?"Not Specified":ReconcileDetails.ConflictingStudyInfo.Patient.Sex %>'></asp:textbox></td>
+                                                    <tr><td><asp:textbox ID="ConflictingPatientSex" runat="server" CssClass="StudyInfoField" BorderWidth="0" ReadOnly="true" Width="95" ValidationGroup="ReconcileValidationGroup" BorderStyle="None" BackColor="Transparent" Font-Size="14px" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Sex) ? Labels.NotSpecified : ReconcileDetails.ConflictingStudyInfo.Patient.Sex %>'></asp:textbox></td>
                                                     <td>
                                                         <ccUI:Warning runat="server" ID="UnknownSexWarning" SkinID="<%$ Image : Warning %>"  
                                                                                 Message="<%$Resources: InputValidation, SIQ_ReconcileDialog_PatientSexOverriddenOnMerge%>"/>
@@ -187,11 +187,11 @@
                                         </tr>
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.IssuerOfPatientID %></asp:Label></td>
-                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientIssuerOfPatientID" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.IssuerOfPatientID)? "Not Specified":ReconcileDetails.ConflictingStudyInfo.Patient.IssuerOfPatientID %>' /></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientIssuerOfPatientID" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.IssuerOfPatientID) ? Labels.NotSpecified : ReconcileDetails.ConflictingStudyInfo.Patient.IssuerOfPatientID %>' /></td>
                                         </tr>
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label6" runat="server" CssClass="DialogTextBoxLabel"><%=Labels.StudyDate %></asp:Label></td>
-                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingStudyDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.StudyDate)?"Not Specified":ReconcileDetails.ConflictingStudyInfo.StudyDate %>' /></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingStudyDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.StudyDate) ? Labels.NotSpecified : ReconcileDetails.ConflictingStudyInfo.StudyDate %>' /></td>
                                         </tr>
                                     </table>
                                     </div>

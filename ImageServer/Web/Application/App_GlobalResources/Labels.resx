@@ -616,4 +616,7 @@
   <data name="StudyDetails_History_Reconcile_StudySnapshot" xml:space="preserve">
     <value>Study (Snapshot)</value>
   </data>
+  <data name="NotSpecified" xml:space="preserve">
+    <value>Not Specified</value>
+  </data>
 </root>
