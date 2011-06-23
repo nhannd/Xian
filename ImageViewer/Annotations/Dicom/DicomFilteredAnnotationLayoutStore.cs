@@ -241,8 +241,8 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 
 			// these are hard-coded as the only filter candidates for now, until more general use cases are identified.
 			filterCandidates.Add(new KeyValuePair<string, string>("Modality", dicomImage.ImageSop.Modality));
-			filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Row", TryGetSubstring(dicomImage.Frame.PatientOrientation.Row, 0, 1)));
-			filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", TryGetSubstring(dicomImage.Frame.PatientOrientation.Column, 0, 1)));
+			filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Row", dicomImage.Frame.PatientOrientation != null ? TryGetSubstring(dicomImage.Frame.PatientOrientation.Row, 0, 1) : string.Empty));
+			filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", dicomImage.Frame.PatientOrientation != null ? TryGetSubstring(dicomImage.Frame.PatientOrientation.Column, 0, 1) : string.Empty));
 
 			return GetMatchingStoredLayoutId(filterCandidates);
 		}
@@ -272,12 +272,11 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 		{
 			try
 			{
-				return s.Substring(startIndex, length);
+				if (!string.IsNullOrEmpty(s))
+					return s.Substring(startIndex, length);
 			}
-			catch (Exception)
-			{
-				return string.Empty;
-			}
+			catch (ArgumentOutOfRangeException) {}
+			return string.Empty;
 		}
 	}
 }
