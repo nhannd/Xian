@@ -533,4 +533,7 @@ Use image with caution.</value>
   <data name="MessageRenderingPipelineFailure" xml:space="preserve">
     <value>An error has occurred in the rendering pipeline.</value>
   </data>
+  <data name="FormatDescriptionNamedLinearLut" xml:space="preserve">
+    <value>W:{0} L:{1} ({2})</value>
+  </data>
 </root>

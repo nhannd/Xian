@@ -181,7 +181,6 @@
     <Compile Include="PresetVoiLuts\Operations\InitialVoiLutProvider.cs" />
     <Compile Include="PresetVoiLuts\Operations\AllowMultiplePresetVoiLutOperationsAttribute.cs" />
     <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactory.cs" />
-    <Compile Include="PresetVoiLuts\Luts\PresetVoiLutLinear.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLut.cs" />
     <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactories.cs" />
     <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactoryExtensionPoint.cs" />
