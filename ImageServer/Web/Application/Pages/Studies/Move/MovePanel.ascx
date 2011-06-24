@@ -64,16 +64,16 @@
   <td class="SeriesDetailsContent">
      <table cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" width="100%" >
         <tr>
-            <td align="left" nowrap="nowrap" valign="bottom" style="padding-top: 5px;"><asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, AETitle%>" CssClass="SearchTextBoxLabel" /><br /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /></td>
+            <td align="left" nowrap="nowrap" valign="bottom" style="padding-top: 5px;"><asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, AETitle%>" CssClass="SearchTextBoxLabel" /><br /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" Tooltip="<%$ Resources: Tooltips, SearchByAETitle %>" /></td>
             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, DeviceDescription %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
-                                                <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Description"></asp:TextBox></td>
+                                                <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="<%$ Resources: Tooltips, SearchByAeDescription %>"></asp:TextBox></td>
 
             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, IPAddress %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
-                                                <asp:TextBox ID="IPAddressFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by IP Address"></asp:TextBox></td>
+                                                <asp:TextBox ID="IPAddressFilter" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips, SearchByIpAddress %>"></asp:TextBox></td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels, DHCP%>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="DHCPFilter" runat="server" CssClass="SearchDropDownList">
