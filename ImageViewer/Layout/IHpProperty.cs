@@ -14,16 +14,19 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
-	public interface IHpPropertyEditContext
-	{
-		ApplicationComponentExitCode ShowModalEditor(IApplicationComponent editorComponent);
-	}
+    public interface IHpPropertyEditContext
+    {
+        ApplicationComponentExitCode ShowModalEditor(IApplicationComponent editorComponent);
+    }
 
 	/// <summary>
 	/// Defines the interface to a single HP "property", displayed in one of the HP editor property tables.
 	/// </summary>
 	public interface IHpProperty
 	{
+        /// <summary>
+        /// The type of the underlying property.
+        /// </summary>
         Type Type { get; }
         
         /// <summary>

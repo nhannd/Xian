@@ -9,8 +9,6 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 using System;
 
 namespace ClearCanvas.ImageViewer.Layout
@@ -38,24 +36,17 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// <param name="getter"></param>
 		/// <param name="setter"></param>
         public HpProperty(string name, string description, ValueGetter getter, ValueSetter setter)
-            : this(name, description, null, getter, setter)
 		{
-		}
-
-        public HpProperty(string name, string description, List<TProperty> standardValues, ValueGetter getter, ValueSetter setter)
-		{
+		    Type = typeof (TProperty);
             DisplayName = name;
             Description = description;
-            if (standardValues != null)
-		        StandardValues = standardValues.AsReadOnly();
-
             _getter = getter;
             _setter = setter;
         }
 
 	    #region Implementation of IHpProperty
 
-        public Type Type { get { return typeof(TProperty); } }
+        public Type Type { get; protected set; }
 
 		/// <summary>
 		/// Gets the display name of this property for display in the user-interface.
@@ -85,19 +76,6 @@ namespace ClearCanvas.ImageViewer.Layout
 			return false;
 		}
 
-	    public bool HasStandardValues
-	    {
-            get { return StandardValues != null && StandardValues.Count > 0; }    
-	    }
-
-        object[] IHpProperty.StandardValues
-        {
-            get
-            {
-                return CollectionUtils.Map<TProperty, object>(StandardValues, value => value).ToArray();
-            }
-        }
-
         public virtual bool CanSetValue
         {
             get { return true; }
@@ -109,15 +87,13 @@ namespace ClearCanvas.ImageViewer.Layout
             set
             {
                 if (!CanSetValue)
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("The value property cannot be set.");
 
                 Value = (TProperty)value;
             }
         }
         
         #endregion
-
-	    IList<TProperty> StandardValues { get; set; }
 
 	    /// <summary>
 		/// Gets or sets the value associated with this property.
