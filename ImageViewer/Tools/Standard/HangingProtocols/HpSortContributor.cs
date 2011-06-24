@@ -73,10 +73,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.HangingProtocols
         public void SetState(object state)
         {
             var data = state as Data;
-            if (data != null)
-            {
-                _selected = CollectionUtils.SelectFirst(ImageComparerList.Items, item => item.Name == data.Name && item.IsReverse == data.Reverse);
-            }
+            _selected = data == null ? null : CollectionUtils.SelectFirst(ImageComparerList.Items, item => item.Name == data.Name && item.IsReverse == data.Reverse);
         }
 
         #endregion
