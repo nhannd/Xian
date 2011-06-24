@@ -212,4 +212,22 @@ Low Watermark  : {2}%</value>
   <data name="ShowOtherNameFormats" xml:space="preserve">
     <value>Show name in other formats</value>
   </data>
+  <data name="AdminRules_AddEditDialog_Default" xml:space="preserve">
+    <value>Default rule applied if no other rules of the type apply to a DICOM message/study.</value>
+  </data>
+  <data name="AdminRules_AddEditDialog_Enabled" xml:space="preserve">
+    <value>Enable/Disable the rule</value>
+  </data>
+  <data name="AdminRules_AddEditDialog_Exempt" xml:space="preserve">
+    <value>Rule that specifies DICOM messages or studies that are exempt from the rule.</value>
+  </data>
+  <data name="SearchByAeDescription" xml:space="preserve">
+    <value>Search the list by Description</value>
+  </data>
+  <data name="SearchByAETitle" xml:space="preserve">
+    <value>Search by Application Entity (AE) Title</value>
+  </data>
+  <data name="SearchByIpAddress" xml:space="preserve">
+    <value>Search the list by IP Address</value>
+  </data>
 </root>
