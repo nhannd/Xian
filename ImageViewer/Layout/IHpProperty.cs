@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout
@@ -23,7 +24,9 @@ namespace ClearCanvas.ImageViewer.Layout
 	/// </summary>
 	public interface IHpProperty
 	{
-		/// <summary>
+        Type Type { get; }
+        
+        /// <summary>
 		/// Gets the display name of this property for display in the user-interface.
 		/// </summary>
 		string DisplayName { get; }
@@ -33,24 +36,17 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// </summary>
 		string Description { get; }
 
-		/// <summary>
-		/// Gets string representation of this property for display in the user-interface.
-		/// </summary>
-		/// <returns></returns>
-		string GetStringValue();
+        /// <summary>
+        /// Gets whether or not <see cref="Value"/> can be set.
+        /// </summary>
+        bool CanSetValue { get; }
+        
+        /// <summary>
+        /// Gets the value for this property.
+        /// </summary>
+        object Value { get; set; }
 
-		/// <summary>
-		/// Sets the value of this property from a string representation, if this property supports parsing.
-		/// </summary>
-		/// <param name="value"></param>
-		void SetStringValue(string value);
-
-		/// <summary>
-		/// Gets a value indicating whether string parsing is supported.
-		/// </summary>
-		bool CanParseStringValue { get; }
-
-		/// <summary>
+        /// <summary>
 		/// Gets a value indicating whether this property can be edited by a custom dialog box.
 		/// </summary>
 		bool HasEditor { get; }
@@ -61,5 +57,6 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// <param name="context"></param>
 		/// <returns></returns>
 		bool EditProperty(IHpPropertyEditContext context);
-	}
+
+    }
 }

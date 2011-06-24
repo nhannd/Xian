@@ -9,9 +9,9 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using System;
-using System.ComponentModel;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
@@ -22,14 +22,13 @@ namespace ClearCanvas.ImageViewer.Layout
 	/// This class can be used as-is or subclassed for advanced functionality.
 	/// </remarks>
 	/// <typeparam name="TProperty"></typeparam>
-	public class HpProperty<TProperty> : IHpProperty
+    public class HpProperty<TProperty> : IHpProperty
 	{
-		public delegate TProperty ValueGetter();
-		public delegate void ValueSetter(TProperty value);
+        public delegate TProperty ValueGetter();
+        public delegate void ValueSetter(TProperty value);
 
 		private readonly ValueGetter _getter;
 		private readonly ValueSetter _setter;
-
 
 		/// <summary>
 		/// Constructor
@@ -38,15 +37,25 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// <param name="description"></param>
 		/// <param name="getter"></param>
 		/// <param name="setter"></param>
-		public HpProperty(string name, string description, ValueGetter getter, ValueSetter setter)
+        public HpProperty(string name, string description, ValueGetter getter, ValueSetter setter)
+            : this(name, description, null, getter, setter)
 		{
-			DisplayName = name;
-			Description = description;
-			_getter = getter;
-			_setter = setter;
 		}
 
-		#region Implementation of IHpProperty
+        public HpProperty(string name, string description, List<TProperty> standardValues, ValueGetter getter, ValueSetter setter)
+		{
+            DisplayName = name;
+            Description = description;
+            if (standardValues != null)
+		        StandardValues = standardValues.AsReadOnly();
+
+            _getter = getter;
+            _setter = setter;
+        }
+
+	    #region Implementation of IHpProperty
+
+        public Type Type { get { return typeof(TProperty); } }
 
 		/// <summary>
 		/// Gets the display name of this property for display in the user-interface.
@@ -57,35 +66,6 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// Gets the description of this property for display in the user-interface.
 		/// </summary>
 		public string Description { get; private set; }
-
-		/// <summary>
-		/// Gets string representation of this property for display in the user-interface.
-		/// </summary>
-		/// <returns></returns>
-		public string GetStringValue()
-		{
-			return Format(this.Value);
-		}
-
-		/// <summary>
-		/// Sets the value of this property from a string representation, if this property supports parsing.
-		/// </summary>
-		/// <param name="value"></param>
-		public void SetStringValue(string value)
-		{
-			if (CanParseStringValue)
-			{
-				this.Value = Parse(value);
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether string parsing is supported.
-		/// </summary>
-		public virtual bool CanParseStringValue
-		{
-			get { return true; }
-		}
 
 		/// <summary>
 		/// Gets a value indicating whether this property can be edited by a custom dialog box.
@@ -105,47 +85,41 @@ namespace ClearCanvas.ImageViewer.Layout
 			return false;
 		}
 
-		#endregion
+	    public bool HasStandardValues
+	    {
+            get { return StandardValues != null && StandardValues.Count > 0; }    
+	    }
 
-		/// <summary>
-		/// Override this method to control formatting of value for display in property user-interface.
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		protected virtual string Format(TProperty value)
-		{
-		    return TypeDescriptor.GetConverter(typeof (TProperty)).ConvertToString(value);
-		}
+        object[] IHpProperty.StandardValues
+        {
+            get
+            {
+                return CollectionUtils.Map<TProperty, object>(StandardValues, value => value).ToArray();
+            }
+        }
 
-		/// <summary>
-		/// Override this method to control parsing of value entered through property user-interface.
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		protected virtual TProperty Parse(string value)
-		{
-			if(!CanParseStringValue)
-				throw new NotSupportedException("This property does not support string parsing.");
+        public virtual bool CanSetValue
+        {
+            get { return true; }
+        }
 
-			// trim
-			if(!string.IsNullOrEmpty(value))
-			{
-				value = value.Trim();
-			}
+        object IHpProperty.Value
+        {
+            get { return Value; }
+            set
+            {
+                if (!CanSetValue)
+                    throw new InvalidOperationException();
 
-		    try
-		    {
-                return (TProperty)TypeDescriptor.GetConverter(typeof(TProperty)).ConvertFromString(value);
-		    }
-		    catch (Exception e)
-		    {
-                Platform.Log(LogLevel.Info, e);
-		    }
+                Value = (TProperty)value;
+            }
+        }
+        
+        #endregion
 
-		    return default(TProperty);
-		}
+	    IList<TProperty> StandardValues { get; set; }
 
-		/// <summary>
+	    /// <summary>
 		/// Gets or sets the value associated with this property.
 		/// </summary>
 		protected TProperty Value
