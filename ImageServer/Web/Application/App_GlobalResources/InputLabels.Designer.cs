@@ -151,11 +151,11 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Authority Groups.
+        ///   Looks up a localized string similar to Authority Groups Granted Access.
         /// </summary>
-        internal static string AuthorityGroups {
+        internal static string AuthorityGroupsDataAccess {
             get {
-                return ResourceManager.GetString("AuthorityGroups", resourceCulture);
+                return ResourceManager.GetString("AuthorityGroupsDataAccess", resourceCulture);
             }
         }
         
@@ -430,6 +430,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rule Options.
+        /// </summary>
+        internal static string RuleCheckBoxes {
+            get {
+                return ResourceManager.GetString("RuleCheckBoxes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select Sample Rule.
         /// </summary>
         internal static string SelectSampleRule {
@@ -466,7 +475,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name.
+        ///   Looks up a localized string similar to Rule Name.
         /// </summary>
         internal static string ServerRuleName {
             get {

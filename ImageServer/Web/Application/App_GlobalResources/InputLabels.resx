@@ -238,7 +238,7 @@
     <value>Exempt Rule</value>
   </data>
   <data name="ServerRuleName" xml:space="preserve">
-    <value>Name</value>
+    <value>Rule Name</value>
   </data>
   <data name="ServerRuleType" xml:space="preserve">
     <value>Type</value>
@@ -282,7 +282,10 @@
   <data name="SIQ_ReconcileDuplicateDialog_UseExistingDemographics" xml:space="preserve">
     <value>Use Existing Demographics</value>
   </data>
-  <data name="AuthorityGroups" xml:space="preserve">
-    <value>Authority Groups</value>
+  <data name="AuthorityGroupsDataAccess" xml:space="preserve">
+    <value>Authority Groups Granted Access</value>
+  </data>
+  <data name="RuleCheckBoxes" xml:space="preserve">
+    <value>Rule Options</value>
   </data>
 </root>

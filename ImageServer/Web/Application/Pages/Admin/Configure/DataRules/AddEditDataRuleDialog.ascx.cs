@@ -167,8 +167,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             var ep = new SampleRuleExtensionPoint();
             var extensions = ep.CreateExtensions();
         
-            ServerPartitionTabContainer.ActiveTabIndex = 0;
-
             Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
 
 
@@ -183,7 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 @"');
                 params = new Array();
                 params.serverRule=escape(CodeMirrorEditor.getCode());
-				params.ruleType = " + ServerRuleTypeEnum.DataAccess.Lookup + @";
+				params.ruleType = '" + ServerRuleTypeEnum.DataAccess.Lookup + @"';
                 return params;
             }
 
@@ -288,13 +286,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                                             tokens,
                                             delegate(AuthorityGroupSummary group)
                                             {
-                                                ListItem item =  new ListItem(group.Name, group.AuthorityGroupRef.ToString());
+                                                ListItem item =  new ListItem(group.Name, group.AuthorityGroupRef.ToString(false,false));
                                                 item.Attributes["title"] = group.Description;
                                                 return item;
                                             });
 
                     AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
-                };
+                }
             }
             else
             {
@@ -343,14 +341,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         {
             if (_rule == null)
             {
-                _rule = new ServerRule();
+                _rule = new ServerRule
+                            {
+                                ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.StudyProcessed
+                            };
             }
-
+            
 
             if (RuleXmlTextBox.Text.Length > 0)
             {
                 _rule.RuleXml = new XmlDocument();
-                _rule.RuleXml.Load(new StringReader(RuleXmlTextBox.Text));
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<rule>");
+                sb.Append(RuleXmlTextBox.Text);
+                sb.Append("<action>");
+                foreach (ListItem item in AuthorityGroupCheckBoxList.Items)
+                {
+                    if (item.Selected)
+                    {
+                        sb.AppendFormat("<grant-access authorityGroupOid=\"{0}\"/>", item.Value);
+                    }
+                }
+                sb.Append("</action>");
+                sb.Append("</rule>");
+
+                _rule.RuleXml.Load(new StringReader(sb.ToString()));
             }
 
             _rule.RuleName = RuleNameTextBox.Text;
@@ -376,18 +392,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             //make sure the dialog stays visible.
             if (!Page.IsValid)
             {
-                RuleXmlTabPanel.TabIndex = 0;
                 ModalDialog.Show();
                 return;
             }
 
-            RuleXmlTabPanel.TabIndex = 0;
-            ServerPartitionTabContainer.ActiveTabIndex = 0;
 
             var ep = new SampleRuleExtensionPoint();
             object[] extensions = ep.CreateExtensions();
-
-            Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
 
             if (EditMode)
             {
@@ -408,7 +419,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 SelectSampleRuleLabel.Visible = false;
 
                 // Fill in the drop down menus
-                
+
 
                 // Fill in the Rule XML
                 var sw = new StringWriter();
@@ -425,13 +436,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
                 XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
 
-                _rule.RuleXml.WriteTo(tw);
+                XmlNode node2 = _rule.RuleXml.SelectSingleNode("/rule/condition");
+                
+                node2.WriteTo(tw);
 
                 tw.Close();
 
                 RuleXmlTextBox.Text = sw.ToString();
 
                 DataRuleValidator.RuleTypeControl = ServerRuleTypeEnum.DataAccess.Lookup;
+
+                AuthorityGroupCheckBoxList.ClearSelection();
+
+                foreach (XmlNode node in _rule.RuleXml.SelectNodes("/rule/action/grant-access"))
+                {
+                    string oid = node.Attributes["authorityGroupOid"].Value;
+                    ListItem item = AuthorityGroupCheckBoxList.Items.FindByValue(oid);
+                    if (item != null) item.Selected = true;
+                }
             }
             else
             {
@@ -450,30 +472,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 SelectSampleRuleLabel.Visible = true;
 
                 // Do the drop down lists
-                bool first = true;
-                var list = new List<ServerRuleTypeEnum>();
-                list.AddRange(ruleTypeList.Keys);
-
-                // Sort the list by description
-                list.Sort(
-                    new Comparison<ServerRuleTypeEnum>(
-                        delegate(ServerRuleTypeEnum type1, ServerRuleTypeEnum type2) { return type1.Description.CompareTo(type2.Description); }));
-
-                foreach (ServerRuleTypeEnum type in list)
+                SampleRuleDropDownList.Items.Clear();
+                SampleRuleDropDownList.Items.Add(new ListItem(string.Empty, string.Empty));
+                foreach (ISampleRule extension in extensions)
                 {
-                    if (first)
+                    if (extension.Type.Equals(ServerRuleTypeEnum.DataAccess))
                     {
-                        first = false;
-                        SampleRuleDropDownList.Items.Clear();
-                        SampleRuleDropDownList.Items.Add(new ListItem(string.Empty, string.Empty));
-
-                        foreach (ISampleRule extension in extensions)
-                        {
-                            if (extension.Type.Equals(type))
-                            {
-                                SampleRuleDropDownList.Items.Add(new ListItem(extension.Description, extension.Name));
-                            }
-                        }
+                        SampleRuleDropDownList.Items.Add(new ListItem(extension.Description, extension.Name));
                     }
                 }
 
