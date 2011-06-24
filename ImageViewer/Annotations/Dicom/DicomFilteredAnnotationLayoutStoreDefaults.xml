@@ -16,6 +16,30 @@
         <filter key="Modality" value="DX" />
       </filters>
     </dicom-filtered-annotation-layout>
+    <dicom-filtered-annotation-layout id="Dicom.Filtered.MG.RowDirectionPosterior" matching-layout-id="Dicom.MG.RowDirectionPosterior">
+      <filters>
+        <filter key="Modality" value="MG" />
+        <filter key="PatientOrientation_Row" value="P" />
+      </filters>
+    </dicom-filtered-annotation-layout>
+    <dicom-filtered-annotation-layout id="Dicom.Filtered.MG.RowDirectionAnterior" matching-layout-id="Dicom.MG.RowDirectionAnterior">
+      <filters>
+        <filter key="Modality" value="MG" />
+        <filter key="PatientOrientation_Row" value="A" />
+      </filters>
+    </dicom-filtered-annotation-layout>
+    <dicom-filtered-annotation-layout id="Dicom.Filtered.MG.ColumnDirectionPosterior" matching-layout-id="Dicom.MG.ColumnDirectionPosterior">
+      <filters>
+        <filter key="Modality" value="MG" />
+        <filter key="PatientOrientation_Col" value="P" />
+      </filters>
+    </dicom-filtered-annotation-layout>
+    <dicom-filtered-annotation-layout id="Dicom.Filtered.MG.ColumnDirectionAnterior" matching-layout-id="Dicom.MG.ColumnDirectionAnterior">
+      <filters>
+        <filter key="Modality" value="MG" />
+        <filter key="PatientOrientation_Col" value="A" />
+      </filters>
+    </dicom-filtered-annotation-layout>
     <dicom-filtered-annotation-layout id="Dicom.Filtered.MG" matching-layout-id="Dicom.MG">
       <filters>
         <filter key="Modality" value="MG" />

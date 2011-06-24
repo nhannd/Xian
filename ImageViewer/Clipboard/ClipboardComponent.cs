@@ -425,7 +425,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			var name = BuildClipboardItemName(image);
 			var description = BuildClipboardItemDescription(image);
 
-			image = image.Clone();
+			image = ImageExport.ImageExporter.ClonePresentationImage(image);
 			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
 
 			return new ClipboardItem(image, bmp, name, description, clientRectangle);
@@ -469,7 +469,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 				else
 				{
 					string name = String.Format("{0} - {1}", selectionStrategy.Description, displaySet.Name);
-					displaySet = new DisplaySet(name, displaySet.Uid);
+					displaySet = new DisplaySet(name, displaySet.Uid) {Description = displaySet.Description, Number = displaySet.Number};
 					images.ForEach(delegate(IPresentationImage image) { displaySet.PresentationImages.Add(image.Clone()); });
 					return CreateDisplaySetItem(displaySet, clientRectangle);
 				}

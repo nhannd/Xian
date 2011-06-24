@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                    
                     if(level != null && alert != null)
                     {
-                        if (alert.Level.Equals("Error") || alert.Level.Equals("Critical"))
+                        if (alert.LevelIsErrorOrCritical)
                         {
                             level.ForeColor = Color.Red;
                         }

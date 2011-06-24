@@ -114,7 +114,7 @@
         <asp:TableCell>
             <asp:Button ID="ShowOtherNameFormatButton" UseSubmitBehavior="false" 
                     runat="server" Text="..." 
-                    ToolTip="Show name in other formats"/>
+                    ToolTip="<%$ Resources: Tooltips, ShowOtherNameFormats %>"/>
         </asp:TableCell>
     </asp:TableRow>
     <asp:TableRow runat="server" ID="PhoneticRow" VerticalAlign="Bottom">

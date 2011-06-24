@@ -325,13 +325,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _treeCtrl.ShowRootLines = value;}
         }
 
-        [DefaultValue(false)]
-		[Obsolete("CheckBoxes is the same as toggling CheckBoxStyle to Standard. Consider using CheckBoxStyle instead.")]
-        public bool CheckBoxes
-        {
-            get { return this.CheckBoxStyle == CheckBoxStyle.Standard; }
-            set { this.CheckBoxStyle = value ? CheckBoxStyle.Standard : CheckBoxStyle.None; }
-        }
+    	[Browsable(false)]
+    	[Obsolete("CheckBoxes is the same as toggling CheckBoxStyle to Standard. Consider using CheckBoxStyle instead.")]
+    	public bool CheckBoxes
+    	{
+    		get { return this.CheckBoxStyle == CheckBoxStyle.Standard; }
+    		set { this.CheckBoxStyle = value ? CheckBoxStyle.Standard : CheckBoxStyle.None; }
+    	}
+
+    	private bool ShouldSerializeCheckBoxes()
+    	{
+    		return false;
+    	}
 
         [DefaultValue(false)]
         public bool SelectionDisabled

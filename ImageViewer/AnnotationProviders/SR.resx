@@ -681,4 +681,94 @@
   <data name="Format2Dimensions" xml:space="preserve">
     <value>{0} x {1}</value>
   </data>
+  <data name="Dicom_PatientStudy_Composite_PatientsAgeSex_DisplayName" xml:space="preserve">
+    <value>Patient's Age and Sex</value>
+  </data>
+  <data name="Dicom_PatientStudy_Composite_PatientsAgeSex_Label" xml:space="preserve">
+    <value>Age/Sex</value>
+  </data>
+  <data name="FormatPatientsAgeSex" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="AnnotationItemProviders_Dicom_DXImage_DisplayName" xml:space="preserve">
+    <value>Dicom (DX Image)</value>
+  </data>
+  <data name="Dicom_DXImage_AcquisitionDeviceProcessingDescription_DisplayName" xml:space="preserve">
+    <value>Acquisition Device Processing Description</value>
+  </data>
+  <data name="Dicom_DXImage_AcquisitionDeviceProcessingDescription_Label" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="Dicom_DXImage_BodyPartThickness_DisplayName" xml:space="preserve">
+    <value>Body Part Thickness</value>
+  </data>
+  <data name="Dicom_DXImage_BodyPartThickness_Label" xml:space="preserve">
+    <value>Body Part Thickness</value>
+  </data>
+  <data name="Dicom_DXImage_CassetteId_DisplayName" xml:space="preserve">
+    <value>Cassette ID</value>
+  </data>
+  <data name="Dicom_DXImage_CassetteId_Label" xml:space="preserve">
+    <value>Cassette</value>
+  </data>
+  <data name="Dicom_DXImage_CompressionForce_DisplayName" xml:space="preserve">
+    <value>Compression Force</value>
+  </data>
+  <data name="Dicom_DXImage_CompressionForce_Label" xml:space="preserve">
+    <value>Compression Force</value>
+  </data>
+  <data name="Dicom_DXImage_DetectorPrimaryAngle_DisplayName" xml:space="preserve">
+    <value>Detector Primary Angle</value>
+  </data>
+  <data name="Dicom_DXImage_DetectorPrimaryAngle_Label" xml:space="preserve">
+    <value>Detector Primary Angle</value>
+  </data>
+  <data name="Dicom_DXImage_ExposureInMas_DisplayName" xml:space="preserve">
+    <value>Exposure in mAs</value>
+  </data>
+  <data name="Dicom_DXImage_ExposureInMas_Label" xml:space="preserve">
+    <value>Exposure in mAs</value>
+  </data>
+  <data name="Dicom_DXImage_FilterMaterial_DisplayName" xml:space="preserve">
+    <value>Filter Material</value>
+  </data>
+  <data name="Dicom_DXImage_FilterMaterial_Label" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Dicom_DXImage_KVP_DisplayName" xml:space="preserve">
+    <value>DX_KVP</value>
+  </data>
+  <data name="Dicom_DXImage_KVP_Label" xml:space="preserve">
+    <value>KVP</value>
+  </data>
+  <data name="Dicom_DXImage_PlateId_DisplayName" xml:space="preserve">
+    <value>Plate ID</value>
+  </data>
+  <data name="Dicom_DXImage_PlateId_Label" xml:space="preserve">
+    <value>Plate</value>
+  </data>
+  <data name="Dicom_DXImage_PresentationIntentType_DisplayName" xml:space="preserve">
+    <value>Presentation Intent</value>
+  </data>
+  <data name="Dicom_DXImage_PresentationIntentType_Label" xml:space="preserve">
+    <value>Intent</value>
+  </data>
+  <data name="Dicom_PatientStudy_Composite_PatientsAgeSexBirthDate_DisplayName" xml:space="preserve">
+    <value>Patient's Age, Sex and Birth Date</value>
+  </data>
+  <data name="Dicom_PatientStudy_Composite_PatientsAgeSexBirthDate_Label" xml:space="preserve">
+    <value>Age/Sex/DOB</value>
+  </data>
+  <data name="FormatPatientsAgeSexBirthDate" xml:space="preserve">
+    <value>{0}/{1}/{2}</value>
+  </data>
+  <data name="ValueNil" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="FormatNewtons" xml:space="preserve">
+    <value>{0} N</value>
+  </data>
+  <data name="Format_mAs" xml:space="preserve">
+    <value>{0} mAs</value>
+  </data>
 </root>

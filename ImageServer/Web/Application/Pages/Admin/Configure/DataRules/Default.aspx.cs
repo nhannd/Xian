@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             };
 
 
-            SetPageTitle(Titles.ServerRulesPageTitle);
+            SetPageTitle(Titles.DataRulesPageTitle);
 
             base.OnInit(e);
         }

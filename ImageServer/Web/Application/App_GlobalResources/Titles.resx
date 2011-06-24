@@ -411,6 +411,9 @@
   <data name="LabelNotForDiagnosticUse" xml:space="preserve">
     <value>Not for Diagnostic Use</value>
   </data>
+  <data name="MoveStudies" xml:space="preserve">
+    <value>Move Studies</value>
+  </data>
   <data name="DataRules" xml:space="preserve">
     <value>Data Access Rules</value>
   </data>

@@ -57,7 +57,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			foreach (var locale in AvailableLocales)
 				_dropDown.Items.Add(locale);
-			_dropDown.SelectedItem = DefaultLocale;
+			_dropDown.SelectedItem = InstalledLocales.Instance.Selected;
 		}
 
 		protected override Size DefaultSize
@@ -68,6 +68,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCore(x, y, width, _dropDown.PreferredHeight, specified);
+		}
+
+		[Category("Appearance")]
+		public override Color BackColor
+		{
+			get { return base.BackColor; }
+			set { base.BackColor = value; }
+		}
+
+		private bool ShouldSerializeBackColor()
+		{
+			return base.BackColor != Color.Transparent;
+		}
+
+		public override void ResetBackColor()
+		{
+			base.BackColor = Color.Transparent;
 		}
 
 		/// <summary>
@@ -108,6 +125,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
+		private bool ShouldSerializeSelectedLocale()
+		{
+			return false;
+		}
+
 		/// <summary>
 		/// Gets or sets the culture associated with <see cref="SelectedLocale"/>.
 		/// </summary>
@@ -124,6 +146,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 						SelectedLocale = locale;
 				}
 			}
+		}
+
+		private bool ShouldSerializeSelectedCulture()
+		{
+			return false;
 		}
 
 		/// <summary>
@@ -176,6 +203,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 			result = null;
 			return false;
+		}
+
+		/// <summary>
+		/// Saves the current value of <see cref="SelectedLocale"/> to persistent storage.
+		/// </summary>
+		public void SaveSelectedLocale()
+		{
+			InstalledLocales.Instance.Selected = SelectedLocale;
 		}
 
 		private void OnSelectedIndexChanged(object sender, EventArgs e)

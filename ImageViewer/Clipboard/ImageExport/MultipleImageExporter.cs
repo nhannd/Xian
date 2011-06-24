@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 					// Technically, we should be doing the clone on the main thread
 					// and then passing it to the worker, but that would require blocking
 					// the main thread while we cloned all the images.
-					_imagesToDispose.Add(image = image.Clone());
+					_imagesToDispose.Add(image = ImageExporter.ClonePresentationImage(image));
 				}
 
 				return image;

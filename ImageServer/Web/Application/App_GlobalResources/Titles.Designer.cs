@@ -592,6 +592,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Studies.
+        /// </summary>
+        internal static string MoveStudies {
+            get {
+                return ResourceManager.GetString("MoveStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move Studies | {0}.
         /// </summary>
         internal static string MoveStudiesPageTitle {

@@ -210,7 +210,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         {
             Filesystem fs = row.DataItem as Filesystem;
             Label lbl = row.FindControl("FilesystemTierDescription") as Label; // The label is added in the template
-            lbl.Text = fs.FilesystemTierEnum.Description;
+            lbl.Text = ServerEnumDescription.GetLocalizedDescription(fs.FilesystemTierEnum);
         }
 
 

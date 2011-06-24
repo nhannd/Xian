@@ -26,7 +26,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// Delegate for creating a filmBox.
 		/// </summary>
 		/// <returns></returns>
-		public delegate FilmBox CreateFilmBoxDelegate();
+		public delegate FilmBox CreateFilmBoxDelegate(IList<IPrintItem> currentQueue);
 
 		public delegate void GetPixelDataDelegate(ImageBox imageBox, ColorMode colorMode, out ushort rows, out ushort columns, out byte[] pixelData);
 
@@ -68,7 +68,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			private FilmBox _currentFilmBox;
 
 			private readonly ReadOnlyCollection<IPrintItem> _printItems;
-			private readonly IEnumerator<IPrintItem> _printItemEnumerator;
+			private readonly Queue<IPrintItem> _printItemQueue;
 
 			public FilmSession(List<IPrintItem> printItems, CreateFilmBoxDelegate createFilmBoxCallback)
 			{
@@ -76,8 +76,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				_filmBoxes = new List<FilmBox>();
 
 				_printItems = printItems.AsReadOnly();
-				_printItemEnumerator = _printItems.GetEnumerator();
-				_printItemEnumerator.MoveNext();
+				_printItemQueue = new Queue<IPrintItem>(printItems);
 			}
 
 			internal DicomUid SopInstanceUid { get; set; }
@@ -95,7 +94,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				this.SopInstanceUid = filmSessionUid;
 
 				// Move to the first element.
-				_filmBoxes.Add(_currentFilmBox = _createFilmBoxCallback.Invoke());
+				_filmBoxes.Add(_currentFilmBox = _createFilmBoxCallback.Invoke(new List<IPrintItem>(_printItemQueue).AsReadOnly()));
 				this.PrintScu.CreateFilmBox(this, _currentFilmBox);
 			}
 
@@ -107,7 +106,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				var imageBoxes = new List<ImageBox>();
 				for (var i = 0; i < imageBoxUids.Count; i++)
 				{
-					var imageBox = new ImageBox(_currentFilmBox, _printItemEnumerator.Current)
+					var imageBox = new ImageBox(_currentFilmBox, _printItemQueue.Dequeue())
 						{
 							ImageBoxPosition = (ushort) (i+1),  // position is 1-based
 							SopInstanceUid = imageBoxUids[i]
@@ -115,7 +114,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 					imageBoxes.Add(imageBox);
 
 					// No more print items.  Stop creating imageBoxes
-					if (!_printItemEnumerator.MoveNext())
+					if (_printItemQueue.Count == 0)
 						break;
 				}
 
@@ -152,7 +151,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			{
 				_currentFilmBox.SopInstanceUid = null;
 
-				if (_printItemEnumerator.Current == null)
+				if (_printItemQueue.Count == 0)
 				{
 					// No more items to create filmBox for.
 					this.PrintScu.DeleteFilmSession(this);
@@ -160,7 +159,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				else
 				{
 					// Create the next filmBox
-					_filmBoxes.Add(_currentFilmBox = _createFilmBoxCallback.Invoke());
+					_filmBoxes.Add(_currentFilmBox = _createFilmBoxCallback.Invoke(new List<IPrintItem>(_printItemQueue).AsReadOnly()));
 					this.PrintScu.CreateFilmBox(this, _currentFilmBox);
 				}
 			}
