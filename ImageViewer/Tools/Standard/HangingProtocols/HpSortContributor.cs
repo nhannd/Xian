@@ -9,21 +9,12 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layout;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.HangingProtocols
 {
-    internal interface IHpSortComparer
-    {
-        string Name { get; }
-        string Description { get; }
-        //bool Reverse { get; }
-
-        IComparer<IPresentationImage> GetComparer();
-    }
-
     [ExtensionOf(typeof(HpImageBoxDefinitionContributorExtensionPoint), Enabled = true)]
     internal class HpSortContributor : IHpImageBoxDefinitionContributor
     {
@@ -31,23 +22,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.HangingProtocols
         private class Data
         {
             public string Name { get; set; }
-            //bool Reverse { get; set; }
+            public bool Reverse { get; set; }
         }
 
-        private static HpSortComparer _selected;
+        private ImageComparerList.Item _selected;
         
         #region IHpImageBoxDefinitionContributor Members
 
         public void Capture(IHpImageBoxDefinitionContext context)
         {
             if (context.ImageBox != null && context.ImageBox.DisplaySet != null)
-                _selected = HpSortComparer.All.Find(item => item.GetComparer().Equals(context.ImageBox.DisplaySet.PresentationImages.SortComparer));
+                _selected = CollectionUtils.SelectFirst(ImageComparerList.Items, item => item.Comparer.Equals(context.ImageBox.DisplaySet.PresentationImages.SortComparer));
+            else
+                _selected = null;
         }
 
         public void ApplyTo(IHpImageBoxDefinitionContext context)
         {
-            if (context.ImageBox != null && context.ImageBox.DisplaySet != null && _selected != null)
-                context.ImageBox.DisplaySet.PresentationImages.Sort(_selected.GetComparer());
+            if (_selected != null && context.ImageBox != null && context.ImageBox.DisplaySet != null)
+                context.ImageBox.DisplaySet.PresentationImages.Sort(_selected.Comparer);
         }
 
         #endregion
@@ -63,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.HangingProtocols
         {
             return new IHpProperty[]
                        {
-                           new HpProperty<HpSortComparer>(SR.PropertyNameSortBy, SR.PropertyDescriptionSortBy, 
+                           new HpProperty<ImageComparerList.Item>(SR.PropertyNameSortBy, SR.PropertyDescriptionSortBy, 
                                () => _selected, sortItem => _selected = sortItem)
                        };
         }
@@ -74,14 +67,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.HangingProtocols
 
         public object GetState()
         {
-            return (_selected == null) ? null : new Data {Name = _selected.Name};
+            return (_selected == null) ? null : new Data {Name = _selected.Name, Reverse = _selected.IsReverse };
         }
 
         public void SetState(object state)
         {
             var data = state as Data;
             if (data != null)
-                _selected = HpSortComparer.All.Find(item => item.Name == data.Name);
+            {
+                _selected = CollectionUtils.SelectFirst(ImageComparerList.Items, item => item.Name == data.Name && item.IsReverse == data.Reverse);
+            }
         }
 
         #endregion

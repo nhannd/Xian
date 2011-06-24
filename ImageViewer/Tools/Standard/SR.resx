@@ -524,15 +524,6 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="SortByImageNumberDescription" xml:space="preserve">
     <value>Image Number</value>
   </data>
-  <data name="SortByReverseAcquisitionTimeDescription" xml:space="preserve">
-    <value>Acquisition Time (Reverse)</value>
-  </data>
-  <data name="SortByReverseImageNumberDescription" xml:space="preserve">
-    <value>Image Number (Reverse)</value>
-  </data>
-  <data name="SortByReverseSliceLocationDescription" xml:space="preserve">
-    <value>Slice Location (Reverse)</value>
-  </data>
   <data name="SortBySliceLocationDescription" xml:space="preserve">
     <value>Slice Location</value>
   </data>
@@ -800,5 +791,8 @@ Please check the log for more details.</value>
   </data>
   <data name="LabelLocation" xml:space="preserve">
     <value>LOC</value>
+  </data>
+  <data name="FormatSortByReverse" xml:space="preserve">
+    <value>{0} (Reverse)</value>
   </data>
 </root>
