@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>472, 496</value>
+    <value>475, 515</value>
   </data>
   <data name="_cancelButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -151,7 +151,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="_acceptButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>391, 496</value>
+    <value>394, 515</value>
   </data>
   <data name="_acceptButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -181,7 +181,7 @@
     <value>Name</value>
   </data>
   <data name="_authorityGroupName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 2</value>
+    <value>21, 17</value>
   </data>
   <data name="_authorityGroupName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -193,7 +193,7 @@
     <value />
   </data>
   <data name="_authorityGroupName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>331, 40</value>
+    <value>311, 40</value>
   </data>
   <data name="_authorityGroupName.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -214,10 +214,10 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="_tokenTreeView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 110</value>
+    <value>25, 126</value>
   </data>
   <data name="_tokenTreeView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>541, 334</value>
+    <value>525, 338</value>
   </data>
   <data name="_tokenTreeView.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -238,7 +238,7 @@
     <value>4</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 92</value>
+    <value>22, 107</value>
   </data>
   <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
@@ -271,7 +271,7 @@
     <value>Description of selected permission</value>
   </data>
   <data name="_description.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 450</value>
+    <value>21, 469</value>
   </data>
   <data name="_description.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -283,7 +283,7 @@
     <value />
   </data>
   <data name="_description.Size" type="System.Drawing.Size, System.Drawing">
-    <value>541, 41</value>
+    <value>529, 41</value>
   </data>
   <data name="_description.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -307,7 +307,7 @@
     <value>Description</value>
   </data>
   <data name="_authorityGroupDescription.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 46</value>
+    <value>21, 61</value>
   </data>
   <data name="_authorityGroupDescription.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -319,7 +319,7 @@
     <value />
   </data>
   <data name="_authorityGroupDescription.Size" type="System.Drawing.Size, System.Drawing">
-    <value>544, 41</value>
+    <value>529, 41</value>
   </data>
   <data name="_authorityGroupDescription.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -343,7 +343,7 @@
     <value>True</value>
   </data>
   <data name="_authorityGroupDataGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>384, 23</value>
+    <value>393, 37</value>
   </data>
   <data name="_authorityGroupDataGroup.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 17</value>
@@ -376,7 +376,7 @@
     <value>True</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>554, 535</value>
+    <value>575, 550</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>AuthorityGroupEditorComponentControl</value>

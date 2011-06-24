@@ -129,7 +129,7 @@ namespace ClearCanvas.Enterprise.Common.Setup
 
 			Platform.GetService((IAuthorityGroupAdminService service) 
                 => service.ImportAuthorityGroups(new ImportAuthorityGroupsRequest(
-                        CollectionUtils.Map(groups, (AuthorityGroupDefinition g) => new AuthorityGroupDetail(null, g.Name, CollectionUtils.Map(g.Tokens, (string t) => new AuthorityTokenSummary(t, null)))))));
+                        CollectionUtils.Map(groups, (AuthorityGroupDefinition g) => new AuthorityGroupDetail(null, g.Name, g.Description, g.DataGroup, CollectionUtils.Map(g.Tokens, (string t) => new AuthorityTokenSummary(t, null)))))));
 		}
     }
 }

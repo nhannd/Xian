@@ -124,7 +124,7 @@
     <value>Authority Group</value>
   </data>
   <data name="ColumnAuthorityGroupDataGroup" xml:space="preserve">
-    <value>Data Access Authority Group</value>
+    <value>Control Access to Data</value>
   </data>
   <data name="ColumnAuthorityGroupDescription" xml:space="preserve">
     <value>Description</value>

@@ -21,7 +21,7 @@ namespace ClearCanvas.Enterprise.Desktop
             Columns.Add(new TableColumn<AuthorityGroupSummary, string>(
                             SR.ColumnAuthorityGroupName,
                             summary => summary.Name,
-                            0.3f));
+                            0.35f));
 
             Columns.Add(new TableColumn<AuthorityGroupSummary, string>(
                             SR.ColumnAuthorityGroupDescription,
@@ -31,7 +31,7 @@ namespace ClearCanvas.Enterprise.Desktop
             Columns.Add(new TableColumn<AuthorityGroupSummary, bool>(
                             SR.ColumnAuthorityGroupDataGroup,
                             summary => summary.DataGroup,
-                            0.2f));
+                            0.15f));
         }
     }
 }

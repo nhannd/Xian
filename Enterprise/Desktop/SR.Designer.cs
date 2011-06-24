@@ -79,7 +79,7 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data Access Authority Group.
+        ///   Looks up a localized string similar to Control Access to Data.
         /// </summary>
         public static string ColumnAuthorityGroupDataGroup {
             get {
