@@ -40,7 +40,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.HangingProtocols
         public void ApplyTo(IHpImageBoxDefinitionContext context)
         {
             if (_selected != null && context.ImageBox != null && context.ImageBox.DisplaySet != null)
+            {
                 context.ImageBox.DisplaySet.PresentationImages.Sort(_selected.Comparer);
+                context.ImageBox.TopLeftPresentationImageIndex = 0;
+                context.ImageBox.SelectDefaultTile();
+            }
         }
 
         #endregion
