@@ -10,9 +10,7 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -219,7 +217,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     tokens.Add(new AuthorityTokenSummary(token.Name, token.Description));
                 }
 
-                service.AddAuthorityGroup(userGroup.Name, tokens);
+                service.AddAuthorityGroup(userGroup.Name, userGroup.Description, userGroup.DataGroup, tokens);
                 success = true;
             }
 
@@ -237,7 +235,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 AuthorityGroupDetail detail = new AuthorityGroupDetail
                                                   {
                                                       AuthorityGroupRef = new EntityRef(userGroup.Ref),
-                                                      Name = userGroup.Name
+                                                      Name = userGroup.Name,
+                                                      Description = userGroup.Description,
+                                                      DataGroup = userGroup.DataGroup
                                                   };
 
                 foreach(TokenSummary token in userGroup.Tokens)

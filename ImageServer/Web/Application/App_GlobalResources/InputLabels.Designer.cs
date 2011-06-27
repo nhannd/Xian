@@ -97,7 +97,25 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Group Name.
+        ///   Looks up a localized string similar to Data Access Authority Group.
+        /// </summary>
+        internal static string AdminUserGroups_DataGroup {
+            get {
+                return ResourceManager.GetString("AdminUserGroups_DataGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string AdminUserGroups_GroupDescription {
+            get {
+                return ResourceManager.GetString("AdminUserGroups_GroupDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authority Group Name.
         /// </summary>
         internal static string AdminUserGroups_GroupName {
             get {
@@ -115,7 +133,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Groups.
+        ///   Looks up a localized string similar to Authority Groups.
         /// </summary>
         internal static string AdminUsers_AddEditDialog_Groups {
             get {

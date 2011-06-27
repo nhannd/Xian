@@ -83,7 +83,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
 
             UserGroup.Name = GroupName.Text;
-
+            UserGroup.Description = GroupDescription.Text;
+            UserGroup.DataGroup = DataGroupCheckBox.Checked;
             UserGroup.Tokens.Clear();
             foreach (ListItem item in TokenCheckBoxList.Items)
             {
@@ -92,7 +93,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                     UserGroup.Tokens.Add(new TokenSummary(item.Value, item.Text));
                 }
             }
-
         }
 
         #endregion
@@ -180,6 +180,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 UpdateButton.Visible = true;
                 OKButton.Visible = false;
                 GroupName.Text = UserGroup.Name;
+                GroupDescription.Text = UserGroup.Description;
+                DataGroupCheckBox.Checked = UserGroup.DataGroup;
                 OriginalGroupName.Value = UserGroup.Name;
                 TokenCheckBoxList.ClearSelection();
                 foreach (TokenSummary token in UserGroup.Tokens)
@@ -191,6 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             {
                 TokenCheckBoxList.ClearSelection();
                 ModalDialog1.Title = SR.DialogAddUserGroupTitle;
+                DataGroupCheckBox.Checked = false;
                 UpdateButton.Visible = false;
                 OKButton.Visible = true;
             }
@@ -199,6 +202,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (UserGroup == null || EditMode == false) 
             {
                 GroupName.Text = string.Empty;
+                GroupDescription.Text = string.Empty;
                 TokenCheckBoxList.SelectedIndex = -1;
             }
         }

@@ -889,7 +889,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Groups.
+        ///   Looks up a localized string similar to Authority Groups.
         /// </summary>
         internal static string UserGroups {
             get {
@@ -898,7 +898,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Groups | {0}.
+        ///   Looks up a localized string similar to Authority Groups | {0}.
         /// </summary>
         internal static string UserGroupsPageTitle {
             get {

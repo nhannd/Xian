@@ -253,7 +253,7 @@
     <value>Users</value>
   </data>
   <data name="UserGroups" xml:space="preserve">
-    <value>User Groups</value>
+    <value>Authority Groups</value>
   </data>
   <data name="StudyHistory" xml:space="preserve">
     <value>History</value>
@@ -268,7 +268,7 @@
     <value>Deleted Studies | {0}</value>
   </data>
   <data name="UserGroupsPageTitle" xml:space="preserve">
-    <value>User Groups | {0}</value>
+    <value>Authority Groups | {0}</value>
   </data>
   <data name="DevicesPageTitle" xml:space="preserve">
     <value>Devices | {0}</value>
