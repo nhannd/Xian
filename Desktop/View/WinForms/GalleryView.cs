@@ -371,7 +371,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			DataObject data = new DataObject();
 			if (DragOutside)
-				data.SetData(draggedItem.Tag);
+			{
+			    data.SetData(draggedItem.Tag);
+			    data.SetText(draggedItem.Tag.ToString(),TextDataFormat.UnicodeText);
+			}
 			if (DragReorder)
 				data.SetData(draggedItem);
 

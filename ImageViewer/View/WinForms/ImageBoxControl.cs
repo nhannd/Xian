@@ -29,7 +29,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private bool _imageScrollerVisible;
 		private CompositeUndoableCommand _historyCommand;
 		private MemorableUndoableCommand _imageBoxCommand;
-        private bool _hideImages;
 
         /// <summary>
         /// Constructor
@@ -122,13 +121,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 control.Draw(); 
             Invalidate();
 		}
-
-        private void ClearImagebox()
-        {
-            DisposeControls(new List<TileControl>(this.TileControls));
-            ImageScrollerVisible = false;
-            Invalidate();
-        }
 
         #region Protected methods
 
@@ -486,6 +478,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		#endregion
 
+        #region ImageBox Extension support
+
         void AttachExtension(IImageBoxExtension extension)
         {
             if (extension.Visible)
@@ -493,27 +487,61 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 Control ctrl = extension.View.GuiElement as Control;
                 if (ctrl != null)
                 {
-                    Controls.Add(ctrl);
+                    AddExtensionControl(ctrl);
                 }
             }
-            extension.VisibilityChanged += OnExtension_VisibilityChanged;
+            
+            extension.VisibilityChanged += OnExtensionVisibilityChanged;
+            extension.SetHostContextMenuDelegate(OnExtensionGetHostContextMenu);
+        }
+
+        void AddExtensionControl(Control control)
+        {
+            control.MouseDown += OnExtensionMouseDown;
+            Controls.Add(control);
+        }
+        
+        void RemoveExtensionControl(Control control)
+        {
+            control.MouseDown -= OnExtensionMouseDown;
+            Controls.Remove(control);
+        }
+
+        void OnExtensionMouseDown(object sender, MouseEventArgs e)
+        {
+            _imageBox.SelectDefaultTile();
+        }
+
+        ContextMenuStrip OnExtensionGetHostContextMenu(Point point)
+        {
+            foreach (var tileControl in TileControls)
+            {
+                var menu = tileControl.GetContextMenu(point);
+                if (menu != null)
+                    return menu;
+            }
+
+            return null;
         }
 
         void DetachExtension(IImageBoxExtension extension)
         {
-            extension.VisibilityChanged -= OnExtension_VisibilityChanged;
+            extension.SetHostContextMenuDelegate(null);
+            extension.VisibilityChanged -= OnExtensionVisibilityChanged;
             var view = extension.View;
             if (view!=null)
             {
                 Control ctrl = view.GuiElement as Control;
                 if (ctrl!=null)
                 {
+                    ctrl.MouseDown -= OnExtensionMouseDown;
                     Controls.Remove(ctrl);
                 }
             }
+
         }
 
-        void OnExtension_VisibilityChanged(object sender, ImageBoxExtensionVisiblityChangedEventArg e)
+        void OnExtensionVisibilityChanged(object sender, ImageBoxExtensionVisiblityChangedEventArg e)
         {
             Platform.CheckForNullReference(e.Extension, "e.Extension");
 
@@ -524,7 +552,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     Control ctrl = e.Extension.View.GuiElement as Control;
                     if (ctrl != null)
                     {
-                        Controls.Add(ctrl);
+                        AddExtensionControl(ctrl);
 
                         // make sure it's on top of the images or if the display set is empty, 
                         // it's on top of the empty tiles
@@ -536,11 +564,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     Control ctrl = e.Extension.View.GuiElement as Control;
                     if (ctrl!=null)
                     {
-                        Controls.Remove(ctrl);
+                        RemoveExtensionControl(ctrl);
                         Draw();
                     }
                 }
             }
         }
+
+        #endregion
     }
+
+    
 }
