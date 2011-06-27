@@ -24,6 +24,46 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     /// </summary>
     public partial class ImageBoxControl : UserControl
     {
+
+        class ContextMenuAdapter : ImageViewer.IHostContextMenuAdapter
+        {
+            private readonly ImageBoxControl _imageBoxControl;
+
+            public ContextMenuAdapter(ImageBoxControl imageBoxControl)
+            {
+                _imageBoxControl = imageBoxControl;   
+            }
+
+            public void Show(Point screenLocation)
+            {
+                foreach(var tileControl in _imageBoxControl.TileControls)
+                {
+                    var contextMenu = tileControl.GetContextMenu(screenLocation);
+                    if (contextMenu!=null)
+                    {
+
+                        contextMenu.Opened += OnContextMenuOpened;
+                        contextMenu.Closed += OnContextMenuClosed;
+                        contextMenu.Show(screenLocation);
+                        return;
+                    }
+                }
+            }
+
+            private void OnContextMenuClosed(object sender, ToolStripDropDownClosedEventArgs e)
+            {
+                EventsHelper.Fire(ContextMenuClosed, this, EventArgs.Empty);
+            }
+
+            private void OnContextMenuOpened(object sender, EventArgs e)
+            {
+                EventsHelper.Fire(ContextMenuOpened, this, EventArgs.Empty);
+            }
+
+            public event EventHandler ContextMenuOpened;
+            public event EventHandler ContextMenuClosed;
+        }
+        
         private ImageBox _imageBox;
 		private Rectangle _parentRectangle;
 		private bool _imageScrollerVisible;
@@ -492,7 +532,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             }
             
             extension.VisibilityChanged += OnExtensionVisibilityChanged;
-            extension.SetHostContextMenuDelegate(OnExtensionGetHostContextMenu);
+            extension.SetHostContextMenuAdapter(new ContextMenuAdapter(this));
         }
 
         void AddExtensionControl(Control control)
@@ -512,21 +552,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             _imageBox.SelectDefaultTile();
         }
 
-        ContextMenuStrip OnExtensionGetHostContextMenu(Point point)
-        {
-            foreach (var tileControl in TileControls)
-            {
-                var menu = tileControl.GetContextMenu(point);
-                if (menu != null)
-                    return menu;
-            }
-
-            return null;
-        }
-
+        
         void DetachExtension(IImageBoxExtension extension)
         {
-            extension.SetHostContextMenuDelegate(null);
+            extension.SetHostContextMenuAdapter(null);
             extension.VisibilityChanged -= OnExtensionVisibilityChanged;
             var view = extension.View;
             if (view!=null)

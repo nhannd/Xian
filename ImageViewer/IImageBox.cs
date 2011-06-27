@@ -11,9 +11,7 @@
 
 using System;
 using System.Drawing;
-using System.Windows.Forms;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
@@ -188,12 +186,28 @@ namespace ClearCanvas.ImageViewer
     public sealed class ImageBoxExtensionPoint : ExtensionPoint<IImageBoxExtension>
     { }
 
+    
     /// <summary>
-    /// A delegate that displays a context menu at the specified location.
+    /// Defines the interface to the host's context menu.
     /// </summary>
-    /// <param name="screenLocation"></param>
-    /// <returns>True if a context menu is displayed. False otherwise</returns>
-    public delegate ContextMenuStrip GetHostContextMenuDelegate(Point screenLocation);
+    public interface IHostContextMenuAdapter
+    {
+        ///<summary>
+        /// Shows the host's context menu at the specified location
+        ///</summary>
+        ///<param name="screenLocation"></param>
+        void Show(Point screenLocation);
+
+        ///<summary>
+        /// Occurs when the host's context menu is opened.
+        ///</summary>
+        event EventHandler ContextMenuOpened;
+
+        ///<summary>
+        /// Occurs when the host's context menu is closed.
+        ///</summary>
+        event EventHandler ContextMenuClosed;
+    }
     
     /// <summary>
     /// Defines the interface of an extension to the <see cref="IImageBox"/>
@@ -233,10 +247,10 @@ namespace ClearCanvas.ImageViewer
         event EventHandler<ImageBoxExtensionVisiblityChangedEventArg> VisibilityChanged;
 
         ///<summary>
-        /// Sets a delegate that returns the context menu for the Image Box.
+        /// Sets the context menu adapter
         ///</summary>
-        ///<param name="hostContextMenuDelegate"></param>
-        void SetHostContextMenuDelegate(GetHostContextMenuDelegate hostContextMenuDelegate);
+        ///<param name="adapter"></param>
+        void SetHostContextMenuAdapter(IHostContextMenuAdapter adapter);
     }
 
 
