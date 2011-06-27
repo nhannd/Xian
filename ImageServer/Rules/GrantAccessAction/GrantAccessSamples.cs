@@ -19,11 +19,24 @@ namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
     {
         public GrantAccessSamples()
             : base("GrantAccessSample",
-                   "Simple Grant Access",
+                   "Grant Access by Referring Physician",
                    ServerRuleTypeEnum.DataAccess,
                    "Sample_GrantAccess.xml")
         {
             ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
 		}
+    }
+
+    [ExtensionOf(typeof(SampleRuleExtensionPoint))]
+    public class GrantAccessSourceAeSamples : SampleRuleBase
+    {
+        public GrantAccessSourceAeSamples()
+            : base("GrantAccessSourceAeSample",
+                   "Grant Access by Source AE Title",
+                   ServerRuleTypeEnum.DataAccess,
+                   "Sample_GrantAccessSourceAe.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+        }
     }
 }

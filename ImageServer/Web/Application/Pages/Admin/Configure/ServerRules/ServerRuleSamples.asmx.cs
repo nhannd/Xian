@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                                           Encoding = Encoding.UTF8,
                                           ConformanceLevel = ConformanceLevel.Fragment,
                                           Indent = true,
-                                          NewLineOnAttributes = true,
+                                          NewLineOnAttributes = false,
                                           CheckCharacters = true,
                                           IndentChars = "  "
                                       };

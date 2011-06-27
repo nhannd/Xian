@@ -35,7 +35,7 @@
                         <ccAsp:InvalidInputIndicator ID="RuleNameHelp" runat="server" SkinID="InvalidInputIndicator" />
                         <ccValidator:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
                             ControlToValidate="RuleNameTextBox" InvalidInputCSS="DialogTextBoxInvalidInput"
-                            ValidationGroup="AddEditDataRuleValidationGroup" Text="Rule must have a name"
+                            ValidationGroup="AddEditDataRuleValidationGroup" Text="<%$Resources: InputValidation,InvalidRuleName %>"
                             InvalidInputIndicatorID="RuleNameHelp" Display="None" />
                     </asp:TableCell>
                 </asp:TableRow>
@@ -45,7 +45,7 @@
                             CssClass="DialogTextBoxLabel" />
                     </asp:TableCell>
                     <asp:TableCell runat="server" HorizontalAlign="left" Width="100%">
-                        <asp:CheckBox ID="EnabledCheckBox" runat="server" Text="" Checked="true" ToolTip="Enable/Disable the rule"
+                        <asp:CheckBox ID="EnabledCheckBox" runat="server" Text="" Checked="true" ToolTip="<%$Resources: Tooltips, AdminRules_AddEditDialog_Enabled %>"
                             CssClass="DialogCheckBox" />
                     </asp:TableCell>
                     <asp:TableCell runat="server"></asp:TableCell>
@@ -56,7 +56,7 @@
                             CssClass="DialogTextBoxLabel" />
                     </asp:TableCell>
                     <asp:TableCell runat="server" HorizontalAlign="left" Width="100%">
-                        <asp:CheckBox ID="DefaultCheckBox" runat="server" Text="" Checked="false" ToolTip="Default rule applied if no other rules of the type apply to a DICOM message/study."
+                        <asp:CheckBox ID="DefaultCheckBox" runat="server" Text="" Checked="false" ToolTip="<% $Resources: Tooltips,AdminRules_AddEditDialog_Default %>"
                             CssClass="DialogCheckBox" />
                     </asp:TableCell>
                     <asp:TableCell runat="server"></asp:TableCell>
@@ -67,7 +67,7 @@
                             CssClass="DialogTextBoxLabel" />
                     </asp:TableCell>
                     <asp:TableCell runat="server" HorizontalAlign="left" Width="100%">
-                        <asp:CheckBox ID="ExemptRuleCheckBox" runat="server" Text="" Checked="false" ToolTip="Rule that specifies DICOM messages or studies that are exempt from the rule."
+                        <asp:CheckBox ID="ExemptRuleCheckBox" runat="server" Text="" Checked="false" ToolTip="<%$Resources: Tooltips,AdminRules_AddEditDialog_Exempt %>"
                             CssClass="DialogCheckBox" />
                     </asp:TableCell>
                     <asp:TableCell runat="server"></asp:TableCell>
@@ -102,9 +102,9 @@
                     <asp:TableCell runat="server">
                         <ccAsp:InvalidInputIndicator ID="InvalidRuleHint" runat="server" SkinID="InvalidInputIndicator" />
                         <ccValidator:ServerRuleValidator runat="server" ID="DataRuleValidator" ControlToValidate="RuleXmlTextBox"
-                            InputName="Server Rule XML" InvalidInputCSS="DialogTextBoxInvalidInput" InvalidInputIndicatorID="InvalidRuleHint"
+                            InputName="Data Access Rule XML" InvalidInputCSS="DialogTextBoxInvalidInput" InvalidInputIndicatorID="InvalidRuleHint"
                             ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
-                            ParamsFunction="ValidationServerRuleParams" Text="Invalid Server Rule" Display="None"
+                            ParamsFunction="ValidationServerRuleParams" Text="<%$Resources: InputValidation,InvalidDataRule %>" Display="None"
                             ValidationGroup="AddEditDataRuleValidationGroup" />
                     </asp:TableCell>
                 </asp:TableRow>

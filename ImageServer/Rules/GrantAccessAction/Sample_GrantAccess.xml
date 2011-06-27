@@ -1,9 +1,11 @@
-﻿<!-- 
-This conditional rule instructs the server to auto-route MR and CT studies 
--->
+﻿<!-- Rule for matching on Referring Physician's Name -->
 <condition expressionLanguage="dicom">
 	<or>
-		<equal  test="$Modality"	 refValue="MR" />
-		<equal  test="$Modality"	 refValue="CT" />
+    <!-- Matches on Roentgen^Wilhem^Conrad -->
+    <regex  test="$ReferringPhysiciansName"	 pattern="Roentgen.Wilhelm.Conrad" />
+    <!-- Matches on Roentgen, Wilhem -->
+    <regex  test="$ReferringPhysiciansName"  pattern="Roentgen,.Wilhelm" />
+    <!-- Matches on 'Wilhem Roentgen' appearing in the name -->
+    <regex  test="$ReferringPhysiciansName"  pattern="Wilhelm\sRoentgen" />
 	</or>
 </condition>
