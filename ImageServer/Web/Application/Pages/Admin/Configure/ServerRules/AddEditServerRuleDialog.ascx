@@ -12,6 +12,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="AddEditServerRuleDialog.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.AddEditServerRuleDialog" %>
+<%@ Import Namespace="Resources"%>
 
 <asp:ScriptManagerProxy runat="server">
 	<Services>
@@ -72,15 +73,15 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-										<asp:CheckBox ID="EnabledCheckBox" runat="server" Text="<%$Resources: InputLabels, Enabled %>" Checked="true" ToolTip="Enable/Disable the rule" CssClass="DialogCheckBox"/>
+										<asp:CheckBox ID="EnabledCheckBox" runat="server" Text="<%$Resources: InputLabels, Enabled %>" Checked="true" ToolTip="<%$Resources: Tooltips, AdminRules_AddEditDialog_Enabled %>" CssClass="DialogCheckBox"/>
 									</td>
 									<td>
 										<asp:CheckBox ID="DefaultCheckBox" runat="server" Text="<%$Resources: InputLabels, ServerRuleDefaultRule %>" Checked="false"
-											ToolTip="Default rule applied if no other rules of the type apply to a DICOM message/study." CssClass="DialogCheckBox" />
+											ToolTip="<% $Resources: Tooltips,AdminRules_AddEditDialog_Default %>" CssClass="DialogCheckBox" />
 									</td>
 									<td>
 										<asp:CheckBox ID="ExemptRuleCheckBox" runat="server" Text="<%$Resources: InputLabels, ServerRuleExemptRule %>" Checked="false"
-											ToolTip="Rule that specifies DICOM messages or studies that are exempt from the rule." CssClass="DialogCheckBox" />
+											ToolTip="<%$Resources: Tooltips,AdminRules_AddEditDialog_Exempt %>" CssClass="DialogCheckBox" />
 									</td>
 									<td></td>
 								</tr>
