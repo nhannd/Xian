@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {

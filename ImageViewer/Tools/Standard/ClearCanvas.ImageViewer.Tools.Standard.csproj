@@ -110,11 +110,6 @@
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
     <Compile Include="ColorBarTool.cs" />
-    <Compile Include="HangingProtocols\SR.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SR.resx</DependentUpon>
-    </Compile>
     <Compile Include="ImageComparerList.cs" />
     <Compile Include="ImageProperties\ImagePropertyProvider.cs" />
     <Compile Include="ImageProperties\ImagePropertiesApplicationComponent.cs" />
@@ -144,12 +139,13 @@
     <Compile Include="MagnificationTool.cs" />
     <Compile Include="OverlayToolBase.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
+    <Compile Include="PresetVoiLuts\Operations\AutoVoiLutApplicator.cs" />
+    <Compile Include="PresetVoiLuts\LutHelper.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutReservedActionModelKeyStrokesProvider.cs" />
     <Compile Include="ScaleGraphic.cs" />
     <Compile Include="ScaleOverlayTool.cs" />
     <Compile Include="ShowHideOverlaysTool.cs" />
     <Compile Include="ShutterOverlayTool.cs" />
-    <Compile Include="HangingProtocols\HpSortContributor.cs" />
     <Compile Include="TextCalloutTool.cs" />
     <Compile Include="ToolSettings.cs" />
     <Compile Include="ToolSettings.Designer.cs">
@@ -446,10 +442,6 @@
     <EmbeddedResource Include="Icons\ImagePropertiesToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HangingProtocols\SR.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SR.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Icons\ColorBarToolLarge.png" />
     <EmbeddedResource Include="Icons\ColorBarToolMedium.png" />
     <EmbeddedResource Include="Icons\ColorBarToolSmall.png" />
