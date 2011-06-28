@@ -19,8 +19,8 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Common
 {
-	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-	internal class DumpProductSettingsApplication : IApplicationRoot
+	[ExtensionOf(typeof (ApplicationRootExtensionPoint))]
+	internal sealed class DumpProductSettingsApplication : IApplicationRoot
 	{
 		#region IApplicationRoot Members
 
@@ -29,17 +29,18 @@ namespace ClearCanvas.Common
 			Dump();
 		}
 
-		private void Dump()
+		private static void Dump()
 		{
 			var settings = new DecryptedProductSettings();
-			Console.WriteLine("Product: {0}", settings.Product);
-			Console.WriteLine("Component: {0}", settings.Component);
-			Console.WriteLine("Edition: {0}", settings.Edition);
-			Console.WriteLine("Version: {0}", settings.Version);
-			Console.WriteLine("VersionSuffix: {0}", settings.VersionSuffix);
-			Console.WriteLine("Release: {0}", settings.Release);
-			Console.WriteLine("Copyright:\n{0}", settings.Copyright);
-			Console.WriteLine("\nLicense:\n{0}", settings.License);
+			Console.WriteLine(@"Name: {0}", settings.Name);
+			Console.WriteLine(@"Product: {0}", settings.Product);
+			Console.WriteLine(@"Component: {0}", settings.Component);
+			Console.WriteLine(@"Edition: {0}", settings.Edition);
+			Console.WriteLine(@"Version: {0}", settings.Version);
+			Console.WriteLine(@"VersionSuffix: {0}", settings.VersionSuffix);
+			Console.WriteLine(@"Release: {0}", settings.Release);
+			Console.WriteLine(@"Copyright:\n{0}", settings.Copyright);
+			Console.WriteLine(@"\nLicense:\n{0}", settings.License);
 		}
 
 		#endregion
@@ -50,6 +51,7 @@ namespace ClearCanvas.Common
 	/// </summary>
 	internal class DecryptedProductSettings
 	{
+		private string _name;
 		private string _product;
 		private string _component;
 		private string _edition;
@@ -63,7 +65,20 @@ namespace ClearCanvas.Common
 
 		public DecryptedProductSettings()
 		{
-			_settings = ((ProductSettings)(ApplicationSettingsBase.Synchronized(new ProductSettings())));
+			_settings = ((ProductSettings) (SettingsBase.Synchronized(new ProductSettings())));
+		}
+
+		/// <summary>
+		/// Gets the component marketing name.
+		/// </summary>
+		public string Name
+		{
+			get
+			{
+				if (_name == null)
+					_name = Decrypt(_settings.Name);
+				return _name;
+			}
 		}
 
 		/// <summary>
@@ -115,8 +130,7 @@ namespace ClearCanvas.Common
 				if (_release == null)
 				{
 					var release = Decrypt(_settings.Release);
-					//TODO (CR February 2011) - Med: Is "Unverified" an appropriate default value?  Perhaps Unspecified, or "Unofficial".
-					_release = string.IsNullOrEmpty(release) || release[0] != '*' ? "Unverified" : release.Substring(1);
+					_release = string.IsNullOrEmpty(release) || release[0] != '*' ? @"Unofficial" : release.Substring(1);
 				}
 				return _release;
 			}
@@ -158,12 +172,8 @@ namespace ClearCanvas.Common
 			{
 				if (_versionSuffix == null)
 				{
-					//TODO (CR February 2011) - Med: Is "Unverified Build" an appropriate value for this now?
 					string versionSuffix = Decrypt(_settings.VersionSuffix);
-					if (String.IsNullOrEmpty(versionSuffix) || versionSuffix[0] != '*')
-						_versionSuffix = "Unverified Build";
-					else
-						_versionSuffix = versionSuffix.Substring(1);
+					_versionSuffix = string.IsNullOrEmpty(versionSuffix) || versionSuffix[0] != '*' ? @"Unofficial Build" : versionSuffix.Substring(1);
 				}
 				return _versionSuffix;
 			}
@@ -207,8 +217,8 @@ namespace ClearCanvas.Common
 				using (MemoryStream dataStream = new MemoryStream(bytes))
 				{
 					RC2CryptoServiceProvider cryptoService = new RC2CryptoServiceProvider();
-					cryptoService.Key = Encoding.UTF8.GetBytes("ClearCanvas");
-					cryptoService.IV = Encoding.UTF8.GetBytes("IsSoCool");
+					cryptoService.Key = Encoding.UTF8.GetBytes(@"ClearCanvas");
+					cryptoService.IV = Encoding.UTF8.GetBytes(@"IsSoCool");
 					cryptoService.UseSalt = false;
 					using (CryptoStream cryptoStream = new CryptoStream(dataStream, cryptoService.CreateDecryptor(), CryptoStreamMode.Read))
 					{
@@ -229,18 +239,24 @@ namespace ClearCanvas.Common
 			return result;
 		}
 	}
-	
+
+	/// <summary>
+	/// Utility class for reading product identity information.
+	/// </summary>
 	public static class ProductInformation
 	{
 		private static readonly DecryptedProductSettings _settings = new DecryptedProductSettings();
 
 		/// <summary>
-		/// Gets the component name.
+		/// Gets the component marketing name.
 		/// </summary>
-		[Obsolete("It is recommended that the Component property be used to avoid ambiguity.")]
 		public static string Name
 		{
-			get { return _settings.Component; }
+			get
+			{
+				var name = _settings.Name;
+				return !string.IsNullOrEmpty(name) ? name : _settings.Component;
+			}
 		}
 
 		/// <summary>
@@ -314,20 +330,17 @@ namespace ClearCanvas.Common
 		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
 		public static string GetName(bool includeEdition, bool includeRelease)
 		{
-			var sb = new StringBuilder(Component);
-			if (includeEdition && !string.IsNullOrEmpty(Edition))
-			{
-				if (sb.Length > 0)
-					sb.Append(' ');
-				sb.Append(Edition);
-			}
-			if (includeRelease && !string.IsNullOrEmpty(Release))
-			{
-				if (sb.Length > 0)
-					sb.Append(' ');
-				sb.AppendFormat("({0})", Release);
-			}
-			return sb.ToString();
+			return Concatenate(Name, GetNameSuffix(includeEdition, includeRelease));
+		}
+
+		/// <summary>
+		/// Gets the suffixes to the component name (i.e. the product edition and/or release type).
+		/// </summary>
+		/// <param name="includeEdition">A value indciating whether or not to include the product edition in the name.</param>
+		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
+		private static string GetNameSuffix(bool includeEdition, bool includeRelease)
+		{
+			return Concatenate(includeEdition ? Edition : string.Empty, includeRelease ? string.Format(SR.FormatReleaseType, Release) : string.Empty);
 		}
 
 		/// <summary>
@@ -349,10 +362,7 @@ namespace ClearCanvas.Common
 		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
 		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeEdition, bool includeRelease)
 		{
-			//TODO (CR February 2011) - High: Although unused, this is actually not correct.
-			//e.g. Below will give: ClearCanvas Workstation Clinical Beta v.3.0
-			//But it should be: ClearCanvas Workstation v.3.0 Clinical Beta
-			return string.Format("{0} {1}", GetName(includeEdition, includeRelease), GetVersion(includeBuildAndRevision, includeVersionSuffix, false));
+			return Concatenate(Name, GetVersion(includeBuildAndRevision, includeVersionSuffix, false), GetNameSuffix(includeEdition, includeRelease));
 		}
 
 		/// <summary>
@@ -374,22 +384,37 @@ namespace ClearCanvas.Common
 		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeRelease)
 		{
 			var version = Version;
-			var versionString = new StringBuilder(string.Format("{0}.{1}", version.Major, version.Minor));
+			var versionString = new StringBuilder(string.Format(@"{0}.{1}", version.Major, version.Minor));
 
 			if (includeBuildAndRevision && version.Build >= 0)
 			{
-				versionString.AppendFormat(".{0}", version.Build);
+				versionString.AppendFormat(@".{0}", version.Build);
 				if (version.Revision >= 0)
-					versionString.AppendFormat(".{0}", version.Revision);
+					versionString.AppendFormat(@".{0}", version.Revision);
 			}
 
-			if (includeVersionSuffix && !string.IsNullOrEmpty(VersionSuffix))
-				versionString.Append(" " + VersionSuffix);
+			return Concatenate(versionString.ToString(), includeVersionSuffix ? VersionSuffix : string.Empty, includeRelease ? Release : string.Empty);
+		}
 
-			if (includeRelease && !string.IsNullOrEmpty(Release))
-				versionString.Append(" " + Release);
+		/// <summary>
+		/// Concatenates a number of strings with spaces, skipping empty strings.
+		/// </summary>
+		private static string Concatenate(params string[] strings)
+		{
+			if (strings == null || strings.Length == 0)
+				return string.Empty;
 
-			return versionString.ToString();
+			var sb = new StringBuilder();
+			foreach (var s in strings)
+			{
+				if (string.IsNullOrEmpty(s))
+					continue;
+
+				if (sb.Length > 0)
+					sb.Append(' ');
+				sb.Append(s);
+			}
+			return sb.ToString();
 		}
 	}
 
