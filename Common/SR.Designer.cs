@@ -538,6 +538,15 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ({0}).
+        /// </summary>
+        public static string FormatReleaseType {
+            get {
+                return ResourceManager.GetString("FormatReleaseType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} seconds.
         /// </summary>
         public static string FormatSeconds {
