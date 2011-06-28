@@ -141,6 +141,7 @@
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
     <Compile Include="PresetVoiLuts\Operations\AutoVoiLutApplicator.cs" />
     <Compile Include="PresetVoiLuts\LutHelper.cs" />
+    <Compile Include="PresetVoiLuts\Operations\VoiLutSelector.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutReservedActionModelKeyStrokesProvider.cs" />
     <Compile Include="ScaleGraphic.cs" />
     <Compile Include="ScaleOverlayTool.cs" />
@@ -179,7 +180,7 @@
     <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactory.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLut.cs" />
     <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactories.cs" />
-    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactoryExtensionPoint.cs" />
+    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperation.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutCollection.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutConfiguration.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutGroup.cs" />

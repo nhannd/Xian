@@ -77,11 +77,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
         #region Public Properties/Methods
 
-        public ICollection<VoiWindow> DataLuts
-        {
-            get { return _windows; }
-        }
-
         public abstract bool IsHeader { get; }
 
         public bool IsData { get { return false; } }

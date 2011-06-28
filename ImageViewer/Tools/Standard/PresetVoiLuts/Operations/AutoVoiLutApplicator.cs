@@ -5,9 +5,9 @@ using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-    public interface IAutoVoiLutApplicator
+    internal interface IAutoVoiLutApplicator
     {
-        //Technically, shouldn't be here, but whatcha gonna do.
+        //Technically, shouldn't be here, but this stuff needs some serious refactoring ...
         IComposableLut GetInitialLut();
 
         bool ApplyInitialLut();
@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
         IAutoVoiLut GetAppliedLut(); //Should 
     }
 
-    public abstract partial class AutoVoiLutApplicator : IAutoVoiLutApplicator
+    internal abstract partial class AutoVoiLutApplicator : IAutoVoiLutApplicator
     {
         protected IPresentationImage Image { get; private set; }
 
@@ -39,6 +39,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
         #endregion
 
+        public static bool CanCreate(IPresentationImage image)
+        {
+             return Grayscale.CanCreateFrom(image) || Color.CanCreateFrom(image);
+        }
+
         public static IAutoVoiLutApplicator Create(IPresentationImage image)
         {
             if (Grayscale.CanCreateFrom(image))
@@ -51,16 +56,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
         }
     }
 
-    public abstract partial class AutoVoiLutApplicator
+    internal abstract partial class AutoVoiLutApplicator
     {
         #region Nested type: Grayscale
 
-        internal class Grayscale : AutoVoiLutApplicator
+        private class Grayscale : AutoVoiLutApplicator
         {
             private static readonly IList<State> _stateProgression = new State[]
                                                                          {
                                                                              State.PresentationData,
-                                                                             State.PresentationLinear, State.ImageData,
+                                                                             State.PresentationLinear,
+                                                                             State.ImageData,
                                                                              State.ImageLinear
                                                                          };
 
@@ -322,7 +328,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
         #region Lut Application for Color Images
 
-        internal class Color : AutoVoiLutApplicator
+        private class Color : AutoVoiLutApplicator
         {
             public Color()
             {

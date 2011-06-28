@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 		public override bool AppliesTo(IPresentationImage presentationImage)
 		{
-		    return AutoVoiLutApplicator.Create(presentationImage) != null;
+		    return AutoVoiLutApplicator.CanCreate(presentationImage);
 		}
 
 		public override void Apply(IPresentationImage presentationImage)

@@ -41,13 +41,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		{
 		}
 
-        public new AutoVoiDataLut AutoVoiDataLut { get { return ((AutoVoiDataLut) base.DataLut); } }
+        public AutoVoiDataLut AutoVoiDataLut { get { return ((AutoVoiDataLut) base.DataLut); } }
 
-        public ICollection<VoiDataLut> DataLuts
-        {
-            get { return AutoVoiDataLut.DataLuts; }
-        }
-	    
 	    public bool IsHeader
 	    {
             get { return AutoVoiDataLut.IsHeader; }
@@ -152,11 +147,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		#endregion
 
 		#region Public Properties/Methods
-
-        public ICollection<VoiDataLut> DataLuts
-        {
-            get { return _dataLuts; }
-        }
 
         public abstract bool IsHeader { get; }
 

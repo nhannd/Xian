@@ -10,7 +10,6 @@
 #endregion
 
 using System.ComponentModel;
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
@@ -37,20 +36,5 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		IPresetVoiLutOperationFactory SourceFactory { get; }
 
 		PresetVoiLutConfiguration GetConfiguration();
-	}
-	
-	public interface IPresetVoiLutOperationFactory
-	{
-		string Name { get; }
-		string Description { get; }
-		
-		bool CanCreateMultiple { get; }
-
-		IPresetVoiLutOperation Create(PresetVoiLutConfiguration configuration);
-		IPresetVoiLutOperationComponent GetEditComponent(PresetVoiLutConfiguration configuration);
-	}
-
-	public sealed class PresetVoiLutOperationFactoryExtensionPoint : ExtensionPoint<IPresetVoiLutOperationFactory>
-	{
 	}
 }
