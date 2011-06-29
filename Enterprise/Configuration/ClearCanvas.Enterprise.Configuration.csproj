@@ -50,6 +50,7 @@
     <Compile Include="ApplicationConfigurationReadService.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="*.gen.cs" />
+    <Compile Include="Brokers\IConfigurationDocumentBroker.cs" />
     <Compile Include="ConfigurationDocument.cs" />
     <Compile Include="ConfigurationDocumentBody.cs" />
     <Compile Include="ConfigurationException.cs" />

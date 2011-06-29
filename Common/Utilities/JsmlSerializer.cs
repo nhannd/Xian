@@ -530,6 +530,10 @@ namespace ClearCanvas.Common.Utilities
 						xmlDoc.DocumentElement.WriteTo(_writer);
 					}
 				}
+				else if(obj is Guid)
+				{
+					_writer.WriteValue(((Guid)obj).ToString("N"));
+				}
 				else
 				{
 					_writer.WriteValue(obj.ToString());
@@ -678,6 +682,12 @@ namespace ClearCanvas.Common.Utilities
 						return doc;
 					}
 					return null;
+				}
+
+				if(dataType == typeof(Guid))
+				{
+					// parse guid
+					return new Guid(xmlElement.InnerText);
 				}
 
 				if (dataType.GetInterface("IConvertible") == typeof(IConvertible))
