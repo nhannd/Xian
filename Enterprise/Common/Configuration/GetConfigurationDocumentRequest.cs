@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Caching;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
 {

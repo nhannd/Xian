@@ -121,6 +121,8 @@
     <Compile Include="Configuration\IApplicationConfigurationReadService.cs" />
     <Compile Include="Configuration\ImportSettingsGroupRequest.cs" />
     <Compile Include="Configuration\ImportSettingsGroupResponse.cs" />
+    <Compile Include="Configuration\ListConfigurationDocumentsRequest.cs" />
+    <Compile Include="Configuration\ListConfigurationDocumentsResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />
     <Compile Include="EntityRefJsmlSerializerHook.cs" />
     <Compile Include="FailedEndpointThrottleClientAdvice.cs" />
@@ -136,7 +138,6 @@
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
     <Compile Include="AuthorityTokens.cs" />
-    <Compile Include="Configuration\ConfigurationDocumentKey.cs" />
     <Compile Include="Configuration\ConfigurationDocumentRequestBase.cs" />
     <Compile Include="Configuration\GetConfigurationDocumentRequest.cs" />
     <Compile Include="Configuration\GetConfigurationDocumentResponse.cs" />

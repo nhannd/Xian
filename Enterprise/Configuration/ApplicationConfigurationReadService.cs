@@ -67,7 +67,12 @@ namespace ClearCanvas.Enterprise.Configuration
                     }));
         }
 
-        // because this service is invoked by the framework, rather than by the application,
+    	public ListConfigurationDocumentsResponse ListConfigurationDocuments(ListConfigurationDocumentsRequest request)
+    	{
+    		throw new NotImplementedException();
+    	}
+
+    	// because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         [ResponseCaching("GetDocumentCachingDirective")]

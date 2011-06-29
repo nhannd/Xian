@@ -68,7 +68,12 @@ namespace ClearCanvas.Enterprise.Configuration
                     }));
         }
 
-        [UpdateOperation]
+    	public ListConfigurationDocumentsResponse ListConfigurationDocuments(ListConfigurationDocumentsRequest request)
+    	{
+    		throw new NotImplementedException();
+    	}
+
+    	[UpdateOperation]
         public ImportSettingsGroupResponse ImportSettingsGroup(ImportSettingsGroupRequest request)
         {
             Platform.CheckForNullReference(request, "request");

@@ -36,6 +36,15 @@ namespace ClearCanvas.Enterprise.Common.Configuration
         [OperationContract]
         ListSettingsPropertiesResponse ListSettingsProperties(ListSettingsPropertiesRequest request);
 
+		/// <summary>
+		/// Lists configuration documents matching specified criteria.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+    	ListConfigurationDocumentsResponse ListConfigurationDocuments(ListConfigurationDocumentsRequest request);
+
+
         /// <summary>
         /// Gets the document specified by the name, version, user and instance key.
         /// The user and instance key may be null.
