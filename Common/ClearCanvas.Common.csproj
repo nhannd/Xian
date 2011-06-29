@@ -143,7 +143,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\ConfigurationDocumentNotFoundException.cs" />
-    <Compile Include="Configuration\ConfigurationStoreFactory.cs" />
+    <Compile Include="Configuration\ConfigurationStore.cs" />
     <Compile Include="Configuration\IConfigurationStore.cs" />
     <Compile Include="Configuration\SettingsStoreSettingsProvider.cs" />
     <Compile Include="Configuration\ISettingsStore.cs" />
@@ -342,6 +342,9 @@
     <Compile Include="Caching\IDefinesCacheKey.cs" />
     <Compile Include="Configuration\ApplicationSettingsExtensions.cs" />
     <Compile Include="Configuration\ApplicationSettingsHelper.cs" />
+    <Compile Include="Configuration\ConfigurationDocumentQuery.cs" />
+    <Compile Include="Configuration\ConfigurationDocumentHeader.cs" />
+    <Compile Include="Configuration\ConfigurationDocumentKey.cs" />
     <Compile Include="Configuration\ConfigurationFileReader.cs" />
     <Compile Include="Configuration\ConfigurationSectionPath.cs" />
     <Compile Include="Configuration\ApplicationCriticalSettingsProvider.cs" />

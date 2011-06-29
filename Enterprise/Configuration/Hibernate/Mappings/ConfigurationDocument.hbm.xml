@@ -19,6 +19,8 @@
     <property name="InstanceKey" type="String">
       <column name="InstanceKey_" unique-key="DocumentKey_" length="100" not-null="false"/>
     </property>
+    <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
+    
     <one-to-one name="Body" class="ConfigurationDocumentBody" cascade="all"/>
   </class>
 </hibernate-mapping>
