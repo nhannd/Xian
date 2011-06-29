@@ -578,6 +578,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         /// <summary>
         ///   Looks up a localized string similar to {0}: {1}.
         /// </summary>
+        internal static string FormatLinearPresetDescription {
+            get {
+                return ResourceManager.GetString("FormatLinearPresetDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
         internal static string FormatProbeInfo {
             get {
                 return ResourceManager.GetString("FormatProbeInfo", resourceCulture);

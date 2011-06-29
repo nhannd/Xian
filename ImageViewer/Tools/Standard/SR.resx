@@ -795,4 +795,7 @@ Please check the log for more details.</value>
   <data name="FormatSortByReverse" xml:space="preserve">
     <value>{0} (Reverse)</value>
   </data>
+  <data name="FormatLinearPresetDescription" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
 </root>

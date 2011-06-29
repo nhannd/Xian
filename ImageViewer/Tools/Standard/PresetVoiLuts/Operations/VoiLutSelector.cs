@@ -66,15 +66,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             {
                 if (!String.IsNullOrEmpty(LutExplanation))
                     applicator.ApplyDataLut(LutExplanation);
-                else if (LutIndex.HasValue)
-                    applicator.ApplyDataLut(LutIndex.Value);
+                else
+                    applicator.ApplyDataLut(LutIndex ?? 0); //just apply the first one.
             }
             else
             {
                 if (!String.IsNullOrEmpty(LutExplanation))
                     applicator.ApplyLinearLut(LutExplanation);
                 else if (LutIndex.HasValue)
-                    applicator.ApplyLinearLut(LutIndex.Value);
+                    applicator.ApplyLinearLut(LutIndex ?? 0); //just apply the first one.
             }
         }
     }
@@ -113,17 +113,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
         { 
             get
             {
-                return String.Format("{0}: {1}"
+                return String.Format(SR.FormatLinearPresetDescription
                                      , String.IsNullOrEmpty(Modality) ? "?" : Modality
                                      , String.IsNullOrEmpty(Name) ? "?" : Name);
-            }
-        }
-
-        public string VerboseDescription
-        {
-            get
-            {
-                return String.Format("{0} (W={1}, L={2}", Description, WindowWidth, WindowCenter);
             }
         }
 
