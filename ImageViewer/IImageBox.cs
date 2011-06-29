@@ -208,7 +208,8 @@ namespace ClearCanvas.ImageViewer
         ///</summary>
         event EventHandler ContextMenuClosed;
     }
-    
+
+   
     /// <summary>
     /// Defines the interface of an extension to the <see cref="IImageBox"/>
     /// </summary>
@@ -239,7 +240,10 @@ namespace ClearCanvas.ImageViewer
         /// to display the extension's view on the screen.
         /// The extension must fire <see cref="VisibilityChanged"/> if it wants to change its visibility. 
         /// </remarks>
-        bool Visible { get; }
+        bool Visible { get; set; }
+
+        IconSet IconSet { get; }
+
 
         ///<summary>
         /// Occurs when the desired visibility of the extension changes.

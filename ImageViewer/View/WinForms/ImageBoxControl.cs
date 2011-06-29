@@ -127,6 +127,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
+
     	private IEnumerable<TileControl> TileControls
     	{
     		get
@@ -234,6 +235,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			foreach (TileControl control in controls)
 			{
 				this.Controls.Remove(control);
+			    control.MouseMove -= OnTileMouseMove;
 				control.Tile.SelectionChanged -= OnTileSelectionChanged;
 				control.Drawing -= OnTileControlDrawing;
 				control.Dispose();
@@ -361,12 +363,22 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			TileControl control = view.GuiElement as TileControl;
 			control.Tile.SelectionChanged += OnTileSelectionChanged;
+            control.MouseMove += OnTileMouseMove;
 			control.Drawing += OnTileControlDrawing;
 
 			control.SuspendLayout();
 			this.Controls.Add(control);
 			control.ResumeLayout(false);
 		}
+
+        void OnTileMouseMove(object sender, MouseEventArgs e)
+        {
+            TileControl tileControl = sender as TileControl;
+            var screenPt = tileControl.PointToScreen(new Point(e.X, e.Y));
+            var imageBoxPos = this.PointToClient(screenPt);
+            MouseEventArgs @event = new MouseEventArgs(e.Button, e.Clicks, imageBoxPos.X, imageBoxPos.Y, e.Delta);
+            OnMouseMove(@event);
+        }
 
 		private void SetTileParentImageBoxRectangles(bool suppressDraw)
 		{

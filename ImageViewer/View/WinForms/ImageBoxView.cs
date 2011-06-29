@@ -11,7 +11,7 @@
 
 using System;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
@@ -47,6 +47,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 if (_imageBoxControl == null)  
                 {
 					_imageBoxControl = new ImageBoxControl(this.ImageBox, this.ParentRectangle);
+
+                    var decorators = new ImageBoxControlDecoratorExtensionPoint().CreateExtensions().Cast < IImageBoxControlDecorator>();
+                    foreach(var decorator in decorators)
+                    {
+                        _imageBoxControl = decorator.Apply(_imageBoxControl, this.ImageBox);
+                    }
                 }
                 return _imageBoxControl;
             }
@@ -54,4 +60,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         
     }
+
+    [ExtensionPoint]
+    public class ImageBoxControlDecoratorExtensionPoint:ExtensionPoint<IImageBoxControlDecorator>{}
+
+    public interface IImageBoxControlDecorator
+    {
+        ImageBoxControl Apply(ImageBoxControl control, ImageBox box);
+    }
+
 }
