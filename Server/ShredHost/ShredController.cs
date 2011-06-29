@@ -101,6 +101,7 @@ namespace ClearCanvas.Server.ShredHost
                 {
                     wcfShred.SharedHttpPort = ShredHostServiceSettings.Instance.SharedHttpPort;
                     wcfShred.SharedTcpPort = ShredHostServiceSettings.Instance.SharedTcpPort;
+                    wcfShred.ServiceAddressBase = ShredHostServiceSettings.Instance.ServiceAddressBase;
                 }
                 shredController.Shred.Start();
             }
