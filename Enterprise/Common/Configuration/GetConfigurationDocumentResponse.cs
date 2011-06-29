@@ -9,11 +9,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
