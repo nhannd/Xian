@@ -567,9 +567,6 @@
   <data name="Dicom_PatientStudy_PatientsWeight_Label" xml:space="preserve">
     <value>Weight</value>
   </data>
-  <data name="ExceptionTransformedEdgeDoesNotMatch" xml:space="preserve">
-    <value>The transformed edge does not have a corresponding value.</value>
-  </data>
   <data name="FormatDegrees" xml:space="preserve">
     <value>{0}°</value>
   </data>

@@ -237,12 +237,23 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			if (dicomImage == null)
 				return null;
 
-			List<KeyValuePair<string, string>> filterCandidates = new List<KeyValuePair<string, string>>();
+			var filterCandidates = new List<KeyValuePair<string, string>>
+            {new KeyValuePair<string, string>("Modality", dicomImage.ImageSop.Modality)};
 
 			// these are hard-coded as the only filter candidates for now, until more general use cases are identified.
-			filterCandidates.Add(new KeyValuePair<string, string>("Modality", dicomImage.ImageSop.Modality));
-			filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Row", dicomImage.Frame.PatientOrientation != null ? dicomImage.Frame.PatientOrientation.PrimaryRow : string.Empty));
-			filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", dicomImage.Frame.PatientOrientation != null ? dicomImage.Frame.PatientOrientation.PrimaryColumn : string.Empty));
+
+		    var patientOrientation = dicomImage.Frame.PatientOrientation;
+		    string primaryRow = String.Empty, primaryColumn = String.Empty;
+            if (patientOrientation != null && !patientOrientation.IsEmpty)
+            {
+                if (patientOrientation.PrimaryRow.HasValue)
+                    primaryRow = patientOrientation.PrimaryRow.ToString();
+                if (patientOrientation.PrimaryRow.HasValue)
+                    primaryColumn = patientOrientation.PrimaryColumn.ToString();
+            }
+
+		    filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Row", primaryRow));
+		    filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", primaryColumn));
 
 			return GetMatchingStoredLayoutId(filterCandidates);
 		}
