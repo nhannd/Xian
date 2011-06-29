@@ -22,6 +22,11 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// </summary>
 		string ContributorId { get; }
 
+        /// <summary>
+        /// Gets a friendly description of what this contributor does.
+        /// </summary>
+        string Description { get; }
+
 		/// <summary>
 		/// Called by the user-interface to obtain the set of properties that can be edited by the user.
 		/// </summary>

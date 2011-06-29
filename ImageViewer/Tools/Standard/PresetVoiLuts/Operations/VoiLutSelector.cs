@@ -149,9 +149,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             var groups = PresetVoiLutSettings.Default.GetPresetGroups();
             foreach (var @group in groups)
             {
-                var dataContract = new LinearPresetVoiLut {Modality = @group.Modality};
                 foreach (var preset in @group.Presets)
                 {
+                    var dataContract = new LinearPresetVoiLut { Modality = @group.Modality };
                     var operation = (LinearPresetVoiLutOperationComponent)preset.Operation;
                     dataContract.Name = preset.Operation.Name;
                     dataContract.WindowWidth = operation.WindowWidth;
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
                 foreach (var preset in @group.Presets)
                 {
-                    if (Equals(preset.Operation.Name) && !preset.Operation.AppliesTo(image))
+                    if (Equals(Name, preset.Operation.Name) && !preset.Operation.AppliesTo(image))
                         return preset.Operation;
                 }
             }
