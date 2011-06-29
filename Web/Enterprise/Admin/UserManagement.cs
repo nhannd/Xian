@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 
-namespace ClearCanvas.ImageServer.Enterprise.Admin
+namespace ClearCanvas.Web.Enterprise.Admin
 {
     /// <summary>
     /// Wrapper for <see cref="IUserAdminService"/> service.

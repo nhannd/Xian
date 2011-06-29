@@ -11,10 +11,8 @@
 
 using System.Threading;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Enterprise
+namespace ClearCanvas.Web.Enterprise.Authentication
 {
     /// <summary>
     /// User credentials

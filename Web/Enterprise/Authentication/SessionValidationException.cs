@@ -11,7 +11,7 @@
 
 using System;
 
-namespace ClearCanvas.ImageServer.Enterprise.Authentication
+namespace ClearCanvas.Web.Enterprise.Authentication
 {
     /// <summary>
     /// Represents an exception thrown when a <see cref="SessionInfo"/> cannot be 
@@ -28,6 +28,5 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
         {
             
         }
-
     }
 }

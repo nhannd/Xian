@@ -19,11 +19,11 @@ using System.Xml;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
+using ClearCanvas.Web.Enterprise.Admin;
 using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRules

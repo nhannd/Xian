@@ -218,6 +218,10 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Web\Enterprise\ClearCanvas.Web.Enterprise.csproj">
+      <Project>{22444EF5-740E-41C2-B6DD-0029BD616338}</Project>
+      <Name>ClearCanvas.Web.Enterprise</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Web\Services\ClearCanvas.Web.Services.csproj">
       <Project>{8EAC6A5A-ADC1-49E4-B1A3-9A87812EE661}</Project>
       <Name>ClearCanvas.Web.Services</Name>

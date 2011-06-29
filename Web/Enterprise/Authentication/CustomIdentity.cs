@@ -12,7 +12,7 @@
 using System;
 using System.Security.Principal;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.Web.Enterprise.Authentication
 {
     /// <summary>
     /// Custom Identity

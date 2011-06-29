@@ -12,11 +12,9 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Common;
 
-namespace ClearCanvas.ImageServer.Enterprise.Authentication
+namespace ClearCanvas.Web.Enterprise.Authentication
 {
-
     public class SessionInfo
     {
         private readonly CustomPrincipal _user;
@@ -90,6 +88,5 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                 _valid = true;
             }   
         }
-
     }
 }

@@ -16,7 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 
-namespace ClearCanvas.ImageServer.Enterprise.Admin
+namespace ClearCanvas.Web.Enterprise.Admin
 {
     /// <summary>
     /// Wrapper for <see cref="IAuthorityGroupAdminService"/> service.

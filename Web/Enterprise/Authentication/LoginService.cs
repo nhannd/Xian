@@ -18,9 +18,8 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
-using ClearCanvas.ImageServer.Common;
 
-namespace ClearCanvas.ImageServer.Enterprise.Authentication
+namespace ClearCanvas.Web.Enterprise.Authentication
 {
     /// <summary>
     /// Wrapper for <see cref="IAuthenticationService"/> service.
@@ -124,31 +123,31 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             {
                 SessionToken newToken = null;
                 Platform.GetService(
-                delegate(IAuthenticationService service)
-                    {
-                        DateTime originalExpiryTime = sessionInfo.Credentials.SessionToken.ExpiryTime;
-                        ValidateSessionResponse response = service.ValidateSession(request);
-                        // update session info
-                        string id = response.SessionToken.Id;
-                        newToken= SessionCache.Instance.Renew(id, response.SessionToken.ExpiryTime);
-
-                        if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                    delegate(IAuthenticationService service)
                         {
-                            Platform.Log(LogLevel.Debug, "Session {0} for {1} is renewed. Valid until {2}", id, sessionInfo.Credentials.UserName, newToken.ExpiryTime);
+                            DateTime originalExpiryTime = sessionInfo.Credentials.SessionToken.ExpiryTime;
+                            ValidateSessionResponse response = service.ValidateSession(request);
+                            // update session info
+                            string id = response.SessionToken.Id;
+                            newToken= SessionCache.Instance.Renew(id, response.SessionToken.ExpiryTime);
 
-                            if (originalExpiryTime == newToken.ExpiryTime)
+                            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                             {
-                                Platform.Log(LogLevel.Warn, "Session expiry time is not changed. Is it cached?");
+                                Platform.Log(LogLevel.Debug, "Session {0} for {1} is renewed. Valid until {2}", id, sessionInfo.Credentials.UserName, newToken.ExpiryTime);
+
+                                if (originalExpiryTime == newToken.ExpiryTime)
+                                {
+                                    Platform.Log(LogLevel.Warn, "Session expiry time is not changed. Is it cached?");
+                                }
                             }
-                        }
-                    });
+                        });
 
                 return newToken;
             }
-			catch(FaultException<InvalidUserSessionException> ex)
-			{
-				throw new SessionValidationException(ex.Detail);
-			}
+            catch(FaultException<InvalidUserSessionException> ex)
+            {
+                throw new SessionValidationException(ex.Detail);
+            }
             catch(FaultException<UserAccessDeniedException> ex)
             {
                 throw new SessionValidationException(ex.Detail);   
@@ -186,7 +185,6 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
         #endregion
 
     }
-
 
     /// <summary>
     /// Internal session cache. 
@@ -243,7 +241,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                 {
                     activeCount++;
                     active.AppendLine(String.Format("\t{0}\t{1}: Active. Expiring on {2}", session.Credentials.UserName,
-                                                 session.Credentials.SessionToken.Id, session.Credentials.SessionToken.ExpiryTime));
+                                                    session.Credentials.SessionToken.Id, session.Credentials.SessionToken.ExpiryTime));
                 }
             }
             if (activeCount > 0)

@@ -11,13 +11,14 @@
 
 using System.Security.Principal;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageServer.Enterprise
+namespace ClearCanvas.Web.Enterprise.Authentication
 {
     /// <summary>
     /// Custom principal
     /// </summary>
-    public class CustomPrincipal : IPrincipal
+    public class CustomPrincipal : IPrincipal, IUserCredentialsProvider
     {
         private IIdentity _identity;
         private LoginCredentials _credentials;
@@ -35,6 +36,7 @@ namespace ClearCanvas.ImageServer.Enterprise
             get { return _identity; }
             set { _identity = value; }
         }
+
         public LoginCredentials Credentials
         {
             get { return _credentials; }
@@ -54,5 +56,19 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
             get { return _credentials.DisplayName; }
         }
+
+        #region IUserCredentialsProvider
+
+        public string UserName
+        {
+            get { return _credentials.UserName; }
+        }
+
+        public string SessionTokenId
+        {
+            get { return _credentials.SessionToken.Id; }
+        }
+
+        #endregion
     }
 }
