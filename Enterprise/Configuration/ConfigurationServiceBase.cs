@@ -17,6 +17,7 @@ using ClearCanvas.Enterprise.Configuration.Brokers;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 using System.Threading;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Configuration
 {
@@ -35,45 +36,39 @@ namespace ClearCanvas.Enterprise.Configuration
 			CheckReadAccess(documentKey);
 
 			var broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-			var criteria = BuildCurrentVersionCriteria(documentKey);
+			var criteria = BuildDocumentKeyCriteria(documentKey);
 			var documents = broker.Find(criteria, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true });
 
 			var document = CollectionUtils.FirstElement(documents);
-			return new GetConfigurationDocumentResponse(documentKey, document == null ? null : document.Body.DocumentText);
+			return document == null
+					? new GetConfigurationDocumentResponse(documentKey, null, null, null)
+					: new GetConfigurationDocumentResponse(documentKey, document.CreationTime, document.Body.ModifiedTime, document.Body.DocumentText);
 		}
 
-		protected ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(ConfigurationDocumentKey key)
+		/// <summary>
+		/// Lists documents matching the specified query.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		protected ListConfigurationDocumentsResponse ListConfigurationDocumentsHelper(ConfigurationDocumentQuery query)
 		{
-			var criteria = BuildUnversionedCriteria(key);
-			criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(key.Version, false, false));
-			return criteria;
+			Platform.CheckNonNegative(query.FirstResult, "FirstResult");
+			Platform.CheckArgumentRange(query.MaxResults, 0, 500, "MaxResults");
+
+			var whereDocument = new ConfigurationDocumentSearchCriteria();
+			var whereBody = new ConfigurationDocumentBodySearchCriteria();
+
+			BuildDocumentQueryCriteria(query, whereDocument, whereBody);
+
+			var broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
+			var page = new SearchResultPage(query.FirstResult, query.MaxResults);
+			var documents = broker.Find(whereDocument, whereBody, page);
+
+			return new ListConfigurationDocumentsResponse(
+				CollectionUtils.Map(documents, (ConfigurationDocument doc) => GetDocumentHeader(doc)));
 		}
 
-		protected ConfigurationDocumentSearchCriteria BuildUnversionedCriteria(ConfigurationDocumentKey key)
-		{
-			var criteria = new ConfigurationDocumentSearchCriteria();
-			criteria.DocumentName.EqualTo(key.DocumentName);
-
-			if (!string.IsNullOrEmpty(key.InstanceKey))
-			{
-				criteria.InstanceKey.EqualTo(key.InstanceKey);
-			}
-			else
-			{
-				criteria.InstanceKey.IsNull();
-			}
-
-			if (!string.IsNullOrEmpty(key.User))
-			{
-				criteria.User.EqualTo(key.User);
-			}
-			else
-			{
-				criteria.User.IsNull();
-			}
-
-			return criteria;
-		}
+		#region Caching Directives
 
 		/// <summary>
 		/// This method is called automatically by response caching framework
@@ -116,7 +111,132 @@ namespace ClearCanvas.Enterprise.Configuration
 				ResponseCachingSite.Client);
 		}
 
-		protected void CheckReadAccess(ConfigurationDocumentKey key)
+		#endregion
+
+		#region Criteria builders
+
+		/// <summary>
+		/// Builds the criteria for retrieving a document by key.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		protected ConfigurationDocumentSearchCriteria BuildDocumentKeyCriteria(ConfigurationDocumentKey key)
+		{
+			var criteria = new ConfigurationDocumentSearchCriteria();
+			criteria.DocumentName.EqualTo(key.DocumentName);
+
+			if (!string.IsNullOrEmpty(key.InstanceKey))
+			{
+				criteria.InstanceKey.EqualTo(key.InstanceKey);
+			}
+			else
+			{
+				criteria.InstanceKey.IsNull();
+			}
+
+			if (!string.IsNullOrEmpty(key.User))
+			{
+				criteria.User.EqualTo(key.User);
+			}
+			else
+			{
+				criteria.User.IsNull();
+			}
+			criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(key.Version, false, false));
+			return criteria;
+		}
+
+		/// <summary>
+		/// Builds criteria for querying documents.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <param name="whereDocument"></param>
+		/// <param name="whereBody"></param>
+		private static void BuildDocumentQueryCriteria(ConfigurationDocumentQuery query, ConfigurationDocumentSearchCriteria whereDocument, ConfigurationDocumentBodySearchCriteria whereBody)
+		{
+			var currentUser = Thread.CurrentPrincipal == null ? null : Thread.CurrentPrincipal.Identity.Name;
+
+			// user type
+			if (query.UserType == ConfigurationDocumentQuery.DocumentUserType.User)
+			{
+				// to query for user documents, we must have an authenticated user
+				if (string.IsNullOrEmpty(currentUser))
+					ThrowNotAuthorized();
+
+				// current users documents only
+				whereDocument.User.EqualTo(currentUser);
+			}
+			else
+			{
+				// shared documents only!
+				// (authentication is irrelevant - shared documents can be queried anonymously)
+				whereDocument.User.IsNull();
+			}
+
+			// document name
+			if (query.DocumentName.IsSet && !string.IsNullOrEmpty(query.DocumentName.Value))
+			{
+				if (query.DocumentName.Operator == ConfigurationDocumentQuery.StringOperator.StartsWith)
+				{
+					whereDocument.DocumentName.StartsWith(query.DocumentName.Value);
+				}
+				else if (query.DocumentName.Operator == ConfigurationDocumentQuery.StringOperator.Exact)
+				{
+					whereDocument.DocumentName.EqualTo(query.DocumentName.Value);
+				}
+			}
+
+			// document version
+			if (query.Version.IsSet)
+			{
+				whereDocument.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(query.Version.Value));
+			}
+
+			// instance key
+			if (query.InstanceKey.IsSet)
+			{
+				if (query.InstanceKey.Value == null)
+				{
+					whereDocument.InstanceKey.IsNull(); // default instances only!
+				}
+				else
+				{
+					whereDocument.InstanceKey.EqualTo(query.InstanceKey.Value);
+				}
+			}
+
+			// creation time
+			if (query.CreationTime.IsSet)
+			{
+				if (query.CreationTime.Operator == ConfigurationDocumentQuery.DateTimeOperator.After)
+				{
+					whereDocument.CreationTime.MoreThan(query.CreationTime.Value);
+				}
+				else if (query.CreationTime.Operator == ConfigurationDocumentQuery.DateTimeOperator.Before)
+				{
+					whereDocument.CreationTime.LessThan(query.CreationTime.Value);
+				}
+			}
+
+			// modified time
+			if (query.ModifiedTime.IsSet)
+			{
+				if (query.ModifiedTime.Operator == ConfigurationDocumentQuery.DateTimeOperator.After)
+				{
+					whereBody.ModifiedTime.MoreThan(query.ModifiedTime.Value);
+				}
+				else if (query.ModifiedTime.Operator == ConfigurationDocumentQuery.DateTimeOperator.Before)
+				{
+					whereBody.ModifiedTime.LessThan(query.ModifiedTime.Value);
+				}
+			}
+		}
+
+		#endregion
+
+		#region Access control
+
+		protected static void CheckReadAccess(ConfigurationDocumentKey key)
 		{
 			var user = key.User;
 			if (string.IsNullOrEmpty(user))
@@ -131,7 +251,7 @@ namespace ClearCanvas.Enterprise.Configuration
 			}
 		}
 
-		protected void CheckWriteAccess(ConfigurationDocumentKey key)
+		protected static void CheckWriteAccess(ConfigurationDocumentKey key)
 		{
 			var user = key.User;
 			if (string.IsNullOrEmpty(user))
@@ -148,9 +268,27 @@ namespace ClearCanvas.Enterprise.Configuration
 			}
 		}
 
-		protected static void ThrowNotAuthorized()
+		private static void ThrowNotAuthorized()
 		{
 			throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
 		}
+
+		#endregion
+
+		#region Misc
+
+		private static ConfigurationDocumentHeader GetDocumentHeader(ConfigurationDocument document)
+		{
+			var key = new ConfigurationDocumentKey(
+				document.DocumentName,
+				VersionUtils.FromPaddedVersionString(document.DocumentVersionString),
+				document.User,
+				document.InstanceKey);
+
+			return new ConfigurationDocumentHeader(key, document.CreationTime, document.Body.ModifiedTime);
+		}
+
+		#endregion
+
 	}
 }

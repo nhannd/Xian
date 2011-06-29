@@ -204,6 +204,18 @@ namespace ClearCanvas.Common.Utilities.Tests
 		}
 
 		[Test]
+		public void Test_Guid()
+		{
+
+			var guid = Guid.NewGuid();
+			var guidString = guid.ToString("N");
+			var expectedJsml = "<Tag>" + guidString + "</Tag>";
+
+			SerializeHelper(guid, expectedJsml);
+			DeserializeHelper(guid, expectedJsml);
+		}
+
+		[Test]
 		public void Test_CR_LF_Spaces()
 		{
 			// CR, LF, spaces between words

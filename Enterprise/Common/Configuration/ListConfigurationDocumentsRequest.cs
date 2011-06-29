@@ -17,6 +17,11 @@ namespace ClearCanvas.Enterprise.Common.Configuration
 	[DataContract]
 	public class ListConfigurationDocumentsRequest : DataContractBase
 	{
+		public ListConfigurationDocumentsRequest(ConfigurationDocumentQuery query)
+		{
+			this.Query = query;
+		}
+
 		public ListConfigurationDocumentsRequest()
 		{
 			this.Query = new ConfigurationDocumentQuery();

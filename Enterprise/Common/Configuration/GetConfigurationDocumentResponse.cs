@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Configuration;
 using System.Runtime.Serialization;
 
@@ -17,14 +18,22 @@ namespace ClearCanvas.Enterprise.Common.Configuration
 	[DataContract]
 	public class GetConfigurationDocumentResponse : DataContractBase
 	{
-		public GetConfigurationDocumentResponse(ConfigurationDocumentKey documentKey, string content)
+		public GetConfigurationDocumentResponse(ConfigurationDocumentKey documentKey, DateTime? creationTime, DateTime? modifiedTime, string content)
 		{
 			DocumentKey = documentKey;
+			CreationTime = creationTime;
+			ModifiedTime = modifiedTime;
 			Content = content;
 		}
 
 		[DataMember]
 		public ConfigurationDocumentKey DocumentKey;
+
+		[DataMember]
+		public DateTime? CreationTime;
+
+		[DataMember]
+		public DateTime? ModifiedTime;
 
 		[DataMember]
 		public string Content;

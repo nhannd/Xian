@@ -53,9 +53,15 @@ namespace ClearCanvas.Enterprise.Configuration
 				CollectionUtils.Map(group.SettingsProperties, (ConfigurationSettingsProperty p) => p.GetDescriptor()));
 		}
 
+		// because this service is invoked by the framework, rather than by the application,
+		// it is safest to use a new persistence scope
+		[ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
 		public ListConfigurationDocumentsResponse ListConfigurationDocuments(ListConfigurationDocumentsRequest request)
 		{
-			throw new NotImplementedException();
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckForNullReference(request.Query, "Query");
+
+			return ListConfigurationDocumentsHelper(request.Query);
 		}
 
 		// because this service is invoked by the framework, rather than by the application,

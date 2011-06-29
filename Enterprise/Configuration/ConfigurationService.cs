@@ -54,9 +54,15 @@ namespace ClearCanvas.Enterprise.Configuration
 				CollectionUtils.Map(group.SettingsProperties, (ConfigurationSettingsProperty p) => p.GetDescriptor()));
 		}
 
+		// because this service is invoked by the framework, rather than by the application,
+		// it is safest to use a new persistence scope
+		[ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
 		public ListConfigurationDocumentsResponse ListConfigurationDocuments(ListConfigurationDocumentsRequest request)
 		{
-			throw new NotImplementedException();
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckForNullReference(request.Query, "Query");
+
+			return ListConfigurationDocumentsHelper(request.Query);
 		}
 
 		[UpdateOperation]
@@ -122,13 +128,16 @@ namespace ClearCanvas.Enterprise.Configuration
 			CheckWriteAccess(request.DocumentKey);
 
 			var broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-			var criteria = BuildCurrentVersionCriteria(request.DocumentKey);
+			var criteria = BuildDocumentKeyCriteria(request.DocumentKey);
 			var documents = broker.Find(criteria, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true });
 
 			var document = CollectionUtils.FirstElement(documents);
 			if (document != null)
 			{
 				document.Body.DocumentText = request.Content;
+
+				// update document modified time
+				document.Body.ModifiedTime = Platform.Time;
 			}
 			else
 			{
@@ -154,7 +163,7 @@ namespace ClearCanvas.Enterprise.Configuration
 			try
 			{
 				var broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-				var criteria = BuildCurrentVersionCriteria(request.DocumentKey);
+				var criteria = BuildDocumentKeyCriteria(request.DocumentKey);
 				var document = broker.FindOne(criteria);
 				broker.Delete(document);
 			}

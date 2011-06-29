@@ -75,8 +75,16 @@ namespace ClearCanvas.Enterprise.Common
 
 		public IEnumerable<ConfigurationDocumentHeader> ListDocuments(ConfigurationDocumentQuery query)
 		{
-			// todo implement queries
-			throw new NotImplementedException();
+			// choose the anonymous-access service if possible (if we're not querying for user docs)
+			var serviceContract = query.UserType == ConfigurationDocumentQuery.DocumentUserType.Shared ?
+				typeof(IApplicationConfigurationReadService) : typeof(IConfigurationService);
+
+			var service = (IApplicationConfigurationReadService)Platform.GetService(serviceContract);
+			using (service as IDisposable)
+			{
+				var response = service.ListConfigurationDocuments(new ListConfigurationDocumentsRequest(query));
+				return response.Documents;
+			}
 		}
 
 		public IConfigurationDocument GetDocument(ConfigurationDocumentKey documentKey)

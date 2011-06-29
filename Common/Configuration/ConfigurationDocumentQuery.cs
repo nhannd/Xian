@@ -53,6 +53,23 @@ namespace ClearCanvas.Common.Configuration
 		}
 
 		/// <summary>
+		/// Defines the set of document user types.
+		/// </summary>
+		public enum DocumentUserType
+		{
+			/// <summary>
+			/// Documents owned by the current user.
+			/// </summary>
+			User,
+
+			/// <summary>
+			/// Shared documents.
+			/// </summary>
+			Shared,
+
+		}
+
+		/// <summary>
 		/// Abstract base class for criteria objects.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -116,7 +133,7 @@ namespace ClearCanvas.Common.Configuration
 		/// User name criteria class.
 		/// </summary>
 		[DataContract]
-		public class UserCriteria : Criteria<string>
+		public class UserCriteria : Criteria<DocumentUserType>
 		{
 		}
 
@@ -148,7 +165,6 @@ namespace ClearCanvas.Common.Configuration
 		{
 			this.DocumentName = new DocumentNameCriteria();
 			this.Version = new VersionCriteria();
-			this.User = new UserCriteria();
 			this.InstanceKey = new InstanceKeyCriteria();
 			this.CreationTime = new DateTimeCriteria();
 			this.ModifiedTime = new DateTimeCriteria();
@@ -172,7 +188,7 @@ namespace ClearCanvas.Common.Configuration
 		/// Gets the criteria for the owner of the document.
 		/// </summary>
 		[DataMember]
-		public UserCriteria User { get; private set; }
+		public DocumentUserType UserType { get; set; }
 
 		/// <summary>
 		/// Gets the criteria for the instance key of the document.
