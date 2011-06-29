@@ -22,8 +22,15 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// </summary>
 		string ContributorId { get; }
 
+        //TODO (CR June 2011): Not sure about this, but I guess it doesn't do any harm.
+
         /// <summary>
-        /// Gets a friendly description of what this contributor does.
+        /// Gets a friendly name for the contributor that could be shown to the user, if needed.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Gets a friendly description for the contributor that could be shown to the user, if needed.
         /// </summary>
         string Description { get; }
 
