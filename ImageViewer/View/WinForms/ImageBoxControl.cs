@@ -593,6 +593,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     Control ctrl = e.Extension.View.GuiElement as Control;
                     if (ctrl != null)
                     {
+                        if (ctrl.Dock == DockStyle.Fill)
+                        {
+                            //temporarily hide it
+                            ImageScrollerVisible = false;
+                        }
                         AddExtensionControl(ctrl);
 
                         // make sure it's on top of the images or if the display set is empty, 
@@ -605,6 +610,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     Control ctrl = e.Extension.View.GuiElement as Control;
                     if (ctrl!=null)
                     {
+                        if (ctrl.Dock == DockStyle.Fill)
+                        {
+                            UpdateImageScroller();
+                        }
+
                         RemoveExtensionControl(ctrl);
                         Draw();
                     }
