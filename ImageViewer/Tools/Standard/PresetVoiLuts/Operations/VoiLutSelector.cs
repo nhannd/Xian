@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
                 foreach (var preset in @group.Presets)
                 {
-                    if (Equals(Name, preset.Operation.Name) && !preset.Operation.AppliesTo(image))
+                    if (Equals(Name, preset.Operation.Name) && preset.Operation.AppliesTo(image))
                         return preset.Operation;
                 }
             }
