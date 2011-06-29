@@ -87,6 +87,7 @@
     <Compile Include="Actions\ActionPermissionAttribute.cs" />
     <Compile Include="Actions\ActionSet.cs" />
     <Compile Include="Actions\ActionViewContext.cs" />
+    <Compile Include="Actions\ITextBoxAction.cs" />
     <Compile Include="Actions\Tests\MockActionPermissionAttribute.cs" />
     <Compile Include="Actions\DropDownActionAttribute.cs" />
     <Compile Include="Actions\CrudActionModel.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Actions\KeyboardActionAttribute.cs" />
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />
     <Compile Include="Actions\ObservablePropertyCoupler.cs" />
+    <Compile Include="Actions\TextBoxAction.cs" />
     <Compile Include="ApplicationSettingsRegistry.cs" />
     <Compile Include="Actions\AbstractAction.cs" />
     <Compile Include="Async.cs" />

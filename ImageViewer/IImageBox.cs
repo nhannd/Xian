@@ -11,6 +11,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
@@ -171,5 +172,112 @@ namespace ClearCanvas.ImageViewer
 		/// Selects the top left tile.
 		/// </summary>
 		void SelectDefaultTile();
+
+	    /// <summary>
+	    /// Occurs when the <see cref="DisplaySet"/> property has changed.
+	    /// </summary>
+	    event EventHandler<DisplaySetChangedEventArgs> DisplaySetChanged;
 	}
+
+    /// <summary>
+    /// An extension point for ImageBox "tools" 
+    /// </summary>
+    [ExtensionPoint]
+    public sealed class ImageBoxExtensionPoint : ExtensionPoint<IImageBoxExtension>
+    { }
+
+    
+    /// <summary>
+    /// Defines the interface to the host's context menu.
+    /// </summary>
+    public interface IHostContextMenuAdapter
+    {
+        ///<summary>
+        /// Shows the host's context menu at the specified location
+        ///</summary>
+        ///<param name="screenLocation"></param>
+        void Show(Point screenLocation);
+
+        ///<summary>
+        /// Occurs when the host's context menu is opened.
+        ///</summary>
+        event EventHandler ContextMenuOpened;
+
+        ///<summary>
+        /// Occurs when the host's context menu is closed.
+        ///</summary>
+        event EventHandler ContextMenuClosed;
+    }
+    
+    /// <summary>
+    /// Defines the interface of an extension to the <see cref="IImageBox"/>
+    /// </summary>
+    public interface IImageBoxExtension : IDisposable
+    {
+
+        /// <summary>
+        /// Name of the extension
+        /// </summary>
+        string Name { get; }
+
+
+        ///<summary>
+        /// Sets the associated ImageBox
+        ///</summary>
+        IImageBox ImageBox { set; }
+
+        ///<summary>
+        /// Gets the view of the plugin
+        ///</summary>
+        IView View { get; }
+
+        ///<summary>
+        /// Gets or sets a value indicating whether the extension wants its <see cref="View"/> to be visible.
+        ///</summary>
+        /// <remarks>
+        /// It is up to the image box control implementation to decide whether it's feasible 
+        /// to display the extension's view on the screen.
+        /// The extension must fire <see cref="VisibilityChanged"/> if it wants to change its visibility. 
+        /// </remarks>
+        bool Visible { get; }
+
+        ///<summary>
+        /// Occurs when the desired visibility of the extension changes.
+        ///</summary>
+        event EventHandler<ImageBoxExtensionVisiblityChangedEventArg> VisibilityChanged;
+
+        ///<summary>
+        /// Sets the context menu adapter
+        ///</summary>
+        ///<param name="adapter"></param>
+        void SetHostContextMenuAdapter(IHostContextMenuAdapter adapter);
+    }
+
+
+    ///<summary>
+    /// Event argument for <see cref="IImageBoxExtension.VisibilityChanged"/>
+    ///</summary>
+    public class ImageBoxExtensionVisiblityChangedEventArg : EventArgs
+    {
+        ///<summary>
+        /// Gets/sets the extension that fired the event
+        ///</summary>
+        public IImageBoxExtension Extension { get; private set; }
+
+        ///<summary>
+        /// Gets/sets the visibility of the extension when the event was fired
+        ///</summary>
+        public bool Visible { get; private set; }
+
+
+        ///<summary>
+        ///</summary>
+        ///<param name="extension"></param>
+        ///<param name="visible"></param>
+        public ImageBoxExtensionVisiblityChangedEventArg(IImageBoxExtension extension, bool visible)
+        {
+            Extension = extension;
+            Visible = visible;
+        }
+    }
 }

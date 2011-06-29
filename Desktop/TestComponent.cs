@@ -88,7 +88,7 @@ namespace ClearCanvas.Desktop
 
         public void Accept()
         {
-            this.Exit(ApplicationComponentExitCode.Error);
+            this.Exit(ApplicationComponentExitCode.Accepted);
         }
 
     }

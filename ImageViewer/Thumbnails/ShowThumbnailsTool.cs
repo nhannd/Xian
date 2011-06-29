@@ -9,12 +9,12 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using System;
 using ClearCanvas.ImageViewer.Thumbnails.Configuration;
 
 namespace ClearCanvas.ImageViewer.Thumbnails

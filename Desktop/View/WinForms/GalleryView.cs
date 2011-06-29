@@ -251,7 +251,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			ListViewItem lvi = _listView.Items[index];
 			IGalleryItem item = (IGalleryItem) _gallery[index];
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
-			_listView.LargeImageList.Images[keyIndex] = item.Image;
+			_listView.LargeImageList.Images[keyIndex] = (Image)item.Image;
 			// update name, description
 			_listView.RedrawItems(index, index, true);
 		}
@@ -261,7 +261,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			IGalleryItem galleryItem = CastToGalleryItem(item);
 
 			string imageKey = Guid.NewGuid().ToString();
-			_listView.LargeImageList.Images.Add(imageKey, galleryItem.Image);
+            _listView.LargeImageList.Images.Add(imageKey, (Image)galleryItem.Image);
 			ListViewItem lvi = new ListViewItem(galleryItem.Name, imageKey);
 
 			AddSubItems(lvi, galleryItem);
@@ -371,7 +371,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			DataObject data = new DataObject();
 			if (DragOutside)
-				data.SetData(draggedItem.Tag);
+			{
+			    data.SetData(draggedItem.Tag);
+			    data.SetText(draggedItem.Tag.ToString(),TextDataFormat.UnicodeText);
+			}
 			if (DragReorder)
 				data.SetData(draggedItem);
 

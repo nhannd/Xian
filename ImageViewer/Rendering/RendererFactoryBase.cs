@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {

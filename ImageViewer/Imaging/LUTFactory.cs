@@ -419,7 +419,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public override string GetKey()
 			{
-
 				return RealColorMap.GetKey();
 			}
 

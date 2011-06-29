@@ -43,6 +43,8 @@ ImageViewer/ClearCanvas.ImageViewer.xml
 
 # Viewer local datastore files
 dicom_datastore/*.sdf
+*.dcm
+*studyXml.xml
 
 # ImageServer files generated and copied by build scripts
 ImageServer/Web/Application/App_Themes/Default/images/LoginSplash.png

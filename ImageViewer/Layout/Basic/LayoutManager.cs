@@ -19,12 +19,27 @@ using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	[ExtensionOf(typeof(LayoutManagerExtensionPoint))]
 	public class LayoutManager : ImageViewer.LayoutManager
 	{
+		#region LayoutHookContext
+
+		class LayoutHookContext : IHpLayoutHookContext
+		{
+			public LayoutHookContext(IImageViewer viewer)
+			{
+				this.ImageViewer = viewer;
+			}
+
+			public IImageViewer ImageViewer { get; private set; }
+		}
+
+		#endregion
+
 		private class DisplaySetFactory : ImageViewer.DisplaySetFactory
 		{
 			private readonly StoredDisplaySetCreationSetting _creationSetting;
@@ -39,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				_creationSetting = creationSetting;
 
-				PresentationState defaultPresentationState = new BasicDicomPresentationState 
+				PresentationState defaultPresentationState = new DicomPresentationState
 																{ ShowGrayscaleInverted = creationSetting.ShowGrayscaleInverted };
 
 				var imageFactory = (PresentationImageFactory)PresentationImageFactory;
@@ -182,6 +197,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		}
 
 		#endregion
+
+		protected override void LayoutAndFillPhysicalWorkspace()
+		{
+			var hookContext = new LayoutHookContext(this.ImageViewer);
+			foreach (IHpLayoutHook hook in new HpLayoutHookExtensionPoint().CreateExtensions())
+			{
+				if(hook.HandleLayout(hookContext))
+					return;
+			}
+
+			// hooks did not handle it, so call base class
+			base.LayoutAndFillPhysicalWorkspace();
+		}
 
 		protected override void LayoutPhysicalWorkspace()
 		{

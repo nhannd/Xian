@@ -9,7 +9,9 @@
 
 #endregion
 
+using System;
 using System.Drawing;
+using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
@@ -42,12 +44,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         {
             get
             {
-                if (_imageBoxControl == null)
+                if (_imageBoxControl == null)  
                 {
 					_imageBoxControl = new ImageBoxControl(this.ImageBox, this.ParentRectangle);
                 }
                 return _imageBoxControl;
             }
         }
+
+        
     }
 }

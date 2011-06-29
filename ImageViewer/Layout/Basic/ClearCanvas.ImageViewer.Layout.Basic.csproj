@@ -125,7 +125,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BasicDicomPresentationState.cs" />
     <Compile Include="ContextMenuActionFactory.cs" />
     <Compile Include="ContextMenuLayoutTool.cs" />
     <Compile Include="DefaultContextMenuActionFactory.cs" />
@@ -190,7 +189,7 @@
       <LastGenOutput>DefaultPatientReconciliationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="DisplaySetCreationSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>DisplaySetCreationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="LayoutSettings.settings">

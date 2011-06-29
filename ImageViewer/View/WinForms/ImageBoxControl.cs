@@ -13,9 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -24,6 +24,46 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     /// </summary>
     public partial class ImageBoxControl : UserControl
     {
+
+        class ContextMenuAdapter : ImageViewer.IHostContextMenuAdapter
+        {
+            private readonly ImageBoxControl _imageBoxControl;
+
+            public ContextMenuAdapter(ImageBoxControl imageBoxControl)
+            {
+                _imageBoxControl = imageBoxControl;   
+            }
+
+            public void Show(Point screenLocation)
+            {
+                foreach(var tileControl in _imageBoxControl.TileControls)
+                {
+                    var contextMenu = tileControl.GetContextMenu(screenLocation);
+                    if (contextMenu!=null)
+                    {
+
+                        contextMenu.Opened += OnContextMenuOpened;
+                        contextMenu.Closed += OnContextMenuClosed;
+                        contextMenu.Show(screenLocation);
+                        return;
+                    }
+                }
+            }
+
+            private void OnContextMenuClosed(object sender, ToolStripDropDownClosedEventArgs e)
+            {
+                EventsHelper.Fire(ContextMenuClosed, this, EventArgs.Empty);
+            }
+
+            private void OnContextMenuOpened(object sender, EventArgs e)
+            {
+                EventsHelper.Fire(ContextMenuOpened, this, EventArgs.Empty);
+            }
+
+            public event EventHandler ContextMenuOpened;
+            public event EventHandler ContextMenuClosed;
+        }
+        
         private ImageBox _imageBox;
 		private Rectangle _parentRectangle;
 		private bool _imageScrollerVisible;
@@ -54,6 +94,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_imageBox.Drawing += OnDrawing;
 			_imageBox.SelectionChanged += OnImageBoxSelectionChanged;
 			_imageBox.LayoutCompleted += OnLayoutCompleted;
+
+            foreach (var extension in ImageBox.Extensions)
+            {
+                AttachExtension(extension);
+            }
         }
 
 		internal ImageBox ImageBox
@@ -112,13 +157,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void DoDraw()
 		{
-			foreach (TileControl control in this.TileControls)
-				control.Draw();
-			
-			Invalidate();
+            foreach (TileControl control in this.TileControls)
+                control.Draw(); 
+            Invalidate();
 		}
 
-		#region Protected methods
+        #region Protected methods
 
 		protected override void OnLoad(EventArgs e)
 		{
@@ -198,6 +242,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void PerformDispose()
 		{
+            if (_imageBox.Extensions!=null)
+            {
+                foreach(IImageBoxExtension extension in _imageBox.Extensions)
+                {
+                    DetachExtension(extension);
+                }
+            }
+
 			if (_imageBox != null)
 			{
 				_imageBox.Drawing -= OnDrawing;
@@ -423,6 +475,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void UpdateImageScroller()
 		{
+
 			//This method can be called repeatedly and will essentially be a no-op if nothing needs to change.
 			//In tiled mode, it could be a little inefficient to call repeatedly, but it's the lesser of the evils.
 			//Otherwise, we're subscribing to a multitude of events and updating different things at different times.
@@ -464,5 +517,91 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		}
 
 		#endregion
-	}
+
+        #region ImageBox Extension support
+
+        void AttachExtension(IImageBoxExtension extension)
+        {
+            if (extension.Visible)
+            {
+                Control ctrl = extension.View.GuiElement as Control;
+                if (ctrl != null)
+                {
+                    AddExtensionControl(ctrl);
+                }
+            }
+            
+            extension.VisibilityChanged += OnExtensionVisibilityChanged;
+            extension.SetHostContextMenuAdapter(new ContextMenuAdapter(this));
+        }
+
+        void AddExtensionControl(Control control)
+        {
+            control.MouseDown += OnExtensionMouseDown;
+            Controls.Add(control);
+        }
+        
+        void RemoveExtensionControl(Control control)
+        {
+            control.MouseDown -= OnExtensionMouseDown;
+            Controls.Remove(control);
+        }
+
+        void OnExtensionMouseDown(object sender, MouseEventArgs e)
+        {
+            _imageBox.SelectDefaultTile();
+        }
+
+        
+        void DetachExtension(IImageBoxExtension extension)
+        {
+            extension.SetHostContextMenuAdapter(null);
+            extension.VisibilityChanged -= OnExtensionVisibilityChanged;
+            var view = extension.View;
+            if (view!=null)
+            {
+                Control ctrl = view.GuiElement as Control;
+                if (ctrl!=null)
+                {
+                    ctrl.MouseDown -= OnExtensionMouseDown;
+                    Controls.Remove(ctrl);
+                }
+            }
+
+        }
+
+        void OnExtensionVisibilityChanged(object sender, ImageBoxExtensionVisiblityChangedEventArg e)
+        {
+            Platform.CheckForNullReference(e.Extension, "e.Extension");
+
+            if (e.Extension.View != null)
+            {
+                if (e.Visible)
+                {
+                    Control ctrl = e.Extension.View.GuiElement as Control;
+                    if (ctrl != null)
+                    {
+                        AddExtensionControl(ctrl);
+
+                        // make sure it's on top of the images or if the display set is empty, 
+                        // it's on top of the empty tiles
+                        ctrl.BringToFront(); 
+                    }
+                }
+                else
+                {
+                    Control ctrl = e.Extension.View.GuiElement as Control;
+                    if (ctrl!=null)
+                    {
+                        RemoveExtensionControl(ctrl);
+                        Draw();
+                    }
+                }
+            }
+        }
+
+        #endregion
+    }
+
+    
 }

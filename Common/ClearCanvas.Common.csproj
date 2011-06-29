@@ -121,6 +121,7 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -326,6 +327,19 @@
     <Compile Include="Audit\AuditLog.cs" />
     <Compile Include="Audit\AuditEntryInfo.cs" />
     <Compile Include="Audit\IAuditSink.cs" />
+    <Compile Include="Caching\Cache.cs" />
+    <Compile Include="Caching\CacheClientLoggingDecorator.cs" />
+    <Compile Include="Caching\CacheException.cs" />
+    <Compile Include="Caching\CacheGetOptions.cs" />
+    <Compile Include="Caching\CacheOptionsBase.cs" />
+    <Compile Include="Caching\CacheProviderInitializationArgs.cs" />
+    <Compile Include="Caching\CachePutOptions.cs" />
+    <Compile Include="Caching\CacheRemoveOptions.cs" />
+    <Compile Include="Caching\DefaultCacheClient.cs" />
+    <Compile Include="Caching\DefaultCacheProvider.cs" />
+    <Compile Include="Caching\ICacheClient.cs" />
+    <Compile Include="Caching\ICacheProvider.cs" />
+    <Compile Include="Caching\IDefinesCacheKey.cs" />
     <Compile Include="Configuration\ApplicationSettingsExtensions.cs" />
     <Compile Include="Configuration\ApplicationSettingsHelper.cs" />
     <Compile Include="Configuration\ConfigurationFileReader.cs" />
@@ -403,6 +417,8 @@
     <Compile Include="Utilities\IRemoteFileTransfer.cs" />
     <Compile Include="Utilities\HttpFileTransfer.cs" />
     <Compile Include="Utilities\EnvironmentUtilities.cs" />
+    <Compile Include="Utilities\JsmlSerializer.cs" />
+    <Compile Include="Utilities\Tests\JsmlSerializerTests.cs" />
     <Compile Include="Utilities\UnitTestExtensionFactory.cs" />
   </ItemGroup>
   <ItemGroup>
