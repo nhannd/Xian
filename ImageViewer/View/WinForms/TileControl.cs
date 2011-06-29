@@ -458,12 +458,19 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
+            bool handled = false;
 			object message = _inputTranslator.OnMouseMove(e);
-			if (message == null)
-				return;
+			if (message != null)
+			{
+                if (_tileController != null)
+                    handled = _tileController.ProcessMessage(message);
+			}
 
-			if (_tileController != null)
-				_tileController.ProcessMessage(message);
+            if (!handled)
+            {
+                base.OnMouseMove(e);
+            }
+			
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
