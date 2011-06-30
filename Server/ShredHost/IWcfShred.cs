@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Server.ShredHost
 {
@@ -28,5 +27,11 @@ namespace ClearCanvas.Server.ShredHost
 			get;
 			set;
 		}
-    }
+
+		string ServiceAddressBase
+		{
+			get;
+			set;
+		}
+	}
 }

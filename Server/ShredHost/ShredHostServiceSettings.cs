@@ -9,9 +9,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
 
 namespace ClearCanvas.Server.ShredHost
@@ -21,6 +18,7 @@ namespace ClearCanvas.Server.ShredHost
 		public const int DefaultShredHostHttpPort = 51121;
 		public const int DefaultSharedHttpPort = 51122;
 		public const int DefaultSharedTcpPort = 50123;
+		public const string DefaultServiceAddressBase = "";
 
 		private static ShredHostServiceSettings _instance;
 
@@ -79,6 +77,13 @@ namespace ClearCanvas.Server.ShredHost
 			set { this["SharedTcpPort"] = value; }
 		}
 
+		[ConfigurationProperty("ServiceAddressBase", DefaultValue = ShredHostServiceSettings.DefaultServiceAddressBase)]
+		public string ServiceAddressBase
+		{
+			get { return (string)this["ServiceAddressBase"]; }
+			set { this["ServiceAddressBase"] = value; ; }
+		}
+
 		#endregion
 
 		public override object Clone()
@@ -88,6 +93,7 @@ namespace ClearCanvas.Server.ShredHost
 			clone.ShredHostHttpPort = _instance.ShredHostHttpPort;
 			clone.SharedHttpPort = _instance.SharedHttpPort;
 			clone.SharedTcpPort = _instance.SharedTcpPort;
+			clone.ServiceAddressBase = _instance.ServiceAddressBase;
 
 			return clone;
 		}
