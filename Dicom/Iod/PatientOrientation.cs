@@ -14,25 +14,6 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.Iod
 {
-    public class PatientDirection
-    {
-        public static readonly char? Empty = null;
-        public const char Unspecified = 'X';
-        public const char Left = 'L';
-        public const char Right = 'R';
-        public const char Posterior = 'P';
-        public const char Anterior = 'A';
-        public const char Head = 'H';
-        public const char Foot = 'F';
-
-        public enum Component
-        {
-            Primary = 0,
-            Secondary = 1,
-            Tertiary = 2
-        }
-    }
-
     /// <summary>
 	/// Represents the orientation of the image in the patient using dicom enumerated values
 	/// to indicate the direction of the first row and column in the image.
@@ -47,27 +28,17 @@ namespace ClearCanvas.Dicom.Iod
         public static PatientOrientation CoronalRight = new PatientOrientation(PatientDirection.Right, PatientDirection.Foot);
         public static PatientOrientation CoronalLeft = new PatientOrientation(PatientDirection.Left, PatientDirection.Foot);
 
-		/// <summary>
+        public PatientOrientation(PatientDirection row, PatientDirection column)
+        {
+            Row = new PatientDirection(row);
+            Column = new PatientDirection(column);
+        }
+        
+        /// <summary>
 		/// Constructor.
 		/// </summary>
 		public PatientOrientation(string row, string column)
-		{
-			Row = row ?? "";
-			Column = column ?? "";
-		}
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-		public PatientOrientation(char row, char column)
-            : this(row.ToString(), column.ToString())
-		{
-		}
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public PatientOrientation(char? row, char? column)
-            : this(row.HasValue ? row.Value.ToString() : null, column.HasValue ? column.Value.ToString() : null)
+            : this (new PatientDirection(row), new PatientDirection(column))
 		{
 		}
 
@@ -78,68 +49,65 @@ namespace ClearCanvas.Dicom.Iod
 		/// </summary>
 		public bool IsEmpty
 		{
-			get { return Row == String.Empty && Column == String.Empty; }	
+			get { return Row.IsEmpty && Column.IsEmpty; }	
 		}
-
-        public bool IsRowUnspecified { get { return IsUnspecified(Row); } }
-        public bool IsColumnUnspecified { get { return IsUnspecified(Column); } }
 
         /// <summary>
 		/// Gets the direction of the first row in the image.
 		/// </summary>
-		public virtual string Row { get; private set; }
+		public virtual PatientDirection Row { get; private set; }
 
 		/// <summary>
 		/// Gets the direction of the first column in the image.
 		/// </summary>
-		public virtual string Column { get; private set; }
+		public virtual PatientDirection Column { get; private set; }
 
 		/// <summary>
 		/// Gets the primary direction of the first row in the image.
 		/// </summary>
-		public char? PrimaryRow
+        public PatientDirection PrimaryRow
 		{
-            get { return GetRowDirection(PatientDirection.Component.Primary); }
+            get { return Row.Primary; }
 		}
 
 		/// <summary>
 		/// Gets the primary direction of the first column in the image.
 		/// </summary>
-        public char? PrimaryColumn
+        public PatientDirection PrimaryColumn
 		{
-            get { return GetColumnDirection(PatientDirection.Component.Primary); }
+            get { return Column.Primary; }
         }
 
 		/// <summary>
 		/// Gets the secondary direction of the first row in the image.
 		/// </summary>
-        public char? SecondaryRow
+        public PatientDirection SecondaryRow
 		{
-            get { return GetRowDirection(PatientDirection.Component.Secondary); }
+            get { return Row.Secondary; }
 		}
 
 		/// <summary>
 		/// Gets the secondary direction of the first column in the image.
 		/// </summary>
-        public char? SecondaryColumn
+        public PatientDirection SecondaryColumn
 		{
-            get { return GetColumnDirection(PatientDirection.Component.Secondary); }
+            get { return Column.Secondary; }
 		}
 
         /// <summary>
         /// Gets the tertiary direction of the first row in the image.
         /// </summary>
-        public char? TertiaryRow
+        public PatientDirection TertiaryRow
         {
-            get { return GetRowDirection(PatientDirection.Component.Tertiary); }
+            get { return Row.Tertiary; }
         }
 
         /// <summary>
         /// Gets the tertiary direction of the first column in the image.
         /// </summary>
-        public char? TertiaryColumn
+        public PatientDirection TertiaryColumn
         {
-            get { return GetColumnDirection(PatientDirection.Component.Tertiary); }
+            get { return Column.Tertiary; }
         }
 
 	    #endregion
@@ -192,42 +160,6 @@ namespace ClearCanvas.Dicom.Iod
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private char? GetRowDirection(PatientDirection.Component component)
-        {
-            return GetRowDirection((int)component);
-        }
-
-        private char? GetColumnDirection(PatientDirection.Component component)
-        {
-            return GetColumnDirection((int)component);
-        }
-
-        private char? GetRowDirection(int index)
-        {
-            return GetDirection(Row, index);
-        }
-
-        private char? GetColumnDirection(int index)
-        {
-            return GetDirection(Column, index);
-        }
-
-        private static char? GetDirection(string direction, int index)
-        {
-            if (!string.IsNullOrEmpty(direction) && direction.Length > index)
-                return direction[index];
-            return null;
-        }
-
-        private static bool IsUnspecified(string direction)
-        {
-            return direction.Length == 0 || direction[0] == PatientDirection.Unspecified;
         }
 
         #endregion

@@ -10,6 +10,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     {
         private readonly SpatialTransform _imageTransform;
         private readonly ImageOrientationPatient _imageOrientationPatient;
+        private readonly PatientOrientation _patientOrientation;
 
         public enum ImageEdge { Left = 0, Top = 1, Right = 2, Bottom = 3 };
         private static readonly SizeF[] _edgeVectors = new SizeF[] { new SizeF(-1, 0), new SizeF(0, -1), new SizeF(1, 0), new SizeF(0, 1) };
@@ -23,35 +24,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             _imageOrientationPatient = imageOrientationPatient;
         }
 
-        public PatientOrientation GetEffectivePatientOrientation(PatientDirection.Component componentLevel)
+        public PatientOrientation GetEffectivePatientOrientation()
         {
-            return new PatientOrientation(
-                GetEdgeDirection(ImageEdge.Right, componentLevel),
-                GetEdgeDirection(ImageEdge.Bottom, componentLevel));
+            return new PatientOrientation(GetEdgeDirection(ImageEdge.Right), GetEdgeDirection(ImageEdge.Bottom));
         }
 
-        public string GetEdgeDirection(ImageEdge viewportEdge, PatientDirection.Component componentLevel)
+        public PatientDirection GetEdgeDirection(ImageEdge viewportEdge)
         {
-            string direction = String.Empty;
-            var primaryDirection = GetPrimaryEdgeDirection(viewportEdge);
-            if (primaryDirection.HasValue)
+            var direction = GetPrimaryEdgeDirection(viewportEdge);
+            if (!direction.IsEmpty)
             {
-                direction += primaryDirection.ToString();
-                if (componentLevel > PatientDirection.Component.Primary)
-                {
-                    var secondaryDirection = GetSecondaryEdgeDirection(viewportEdge);
-                    if (secondaryDirection.HasValue)
-                    {
-                        direction += secondaryDirection.ToString();
-                        //TODO (CR June 2011): Tertiary?
-                    }
-                }
+                var secondaryDirection = GetSecondaryEdgeDirection(viewportEdge);
+                direction += secondaryDirection;
+                //TODO (CR June 2011): Tertiary?
             }
 
             return direction;
         }
 
-        public char? GetPrimaryEdgeDirection(ImageEdge viewportEdge)
+        public PatientDirection GetPrimaryEdgeDirection(ImageEdge viewportEdge)
         {
             var destinationEdgeVectors = GetDestinationEdgeVectors();
             //find out which source image edge got transformed to coincide with this viewport edge.
@@ -59,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             return GetEdgeComponentDirection(transformedEdge, PatientDirection.Component.Primary);
         }
 
-        public char? GetSecondaryEdgeDirection(ImageEdge viewportEdge)
+        public PatientDirection GetSecondaryEdgeDirection(ImageEdge viewportEdge)
         {
             var destinationEdgeVectors = GetDestinationEdgeVectors();
             //find out which source image edge got transformed to coincide with this viewport edge.
@@ -67,31 +58,75 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             return GetEdgeComponentDirection(transformedEdge, PatientDirection.Component.Secondary);
         }
 
-        private char? GetEdgeComponentDirection(ImageEdge imageEdge, PatientDirection.Component component)
+        private PatientDirection GetEdgeComponentDirection(ImageEdge imageEdge, PatientDirection.Component component)
 		{
 			bool negativeDirection = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Top);
 			bool rowValues = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Right);
 
-            ImageOrientationPatient.Directions? direction = null;
+            var direction = PatientDirection.Empty;
             if (rowValues)
 			{
                 //TODO (CR June 2011): tertiary?
                 if (component == PatientDirection.Component.Primary)
-                    direction = _imageOrientationPatient.GetPrimaryRowDirection(negativeDirection);
+                    direction = GetPrimaryRowDirection();
                 else if (component == PatientDirection.Component.Secondary)
-                    direction = _imageOrientationPatient.GetSecondaryRowDirection(negativeDirection);
+                    direction = GetSecondaryRowDirection();
 			}
 			else
 			{
                 //TODO (CR June 2011): tertiary?
                 if (component == PatientDirection.Component.Primary)
-                    direction = _imageOrientationPatient.GetPrimaryColumnDirection(negativeDirection);
+                    direction = GetPrimaryColumnDirection();
                 else if (component == PatientDirection.Component.Secondary)
-                    direction = _imageOrientationPatient.GetSecondaryColumnDirection(negativeDirection);
+                    direction = GetSecondaryColumnDirection();
             }
 
-            return direction.HasValue ? GetPatientDirection(direction.Value) : null;
+            return negativeDirection ? direction.OpposingDirection : direction;
 		}
+
+        private PatientDirection GetPrimaryRowDirection()
+        {
+            if (_imageOrientationPatient != null)
+                return _imageOrientationPatient.GetPrimaryRowDirection(false);
+            
+            if (_patientOrientation != null)
+                return _patientOrientation.PrimaryRow;
+
+            return PatientDirection.Empty;
+        }
+
+        private PatientDirection GetPrimaryColumnDirection()
+        {
+            if (_imageOrientationPatient != null)
+                return _imageOrientationPatient.GetPrimaryColumnDirection(false);
+
+            if (_patientOrientation != null)
+                return _patientOrientation.PrimaryColumn;
+
+            return PatientDirection.Empty;
+        }
+
+        private PatientDirection GetSecondaryRowDirection()
+        {
+            if (_imageOrientationPatient != null)
+                return _imageOrientationPatient.GetSecondaryRowDirection(false);
+
+            if (_patientOrientation != null)
+                return _patientOrientation.SecondaryRow;
+
+            return PatientDirection.Empty;
+        }
+
+        private PatientDirection GetSecondaryColumnDirection()
+        {
+            if (_imageOrientationPatient != null)
+                return _imageOrientationPatient.GetSecondaryColumnDirection(false);
+
+            if (_patientOrientation != null)
+                return _patientOrientation.SecondaryColumn;
+
+            return PatientDirection.Empty;
+        }
 
         private SizeF[] GetDestinationEdgeVectors()
         {
@@ -128,26 +163,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             //this should never happen.
             throw new IndexOutOfRangeException("The transformed edge does not have a corresponding value.");
         }
-
-        private static char? GetPatientDirection(ImageOrientationPatient.Directions direction)
-		{
-			switch (direction)
-			{
-				case ImageOrientationPatient.Directions.Left:
-					return PatientDirection.Left;
-				case ImageOrientationPatient.Directions.Right:
-					return PatientDirection.Right;
-				case ImageOrientationPatient.Directions.Head:
-					return PatientDirection.Head;
-				case ImageOrientationPatient.Directions.Foot:
-                    return PatientDirection.Foot;
-				case ImageOrientationPatient.Directions.Anterior:
-                    return PatientDirection.Anterior;
-				case ImageOrientationPatient.Directions.Posterior:
-                    return PatientDirection.Posterior;
-			}
-
-			return null;
-		}
     }
 }

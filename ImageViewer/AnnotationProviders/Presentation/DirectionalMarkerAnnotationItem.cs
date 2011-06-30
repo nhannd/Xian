@@ -64,9 +64,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
         internal string GetAnnotationTextInternal(SpatialTransform spatialTransform, ImageOrientationPatient imageOrientationPatient)
         {
             var helper = new PatientOrientationHelper(spatialTransform, imageOrientationPatient);
-            var edgeDirection = helper.GetEdgeDirection(_viewportEdge, PatientDirection.Component.Secondary);
+            var edgeDirection = helper.GetEdgeDirection(_viewportEdge);
             var translatedDirection = String.Empty;
-            foreach (var directionComponent in edgeDirection)
+            foreach (var directionComponent in edgeDirection.Code)
                 translatedDirection += GetMarkerText(directionComponent);
 
             return translatedDirection;
@@ -81,17 +81,17 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		{
 			switch (direction)
 			{
-				case PatientDirection.Left:
+				case PatientDirection.LeftCode:
 					return SR.ValueDirectionalMarkersLeft;
-                case PatientDirection.Right:
+                case PatientDirection.RightCode:
 					return SR.ValueDirectionalMarkersRight;
-                case PatientDirection.Head:
+                case PatientDirection.HeadCode:
 					return SR.ValueDirectionalMarkersHead;
-                case PatientDirection.Foot:
+                case PatientDirection.FootCode:
 					return SR.ValueDirectionalMarkersFoot;
-                case PatientDirection.Anterior:
+                case PatientDirection.AnteriorCode:
 					return SR.ValueDirectionalMarkersAnterior;
-                case PatientDirection.Posterior:
+                case PatientDirection.PosteriorCode:
 					return SR.ValueDirectionalMarkersPosterior;
 			}
 
