@@ -136,30 +136,6 @@ namespace ClearCanvas.Dicom.Iod
             return UnspecifiedCode;
         }
 
-        //public static implicit operator ImageOrientationPatient.Directions(PatientDirection direction)
-        //{
-        //    if (direction.Code.Length != 1)
-        //        throw new ArgumentException("Direction must have only a primary component.");
-
-        //    switch (direction.Code[0])
-        //    {
-        //        case LeftCode:
-        //            return ImageOrientationPatient.Directions.Left;
-        //        case RightCode:
-        //            return ImageOrientationPatient.Directions.Right;
-        //        case AnteriorCode:
-        //            return ImageOrientationPatient.Directions.Anterior;
-        //        case PosteriorCode:
-        //            return ImageOrientationPatient.Directions.Posterior;
-        //        case HeadCode:
-        //            return ImageOrientationPatient.Directions.Head;
-        //        case FootCode:
-        //            return ImageOrientationPatient.Directions.Foot;
-        //    }
-
-        //    return ImageOrientationPatient.Directions.None;
-        //}
-
         public static implicit operator PatientDirection(ImageOrientationPatient.Directions direction)
         {
             switch (direction)

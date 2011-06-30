@@ -187,6 +187,26 @@ namespace ClearCanvas.Dicom.Iod
 			return null;
 		}
 
+        public Directions PrimaryRow
+	    {
+            get { return (Directions)_primaryRowDirection; }    
+	    }
+
+        public Directions PrimaryColumn
+        {
+            get { return (Directions)_primaryColumnDirection; }
+        }
+
+        public Directions SecondaryRow
+        {
+            get { return (Directions)_secondaryRowDirection; }
+        }
+
+        public Directions SecondaryColumn
+        {
+            get { return (Directions)_secondaryColumnDirection; }
+        }
+
 		/// <summary>
 		/// Gets the primary direction, in terms of the Patient based coordinate system, of the first row of the Image (increasing x).
 		/// </summary>
@@ -209,7 +229,17 @@ namespace ClearCanvas.Dicom.Iod
 			return (Directions)(_primaryColumnDirection * (opposingDirection ? -1 : 1));
 		}
 
-		/// <summary>
+		public Directions GetSecondaryRowDirection()
+		{
+            return GetSecondaryRowDirection(false);
+        }
+
+        public Directions GetSecondaryRowDirection(double degreesTolerance)
+        {
+            return GetSecondaryRowDirection(false, degreesTolerance);
+        }
+
+	    /// <summary>
 		/// Gets the secondary direction, in terms of the Patient based coordinate system, of the first row of the Image (increasing x).
 		/// </summary>
 		/// <param name="opposingDirection">indicates the opposite direction to the secondary direction should be returned.
@@ -247,6 +277,16 @@ namespace ClearCanvas.Dicom.Iod
 				return Directions.None;
 			return GetSecondaryRowDirection(opposingDirection);
 		}
+
+        public Directions GetSecondaryColumnDirection()
+        {
+            return GetSecondaryColumnDirection(false);
+        }
+
+        public Directions GetSecondaryColumnDirection(double degreesTolerance)
+        {
+            return GetSecondaryColumnDirection(false, degreesTolerance);
+        }
 
 		/// <summary>
 		/// Gets the secondary direction, in terms of the Patient based coordinate system, of the first column of the Image (increasing y).
