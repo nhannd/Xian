@@ -17,6 +17,12 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// Gets the relevant image viewer.
 		/// </summary>
 		IImageViewer ImageViewer { get; }
+
+        /// <summary>
+        /// Called by the hook to lay out the default physicial workspace
+        /// </summary>
+        void PerformDefaultPhysicalWorkspaceLayout();
+        
 	}
 
 	/// <summary>

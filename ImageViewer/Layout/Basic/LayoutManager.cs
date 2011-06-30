@@ -30,12 +30,23 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		class LayoutHookContext : IHpLayoutHookContext
 		{
-			public LayoutHookContext(IImageViewer viewer)
+		    private readonly LayoutManager _layoutManager;
+
+		    public LayoutHookContext(IImageViewer viewer, LayoutManager layoutManager)
 			{
 				this.ImageViewer = viewer;
+		        this._layoutManager = layoutManager;
 			}
 
 			public IImageViewer ImageViewer { get; private set; }
+
+		    public void PerformDefaultPhysicalWorkspaceLayout()
+		    {
+		        if (_layoutManager!=null)
+		        {
+		            _layoutManager.LayoutPhysicalWorkspace();
+		        }
+		    }
 		}
 
 		#endregion
@@ -200,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		protected override void LayoutAndFillPhysicalWorkspace()
 		{
-			var hookContext = new LayoutHookContext(this.ImageViewer);
+            var hookContext = new LayoutHookContext(this.ImageViewer, this);
 			foreach (IHpLayoutHook hook in new HpLayoutHookExtensionPoint().CreateExtensions())
 			{
 				if(hook.HandleLayout(hookContext))
