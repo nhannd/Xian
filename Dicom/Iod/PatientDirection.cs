@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.Iod
 {
@@ -43,6 +45,28 @@ namespace ClearCanvas.Dicom.Iod
         public string Code { get; private set; }
 
         public bool IsEmpty { get { return Code.Length == 0; } }
+        public bool IsUnspecified { get { return Code.Contains(UnspecifiedCode.ToString()); } }
+        public bool IsValid
+        {
+            get
+            {
+                if (IsEmpty)
+                    return false;
+
+                //If contains 'X', it must be the only value.
+                if (IsUnspecified && Code.Length == 1)
+                    return true;
+
+                //Each value in the code must be valid.
+                if (!CollectionUtils.TrueForAll(Code, IsValidCode))
+                    return false;
+
+                //Each value must be unique.
+                return (CollectionUtils.Unique(Code).Count == Code.Length);
+
+                // ... We could go on to make sure L & R aren't in the same code, etc, but this is good enough for now.
+            }
+        }
 
         public PatientDirection this[int index]
         {
@@ -113,6 +137,27 @@ namespace ClearCanvas.Dicom.Iod
         public static implicit operator String(PatientDirection direction)
         {
             return direction.ToString();
+        }
+
+        private static bool IsValidCode(char code)
+        {
+            foreach (var validCode in GetCodes())
+            {
+                if (code == validCode)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<char> GetCodes()
+        {
+            yield return LeftCode;
+            yield return RightCode;
+            yield return AnteriorCode;
+            yield return PosteriorCode;
+            yield return HeadCode;
+            yield return FootCode;
         }
 
         private static char GetOpposingDirection(char code)

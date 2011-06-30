@@ -124,12 +124,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			get
 			{
 				return string.Format(@"{0:f6}\{1:f6}\{2:f6}\{3:f6}\{4:f6}\{5:f6}",
-				                     Math.Cos(_imageXPatient.GetAngleBetween(Vector3D.xUnit)),
-				                     Math.Cos(_imageXPatient.GetAngleBetween(Vector3D.yUnit)),
-				                     Math.Cos(_imageXPatient.GetAngleBetween(Vector3D.zUnit)),
-				                     Math.Cos(_imageYPatient.GetAngleBetween(Vector3D.xUnit)),
-				                     Math.Cos(_imageYPatient.GetAngleBetween(Vector3D.yUnit)),
-				                     Math.Cos(_imageYPatient.GetAngleBetween(Vector3D.zUnit))
+				                     Math.Cos(Math.Abs(_imageXPatient.GetSubtendedAngle(Vector3D.xUnit))),
+                                     Math.Cos(Math.Abs(_imageXPatient.GetSubtendedAngle(Vector3D.yUnit))),
+                                     Math.Cos(Math.Abs(_imageXPatient.GetSubtendedAngle(Vector3D.zUnit))),
+                                     Math.Cos(Math.Abs(_imageYPatient.GetSubtendedAngle(Vector3D.xUnit))),
+                                     Math.Cos(Math.Abs(_imageYPatient.GetSubtendedAngle(Vector3D.yUnit))),
+                                     Math.Cos(Math.Abs(_imageYPatient.GetSubtendedAngle(Vector3D.zUnit)))
 					);
 			}
 		}

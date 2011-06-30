@@ -56,14 +56,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			_z = z;
 		}
 
-		public Vector3D(params float[] values)
-		{
-            if (values.Length != 3)
-                throw new ArgumentException("Parameter must have exactly 3 values.");
-            
-
-        }
-
 	    /// <summary>
 		/// Copy Constructor.
 		/// </summary>
@@ -151,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public bool IsParallelTo(Vector3D other, float angleToleranceRadians)
 		{
 			angleToleranceRadians = Math.Abs(angleToleranceRadians);
-			float angle = GetAngleBetween(other);
+			float angle = Math.Abs(GetSubtendedAngle(other));
 			return FloatComparer.AreEqual(angle, 0, angleToleranceRadians) ||
 			       FloatComparer.AreEqual(angle, (float)Math.PI, angleToleranceRadians);
 		}
@@ -162,31 +154,57 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public bool IsOrthogonalTo(Vector3D other, float angleToleranceRadians)
 		{
 			angleToleranceRadians = Math.Abs(angleToleranceRadians);
-			float angle = GetAngleBetween(other);
+            float angle = Math.Abs(GetSubtendedAngle(other));
 			const float halfPi = (float)Math.PI/2;
 			return FloatComparer.AreEqual(angle, halfPi, angleToleranceRadians);
 		}
 
 		/// <summary>
-		/// Gets the angle between this vector and <paramref name="other"/> in radians.
+		/// Gets the absolute value of the angle between this vector and <paramref name="other"/> in radians.
 		/// </summary>
+		[Obsolete("Use GetSubtendedAngle instead, but be aware that it returns a signed value.")]
 		public float GetAngleBetween(Vector3D other)
 		{
-			Vector3D normal1 = this.Normalize();
-			Vector3D normal2 = other.Normalize();
-
-			// the vectors are already normalized, so we don't need to divide by the magnitudes.
-			float dot = normal1.Dot(normal2);
-
-			if (dot < -1F)
-				dot = -1F;
-			if (dot > 1F)
-				dot = 1F;
-
-			return Math.Abs((float)Math.Acos(dot));
+    		return Math.Abs(GetSubtendedAngle(other));
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Gets the subtended angle between this vector and <see paramref="other"/> in radians.
+        /// </summary>
+        /// <remarks>
+        /// This method does not exclude the sign, and the angle is always expressed as though you had
+        /// rotated "this" vector about it's tail.  For example, +PI/2 means you would rotate
+        /// this vector 90 degrees clockwise about it's tail, whereas -PI/2 means you would
+        /// rotate this vector 90 degrees counter-clockwise about it's tail.
+        /// </remarks>
+        public float GetSubtendedAngle(Vector3D other)
+        {
+            float dotProduct = Dot(other);
+
+            float magA = Magnitude;
+            float magB = other.Magnitude;
+
+            if (FloatComparer.AreEqual(magA, 0F) || FloatComparer.AreEqual(magB, 0F))
+                return 0;
+
+            double cosTheta = dotProduct / magA / magB;
+
+            // Make sure cosTheta is within bounds so we don't
+            // get any errors when we take the acos.
+            if (cosTheta > 1.0f)
+                cosTheta = 1.0f;
+
+            if (cosTheta < -1.0f)
+                cosTheta = -1.0f;
+
+            Vector3D crossProduct = Cross(other);
+
+            double theta = Math.Acos(cosTheta) * (crossProduct.Z == 0 ? 1 : -Math.Sign(crossProduct.Z));
+            return (float)theta;
+
+        }
+
+	    /// <summary>
 		/// Finds the intersection of the line segment defined by <paramref name="linePoint1"/> and
 		/// <paramref name="linePoint2"/> with a plane described by it's normal (<paramref name="planeNormal"/>)
 		/// and an arbitrary point in the plane (<paramref name="pointInPlane"/>).

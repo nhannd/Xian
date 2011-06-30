@@ -106,6 +106,7 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			Assert.IsTrue(Vector3D.AreEqual(v1.Cross(v2), result));
 		}
 
+	    //TODO (CR June 2011): Update this to test GetSubtendedAngle.
 		[Test]
 		public void TestAngleBetween()
 		{
@@ -113,31 +114,31 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			const float tolerance = 1e-5F;
 			var v1 = Vector3D.xUnit;
 			var v2 = Vector3D.yUnit;
-			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+			Assert.AreEqual(halfPi, Math.Abs(v1.GetSubtendedAngle(v2)), tolerance);
 
 			v2 = -Vector3D.yUnit;
-			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+			Assert.AreEqual(halfPi, Math.Abs(v1.GetSubtendedAngle(v2)), tolerance);
 
 			v2 = Vector3D.zUnit;
-			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+			Assert.AreEqual(halfPi, Math.Abs(v1.GetSubtendedAngle(v2)), tolerance);
 
 			v2 = -Vector3D.zUnit;
-			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+			Assert.AreEqual(halfPi, Math.Abs(v1.GetSubtendedAngle(v2)), tolerance);
 
 			v1 = Vector3D.yUnit;
 			v2 = Vector3D.zUnit;
-			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+			Assert.AreEqual(halfPi, Math.Abs(v1.GetSubtendedAngle(v2)), tolerance);
 
 			v2 = -Vector3D.zUnit;
-			Assert.AreEqual(halfPi, v1.GetAngleBetween(v2), tolerance);
+			Assert.AreEqual(halfPi, Math.Abs(v1.GetSubtendedAngle(v2)), tolerance);
 
 			v1 = new Vector3D(2.2F, -6.1F, 7.4F);
 			v2 = new Vector3D(3.8F, 3.7F, 4.1F);
 			const float result = 1.32374F; //75.845 degrees.
-			Assert.AreEqual(result, v1.GetAngleBetween(v2), tolerance);
+			Assert.AreEqual(result, Math.Abs(v1.GetSubtendedAngle(v2)), tolerance);
 
 			v1 = v2 = Vector3D.xUnit;
-			Assert.AreEqual(0, v1.GetAngleBetween(v2), tolerance);
+			Assert.AreEqual(0, Math.Abs(v1.GetSubtendedAngle(v2)), tolerance);
 
 		}
 

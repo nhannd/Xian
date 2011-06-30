@@ -331,7 +331,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		public float GetAngleBetween(DicomImagePlane other)
 		{
-			return Normal.GetAngleBetween(other.Normal);
+            return Math.Abs(Normal.GetSubtendedAngle(other.Normal));
 		}
 
 		public bool GetIntersectionPoints(DicomImagePlane other, out Vector3D intersectionPointPatient1, out Vector3D intersectionPointPatient2)
