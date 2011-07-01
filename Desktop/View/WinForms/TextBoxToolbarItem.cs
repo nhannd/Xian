@@ -10,8 +10,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Actions;
 
@@ -19,6 +18,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	class TextBoxToolbarItem : ToolStripTextBox
 	{
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+        private const int EM_SETCUEBANNER = 0x1501;
+
+
+
 		private ITextBoxAction _action;
 		private readonly EventHandler _actionEnabledChangedHandler;
 		private readonly EventHandler _actionVisibleChangedHandler;
@@ -27,6 +32,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private readonly EventHandler _actionTooltipChangedHandler;
 		private readonly EventHandler _actionIconSetChangedHandler;
 		private readonly EventHandler _actionTextBoxValueChangedHandler;
+		private readonly EventHandler _actionCueTextChangedHandler;
 
 		private IconSize _iconSize;
 
@@ -46,6 +52,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_actionTooltipChangedHandler = new EventHandler(OnActionTooltipChanged);
 			_actionIconSetChangedHandler = new EventHandler(OnActionIconSetChanged);
 			_actionTextBoxValueChangedHandler = new EventHandler(OnActionTextBoxValueChanged);
+			_actionCueTextChangedHandler = new EventHandler(OnActionCueTextChanged);
 
 			_action.EnabledChanged += _actionEnabledChangedHandler;
 			_action.VisibleChanged += _actionVisibleChangedHandler;
@@ -54,13 +61,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_action.TooltipChanged += _actionTooltipChangedHandler;
 			_action.IconSetChanged += _actionIconSetChangedHandler;
 			_action.TextValueChanged += _actionTextBoxValueChangedHandler;
+			_action.CueTextChanged += _actionCueTextChangedHandler;
 
 			_iconSize = iconSize;
 
 			this.Text = _action.TextValue;
 			this.Enabled = _action.Enabled;
 			SetTooltipText();
-
+			UpdateCueBanner();
 			UpdateVisibility();
 			UpdateEnablement();
 			UpdateIcon();
@@ -125,6 +133,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
+		private void OnActionCueTextChanged(object sender, EventArgs e)
+		{
+			UpdateCueBanner();
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && _action != null)
@@ -142,6 +155,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_action.TooltipChanged -= _actionTooltipChangedHandler;
 				_action.IconSetChanged -= _actionIconSetChangedHandler;
 				_action.TextValueChanged -= _actionTextBoxValueChangedHandler;
+				_action.CueTextChanged -= _actionCueTextChangedHandler;
 
 				_action = null;
 			}
@@ -166,6 +180,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void SetTooltipText()
 		{
 			ActionViewUtils.SetTooltipText(this, _action);
+		}
+
+		private void UpdateCueBanner()
+		{
+			var textBox = this.TextBox;
+			if(textBox == null)
+				return;
+
+			SendMessage(textBox.Handle, EM_SETCUEBANNER, 0, _action.CueText ?? "");
 		}
 	}
 }

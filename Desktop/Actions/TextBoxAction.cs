@@ -20,6 +20,7 @@ namespace ClearCanvas.Desktop.Actions
 	public class TextBoxAction : Action, ITextBoxAction
 	{
 		private string _textValue;
+		private string _cueText;
 
 		/// <summary>
 		/// Constructor.
@@ -51,6 +52,27 @@ namespace ClearCanvas.Desktop.Actions
 				{
 					_textValue = value;
 					EventsHelper.Fire(TextValueChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the value of <see cref="ITextBoxAction.CueText"/> changes.
+		/// </summary>
+		public event EventHandler CueTextChanged;
+
+		/// <summary>
+		/// Gets or sets the cue text displayed in the text box when it does not have focus.
+		/// </summary>
+		public string CueText
+		{
+			get { return _cueText; }
+			set
+			{
+				if (value != _cueText)
+				{
+					_cueText = value;
+					EventsHelper.Fire(CueTextChanged, this, EventArgs.Empty);
 				}
 			}
 		}

@@ -27,5 +27,17 @@ namespace ClearCanvas.Desktop.Actions
 		/// Gets or sets the value of the text displayed in the text box.
 		/// </summary>
 		string TextValue { get; set; }
+
+
+		/// <summary>
+		/// Occurs when the value of <see cref="CueText"/> changes.
+		/// </summary>
+		event EventHandler CueTextChanged;
+
+		/// <summary>
+		/// Gets or sets the cue text displayed in the text box when it does not have focus.
+		/// </summary>
+		string CueText { get; set; }
+
 	}
 }
