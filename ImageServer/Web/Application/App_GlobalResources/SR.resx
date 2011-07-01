@@ -379,10 +379,10 @@
     <value>User Found</value>
   </data>
   <data name="GridPagerUserGroupsMultipleItemsFound" xml:space="preserve">
-    <value>User Groups Found</value>
+    <value>Authority Groups Found</value>
   </data>
   <data name="GridPagerUserGroupsSingleItemFound" xml:space="preserve">
-    <value>User Group Found</value>
+    <value>Authority Group Found</value>
   </data>
   <data name="GridPagerAuthorityTokenMultipleItemsFound" xml:space="preserve">
     <value>Authority Tokens Found</value>
@@ -394,7 +394,7 @@
     <value>Add Token</value>
   </data>
   <data name="DialogAddUserGroupTitle" xml:space="preserve">
-    <value>Add User Group</value>
+    <value>Add Authority Group</value>
   </data>
   <data name="DialogAddUserTitle" xml:space="preserve">
     <value>Add User</value>
@@ -403,7 +403,7 @@
     <value>Edit Token</value>
   </data>
   <data name="DialogEditUserGroupTitle" xml:space="preserve">
-    <value>Edit User Group</value>
+    <value>Edit Authority Group</value>
   </data>
   <data name="DialogEditUserTitle" xml:space="preserve">
     <value>Edit User</value>
@@ -707,10 +707,10 @@ At least one server partition is required. Please add a new server partition.</v
     <value>No services were found using the provided criteria</value>
   </data>
   <data name="NoUserGroupsFound" xml:space="preserve">
-    <value>No User Groups were found using the provided criteria.</value>
+    <value>No Authority Groups were found using the provided criteria.</value>
   </data>
   <data name="AdminUserGroups_DeleteDialog_AreYouSure" xml:space="preserve">
-    <value>Are you sure you want to delete user group "{0}"?</value>
+    <value>Are you sure you want to delete authority group "{0}"?</value>
   </data>
   <data name="AdminUser_DeleteDialog_AreYouSure" xml:space="preserve">
     <value>Are you sure to delete user "{0}" ({1})?</value>

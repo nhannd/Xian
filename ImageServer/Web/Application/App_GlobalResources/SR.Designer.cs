@@ -218,7 +218,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete user group &quot;{0}&quot;?.
+        ///   Looks up a localized string similar to Are you sure you want to delete authority group &quot;{0}&quot;?.
         /// </summary>
         internal static string AdminUserGroups_DeleteDialog_AreYouSure {
             get {
@@ -533,7 +533,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add User Group.
+        ///   Looks up a localized string similar to Add Authority Group.
         /// </summary>
         internal static string DialogAddUserGroupTitle {
             get {
@@ -605,7 +605,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit User Group.
+        ///   Looks up a localized string similar to Edit Authority Group.
         /// </summary>
         internal static string DialogEditUserGroupTitle {
             get {
@@ -857,7 +857,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Groups Found.
+        ///   Looks up a localized string similar to Authority Groups Found.
         /// </summary>
         internal static string GridPagerUserGroupsMultipleItemsFound {
             get {
@@ -866,7 +866,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Group Found.
+        ///   Looks up a localized string similar to Authority Group Found.
         /// </summary>
         internal static string GridPagerUserGroupsSingleItemFound {
             get {
@@ -1226,7 +1226,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No User Groups were found using the provided criteria..
+        ///   Looks up a localized string similar to No Authority Groups were found using the provided criteria..
         /// </summary>
         internal static string NoUserGroupsFound {
             get {
