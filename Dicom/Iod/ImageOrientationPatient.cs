@@ -44,10 +44,10 @@ namespace ClearCanvas.Dicom.Iod
 
         private static readonly int[] _left = new [] { 1, 0, 0 };
         private static readonly int[] _right = new[] { -1, 0, 0 };
+        private static readonly int[] _posterior = new[] { 0, 1, 0 };
+        private static readonly int[] _anterior = new[] { 0, -1, 0 };
         private static readonly int[] _head = new[] { 0, 0, 1 };
         private static readonly int[] _foot = new[] { 0, 0, -1 };
-        private static readonly int[] _anterior = new[] { 0, 1, 0 };
-        private static readonly int[] _posterior = new[] { 0, -1, 0 };
 
         public static ImageOrientationPatient Empty = new ImageOrientationPatient();
         public static ImageOrientationPatient AxialRight = new ImageOrientationPatient(_right, _posterior);
@@ -147,22 +147,6 @@ namespace ClearCanvas.Dicom.Iod
 		#endregion
 
 		#region Public Methods
-
-        /// <summary>
-        /// Gets the row cosines as an array of doubles (x,y,z).
-        /// </summary>
-        public double[] GetRowCosines()
-        {
-            return new [] { RowX, RowY, RowZ };
-        }
-
-        /// <summary>
-        /// Gets the column cosines as an array of doubles (x,y,z).
-        /// </summary>
-        public double[] GetColumnCosines()
-        {
-            return new[] { ColumnX, ColumnY, ColumnZ };
-        }
 
 	    /// <summary>
 		/// Gets a string suitable for direct insertion into a <see cref="DicomAttributeMultiValueText"/> attribute.
@@ -373,7 +357,23 @@ namespace ClearCanvas.Dicom.Iod
 
 		#endregion
 
-		/// <summary>
+        /// <summary>
+        /// Gets the row cosines as an array of doubles (x,y,z).
+        /// </summary>
+        private double[] GetRowCosines()
+        {
+            return new[] { RowX, RowY, RowZ };
+        }
+
+        /// <summary>
+        /// Gets the column cosines as an array of doubles (x,y,z).
+        /// </summary>
+        private double[] GetColumnCosines()
+        {
+            return new[] { ColumnX, ColumnY, ColumnZ };
+        }
+
+        /// <summary>
 		/// Recalculates the primary/secondary directions (in patient based system) for the first row and first column.
 		/// </summary>
 		private void Recalculate()

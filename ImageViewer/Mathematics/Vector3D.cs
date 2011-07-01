@@ -56,15 +56,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			_z = z;
 		}
 
-		public Vector3D(params float[] values)
-		{
-            if (values.Length != 3)
-                throw new ArgumentException("Parameter must have exactly 3 values.");
-            
-
-        }
-
-	    /// <summary>
+		/// <summary>
 		/// Copy Constructor.
 		/// </summary>
 		public Vector3D(Vector3D src)
