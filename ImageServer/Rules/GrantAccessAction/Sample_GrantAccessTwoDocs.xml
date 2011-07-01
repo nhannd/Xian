@@ -9,5 +9,14 @@
     <regex  test="$ReferringPhysiciansName"  pattern="LastName,.FirstName" ignoreCase="true"/>
     <!-- Matches on 'FirstName LastName' appearing in the name -->
     <regex  test="$ReferringPhysiciansName"  pattern="FirstName\sLastName" ignoreCase="true"/>
-	</or>
+
+    <!-- Matches on LastNameDoc2^FirstNameDoc2^MiddleNameDoc2 -->
+    <regex  test="$ReferringPhysiciansName"	 pattern="LastNameDoc2.FirstNameDoc2.MiddleNameDoc2" ignoreCase="true"/>
+    <!-- Matches on LastNameDoc2^FirstNameDoc2 -->
+    <regex  test="$ReferringPhysiciansName"	 pattern="LastNameDoc2.FirstNameDoc2" ignoreCase="true"/>
+    <!-- Matches on LastNameDoc2, FirstNameDoc2 -->
+    <regex  test="$ReferringPhysiciansName"  pattern="LastNameDoc2,.FirstNameDoc2" ignoreCase="true"/>
+    <!-- Matches on 'FirstNameDoc2 LastNameDoc2' appearing in the name -->
+    <regex  test="$ReferringPhysiciansName"  pattern="FirstNameDoc2\sLastNameDoc2" ignoreCase="true"/>
+  </or>
 </condition>
