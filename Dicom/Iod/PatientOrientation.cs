@@ -52,6 +52,20 @@ namespace ClearCanvas.Dicom.Iod
 			get { return Row.IsEmpty && Column.IsEmpty; }	
 		}
 
+        public bool IsValid
+        {
+            get
+            {
+                //Both unspecified is not valid.
+                if (Row.IsUnspecified && Column.IsUnspecified)
+                    return false;
+
+                // We could check and make sure that the values in row and column
+                // actually make sense together (e.g. orthogonal?), but this is good enough.
+                return Row.IsValid && Column.IsValid;
+            }    
+        }
+
         /// <summary>
 		/// Gets the direction of the first row in the image.
 		/// </summary>
@@ -119,6 +133,9 @@ namespace ClearCanvas.Dicom.Iod
 		/// </summary>
 		public override string ToString()
 		{
+            if (Row.IsEmpty && Column.IsEmpty)
+                return String.Empty;
+
 			return String.Format(@"{0}\{1}", Row, Column);
 		}
 

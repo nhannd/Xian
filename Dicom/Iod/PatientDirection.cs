@@ -57,14 +57,19 @@ namespace ClearCanvas.Dicom.Iod
                 if (IsUnspecified && Code.Length == 1)
                     return true;
 
+                if (Code.Length > 3)
+                    return false;
+
                 //Each value in the code must be valid.
                 if (!CollectionUtils.TrueForAll(Code, IsValidCode))
                     return false;
 
-                //Each value must be unique.
-                return (CollectionUtils.Unique(Code).Count == Code.Length);
+                var normalized = Code.Replace(RightCode, LeftCode);
+                normalized = normalized.Replace(AnteriorCode, PosteriorCode);
+                normalized = normalized.Replace(FootCode, HeadCode);
 
-                // ... We could go on to make sure L & R aren't in the same code, etc, but this is good enough for now.
+                //Each value must be unique, and not along the same direction.
+                return (CollectionUtils.Unique(normalized).Count == Code.Length);
             }
         }
 
