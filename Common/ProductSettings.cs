@@ -340,7 +340,7 @@ namespace ClearCanvas.Common
 		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
 		private static string GetNameSuffix(bool includeEdition, bool includeRelease)
 		{
-			return Concatenate(includeEdition ? Edition : string.Empty, includeRelease ? string.Format(SR.FormatReleaseType, Release) : string.Empty);
+			return Concatenate(includeEdition ? Edition : string.Empty, includeRelease && !string.IsNullOrEmpty(Release) ? string.Format(SR.FormatReleaseType, Release) : string.Empty);
 		}
 
 		/// <summary>
