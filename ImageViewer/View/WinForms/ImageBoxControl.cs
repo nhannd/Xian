@@ -63,7 +63,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             public event EventHandler ContextMenuOpened;
             public event EventHandler ContextMenuClosed;
         }
-        
+
+        private bool _extensionsAdded;
         private ImageBox _imageBox;
 		private Rectangle _parentRectangle;
 		private bool _imageScrollerVisible;
@@ -94,11 +95,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_imageBox.Drawing += OnDrawing;
 			_imageBox.SelectionChanged += OnImageBoxSelectionChanged;
 			_imageBox.LayoutCompleted += OnLayoutCompleted;
-
-            foreach (var extension in ImageBox.Extensions)
-            {
-                AttachExtension(extension);
-            }
         }
 
 		internal ImageBox ImageBox
@@ -158,6 +154,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void DoDraw()
 		{
+            //Wait until the first draw call from the model to add the extensions.
+            if (!_extensionsAdded)
+            {
+                foreach (var extension in ImageBox.Extensions)
+                    AttachExtension(extension);
+            }
+
             foreach (TileControl control in this.TileControls)
                 control.Draw(); 
             Invalidate();
@@ -538,9 +541,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             {
                 Control ctrl = extension.View.GuiElement as Control;
                 if (ctrl != null)
-                {
                     AddExtensionControl(ctrl);
-                }
             }
             
             extension.VisibilityChanged += OnExtensionVisibilityChanged;
