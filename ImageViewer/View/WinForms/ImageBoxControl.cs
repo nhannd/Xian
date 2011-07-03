@@ -193,6 +193,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
+            if (_imageBox == null)
+                return;
+
 			e.Graphics.Clear(Color.Black);
 
 			DrawImageBoxBorder(e);
