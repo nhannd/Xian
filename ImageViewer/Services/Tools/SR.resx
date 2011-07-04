@@ -237,7 +237,7 @@ Do you want to cancel the reindex operation anyway?</value>
   </data>
   <data name="MessageDeletionHelperUnableToConnect" xml:space="preserve">
     <value>Failed to process delete request because the Local Data Store service is not running.
-Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageFailedToImportSelection" xml:space="preserve">
     <value>Failed to initiate an import of the selected items.</value>
@@ -255,7 +255,8 @@ Please ensure the ClearCanvas server is running or contact your system administr
     <value>Failed to restart service. Please check the logs for more details.</value>
   </data>
   <data name="MessageFailedToRetrieveDiskspaceManagementSettings" xml:space="preserve">
-    <value>Failed to retrieve Diskspace Management settings.  Make sure the ClearCanvas Service is running.</value>
+    <value>Failed to retrieve Diskspace Management settings.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageFailedToRetrieveStudy" xml:space="preserve">
     <value>Failed to initiate a retrieval of the selected items.</value>
@@ -273,11 +274,12 @@ Please ensure the ClearCanvas server is running or contact your system administr
     <value>Failed to stop service. Please check the logs for more details.</value>
   </data>
   <data name="MessageFailedToUpdateDiskspaceManagementSettings" xml:space="preserve">
-    <value>Failed to update Diskspace Management settings.  Make sure the ClearCanvas Service is running.</value>
+    <value>Failed to update Diskspace Management settings.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageImportLocalDataStoreServiceNotRunning" xml:space="preserve">
     <value>Failed to import the selected items because the Local Data Store service is not running.
-Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageNothingSelected" xml:space="preserve">
     <value>Nothing has been selected.</value>
@@ -308,10 +310,11 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="MessageReindexLocalDataStoreServiceNotRunning" xml:space="preserve">
     <value>Failed to reindex the Local Data Store because the Local Data Store service is not running.
-Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageReindexNotStarted" xml:space="preserve">
-    <value>The reindex operation couldn't start.  Please ensure the workstation service is running.</value>
+    <value>The reindex operation couldn't start.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageReindexRunning" xml:space="preserve">
     <value>Reindex already running ...</value>
@@ -320,8 +323,8 @@ Please ensure the ClearCanvas server is running or contact your system administr
     <value>The reindex operation will continue to run in the background, however you will NOT be informed of any errors that may have occurred.</value>
   </data>
   <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
-    <value>Failed to retrieve the selected studies because the Dicom Server service is not running.
-Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+    <value>Failed to retrieve the selected studies because the DICOM Server service is not running.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageSelectDestination" xml:space="preserve">
     <value>Please select a destination.</value>
@@ -330,8 +333,8 @@ Please ensure the ClearCanvas server is running or contact your system administr
     <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
   </data>
   <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
-    <value>Failed to send the selected studies because the Dicom Server service is not running.
-Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+    <value>Failed to send the selected studies because the DICOM Server service is not running.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
     <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
@@ -433,7 +436,7 @@ Please ensure the ClearCanvas server is running or contact your system administr
     <value>Delete study</value>
   </data>
   <data name="TooltipImportDicomFiles" xml:space="preserve">
-    <value>Import dicom files from the local file system</value>
+    <value>Import DICOM files from the local file system</value>
   </data>
   <data name="TooltipOpenStudies" xml:space="preserve">
     <value>Open</value>
