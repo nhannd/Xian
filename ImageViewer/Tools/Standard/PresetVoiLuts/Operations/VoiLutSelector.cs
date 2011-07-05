@@ -95,6 +95,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
         private LinearPresetVoiLutSelector(Data dataContract)
         {
             _dataContract = dataContract;
+            AlwaysApply = true;
         }
 
         public LinearPresetVoiLutSelector(object dataContract)
@@ -105,6 +106,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
         public object DataContract { get{ return _dataContract; } }
 
         internal string Modality { get { return _dataContract.Modality; } }
+
+        /// <summary>
+        /// Specifies whether or not to always apply the LUT, even if it isn't technically
+        /// a match for the image (e.g. not the same <see cref="Modality"/>).
+        /// </summary>
+        public bool AlwaysApply { get; set; }
         public string Name { get { return _dataContract.Name; } }
         public double WindowWidth { get { return _dataContract.WindowWidth; } }
         public double WindowCenter { get { return _dataContract.WindowCenter; } }
@@ -170,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             var groups = PresetVoiLutSettings.Default.GetPresetGroups();
             foreach (var @group in groups)
             {
-                if (!group.AppliesTo(imageSop))
+                if (!AlwaysApply && !group.AppliesTo(imageSop))
                     continue;
 
                 foreach (var preset in @group.Presets)
