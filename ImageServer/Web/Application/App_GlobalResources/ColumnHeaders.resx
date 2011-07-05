@@ -446,4 +446,16 @@
   <data name="UserDisplayName" xml:space="preserve">
     <value>Display Name</value>
   </data>
+  <data name="ServerRuleType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="DicomTagDetails" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="DicomTagName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="DeletedBy" xml:space="preserve">
+    <value>Deleted By</value>
+  </data>
 </root>

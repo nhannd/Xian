@@ -43,17 +43,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public string TypeString
 		{
-			get { return _theWorkQueueItem.WorkQueueTypeEnum.Description; }
+			get { return ServerEnumDescription.GetLocalizedDescription(_theWorkQueueItem.WorkQueueTypeEnum); }
 		}
 
 		public string StatusString
 		{
-			get { return _theWorkQueueItem.WorkQueueStatusEnum.Description; }
+			get { return ServerEnumDescription.GetLocalizedDescription(_theWorkQueueItem.WorkQueueStatusEnum); }
 		}
 
 		public string PriorityString
 		{
-			get { return _theWorkQueueItem.WorkQueuePriorityEnum.Description; }
+			get { return ServerEnumDescription.GetLocalizedDescription(_theWorkQueueItem.WorkQueuePriorityEnum); }
 		}
 
 		public string PatientId { get; set; }

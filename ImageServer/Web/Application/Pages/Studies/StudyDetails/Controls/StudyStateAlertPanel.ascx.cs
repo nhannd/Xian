@@ -11,6 +11,7 @@
 
 using System;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using Resources;
 
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 }
                 else if (_studySummary.IsLocked)
                 {
-                    ShowAlert(_studySummary.QueueStudyStateEnum.LongDescription);
+                    ShowAlert(ServerEnumDescription.GetLocalizedLongDescription(_studySummary.QueueStudyStateEnum));
                 }
                 else if (_studySummary.IsNearline)
                 {

@@ -333,7 +333,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
                 CurrentPage.Text = "0";
                 EnableCurrentPage(false);
-                PageCountLabel.Text = string.Format(" of 0");
+                PageCountLabel.Text = string.Format(" {0} 0", Resources.GridPager.PageOf);;
                 PrevPageButton.Enabled = false;
                 PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
                 NextPageButton.Enabled = false;

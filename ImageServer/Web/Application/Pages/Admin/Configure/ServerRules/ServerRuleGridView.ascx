@@ -22,7 +22,7 @@
                 OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="20">
                 <Columns>
                     <asp:BoundField DataField="RuleName" HeaderText="<%$Resources: ColumnHeaders, ServerRuleName  %>" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
-                    <asp:TemplateField HeaderText="Type" HeaderStyle-HorizontalAlign="Left">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, ServerRuleType  %>" HeaderStyle-HorizontalAlign="Left">
                         <ItemTemplate>
                             <asp:Label ID="ServerRuleTypeEnum" runat="server" />
                         </ItemTemplate>
