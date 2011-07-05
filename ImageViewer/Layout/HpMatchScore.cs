@@ -10,7 +10,6 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
@@ -36,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Layout
 
 		public bool IsMatch
 		{
-			get { return _value > 0; }
+			get { return _value >= 0; }
 		}
 
 		public int Value
