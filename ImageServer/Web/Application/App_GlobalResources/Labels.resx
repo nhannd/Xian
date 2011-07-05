@@ -607,4 +607,16 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="ArchiveQueue_EnterSearchCriteria" xml:space="preserve">
+    <value>Please enter search criteria to find archive items.</value>
+  </data>
+  <data name="ArchiveQueue_NoResults" xml:space="preserve">
+    <value>No items found matching the provided criteria.</value>
+  </data>
+  <data name="StudyDetails_History_Reconcile_StudySnapshot" xml:space="preserve">
+    <value>Study (Snapshot)</value>
+  </data>
+  <data name="NotSpecified" xml:space="preserve">
+    <value>Not Specified</value>
+  </data>
 </root>

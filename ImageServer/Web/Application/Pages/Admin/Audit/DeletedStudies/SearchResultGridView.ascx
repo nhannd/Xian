@@ -48,7 +48,7 @@
 							ItemStyle-HorizontalAlign="Center" />
 				        <asp:BoundField DataField="PartitionAE" HeaderText="<%$Resources: ColumnHeaders,Partition %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
-					    <asp:TemplateField HeaderText="Deleted By" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+					    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,DeletedBy %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
                                 <%# Eval("UserName")%>
                             </itemtemplate>

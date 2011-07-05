@@ -414,4 +414,7 @@
   <data name="MoveStudies" xml:space="preserve">
     <value>Move Studies</value>
   </data>
+  <data name="DicomTagsTitle" xml:space="preserve">
+    <value>DICOM Tags</value>
+  </data>
 </root>
