@@ -52,7 +52,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
                     _isImageLoaded = false;
                     _isImageValid = false;
-                    UpdateImage();
+
+                    if (!_isDisposed && _isVisible)
+                       UpdateImage();
                 }
             }
 
