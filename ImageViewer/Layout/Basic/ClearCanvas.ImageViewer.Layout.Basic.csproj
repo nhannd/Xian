@@ -143,6 +143,7 @@
     <Compile Include="DisplaySetCreationConfigurationComponent.cs" />
     <Compile Include="DisplaySetFactoryExtensionPoint.cs" />
     <Compile Include="ExplodeTileTool.cs" />
+    <Compile Include="ImageBoxFillingStrategy.cs" />
     <Compile Include="LayoutChangerAction.cs" />
     <Compile Include="LayoutComponent.cs" />
     <Compile Include="ConfigurationPageProvider.cs" />
