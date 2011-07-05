@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common;
@@ -534,17 +535,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         void AttachExtension(IImageBoxExtension extension)
         {
-            if (extension.Visible)
+            if (extension.Enabled && extension.Visible)
             {
                 Control ctrl = extension.View.GuiElement as Control;
                 if (ctrl != null)
                 {
                     AddExtensionControl(ctrl);
                 }
+
             }
-            
-            extension.VisibilityChanged += OnExtensionVisibilityChanged;
-            extension.SetHostContextMenuAdapter(new ContextMenuAdapter(this));
+
+            extension.PropertyChanged += OnExtensionPropertyChanged;
+            extension.SetHostContextMenuAdapter(new ContextMenuAdapter(this));            
         }
 
         void AddExtensionControl(Control control)
@@ -568,7 +570,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         void DetachExtension(IImageBoxExtension extension)
         {
             extension.SetHostContextMenuAdapter(null);
-            extension.VisibilityChanged -= OnExtensionVisibilityChanged;
+            extension.PropertyChanged -= OnExtensionPropertyChanged;
             var view = extension.View;
             if (view!=null)
             {
@@ -582,15 +584,54 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         }
 
-        void OnExtensionVisibilityChanged(object sender, ImageBoxExtensionVisiblityChangedEventArg e)
+        void OnExtensionPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            Platform.CheckForNullReference(e.Extension, "e.Extension");
+            var extension = sender as IImageBoxExtension;
 
-            if (e.Extension.View != null)
+            Platform.CheckForNullReference(extension, "extension");
+            
+            if (e.PropertyName == "Visible")
             {
-                if (e.Visible)
+                if (extension.View != null)
                 {
-                    Control ctrl = e.Extension.View.GuiElement as Control;
+                    if (extension.Visible)
+                    {
+                        Control ctrl = extension.View.GuiElement as Control;
+                        if (ctrl != null)
+                        {
+                            if (ctrl.Dock == DockStyle.Fill)
+                            {
+                                //temporarily hide it
+                                ImageScrollerVisible = false;
+                            }
+                            AddExtensionControl(ctrl);
+
+                            // make sure it's on top of the images or if the display set is empty, 
+                            // it's on top of the empty tiles
+                            ctrl.BringToFront();
+                        }
+                    }
+                    else
+                    {
+                        Control ctrl = extension.View.GuiElement as Control;
+                        if (ctrl != null)
+                        {
+                            if (ctrl.Dock == DockStyle.Fill)
+                            {
+                                UpdateImageScroller();
+                            }
+
+                            RemoveExtensionControl(ctrl);
+                            Draw();
+                        }
+                    }
+                }
+            }
+            else if (e.PropertyName == "Enabled")
+            {
+                if (extension.Enabled && extension.Visible)
+                {
+                    Control ctrl = extension.View.GuiElement as Control;
                     if (ctrl != null)
                     {
                         if (ctrl.Dock == DockStyle.Fill)
@@ -599,16 +640,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                             ImageScrollerVisible = false;
                         }
                         AddExtensionControl(ctrl);
-
-                        // make sure it's on top of the images or if the display set is empty, 
-                        // it's on top of the empty tiles
-                        ctrl.BringToFront(); 
+                        ctrl.BringToFront();
                     }
                 }
                 else
                 {
-                    Control ctrl = e.Extension.View.GuiElement as Control;
-                    if (ctrl!=null)
+                    Control ctrl = extension.View.GuiElement as Control;
+                    if (ctrl != null)
                     {
                         if (ctrl.Dock == DockStyle.Fill)
                         {
@@ -620,6 +658,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     }
                 }
             }
+            
         }
 
         #endregion
