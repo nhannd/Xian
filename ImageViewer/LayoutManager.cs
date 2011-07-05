@@ -142,7 +142,9 @@ namespace ClearCanvas.ImageViewer
 			// Now, only after showing the "primary study", sort the image sets according to study order. (yes, this calls SortStudies)
 			SortImageSets();
 
-			ImageViewer.PhysicalWorkspace.Draw();
+            ImageViewer.PhysicalWorkspace.Draw();
+            ImageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+
 			OnLayoutCompleted();
 		}
 
