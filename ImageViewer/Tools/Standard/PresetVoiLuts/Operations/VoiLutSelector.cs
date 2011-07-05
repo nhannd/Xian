@@ -79,26 +79,26 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
         }
     }
 
-    [HpDataContract("{9F548831-7669-4abb-8CFC-A3AB676C09E6}")]
-    internal class LinearPresetVoiLut
-    {
-        public string Modality { get; set; }
-        public string Name { get; set; }
-        public double WindowWidth { get; set; }
-        public double WindowCenter { get; set; }
-    }
-
     public class LinearPresetVoiLutSelector : VoiLutSelector
     {
-        private readonly LinearPresetVoiLut _dataContract;
+        [HpDataContract("{9F548831-7669-4abb-8CFC-A3AB676C09E6}")]
+        private class Data
+        {
+            public string Modality { get; set; }
+            public string Name { get; set; }
+            public double WindowWidth { get; set; }
+            public double WindowCenter { get; set; }
+        }
 
-        internal LinearPresetVoiLutSelector(LinearPresetVoiLut dataContract)
+        private readonly Data _dataContract;
+
+        private LinearPresetVoiLutSelector(Data dataContract)
         {
             _dataContract = dataContract;
         }
 
         public LinearPresetVoiLutSelector(object dataContract)
-            : this((LinearPresetVoiLut)dataContract)
+            : this((Data)dataContract)
         {
         }
 
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             if (lut == null)
                 return null;
 
-            return new LinearPresetVoiLutSelector(new LinearPresetVoiLut
+            return new LinearPresetVoiLutSelector(new Data
                     {
                         Modality = modality,
                         Name = lut.Name,
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             {
                 foreach (var preset in @group.Presets)
                 {
-                    var dataContract = new LinearPresetVoiLut { Modality = @group.Modality };
+                    var dataContract = new Data { Modality = @group.Modality };
                     var operation = (LinearPresetVoiLutOperationComponent)preset.Operation;
                     dataContract.Name = preset.Operation.Name;
                     dataContract.WindowWidth = operation.WindowWidth;
