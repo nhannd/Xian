@@ -15,7 +15,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
     [Cloneable(true)]
-    public sealed class NamedVoiLutLinear : VoiLutLinearBase, IVoiLutLinear
+    public class NamedVoiLutLinear : VoiLutLinearBase, IVoiLutLinear
     {
         #region Memento
 

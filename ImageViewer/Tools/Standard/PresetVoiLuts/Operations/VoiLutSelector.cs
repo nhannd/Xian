@@ -79,32 +79,39 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
         }
     }
 
-    [HpDataContract("{9F548831-7669-4abb-8CFC-A3AB676C09E6}")]
-    internal class LinearPresetVoiLut
-    {
-        public string Modality { get; set; }
-        public string Name { get; set; }
-        public double WindowWidth { get; set; }
-        public double WindowCenter { get; set; }
-    }
-
     public class LinearPresetVoiLutSelector : VoiLutSelector
     {
-        private readonly LinearPresetVoiLut _dataContract;
+        [HpDataContract("{9F548831-7669-4abb-8CFC-A3AB676C09E6}")]
+        private class Data
+        {
+            public string Modality { get; set; }
+            public string Name { get; set; }
+            public double WindowWidth { get; set; }
+            public double WindowCenter { get; set; }
+        }
 
-        internal LinearPresetVoiLutSelector(LinearPresetVoiLut dataContract)
+        private readonly Data _dataContract;
+
+        private LinearPresetVoiLutSelector(Data dataContract)
         {
             _dataContract = dataContract;
+            AlwaysApply = true;
         }
 
         public LinearPresetVoiLutSelector(object dataContract)
-            : this((LinearPresetVoiLut)dataContract)
+            : this((Data)dataContract)
         {
         }
 
         public object DataContract { get{ return _dataContract; } }
 
         internal string Modality { get { return _dataContract.Modality; } }
+
+        /// <summary>
+        /// Specifies whether or not to always apply the LUT, even if it isn't technically
+        /// a match for the image (e.g. not the same <see cref="Modality"/>).
+        /// </summary>
+        public bool AlwaysApply { get; set; }
         public string Name { get { return _dataContract.Name; } }
         public double WindowWidth { get { return _dataContract.WindowWidth; } }
         public double WindowCenter { get { return _dataContract.WindowCenter; } }
@@ -126,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             if (lut == null)
                 return null;
 
-            return new LinearPresetVoiLutSelector(new LinearPresetVoiLut
+            return new LinearPresetVoiLutSelector(new Data
                     {
                         Modality = modality,
                         Name = lut.Name,
@@ -143,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             {
                 foreach (var preset in @group.Presets)
                 {
-                    var dataContract = new LinearPresetVoiLut { Modality = @group.Modality };
+                    var dataContract = new Data { Modality = @group.Modality };
                     var operation = (LinearPresetVoiLutOperationComponent)preset.Operation;
                     dataContract.Name = preset.Operation.Name;
                     dataContract.WindowWidth = operation.WindowWidth;
@@ -170,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             var groups = PresetVoiLutSettings.Default.GetPresetGroups();
             foreach (var @group in groups)
             {
-                if (!group.AppliesTo(imageSop))
+                if (!AlwaysApply && !group.AppliesTo(imageSop))
                     continue;
 
                 foreach (var preset in @group.Presets)
