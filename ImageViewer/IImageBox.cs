@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -213,7 +214,7 @@ namespace ClearCanvas.ImageViewer
     /// <summary>
     /// Defines the interface of an extension to the <see cref="IImageBox"/>
     /// </summary>
-    public interface IImageBoxExtension : IDisposable
+    public interface IImageBoxExtension : INotifyPropertyChanged, IDisposable
     {
 
         /// <summary>
@@ -244,11 +245,8 @@ namespace ClearCanvas.ImageViewer
 
         IconSet IconSet { get; }
 
+        bool Enabled { get; set; }
 
-        ///<summary>
-        /// Occurs when the desired visibility of the extension changes.
-        ///</summary>
-        event EventHandler<ImageBoxExtensionVisiblityChangedEventArg> VisibilityChanged;
 
         ///<summary>
         /// Sets the context menu adapter
