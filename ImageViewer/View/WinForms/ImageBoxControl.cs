@@ -409,7 +409,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		/// <summary>
 		/// Gets the <see cref="Control.ClientRectangle"/> of this control, less any area dedicated to the ImageBoxControl scrollbar.
 		/// </summary>
-    	private Rectangle AvailableClientRectangle
+    	public Rectangle AvailableClientRectangle
     	{
     		get
     		{
