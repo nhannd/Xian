@@ -153,6 +153,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			_layoutCompleted = true;
 			ImageViewer.EventBroker.StudyLoaded += OnPriorStudyLoaded;
+            ImageViewer.EventBroker.OnLayoutCompleted();
 		}
 
 		#endregion

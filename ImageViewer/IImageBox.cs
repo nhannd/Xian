@@ -178,6 +178,8 @@ namespace ClearCanvas.ImageViewer
 	    /// Occurs when the <see cref="DisplaySet"/> property has changed.
 	    /// </summary>
 	    event EventHandler<DisplaySetChangedEventArgs> DisplaySetChanged;
+
+	    event EventHandler LayoutCompleted;
 	}
 
     /// <summary>
@@ -247,12 +249,15 @@ namespace ClearCanvas.ImageViewer
 
         bool Enabled { get; set; }
 
+        void SetViewClientSize(int width, int height);
+
 
         ///<summary>
         /// Sets the context menu adapter
         ///</summary>
         ///<param name="adapter"></param>
         void SetHostContextMenuAdapter(IHostContextMenuAdapter adapter);
+
     }
 
 

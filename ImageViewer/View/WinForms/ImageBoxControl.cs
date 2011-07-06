@@ -125,6 +125,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Size = new Size(right - left, bottom - top);
 
 				this.ResumeLayout(false);
+
+                foreach(var ex in _imageBox.Extensions)
+                {
+                    ex.SetViewClientSize(Size.Width, Size.Height);
+                }
 			}
 		}
 
@@ -160,7 +165,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private void DoDraw()
 		{
             foreach (TileControl control in this.TileControls)
-                control.Draw(); 
+                control.Draw();
+
             Invalidate();
 		}
 
@@ -554,6 +560,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         void AddExtensionControl(Control control)
         {
+            if (Controls.Contains(control))
+                return;
+
             control.MouseDown += OnExtensionMouseDown;
             Controls.Add(control);
         }
@@ -624,7 +633,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                                 UpdateImageScroller();
                             }
 
-                            RemoveExtensionControl(ctrl);
+                            //RemoveExtensionControl(ctrl);
                             Draw();
                         }
                     }
