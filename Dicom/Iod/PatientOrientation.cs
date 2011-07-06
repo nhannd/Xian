@@ -57,7 +57,7 @@ namespace ClearCanvas.Dicom.Iod
             get
             {
                 //Both unspecified is not valid.
-                if (Row.IsUnspecified && Column.IsUnspecified)
+                if (Row.Equals(Column))
                     return false;
 
                 // We could check and make sure that the values in row and column
