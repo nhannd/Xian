@@ -113,32 +113,30 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                             _isImageValid = true;
                         }
 
-                        Loader.LoadThumbnailAsync(new LoadThumbnailRequest(descriptor, _thumbnailSize, OnThumbnailLoaded));
+                        Loader.LoadThumbnailAsync(new LoadThumbnailRequest(descriptor, _thumbnailSize, OnThumbnailLoadedAsync));
                     }
                 }
             }
 
+            private void OnThumbnailLoadedAsync(LoadThumbnailResult result)
+            {
+                //Dispose the image on the thread on which the image was rendered because of some weirdities with current rendering implementation.
+                result.Descriptor.ReferenceImage.Dispose();
+                SynchronizationContext.Post(ignore => OnThumbnailLoaded(result), null);
+            }
+
             private void OnThumbnailLoaded(LoadThumbnailResult result)
             {
-                if (!SynchronizationContext.Equals(SynchronizationContext.Current))
+                //just toss it if it's not the size we are currently looking for, or we're disposed.
+                if (result.Error == null && (result.Size != _thumbnailSize || _isDisposed))
                 {
-                    //Dispose the image on the thread on which the image was rendered because of some weirdities with current rendering implementation.
-                    result.Descriptor.ReferenceImage.Dispose();
-                    SynchronizationContext.Post(ignore => OnThumbnailLoaded(result), null);
+                    if (result.ThumbnailData != null)
+                        result.ThumbnailData.Dispose();
                 }
                 else
                 {
-                    //just toss it if it's not the size we are currently looking for, or we're disposed.
-                    if (result.Error == null && (result.Size != _thumbnailSize || _isDisposed))
-                    {
-                        if (result.ThumbnailData != null)
-                            result.ThumbnailData.Dispose();
-                    }
-                    else
-                    {
-                        ImageData = result.ThumbnailData ?? Loader.GetErrorThumbnail(_thumbnailSize);
-                        _isImageValid = _isImageLoaded = true;
-                    }
+                    ImageData = result.ThumbnailData ?? Loader.GetErrorThumbnail(_thumbnailSize);
+                    _isImageValid = _isImageLoaded = true;
                 }
             }
 
