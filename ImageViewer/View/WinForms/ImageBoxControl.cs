@@ -635,6 +635,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
                             //RemoveExtensionControl(ctrl);
                             Draw();
+                            Update();
                         }
                     }
                 }
