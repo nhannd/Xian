@@ -125,6 +125,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Size = new Size(right - left, bottom - top);
 
 				this.ResumeLayout(false);
+
+
+
+                foreach (var ex in _imageBox.Extensions)
+                {
+                    ex.SetViewSize(Width, Height);
+                }
 			}
 		}
 
@@ -554,6 +561,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         void AddExtensionControl(Control control)
         {
+            if (Controls.Contains(control))
+                return;
+
             control.MouseDown += OnExtensionMouseDown;
             Controls.Add(control);
         }
@@ -624,8 +634,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                                 UpdateImageScroller();
                             }
 
-                            RemoveExtensionControl(ctrl);
+                            //RemoveExtensionControl(ctrl);
                             Draw();
+                            Update();
                         }
                     }
                 }
