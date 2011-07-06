@@ -247,6 +247,8 @@ namespace ClearCanvas.ImageViewer
 
         bool Enabled { get; set; }
 
+        void SetViewSize(int width, int height);
+
 
         ///<summary>
         /// Sets the context menu adapter
