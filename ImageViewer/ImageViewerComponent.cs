@@ -839,7 +839,6 @@ namespace ClearCanvas.ImageViewer
             try
             {
                 imageViewer.Layout();
-                imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
             }
             catch (Exception)
             {
