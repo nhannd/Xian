@@ -336,4 +336,7 @@
   <data name="FormatFileSizeTB" xml:space="preserve">
     <value>{0:f2} TB</value>
   </data>
+  <data name="FormatReleaseType" xml:space="preserve">
+    <value>({0})</value>
+  </data>
 </root>

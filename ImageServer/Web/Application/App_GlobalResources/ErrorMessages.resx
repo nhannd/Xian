@@ -225,6 +225,9 @@ Please retype your passwords and try again.</value>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Something happened that the ImageServer was unprepared for.</value>
   </data>
+  <data name="UserAccessDenied" xml:space="preserve">
+    <value>Access denied.  The user credentials may be invalid or the account may be disabled.</value>
+  </data>
   <data name="WebAuthorizationErrorDescription" xml:space="preserve">
     <value>This message is being displayed because the ClearCanvas ImageServer encountered an error authorizing user with ID "{0}"</value>
   </data>
