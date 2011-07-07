@@ -13,6 +13,13 @@ namespace ClearCanvas.ImageViewer.Layout
 {
 	public interface IHpImageBoxDefinitionContext : IHpLayoutDefinitionContext // should probably inherit everything from layout level context
 	{
+	    //TODO (CR July 2011): Not entirely sure about this, but if we don't do it,
+        //then the "prior placeholder" has values for W/L, etc even when the display set wasn't captured.
+        /// <summary>
+        /// Gets whether or not the display set itself was successfully captured.
+        /// </summary>
+        bool DisplaySetCaptured { get; set; }
+
 		/// <summary>
 		/// Gets the relevant image box.
 		/// </summary>
