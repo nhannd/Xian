@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchPanelComponentControl));
 			this._patientID = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._accessionNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._patientsName = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -155,10 +154,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchButton
 			// 
-			this._searchButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchButton.Image")));
-			this._searchButton.Location = new System.Drawing.Point(710, 63);
+			this._searchButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Search;
+			this._searchButton.ImageKey = "Search.png";
+			this._searchButton.Location = new System.Drawing.Point(710, 62);
 			this._searchButton.Name = "_searchButton";
-			this._searchButton.Size = new System.Drawing.Size(90, 22);
+			this._searchButton.Size = new System.Drawing.Size(90, 25);
 			this._searchButton.TabIndex = 8;
 			this._searchButton.Text = "Search";
 			this._searchButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -167,10 +167,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchLastWeekButton
 			// 
-			this._searchLastWeekButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchLastWeekButton.Image")));
-			this._searchLastWeekButton.Location = new System.Drawing.Point(806, 93);
+			this._searchLastWeekButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Last7Days;
+			this._searchLastWeekButton.ImageKey = "Last7Days.png";
+			this._searchLastWeekButton.Location = new System.Drawing.Point(806, 95);
 			this._searchLastWeekButton.Name = "_searchLastWeekButton";
-			this._searchLastWeekButton.Size = new System.Drawing.Size(90, 22);
+			this._searchLastWeekButton.Size = new System.Drawing.Size(90, 25);
 			this._searchLastWeekButton.TabIndex = 11;
 			this._searchLastWeekButton.Text = "Last 7 days";
 			this._searchLastWeekButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -179,10 +180,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _clearButton
 			// 
-			this._clearButton.Image = ((System.Drawing.Image)(resources.GetObject("_clearButton.Image")));
-			this._clearButton.Location = new System.Drawing.Point(710, 93);
+			this._clearButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Clear;
+			this._clearButton.ImageKey = "Clear.png";
+			this._clearButton.Location = new System.Drawing.Point(710, 95);
 			this._clearButton.Name = "_clearButton";
-			this._clearButton.Size = new System.Drawing.Size(90, 22);
+			this._clearButton.Size = new System.Drawing.Size(90, 25);
 			this._clearButton.TabIndex = 10;
 			this._clearButton.Text = "Clear";
 			this._clearButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -191,10 +193,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchTodayButton
 			// 
-			this._searchTodayButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchTodayButton.Image")));
-			this._searchTodayButton.Location = new System.Drawing.Point(806, 63);
+			this._searchTodayButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Today;
+			this._searchTodayButton.ImageKey = "Today.png";
+			this._searchTodayButton.Location = new System.Drawing.Point(806, 62);
 			this._searchTodayButton.Name = "_searchTodayButton";
-			this._searchTodayButton.Size = new System.Drawing.Size(90, 22);
+			this._searchTodayButton.Size = new System.Drawing.Size(90, 25);
 			this._searchTodayButton.TabIndex = 9;
 			this._searchTodayButton.Text = "Today";
 			this._searchTodayButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
