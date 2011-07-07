@@ -9,6 +9,8 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.ImageViewer.Layout
 {
 	/// <summary>
@@ -20,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// <summary>
 		/// Gets a GUID identifying this class of contributor (must return a constant value) for serialization purposes.
 		/// </summary>
-		string ContributorId { get; }
+		Guid ContributorId { get; }
 
         //TODO (CR June 2011): Not sure about this, but I guess it doesn't do any harm.
 
