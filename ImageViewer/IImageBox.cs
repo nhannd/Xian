@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer
 
         IconSet IconSet { get; }
 
-        bool Enabled { get; set; }
+        bool AutoOpenInEmptyImageBox { get; set; }
 
         void SetViewSize(int width, int height);
 
