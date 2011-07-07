@@ -18,12 +18,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{
 		public static Color ClearCanvasDarkBlue
 		{
-			get { return Color.FromArgb(61, 152, 209); }
+			get { return Color.FromArgb(120, 153, 184); }
 		}
 
 		public static Color ClearCanvasBlue
 		{
-			get { return Color.FromArgb(124, 177, 221); }
+			get { return Color.FromArgb(164, 183, 206); }
 		}
 
 		public static Color ClearCanvasLightBlue
