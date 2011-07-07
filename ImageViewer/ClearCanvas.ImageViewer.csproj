@@ -173,7 +173,7 @@
     <Compile Include="Imaging\NamedVoiLutLinear.cs" />
     <Compile Include="Layout\HpDataContractAttribute.cs" />
     <Compile Include="Layout\HpExtensionPoints.cs" />
-    <Compile Include="Layout\HpMatchScore.cs" />
+    <Compile Include="Layout\HpMatchResult.cs" />
     <Compile Include="Layout\HpProperty.cs" />
     <Compile Include="Layout\IHpContributor.cs" />
     <Compile Include="Layout\IHpImageBoxDefinitionContributor.cs" />
@@ -182,6 +182,7 @@
     <Compile Include="Layout\IHpMatchCriteriaContributor.cs" />
     <Compile Include="Layout\IHpProperty.cs" />
     <Compile Include="Layout\IHpSerializableElement.cs" />
+    <Compile Include="Layout\Tests\HpMatchResultTests.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />

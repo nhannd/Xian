@@ -35,6 +35,6 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		HpMatchScore Test(IHpMatchCriteriaContext context);
+		HpMatchResult Test(IHpMatchCriteriaContext context);
 	}
 }
