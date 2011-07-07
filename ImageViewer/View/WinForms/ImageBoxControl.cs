@@ -505,7 +505,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         void AttachExtension(IImageBoxExtension extension)
         {
-            if (extension.Enabled && extension.Visible)
+            if (extension.Visible)
             {
                 Control ctrl = extension.View.GuiElement as Control;
                 if (ctrl != null)
@@ -599,37 +599,37 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     }
                 }
             }
-            else if (e.PropertyName == "Enabled")
-            {
-                if (extension.Enabled && extension.Visible)
-                {
-                    Control ctrl = extension.View.GuiElement as Control;
-                    if (ctrl != null)
-                    {
-                        if (ctrl.Dock == DockStyle.Fill)
-                        {
-                            //temporarily hide it
-                            ImageScrollerVisible = false;
-                        }
-                        AddExtensionControl(ctrl);
-                        ctrl.BringToFront();
-                    }
-                }
-                else
-                {
-                    Control ctrl = extension.View.GuiElement as Control;
-                    if (ctrl != null)
-                    {
-                        if (ctrl.Dock == DockStyle.Fill)
-                        {
-                            UpdateImageScroller();
-                        }
+            //else if (e.PropertyName == "Enabled")
+            //{
+            //    if (extension.AutoOpenInEmptyImageBox && extension.Visible)
+            //    {
+            //        Control ctrl = extension.View.GuiElement as Control;
+            //        if (ctrl != null)
+            //        {
+            //            if (ctrl.Dock == DockStyle.Fill)
+            //            {
+            //                //temporarily hide it
+            //                ImageScrollerVisible = false;
+            //            }
+            //            AddExtensionControl(ctrl);
+            //            ctrl.BringToFront();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Control ctrl = extension.View.GuiElement as Control;
+            //        if (ctrl != null)
+            //        {
+            //            if (ctrl.Dock == DockStyle.Fill)
+            //            {
+            //                UpdateImageScroller();
+            //            }
 
-                        RemoveExtensionControl(ctrl);
-                        Draw();
-                    }
-                }
-            }
+            //            RemoveExtensionControl(ctrl);
+            //            Draw();
+            //        }
+            //    }
+            //}
             
         }
 
