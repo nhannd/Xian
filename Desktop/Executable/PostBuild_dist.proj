@@ -91,9 +91,13 @@
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
-    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
-    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
+  </ItemGroup>
+
+  <!-- Extension Browser plugin files -->
+  <ItemGroup>
+    <ExtensionBrowserPlugin Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
+    <ExtensionBrowserPlugin Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
   </ItemGroup>
 
   <!--Icon Files-->
@@ -136,6 +140,12 @@
     <!-- Copy icon file -->
     <Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
   </Target>
+
+  <Target Name="Disable Logging">
+    <!-- Disables logging -->
+    <RemoveDir Directories="$(LogDirectory)" />
+    <Delete Files="$(DistributionDirectory)\Logging.config" />
+  </Target>
   
   <Target Name="Copy Files">
 
@@ -153,6 +163,14 @@
 
     <!-- Copy shared plugins -->
     <Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+    
+    <!-- Evaluate desktop executable specific build options -->
+    <RegexIsMatch Pattern="ExcludeExtensionBrowser" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeExtensionBrowser" />
+    </RegexIsMatch>
+    
+    <!-- Copy Extension Browser plugins-->
+    <Copy SourceFiles="@(ExtensionBrowserPlugin)" DestinationFolder="$(PluginsDirectory)" Condition="!$(ExcludeExtensionBrowser)" />
 
     <!-- Copy execution files -->
     <Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />
@@ -160,6 +178,9 @@
   
   <Target Name="Copy Desktop Executable Files">
     <!-- Evaluate desktop executable specific build options -->
+    <RegexIsMatch Pattern="DisableLogging" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="DisableLogging" />
+    </RegexIsMatch>
     <RegexIsMatch Pattern="IncludeApplicationIcon" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="IncludeApplicationIcon" />
     </RegexIsMatch>
@@ -175,6 +196,9 @@
 
     <!-- Copy optional components -->
     <CallTarget Condition="$(IncludeApplicationIcon)" Targets="Copy App Icon" />
+    
+    <!-- Disables logging if desired -->
+    <CallTarget Condition="$(DisableLogging)" Targets="Disable Logging" />
 
     <!-- Set executable header flags -->
     <CallTarget Condition="$(SetDesktopExecutableX86Flag)" Targets="SetExeX86Flag" />
