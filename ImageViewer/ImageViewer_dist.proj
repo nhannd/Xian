@@ -282,6 +282,17 @@
   <ItemGroup>
     <FusionPluginFiles Include="$(TrunkDirectory)\ImageViewer\AdvancedImaging\Fusion\bin\$(Configuration)\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.dll" />
   </ItemGroup>
+
+  <ItemGroup Condition="$(DesktopBuild)">
+    <SynchronizationPluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Synchronization\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.dll" />
+    <SynchronizationPluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Synchronization\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.View.WinForms.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(DesktopBuild)">
+    <!-- Externals -->
+    <ExternalsPluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.dll" />
+    <ExternalsPluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.View.WinForms.dll" />
+  </ItemGroup>
   
   <ItemGroup Condition="$(DesktopBuild)">
     <!-- Core Viewer -->
@@ -299,8 +310,6 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Measurement\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Standard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Synchronization\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Synchronization\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.View.WinForms.dll" />
 
     <!-- Layout -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
@@ -313,10 +322,6 @@
     <!-- Thumbnails -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Thumbnails\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Thumbnails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" />
-    
-    <!-- Externals -->
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.View.WinForms.dll" />
 
     <!-- Manifest -->
     <PluginFiles Include="$(TrunkDirectory)\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
@@ -404,6 +409,12 @@
   <Target Name="Copy Dicom Editor">
     <Copy SourceFiles="@(DicomEditorFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
+  <Target Name="Copy Synchronization Plugin">
+    <Copy SourceFiles="@(SynchronizationPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Externals Plugin">
+    <Copy SourceFiles="@(ExternalsPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
   <Target Name="Copy Help Update">
     <Copy SourceFiles="@(HelpUpdateFiles)" DestinationFolder="$(PluginsDirectory)" />
     <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\Desktop.HelpUpdate_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
@@ -455,6 +466,9 @@
     <RegexIsMatch Pattern="ExcludeStudyFilters" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyFilters" />
     </RegexIsMatch>
+    <RegexIsMatch Pattern="ExcludeExternals" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeExternals" />
+    </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeSeriesDetails" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeSeriesDetails" />
     </RegexIsMatch>
@@ -466,6 +480,9 @@
     </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeDatabase" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDatabase" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="ExcludeSynchronizationTools" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeSynchronizationTools" />
     </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeDicomRemote" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDicomRemote" />
@@ -487,6 +504,7 @@
     <CallTarget Condition="!$(ExcludeStudyComposer)" Targets="Copy Study Composer" />
     <CallTarget Condition="!$(ExcludeDicomEditor)" Targets="Copy Dicom Editor" />
     <CallTarget Condition="!$(ExcludeStudyFilters)" Targets="Copy Study Filters" />
+    <CallTarget Condition="!$(ExcludeExternals)" Targets="Copy Externals Plugin" />
     <CallTarget Condition="!$(ExcludeSeriesDetails)" Targets="Copy Series Details" />
     <CallTarget Condition="!$(ExcludeReporting)" Targets="Copy Reporting" />
     <CallTarget Condition="!$(ExcludeHelpUpdate)" Targets="Copy Help Update" />
@@ -495,6 +513,7 @@
     <CallTarget Condition="!$(ExcludeMpr)" Targets="Copy Mpr Files" />
     <CallTarget Condition="!$(ExcludeFusion)" Targets="Copy Fusion Files" />
     <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local DataStore Client Files" />
+    <CallTarget Condition="!$(ExcludeSynchronizationTools)" Targets="Copy Synchronization Plugin" />
 
   </Target>
 

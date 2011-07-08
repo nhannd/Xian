@@ -55,8 +55,6 @@
     <File name="plugins\ClearCanvas.ImageViewer.Configuration.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.Externals.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.Externals.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Layout.Basic.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Services.dll" checksum="true" />
@@ -67,8 +65,6 @@
     <File name="plugins\ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Tools.Standard.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.Tools.Synchronization.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.Tools.Synchronization.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Jscript.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Utilities.Manifest.dll" checksum="true" />
