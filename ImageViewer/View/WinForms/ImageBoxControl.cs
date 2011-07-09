@@ -536,19 +536,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         void DetachExtension(IImageBoxExtension extension)
         {
             extension.PropertyChanged -= OnExtensionPropertyChanged;
-            var view = extension.View;
-            if (view!=null)
-            {
-                // TODO: The view wil be created even when it is not necessary (eg, when it's not visible)
-                // Can we simply dispose the view?
-                Control ctrl = view.GuiElement as Control;
-                if (ctrl!=null)
-                {
-                    ctrl.MouseDown -= OnExtensionMouseDown;
-                    Controls.Remove(ctrl);
-                }
-            }
-
+            
+            //Note: the extension's view (if exists) will be disposed when the image box is disposed
         }
 
         void OnExtensionPropertyChanged(object sender, PropertyChangedEventArgs e)
