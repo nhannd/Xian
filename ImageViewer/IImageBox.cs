@@ -210,6 +210,10 @@ namespace ClearCanvas.ImageViewer
         event EventHandler ContextMenuClosed;
     }
 
+    public interface IImageBoxExtensionView:IView,IDisposable
+    {
+        
+    }
    
     /// <summary>
     /// Defines the interface of an extension to the <see cref="IImageBox"/>
@@ -231,7 +235,7 @@ namespace ClearCanvas.ImageViewer
         ///<summary>
         /// Gets the view of the plugin
         ///</summary>
-        IView View { get; }
+        IImageBoxExtensionView View { get; }
 
         ///<summary>
         /// Gets or sets a value indicating whether the extension wants its <see cref="View"/> to be visible.

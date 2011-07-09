@@ -527,12 +527,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             Controls.Add(control);
         }
         
-        void RemoveExtensionControl(Control control)
-        {
-            control.MouseDown -= OnExtensionMouseDown;
-            Controls.Remove(control);
-        }
-
         void OnExtensionMouseDown(object sender, MouseEventArgs e)
         {
             _imageBox.SelectDefaultTile();
@@ -545,6 +539,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             var view = extension.View;
             if (view!=null)
             {
+                // TODO: The view wil be created even when it is not necessary (eg, when it's not visible)
+                // Can we simply dispose the view?
                 Control ctrl = view.GuiElement as Control;
                 if (ctrl!=null)
                 {
