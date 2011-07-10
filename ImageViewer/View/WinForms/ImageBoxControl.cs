@@ -584,38 +584,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     }
                 }
             }
-            //else if (e.PropertyName == "Enabled")
-            //{
-            //    if (extension.AutoOpenInEmptyImageBox && extension.Visible)
-            //    {
-            //        Control ctrl = extension.View.GuiElement as Control;
-            //        if (ctrl != null)
-            //        {
-            //            if (ctrl.Dock == DockStyle.Fill)
-            //            {
-            //                //temporarily hide it
-            //                ImageScrollerVisible = false;
-            //            }
-            //            AddExtensionControl(ctrl);
-            //            ctrl.BringToFront();
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Control ctrl = extension.View.GuiElement as Control;
-            //        if (ctrl != null)
-            //        {
-            //            if (ctrl.Dock == DockStyle.Fill)
-            //            {
-            //                UpdateImageScroller();
-            //            }
-
-            //            RemoveExtensionControl(ctrl);
-            //            Draw();
-            //        }
-            //    }
-            //}
-            
         }
 
         #endregion
