@@ -66,7 +66,7 @@ namespace ClearCanvas.Dicom.Utilities
 			if (dicomStringArray == null)
 				dicomStringArray = ""; //return an empty array.
 
-			return dicomStringArray.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+			return dicomStringArray.Split(new [] { '\\' }, StringSplitOptions.None);
 		}
 
 		/// <summary>
