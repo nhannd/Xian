@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			_desktopWindow = desktopWindow;
 			_dummyTreeInfo = new ImageSetTreeInfo(new ObservableList<IImageSet>(), null);
 			_currentTreeInfo = _dummyTreeInfo;
-		    _thumbnailGallery = new ThumbnailGallery();
+		    _thumbnailGallery = new ThumbnailGallery {NameAndDescriptionFormat = NameAndDescriptionFormat.VerboseNameNoDescription};
 		}
 
 		#region Presentation Model

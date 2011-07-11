@@ -25,9 +25,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         #region IGalleryItemFactory<IDisplaySet> Members
 
-        public IGalleryItem Create(IDisplaySet displaySet)
+        public IGalleryItem Create(GalleryItemCreationArgs<IDisplaySet> args)
         {
-            return new ThumbnailGalleryItem(this, displaySet);
+            return new ThumbnailGalleryItem(this, args.SourceItem, args.NameAndDescriptionFormat);
         }
 
         #endregion
@@ -38,7 +38,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             name = name.Replace("\r\n", " ");
             name = name.Replace("\r", " ");
             name = name.Replace("\n", " ");
+            return name;
+        }
 
+        private static string GetDisplaySetDescription(IDisplaySet displaySet)
+        {
+            var name = GetDisplaySetName(displaySet);
             int number = displaySet.PresentationImages.Count;
             if (number <= 1)
                 return String.Format(SR.FormatThumbnailName1Image, name);

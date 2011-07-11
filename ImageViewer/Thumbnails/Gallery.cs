@@ -18,9 +18,23 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         IObservableList<TSourceItem> SourceItems { get; set; }
     }
 
+    public enum NameAndDescriptionFormat
+    {
+        NameAndDescription,
+        NoDescription,
+        VerboseNameNoDescription,
+        VerboseNameAndDescription
+    }
+
+    public struct GalleryItemCreationArgs<TSourceItem>
+    {
+        public TSourceItem SourceItem;
+        public NameAndDescriptionFormat NameAndDescriptionFormat;
+    }
+
     public interface IGalleryItemFactory<TSourceItem>
     {
-        IGalleryItem Create(TSourceItem sourceItem);
+        IGalleryItem Create(GalleryItemCreationArgs<TSourceItem> args);
     }
 
     public class Gallery<TSourceItem> : IGallery<TSourceItem> where TSourceItem : class, IDisposable
@@ -43,7 +57,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         {
             GalleryItemFactory = galleryItemFactory;
         }
-    
+
+        public NameAndDescriptionFormat NameAndDescriptionFormat { get; set; }
+
         #region IGallery<TSourceItem> Members
 
         public IObservableList<TSourceItem> SourceItems
@@ -143,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         protected virtual IGalleryItem CreateNew(TSourceItem item)
         {
-            return GalleryItemFactory.Create(item);
+            return GalleryItemFactory.Create(new GalleryItemCreationArgs<TSourceItem> { SourceItem = item, NameAndDescriptionFormat = NameAndDescriptionFormat });
         }
 
         protected virtual void OnItemChanged(IGalleryItem item)

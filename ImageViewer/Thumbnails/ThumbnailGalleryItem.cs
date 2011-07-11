@@ -23,11 +23,27 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             private bool _isVisible;
             private bool _isDisposed;
 
-            internal ThumbnailGalleryItem(ThumbnailGalleryItemFactory factory, IDisplaySet displaySet)
+            internal ThumbnailGalleryItem(ThumbnailGalleryItemFactory factory, IDisplaySet displaySet, NameAndDescriptionFormat nameAndDescriptionFormat)
                 : base(displaySet)
             {
                 _factory = factory;
-                Name = GetDisplaySetName(displaySet);
+
+                switch (nameAndDescriptionFormat)
+                {
+                    case NameAndDescriptionFormat.NameAndDescription:
+                        Name = GetDisplaySetName(displaySet);
+                        Description = GetDisplaySetDescription(displaySet);
+                        break;
+                    case NameAndDescriptionFormat.NoDescription:
+                        Name = GetDisplaySetName(displaySet);
+                        break;
+                    case NameAndDescriptionFormat.VerboseNameNoDescription:
+                        Name = GetDisplaySetDescription(displaySet);
+                        break;
+                    case NameAndDescriptionFormat.VerboseNameAndDescription:
+                        Name = Description = GetDisplaySetDescription(displaySet);
+                        break;
+                }
             }
 
             private SynchronizationContext SynchronizationContext { get { return _factory._synchronizationContext; } }
