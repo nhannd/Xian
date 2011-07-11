@@ -60,9 +60,24 @@ namespace ClearCanvas.Dicom.Iod
                 if (Row.Equals(Column))
                     return false;
 
-                // We could check and make sure that the values in row and column
-                // actually make sense together (e.g. orthogonal?), but this is good enough.
-                return Row.IsValid && Column.IsValid;
+                if (!Row.IsValid || !Column.IsValid)
+                    return false;
+
+                //We could do something with vectors and check they are "orthogonal", but this is pretty good.
+                for (int i = 0; i < Math.Max(Row.ComponentCount, Column.ComponentCount); ++i)
+                {
+                    //They can both point to the same direction in the patient, but
+                    //they can't both have "primary component == Foot", for example
+                    //or event have primary components along the same axis (e.g. Right and Left).
+                    var row = Row[i]; var column = Column[i];
+                    if (row.Equals(column))
+                        return false;
+
+                    if (row.Equals(column.OpposingDirection))
+                        return false;
+                }
+
+                return true;
             }    
         }
 

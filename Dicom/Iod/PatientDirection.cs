@@ -43,6 +43,7 @@ namespace ClearCanvas.Dicom.Iod
         }
 
         public string Code { get; private set; }
+        public int ComponentCount { get { return Code.Length; } }
 
         public bool IsEmpty { get { return Code.Length == 0; } }
         public bool IsUnspecified { get { return Code.Contains(UnspecifiedCode.ToString()); } }
