@@ -70,7 +70,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e);
+                Platform.Log(LogLevel.Debug, e);
             }
         }
 
