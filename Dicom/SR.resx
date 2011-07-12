@@ -398,4 +398,7 @@
   <data name="LabelPrintPriorityMedium" xml:space="preserve">
     <value>Medium</value>
   </data>
+  <data name="LabelFilmSmoothingTypeCubic" xml:space="preserve">
+    <value>Cubic</value>
+  </data>
 </root>
