@@ -192,7 +192,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Icons\" />
+    <EmbeddedResource Include="Icons\Clear.png" />
+    <EmbeddedResource Include="Icons\Last7Days.png" />
+    <EmbeddedResource Include="Icons\Search.png" />
+    <EmbeddedResource Include="Icons\Today.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
