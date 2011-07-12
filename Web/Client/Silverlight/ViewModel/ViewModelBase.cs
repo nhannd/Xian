@@ -117,8 +117,6 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
         /// exception is thrown in DEBUG configuration only.</remarks>
         /// <param name="propertyName">The name of the property that
         /// changed.</param>
-        [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate",
-            Justification = "This cannot be an event")]
         protected virtual void RaisePropertyChanged(string propertyName)
         {
             VerifyPropertyName(propertyName);
@@ -138,12 +136,6 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
         /// changed.</typeparam>
         /// <param name="propertyExpression">An expression identifying the property
         /// that changed.</param>
-        [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate",
-            Justification = "This cannot be an event")]
-        [SuppressMessage(
-            "Microsoft.Design",
-            "CA1006:GenericMethodsShouldProvideTypeParameter",
-           Justification = "This syntax is more convenient than other alternatives.")]
         protected virtual void RaisePropertyChanged<T>(Expression<Func<T>> propertyExpression)
         {
             if (propertyExpression == null)
@@ -167,8 +159,6 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
         /// </summary>
         /// <exception cref="InvalidOperationException">If this method is called outside
         /// of a property setter.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate",
-            Justification = "This cannot be an event")]
         protected virtual void RaisePropertyChanged()
         {
             var frames = new StackTrace();
