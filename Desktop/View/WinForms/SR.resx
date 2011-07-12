@@ -205,4 +205,25 @@
   <data name="MenuShowDetails" xml:space="preserve">
     <value>&amp;Details &gt;&gt;</value>
   </data>
+  <data name="ButtonAbort" xml:space="preserve">
+    <value>&amp;Abort</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>&amp;Cancel</value>
+  </data>
+  <data name="ButtonIgnore" xml:space="preserve">
+    <value>&amp;Ignore</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>&amp;No</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>&amp;Ok</value>
+  </data>
+  <data name="ButtonRetry" xml:space="preserve">
+    <value>&amp;Retry</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>&amp;Yes</value>
+  </data>
 </root>
