@@ -28,7 +28,7 @@ using System.Reflection;
 
 namespace ClearCanvas.Web.Client.Silverlight.ViewModel
 {
-    public class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         #region Design Mode
         private static bool? _isInDesignMode;
