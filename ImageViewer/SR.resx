@@ -533,4 +533,10 @@ Use image with caution.</value>
   <data name="MessageRenderingPipelineFailure" xml:space="preserve">
     <value>An error has occurred in the rendering pipeline.</value>
   </data>
+  <data name="FormatAnnotationItem" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="ValueNil" xml:space="preserve">
+    <value>-</value>
+  </data>
 </root>

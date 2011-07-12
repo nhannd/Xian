@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							double value;
 							bool tagExists = frame.ParentImageSop[DicomTags.Kvp].TryGetFloat64(0, out value);
 							if (tagExists)
-								return String.Format(SR.FormatkV, value);
+								return String.Format(SR.FormatKilovolts, value);
 
 							return "";
 						},
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							int value;
 							bool tagExists = frame.ParentImageSop[DicomTags.XRayTubeCurrent].TryGetInt32(0, out value);
 							if (tagExists)
-								return String.Format(SR.FormatmA, value);
+								return String.Format(SR.FormatMilliamps, value);
 
 							return "";
 						},
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							int value;
 							bool tagExists = frame.ParentImageSop[DicomTags.ExposureTime].TryGetInt32(0, out value);
 							if (tagExists)
-								return String.Format(SR.Formatms, value);
+								return String.Format(SR.FormatMilliseconds, value.ToString("F2"));
 
 							return "";
 						},

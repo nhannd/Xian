@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 				displayedFieldOfViewY = y1 * normalizedPixelSpacing.Row / 10;
 			}
 
-			return String.Format("{0:F1} x {1:F1} cm", displayedFieldOfViewX, displayedFieldOfViewY);
+			return String.Format(SR.FormatCentimeters, String.Format(SR.Format2Dimensions, displayedFieldOfViewX.ToString("F1"), displayedFieldOfViewY.ToString("F1")));
 		}
 	}
 }
