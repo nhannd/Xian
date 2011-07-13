@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private bool _imageScrollerVisible;
 		private CompositeUndoableCommand _historyCommand;
 		private MemorableUndoableCommand _imageBoxCommand;
+        private Dictionary<IImageBoxExtension, IImageBoxExtensionView> _extensionViews = new Dictionary<IImageBoxExtension, IImageBoxExtensionView>();
 
         /// <summary>
         /// Constructor
@@ -59,7 +60,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             foreach (var extension in ImageBox.Extensions)
             {
                 AttachExtension(extension);
-                extension.SetViewSize(Width, Height);
             }
         }
 
@@ -87,11 +87,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				this.ResumeLayout(false);
 
-
-
-                foreach (var ex in _imageBox.Extensions)
+                foreach (var view in _extensionViews.Values)
                 {
-                    ex.SetViewSize(Width, Height);
+                    view.Size = Size;
                 }
 			}
 		}
@@ -504,19 +502,31 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         #region ImageBox Extension support
 
+        
         void AttachExtension(IImageBoxExtension extension)
         {
-            if (extension.Visible)
+            IImageBoxExtensionView view;
+            if (!_extensionViews.TryGetValue(extension, out view))
             {
-                Control ctrl = extension.View.GuiElement as Control;
-                if (ctrl != null)
+                extension.PropertyChanged += OnExtensionPropertyChanged;
+
+                view = extension.CreateView();
+                if (view!=null)
                 {
-                    AddExtensionControl(ctrl);
+                    view.Size = Size;
+                    _extensionViews.Add(extension, view);
+
+                    if (extension.Visible)
+                    {
+                        Control ctrl = view.GuiElement as Control;
+                        if (ctrl != null)
+                        {
+                            AddExtensionControl(ctrl);
+                        }
+                    }
                 }
-
             }
-
-            extension.PropertyChanged += OnExtensionPropertyChanged;        
+      
         }
 
         void AddExtensionControl(Control control)
@@ -528,17 +538,29 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             Controls.Add(control);
         }
         
-        void OnExtensionMouseDown(object sender, MouseEventArgs e)
+        IImageBoxExtensionView FindExtensionView(IImageBoxExtension extension)
         {
-            _imageBox.SelectDefaultTile();
-        }
+            IImageBoxExtensionView view;
+            if (_extensionViews.TryGetValue(extension, out view))
+            {
+                return view;
+            }
 
+            return null;
+        }
         
         void DetachExtension(IImageBoxExtension extension)
         {
             extension.PropertyChanged -= OnExtensionPropertyChanged;
-            
-            //Note: the extension's view (if exists) will be disposed when the image box is disposed
+
+            // Dispose the extenion's view which was obtained using CreateView()
+            // The extension itself will be disposed when the image box is disposed
+            IImageBoxExtensionView view;
+            if (_extensionViews.TryGetValue(extension, out view))
+            {
+                _extensionViews.Remove(extension);
+                view.Dispose();
+            }
         }
 
         void OnExtensionPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -549,12 +571,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             
             if (e.PropertyName == "Visible")
             {
-                if (extension.View != null)
+                var view = FindExtensionView(extension);
+                if (view!=null)
                 {
-                    if (extension.Visible)
+                    Control ctrl = view.GuiElement as Control;
+                    if (ctrl!=null)
                     {
-                        Control ctrl = extension.View.GuiElement as Control;
-                        if (ctrl != null)
+                        if (extension.Visible)
                         {
                             AddExtensionControl(ctrl);
 
@@ -562,18 +585,21 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                             // it's on top of the empty tiles
                             ctrl.BringToFront();
                         }
-                    }
-                    else
-                    {
-                        Control ctrl = extension.View.GuiElement as Control;
-                        if (ctrl != null)
+                        else
                         {
                             Draw();
                             Update();
                         }
                     }
+                    
                 }
             }
+        }
+
+
+        void OnExtensionMouseDown(object sender, MouseEventArgs e)
+        {
+            _imageBox.SelectDefaultTile();
         }
 
         #endregion

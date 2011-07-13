@@ -212,7 +212,10 @@ namespace ClearCanvas.ImageViewer
 
     public interface IImageBoxExtensionView:IView,IDisposable
     {
-        
+        ///<summary>
+        /// Set the rendering size for the view
+        ///</summary>
+        Size Size{ set; }
     }
    
     /// <summary>
@@ -233,9 +236,12 @@ namespace ClearCanvas.ImageViewer
         IImageBox ImageBox { set; }
 
         ///<summary>
-        /// Gets the view of the plugin
+        /// Create an instance of the view for the plugin
         ///</summary>
-        IImageBoxExtensionView View { get; }
+        /// <remarks>
+        /// Caller will be responsible for managing the view
+        /// </remarks>
+        IImageBoxExtensionView CreateView();
 
         ///<summary>
         /// Gets or sets a value indicating whether the extension wants its <see cref="View"/> to be visible.
@@ -247,39 +253,11 @@ namespace ClearCanvas.ImageViewer
         /// </remarks>
         bool Visible { get; set; }
 
+        ///<summary>
+        /// Gets the icons for the extension
+        ///</summary>
         IconSet IconSet { get; }
 
-        bool AutoOpenInEmptyImageBox { get; set; }
-
-        void SetViewSize(int width, int height);
-
     }
 
-
-    ///<summary>
-    /// Event argument for <see cref="IImageBoxExtension.VisibilityChanged"/>
-    ///</summary>
-    public class ImageBoxExtensionVisiblityChangedEventArg : EventArgs
-    {
-        ///<summary>
-        /// Gets/sets the extension that fired the event
-        ///</summary>
-        public IImageBoxExtension Extension { get; private set; }
-
-        ///<summary>
-        /// Gets/sets the visibility of the extension when the event was fired
-        ///</summary>
-        public bool Visible { get; private set; }
-
-
-        ///<summary>
-        ///</summary>
-        ///<param name="extension"></param>
-        ///<param name="visible"></param>
-        public ImageBoxExtensionVisiblityChangedEventArg(IImageBoxExtension extension, bool visible)
-        {
-            Extension = extension;
-            Visible = visible;
-        }
-    }
 }
