@@ -35,6 +35,14 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		ISeriesIdentifier SourceSeries { get; }
 
+	    //TODO (CR July 2011): Not sure about this ...
+
+        /// <summary>
+        /// Gets whether or not the display set is comprised of simple DICOM images, taken from a single
+        /// series, or whether it is a composite of images from multiple series.
+        /// </summary>
+        bool IsComposite { get; }
+
 		//TODO: put this stuff back when we actually support dynamically updating the viewer.
 		//bool Update(Sop sop);
 	}
@@ -89,6 +97,7 @@ namespace ClearCanvas.ImageViewer
 		protected DicomDisplaySetDescriptor(ISeriesIdentifier sourceSeries)
 			: this(sourceSeries, null)
 		{
+		    IsComposite = false;
 		}
 
 		/// <summary>
@@ -97,6 +106,8 @@ namespace ClearCanvas.ImageViewer
 		protected DicomDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImageFactory presentationImageFactory)
 		{
 			Platform.CheckForNullReference(sourceSeries, "sourceSeries");
+            IsComposite = false;
+
 			_sourceSeries = sourceSeries;
 			_presentationImageFactory = presentationImageFactory;
 		}
@@ -125,6 +136,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return _sourceSeries; }
 		}
+
+	    /// <summary>
+	    /// Gets whether or not the display set is comprised of simple DICOM images, taken from a single
+	    /// series, or whether it is a composite of images from multiple series.
+	    /// </summary>
+	    public bool IsComposite { get; protected set; }
 
 		#endregion
 
