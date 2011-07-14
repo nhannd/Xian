@@ -26,7 +26,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 	{
 		private UpdateContextInterceptor _interceptor;
 		private IEntityChangeSetRecorder _changeSetRecorder;
-		private readonly DomainObjectValidator _validator;
+		private IDomainObjectValidator _validator;
 		private readonly ChangeTracker _validationChangeTracker; 
 
 		/// <summary>
@@ -44,6 +44,17 @@ namespace ClearCanvas.Enterprise.Hibernate
 			_changeSetRecorder = new DefaultEntityChangeSetRecorder();
 			_validator = new DomainObjectValidator();
 			_validationChangeTracker = new ChangeTracker();
+		}
+
+		/// <summary>
+		/// Disable domain object validation on this context.
+		/// </summary>
+		/// <remarks>
+		/// This feature should be used with care.
+		/// </remarks>
+		public void DisableValidation()
+		{
+			_validator = DomainObjectValidator.NullValidator;
 		}
 
 		#region IUpdateContext members
@@ -104,7 +115,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		protected override ISession CreateSession()
 		{
-			_interceptor = new UpdateContextInterceptor(_validator);
+			_interceptor = new UpdateContextInterceptor(this);
 			_interceptor.AddChangeTracker(_validationChangeTracker);
 			return PersistentStore.SessionFactory.OpenSession(_interceptor);
 		}
@@ -124,6 +135,11 @@ namespace ClearCanvas.Enterprise.Hibernate
 					Session.Lock(obj, LockMode.None);
 					break;
 			}
+		}
+
+		internal IDomainObjectValidator Validator
+		{
+			get { return _validator; }
 		}
 
 		internal override bool ReadOnly
