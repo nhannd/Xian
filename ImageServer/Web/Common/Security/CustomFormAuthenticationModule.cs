@@ -105,8 +105,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 else
                 {
                     // redirect to login screen
-                    String error = String.Format("The current session is no longer valid.");
-                    SessionManager.TerminateSession(error);
+                    SessionManager.TerminateSession("The current session is no longer valid.", SR.MessageCurrentSessionNoLongerValid);
                 }
             }
             catch(Exception ex)
