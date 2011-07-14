@@ -69,9 +69,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 #endif 
 
             title = string.IsNullOrEmpty(title) ? Application.Name : string.Format("{0} - {1}", Application.Name, title);
-            DialogResult dr = System.Windows.Forms.MessageBox.Show(owner,
-                message, title, _buttonMap[(int)buttons]);
-            return (DialogBoxAction)_resultMap[dr];
+
+        	using (var hook = new CommonDialogHook())
+        	{
+        		var mbButtons = _buttonMap[(int) buttons];
+
+        		// The OK-only message box has a single button whose control ID is actually "Cancel"
+        		if (mbButtons == MessageBoxButtons.OK)
+        			hook.ButtonCaptions[2] = SR.ButtonOk;
+
+        		var dr = System.Windows.Forms.MessageBox.Show(owner, message, title, mbButtons);
+        		return (DialogBoxAction) _resultMap[dr];
+        	}
         }
     }
 }
