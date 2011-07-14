@@ -209,7 +209,7 @@
     <value>&amp;Abort</value>
   </data>
   <data name="ButtonCancel" xml:space="preserve">
-    <value>&amp;Cancel</value>
+    <value>Cancel</value>
   </data>
   <data name="ButtonIgnore" xml:space="preserve">
     <value>&amp;Ignore</value>
@@ -218,7 +218,7 @@
     <value>&amp;No</value>
   </data>
   <data name="ButtonOk" xml:space="preserve">
-    <value>&amp;Ok</value>
+    <value>OK</value>
   </data>
   <data name="ButtonRetry" xml:space="preserve">
     <value>&amp;Retry</value>

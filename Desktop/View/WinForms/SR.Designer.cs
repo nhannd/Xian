@@ -70,7 +70,7 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Cancel.
+        ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string ButtonCancel {
             get {
@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Ok.
+        ///   Looks up a localized string similar to OK.
         /// </summary>
         internal static string ButtonOk {
             get {
