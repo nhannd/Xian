@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DicomSendService" xml:space="preserve">
-    <value>Dicom Send</value>
+    <value>DICOM Send</value>
   </data>
   <data name="DicomSendServiceDescription" xml:space="preserve">
-    <value>Sends sop instances to remote Dicom servers</value>
+    <value>Sends SOP instances to remote DICOM servers</value>
   </data>
   <data name="DicomServer" xml:space="preserve">
-    <value>Dicom Server</value>
+    <value>DICOM Server</value>
   </data>
   <data name="DicomServerDescription" xml:space="preserve">
-    <value>This shred hosts the Dicom Server and the WCF Dicom Server service</value>
+    <value>This shred hosts the DICOM Server and the WCF DICOM Server service</value>
   </data>
   <data name="DiskspaceManager" xml:space="preserve">
     <value>Diskspace Manager</value>
@@ -359,7 +359,7 @@ Please check the service logs for more details.</value>
     <value>Pending ...</value>
   </data>
   <data name="MessageRetrieveLikelyFailed" xml:space="preserve">
-    <value>This operation appears to have failed.  This can be caused by a number of problems including an incorrect Dicom configuration (client or server) or the local firewall blocking the inbound Dicom port. </value>
+    <value>This operation appears to have failed.  This can be caused by a number of problems including an incorrect DICOM configuration (client or server) or the local firewall blocking the inbound DICOM port. </value>
   </data>
   <data name="MessageWaitingForFilesToBecomeAvailable" xml:space="preserve">
     <value>Waiting for all files to become available ...</value>
