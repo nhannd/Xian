@@ -18,7 +18,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <asp:Content runat="server" ID="ContentTitle" ContentPlaceHolderID="TitlePlaceHolder"></asp:Content>
 
 <asp:Content runat="server" ID="MainMenuContent" contentplaceholderID="MainMenuPlaceHolder">
-    <asp:Table ID="Table1" runat="server" Width="100%" ><asp:TableRow><asp:TableCell HorizontalAlign="right" style="padding-top: 12px;"><asp:LinkButton ID="LinkButton1" runat="server" SkinId="<%$Image:CloseButton%>" OnClientClick="javascript: window.close(); return false;" Text="<%$Resources: Labels,Close %>" /></asp:TableCell></asp:TableRow></asp:Table>
+    <asp:Table ID="Table1" runat="server" Width="100%" ><asp:TableRow><asp:TableCell HorizontalAlign="right" style="padding-top: 12px;"><asp:LinkButton ID="LinkButton1" runat="server" SkinId="CloseButton" Text="<%$Resources: Labels, Close %>" OnClientClick="javascript: window.close(); return false;" /></asp:TableCell></asp:TableRow></asp:Table>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentSectionPlaceHolder" runat="server">
