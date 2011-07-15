@@ -38,8 +38,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
         /// Gets a value indicating whether the control is in design mode
         /// (running under Blend or Visual Studio).
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Non static member needed for data binding")]
-        public bool IsInDesignMode
+       public bool IsInDesignMode
         {
             get
             {
@@ -52,10 +51,6 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
         /// Gets a value indicating whether the control is in design mode
         /// (running in Blend or Visual Studio).
         /// </summary>
-        [SuppressMessage(
-            "Microsoft.Security",
-            "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands",
-            Justification = "The security risk here is neglectible.")]
         public static bool IsInDesignModeStatic
         {
             get
