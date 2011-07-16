@@ -94,7 +94,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
         /// </summary>
         /// <param name="propertyName"></param>
         [Conditional("DEBUG")]
-        [DebuggerStepThrough]
+        //[DebuggerStepThrough]
         public void VerifyPropertyName(string propertyName)
         {
             var myType = this.GetType();

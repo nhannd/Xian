@@ -101,6 +101,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CustomScrollViewer.cs" />
     <Compile Include="Command\RelayCommand.cs" />
+    <Compile Include="Utilities\PropertyUtils.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>
