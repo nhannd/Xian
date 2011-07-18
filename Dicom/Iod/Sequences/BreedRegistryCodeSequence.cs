@@ -9,7 +9,9 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Dicom.Iod.Macros;
+using ClearCanvas.Dicom.Iod.ContextGroups;
 
 namespace ClearCanvas.Dicom.Iod.Sequences
 {
@@ -17,6 +19,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 	/// BreedRegistry Code Sequence
 	/// </summary>
 	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.7.1.1 (Table C.7-1)</remarks>
+	[Obsolete("Use ContextGroups.BreedRegistry instead.")]
 	public class BreedRegistryCodeSequence : CodeSequenceMacro
 	{
 		/// <summary>
@@ -34,6 +37,16 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		public BreedRegistryCodeSequence(DicomSequenceItem dicomSequenceItem) : base(dicomSequenceItem)
 		{
 			base.ContextIdentifier = "7481";
+		}
+
+		/// <summary>
+		/// Converts a <see cref="BreedRegistryCodeSequence"/> to a <see cref="BreedRegistry"/>.
+		/// </summary>
+		/// <param name="code"></param>
+		/// <returns></returns>
+		public static implicit operator BreedRegistry(BreedRegistryCodeSequence code)
+		{
+			return new BreedRegistry(code.CodingSchemeDesignator, code.CodingSchemeVersion, code.CodeValue, code.CodeMeaning);
 		}
 	}
 }
