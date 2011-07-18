@@ -44,7 +44,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
-		private bool _invert;
 
 		private LutComposer _lutComposer;
 		private LutFactory _lutFactory;
@@ -221,11 +220,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>
 		/// Inversion is equivalent to polarity.
 		/// </remarks>
-		public bool Invert
-		{
-			get { return _invert; }
-			set { _invert = value; }
-		}
+		public bool Invert { get; set; }
+
+	    /// <summary>
+	    /// Gets the default value of <see cref="Invert"/>.  In DICOM, this would be true
+	    /// for all MONOCHROME1 images.
+	    /// </summary>
+	    public bool DefaultInvert { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the VOI LUT factory for this <see cref="GrayscaleImageGraphic"/>.
@@ -451,7 +452,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_isSigned = isSigned;
 			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
 			_rescaleIntercept = rescaleIntercept;
-			_invert = invert;
+			DefaultInvert = Invert = invert;
 		}
 
 		private void InitializeNecessaryLuts(Luts luts)

@@ -48,8 +48,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private Fields
 
-		private bool _invert;
-
 		private LutComposer _lutComposer;
 		private IVoiLutManager _voiLutManager;
 
@@ -149,11 +147,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>
 		/// Inversion is equivalent to polarity.
 		/// </remarks>
-		public bool Invert
-		{
-			get { return _invert; }
-			set { _invert = value; }
-		}
+		public bool Invert { get; set; }
+
+	    /// <summary>
+	    /// Gets the default value of <see cref="Invert"/>.  In DICOM, this would be true
+	    /// for all MONOCHROME1 images.
+	    /// </summary>
+        public bool DefaultInvert { get { return false; } }
 
 		/// <summary>
 		/// Gets an object that encapsulates the pixel data.
