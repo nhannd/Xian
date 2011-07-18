@@ -763,5 +763,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				unavailableItem.Dispose();
 			}
 		}
+
+        internal void ProcessKeyUp(KeyEventArgs ev)
+        {
+            OnKeyDown(ev);
+        }
+
+        internal void ProcessKeyDown(KeyEventArgs args)
+	    {
+	        OnKeyDown(args);
+	    }
 	}
 }

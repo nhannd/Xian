@@ -410,10 +410,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (this.ImageBoxes.Count > 0)
 			{
-				IImageBox topLeftImageBox = this.ImageBoxes[0];
-
-				if (topLeftImageBox != null)
-					topLeftImageBox.SelectDefaultTile();
+                foreach(IImageBox imageBox in ImageBoxes)
+                {
+                    if (imageBox.DisplaySet != null)
+                    {
+                        imageBox.SelectDefaultTile();
+                        return;
+                    }
+                }
+				
 			}
 		}
 
