@@ -10,6 +10,8 @@
 #endregion
 
 using System;
+using ClearCanvas.Dicom.Iod.ContextGroups;
+using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom.Iod.Sequences
 {
@@ -33,9 +35,9 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
 		/// </summary>
-		public void InitializeAttributes() {
+		public void InitializeAttributes()
+		{
 			this.BreedRegistrationNumber = " ";
-			this.BreedRegistryCodeSequence = new BreedRegistryCodeSequence();
 		}
 
 		/// <summary>
@@ -54,22 +56,29 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 
 		/// <summary>
 		/// Gets or sets the value of BreedRegistryCodeSequence in the underlying collection. Type 1.
+		/// Only one item shall be present.
 		/// </summary>
-		public BreedRegistryCodeSequence BreedRegistryCodeSequence
+		public BreedRegistry BreedRegistryCodeSequence
 		{
 			get
 			{
 				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.BreedRegistryCodeSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					return null;
-				return new BreedRegistryCodeSequence(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
+
+				var dicomSequenceItem = ((DicomSequenceItem[])dicomAttribute.Values)[0];
+				return new BreedRegistry(new CodeSequenceMacro(dicomSequenceItem));
 			}
 			set
 			{
 				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.BreedRegistryCodeSequence];
 				if (value == null)
 					throw new ArgumentNullException("value", "BreedRegistryCodeSequence is Type 1 Required.");
-				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+
+				var sequenceItem = new CodeSequenceMacro();
+				value.WriteToCodeSequence(sequenceItem);
+
+				dicomAttribute.Values = new DicomSequenceItem[] { sequenceItem.DicomSequenceItem };
 			}
 		}
 	}

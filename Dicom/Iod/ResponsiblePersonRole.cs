@@ -12,8 +12,11 @@
 namespace ClearCanvas.Dicom.Iod
 {
 	/// <summary>
-	/// Enumeration for Responsible Person
+	/// Enumerated values for the <see cref="DicomTags.ResponsiblePersonRole"/> attribute indicating the role of the responsible person for the named patient.
 	/// </summary>
+	/// <remarks>
+	/// As defined in the DICOM Standard 2009, Part 3, Section C.7.1.1.1.2
+	/// </remarks>
 	public enum ResponsiblePersonRole
 	{
 		/// <summary>
@@ -21,9 +24,14 @@ namespace ClearCanvas.Dicom.Iod
 		/// </summary>
 		None,
 
-		/// <summary>
-		/// 
-		/// </summary>
-		Owner
+		OWNER,
+		PARENT,
+		CHILD,
+		SPOUSE,
+		SIBLING,
+		RELATIVE,
+		GUARDIAN,
+		CUSTODIAN,
+		AGENT
 	}
 }

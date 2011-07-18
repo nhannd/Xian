@@ -480,6 +480,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			queryParams.Add("ModalitiesInStudy", modalityFilter);
 			queryParams.Add("StudyDate", dateRangeQuery);
 			queryParams.Add("StudyInstanceUid", "");
+			queryParams.Add("PatientSpeciesDescription", "");
+			queryParams.Add("PatientSpeciesCodeSequenceCodeValue", "");
+			queryParams.Add("PatientSpeciesCodeSequenceCodeMeaning", "");
+			queryParams.Add("PatientBreedDescription", "");
+			queryParams.Add("PatientBreedCodeSequenceCodeValue", "");
+			queryParams.Add("PatientBreedCodeSequenceCodeMeaning", "");
+			queryParams.Add("ResponsiblePerson", "");
+			queryParams.Add("ResponsibleOrganization", "");
 
 			return queryParams;
 		}

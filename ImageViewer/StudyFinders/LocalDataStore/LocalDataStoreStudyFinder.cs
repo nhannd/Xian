@@ -17,6 +17,7 @@ using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 {
@@ -48,6 +49,38 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 			collection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
 			collection[DicomTags.InstanceAvailability].SetStringValue("");
 
+			collection[DicomTags.PatientSpeciesDescription].SetStringValue(queryParams["PatientSpeciesDescription"]);
+			var codeValue = queryParams["PatientSpeciesCodeSequenceCodeValue"];
+			var codeMeaning = queryParams["PatientSpeciesCodeSequenceCodeMeaning"];
+			if (codeValue != null || codeMeaning != null)
+			{
+				var codeSequenceMacro = new CodeSequenceMacro
+					{
+						CodingSchemeDesignator = "",
+						CodeValue = codeValue,
+						CodeMeaning = codeMeaning
+					};
+				collection[DicomTags.PatientSpeciesCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
+			}
+
+			collection[DicomTags.PatientBreedDescription].SetStringValue(queryParams["PatientBreedDescription"]);
+			codeValue = queryParams["PatientBreedCodeSequenceCodeValue"];
+			codeMeaning = queryParams["PatientBreedCodeSequenceCodeMeaning"];
+			if (codeValue != null || codeMeaning != null)
+			{
+				var codeSequenceMacro = new CodeSequenceMacro
+					{
+						CodingSchemeDesignator = "",
+						CodeValue = codeValue,
+						CodeMeaning = codeMeaning
+					};
+				collection[DicomTags.PatientBreedCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
+			}
+
+			collection[DicomTags.ResponsiblePerson].SetStringValue(queryParams["ResponsiblePerson"]);
+			collection[DicomTags.ResponsiblePersonRole].SetStringValue("");
+			collection[DicomTags.ResponsibleOrganization].SetStringValue(queryParams["ResponsibleOrganization"]);
+
             StudyItemList studyItemList = new StudyItemList();
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
@@ -68,6 +101,30 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					item.InstanceAvailability = result[DicomTags.InstanceAvailability].GetString(0, "");
 					if (String.IsNullOrEmpty(item.InstanceAvailability))
 						item.InstanceAvailability = "ONLINE";
+
+					item.PatientSpeciesDescription = result[DicomTags.PatientSpeciesDescription].GetString(0, "");
+					var patientSpeciesCodeSequence = result[DicomTags.PatientSpeciesCodeSequence];
+					if (!patientSpeciesCodeSequence.IsNull && patientSpeciesCodeSequence.Count > 0)
+					{
+						var codeSequenceMacro = new CodeSequenceMacro(((DicomSequenceItem[]) result[DicomTags.PatientSpeciesCodeSequence].Values)[0]);
+						item.PatientSpeciesCodeSequenceCodingSchemeDesignator = codeSequenceMacro.CodingSchemeDesignator;
+						item.PatientSpeciesCodeSequenceCodeValue = codeSequenceMacro.CodeValue;
+						item.PatientSpeciesCodeSequenceCodeMeaning = codeSequenceMacro.CodeMeaning;
+					}
+
+					item.PatientBreedDescription = result[DicomTags.PatientBreedDescription].GetString(0, "");
+					var patientBreedCodeSequence = result[DicomTags.PatientBreedCodeSequence];
+					if (!patientBreedCodeSequence.IsNull && patientBreedCodeSequence.Count > 0)
+					{
+						var codeSequenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])result[DicomTags.PatientBreedCodeSequence].Values)[0]);
+						item.PatientBreedCodeSequenceCodingSchemeDesignator = codeSequenceMacro.CodingSchemeDesignator;
+						item.PatientBreedCodeSequenceCodeValue = codeSequenceMacro.CodeValue;
+						item.PatientBreedCodeSequenceCodeMeaning = codeSequenceMacro.CodeMeaning;
+					}
+
+					item.ResponsiblePerson = new PersonName(result[DicomTags.ResponsiblePerson].GetString(0, ""));
+					item.ResponsiblePersonRole = result[DicomTags.ResponsiblePersonRole].GetString(0, "");
+					item.ResponsibleOrganization = result[DicomTags.ResponsibleOrganization].GetString(0, "");
 
 					studyItemList.Add(item);
 				}
