@@ -4,6 +4,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Layout;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
@@ -92,29 +93,63 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
         private readonly Data _dataContract;
 
-        private LinearPresetVoiLutSelector(Data dataContract)
-        {
-            _dataContract = dataContract;
-            AlwaysApply = true;
-        }
-
         public LinearPresetVoiLutSelector(object dataContract)
             : this((Data)dataContract)
         {
         }
 
-        public object DataContract { get{ return _dataContract; } }
+        private LinearPresetVoiLutSelector(string modality, string name, double windowWidth, double windowCenter)
+            : this(new Data { Modality = modality, Name = name, WindowWidth = windowWidth, WindowCenter = windowCenter })
+        {
+        }
+
+        private LinearPresetVoiLutSelector(Data dataContract)
+        {
+            _dataContract = dataContract;
+            AlwaysApply = true;
+            UseLatestValues = true;
+        }
+
+        public object DataContract
+        {
+            get
+            {
+                Update();
+                return _dataContract;
+            }
+        }
 
         internal string Modality { get { return _dataContract.Modality; } }
 
         /// <summary>
         /// Specifies whether or not to always apply the LUT, even if it isn't technically
-        /// a match for the image (e.g. not the same <see cref="Modality"/>).
+        /// a match for the image (e.g. not the same <see cref="Modality"/>), or the preset no longer exists.
         /// </summary>
         public bool AlwaysApply { get; set; }
+        /// <summary>
+        /// Specifies whether to automatically update <see cref="WindowWidth"/> and <see cref="WindowCenter"/>
+        /// based on the user's current presets.
+        /// </summary>
+        public bool UseLatestValues { get; set; }
+
         public string Name { get { return _dataContract.Name; } }
-        public double WindowWidth { get { return _dataContract.WindowWidth; } }
-        public double WindowCenter { get { return _dataContract.WindowCenter; } }
+        public double WindowWidth
+        {
+            get
+            {
+                Update();
+                return _dataContract.WindowWidth;
+            }
+        }
+
+        public double WindowCenter
+        {
+            get
+            {
+                Update();
+                return _dataContract.WindowCenter;
+            }
+        }
 
         public string Description
         { 
@@ -126,20 +161,27 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             }
         }
 
+        private void Update()
+        {
+            if (!UseLatestValues)
+                return;
+
+            var selector = CollectionUtils.SelectFirst(GetAllSelectors(),
+                           s => s.Modality == _dataContract.Modality && s.Name == _dataContract.Name);
+
+            if (selector == null)
+                return;
+
+            var otherContract = selector._dataContract;
+            _dataContract.WindowWidth = otherContract.WindowWidth;
+            _dataContract.WindowCenter = otherContract.WindowCenter;
+        }
+
         public static LinearPresetVoiLutSelector CreateFrom(IPresentationImage image)
         {
             string modality;
             var lut = GetAppliedLut(image, out modality);
-            if (lut == null)
-                return null;
-
-            return new LinearPresetVoiLutSelector(new Data
-                    {
-                        Modality = modality,
-                        Name = lut.Name,
-                        WindowWidth = lut.WindowWidth,
-                        WindowCenter = lut.WindowCenter
-                    });
+            return lut == null ? null : new LinearPresetVoiLutSelector(modality, lut.Name, lut.WindowWidth, lut.WindowCenter);
         }
 
         public static List<LinearPresetVoiLutSelector> GetAllSelectors()
@@ -150,12 +192,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
             {
                 foreach (var preset in @group.Presets)
                 {
-                    var dataContract = new Data { Modality = @group.Modality };
                     var operation = (LinearPresetVoiLutOperationComponent)preset.Operation;
-                    dataContract.Name = preset.Operation.Name;
-                    dataContract.WindowWidth = operation.WindowWidth;
-                    dataContract.WindowCenter = operation.WindowCenter;
-                    selectors.Add(new LinearPresetVoiLutSelector(dataContract));
+                    selectors.Add(new LinearPresetVoiLutSelector(@group.Modality, @operation.Name, @operation.WindowWidth, @operation.WindowCenter));
                 }
             }
 
@@ -187,7 +225,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
                 }
             }
 
-            return null;
+            return !AlwaysApply ? null : new LinearPresetVoiLutOperationComponent
+                           {
+                               PresetName = Name,
+                               WindowWidth = WindowWidth,
+                               WindowCenter = WindowCenter
+                           };
         }
 
         private static NamedVoiLutLinear GetAppliedLut(IPresentationImage image, out string modality)
@@ -220,7 +263,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
                     if (!Equals(preset.Operation.Name, namedLut.Name) || !preset.Operation.AppliesTo(image))
                         continue;
 
-                    var operation = (LinearPresetVoiLutOperationComponent)preset.Operation;
+                    //This only works for linear presets.
+                    var operation = preset.Operation as LinearPresetVoiLutOperationComponent;
+                    if (operation == null)
+                        continue;
+
                     if (operation.WindowCenter == namedLut.WindowCenter || operation.WindowWidth == namedLut.WindowWidth)
                         return namedLut;
                 }
