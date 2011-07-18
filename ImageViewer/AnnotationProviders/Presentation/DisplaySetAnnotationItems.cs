@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			{
 				if (presentationImage.ParentDisplaySet.ParentImageSet != null)
 				{
-					return String.Format("{0}/{1}", presentationImage.ParentDisplaySet.Number,
+					return String.Format(SR.FormatDisplaySetNumberAndCount, presentationImage.ParentDisplaySet.Number,
 						presentationImage.ParentDisplaySet.ParentImageSet.DisplaySets.Count);
 				}
 				else

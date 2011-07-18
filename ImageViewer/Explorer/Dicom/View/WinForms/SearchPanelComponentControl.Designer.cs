@@ -123,6 +123,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchButton
 			// 
+			this._searchButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Search;
 			resources.ApplyResources(this._searchButton, "_searchButton");
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.UseVisualStyleBackColor = true;
@@ -130,6 +131,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchLastWeekButton
 			// 
+			this._searchLastWeekButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Last7Days;
 			resources.ApplyResources(this._searchLastWeekButton, "_searchLastWeekButton");
 			this._searchLastWeekButton.Name = "_searchLastWeekButton";
 			this._searchLastWeekButton.UseVisualStyleBackColor = true;
@@ -137,6 +139,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _clearButton
 			// 
+			this._clearButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Clear;
 			resources.ApplyResources(this._clearButton, "_clearButton");
 			this._clearButton.Name = "_clearButton";
 			this._clearButton.UseVisualStyleBackColor = true;
@@ -144,6 +147,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchTodayButton
 			// 
+			this._searchTodayButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Today;
 			resources.ApplyResources(this._searchTodayButton, "_searchTodayButton");
 			this._searchTodayButton.Name = "_searchTodayButton";
 			this._searchTodayButton.UseVisualStyleBackColor = true;

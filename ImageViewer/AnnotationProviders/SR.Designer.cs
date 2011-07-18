@@ -1636,11 +1636,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} mAs.
+        ///   Looks up a localized string similar to The transformed edge does not have a corresponding value..
         /// </summary>
-        public static string Format_mAs {
+        public static string ExceptionTransformedEdgeDoesNotMatch {
             get {
-                return ResourceManager.GetString("Format_mAs", resourceCulture);
+                return ResourceManager.GetString("ExceptionTransformedEdgeDoesNotMatch", resourceCulture);
             }
         }
         
@@ -1654,6 +1654,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} cm.
+        /// </summary>
+        public static string FormatCentimeters {
+            get {
+                return ResourceManager.GetString("FormatCentimeters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}°.
         /// </summary>
         public static string FormatDegrees {
@@ -1663,11 +1672,47 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}/{1}.
+        /// </summary>
+        public static string FormatDisplaySetNumberAndCount {
+            get {
+                return ResourceManager.GetString("FormatDisplaySetNumberAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fr: {0}/{1}.
+        /// </summary>
+        public static string FormatFrameNumberAndCount {
+            get {
+                return ResourceManager.GetString("FormatFrameNumberAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}/{1}.
+        /// </summary>
+        public static string FormatImageNumberAndCount {
+            get {
+                return ResourceManager.GetString("FormatImageNumberAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} kg.
+        /// </summary>
+        public static string FormatKilograms {
+            get {
+                return ResourceManager.GetString("FormatKilograms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} kV.
         /// </summary>
-        public static string FormatkV {
+        public static string FormatKilovolts {
             get {
-                return ResourceManager.GetString("FormatkV", resourceCulture);
+                return ResourceManager.GetString("FormatKilovolts", resourceCulture);
             }
         }
         
@@ -1681,29 +1726,56 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}({1}).
+        /// </summary>
+        public static string FormatLossyCompressionRatio {
+            get {
+                return ResourceManager.GetString("FormatLossyCompressionRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} m.
+        /// </summary>
+        public static string FormatMeters {
+            get {
+                return ResourceManager.GetString("FormatMeters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} mA.
         /// </summary>
-        public static string FormatmA {
+        public static string FormatMilliamps {
             get {
-                return ResourceManager.GetString("FormatmA", resourceCulture);
+                return ResourceManager.GetString("FormatMilliamps", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:F1} mm.
+        ///   Looks up a localized string similar to {0} mAs.
         /// </summary>
-        public static string Formatmm1 {
+        public static string FormatMilliampSeconds {
             get {
-                return ResourceManager.GetString("Formatmm1", resourceCulture);
+                return ResourceManager.GetString("FormatMilliampSeconds", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:F2} ms.
+        ///   Looks up a localized string similar to {0} mm.
         /// </summary>
-        public static string Formatms {
+        public static string FormatMillimeters {
             get {
-                return ResourceManager.GetString("Formatms", resourceCulture);
+                return ResourceManager.GetString("FormatMillimeters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ms.
+        /// </summary>
+        public static string FormatMilliseconds {
+            get {
+                return ResourceManager.GetString("FormatMilliseconds", resourceCulture);
             }
         }
         
@@ -1735,7 +1807,16 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:F1}T.
+        ///   Looks up a localized string similar to {0}/{1}.
+        /// </summary>
+        public static string FormatSeriesNumberAndCount {
+            get {
+                return ResourceManager.GetString("FormatSeriesNumberAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} T.
         /// </summary>
         public static string FormatTeslas {
             get {
@@ -1744,20 +1825,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to kg.
+        ///   Looks up a localized string similar to {0}x.
         /// </summary>
-        public static string Label_kilograms {
+        public static string FormatZoomFactor {
             get {
-                return ResourceManager.GetString("Label_kilograms", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to m.
-        /// </summary>
-        public static string Label_metres {
-            get {
-                return ResourceManager.GetString("Label_metres", resourceCulture);
+                return ResourceManager.GetString("FormatZoomFactor", resourceCulture);
             }
         }
         
@@ -1915,20 +1987,20 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to x.
-        /// </summary>
-        public static string Presentation_Zoom_Indicator {
-            get {
-                return ResourceManager.GetString("Presentation_Zoom_Indicator", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Zoom.
         /// </summary>
         public static string Presentation_Zoom_Label {
             get {
                 return ResourceManager.GetString("Presentation_Zoom_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /.
+        /// </summary>
+        public static string SeparatorLossyCompressionRatio {
+            get {
+                return ResourceManager.GetString("SeparatorLossyCompressionRatio", resourceCulture);
             }
         }
         

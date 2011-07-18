@@ -269,6 +269,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest 
 		ManifestInputDicomEditor.xml = ManifestInputDicomEditor.xml
 		ManifestInputDicomRemote.xml = ManifestInputDicomRemote.xml
 		ManifestInputEnterprise.xml = ManifestInputEnterprise.xml
+		ManifestInputExternals.xml = ManifestInputExternals.xml
 		ManifestInputFusion.xml = ManifestInputFusion.xml
 		ManifestInputHelpFiles.xml = ManifestInputHelpFiles.xml
 		ManifestInputHelpUpdate.xml = ManifestInputHelpUpdate.xml
@@ -280,6 +281,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest 
 		ManifestInputStudyBrowser.xml = ManifestInputStudyBrowser.xml
 		ManifestInputStudyComposer.xml = ManifestInputStudyComposer.xml
 		ManifestInputStudyFilters.xml = ManifestInputStudyFilters.xml
+		ManifestInputSynchronizationTools.xml = ManifestInputSynchronizationTools.xml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Executable", "..\Executable\ClearCanvas.Executable.csproj", "{EA26AAB0-85FE-4ECC-BB9A-D99374869AA5}"

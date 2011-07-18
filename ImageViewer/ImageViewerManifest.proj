@@ -145,7 +145,17 @@
     <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputHelpFiles.xml">
       <Output TaskParameter="Include" ItemName="ManifestFiles" />
     </CreateItem>
-  </Target> 
+  </Target>
+  <Target Name="Externals" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputExternals.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
+  <Target Name="SynchronizationTools" >
+    <CreateItem Include="$(TrunkDirectory)\ImageViewer\ManifestInputSynchronizationTools.xml">
+      <Output TaskParameter="Include" ItemName="ManifestFiles" />
+    </CreateItem>
+  </Target>
   
   <Target Name ="Create Manifests" >
 
@@ -228,6 +238,16 @@
       <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpFiles" />
     </RegexIsMatch>
     <CallTarget Targets="HelpFiles" Condition ="!$(ExcludeHelpFiles)"/>
+    
+    <RegexIsMatch Pattern="ExcludeExternals" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeExternals" />
+    </RegexIsMatch>
+    <CallTarget Targets="Externals" Condition ="!$(ExcludeExternals)"/>
+
+    <RegexIsMatch Pattern="ExcludeSynchronizationTools" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeSynchronizationTools" />
+    </RegexIsMatch>
+    <CallTarget Targets="SynchronizationTools" Condition ="!$(ExcludeSynchronizationTools)"/>
     
     <CallTarget Targets="GetDefaultManifestInputs" />
 

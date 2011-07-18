@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
@@ -327,7 +326,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				DicomGraphicsPlane psGraphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
 				if (psGraphic != null)
 				{
-					foreach (ILayer layerGraphic in (IEnumerable<ILayer>)psGraphic.Layers)
+					foreach (ILayer layerGraphic in (IEnumerable<ILayer>) psGraphic.Layers)
 					{
 						// do not serialize the inactive layer, and do not serialize layers more than once
 						if (!string.IsNullOrEmpty(layerGraphic.Id) && !layerIndex.ContainsKey(layerGraphic.Id))
@@ -371,7 +370,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				DicomGraphicsPlane psGraphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
 				if (psGraphic != null)
 				{
-					foreach (ILayer layerGraphic in (IEnumerable<ILayer>)psGraphic.Layers)
+					foreach (ILayer layerGraphic in (IEnumerable<ILayer>) psGraphic.Layers)
 					{
 						foreach (IGraphic graphic in layerGraphic.Graphics)
 						{
@@ -526,7 +525,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 					// identify any visible overlays
 					foreach (ILayer layer in
-						CollectionUtils.Select((IEnumerable<ILayer>)dicomGraphics.Layers, delegate(ILayer test) { return test.Visible; }))
+						CollectionUtils.Select((IEnumerable<ILayer>) dicomGraphics.Layers, delegate(ILayer test) { return test.Visible; }))
 					{
 						foreach (OverlayPlaneGraphic overlay in
 							CollectionUtils.Select(layer.Graphics, delegate(IGraphic test) { return test is OverlayPlaneGraphic && test.Visible; }))
@@ -539,12 +538,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			Queue<OverlayPlaneGraphic> overlaysToRemap = new Queue<OverlayPlaneGraphic>();
 
 			// user and presentation state overlays are high priority items to remap
-			foreach(OverlayPlaneGraphic overlay in CollectionUtils.Select(visibleOverlays, delegate(OverlayPlaneGraphic t) { return t.Source != OverlayPlaneSource.Image; }))
+			foreach (OverlayPlaneGraphic overlay in CollectionUtils.Select(visibleOverlays, delegate(OverlayPlaneGraphic t) { return t.Source != OverlayPlaneSource.Image; }))
 				overlaysToRemap.Enqueue(overlay);
-			foreach (OverlayPlaneGraphic overlay in CollectionUtils.Select(visibleOverlays, delegate(OverlayPlaneGraphic t) { return t.Source == OverlayPlaneSource.Image; })) {
+			foreach (OverlayPlaneGraphic overlay in CollectionUtils.Select(visibleOverlays, delegate(OverlayPlaneGraphic t) { return t.Source == OverlayPlaneSource.Image; }))
+			{
 				if (overlayMap[overlay.Index] == null)
 					overlayMap[overlay.Index] = overlay;
-				else 
+				else
 					overlaysToRemap.Enqueue(overlay); // image overlays are lower priority items to remap, since they will be included in the header anyway
 			}
 
@@ -602,7 +602,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				OverlayPlaneGraphic overlay = overlayMapping[n];
 				if (overlay != null)
 				{
-					if(overlay.ParentGraphic is ILayer)
+					if (overlay.ParentGraphic is ILayer)
 					{
 						overlayActivationModule[n].OverlayActivationLayer = ((ILayer) overlay.ParentGraphic).Id;
 					}
@@ -665,6 +665,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private bool _overlayPlanesDeserialized = false;
 
+		private static PointF GetRectangleCenter(RectangleF rectangle)
+		{
+			return new PointF((rectangle.Left + rectangle.Right)/2f, (rectangle.Top + rectangle.Bottom)/2f);
+		}
+
 		protected void DeserializeDisplayedArea(DisplayedAreaModuleIod dispAreaMod, out RectangleF displayedArea, T image)
 		{
 			ISpatialTransform spatialTransform = image.SpatialTransform;
@@ -672,9 +677,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				if (item.ReferencedImageSequence[0].ReferencedSopInstanceUid == image.ImageSop.SopInstanceUid)
 				{
-					RectangleF displayRect = new RectangleF(item.DisplayedAreaTopLeftHandCorner, new Size(item.DisplayedAreaBottomRightHandCorner - new Size(item.DisplayedAreaTopLeftHandCorner)));
+					// get the displayed area of the image in source coordinates (stored values do not have sub-pixel accuracy)
+					var displayRect = RectangleF.FromLTRB(item.DisplayedAreaTopLeftHandCorner.X,
+					                                      item.DisplayedAreaTopLeftHandCorner.Y,
+					                                      item.DisplayedAreaBottomRightHandCorner.X,
+					                                      item.DisplayedAreaBottomRightHandCorner.Y);
 					displayRect = RectangleUtilities.ConvertToPositiveRectangle(displayRect);
 					displayRect.Location = displayRect.Location - new SizeF(1, 1);
+					displayRect.Size = displayRect.Size + new SizeF(1, 1);
+
+					var centerDisplay = true;
 
 					switch (item.PresentationSizeMode)
 					{
@@ -692,22 +704,32 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 								// if the display rect is the whole image, then take advantage of the built-in scale image to fit functionality
 								IImageSpatialTransform iist = (IImageSpatialTransform) spatialTransform;
 								iist.ScaleToFit = true;
+								centerDisplay = false; // when ScaleToFit is true, the image will automatically be positioned correctly in the client area
 							}
 							else
 							{
-								// otherwise manually compute max magnification to show all off selected area
-								SizeF clientArea = image.ClientRectangle.Size;
-								if (spatialTransform.RotationXY%180 > 0)
-									clientArea = new SizeF(clientArea.Height, clientArea.Width);
-								spatialTransform.Scale = Math.Min(clientArea.Width/displayRect.Width, clientArea.Height/displayRect.Height);
+								var clientArea = image.ClientRectangle.Size;
+								var displaySize = displayRect.Size;
+
+								// if image is rotated 90 or 270, transpose width/height
+								if (Math.Abs(Math.Round(Math.Sin(spatialTransform.RotationXY*Math.PI/180))) > 0)
+									displaySize = new SizeF(displaySize.Height, displaySize.Width);
+
+								// compute the maximum magnification that allows the entire displayRect to be visible
+								spatialTransform.Scale = Math.Min(clientArea.Width/displaySize.Width, clientArea.Height/displaySize.Height);
 							}
 
 							break;
 					}
 
-					// center the area on the tile
-					spatialTransform.TranslationX = (item.DisplayedAreaTopLeftHandCorner.X + item.DisplayedAreaBottomRightHandCorner.X - image.ImageGraphic.Columns)/-2f;
-					spatialTransform.TranslationY = (item.DisplayedAreaTopLeftHandCorner.Y + item.DisplayedAreaBottomRightHandCorner.Y - image.ImageGraphic.Rows)/-2f;
+					if (centerDisplay && spatialTransform is SpatialTransform)
+					{
+						// compute translation so that the displayRect is centered in the clientRect
+						var displayCentre = GetRectangleCenter(displayRect);
+						var clientCentre = ((SpatialTransform) spatialTransform).ConvertToSource(GetRectangleCenter(image.ClientRectangle));
+						spatialTransform.TranslationX = clientCentre.X - displayCentre.X;
+						spatialTransform.TranslationY = clientCentre.Y - displayCentre.Y;
+					}
 
 					displayedArea = displayRect;
 					return;
@@ -729,7 +751,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				spatialTransform.FlipX = false;
 				spatialTransform.FlipY = true;
-				spatialTransform.RotationXY = (360 - module.ImageRotation) % 360;
+				spatialTransform.RotationXY = (360 - module.ImageRotation)%360;
 			}
 			else
 			{
@@ -797,7 +819,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			if (!_overlayPlanesDeserialized)
 				throw new InvalidOperationException("Overlay planes must be deserialized first.");
 
-			if(bitmapDisplayShutterModule.ShutterShape == ShutterShape.Bitmap)
+			if (bitmapDisplayShutterModule.ShutterShape == ShutterShape.Bitmap)
 			{
 				DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
 				int overlayIndex = bitmapDisplayShutterModule.ShutterOverlayGroupIndex;

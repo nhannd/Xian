@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 					// this is actually DX Positioning module
 					"Dicom.DXImage.BodyPartThickness",
 					resolver,
-					f => FormatFloat64(f, DicomTags.BodyPartThickness, SR.Formatmm1),
+					f => string.Format(SR.FormatMillimeters, FormatFloat64(f, DicomTags.BodyPartThickness, "{0:F1}")),
 					DicomDataFormatHelper.RawStringFormat
 					)
 				);
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 					// this isn't even a DX module, but other X-Ray related modules
 					"Dicom.DXImage.KVP",
 					resolver,
-					f => FormatFloat64(f, DicomTags.Kvp, SR.FormatkV),
+					f => FormatFloat64(f, DicomTags.Kvp, SR.FormatKilovolts),
 					DicomDataFormatHelper.RawStringFormat
 					)
 				);
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 					// this isn't even a DX module, but other X-Ray related modules
 					"Dicom.DXImage.ExposureInMas",
 					resolver,
-					f => FormatFloat64(f, DicomTags.ExposureInMas, SR.Format_mAs),
+					f => FormatFloat64(f, DicomTags.ExposureInMas, SR.FormatMilliampSeconds),
 					DicomDataFormatHelper.RawStringFormat
 					)
 				);

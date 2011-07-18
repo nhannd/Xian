@@ -65,6 +65,7 @@
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CloseHelperComponentView.cs" />
+    <Compile Include="CommonDialogHook.cs" />
     <Compile Include="Configuration\ActionModelConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

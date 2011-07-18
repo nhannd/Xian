@@ -43,6 +43,7 @@ ImageViewer/ClearCanvas.ImageViewer.xml
 
 # Viewer local datastore files
 dicom_datastore/*.sdf
+dicom_datastore/filestore/*.*
 *.dcm
 *studyXml.xml
 

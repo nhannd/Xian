@@ -132,6 +132,9 @@
   <data name="ActionNotAllowed_StudyIsNearline" xml:space="preserve">
     <value>Study is nearline.</value>
   </data>
+  <data name="MessageCurrentSessionNoLongerValid" xml:space="preserve">
+    <value>The current session is no longer valid.</value>
+  </data>
   <data name="WebGUILogHeader" xml:space="preserve">
     <value>Web (@{0},{1} {2}, User:{3})</value>
   </data>

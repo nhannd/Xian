@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							if (double.IsNaN(input) || input == 0)
 								return "";
 
-							return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
+							return String.Format(SR.FormatMeters, input.ToString("F2"));
 						}
 					)
 				);
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							if (double.IsNaN(input) || input == 0)
 								return "";
 
-							return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);
+							return String.Format(SR.FormatKilograms, input.ToString("F2"));
 						}
 					)
 				);

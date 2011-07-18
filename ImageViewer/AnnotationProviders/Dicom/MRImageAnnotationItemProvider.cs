@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							double value;
 							bool tagExists = frame.ParentImageSop[DicomTags.EchoTime].TryGetFloat64(0, out value);
 							if (tagExists)
-								return String.Format(SR.Formatms, value);
+								return String.Format(SR.FormatMilliseconds, value.ToString("F2"));
 
 							return "";
 						},
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							double value;
 							bool tagExists = frame.ParentImageSop[DicomTags.MagneticFieldStrength].TryGetFloat64(0, out value);
 							if (tagExists)
-								return String.Format(SR.FormatTeslas, value);
+								return String.Format(SR.FormatTeslas, value.ToString("F1"));
 
 							return "";
 						},
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							double value;
 							bool tagExists = frame.ParentImageSop[DicomTags.RepetitionTime].TryGetFloat64(0, out value);
 							if (tagExists)
-								return String.Format(SR.Formatms, value);
+								return String.Format(SR.FormatMilliseconds, value.ToString("F2"));
 
 							return "";
 						},

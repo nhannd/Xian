@@ -853,6 +853,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cubic.
+        /// </summary>
+        public static string LabelFilmSmoothingTypeCubic {
+            get {
+                return ResourceManager.GetString("LabelFilmSmoothingTypeCubic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to High.
         /// </summary>
         public static string LabelPrintPriorityHigh {

@@ -158,17 +158,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             }
         }
 
-
         /// <summary>
-        /// Terminates the current session and redirects users to the login page and displays the given message on the screen.
+        /// Terminates the current session and redirects users to the login page and logs the given log message and 
+        /// displays the given display message on the screen.
         /// </summary>
-        public static void TerminateSession(string reason)
+        public static void TerminateSession(string logMessage, string displayMessage)
         {
             SignOut();// force to signout by removing the authentication ticket
-            String queryString = String.Format("error={0}", reason);
-            if (!String.IsNullOrEmpty(reason))
+            if (!String.IsNullOrEmpty(logMessage))
             {
-                Platform.Log(LogLevel.Info, "Terminate session because {0}", reason);
+                Platform.Log(LogLevel.Info, "Terminate session because {0}", logMessage);
                 Platform.Log(LogLevel.Info, Environment.StackTrace);
             }
 
@@ -180,11 +179,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             {
                 // Redirect to login page but don't include the ReturnUrl
                 var baseUrl = VirtualPathUtility.ToAbsolute(FormsAuthentication.LoginUrl);
-                string loginUrl = string.Format("{0}?error={1}", baseUrl, reason);
+                var loginUrl = string.Format("{0}?error={1}", baseUrl, displayMessage);
                 HttpContext.Current.Response.Redirect(loginUrl, true);
             }
             else
-                FormsAuthentication.RedirectToLoginPage(queryString);
+                FormsAuthentication.RedirectToLoginPage(String.Format("error={0}", displayMessage));
             
         }
 

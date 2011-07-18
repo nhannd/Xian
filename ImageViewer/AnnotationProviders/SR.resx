@@ -569,30 +569,30 @@
   </data>
   <data name="FormatDegrees" xml:space="preserve">
     <value>{0}°</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
-  <data name="FormatkV" xml:space="preserve">
+  <data name="FormatKilovolts" xml:space="preserve">
     <value>{0} kV</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
   <data name="FormatLateralityViewPosition" xml:space="preserve">
     <value>{0}/{1}</value>
   </data>
-  <data name="FormatmA" xml:space="preserve">
+  <data name="FormatMilliamps" xml:space="preserve">
     <value>{0} mA</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
-  <data name="Formatmm1" xml:space="preserve">
-    <value>{0:F1} mm</value>
+  <data name="FormatMillimeters" xml:space="preserve">
+    <value>{0} mm</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
-  <data name="Formatms" xml:space="preserve">
-    <value>{0:F2} ms</value>
+  <data name="FormatMilliseconds" xml:space="preserve">
+    <value>{0} ms</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
   <data name="FormatTeslas" xml:space="preserve">
-    <value>{0:F1}T</value>
-  </data>
-  <data name="Label_kilograms" xml:space="preserve">
-    <value>kg</value>
-  </data>
-  <data name="Label_metres" xml:space="preserve">
-    <value>m</value>
+    <value>{0} T</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
   <data name="Presentation_AppliedLut_DisplayName" xml:space="preserve">
     <value>Lut (Applied)</value>
@@ -645,9 +645,6 @@
   <data name="Presentation_Zoom_DisplayName" xml:space="preserve">
     <value>Zoom</value>
   </data>
-  <data name="Presentation_Zoom_Indicator" xml:space="preserve">
-    <value>x</value>
-  </data>
   <data name="Presentation_Zoom_Label" xml:space="preserve">
     <value>Zoom</value>
   </data>
@@ -677,6 +674,7 @@
   </data>
   <data name="Format2Dimensions" xml:space="preserve">
     <value>{0} x {1}</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
   <data name="Dicom_PatientStudy_Composite_PatientsAgeSex_DisplayName" xml:space="preserve">
     <value>Patient's Age and Sex</value>
@@ -764,8 +762,44 @@
   </data>
   <data name="FormatNewtons" xml:space="preserve">
     <value>{0} N</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
-  <data name="Format_mAs" xml:space="preserve">
+  <data name="FormatMilliampSeconds" xml:space="preserve">
     <value>{0} mAs</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatCentimeters" xml:space="preserve">
+    <value>{0} cm</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatDisplaySetNumberAndCount" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="FormatFrameNumberAndCount" xml:space="preserve">
+    <value>Fr: {0}/{1}</value>
+  </data>
+  <data name="FormatImageNumberAndCount" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="FormatKilograms" xml:space="preserve">
+    <value>{0} kg</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatLossyCompressionRatio" xml:space="preserve">
+    <value>{0}({1})</value>
+  </data>
+  <data name="FormatMeters" xml:space="preserve">
+    <value>{0} m</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatSeriesNumberAndCount" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="FormatZoomFactor" xml:space="preserve">
+    <value>{0}x</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="SeparatorLossyCompressionRatio" xml:space="preserve">
+    <value>/</value>
   </data>
 </root>
