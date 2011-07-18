@@ -612,6 +612,15 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to W:{0} L:{1} ({2}).
         /// </summary>
+        public static string FormatDescriptionNamedLinearLut {
+            get {
+                return ResourceManager.GetString("FormatDescriptionNamedLinearLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W:{0} L:{1} ({2}).
+        /// </summary>
         public static string FormatDescriptionPresentationStateLinearLut {
             get {
                 return ResourceManager.GetString("FormatDescriptionPresentationStateLinearLut", resourceCulture);

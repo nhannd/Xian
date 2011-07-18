@@ -26,12 +26,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 	{
 		private const char _lateralityLeft = 'L';
 		private const char _lateralityRight = 'R';
-		private const char _orientationLeft = 'L';
-		private const char _orientationRight = 'R';
-		private const char _orientationHead = 'H';
-		private const char _orientationFoot = 'F';
-		private const char _orientationPosterior = 'P';
-		private const char _orientationAnterior = 'A';
 
 		[CloneIgnore]
 		private readonly Vector3D _imagePosterior;
@@ -153,14 +147,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 			screenPosterior = new Vector3D((int) screenPosterior.X, (int) screenPosterior.Y, 0);
 
 			if (screenPosterior.Y > 0)
-				column = _orientationPosterior.ToString();
+				column = PatientDirection.PosteriorCode.ToString();
 			else if (screenPosterior.Y < 0)
-				column = _orientationAnterior.ToString();
+				column = PatientDirection.AnteriorCode.ToString();
 
 			if (screenPosterior.X > 0)
-				row = _orientationPosterior.ToString();
+				row = PatientDirection.PosteriorCode.ToString();
 			else if (screenPosterior.X < 0)
-				row = _orientationAnterior.ToString();
+				row = PatientDirection.AnteriorCode.ToString();
 		}
 
 		private static void GetNormativeOrientationVectors(string laterality, out Vector3D headVector, out Vector3D leftVector, out Vector3D posteriorVector)
@@ -189,54 +183,51 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private static void GetPatientOrientationVectors(PatientOrientation patientOrientation, out Vector3D headVector, out Vector3D leftVector, out Vector3D posteriorVector)
 		{
 			headVector = leftVector = posteriorVector = null;
-			if (patientOrientation == null)
+			if (patientOrientation == null || patientOrientation.IsEmpty)
 				return;
 
-			if (!string.IsNullOrEmpty(patientOrientation.Row))
+			switch (patientOrientation.Row.Code[0])
 			{
-				switch (char.ToUpperInvariant(patientOrientation.Row[0]))
-				{
-					case _orientationLeft:
-						leftVector = new Vector3D(+1, 0, 0);
-						break;
-					case _orientationRight:
-						leftVector = new Vector3D(-1, 0, 0);
-						break;
-					case _orientationPosterior:
-						posteriorVector = new Vector3D(+1, 0, 0);
-						break;
-					case _orientationAnterior:
-						posteriorVector = new Vector3D(-1, 0, 0);
-						break;
-					case _orientationHead:
-						headVector = new Vector3D(+1, 0, 0);
-						break;
-					case _orientationFoot:
-						headVector = new Vector3D(-1, 0, 0);
-						break;
-				}
+				case PatientDirection.LeftCode:
+					leftVector = new Vector3D(+1, 0, 0);
+					break;
+				case PatientDirection.RightCode:
+					leftVector = new Vector3D(-1, 0, 0);
+					break;
+				case PatientDirection.PosteriorCode:
+					posteriorVector = new Vector3D(+1, 0, 0);
+					break;
+				case PatientDirection.AnteriorCode:
+					posteriorVector = new Vector3D(-1, 0, 0);
+					break;
+				case PatientDirection.HeadCode:
+					headVector = new Vector3D(+1, 0, 0);
+					break;
+				case PatientDirection.FootCode:
+					headVector = new Vector3D(-1, 0, 0);
+					break;
 			}
 
 			if (!string.IsNullOrEmpty(patientOrientation.Column))
 			{
-				switch (char.ToUpperInvariant(patientOrientation.Column[0]))
+				switch (patientOrientation.Column.Code[0])
 				{
-					case _orientationLeft:
+					case PatientDirection.LeftCode:
 						leftVector = new Vector3D(0, +1, 0);
 						break;
-					case _orientationRight:
+					case PatientDirection.RightCode:
 						leftVector = new Vector3D(0, -1, 0);
 						break;
-					case _orientationPosterior:
+					case PatientDirection.PosteriorCode:
 						posteriorVector = new Vector3D(0, +1, 0);
 						break;
-					case _orientationAnterior:
+					case PatientDirection.AnteriorCode:
 						posteriorVector = new Vector3D(0, -1, 0);
 						break;
-					case _orientationHead:
+					case PatientDirection.HeadCode:
 						headVector = new Vector3D(0, +1, 0);
 						break;
-					case _orientationFoot:
+                    case PatientDirection.FootCode:
 						headVector = new Vector3D(0, -1, 0);
 						break;
 				}

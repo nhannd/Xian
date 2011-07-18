@@ -147,6 +147,7 @@
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\BufferCache.cs" />
+    <Compile Include="Common\Cache.cs" />
     <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Common\Diagnostics.cs" />
     <Compile Include="Common\LargeObjectContainer.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Common\MemoryManagementStrategy.cs" />
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
+    <Compile Include="Comparers\ReverseComparer.cs" />
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
@@ -168,6 +170,19 @@
     <Compile Include="Graphics\Tests\MammographyImageSpatialTransformTest.cs" />
     <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
+    <Compile Include="Imaging\NamedVoiLutLinear.cs" />
+    <Compile Include="Layout\HpDataContractAttribute.cs" />
+    <Compile Include="Layout\HpExtensionPoints.cs" />
+    <Compile Include="Layout\HpMatchResult.cs" />
+    <Compile Include="Layout\HpProperty.cs" />
+    <Compile Include="Layout\IHpContributor.cs" />
+    <Compile Include="Layout\IHpImageBoxDefinitionContributor.cs" />
+    <Compile Include="Layout\IHpLayoutDefinitionContributor.cs" />
+    <Compile Include="Layout\IHpLayoutHook.cs" />
+    <Compile Include="Layout\IHpMatchCriteriaContributor.cs" />
+    <Compile Include="Layout\IHpProperty.cs" />
+    <Compile Include="Layout\IHpSerializableElement.cs" />
+    <Compile Include="Layout\Tests\HpMatchResultTests.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
@@ -178,6 +193,7 @@
     <Compile Include="Common\IBlockingEnumerator.cs" />
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
+    <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />
     <Compile Include="StudyManagement\WeightedWindowPrefetchingStrategy.cs" />
@@ -301,7 +317,7 @@
     <Compile Include="IUndoableOperation.cs" />
     <Compile Include="LinkedImageEnumerator.cs" />
     <Compile Include="Mathematics\Tests\PolygonFTests.cs" />
-    <Compile Include="PresentationStates\Dicom\DicomDefaultPresentationState.cs" />
+    <Compile Include="PresentationStates\Dicom\DicomPresentationState.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\DecoratorGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\EllipseGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\PolylineGraphicAnnotationSerializer.cs" />
@@ -474,7 +490,7 @@
     <Compile Include="Mathematics\Vector3D.cs" />
     <Compile Include="PriorStudyFinder.cs" />
     <Compile Include="PriorStudyLoader.cs" />
-    <Compile Include="ReferenceCountedObjectWrapper.cs" />
+    <Compile Include="Common\ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\BackBuffer.cs" />

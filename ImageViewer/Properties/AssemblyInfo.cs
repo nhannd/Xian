@@ -19,7 +19,7 @@ using ClearCanvas.Common;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("Model Plugin")]
+[assembly: AssemblyTitle("Image Viewer Plugin")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]

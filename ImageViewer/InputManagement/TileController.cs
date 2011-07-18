@@ -789,33 +789,41 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return ProcessTrackMessage(message as TrackMousePositionMessage);
 			}
 
-			if (_tile.PresentationImage != null)
-			{
-				if (message is MouseWheelMessage)
-				{
-					bool returnValue = ProcessMouseWheelMessage(message as MouseWheelMessage);
-					TrackCurrentPosition();
-					return returnValue;
-				}
-				else if (message is KeyboardButtonMessage)
-				{
-					bool returnValue = ProcessKeyboardMessage(message as KeyboardButtonMessage);
-					TrackCurrentPosition();
-					return returnValue;
-				}
-				else if (message is ReleaseCaptureMessage)
-				{
-					ReleaseCapture(true);
-					TrackCurrentPosition();
-					return true;
-				}
-				else if (message is MouseLeaveMessage)
-				{
-					_tile.PresentationImage.FocussedGraphic = null;
-				}
-			}
-
-			return false;
+            if (_tile.PresentationImage != null)
+            {
+                if (message is MouseWheelMessage)
+                {
+                    bool returnValue = ProcessMouseWheelMessage(message as MouseWheelMessage);
+                    TrackCurrentPosition();
+                    return returnValue;
+                }
+                else if (message is KeyboardButtonMessage)
+                {
+                    bool returnValue = ProcessKeyboardMessage(message as KeyboardButtonMessage);
+                    TrackCurrentPosition();
+                    return returnValue;
+                }
+                else if (message is ReleaseCaptureMessage)
+                {
+                    ReleaseCapture(true);
+                    TrackCurrentPosition();
+                    return true;
+                }
+                else if (message is MouseLeaveMessage)
+                {
+                    _tile.PresentationImage.FocussedGraphic = null;
+                }
+            }
+            else
+            {
+                // We should respond to keyboard even when there's no presentation image.
+                if (message is KeyboardButtonMessage)
+                {
+                    bool returnValue = ProcessKeyboardMessage(message as KeyboardButtonMessage);
+                    return returnValue;
+                }
+            }
+		    return false;
 		}
 
 		#endregion

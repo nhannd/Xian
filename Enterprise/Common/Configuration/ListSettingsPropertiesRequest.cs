@@ -15,7 +15,7 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
 {

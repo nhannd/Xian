@@ -34,9 +34,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	/// The objects that constitute the presentation state of a given <see cref="IPresentationImage"/> are defined by the specific implementations.
 	/// </remarks>
 	[Cloneable(true)]
-	public abstract class PresentationState
+    public abstract class PresentationState
 	{
-		public static readonly PresentationState DicomDefault = DicomDefaultPresentationState.Instance;
+        /// <summary>
+        /// Gets the default <see cref="PresentationState"/> for DICOM images.
+        /// </summary>
+		public static readonly PresentationState DicomDefault = DicomPresentationState.Default;
 
 		/// <summary>
 		/// Constructs a new presentation state.

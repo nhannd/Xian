@@ -14,128 +14,144 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.Iod
 {
-	/// <summary>
+    /// <summary>
 	/// Represents the orientation of the image in the patient using dicom enumerated values
 	/// to indicate the direction of the first row and column in the image.
 	/// </summary>
 	public class PatientOrientation : IEquatable<PatientOrientation>
 	{
-		#region Private Members
+        public static PatientOrientation Empty = new PatientOrientation(String.Empty, String.Empty);
+        public static PatientOrientation AxialRight = new PatientOrientation(PatientDirection.Right, PatientDirection.Posterior);
+        public static PatientOrientation AxialLeft = new PatientOrientation(PatientDirection.Left, PatientDirection.Posterior);
+        public static PatientOrientation SaggittalPosterior = new PatientOrientation(PatientDirection.Posterior, PatientDirection.Foot);
+        public static PatientOrientation SaggittalAnterior = new PatientOrientation(PatientDirection.Anterior, PatientDirection.Foot);
+        public static PatientOrientation CoronalRight = new PatientOrientation(PatientDirection.Right, PatientDirection.Foot);
+        public static PatientOrientation CoronalLeft = new PatientOrientation(PatientDirection.Left, PatientDirection.Foot);
 
-		private string _row;
-		private string _column;
-
-		#endregion
-
-		/// <summary>
+        public PatientOrientation(PatientDirection row, PatientDirection column)
+        {
+            Row = new PatientDirection(row);
+            Column = new PatientDirection(column);
+        }
+        
+        /// <summary>
 		/// Constructor.
 		/// </summary>
 		public PatientOrientation(string row, string column)
-		{
-			_row = row ?? "";
-			_column = column ?? "";
-		}
-
-		/// <summary>
-		/// Protected constructor.
-		/// </summary>
-		protected PatientOrientation()
-			: this("", "")
+            : this (new PatientDirection(row), new PatientDirection(column))
 		{
 		}
 
-		#region Public Properties
+        #region Public Properties
 
 		/// <summary>
 		/// Gets whether or not this <see cref="PatientOrientation"/> object is empty.
 		/// </summary>
 		public bool IsEmpty
 		{
-			get { return _row == "" && _column == ""; }	
+			get { return Row.IsEmpty && Column.IsEmpty; }	
 		}
 
-		/// <summary>
+        public bool IsValid
+        {
+            get
+            {
+                //Both unspecified is not valid.
+                if (Row.Equals(Column))
+                    return false;
+
+                if (!Row.IsValid || !Column.IsValid)
+                    return false;
+
+                //We could do something with vectors and check they are "orthogonal", but this is pretty good.
+                for (int i = 0; i < Math.Max(Row.ComponentCount, Column.ComponentCount); ++i)
+                {
+                    //They can both point to the same direction in the patient, but
+                    //they can't both have "primary component == Foot", for example
+                    //or event have primary components along the same axis (e.g. Right and Left).
+                    var row = Row[i]; var column = Column[i];
+                    if (row.Equals(column))
+                        return false;
+
+                    if (row.Equals(column.OpposingDirection))
+                        return false;
+                }
+
+                return true;
+            }    
+        }
+
+        /// <summary>
 		/// Gets the direction of the first row in the image.
 		/// </summary>
-		public virtual string Row
-		{
-			get { return _row; }
-			protected set { _row = value ?? ""; }
-		}
+		public virtual PatientDirection Row { get; private set; }
 
 		/// <summary>
 		/// Gets the direction of the first column in the image.
 		/// </summary>
-		public virtual string Column
-		{
-			get { return _column; }
-			protected set { _column = value ?? ""; }
-		}
+		public virtual PatientDirection Column { get; private set; }
 
 		/// <summary>
 		/// Gets the primary direction of the first row in the image.
 		/// </summary>
-		public string PrimaryRow
+        public PatientDirection PrimaryRow
 		{
-			get
-			{
-				var direction = Row;
-				if (!string.IsNullOrEmpty(direction) && direction.Length >= 1)
-					return direction[0].ToString();
-				return string.Empty;
-			}
+            get { return Row.Primary; }
 		}
 
 		/// <summary>
 		/// Gets the primary direction of the first column in the image.
 		/// </summary>
-		public string PrimaryColumn
+        public PatientDirection PrimaryColumn
 		{
-			get
-			{
-				var direction = Column;
-				if (!string.IsNullOrEmpty(direction) && direction.Length >= 1)
-					return direction[0].ToString();
-				return string.Empty;
-			}
-		}
+            get { return Column.Primary; }
+        }
 
 		/// <summary>
 		/// Gets the secondary direction of the first row in the image.
 		/// </summary>
-		public string SecondaryRow
+        public PatientDirection SecondaryRow
 		{
-			get
-			{
-				var direction = Row;
-				if (!string.IsNullOrEmpty(direction) && direction.Length >= 2)
-					return direction[1].ToString();
-				return string.Empty;
-			}
+            get { return Row.Secondary; }
 		}
 
 		/// <summary>
 		/// Gets the secondary direction of the first column in the image.
 		/// </summary>
-		public string SecondaryColumn
+        public PatientDirection SecondaryColumn
 		{
-			get
-			{
-				var direction = Column;
-				if (!string.IsNullOrEmpty(direction) && direction.Length >= 2)
-					return direction[1].ToString();
-				return string.Empty;
-			}
+            get { return Column.Secondary; }
 		}
 
-		#endregion
+        /// <summary>
+        /// Gets the tertiary direction of the first row in the image.
+        /// </summary>
+        public PatientDirection TertiaryRow
+        {
+            get { return Row.Tertiary; }
+        }
 
-		/// <summary>
+        /// <summary>
+        /// Gets the tertiary direction of the first column in the image.
+        /// </summary>
+        public PatientDirection TertiaryColumn
+        {
+            get { return Column.Tertiary; }
+        }
+
+	    #endregion
+
+        #region Public Methods
+
+        /// <summary>
 		/// Gets a string suitable for direct insertion into a <see cref="DicomAttributeMultiValueText"/> attribute.
 		/// </summary>
 		public override string ToString()
 		{
-			return String.Format(@"{0}\{1}", _row, _column);
+            if (Row.IsEmpty && Column.IsEmpty)
+                return String.Empty;
+
+			return String.Format(@"{0}\{1}", Row, Column);
 		}
 
 		/// <summary>
@@ -160,7 +176,7 @@ namespace ClearCanvas.Dicom.Iod
 			if (other == null)
 				return false;
 
-			return other._row == _row && other._column == _column;
+			return other.Row == Row && other.Column == Column;
 		}
 
 		#endregion
@@ -176,6 +192,8 @@ namespace ClearCanvas.Dicom.Iod
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
-		}
-	}
+        }
+
+        #endregion
+    }
 }

@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {
@@ -23,19 +24,18 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		public PresentationAnnotationItemProvider()
 			: base("AnnotationItemProviders.Presentation", new AnnotationResourceResolver(typeof(PresentationAnnotationItemProvider).Assembly))
 		{
-			_annotationItems = new List<IAnnotationItem>();
-
-			_annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem());
-			_annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem());
-
-			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left));
-			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
-			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right));
-			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
-
-			_annotationItems.Add(new DFOVAnnotationItem());
-			_annotationItems.Add(new DisplaySetDescriptionAnnotationItem());
-			_annotationItems.Add(new DisplaySetNumberAnnotationItem());
+			_annotationItems = new List<IAnnotationItem>
+			                       {
+			                           new ZoomAnnotationItem(),
+			                           new AppliedLutAnnotationItem(),
+			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Left),
+			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Top),
+			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Right),
+			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Bottom),
+			                           new DFOVAnnotationItem(),
+			                           new DisplaySetDescriptionAnnotationItem(),
+			                           new DisplaySetNumberAnnotationItem()
+			                       };
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

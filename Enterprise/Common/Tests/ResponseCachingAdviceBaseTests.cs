@@ -15,10 +15,9 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
 using Castle.Core.Interceptor;
 using System.Reflection;
-using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common.Tests
 {

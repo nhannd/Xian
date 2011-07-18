@@ -83,6 +83,7 @@
     <Compile Include="ExtendedPropertyUtils.cs" />
     <Compile Include="IEntityChangeSetListener.cs" />
     <Compile Include="IPersistenceBrokerFactory.cs" />
+    <Compile Include="Modelling\IDomainObjectValidator.cs" />
     <Compile Include="Modelling\PublishInChangeSetsAttribute.cs" />
     <Compile Include="Modelling\DomainObjectValidator.cs" />
     <Compile Include="Modelling\EntityValidationSettings.cs" />
