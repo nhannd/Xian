@@ -18,6 +18,8 @@ namespace ClearCanvas.Web.Client.Silverlight.Command
 
         private readonly Func<bool> _canExecute;
 
+        public object Parameter { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the RelayCommand class that 
         /// can always execute.
@@ -82,6 +84,7 @@ namespace ClearCanvas.Web.Client.Silverlight.Command
         /// <param name="parameter">This parameter will always be ignored.</param>
         public void Execute(object parameter)
         {
+            Parameter = parameter;
             _execute();
         }
     }
