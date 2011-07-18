@@ -42,7 +42,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.MagnificationToolSmall.png", "Icons.MagnificationToolMedium.png", "Icons.MagnificationToolLarge.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
-	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[GroupHint("activate", "Tools.Image.Magnify")]
 
 	[MenuAction("1.5x", "magnification-dropdown/MenuMagnification1AndOneHalf", "Set1And1HalfMagnification")]

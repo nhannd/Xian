@@ -23,7 +23,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowThumbnails", "Show")]
 	[Tooltip("show", "TooltipShowThumbnails")]
 	[IconSet("show", IconScheme.Colour, "Icons.ShowThumbnailsToolSmall.png", "Icons.ShowThumbnailsToolMedium.png", "Icons.ShowThumbnailsToolLarge.png")]
-	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ShowThumbnailsTool : ImageViewerTool
