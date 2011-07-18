@@ -31,15 +31,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private CompositeUndoableCommand _historyCommand;
 		private MemorableUndoableCommand _imageBoxCommand;
         private Dictionary<IImageBoxExtension, IImageBoxExtensionView> _extensionViews = new Dictionary<IImageBoxExtension, IImageBoxExtensionView>();
-
+            
         /// <summary>
         /// Constructor
         /// </summary>
 		internal ImageBoxControl(ImageBox imageBox, Rectangle parentRectangle)
         {
 			_imageBox = imageBox;
+            
 			this.ParentRectangle = parentRectangle;
-
+             
 			InitializeComponent();
 
 			_imageScrollerVisible = _imageScroller.Visible;
@@ -534,10 +535,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             if (Controls.Contains(control))
                 return;
 
+            // TODO: We should let extension decide if it wants to handle these events first
             control.MouseDown += OnExtensionMouseDown;
+            control.KeyDown += OnExtensionKeyDown;
+            control.KeyUp += OnExtensionKeyUp;
             Controls.Add(control);
         }
-        
+
+
         IImageBoxExtensionView FindExtensionView(IImageBoxExtension extension)
         {
             IImageBoxExtensionView view;
@@ -596,6 +601,37 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             }
         }
 
+        void OnExtensionKeyUp(object sender, KeyEventArgs e)
+        {
+            // let tile controls handle it first
+            foreach (var tileControl in TileControls)
+            {
+                tileControl.ProcessKeyUp(e);
+                if (e.Handled)
+                    return;
+            }
+
+            if (e.Handled)
+                return;
+
+            OnKeyUp(e);
+        }
+
+        void OnExtensionKeyDown(object sender, KeyEventArgs e)
+        {
+            // let tile controls handle it first
+            foreach (var tileControl in TileControls)
+            {
+                tileControl.ProcessKeyDown(e);
+                if (e.Handled)
+                    return;
+            }
+
+            if (e.Handled)
+                return;
+
+            OnKeyDown(e);
+        }
 
         void OnExtensionMouseDown(object sender, MouseEventArgs e)
         {
