@@ -263,6 +263,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
+
+        public ContextMenuStrip GetContextMenu(Point screenLocation)
+        {
+            ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+            if (BuildContextMenu(contextMenuStrip))
+            {
+                return contextMenuStrip;
+            }
+
+            return null;
+        }
+
 		#region Overrides
 
 		private void OnTileSelectionChanged(object sender, ItemEventArgs<ITile> e)
@@ -446,12 +458,19 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
+            bool handled = false;
 			object message = _inputTranslator.OnMouseMove(e);
-			if (message == null)
-				return;
+			if (message != null)
+			{
+                if (_tileController != null)
+                    handled = _tileController.ProcessMessage(message);
+			}
 
-			if (_tileController != null)
-				_tileController.ProcessMessage(message);
+            if (!handled)
+            {
+                base.OnMouseMove(e);
+            }
+			
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
@@ -631,7 +650,22 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
-		private void OnContextMenuStripOpening(object sender, CancelEventArgs e)
+	    private bool BuildContextMenu(ContextMenuStrip contextMenuStrip)
+	    {
+	        ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController);
+	        if (menuModel != null && menuModel.ChildNodes.Count > 0)
+	        {
+	            ToolStripBuilder.Clear(contextMenuStrip.Items);
+	            ToolStripBuilder.BuildMenu(contextMenuStrip.Items, menuModel.ChildNodes);
+	            FilterUnavailableItems(contextMenuStrip.Items);
+
+	            return contextMenuStrip.Items.Count > 0;
+
+	        }
+	        return false;
+	    }
+
+	    private void OnContextMenuStripOpening(object sender, CancelEventArgs e)
 		{
 			if (_tileController == null || _tileController.ContextMenuProvider == null)
 			{
@@ -641,6 +675,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			if (_tileController.ContextMenuEnabled)
 			{
+                //TODO: Use BuildContextMenu instead?
+
 				ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController);
 				if (menuModel != null && menuModel.ChildNodes.Count > 0)
 				{
@@ -727,5 +763,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				unavailableItem.Dispose();
 			}
 		}
+
+        internal void ProcessKeyUp(KeyEventArgs ev)
+        {
+            OnKeyDown(ev);
+        }
+
+        internal void ProcessKeyDown(KeyEventArgs args)
+	    {
+	        OnKeyDown(args);
+	    }
 	}
 }

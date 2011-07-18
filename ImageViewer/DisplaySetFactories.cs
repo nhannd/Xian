@@ -19,14 +19,13 @@ using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer
 {
 	#region Default
 
 	[Cloneable(false)]
-	internal class SeriesDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SeriesDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		public SeriesDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImageFactory presentationImageFactory)
 			: base(sourceSeries, presentationImageFactory)
@@ -61,7 +60,7 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	[Cloneable(false)]
-	internal class SingleFrameDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SingleFrameDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
 		private readonly string _seriesInstanceUid;
@@ -118,7 +117,7 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	[Cloneable(false)]
-	internal class SingleImageDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SingleImageDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
 		private readonly string _seriesInstanceUid;
@@ -158,7 +157,7 @@ namespace ClearCanvas.ImageViewer
 			}
 			else
 			{
-				//this is a referenced image (e.g. key iamge).
+				//this is a referenced image (e.g. key image).
 				if (lateralityViewPosition != null)
 					_suffix = String.Format(SR.SuffixFormatSingleReferencedImageDisplaySetWithLateralityViewPosition, 
 						lateralityViewPosition, imageSop.SeriesNumber, imageSop.InstanceNumber);
@@ -499,16 +498,15 @@ namespace ClearCanvas.ImageViewer
 	#region MR Echo
 
 	[Cloneable(false)]
-	internal class MREchoDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class MREchoDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
-		private readonly int _echoNumber;
 		private readonly string _suffix;
 
 		public MREchoDisplaySetDescriptor(ISeriesIdentifier sourceSeries, int echoNumber, IPresentationImageFactory presentationImageFactory)
 			: base(sourceSeries, presentationImageFactory)
 		{
 			Platform.CheckForNullReference(presentationImageFactory, "presentationImageFactory");
-			_echoNumber = echoNumber;
+			EchoNumber = echoNumber;
 			_suffix = String.Format(SR.SuffixFormatMREchoDisplaySet, echoNumber);
 		}
 
@@ -517,6 +515,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			context.CloneFields(source, this);
 		}
+
+        public int EchoNumber { get; private set; }
 
 		protected override string GetName()
 		{
@@ -537,7 +537,7 @@ namespace ClearCanvas.ImageViewer
 
 		protected override string GetUid()
 		{
-			return String.Format("{0}:Echo{1}", SourceSeries.SeriesInstanceUid, _echoNumber);
+			return String.Format("{0}:Echo{1}", SourceSeries.SeriesInstanceUid, EchoNumber);
 		}
 
 		internal override bool ShouldAddSop(Sop sop)
@@ -548,7 +548,7 @@ namespace ClearCanvas.ImageViewer
 				if (!echoAttribute.IsEmpty)
 				{
 					int echoNumber = echoAttribute.GetInt32(0, 0);
-					return echoNumber == _echoNumber;
+					return echoNumber == EchoNumber;
 				}
 			}
 
@@ -643,7 +643,7 @@ namespace ClearCanvas.ImageViewer
 	#region Mixed Multi-frame
 
 	[Cloneable(false)]
-	internal class MultiframeDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class MultiframeDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _sopInstanceUid;
 		private readonly string _suffix;
@@ -684,7 +684,7 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	[Cloneable(false)]
-	internal class SingleImagesDisplaySetDescriptor : DicomDisplaySetDescriptor
+	public class SingleImagesDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
 

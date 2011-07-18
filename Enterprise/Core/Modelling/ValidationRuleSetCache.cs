@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {

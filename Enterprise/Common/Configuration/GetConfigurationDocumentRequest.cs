@@ -9,11 +9,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
@@ -21,17 +19,17 @@ namespace ClearCanvas.Enterprise.Common.Configuration
 	public class GetConfigurationDocumentRequest : ConfigurationDocumentRequestBase, IDefinesCacheKey
 	{
 		public GetConfigurationDocumentRequest(ConfigurationDocumentKey documentKey)
-			:base(documentKey)
+			: base(documentKey)
 		{
 		}
 
-        #region IDefinesCacheKey Members
+		#region IDefinesCacheKey Members
 
-        string IDefinesCacheKey.GetCacheKey()
-        {
-            return ((IDefinesCacheKey)this.DocumentKey).GetCacheKey();
-        }
+		string IDefinesCacheKey.GetCacheKey()
+		{
+			return ((IDefinesCacheKey)this.DocumentKey).GetCacheKey();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

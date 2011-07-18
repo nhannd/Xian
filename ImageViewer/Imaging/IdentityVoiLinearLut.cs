@@ -29,6 +29,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public IdentityVoiLinearLut()
 		{
+		    //TODO (CR June 2011): doesn't make sense to arbitrarily set the
+            //min/max input to 8-bit values when it's dependent on the source
+            //image bit depth and sign.
 			_minInputValue = 0;
 			_maxInputValue = 255;
 		}
@@ -40,7 +43,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if the bit-depth is not between 1 and 31, inclusive.</exception>
 		public IdentityVoiLinearLut(int channelBitDepth)
 		{
-			Platform.CheckArgumentRange(channelBitDepth, 1, 31, "channelBitDepth");
+            //TODO (CR June 2011): this is wrong because it doesn't account for the sign
+            //of the source image.  Not even sure why we're doing this because
+            //it'll get set externally by LutComposer anyway?
+
+            Platform.CheckArgumentRange(channelBitDepth, 1, 31, "channelBitDepth");
 			_minInputValue = 0;
 			_maxInputValue = (1 << channelBitDepth) - 1;
 		}

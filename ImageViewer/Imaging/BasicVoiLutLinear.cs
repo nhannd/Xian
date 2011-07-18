@@ -10,196 +10,195 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// The most basic of Linear Luts where the <see cref="WindowWidth"/> and <see cref="WindowCenter"/> can be directly set/manipulated.
-	/// </summary>
-	/// <seealso cref="IBasicVoiLutLinear"/>
-	[Cloneable(true)]
-	public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
-	{
-		#region Window/Level Memento class
+    /// <summary>
+    /// The most basic of Linear Luts where the <see cref="WindowWidth"/> and <see cref="WindowCenter"/> can be directly set/manipulated.
+    /// </summary>
+    /// <seealso cref="IBasicVoiLutLinear"/>
+    [Cloneable(true)]
+    public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
+    {
+        #region Window/Level Memento class
 
-		private class WindowLevelMemento : IEquatable<WindowLevelMemento>
-		{
-			public readonly double WindowWidth;
-			public readonly double WindowCenter;
+        private class Memento : IEquatable<Memento>
+        {
+            public readonly double WindowCenter;
+            public readonly double WindowWidth;
 
-			public WindowLevelMemento(double windowWidth, double windowCenter)
-			{
-				WindowWidth = windowWidth;
-				WindowCenter = windowCenter;
-			}
+            public Memento(double windowWidth, double windowCenter)
+            {
+                WindowWidth = windowWidth;
+                WindowCenter = windowCenter;
+            }
 
-			public override int GetHashCode()
-			{
-				return base.GetHashCode();
-			}	
-		
-			public override bool Equals(object obj)
-			{
-				if (obj == this)
-					return true;
+            #region IEquatable<Memento> Members
 
-				if (obj is WindowLevelMemento)
-					return this.Equals((WindowLevelMemento) obj);
+            public bool Equals(Memento other)
+            {
+                if (other == null)
+                    return false;
 
-				return false;
-			}
+                return WindowWidth == other.WindowWidth && WindowCenter == other.WindowCenter;
+            }
 
-			#region IEquatable<WindowLevelMemento> Members
+            #endregion
 
-			public bool Equals(WindowLevelMemento other)
-			{
-				if (other == null)
-					return false;
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
 
-				return this.WindowWidth == other.WindowWidth && this.WindowCenter == other.WindowCenter;
-			}
+            public override bool Equals(object obj)
+            {
+                if (obj == this)
+                    return true;
 
-			#endregion
-		}
+                if (obj is Memento)
+                    return Equals((Memento) obj);
 
-		#endregion
+                return false;
+            }
+        }
 
-		#region Private Fields
+        #endregion
 
-		private double _windowWidth;
-		private double _windowCenter;
+        #region Private Fields
 
-		#endregion
+        private double _windowCenter;
+        private double _windowWidth;
 
-		#region Public Constructors
+        #endregion
 
-		/// <summary>
-		/// Constructor.  
-		/// </summary>
-		/// <remarks>
-		/// Allows the initial <see cref="WindowWidth"/> and <see cref="WindowCenter"/> to be set.
-		/// </remarks>
-		/// <param name="windowWidth">The initial Window Width.</param>
-		/// <param name="windowCenter">The initial Window Center.</param>
-		public BasicVoiLutLinear(double windowWidth, double windowCenter)
-			: base()
-		{
-			this.WindowWidth = windowWidth;
-			this.WindowCenter = windowCenter;
-		}
+        #region Public Constructors
 
-		/// <summary>
-		/// Default Constructor.
-		/// </summary>
-		/// <remarks>
-		/// The initial <see cref="WindowWidth"/> and <see cref="WindowCenter"/> are 1 and 0, respectively.
-		/// </remarks>
-		public BasicVoiLutLinear()
-			: this(1, 0)
-		{
-		}
+        /// <summary>
+        /// Constructor.  
+        /// </summary>
+        /// <remarks>
+        /// Allows the initial <see cref="WindowWidth"/> and <see cref="WindowCenter"/> to be set.
+        /// </remarks>
+        /// <param name="windowWidth">The initial Window Width.</param>
+        /// <param name="windowCenter">The initial Window Center.</param>
+        public BasicVoiLutLinear(double windowWidth, double windowCenter)
+            : base()
+        {
+            WindowWidth = windowWidth;
+            WindowCenter = windowCenter;
+        }
 
-		#endregion
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <remarks>
+        /// The initial <see cref="WindowWidth"/> and <see cref="WindowCenter"/> are 1 and 0, respectively.
+        /// </remarks>
+        public BasicVoiLutLinear()
+            : this(1, 0)
+        {
+        }
 
-		#region Protected Methods
-		#region Overrides
+        #endregion
 
-		/// <summary>
-		/// Gets the <see cref="WindowWidth"/>.
-		/// </summary>
-		protected override double GetWindowWidth()
-		{
-			return this.WindowWidth;
-		}
+        #region Protected Methods
 
-		/// <summary>
-		/// Gets the <see cref="WindowCenter"/>.
-		/// </summary>
-		protected override double GetWindowCenter()
-		{
-			return this.WindowCenter;
-		}
+        #region Overrides
 
-		#endregion
-		#endregion
+        /// <summary>
+        /// Gets the <see cref="WindowWidth"/>.
+        /// </summary>
+        protected override double GetWindowWidth()
+        {
+            return WindowWidth;
+        }
 
-		#region Public Members
-		#region Properties
+        /// <summary>
+        /// Gets the <see cref="WindowCenter"/>.
+        /// </summary>
+        protected override double GetWindowCenter()
+        {
+            return WindowCenter;
+        }
 
-		/// <summary>
-		/// Gets or sets the Window Width.
-		/// </summary>
-		public double WindowWidth
-		{
-			get { return _windowWidth; }
-			set
-			{
-				if (value == _windowWidth)
-					return;
+        #endregion
 
-				if (value < 1)
-					value = 1;
+        #endregion
 
-				_windowWidth = value;
-				base.OnLutChanged();
-			}
-		}
+        #region Properties
 
-		/// <summary>
-		/// Gets or sets the Window Center.
-		/// </summary>
-		public double WindowCenter
-		{
-			get { return _windowCenter; }
-			set
-			{
-				if (value == _windowCenter)
-					return;
+        /// <summary>
+        /// Gets or sets the Window Width.
+        /// </summary>
+        public double WindowWidth
+        {
+            get { return _windowWidth; }
+            set
+            {
+                if (value == _windowWidth)
+                    return;
 
-				_windowCenter = value;
-				base.OnLutChanged();
-			}
-		}
+                if (value < 1)
+                    value = 1;
 
-		#endregion
+                _windowWidth = value;
+                base.OnLutChanged();
+            }
+        }
 
-		#region Methods
-		#region Overrides
+        /// <summary>
+        /// Gets or sets the Window Center.
+        /// </summary>
+        public double WindowCenter
+        {
+            get { return _windowCenter; }
+            set
+            {
+                if (value == _windowCenter)
+                    return;
 
-		/// <summary>
-		/// Gets an abbreviated description of the Lut.
-		/// </summary>
-		public override string GetDescription()
-		{
-			return String.Format(SR.FormatDescriptionBasicLinearLut, WindowWidth, WindowCenter);
-		}
+                _windowCenter = value;
+                base.OnLutChanged();
+            }
+        }
 
-		/// <summary>
-		/// Creates a memento, through which the Lut's state can be restored.
-		/// </summary>
-		public override object CreateMemento()
-		{
-			return new WindowLevelMemento(this.WindowWidth, this.WindowCenter);
-		}
+        #endregion
 
-		/// <summary>
-		/// Sets the Lut's state from the input memento object.
-		/// </summary>
-		/// <exception cref="InvalidCastException">Thrown when the memento is unrecognized, which should never happen.</exception>
-		/// <param name="memento">The memento to use to restore a previous state.</param>
-		public override void SetMemento(object memento)
-		{
-			WindowLevelMemento windowLevelMemento = (WindowLevelMemento) memento;
+        #region Methods
 
-			this.WindowWidth = windowLevelMemento.WindowWidth;
-			this.WindowCenter = windowLevelMemento.WindowCenter;
-		}
+        #region Overrides
 
-		#endregion
-		#endregion
-		#endregion
-	}
+        /// <summary>
+        /// Gets an abbreviated description of the Lut.
+        /// </summary>
+        public override string GetDescription()
+        {
+            return String.Format(SR.FormatDescriptionBasicLinearLut, WindowWidth, WindowCenter);
+        }
+
+        /// <summary>
+        /// Creates a memento, through which the Lut's state can be restored.
+        /// </summary>
+        public override object CreateMemento()
+        {
+            return new Memento(WindowWidth, WindowCenter);
+        }
+
+        /// <summary>
+        /// Sets the Lut's state from the input memento object.
+        /// </summary>
+        /// <exception cref="InvalidCastException">Thrown when the memento is unrecognized, which should never happen.</exception>
+        /// <param name="memento">The memento to use to restore a previous state.</param>
+        public override void SetMemento(object memento)
+        {
+            var windowLevelMemento = (Memento) memento;
+            WindowWidth = windowLevelMemento.WindowWidth;
+            WindowCenter = windowLevelMemento.WindowCenter;
+        }
+
+        #endregion
+
+        #endregion
+    }
 }
