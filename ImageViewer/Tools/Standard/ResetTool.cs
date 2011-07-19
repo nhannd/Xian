@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipReset")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ResetToolSmall.png", "Icons.ResetToolMedium.png", "Icons.ResetToolLarge.png")]
-	[GroupHint("activate", "Tools.Image.Manipulation.Reset")]
+	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Reset")]
 
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ResetTool : ImageViewerTool
