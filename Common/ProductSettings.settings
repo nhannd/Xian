@@ -26,5 +26,8 @@
     <Setting Name="Release" Type="System.String" Scope="Application">
       <Value Profile="(Default)">vKfTr+ue1fm9jaIYbfkY5g==</Value>
     </Setting>
+    <Setting Name="Name" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

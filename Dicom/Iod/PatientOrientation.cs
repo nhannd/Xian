@@ -72,6 +72,62 @@ namespace ClearCanvas.Dicom.Iod
 			protected set { _column = value ?? ""; }
 		}
 
+		/// <summary>
+		/// Gets the primary direction of the first row in the image.
+		/// </summary>
+		public string PrimaryRow
+		{
+			get
+			{
+				var direction = Row;
+				if (!string.IsNullOrEmpty(direction) && direction.Length >= 1)
+					return direction[0].ToString();
+				return string.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Gets the primary direction of the first column in the image.
+		/// </summary>
+		public string PrimaryColumn
+		{
+			get
+			{
+				var direction = Column;
+				if (!string.IsNullOrEmpty(direction) && direction.Length >= 1)
+					return direction[0].ToString();
+				return string.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Gets the secondary direction of the first row in the image.
+		/// </summary>
+		public string SecondaryRow
+		{
+			get
+			{
+				var direction = Row;
+				if (!string.IsNullOrEmpty(direction) && direction.Length >= 2)
+					return direction[1].ToString();
+				return string.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Gets the secondary direction of the first column in the image.
+		/// </summary>
+		public string SecondaryColumn
+		{
+			get
+			{
+				var direction = Column;
+				if (!string.IsNullOrEmpty(direction) && direction.Length >= 2)
+					return direction[1].ToString();
+				return string.Empty;
+			}
+		}
+
 		#endregion
 
 		/// <summary>
