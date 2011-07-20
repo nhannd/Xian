@@ -110,56 +110,55 @@ namespace ClearCanvas.Desktop.Actions.Tests
 		{
 			//null
 			GroupHint left = new GroupHint(null);
-			Assert.AreEqual(left.Hint, "");
+			Assert.AreEqual(String.Empty, left.Hint);
 
 			// left = "", right=""
 			GroupHint right = new GroupHint("");
-
-			Assert.AreEqual(left.MatchScore(right), 1);
+			Assert.AreEqual(1, left.MatchScore(right));
 
 			// left = "NonEmpty.Test", right=""
 			left = new GroupHint("NonEmpty.Test");
-			Assert.AreEqual(left.MatchScore(right), 1);
+			Assert.AreEqual(1, left.MatchScore(right));
 
 			// left = "", right="NonEmpty.Test"
 			left = right;
 			right = new GroupHint("NonEmpty.Test");
-			Assert.AreEqual(left.MatchScore(right), 0);
+			Assert.AreEqual(0, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut.LutPresets", right="Tools.Standard.ImageManipulation.Lut"
 			left = new GroupHint("Tools.Standard.ImageManipulation.Lut.LutPresets");
 			right = new GroupHint("Tools.Standard.ImageManipulation.Lut");
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(5, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut", right="Tools.Standard.ImageManipulation.Lut.LutPresets"
 			GroupHint temp = left;
 			left = right;
 			right = temp;
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(-5, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut", right="Tools.Standard.ImageManipulation.Lut"
 			right = left;
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(5, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut.LutPresets", right="Tools.Standard.ImageManipulation.Lut.Auto"
 			left = new GroupHint("Tools.Standard.ImageManipulation.Lut.LutPresets");
 			right = new GroupHint("Tools.Standard.ImageManipulation.Lut.Auto");
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(5, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut.Auto", right="Tools.Standard.ImageManipulation.Lut.LutPresets"
 			left = right;
 			right = temp;
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(-5, left.MatchScore(right));
 			
 			// left = "Tools.Standard.ImageManipulation.Lut", right="DisplaySets"
 			right = new GroupHint("DisplaySets");
-			Assert.AreEqual(left.MatchScore(right), 0);
+			Assert.AreEqual(0, left.MatchScore(right));
 
 			// left = "DisplaySets", right="Tools.Standard.ImageManipulation.Lut"
 			temp = left;
 			left = right;
 			right = temp;
-			Assert.AreEqual(left.MatchScore(right), 0);
+			Assert.AreEqual(0, left.MatchScore(right));
 		}
 
 		[Test]

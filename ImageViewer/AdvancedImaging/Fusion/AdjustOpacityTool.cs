@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarAdjustOpacity", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[GroupHint("activate", "Tools.Image.Manipulation.Layers.Opacity")]
+	[GroupHint("activate", "Tools.Image.Manipulation.Overlays.Opacity")]
 	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.AdjustOpacityToolSmall.png", "Icons.AdjustOpacityToolMedium.png", "Icons.AdjustOpacityToolLarge.png")]
 	[MouseToolButton(XMouseButtons.Right, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
