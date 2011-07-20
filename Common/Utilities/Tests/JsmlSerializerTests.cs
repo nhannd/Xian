@@ -162,6 +162,11 @@ namespace ClearCanvas.Common.Utilities.Tests
 			public string Value;
 		}
 
+		public JsmlSerializerTests()
+		{
+			Platform.SetExtensionFactory(new UnitTestExtensionFactory());
+		}
+
 		[Test]
 		public void Test_Null()
 		{
