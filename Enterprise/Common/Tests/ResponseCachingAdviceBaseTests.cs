@@ -18,6 +18,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Caching;
 using Castle.Core.Interceptor;
 using System.Reflection;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common.Tests
 {
@@ -178,7 +179,11 @@ namespace ClearCanvas.Enterprise.Common.Tests
 
 			public object InvocationTarget
 			{
-				get { throw new NotImplementedException(); }
+				get
+				{
+					// not sure about this... 
+					return this.Target;
+				}
 			}
 
 			public MethodInfo MethodInvocationTarget
@@ -256,7 +261,11 @@ namespace ClearCanvas.Enterprise.Common.Tests
 
 		public ResponseCachingAdviceBaseTests()
 		{
-			Platform.SetExtensionFactory(new TestExtensionFactory());
+			Platform.SetExtensionFactory(
+				new UnitTestExtensionFactory(
+					new Dictionary<Type, Type> {{typeof (CacheProviderExtensionPoint), typeof (TestCacheProvider)}}
+				)
+			);
 		}
 
 		[Test]
