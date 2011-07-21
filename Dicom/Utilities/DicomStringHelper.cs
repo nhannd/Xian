@@ -63,13 +63,10 @@ namespace ClearCanvas.Dicom.Utilities
 		/// <returns>An array of <see cref="string"/>s.</returns>
 		static public string[] GetStringArray(string dicomStringArray)
 		{
-			if (dicomStringArray == null)
-				dicomStringArray = ""; //return an empty array.
-
-			return dicomStringArray.Split(new [] { '\\' }, StringSplitOptions.None);
+		    return String.IsNullOrEmpty(dicomStringArray) ? new string[0] : dicomStringArray.Split(new [] { '\\' }, StringSplitOptions.None);
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="PersonName"/>s.
 		/// </summary>
 		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
