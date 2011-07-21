@@ -14,7 +14,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-    [Cloneable(true)]
+    [Cloneable(false)]
     public class NamedVoiLutLinear : VoiLutLinearBase, IVoiLutLinear
     {
         #region Memento
@@ -72,6 +72,11 @@ namespace ClearCanvas.ImageViewer.Imaging
             Name = name;
             WindowWidth = windowWidth;
             WindowCenter = windowCenter;
+        }
+
+        protected NamedVoiLutLinear(NamedVoiLutLinear other, ICloningContext context)
+        {
+            context.CloneFields(other, this);
         }
 
         #region Public Properties
