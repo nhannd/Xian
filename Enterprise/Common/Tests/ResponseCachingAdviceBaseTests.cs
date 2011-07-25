@@ -85,7 +85,7 @@ namespace ClearCanvas.Enterprise.Common.Tests
 
 			public string CacheID
 			{
-				get { throw new NotImplementedException(); }
+				get { return "test"; }
 			}
 
 			public object Get(string key, CacheGetOptions options)
