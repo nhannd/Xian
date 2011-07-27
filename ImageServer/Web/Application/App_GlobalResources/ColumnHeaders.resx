@@ -426,7 +426,7 @@
     <value>Server</value>
   </data>
   <data name="AdminUserGroups_GroupName" xml:space="preserve">
-    <value>Name</value>
+    <value>Authority Group Name</value>
   </data>
   <data name="AdminUserGroups_Tokens" xml:space="preserve">
     <value>Authority Tokens</value>
@@ -450,6 +450,6 @@
     <value>Data Access Authority Group</value>
   </data>
   <data name="AdminUserGroups_GroupDescription" xml:space="preserve">
-    <value>Description</value>
+    <value>Authority Group Description</value>
   </data>
 </root>

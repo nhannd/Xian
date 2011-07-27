@@ -12,7 +12,6 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
-using ClearCanvas.ImageServer.Rules.AutoRouteAction;
 
 namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
 {
@@ -21,13 +20,13 @@ namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
     /// </summary>
     public class GrantAccessActionItem : ServerActionItemBase
     {
-        readonly private string _device;
+        readonly private string _oid;
         #region Constructors
 
-        public GrantAccessActionItem(string device)
+        public GrantAccessActionItem(string oid)
             : base("GrantAcccess Action")
         {
-            _device = device;
+            _oid = oid;
         }
 
         #endregion
@@ -42,7 +41,7 @@ namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
         {
             InsertStudyDataAccessCommand command;
 
-            command = new InsertStudyDataAccessCommand(context, Guid.NewGuid());
+            command = new InsertStudyDataAccessCommand(context, new Guid(_oid));
 
             if (context.CommandProcessor != null)
                 context.CommandProcessor.AddCommand(command);

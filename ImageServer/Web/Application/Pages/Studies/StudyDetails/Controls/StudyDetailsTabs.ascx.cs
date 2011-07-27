@@ -16,8 +16,6 @@ using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
-using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
@@ -26,8 +24,7 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
     [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs",
-                          ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Scripts.StudyDetailsTabs.js")]
-    
+                          ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Scripts.StudyDetailsTabs.js")]    
     public partial class StudyDetailsTabs : ScriptUserControl
     {
         private EventHandler<StudyDetailsTabsDeleteSeriesClickEventArgs> _deleteSeriesClickedHandler;
@@ -233,10 +230,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 ArchivePanel.Study = Study.TheStudy;
                 HistoryPanel.TheStudySummary = Study;
                 StudyIntegrityQueueGridView.Study = Study;
+                DataAccessPanel.Study = Study;
             }
 
             base.DataBind();
+        }
 
+        protected void AddAuthorityGroupButton_Click(object sender, ImageClickEventArgs e)
+        {
+            
+        }
+
+        protected void DeleteAuthorityGroupButton_Click(object sender, ImageClickEventArgs e)
+        {
+            
         }
     }
 }

@@ -210,7 +210,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.HistoryPanel HistoryPanel;
+
+        /// <summary>
+        /// DataAccessPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DataAccessPanel DataAccessPanel;
         
+
         /// <summary>
         /// DeleteConfirmation control.
         /// </summary>

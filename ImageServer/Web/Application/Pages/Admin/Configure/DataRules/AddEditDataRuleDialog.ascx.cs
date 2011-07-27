@@ -22,6 +22,7 @@ using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 using ClearCanvas.Web.Enterprise.Admin;
 using Resources;
@@ -350,6 +351,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
             if (RuleXmlTextBox.Text.Length > 0)
             {
+                StudyDataAccessController controller = new StudyDataAccessController();
+
                 _rule.RuleXml = new XmlDocument();
 
                 StringBuilder sb = new StringBuilder();
@@ -361,6 +364,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                     if (item.Selected)
                     {
                         sb.AppendFormat("<grant-access authorityGroupOid=\"{0}\"/>", item.Value);
+                        // Add if it doesn't exist to the DataAccessGroup table
+                        controller.AddDataAccessIfNotExists(item.Value);
                     }
                 }
                 sb.Append("</action>");

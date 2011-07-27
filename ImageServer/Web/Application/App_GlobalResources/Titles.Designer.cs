@@ -385,6 +385,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Data Access.
+        /// </summary>
+        internal static string DataAccess {
+            get {
+                return ResourceManager.GetString("DataAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Data Access Rules.
         /// </summary>
         internal static string DataRules {

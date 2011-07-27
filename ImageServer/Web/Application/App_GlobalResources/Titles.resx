@@ -420,4 +420,7 @@
   <data name="DataRulesPageTitle" xml:space="preserve">
     <value>Data Access Rules | {0}</value>
   </data>
+  <data name="DataAccess" xml:space="preserve">
+    <value>Data Access</value>
+  </data>
 </root>

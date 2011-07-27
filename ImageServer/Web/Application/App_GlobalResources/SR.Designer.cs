@@ -1604,6 +1604,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Data Access Authority Groups assigned to this study..
+        /// </summary>
+        internal static string StudyDetails_NoAuthorityGroupsForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoAuthorityGroupsForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No File System Queue items for this study..
         /// </summary>
         internal static string StudyDetails_NoFileSystemForThisStudy {

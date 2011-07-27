@@ -764,4 +764,7 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="DialogEditDataRuleTitle" xml:space="preserve">
     <value>Edit Data Access Rule</value>
   </data>
+  <data name="StudyDetails_NoAuthorityGroupsForThisStudy" xml:space="preserve">
+    <value>No Data Access Authority Groups assigned to this study.</value>
+  </data>
 </root>

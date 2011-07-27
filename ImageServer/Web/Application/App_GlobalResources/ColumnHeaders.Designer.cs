@@ -79,7 +79,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description.
+        ///   Looks up a localized string similar to Authority Group Description.
         /// </summary>
         internal static string AdminUserGroups_GroupDescription {
             get {
@@ -88,7 +88,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name.
+        ///   Looks up a localized string similar to Authority Group Name.
         /// </summary>
         internal static string AdminUserGroups_GroupName {
             get {
