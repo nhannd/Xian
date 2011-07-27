@@ -52,9 +52,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			requestCollection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
 			requestCollection[DicomTags.InstanceAvailability].SetStringValue("");
 
-			requestCollection[DicomTags.PatientSpeciesDescription].SetStringValue(queryParams["PatientSpeciesDescription"]);
-			var codeValue = queryParams["PatientSpeciesCodeSequenceCodeValue"];
-			var codeMeaning = queryParams["PatientSpeciesCodeSequenceCodeMeaning"];
+			requestCollection[DicomTags.PatientSpeciesDescription].SetStringValue(GetString(queryParams, "PatientSpeciesDescription"));
+			var codeValue = GetString(queryParams, "PatientSpeciesCodeSequenceCodeValue");
+			var codeMeaning = GetString(queryParams, "PatientSpeciesCodeSequenceCodeMeaning");
 			if (codeValue != null || codeMeaning != null)
 			{
 				var codeSequenceMacro = new CodeSequenceMacro
@@ -66,9 +66,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				requestCollection[DicomTags.PatientSpeciesCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
 			}
 
-			requestCollection[DicomTags.PatientBreedDescription].SetStringValue(queryParams["PatientBreedDescription"]);
-			codeValue = queryParams["PatientBreedCodeSequenceCodeValue"];
-			codeMeaning = queryParams["PatientBreedCodeSequenceCodeMeaning"];
+			requestCollection[DicomTags.PatientBreedDescription].SetStringValue(GetString(queryParams, "PatientBreedDescription"));
+			codeValue = GetString(queryParams, "PatientBreedCodeSequenceCodeValue");
+			codeMeaning = GetString(queryParams, "PatientBreedCodeSequenceCodeMeaning");
 			if (codeValue != null || codeMeaning != null)
 			{
 				var codeSequenceMacro = new CodeSequenceMacro
@@ -80,9 +80,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				requestCollection[DicomTags.PatientBreedCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
 			}
 
-			requestCollection[DicomTags.ResponsiblePerson].SetStringValue(queryParams["ResponsiblePerson"]);
+			requestCollection[DicomTags.ResponsiblePerson].SetStringValue(GetString(queryParams, "ResponsiblePerson"));
 			requestCollection[DicomTags.ResponsiblePersonRole].SetStringValue("");
-			requestCollection[DicomTags.ResponsibleOrganization].SetStringValue(queryParams["ResponsibleOrganization"]);
+			requestCollection[DicomTags.ResponsibleOrganization].SetStringValue(GetString(queryParams,"ResponsibleOrganization"));
 
 			IList<DicomAttributeCollection> results = Query(selectedServer, requestCollection);
 			
@@ -299,6 +299,14 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			}
 
 			return everythingMatches;
+		}
+
+		private static string GetString(QueryParameters queryParams, string key)
+		{
+			string sResult;
+			if (queryParams.TryGetValue(key, out sResult))
+				return sResult;
+			return "";
 		}
 	}
 }

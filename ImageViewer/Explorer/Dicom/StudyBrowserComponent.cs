@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	}
 	
 	[AssociateView(typeof(StudyBrowserComponentViewExtensionPoint))]
-	public class StudyBrowserComponent : ApplicationComponent
+	public class StudyBrowserComponent : ApplicationComponent, IStudyBrowserComponent
 	{
 		#region Tool Context
 
@@ -124,7 +124,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				try
 				{
-					BlockingOperation.Run(_component.Search);
+					BlockingOperation.Run(
+						() => _component.Search(_component._lastQueryParametersList));
 				}
 				catch (Exception e)
 				{
@@ -170,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			_dummyStudyTable = new Table<StudyItem>();
 			_searchResults = new Dictionary<string, SearchResult>();
-			_lastQueryParametersList = new List<QueryParameters> { OpenQueryParameters };
+			_lastQueryParametersList = new List<QueryParameters> { OpenSearchQueryParams };
 
 			_localDataStoreCleared = false;
 			_setStudiesArrived = new Dictionary<string, string>();
@@ -201,32 +202,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		internal QueryParameters OpenQueryParameters
+		public QueryParameters OpenSearchQueryParams
 		{
 			get
 			{
-				var queryParams = new QueryParameters();
-				queryParams.Add("PatientsName", "");
-				queryParams.Add("ReferringPhysiciansName", "");
-				queryParams.Add("PatientId", "");
-				queryParams.Add("AccessionNumber", "");
-				queryParams.Add("StudyDescription", "");
-				queryParams.Add("ModalitiesInStudy", "");
-				queryParams.Add("StudyDate", "");
-				queryParams.Add("StudyInstanceUid", "");
-
-				queryParams.Add("PatientSpeciesDescription", "");
-				queryParams.Add("PatientSpeciesCodeSequenceCodeValue", "");
-				queryParams.Add("PatientSpeciesCodeSequenceCodeMeaning", "");
-				queryParams.Add("PatientBreedDescription", "");
-				queryParams.Add("PatientBreedCodeSequenceCodeValue", "");
-				queryParams.Add("PatientBreedCodeSequenceCodeMeaning", "");
-				queryParams.Add("ResponsiblePerson", "");
-				queryParams.Add("ResponsibleOrganization", "");
+				var queryParams = new QueryParameters
+					{
+						{"PatientsName", ""},
+						{"ReferringPhysiciansName", ""},
+						{"PatientId", ""},
+						{"AccessionNumber", ""},
+						{"StudyDescription", ""},
+						{"ModalitiesInStudy", ""},
+						{"StudyDate", ""},
+						{"StudyInstanceUid", ""},
+					};
 
 				return queryParams;
 			}
 		}
+
 		internal SearchResult CurrentSearchResult
 		{
 			get
@@ -340,21 +335,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public void Search()
+		public void Search(List<QueryParameters> queryParametersList)
 		{
 			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
 				_setStudiesArrived.Clear();
 
-			QueryParameters queryParams = PrepareQueryParameters();
-
-			bool isOpenSearchQuery = (queryParams["PatientsName"].Length == 0
-									  && queryParams["ReferringPhysiciansName"].Length == 0
-									  && queryParams["PatientId"].Length == 0
-			                          && queryParams["AccessionNumber"].Length == 0
-			                          && queryParams["StudyDescription"].Length == 0
-			                          && queryParams["ModalitiesInStudy"].Length == 0
-			                          && queryParams["StudyDate"].Length == 0 &&
-			                          queryParams["StudyInstanceUid"].Length == 0);
+			var isOpenSearchQuery = CollectionUtils.TrueForAll(queryParametersList,
+				q => CollectionUtils.TrueForAll(q.Values,
+					v => !string.IsNullOrEmpty(v)));
 
 			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
 			{
@@ -362,8 +350,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 			}
 
-			List<KeyValuePair<string, Exception>> failedServerInfo = new List<KeyValuePair<string, Exception>>();
-			StudyItemList aggregateStudyItemList = Query(queryParams, failedServerInfo);
+			_lastQueryParametersList = new List<QueryParameters>(queryParametersList);
+			var failedServerInfo = new List<KeyValuePair<string, Exception>>();
+			var aggregateStudyItemList = Query(queryParametersList, failedServerInfo);
 
 			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
 
@@ -463,130 +452,48 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			NotifyPropertyChanged("ResultsTitle");
 		}
 
-		private QueryParameters PrepareQueryParameters()
-		{
-			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
-
-			string patientsName = ConvertNameToSearchCriteria(_searchPanelComponent.PatientsName);
-			string referringPhysiciansName = ConvertNameToSearchCriteria(_searchPanelComponent.ReferringPhysiciansName);
-
-			string patientId = "";
-			if (!String.IsNullOrEmpty(_searchPanelComponent.PatientID))
-				patientId = _searchPanelComponent.PatientID + "*";
-
-			string accessionNumber = "";
-			if (!String.IsNullOrEmpty(_searchPanelComponent.AccessionNumber))
-				accessionNumber = _searchPanelComponent.AccessionNumber + "*";
-
-			string studyDescription = "";
-			if (!String.IsNullOrEmpty(_searchPanelComponent.StudyDescription))
-				studyDescription = _searchPanelComponent.StudyDescription + "*";
-
-			string dateRangeQuery = DateRangeHelper.GetDicomDateRangeQueryString(_searchPanelComponent.StudyDateFrom, _searchPanelComponent.StudyDateTo);
-
-			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
-			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
-			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
-			//or by running multiple queries, one per modality specified (for example).
-
-			string modalityFilter = DicomStringHelper.GetDicomStringArray(_searchPanelComponent.SearchModalities);
-
-			QueryParameters queryParams = new QueryParameters();
-			queryParams.Add("PatientsName", patientsName);
-			queryParams.Add("ReferringPhysiciansName", referringPhysiciansName); 
-			queryParams.Add("PatientId", patientId);
-			queryParams.Add("AccessionNumber", accessionNumber);
-			queryParams.Add("StudyDescription", studyDescription);
-			queryParams.Add("ModalitiesInStudy", modalityFilter);
-			queryParams.Add("StudyDate", dateRangeQuery);
-			queryParams.Add("StudyInstanceUid", "");
-			queryParams.Add("PatientSpeciesDescription", "");
-			queryParams.Add("PatientSpeciesCodeSequenceCodeValue", "");
-			queryParams.Add("PatientSpeciesCodeSequenceCodeMeaning", "");
-			queryParams.Add("PatientBreedDescription", "");
-			queryParams.Add("PatientBreedCodeSequenceCodeValue", "");
-			queryParams.Add("PatientBreedCodeSequenceCodeMeaning", "");
-			queryParams.Add("ResponsiblePerson", "");
-			queryParams.Add("ResponsibleOrganization", "");
-
-			return queryParams;
-		}
-
-		private static string[] GetNameComponents(string unparsedName)
-		{
-			unparsedName = unparsedName ?? "";
-			char separator = DicomExplorerConfigurationSettings.Default.NameSeparator;
-			string name = unparsedName.Trim();
-			if (String.IsNullOrEmpty(name))
-				return new string[0];
-
-			return name.Split(new char[] { separator }, StringSplitOptions.None);
-		}
-
-		private static string ConvertNameToSearchCriteria(string name)
-		{
-			string[] nameComponents = GetNameComponents(name);
-			if (nameComponents.Length == 1)
-			{
-				//Open name search
-				return String.Format("*{0}*", nameComponents[0].Trim());
-			}
-			else if (nameComponents.Length > 1)
-			{
-				if (String.IsNullOrEmpty(nameComponents[0]))
-				{
-					//Open name search - should never get here
-					return String.Format("*{0}*", nameComponents[1].Trim());
-				}
-				else if (String.IsNullOrEmpty(nameComponents[1]))
-				{
-					//Pure Last Name search
-					return String.Format("{0}*", nameComponents[0].Trim());
-				}
-				else
-				{
-					//Last Name, First Name search
-					return String.Format("{0}*{1}*", nameComponents[0].Trim(), nameComponents[1].Trim());
-				}
-			}
-
-			return "";
-		}
-
-		private StudyItemList Query(QueryParameters queryParams, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
+		private StudyItemList Query(List<QueryParameters> queryParamsList, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
 		{
 			StudyItemList aggregateStudyItemList = new StudyItemList();
 
 			foreach (IServerTreeNode serverNode in _selectedServerGroup.Servers)
 			{
+				var serverStudyItemList = new StudyItemList();
+				var serverHasError = false;
+
 				try
 				{
-					StudyItemList serverStudyItemList;
-
-					if (serverNode.IsLocalDataStore)
+					foreach (var queryParams in queryParamsList)
 					{
-						serverStudyItemList = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
-					}
-					else if (serverNode.IsServer)
-					{
-						Server server = (Server)serverNode;
-						ApplicationEntity ae = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
-														server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
+						if (serverNode.IsLocalDataStore)
+						{
+							var studyItemList = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
+							serverStudyItemList.AddRange(studyItemList);
+						}
+						else if (serverNode.IsServer)
+						{
+							Server server = (Server)serverNode;
+							ApplicationEntity ae = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
+															server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
 
-						serverStudyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
+							var studyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
+							serverStudyItemList.AddRange(studyItemList);
+						}
+						else
+						{
+							throw new Exception("The specified server object is not queryable.");
+						}
 					}
-					else
-					{
-						throw new Exception("The specified server object is not queryable.");
-					}
-
-					aggregateStudyItemList.AddRange(serverStudyItemList);
 				}
 				catch (Exception e)
 				{
 					// keep track of the failed server names and exceptions
 					failedServerInfo.Add(new KeyValuePair<string, Exception>(serverNode.Name, e));
+					serverHasError = true;
 				}
+
+				if (!serverHasError)
+					aggregateStudyItemList.AddRange(serverStudyItemList);
 			}
 
 			return aggregateStudyItemList;
@@ -628,7 +535,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				string studyUids = DicomStringHelper.GetDicomStringArray(studyUidList);
 				if (!String.IsNullOrEmpty(studyUids))
 				{
-					var queryParams = new QueryParameters(this.OpenQueryParameters);
+					var queryParams = new QueryParameters(this.OpenSearchQueryParams);
 					queryParams["StudyInstanceUid"] = studyUids;
 
 					try
