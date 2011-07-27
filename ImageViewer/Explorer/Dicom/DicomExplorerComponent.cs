@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private ServerTreeComponent _serverTreeComponent;
 		private StudyBrowserComponent _studyBrowserComponent;
+		private SearchPanelComponent _searchPanelComponent;
 
 		private DicomExplorerComponent(SplitPane pane1, SplitPane pane2)
 			: base(pane1, pane2, Desktop.SplitOrientation.Horizontal)
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public SearchPanelComponent SearchPanelComponent
 		{
-			get { return _studyBrowserComponent.SearchPanelComponent; }
+			get { return _searchPanelComponent; }
 		}
 
 		public override void Start()
@@ -59,10 +60,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				_activeComponents.Add(this);
 			}
+
+			_searchPanelComponent.SearchRequestEvent += OnSearchPanelComponentSearchRequested;
 		}
 
 		public override void Stop()
 		{
+			_searchPanelComponent.SearchRequestEvent -= OnSearchPanelComponentSearchRequested;
+
 			lock (_syncLock)
 			{
 				_activeComponents.Remove(this);
@@ -92,15 +97,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			serverTreeComponent.SelectedServerChanged +=
 				delegate { studyBrowserComponent.SelectServerGroup(serverTreeComponent.SelectedServers); };
 
-			SearchPanelComponent searchPanel = new SearchPanelComponent(studyBrowserComponent);
-
+			SearchPanelComponent searchPanelComponent = new SearchPanelComponent();
 			SelectDefaultServerNode(serverTreeComponent);
 
 			try
 			{
 				//explicitly check and make sure we're querying local only.
 				if (serverTreeComponent.ShowLocalDataStoreNode && serverTreeComponent.SelectedServers.IsLocalDatastore)
+				{
 					studyBrowserComponent.Search();
+				}
 			}
 			catch (PolicyException)
 			{
@@ -120,13 +126,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				rightPane,
 				SplitOrientation.Vertical);
 
-			SplitPane topPane = new SplitPane(SR.TitleSearchPanelPane, searchPanel, true);
+			SplitPane topPane = new SplitPane(SR.TitleSearchPanelPane, searchPanelComponent, true);
 			SplitPane bottomPane = new SplitPane(SR.TitleStudyNavigatorPane, bottomContainer, false);
 
 			DicomExplorerComponent component = new DicomExplorerComponent(topPane, bottomPane);
 			component._studyBrowserComponent = studyBrowserComponent;
+			component._searchPanelComponent = searchPanelComponent;
 			component._serverTreeComponent = serverTreeComponent;
 			return component;
+		}
+
+		private void OnSearchPanelComponentSearchRequested(object sender, SearchRequestEventArgs e)
+		{
+			try
+			{
+				BlockingOperation.Run(
+					() => _studyBrowserComponent.Search(e.QueryParametersList));
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
+			}
 		}
 
 		internal void SelectDefaultServers()
