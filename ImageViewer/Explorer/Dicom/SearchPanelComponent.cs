@@ -15,6 +15,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using System.Text.RegularExpressions;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -35,8 +38,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private const string _disallowedCharacters = @"\r\n\e\f\\";
 		private const string _disallowedCharactersPattern = @"[" + _disallowedCharacters + @"]+";
 
-		private readonly StudyBrowserComponent _studyBrowserComponent;
-
 		private string _title;
 
 		private string _name = "";
@@ -53,16 +54,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private readonly List<string> _searchModalities;
 		private readonly ICollection<string> _availableModalities;
-		
+
+		private event EventHandler<SearchRequestEventArgs> _searchRequestEvent;
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public SearchPanelComponent(StudyBrowserComponent studyBrowserComponent)
+		public SearchPanelComponent()
 		{
-			Platform.CheckForNullReference(studyBrowserComponent, "studyBrowserComponent");
-			_studyBrowserComponent = studyBrowserComponent;
-			_studyBrowserComponent.SearchPanelComponent = this;
-
 			_searchModalities = new List<string>();
 			_availableModalities = StandardModalities.Modalities;
 
@@ -252,14 +251,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				base.ShowValidation(false);
 			}
 
-			try
-			{
-				BlockingOperation.Run(_studyBrowserComponent.Search);
-			}
-			catch(Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
+			var queryParamsList = GetQueryParametersPermutation();
+			var eventArgs = new SearchRequestEventArgs(queryParamsList);
+			EventsHelper.Fire(_searchRequestEvent, this, eventArgs);
 		}
 
 		public void SearchToday()
@@ -275,6 +269,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public void SearchLastXDays(int numberOfDays)
 		{
 			InternalSearchLastXDays(numberOfDays);
+		}
+
+		public event EventHandler<SearchRequestEventArgs> SearchRequestEvent
+		{
+			add { _searchRequestEvent += value; }
+			remove { _searchRequestEvent -= value; }
 		}
 
 		private void InternalSearchLastXDays(int numberOfDays)
@@ -361,5 +361,170 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			return new ValidationResult(true, "");
 		}
-    }
+
+		private List<QueryParameters> GetQueryParametersPermutation()
+		{
+			var baseQueryParams = PrepareBaseQueryParameters();
+
+			if (string.IsNullOrEmpty(this.Species) && string.IsNullOrEmpty(this.Breed))
+				return new List<QueryParameters> { baseQueryParams };
+
+			var queryParametersSets = new List<QueryParameters>();
+			if (string.IsNullOrEmpty(this.Species))
+			{
+				var parametersSets = GetBreedQueryParametersSets(baseQueryParams, this.Breed);
+				queryParametersSets.AddRange(parametersSets);
+			}
+			else if (string.IsNullOrEmpty(this.Breed))
+			{
+				var parametersSets = GetSpeciesQueryParametersSets(baseQueryParams, this.Species);
+				queryParametersSets.AddRange(parametersSets);
+			}
+			else
+			{
+				// If both species and breed are specified, 3x3 = 9 queries will need to be performed in order to get all permutations of 
+				// the search parameters.
+				var speciesParametersSets = GetSpeciesQueryParametersSets(baseQueryParams, this.Species);
+				foreach (var q in speciesParametersSets)
+				{
+					var speciesAndBreedParametersSets = GetBreedQueryParametersSets(q, this.Breed);
+					queryParametersSets.AddRange(speciesAndBreedParametersSets);
+				}
+			}
+
+			return queryParametersSets;
+		}
+
+		private QueryParameters PrepareBaseQueryParameters()
+		{
+			var patientsName = ConvertNameToSearchCriteria(this.PatientsName);
+			var referringPhysiciansName = ConvertNameToSearchCriteria(this.ReferringPhysiciansName);
+
+			var patientId = "";
+			if (!String.IsNullOrEmpty(this.PatientID))
+				patientId = this.PatientID + "*";
+
+			var accessionNumber = "";
+			if (!String.IsNullOrEmpty(this.AccessionNumber))
+				accessionNumber = this.AccessionNumber + "*";
+
+			var studyDescription = "";
+			if (!String.IsNullOrEmpty(this.StudyDescription))
+				studyDescription = this.StudyDescription + "*";
+
+			var dateRangeQuery = DateRangeHelper.GetDicomDateRangeQueryString(this.StudyDateFrom, this.StudyDateTo);
+
+			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
+			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
+			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
+			//or by running multiple queries, one per modality specified (for example).
+			var modalityFilter = DicomStringHelper.GetDicomStringArray(this.SearchModalities);
+
+			var responsiblePerson = ConvertNameToSearchCriteria(this.ResponsiblePerson);
+
+			var responsibleOrganization = "";
+			if (!String.IsNullOrEmpty(this.ResponsibleOrganization))
+				responsibleOrganization = this.ResponsibleOrganization + "*";
+
+			var queryParams = new QueryParameters();
+			queryParams.Add("PatientsName", patientsName);
+			queryParams.Add("ReferringPhysiciansName", referringPhysiciansName);
+			queryParams.Add("PatientId", patientId);
+			queryParams.Add("AccessionNumber", accessionNumber);
+			queryParams.Add("StudyDescription", studyDescription);
+			queryParams.Add("ModalitiesInStudy", modalityFilter);
+			queryParams.Add("StudyDate", dateRangeQuery);
+			queryParams.Add("StudyInstanceUid", "");
+
+			queryParams.Add("PatientSpeciesDescription", "");
+			queryParams.Add("PatientSpeciesCodeSequenceCodeValue", "");
+			queryParams.Add("PatientSpeciesCodeSequenceCodeMeaning", "");
+			queryParams.Add("PatientBreedDescription", "");
+			queryParams.Add("PatientBreedCodeSequenceCodeValue", "");
+			queryParams.Add("PatientBreedCodeSequenceCodeMeaning", "");
+			queryParams.Add("ResponsiblePerson", responsiblePerson);
+			queryParams.Add("ResponsibleOrganization", responsibleOrganization);
+
+			return queryParams;
+		}
+
+		private static List<QueryParameters> GetSpeciesQueryParametersSets(QueryParameters baseQueryParams, string species)
+		{
+			var queryParametersSet = new List<QueryParameters>();
+
+			var queryParams = new QueryParameters(baseQueryParams);
+			queryParams["PatientSpeciesDescription"] = species;
+			queryParametersSet.Add(queryParams);
+
+			queryParams = new QueryParameters(baseQueryParams);
+			queryParams["PatientSpeciesCodeSequenceCodeValue"] = species;
+			queryParametersSet.Add(queryParams);
+
+			queryParams = new QueryParameters(baseQueryParams);
+			queryParams["PatientSpeciesCodeSequenceCodeMeaning"] = species;
+			queryParametersSet.Add(queryParams);
+
+			return queryParametersSet;
+		}
+
+		private static List<QueryParameters> GetBreedQueryParametersSets(QueryParameters baseQueryParams, string breed)
+		{
+			var queryParametersSet = new List<QueryParameters>();
+
+			var queryParams = new QueryParameters(baseQueryParams);
+			queryParams["PatientBreedDescription"] = breed;
+			queryParametersSet.Add(queryParams);
+
+			queryParams = new QueryParameters(baseQueryParams);
+			queryParams["PatientBreedCodeSequenceCodeValue"] = breed;
+			queryParametersSet.Add(queryParams);
+
+			queryParams = new QueryParameters(baseQueryParams);
+			queryParams["PatientBreedCodeSequenceCodeMeaning"] = breed;
+			queryParametersSet.Add(queryParams);
+
+			return queryParametersSet;
+		}
+
+		private static string ConvertNameToSearchCriteria(string name)
+		{
+			string[] nameComponents = GetNameComponents(name);
+			if (nameComponents.Length == 1)
+			{
+				//Open name search
+				return String.Format("*{0}*", nameComponents[0].Trim());
+			}
+			else if (nameComponents.Length > 1)
+			{
+				if (String.IsNullOrEmpty(nameComponents[0]))
+				{
+					//Open name search - should never get here
+					return String.Format("*{0}*", nameComponents[1].Trim());
+				}
+				else if (String.IsNullOrEmpty(nameComponents[1]))
+				{
+					//Pure Last Name search
+					return String.Format("{0}*", nameComponents[0].Trim());
+				}
+				else
+				{
+					//Last Name, First Name search
+					return String.Format("{0}*{1}*", nameComponents[0].Trim(), nameComponents[1].Trim());
+				}
+			}
+
+			return "";
+		}
+
+		private static string[] GetNameComponents(string unparsedName)
+		{
+			unparsedName = unparsedName ?? "";
+			char separator = DicomExplorerConfigurationSettings.Default.NameSeparator;
+			string name = unparsedName.Trim();
+			if (String.IsNullOrEmpty(name))
+				return new string[0];
+
+			return name.Split(new char[] { separator }, StringSplitOptions.None);
+		}
+	}
 }

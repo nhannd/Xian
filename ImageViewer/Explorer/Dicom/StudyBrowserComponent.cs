@@ -139,8 +139,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#region Fields
 
-		private SearchPanelComponent _searchPanelComponent;
-
+		private List<QueryParameters> _lastQueryParametersList;
 		private readonly Dictionary<string, SearchResult> _searchResults;
 		private readonly Table<StudyItem> _dummyStudyTable;
 		private event EventHandler _studyTableChanged;
@@ -171,6 +170,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			_dummyStudyTable = new Table<StudyItem>();
 			_searchResults = new Dictionary<string, SearchResult>();
+			_lastQueryParametersList = new List<QueryParameters> { OpenQueryParameters };
 
 			_localDataStoreCleared = false;
 			_setStudiesArrived = new Dictionary<string, string>();
@@ -178,12 +178,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		}
 
 		#region Properties/Events
-
-		internal SearchPanelComponent SearchPanelComponent
-		{
-			get { return _searchPanelComponent; }
-			set { _searchPanelComponent = value; }
-		}
 
 		internal AEServerGroup SelectedServerGroup
 		{
@@ -207,6 +201,32 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+		internal QueryParameters OpenQueryParameters
+		{
+			get
+			{
+				var queryParams = new QueryParameters();
+				queryParams.Add("PatientsName", "");
+				queryParams.Add("ReferringPhysiciansName", "");
+				queryParams.Add("PatientId", "");
+				queryParams.Add("AccessionNumber", "");
+				queryParams.Add("StudyDescription", "");
+				queryParams.Add("ModalitiesInStudy", "");
+				queryParams.Add("StudyDate", "");
+				queryParams.Add("StudyInstanceUid", "");
+
+				queryParams.Add("PatientSpeciesDescription", "");
+				queryParams.Add("PatientSpeciesCodeSequenceCodeValue", "");
+				queryParams.Add("PatientSpeciesCodeSequenceCodeMeaning", "");
+				queryParams.Add("PatientBreedDescription", "");
+				queryParams.Add("PatientBreedCodeSequenceCodeValue", "");
+				queryParams.Add("PatientBreedCodeSequenceCodeMeaning", "");
+				queryParams.Add("ResponsiblePerson", "");
+				queryParams.Add("ResponsibleOrganization", "");
+
+				return queryParams;
+			}
+		}
 		internal SearchResult CurrentSearchResult
 		{
 			get
@@ -608,12 +628,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				string studyUids = DicomStringHelper.GetDicomStringArray(studyUidList);
 				if (!String.IsNullOrEmpty(studyUids))
 				{
-					QueryParameters parameters = PrepareQueryParameters();
-					parameters["StudyInstanceUid"] = studyUids;
+					var queryParams = new QueryParameters(this.OpenQueryParameters);
+					queryParams["StudyInstanceUid"] = studyUids;
 
 					try
 					{
-						StudyItemList list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
+						StudyItemList list = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
 						foreach (StudyItem item in list)
 						{
 							//don't need to check this again, it's just paranoia
