@@ -49,9 +49,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 			collection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
 			collection[DicomTags.InstanceAvailability].SetStringValue("");
 
-			collection[DicomTags.PatientSpeciesDescription].SetStringValue(queryParams["PatientSpeciesDescription"]);
-			var codeValue = queryParams["PatientSpeciesCodeSequenceCodeValue"];
-			var codeMeaning = queryParams["PatientSpeciesCodeSequenceCodeMeaning"];
+			collection[DicomTags.PatientSpeciesDescription].SetStringValue(GetString(queryParams, "PatientSpeciesDescription"));
+			var codeValue = GetString(queryParams, "PatientSpeciesCodeSequenceCodeValue");
+			var codeMeaning = GetString(queryParams, "PatientSpeciesCodeSequenceCodeMeaning");
 			if (codeValue != null || codeMeaning != null)
 			{
 				var codeSequenceMacro = new CodeSequenceMacro
@@ -63,9 +63,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 				collection[DicomTags.PatientSpeciesCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
 			}
 
-			collection[DicomTags.PatientBreedDescription].SetStringValue(queryParams["PatientBreedDescription"]);
-			codeValue = queryParams["PatientBreedCodeSequenceCodeValue"];
-			codeMeaning = queryParams["PatientBreedCodeSequenceCodeMeaning"];
+			collection[DicomTags.PatientBreedDescription].SetStringValue(GetString(queryParams, "PatientBreedDescription"));
+			codeValue = GetString(queryParams, "PatientBreedCodeSequenceCodeValue");
+			codeMeaning = GetString(queryParams, "PatientBreedCodeSequenceCodeMeaning");
 			if (codeValue != null || codeMeaning != null)
 			{
 				var codeSequenceMacro = new CodeSequenceMacro
@@ -77,9 +77,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 				collection[DicomTags.PatientBreedCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
 			}
 
-			collection[DicomTags.ResponsiblePerson].SetStringValue(queryParams["ResponsiblePerson"]);
+			collection[DicomTags.ResponsiblePerson].SetStringValue(GetString(queryParams, "ResponsiblePerson"));
 			collection[DicomTags.ResponsiblePersonRole].SetStringValue("");
-			collection[DicomTags.ResponsibleOrganization].SetStringValue(queryParams["ResponsibleOrganization"]);
+			collection[DicomTags.ResponsibleOrganization].SetStringValue(GetString(queryParams, "ResponsibleOrganization"));
 
             StudyItemList studyItemList = new StudyItemList();
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
@@ -130,10 +130,18 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 				}
 			}
 
-        	AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
-        	                           SopClass.StudyRootQueryRetrieveInformationModelFindUid, collection);
+			AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
+									   SopClass.StudyRootQueryRetrieveInformationModelFindUid, collection);
 
-            return studyItemList;
-        }
-    }
+			return studyItemList;
+		}
+
+		private static string GetString(QueryParameters queryParams, string key)
+		{
+			string sResult;
+			if (queryParams.TryGetValue(key, out sResult))
+				return sResult;
+			return "";
+		}
+	}
 }

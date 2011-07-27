@@ -29,8 +29,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private static readonly List<DicomExplorerComponent> _activeComponents = new List<DicomExplorerComponent>();
 
 		private ServerTreeComponent _serverTreeComponent;
-		private StudyBrowserComponent _studyBrowserComponent;
-		private SearchPanelComponent _searchPanelComponent;
+		private IStudyBrowserComponent _studyBrowserComponent;
+		private ISearchPanelComponent _searchPanelComponent;
 
 		private DicomExplorerComponent(SplitPane pane1, SplitPane pane2)
 			: base(pane1, pane2, Desktop.SplitOrientation.Horizontal)
@@ -42,12 +42,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _serverTreeComponent; }
 		}
 
-		public StudyBrowserComponent StudyBrowserComponent
+		public IStudyBrowserComponent StudyBrowserComponent
 		{
 			get { return _studyBrowserComponent; }
 		}
 
-		public SearchPanelComponent SearchPanelComponent
+		public ISearchPanelComponent SearchPanelComponent
 		{
 			get { return _searchPanelComponent; }
 		}
@@ -92,12 +92,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
 			serverTreeComponent.IsReadOnly = !hasEditPermission;
 
-			StudyBrowserComponent studyBrowserComponent = new StudyBrowserComponent();
+			var studyBrowserComponent = CreateComponentFromExtension<StudyBrowserComponentExtensionPoint, IStudyBrowserComponent>()
+				?? new StudyBrowserComponent();
 
 			serverTreeComponent.SelectedServerChanged +=
 				delegate { studyBrowserComponent.SelectServerGroup(serverTreeComponent.SelectedServers); };
 
-			SearchPanelComponent searchPanelComponent = new SearchPanelComponent();
+			var searchPanelComponent = CreateComponentFromExtension<SearchPanelComponentExtensionPoint, ISearchPanelComponent>()
+				?? new SearchPanelComponent();
 			SelectDefaultServerNode(serverTreeComponent);
 
 			try
@@ -105,7 +107,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				//explicitly check and make sure we're querying local only.
 				if (serverTreeComponent.ShowLocalDataStoreNode && serverTreeComponent.SelectedServers.IsLocalDatastore)
 				{
-					studyBrowserComponent.Search();
+					var queryParamList = new List<QueryParameters> { studyBrowserComponent.OpenSearchQueryParams };
+					studyBrowserComponent.Search(queryParamList);
 				}
 			}
 			catch (PolicyException)
@@ -243,6 +246,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				Platform.Log(LogLevel.Warn, "Local data store study finder not found.");
 				return false;
+			}
+		}
+
+		private static TComponent CreateComponentFromExtension<TExtensionPoint, TComponent>()
+			where TExtensionPoint : ExtensionPoint, new()
+			where TComponent : class, IApplicationComponent
+		{
+			try
+			{
+				var xp = new TExtensionPoint();
+				return (TComponent)xp.CreateExtension();
+			}
+			catch (Exception)
+			{
+				return null;
 			}
 		}
 	}
