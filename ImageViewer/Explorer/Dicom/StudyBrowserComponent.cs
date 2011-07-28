@@ -14,7 +14,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -180,9 +179,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#region Properties/Events
 
-		internal AEServerGroup SelectedServerGroup
+		public AEServerGroup SelectedServerGroup
 		{
 			get { return _selectedServerGroup; }
+			set
+			{
+				_selectedServerGroup = value;
+
+				if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
+				{
+					SearchResult searchResult = CreateSearchResult();
+					_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
+				}
+
+				ProcessReceivedAndRemovedStudies();
+				OnSelectedServerChanged();
+			}
 		}
 
 		internal bool FilterDuplicateStudies
@@ -202,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public QueryParameters OpenSearchQueryParams
+		public virtual QueryParameters OpenSearchQueryParams
 		{
 			get
 			{
@@ -312,20 +324,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _contextMenuModel; }
 		}
 
-		public void SelectServerGroup(AEServerGroup selectedServerGroup)
-		{
-			_selectedServerGroup = selectedServerGroup;
-
-			if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
-			{
-				SearchResult searchResult = new SearchResult();
-				_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
-			}
-
-			ProcessReceivedAndRemovedStudies();
-			OnSelectedServerChanged();
-		}
-
 		public void SetSelection(ISelection selection)
 		{
 			if (_currentSelection != selection)
@@ -335,7 +333,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public void Search(List<QueryParameters> queryParametersList)
+		public virtual SearchResult CreateSearchResult()
+		{
+			return new SearchResult();
+		}
+
+		public virtual void Search(List<QueryParameters> queryParametersList)
 		{
 			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
 				_setStudiesArrived.Clear();
@@ -647,6 +650,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			existingItem.SpecificCharacterSet = sourceItem.SpecificCharacterSet;
 			existingItem.StudyDate = sourceItem.StudyDate;
 			existingItem.StudyDescription = sourceItem.StudyDescription;
+
+			existingItem.PatientSpeciesDescription = sourceItem.PatientSpeciesDescription;
+			existingItem.PatientSpeciesCodeSequenceCodingSchemeDesignator = sourceItem.PatientSpeciesCodeSequenceCodingSchemeDesignator;
+			existingItem.PatientSpeciesCodeSequenceCodeValue = sourceItem.PatientSpeciesCodeSequenceCodeValue;
+			existingItem.PatientSpeciesCodeSequenceCodeMeaning = sourceItem.PatientSpeciesCodeSequenceCodeMeaning;
+			existingItem.PatientBreedDescription = sourceItem.PatientBreedDescription;
+			existingItem.PatientBreedCodeSequenceCodingSchemeDesignator = sourceItem.PatientBreedCodeSequenceCodingSchemeDesignator;
+			existingItem.PatientBreedCodeSequenceCodeValue = sourceItem.PatientBreedCodeSequenceCodeValue;
+			existingItem.PatientBreedCodeSequenceCodeMeaning = sourceItem.PatientBreedCodeSequenceCodeMeaning;
+			existingItem.ResponsibleOrganization = sourceItem.ResponsibleOrganization;
+			existingItem.ResponsiblePersonRole = sourceItem.ResponsiblePersonRole;
+			existingItem.ResponsiblePerson = sourceItem.ResponsiblePerson;
 		}
 	}
 }

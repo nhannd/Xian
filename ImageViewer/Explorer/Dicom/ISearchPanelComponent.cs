@@ -34,6 +34,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	public interface ISearchPanelComponent : IApplicationComponent
 	{
+		void Search();
+		void Clear();
+
 		event EventHandler<SearchRequestEventArgs> SearchRequestEvent;
 	}
 }
