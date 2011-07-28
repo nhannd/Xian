@@ -466,8 +466,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 				try
 				{
-					foreach (var queryParams in queryParamsList)
+					foreach (var q in queryParamsList)
 					{
+						// Make sure the query parameters sent contains all user specified parameters, plus any keys defined in 
+						// OpenSearchQueryParams but not in user specified parameters.
+						var queryParams = MergeQueryParams(q, this.OpenSearchQueryParams);
+
 						if (serverNode.IsLocalDataStore)
 						{
 							var studyItemList = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
@@ -500,6 +504,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			return aggregateStudyItemList;
+		}
+		
+		private static QueryParameters MergeQueryParams(QueryParameters primary, QueryParameters secondary)
+		{
+			// Merge the primary with secondary query parameters.  If the key exist in both, keep the value in the primary
+			// Otherwise, add the value in the secondary to the merged query parameters.
+			var merged = new QueryParameters(primary);
+			foreach (var k in secondary.Keys)
+			{
+				if (!merged.ContainsKey(k))
+					merged.Add(k, secondary[k]);
+			}
+
+			return merged;
 		}
 
 		private bool StudyExists(string studyInstanceUid)
