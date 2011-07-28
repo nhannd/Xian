@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				?? new StudyBrowserComponent();
 
 			serverTreeComponent.SelectedServerChanged +=
-				delegate { studyBrowserComponent.SelectServerGroup(serverTreeComponent.SelectedServers); };
+				delegate { studyBrowserComponent.SelectedServerGroup = serverTreeComponent.SelectedServers; };
 
 			var searchPanelComponent = CreateComponentFromExtension<SearchPanelComponentExtensionPoint, ISearchPanelComponent>()
 				?? new SearchPanelComponent();

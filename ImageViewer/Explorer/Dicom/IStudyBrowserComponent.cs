@@ -25,7 +25,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	public interface IStudyBrowserComponent : IApplicationComponent
 	{
 		QueryParameters OpenSearchQueryParams { get; }
-		void SelectServerGroup(AEServerGroup selectedServerGroup);
+		SearchResult CreateSearchResult();
+		AEServerGroup SelectedServerGroup { get; set; }
 		void Search(List<QueryParameters> queryParameters);
 	}
 }

@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			base.Start();
 		}
 
-		public void Clear()
+		public virtual void Clear()
 		{
 			this.PatientID = "";
 			this.PatientsName = "";
@@ -239,7 +239,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			InternalClearDates();
 		}
 
-		public void Search()
+		public virtual void Search()
 		{
 			if (base.HasValidationErrors)
 			{

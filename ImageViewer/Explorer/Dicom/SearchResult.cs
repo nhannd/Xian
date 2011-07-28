@@ -20,7 +20,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	internal class SearchResult
+	public class SearchResult
 	{
 		private string _serverGroupName;
 		private bool _isLocalDataStore;
@@ -183,10 +183,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				allStudies.Remove(study);
 		}
 
-		private void InitializeTable()
+		protected virtual void InitializeTable()
 		{
-			TableColumn<StudyItem, string> column;
+			InitializeExtensionColumns();
+			InitializeMainColumns();
+			InitializeNumberOfInstancesColumn();
+			InitializeServerColumns();
+		}
 
+		protected void InitializeExtensionColumns()
+		{
 			try
 			{
 				// Create and add any extension columns
@@ -195,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					IStudyColumn newColumn = (IStudyColumn)obj;
 
-					column = new TableColumn<StudyItem, string>(
+					var column = new TableColumn<StudyItem, string>(
 						newColumn.Name,
 						item => (newColumn.GetValue(item) ?? "").ToString(),
 						newColumn.WidthFactor);
@@ -207,6 +213,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			catch (NotSupportedException)
 			{
 			}
+		}
+
+		protected void InitializeMainColumns()
+		{
+			TableColumn<StudyItem, string> column;
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingPatientId,
@@ -301,8 +312,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				0.6f);
 
 			_studyTable.Columns.Add(column);
+		}
 
-			column = new TableColumn<StudyItem, string>(
+		protected void InitializeNumberOfInstancesColumn()
+		{
+			var column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingNumberOfInstances,
 				delegate(StudyItem item)
 					{
@@ -336,8 +350,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 
 			_studyTable.Columns.Add(column);
+		}
 
-			column = new TableColumn<StudyItem, string>(SR.ColumnHeadingServer,
+		protected void InitializeServerColumns()
+		{
+			var column = new TableColumn<StudyItem, string>(SR.ColumnHeadingServer,
 														delegate(StudyItem item)
 														{
 															return (item.Server == null) ? "" : item.Server.ToString();
@@ -356,7 +373,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_studyTable.Columns.Add(column);
 		}
 
-		public void UpdateColumnVisibility()
+		internal void UpdateColumnVisibility()
 		{
 			foreach (TableColumnBase<StudyItem> column in _studyTable.Columns)
 			{
@@ -395,7 +412,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		private TableColumnBase<StudyItem> FindColumn(string columnHeading)
+		protected TableColumnBase<StudyItem> FindColumn(string columnHeading)
 		{
 			foreach (TableColumnBase<StudyItem> column in StudyTable.Columns)
 			{
@@ -406,14 +423,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return null;
 		}
 
-		private void OnColumnValueChanged(object sender, ItemEventArgs<StudyItem> e)
+		protected void OnColumnValueChanged(object sender, ItemEventArgs<StudyItem> e)
 		{
 			this.StudyTable.Items.NotifyItemUpdated(e.Item);
 		}
 
 		#endregion
 
-		private static string GetDateStringFromDicomDA(string dicomDate)
+		protected static string GetDateStringFromDicomDA(string dicomDate)
 		{
 			DateTime date;
 			if (!DateParser.Parse(dicomDate, out date))
