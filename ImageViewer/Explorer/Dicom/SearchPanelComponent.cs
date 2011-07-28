@@ -253,7 +253,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			var queryParams = PrepareBaseQueryParameters();
 			var eventArgs = new SearchRequestEventArgs(new List<QueryParameters> { queryParams });
-			EventsHelper.Fire(_searchRequestEvent, this, eventArgs);
+			NotifySearchRequested(eventArgs);
 		}
 
 		public void SearchToday()
@@ -379,6 +379,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			queryParams["ModalitiesInStudy"] = DicomStringHelper.GetDicomStringArray(this.SearchModalities);
 
 			return queryParams;
+		}
+
+		protected void NotifySearchRequested(SearchRequestEventArgs e)
+		{
+			EventsHelper.Fire(_searchRequestEvent, this, e);
 		}
 	}
 }
