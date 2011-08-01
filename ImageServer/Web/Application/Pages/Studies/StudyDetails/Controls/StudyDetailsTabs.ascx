@@ -19,6 +19,7 @@
 <%@ Register Src="HistoryPanel.ascx" TagName="HistoryPanel" TagPrefix="localAsp" %>
 <%@ Register Src="StudyIntegrityQueueGridView.ascx" TagName="StudyIntegrityQueueGridView" TagPrefix="localAsp" %>
 <%@ Register Src="DataAccessPanel.ascx" TagName="DataAccessPanel" TagPrefix="localAsp" %>
+<%@ Register Src="UpdateAuthorityGroupDialog.ascx" TagName="UpdateAuthorityGroupDialog" TagPrefix="localAsp" %>
 
 <aspAjax:TabContainer ID="StudyDetailsTabContainer" runat="server" ActiveTabIndex="0"
     CssClass="TabControl" Width="100%" Style="border-bottom: #618FAD 1px solid;">
@@ -154,14 +155,13 @@
             </table>
         </ContentTemplate>
     </aspAjax:TabPanel>
-    <aspAjax:TabPanel ID="TabPanel5" HeaderText="<%$Resources: Titles, DataAccess %>" runat="server">
+    <aspAjax:TabPanel ID="DataAccessTabPanel" HeaderText="<%$Resources: Titles, DataAccess %>" runat="server">
         <ContentTemplate>
             <table width="100%" cellpadding="4" cellspacing="0" style="background-color: #B8D8EE;">
                 <tr>
                     <td>
                         <div style="padding-top: 5px; padding-left: 1px;" />
-                        <ccUI:ToolbarButton runat="server" ID="AddAuthorityGroupButton" SkinID="<%$Image:AddButton%>" OnClick="AddAuthorityGroupButton_Click" />&nbsp;
-                        <ccUI:ToolbarButton runat="server" ID="DeleteAuthorityGroupButton" SkinID="<%$Image:DeleteButton%>" OnClick="DeleteAuthorityGroupButton_Click" />&nbsp;
+                        <ccUI:ToolbarButton runat="server" ID="UpdateAuthorityGroupButton" SkinID="<%$Image:UpdateButton%>" OnClick="UpdateAuthorityGroupButton_Click" />&nbsp;
                         </div>
                     </td>
                 </tr>
@@ -177,3 +177,4 @@
     </aspAjax:TabPanel>
 </aspAjax:TabContainer>
 <ccAsp:MessageBox ID="DeleteConfirmation" runat="server" Title="Delete Series Confirmation" />
+<localAsp:UpdateAuthorityGroupDialog ID="UpdateAuthorityGroupDialog" runat="server" />

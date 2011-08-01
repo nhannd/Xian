@@ -423,4 +423,7 @@
   <data name="DataAccess" xml:space="preserve">
     <value>Data Access</value>
   </data>
+  <data name="UpdateAuthorityGroupDialog" xml:space="preserve">
+    <value>Update Data Access Authority Group Assignments</value>
+  </data>
 </root>

@@ -27,6 +27,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public string Description { get; set; }
 
+        public string AuthorityGroupOID { set; get; }
+
         public StudyDataAccess StudyDataAccess { get; set; }
     }
 
@@ -66,9 +68,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return broker.FindOne(select);
         }
 
-        public void AddDataAccessIfNotExists(string oid)
+        public StudyDataAccess FindStudyDataAccess(ServerEntityKey studyStorageKey, ServerEntityKey dataAccessKey)
         {
-            if (FindDataAccessGroup(oid) == null)
+            StudyDataAccessSelectCriteria select = new StudyDataAccessSelectCriteria();
+            select.StudyStorageKey.EqualTo(studyStorageKey);
+            select.DataAccessGroupKey.EqualTo(dataAccessKey);
+            IStudyDataAccessEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDataAccessEntityBroker>();
+            return broker.FindOne(select);
+        }
+
+        public DataAccessGroup AddDataAccessIfNotExists(string oid)
+        {
+            DataAccessGroup theGroup = FindDataAccessGroup(oid);
+            if (theGroup == null)
             {
                 using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
@@ -80,10 +92,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                                                                   Deleted = false
                                                               };
                     IDataAccessGroupEntityBroker broker = update.GetBroker<IDataAccessGroupEntityBroker>();
-                    broker.Insert(insert);
+                    theGroup = broker.Insert(insert);
                     update.Commit();
                 }
             }
+            return theGroup;
         }
 
         public IList<StudyDataAccessSummary> LoadStudyDataAccess(ServerEntityKey studyStorageKey)
@@ -105,12 +118,70 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                                                                           {
                                                                               Description = groupSummary.Description,
                                                                               Name = groupSummary.Name,
+                                                                              AuthorityGroupOID = groupSummary.AuthorityGroupRef.ToString(false,false), 
                                                                               StudyDataAccess = dataAccess
                                                                           });
                                                   }
                                               });
 
             return summaryList;              
+        }
+
+        public bool UpdateStudyAuthorityGroups(ServerEntityKey studyStorageKey, IList<string> assignedGroupOids)
+        {
+            IList<StudyDataAccessSummary> assignedList = LoadStudyDataAccess(studyStorageKey);
+
+            foreach (StudyDataAccessSummary summary in assignedList)
+            {
+                bool found = false;
+                foreach (var oid in assignedGroupOids)
+                {
+                    if (summary.AuthorityGroupOID.Equals(oid))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                    {
+                        IStudyDataAccessEntityBroker broker = update.GetBroker<IStudyDataAccessEntityBroker>();
+                        broker.Delete(summary.StudyDataAccess.Key);
+                        update.Commit();
+                    }
+                }
+            }
+            foreach (var oid in assignedGroupOids)
+            {
+                bool found = false;
+                foreach (StudyDataAccessSummary summary in assignedList)
+                {
+                    if (summary.AuthorityGroupOID.Equals(oid))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    DataAccessGroup accessGroup = AddDataAccessIfNotExists(oid);
+
+                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                    {
+                        StudyDataAccessUpdateColumns insertColumns = new StudyDataAccessUpdateColumns
+                                                                         {
+                                                                             DataAccessGroupKey = accessGroup.Key,
+                                                                             StudyStorageKey = studyStorageKey
+                                                                         };
+
+                        IStudyDataAccessEntityBroker insert = updateContext.GetBroker<IStudyDataAccessEntityBroker>();
+                        insert.Insert(insertColumns);
+                        updateContext.Commit();
+                    }
+                }
+            }
+            return true;
         }
     }
 }

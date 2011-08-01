@@ -1,4 +1,15 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
@@ -10,11 +21,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 {
     public partial class DataAccessPanel : System.Web.UI.UserControl
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
-
         #region Private members
 
         #endregion Private members
@@ -35,29 +41,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             get
             {
-                if (!SeriesListControl.IsDataBound) DataBind();
+                if (!AccessListControl.IsDataBound) DataBind();
 
                 if (DataAccessGroups == null || DataAccessGroups.Count == 0)
                     return null;
 
-                int[] rows = SeriesListControl.SelectedIndices;
+                int[] rows = AccessListControl.SelectedIndices;
                 if (rows == null || rows.Length == 0)
                     return null;
 
-                IList<StudyDataAccessSummary> seriesItems = new List<StudyDataAccessSummary>();
+                IList<StudyDataAccessSummary> dataAccessSummaries = new List<StudyDataAccessSummary>();
                 for (int i = 0; i < rows.Length; i++)
                 {
                     if (rows[i] < DataAccessGroups.Count)
                     {
-                        seriesItems.Add(DataAccessGroups[rows[i]]);
+                        dataAccessSummaries.Add(DataAccessGroups[rows[i]]);
                     }
                 }
 
-                return seriesItems;
+                return dataAccessSummaries;
             }
         }     
 
-        public Web.Common.WebControls.UI.GridView SeriesListControl
+        public Web.Common.WebControls.UI.GridView AccessListControl
         {
             get { return GridView1; }
         }
@@ -65,6 +71,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         #endregion Public properties
 
         #region Protected methods
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
 
         public override void DataBind()
         {

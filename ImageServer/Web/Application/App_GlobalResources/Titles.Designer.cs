@@ -898,6 +898,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Data Access Authority Group Assignments.
+        /// </summary>
+        internal static string UpdateAuthorityGroupDialog {
+            get {
+                return ResourceManager.GetString("UpdateAuthorityGroupDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Authority Groups.
         /// </summary>
         internal static string UserGroups {

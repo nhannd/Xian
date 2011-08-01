@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
 using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
@@ -130,7 +131,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         public StudySummary Study
         {
             get { return _study; }
-            set { _study = value; }
+            set 
+            { 
+                _study = value;
+                UpdateAuthorityGroupDialog.Study = value;
+            }
         }
 
         public ServerPartition Partition
@@ -144,7 +149,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             get { return SeriesGridView.SelectedItems; }
         }
 
-
         #endregion Public Members
 
         #region Protected Methods
@@ -153,8 +157,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             base.OnInit(e);
 
-            DeleteConfirmation.Confirmed += delegate(object data)
-                                              {
+            DeleteConfirmation.Confirmed += delegate
+                                                {
                                                   ScriptManager.RegisterStartupScript(Page, Page.GetType(),
                                                                                       "alertScript", "self.close();",
                                                                                       true);
@@ -167,6 +171,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             DeleteSeriesButton.Roles = AuthorityTokens.Study.Delete;
             MoveSeriesButton.Roles = AuthorityTokens.Study.Move;
+
+            UpdateAuthorityGroupDialog.AuthorityGroupsEdited += UpdateAuthorityGroupDialog_AuthorityGroupsEdited;
+
+            try
+            {
+                PrincipalPermission perm = new PrincipalPermission(null,ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+                perm.Demand();
+                DataAccessTabPanel.Visible = true;
+            }
+            catch (Exception)
+            {
+                DataAccessTabPanel.Visible = false;
+            }                       
+        }
+
+        private void UpdateAuthorityGroupDialog_AuthorityGroupsEdited(object sender, EventArgs e)
+        {
+            DataAccessPanel.DataBind();
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -179,8 +201,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             base.OnPreRender(e);
         }
-
-        
 
         protected void DeleteSeriesButton_Click(object sender, ImageClickEventArgs e)
         {
@@ -205,6 +225,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             
             DeleteConfirmation.Show();
  */
+        }
+
+        protected void UpdateAuthorityGroupButton_Click(object sender, ImageClickEventArgs e)
+        {
+            UpdateAuthorityGroupDialog.Study = Study;
+            UpdateAuthorityGroupDialog.Show();
         }
 
         #endregion Protected Methods
@@ -234,16 +260,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
 
             base.DataBind();
-        }
-
-        protected void AddAuthorityGroupButton_Click(object sender, ImageClickEventArgs e)
-        {
-            
-        }
-
-        protected void DeleteAuthorityGroupButton_Click(object sender, ImageClickEventArgs e)
-        {
-            
         }
     }
 }

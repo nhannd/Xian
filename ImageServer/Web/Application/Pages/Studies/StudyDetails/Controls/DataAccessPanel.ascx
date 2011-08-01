@@ -12,6 +12,7 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DataAccessPanel" %>
 <%@ Import Namespace="Resources" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Model" %>
+
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
