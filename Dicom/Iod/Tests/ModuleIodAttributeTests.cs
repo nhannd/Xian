@@ -105,8 +105,8 @@ namespace ClearCanvas.Dicom.Iod.Tests
 			var module = new GeneralSeriesModuleIod(dicomFile.DataSet);
 			Assert.AreEqual(module.AnatomicalOrientationType, AnatomicalOrientationType.None);
 
-			module.AnatomicalOrientationType = AnatomicalOrientationType.QUADRUPED;
-			Assert.AreEqual(module.AnatomicalOrientationType, AnatomicalOrientationType.QUADRUPED);
+			module.AnatomicalOrientationType = AnatomicalOrientationType.Quadruped;
+			Assert.AreEqual(module.AnatomicalOrientationType, AnatomicalOrientationType.Quadruped);
 
 			dicomFile.Save("TestGeneralSeriesModuleIod.dcm");
 
@@ -114,7 +114,7 @@ namespace ClearCanvas.Dicom.Iod.Tests
 			reloadedDicomFile.Load();
 
 			var realoadedModule = new PatientModuleIod(reloadedDicomFile.DataSet);
-			Assert.AreEqual(module.AnatomicalOrientationType, AnatomicalOrientationType.QUADRUPED);
+			Assert.AreEqual(module.AnatomicalOrientationType, AnatomicalOrientationType.Quadruped);
 		}
 	}
 }
