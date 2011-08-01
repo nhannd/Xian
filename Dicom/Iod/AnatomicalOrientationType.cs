@@ -21,18 +21,18 @@ namespace ClearCanvas.Dicom.Iod
 	public enum AnatomicalOrientationType
 	{
 		/// <summary>
-		/// None, ie, blank value
+		/// None.
 		/// </summary>
 		None,
 
 		/// <summary>
-		/// Biped, two feet.
+		/// Biped.
 		/// </summary>
-		BIPED,
+		Biped,
 
 		/// <summary>
-		/// Quadruped, four feet.
+		/// Quadruped.
 		/// </summary>
-		QUADRUPED
+		Quadruped
 	}
 }

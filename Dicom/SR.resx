@@ -401,4 +401,61 @@
   <data name="LabelFilmSmoothingTypeCubic" xml:space="preserve">
     <value>Cubic</value>
   </data>
+  <data name="LabelPatientDirectionAnterior" xml:space="preserve">
+    <value>Anterior</value>
+  </data>
+  <data name="LabelPatientDirectionCaudal" xml:space="preserve">
+    <value>Caudal</value>
+  </data>
+  <data name="LabelPatientDirectionCranial" xml:space="preserve">
+    <value>Cranial</value>
+  </data>
+  <data name="LabelPatientDirectionDistal" xml:space="preserve">
+    <value>Distal</value>
+  </data>
+  <data name="LabelPatientDirectionDorsal" xml:space="preserve">
+    <value>Dorsal</value>
+  </data>
+  <data name="LabelPatientDirectionFoot" xml:space="preserve">
+    <value>Foot</value>
+  </data>
+  <data name="LabelPatientDirectionHead" xml:space="preserve">
+    <value>Head</value>
+  </data>
+  <data name="LabelPatientDirectionLateral" xml:space="preserve">
+    <value>Lateral</value>
+  </data>
+  <data name="LabelPatientDirectionLeft" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="LabelPatientDirectionMedial" xml:space="preserve">
+    <value>Medial</value>
+  </data>
+  <data name="LabelPatientDirectionPalmar" xml:space="preserve">
+    <value>Palmar</value>
+  </data>
+  <data name="LabelPatientDirectionPlantar" xml:space="preserve">
+    <value>Plantar</value>
+  </data>
+  <data name="LabelPatientDirectionPosterior" xml:space="preserve">
+    <value>Posterior</value>
+  </data>
+  <data name="LabelPatientDirectionProximal" xml:space="preserve">
+    <value>Proximal</value>
+  </data>
+  <data name="LabelPatientDirectionRight" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="LabelPatientDirectionRostral" xml:space="preserve">
+    <value>Rostral</value>
+  </data>
+  <data name="LabelPatientDirectionVentral" xml:space="preserve">
+    <value>Ventral</value>
+  </data>
+  <data name="LabelPatientDirectionUnspecified" xml:space="preserve">
+    <value>Unspecified</value>
+  </data>
+  <data name="LabelPatientDirectionSeparator" xml:space="preserve">
+    <value>-</value>
+  </data>
 </root>
