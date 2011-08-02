@@ -1402,6 +1402,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient Breed.
+        /// </summary>
+        public static string Dicom_Patient_PatientBreed_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_Patient_PatientBreed_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Breed.
+        /// </summary>
+        public static string Dicom_Patient_PatientBreed_Label {
+            get {
+                return ResourceManager.GetString("Dicom_Patient_PatientBreed_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient Comments.
         /// </summary>
         public static string Dicom_Patient_PatientComments_DisplayName {
@@ -1492,6 +1510,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient Species.
+        /// </summary>
+        public static string Dicom_Patient_PatientSpecies_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_Patient_PatientSpecies_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Species.
+        /// </summary>
+        public static string Dicom_Patient_PatientSpecies_Label {
+            get {
+                return ResourceManager.GetString("Dicom_Patient_PatientSpecies_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient&apos;s Sex.
         /// </summary>
         public static string Dicom_Patient_PatientsSex_DisplayName {
@@ -1506,6 +1542,42 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         public static string Dicom_Patient_PatientsSex_Label {
             get {
                 return ResourceManager.GetString("Dicom_Patient_PatientsSex_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Responsible Organization.
+        /// </summary>
+        public static string Dicom_Patient_ResponsibleOrganization_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_Patient_ResponsibleOrganization_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Responsible Organization.
+        /// </summary>
+        public static string Dicom_Patient_ResponsibleOrganization_Label {
+            get {
+                return ResourceManager.GetString("Dicom_Patient_ResponsibleOrganization_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Responsible Person.
+        /// </summary>
+        public static string Dicom_Patient_ResponsiblePerson_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_Patient_ResponsiblePerson_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Responsible Person.
+        /// </summary>
+        public static string Dicom_Patient_ResponsiblePerson_Label {
+            get {
+                return ResourceManager.GetString("Dicom_Patient_ResponsiblePerson_Label", resourceCulture);
             }
         }
         
@@ -1659,6 +1731,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         public static string FormatCentimeters {
             get {
                 return ResourceManager.GetString("FormatCentimeters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ({1}).
+        /// </summary>
+        public static string FormatCodeSequence {
+            get {
+                return ResourceManager.GetString("FormatCodeSequence", resourceCulture);
             }
         }
         

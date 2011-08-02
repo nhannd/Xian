@@ -1461,9 +1461,7 @@
             <annotation-box normalized-rectangle="0.000000\0.025000\0.500000\0.050000" annotation-item-id="Dicom.Patient.PatientsName" />
             <annotation-box normalized-rectangle="0.000000\0.050000\0.500000\0.075000" annotation-item-id="Dicom.Patient.PatientsSex" />
             <annotation-box normalized-rectangle="0.000000\0.075000\0.500000\0.100000" annotation-item-id="Dicom.PatientStudy.PatientsAge" />
-            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="">
-              <box-settings bold="true" color="Yellow" fit-width="true" always-visible="false" />
-            </annotation-box>
+            <annotation-box normalized-rectangle="0.000000\0.100000\0.500000\0.125000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.000000\0.125000\0.500000\0.150000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.000000\0.150000\0.500000\0.175000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.000000\0.175000\0.500000\0.200000" annotation-item-id="" />
