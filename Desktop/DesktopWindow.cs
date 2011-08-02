@@ -371,6 +371,8 @@ namespace ClearCanvas.Desktop
 				//TODO (CR February 2011) - High: We should have left this as a property on ProductInformation rather than checking for empty string.
 				if (ProductInformation.Release != string.Empty)
     				tags.Add(SR.LabelNotForDiagnosticUse);
+				else
+					tags.Add(SR.LabelNotForHumanDiagnosis);
     			if (!ManifestVerification.Valid)
     				// should be hardcoded because manifest verification is all that prevents localizing this tag away
     				tags.Add(LabelModifiedInstallation);
