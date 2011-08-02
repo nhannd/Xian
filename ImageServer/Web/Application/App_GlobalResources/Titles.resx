@@ -426,4 +426,7 @@
   <data name="UpdateAuthorityGroupDialog" xml:space="preserve">
     <value>Update Data Access Authority Group Assignments</value>
   </data>
+  <data name="AddAuthorityGroupsDialogTitle" xml:space="preserve">
+    <value>Add Data Access Authority Groups to Studies</value>
+  </data>
 </root>

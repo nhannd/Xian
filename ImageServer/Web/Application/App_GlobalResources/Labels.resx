@@ -607,4 +607,10 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="AddAuthorityGroupsDialog_AuthorityGroupsLabel" xml:space="preserve">
+    <value>To the following data access authority groups:</value>
+  </data>
+  <data name="AddAuthorityGroupsDialog_StudyListingLabel" xml:space="preserve">
+    <value>The following study/studies will be assigned:</value>
+  </data>
 </root>

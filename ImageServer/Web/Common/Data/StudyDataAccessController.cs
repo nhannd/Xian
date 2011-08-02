@@ -183,5 +183,41 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
             return true;
         }
+
+        public bool AddStudyAuthorityGroups(ServerEntityKey studyStorageKey, IList<string> assignedGroupOids)
+        {
+            IList<StudyDataAccessSummary> assignedList = LoadStudyDataAccess(studyStorageKey);
+
+            foreach (var oid in assignedGroupOids)
+            {
+                bool found = false;
+                foreach (StudyDataAccessSummary summary in assignedList)
+                {
+                    if (summary.AuthorityGroupOID.Equals(oid))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    DataAccessGroup accessGroup = AddDataAccessIfNotExists(oid);
+
+                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                    {
+                        StudyDataAccessUpdateColumns insertColumns = new StudyDataAccessUpdateColumns
+                        {
+                            DataAccessGroupKey = accessGroup.Key,
+                            StudyStorageKey = studyStorageKey
+                        };
+
+                        IStudyDataAccessEntityBroker insert = updateContext.GetBroker<IStudyDataAccessEntityBroker>();
+                        insert.Insert(insertColumns);
+                        updateContext.Commit();
+                    }
+                }
+            }
+            return true;
+        }
     }
 }

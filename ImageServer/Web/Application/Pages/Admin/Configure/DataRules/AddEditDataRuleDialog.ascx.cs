@@ -21,9 +21,7 @@ using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
-using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 using ClearCanvas.Web.Enterprise.Admin;
 using Resources;
 

@@ -79,6 +79,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Data Access Authority Groups to Studies.
+        /// </summary>
+        internal static string AddAuthorityGroupsDialogTitle {
+            get {
+                return ResourceManager.GetString("AddAuthorityGroupsDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Partition Archive.
         /// </summary>
         internal static string AddPartitionArchiveTitle {
