@@ -771,6 +771,33 @@
   <data name="Format_mAs" xml:space="preserve">
     <value>{0} mAs</value>
   </data>
+  <data name="Dicom_Patient_PatientBreed_DisplayName" xml:space="preserve">
+    <value>Patient Breed</value>
+  </data>
+  <data name="Dicom_Patient_PatientBreed_Label" xml:space="preserve">
+    <value>Breed</value>
+  </data>
+  <data name="Dicom_Patient_PatientSpecies_DisplayName" xml:space="preserve">
+    <value>Patient Species</value>
+  </data>
+  <data name="Dicom_Patient_PatientSpecies_Label" xml:space="preserve">
+    <value>Species</value>
+  </data>
+  <data name="Dicom_Patient_ResponsibleOrganization_DisplayName" xml:space="preserve">
+    <value>Responsible Organization</value>
+  </data>
+  <data name="Dicom_Patient_ResponsibleOrganization_Label" xml:space="preserve">
+    <value>Responsible Organization</value>
+  </data>
+  <data name="Dicom_Patient_ResponsiblePerson_DisplayName" xml:space="preserve">
+    <value>Responsible Person</value>
+  </data>
+  <data name="Dicom_Patient_ResponsiblePerson_Label" xml:space="preserve">
+    <value>Responsible Person</value>
+  </data>
+  <data name="FormatCodeSequence" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
   <data name="ValueDirectionalMarkersQuadrupedCaudal" xml:space="preserve">
     <value>Cd</value>
   </data>

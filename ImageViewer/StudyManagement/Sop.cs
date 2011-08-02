@@ -400,9 +400,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the responsible person for this patient.
 		/// </summary>
-		public string ResponsiblePerson
+		public PersonName ResponsiblePerson
 		{
-			get { return this[DicomTags.ResponsiblePerson].GetString(0, null); }
+			get
+			{
+				string responsiblePerson;
+				responsiblePerson = this[DicomTags.ResponsiblePerson].GetString(0, null);
+				return new PersonName(responsiblePerson ?? "");
+			}
 		}
 
 		/// <summary>
@@ -423,7 +428,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		#endregion	
+		#endregion
+
+		string IPatientData.ResponsiblePerson
+		{
+			get { return ResponsiblePerson.ToString(); }
+		}
 
 		string IPatientData.PatientsName
 		{

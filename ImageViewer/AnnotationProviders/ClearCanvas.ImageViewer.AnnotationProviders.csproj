@@ -53,6 +53,7 @@
     <Compile Include="Dicom\GeneralSeriesAnnotationItemProvider.cs" />
     <Compile Include="Dicom\GeneralStudyAnnotationItemProvider.cs" />
     <Compile Include="Dicom\GeneralImageAnnotationItemProvider.cs" />
+    <Compile Include="Dicom\CodeSequenceAnnotationItem.cs" />
     <Compile Include="Dicom\PatientStudyAnnotationItemProvider.cs" />
     <Compile Include="Dicom\PatientAnnotationItemProvider.cs" />
     <Compile Include="Dicom\SliceLocationAnnotationItem.cs" />
