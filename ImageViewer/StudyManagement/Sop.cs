@@ -278,9 +278,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region Species
 
 		/// <summary>
-		/// Gets the patient's species description.
+		/// Gets the patient species description.
 		/// </summary>
-		public string PatientSpeciesDescription
+		public virtual string PatientSpeciesDescription
 		{
 			get { return this[DicomTags.PatientSpeciesDescription].GetString(0, null); }
 		}
@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the coding scheme designator of the patient species code sequence.
 		/// </summary>
-		public string PatientSpeciesCodeSequenceCodingSchemeDesignator
+		public virtual string PatientSpeciesCodeSequenceCodingSchemeDesignator
 		{
 			get
 			{
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the code value of the patient species code sequence.
 		/// </summary>
-		public string PatientSpeciesCodeSequenceCodeValue
+		public virtual string PatientSpeciesCodeSequenceCodeValue
 		{
 			get
 			{
@@ -338,9 +338,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region Breed
 
 		/// <summary>
-		/// Gets the patient's breed description.
+		/// Gets the patient breed description.
 		/// </summary>
-		public string PatientBreedDescription
+		public virtual string PatientBreedDescription
 		{
 			get { return this[DicomTags.PatientBreedDescription].GetString(0, null); }
 		}
@@ -348,7 +348,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the coding scheme designator of the patient breed code sequence.
 		/// </summary>
-		public string PatientBreedCodeSequenceCodingSchemeDesignator
+		public virtual string PatientBreedCodeSequenceCodingSchemeDesignator
 		{
 			get
 			{
@@ -364,7 +364,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the code value of the patient breed code sequence.
 		/// </summary>
-		public string PatientBreedCodeSequenceCodeValue
+		public virtual string PatientBreedCodeSequenceCodeValue
 		{
 			get
 			{
@@ -380,7 +380,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the code meaning of the patient breed code sequence.
 		/// </summary>
-		public string PatientBreedCodeSequenceCodeMeaning
+		public virtual string PatientBreedCodeSequenceCodeMeaning
 		{
 			get
 			{
@@ -398,9 +398,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region Responsible Person/Organization
 
 		/// <summary>
-		/// Gets the responsible person for this patient.
+		/// Gets the responsible person for the patient.
 		/// </summary>
-		public PersonName ResponsiblePerson
+		public virtual PersonName ResponsiblePerson
 		{
 			get
 			{
@@ -411,17 +411,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the role of the responsible person for this patient.
+		/// Gets the role of the responsible person for the patient.
 		/// </summary>
-		public string ResponsiblePersonRole
+		public virtual string ResponsiblePersonRole
 		{
 			get { return this[DicomTags.ResponsiblePersonRole].GetString(0, null); }
 		}
 
 		/// <summary>
-		/// Gets the organization responsible for this patient.
+		/// Gets the organization responsible for the patient.
 		/// </summary>
-		public string ResponsibleOrganization
+		public virtual string ResponsibleOrganization
 		{
 			get { return this[DicomTags.ResponsibleOrganization].GetString(0, null); }
 		}

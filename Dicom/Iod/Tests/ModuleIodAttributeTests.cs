@@ -36,7 +36,7 @@ namespace ClearCanvas.Dicom.Iod.Tests
 			var module = new PatientModuleIod(dicomFile.DataSet);
 			module.ResponsibleOrganization = "Walt Disney";
 			module.ResponsiblePerson = "Roger Radcliffe";
-			module.ResponsiblePersonRole = ResponsiblePersonRole.OWNER;
+			module.ResponsiblePersonRole = ResponsiblePersonRole.Owner;
 			module.PatientSpeciesDescription = "Canine species";
 			module.PatientSpeciesCodeSequence = SpeciesContextGroup.CanineSpecies;
 			module.PatientBreedDescription = "Dalmatian dog";
@@ -56,7 +56,7 @@ namespace ClearCanvas.Dicom.Iod.Tests
 
 			Assert.AreEqual(module.ResponsibleOrganization, "Walt Disney");
 			Assert.AreEqual(module.ResponsiblePerson, "Roger Radcliffe");
-			Assert.AreEqual(module.ResponsiblePersonRole, ResponsiblePersonRole.OWNER);
+			Assert.AreEqual(module.ResponsiblePersonRole, ResponsiblePersonRole.Owner);
 			Assert.AreEqual(module.PatientSpeciesDescription, "Canine species");
 			Assert.AreEqual(module.PatientSpeciesCodeSequence, SpeciesContextGroup.CanineSpecies);
 			Assert.AreEqual(module.PatientBreedDescription, "Dalmatian dog");
@@ -77,7 +77,7 @@ namespace ClearCanvas.Dicom.Iod.Tests
 			var realoadedModule = new PatientModuleIod(reloadedDicomFile.DataSet);
 			Assert.AreEqual(realoadedModule.ResponsibleOrganization, "Walt Disney");
 			Assert.AreEqual(realoadedModule.ResponsiblePerson, "Roger Radcliffe");
-			Assert.AreEqual(realoadedModule.ResponsiblePersonRole, ResponsiblePersonRole.OWNER);
+			Assert.AreEqual(realoadedModule.ResponsiblePersonRole, ResponsiblePersonRole.Owner);
 			Assert.AreEqual(realoadedModule.PatientSpeciesDescription, "Canine species");
 			Assert.AreEqual(realoadedModule.PatientSpeciesCodeSequence, SpeciesContextGroup.CanineSpecies);
 			Assert.AreEqual(realoadedModule.PatientBreedDescription, "Dalmatian dog");
