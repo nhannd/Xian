@@ -621,4 +621,8 @@
   </data>
   <data name="NotSpecified" xml:space="preserve">
     <value>Not Specified</value>
+  </data>
+  <data name="ArchiveQueue_EnterSearchCriteria" xml:space="preserve">
+    <value>Please enter search criteria</value>
+  </data>
 </root>

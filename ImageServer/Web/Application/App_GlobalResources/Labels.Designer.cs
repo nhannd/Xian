@@ -169,7 +169,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please enter search criteria to find archive items..
+        ///   Looks up a localized string similar to Please enter search criteria.
         /// </summary>
         internal static string ArchiveQueue_EnterSearchCriteria {
             get {
