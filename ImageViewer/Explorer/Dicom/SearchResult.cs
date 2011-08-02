@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		protected void InitializeMainColumns()
+		private void InitializeMainColumns()
 		{
 			TableColumn<StudyItem, string> column;
 

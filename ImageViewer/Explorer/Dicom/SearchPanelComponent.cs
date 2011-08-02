@@ -367,9 +367,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			var queryParams = new QueryParameters();
 			queryParams["PatientsName"] = QueryStringHelper.ConvertNameToSearchCriteria(this.PatientsName);
 			queryParams["ReferringPhysiciansName"] = QueryStringHelper.ConvertNameToSearchCriteria(this.ReferringPhysiciansName);
-			queryParams["PatientId"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.PatientID);
-			queryParams["AccessionNumber"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.AccessionNumber);
-			queryParams["StudyDescription"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.StudyDescription);
+			queryParams["PatientId"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.PatientID, false, true);
+			queryParams["AccessionNumber"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.AccessionNumber, false, true);
+			queryParams["StudyDescription"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.StudyDescription, false, true);
 			queryParams["StudyDate"] = DateRangeHelper.GetDicomDateRangeQueryString(this.StudyDateFrom, this.StudyDateTo);
 
 			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
