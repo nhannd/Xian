@@ -117,6 +117,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DuplicateSopPolicyEnum_SendSuccess_Description" xml:space="preserve">
+    <value>Send Success</value>
+  </data>
+  <data name="DuplicateSopPolicyEnum_SendSuccess_LongDescription" xml:space="preserve">
+    <value>Send a DICOM C-STORE-RSP success status when receiving a duplicate, but ignore the file.</value>
+  </data>
+  <data name="DuplicateSopPolicyEnum_RejectDuplicates_Description" xml:space="preserve">
+    <value>Reject Duplicates</value>
+  </data>
+  <data name="DuplicateSopPolicyEnum_RejectDuplicates_LongDescription" xml:space="preserve">
+    <value>Send a DICOM C-STORE-RSP reject status when receiving a duplicate.</value>
+  </data>
+  <data name="DuplicateSopPolicyEnum_CompareDuplicates_Description" xml:space="preserve">
+    <value>Compare Duplicates</value>
+  </data>
+  <data name="DuplicateSopPolicyEnum_CompareDuplicates_LongDescription" xml:space="preserve">
+    <value>Process duplicate objects received and compare them to originals flagging any differences as a failure.</value>
+  </data>
   <data name="AlertCategoryEnum_System_Description" xml:space="preserve">
     <value>System alert</value>
   </data>
@@ -531,6 +549,12 @@
   <data name="ServerRuleTypeEnum_SopCompress_LongDescription" xml:space="preserve">
     <value>A rule to specify when a SOP Instance should be compressed (during initial processing)</value>
   </data>
+  <data name="ServerRuleTypeEnum_DataAccess_Description" xml:space="preserve">
+    <value>Data Access</value>
+  </data>
+  <data name="ServerRuleTypeEnum_DataAccess_LongDescription" xml:space="preserve">
+    <value>A rule to specify the Authority Groups that have access to a study</value>
+  </data>
   <data name="ServerRuleApplyTimeEnum_SopReceived_Description" xml:space="preserve">
     <value>SOP Received</value>
   </data>
@@ -734,23 +758,5 @@
   </data>
   <data name="RestoreQueueStatusEnum_Restoring_LongDescription" xml:space="preserve">
     <value>The Queue entry is waiting for the study to be restored by the archive.</value>
-  </data>
-  <data name="DuplicateSopPolicyEnum_SendSuccess_Description" xml:space="preserve">
-    <value>Send Success</value>
-  </data>
-  <data name="DuplicateSopPolicyEnum_SendSuccess_LongDescription" xml:space="preserve">
-    <value>Send a DICOM C-STORE-RSP success status when receiving a duplicate, but ignore the file.</value>
-  </data>
-  <data name="DuplicateSopPolicyEnum_RejectDuplicates_Description" xml:space="preserve">
-    <value>Reject Duplicates</value>
-  </data>
-  <data name="DuplicateSopPolicyEnum_RejectDuplicates_LongDescription" xml:space="preserve">
-    <value>Send a DICOM C-STORE-RSP reject status when receiving a duplicate.</value>
-  </data>
-  <data name="DuplicateSopPolicyEnum_CompareDuplicates_Description" xml:space="preserve">
-    <value>Compare Duplicates</value>
-  </data>
-  <data name="DuplicateSopPolicyEnum_CompareDuplicates_LongDescription" xml:space="preserve">
-    <value>Process duplicate objects received and compare them to originals flagging any differences as a failure.</value>
   </data>
 </root>

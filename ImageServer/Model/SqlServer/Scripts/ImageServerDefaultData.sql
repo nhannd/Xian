@@ -359,6 +359,12 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
            (newid(),105,'SopCompress','SOP Compress','A rule to specify when a SOP Instance should be compressed (during initial processing)')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),106,'DataAccess','Data Access','A rule to specify the Authority Groups that have access to a study')
+GO
+
 
 -- ServerRuleApplyTimeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]

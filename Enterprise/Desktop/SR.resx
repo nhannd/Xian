@@ -123,6 +123,12 @@
   <data name="ColumnAuthorityGroup" xml:space="preserve">
     <value>Authority Group</value>
   </data>
+  <data name="ColumnAuthorityGroupDataGroup" xml:space="preserve">
+    <value>Data Access Authority Group</value>
+  </data>
+  <data name="ColumnAuthorityGroupDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
   <data name="ColumnAuthorityGroupName" xml:space="preserve">
     <value>Name</value>
   </data>
