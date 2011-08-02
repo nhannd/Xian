@@ -20,18 +20,53 @@ namespace ClearCanvas.Dicom.Iod
 	public enum ResponsiblePersonRole
 	{
 		/// <summary>
-		/// None, ie, blank value
+		/// None.
 		/// </summary>
 		None,
 
-		OWNER,
-		PARENT,
-		CHILD,
-		SPOUSE,
-		SIBLING,
-		RELATIVE,
-		GUARDIAN,
-		CUSTODIAN,
-		AGENT
+		/// <summary>
+		/// Owner.
+		/// </summary>
+		Owner,
+
+		/// <summary>
+		/// Parent.
+		/// </summary>
+		Parent,
+
+		/// <summary>
+		/// Child.
+		/// </summary>
+		Child,
+
+		/// <summary>
+		/// Spouse.
+		/// </summary>
+		Spouse,
+
+		/// <summary>
+		/// Sibling.
+		/// </summary>
+		Sibling,
+
+		/// <summary>
+		/// Relative.
+		/// </summary>
+		Relative,
+
+		/// <summary>
+		/// Guardian.
+		/// </summary>
+		Guardian,
+
+		/// <summary>
+		/// Custodian.
+		/// </summary>
+		Custodian,
+
+		/// <summary>
+		/// Agent.
+		/// </summary>
+		Agent
 	}
 }

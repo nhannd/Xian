@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region Species
 
 		/// <summary>
-		/// Gets the patient's species description.
+		/// Gets the patient species description.
 		/// </summary>
 		public string PatientSpeciesDescription
 		{
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region Breed
 
 		/// <summary>
-		/// Gets the patient's breed description.
+		/// Gets the patient breed description.
 		/// </summary>
 		public string PatientBreedDescription
 		{
@@ -162,15 +162,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region Responsible Person/Organization
 
 		/// <summary>
-		/// Gets the responsible person for this patient.
+		/// Gets the responsible person for the patient.
 		/// </summary>
-		public string ResponsiblePerson
+		public PersonName ResponsiblePerson
+		{
+			get { return _sop.ResponsiblePerson; }
+		}
+
+		string IPatientData.ResponsiblePerson
 		{
 			get { return _sop.ResponsiblePerson; }
 		}
 
 		/// <summary>
-		/// Gets the role of the responsible person for this patient.
+		/// Gets the role of the responsible person for the patient.
 		/// </summary>
 		public string ResponsiblePersonRole
 		{
@@ -178,7 +183,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the organization responsible for this patient.
+		/// Gets the organization responsible for the patient.
 		/// </summary>
 		public string ResponsibleOrganization
 		{
