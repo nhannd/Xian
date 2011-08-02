@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					string[] values = DicomStringHelper.GetStringArray(patientOrientation);
 					if (values.Length == 2)
-						return new PatientOrientation(values[0], values[1]);
+						return new PatientOrientation(values[0], values[1], _parentImageSop.AnatomicalOrientationType);
 				}
 
 				return new PatientOrientation("", "");

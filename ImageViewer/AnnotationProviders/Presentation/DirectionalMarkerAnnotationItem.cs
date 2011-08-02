@@ -34,13 +34,20 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	/// </summary>
 	internal sealed class DirectionalMarkerAnnotationItem : AnnotationItem
 	{
-		public enum ImageEdge { Left = 0, Top = 1, Right = 2, Bottom = 3 };
-		private static readonly SizeF[] _edgeVectors = new SizeF[] { new SizeF(-1, 0), new SizeF(0, -1), new SizeF(1, 0), new SizeF(0, 1) };
+		public enum ImageEdge
+		{
+			Left = 0,
+			Top = 1,
+			Right = 2,
+			Bottom = 3
+		} ;
+
+		private static readonly SizeF[] _edgeVectors = new SizeF[] {new SizeF(-1, 0), new SizeF(0, -1), new SizeF(1, 0), new SizeF(0, 1)};
 
 		private ImageEdge _viewportEdge;
-		
+
 		public DirectionalMarkerAnnotationItem(ImageEdge viewportEdge)
-			: base("Presentation.DirectionalMarkers." + viewportEdge.ToString(), new AnnotationResourceResolver(typeof(DirectionalMarkerAnnotationItem).Assembly))
+			: base("Presentation.DirectionalMarkers." + viewportEdge.ToString(), new AnnotationResourceResolver(typeof (DirectionalMarkerAnnotationItem).Assembly))
 		{
 			_viewportEdge = viewportEdge;
 		}
@@ -61,11 +68,17 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 
 				if (associatedDicom != null && associatedTransform != null)
 				{
-					SpatialTransform spatialTransform = associatedTransform.SpatialTransform as SpatialTransform;
-					if (spatialTransform != null && associatedDicom.Frame.ImageOrientationPatient != null)
-						markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.Frame.ImageOrientationPatient);
-					if (spatialTransform != null && associatedDicom.Frame.PatientOrientation != null)
-						markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.Frame.PatientOrientation);
+					var spatialTransform = associatedTransform.SpatialTransform as SpatialTransform;
+					if (spatialTransform != null)
+					{
+						var imageOrientationPatient = associatedDicom.Frame.ImageOrientationPatient;
+						var patientOrientation = associatedDicom.Frame.PatientOrientation;
+
+						if (imageOrientationPatient != null && !imageOrientationPatient.IsNull)
+							markerText = GetAnnotationTextInternal(spatialTransform, imageOrientationPatient);
+						else if (patientOrientation != null && patientOrientation.IsValid)
+							markerText = GetAnnotationTextInternal(spatialTransform, patientOrientation);
+					}
 				}
 			}
 
@@ -84,7 +97,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			SizeF[] imageEdgeVectors = new SizeF[4];
 			for (int i = 0; i < 4; ++i)
 				imageEdgeVectors[i] = imageTransform.ConvertToDestination(_edgeVectors[i]);
-			
+
 			//find out which source image edge got transformed to coincide with this viewport edge.
 			ImageEdge transformedEdge = GetTransformedEdge(imageEdgeVectors);
 
@@ -104,7 +117,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			SizeF[] imageEdgeVectors = new SizeF[4];
 			for (int i = 0; i < 4; ++i)
 				imageEdgeVectors[i] = imageTransform.ConvertToDestination(_edgeVectors[i]);
-			
+
 			//find out which source image edge got transformed to coincide with this viewport edge.
 			ImageEdge transformedEdge = GetTransformedEdge(imageEdgeVectors);
 
@@ -122,31 +135,31 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		private ImageEdge GetTransformedEdge(SizeF[] transformedVectors)
 		{
 			//the original (untransformed) vector for this viewport edge.
-			SizeF thisViewportEdge = _edgeVectors[(int)_viewportEdge];
+			SizeF thisViewportEdge = _edgeVectors[(int) _viewportEdge];
 
 			//find out which edge in the source image has moved to this edge of the viewport.
 			for (int index = 0; index < transformedVectors.Length; ++index)
 			{
 				//normalize the vector before comparing.
 				SizeF transformedVector = transformedVectors[index];
-				double magnitude = Math.Sqrt(transformedVector.Width * transformedVector.Width +
-												transformedVector.Height * transformedVector.Height);
+				double magnitude = Math.Sqrt(transformedVector.Width*transformedVector.Width +
+				                             transformedVector.Height*transformedVector.Height);
 
-				transformedVector.Width = (float)Math.Round(transformedVector.Width / magnitude);
-				transformedVector.Height = (float)Math.Round(transformedVector.Height / magnitude);
+				transformedVector.Width = (float) Math.Round(transformedVector.Width/magnitude);
+				transformedVector.Height = (float) Math.Round(transformedVector.Height/magnitude);
 
 				//is it the same as the original vector for this edge?
 				if (transformedVector == thisViewportEdge)
 				{
 					//return the image edge that has now moved to this edge of the viewport.
-					return (ImageEdge)index;
+					return (ImageEdge) index;
 				}
 			}
 
 			//this should never happen.
 			throw new IndexOutOfRangeException(SR.ExceptionTransformedEdgeDoesNotMatch);
 		}
-		
+
 		/// <summary>
 		/// Determines the (untransformed) marker for a particular image edge.
 		/// </summary>
@@ -177,7 +190,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 
 			return markerText;
 		}
-		
+
 		/// <summary>
 		/// Determines the (untransformed) marker for a particular image edge.
 		/// </summary>
@@ -188,7 +201,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		{
 			bool negativeDirection = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Top);
 			bool rowValues = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Right);
-
 
 			var direction = (rowValues ? patientOrientation.Row : patientOrientation.Column) ?? PatientDirection.Empty;
 			if (negativeDirection)
@@ -202,65 +214,38 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		}
 
 		/// <summary>
-		/// Converts an <see cref="ImageOrientationPatient.Directions"/> to a marker string.
-		/// </summary>
-		/// <param name="direction">the direction (patient based system)</param>
-		/// <returns>marker text</returns>
-		private string GetMarkerText(ImageOrientationPatient.Directions direction)
-		{
-			switch (direction)
-			{
-				case ImageOrientationPatient.Directions.Left:
-					return SR.ValueDirectionalMarkersLeft;
-				case ImageOrientationPatient.Directions.Right:
-					return SR.ValueDirectionalMarkersRight;
-				case ImageOrientationPatient.Directions.Head:
-					return SR.ValueDirectionalMarkersHead;
-				case ImageOrientationPatient.Directions.Foot:
-					return SR.ValueDirectionalMarkersFoot;
-				case ImageOrientationPatient.Directions.Anterior:
-					return SR.ValueDirectionalMarkersAnterior;
-				case ImageOrientationPatient.Directions.Posterior:
-					return SR.ValueDirectionalMarkersPosterior;
-			}
-
-			return "";
-		}
-
-		/// <summary>
 		/// Converts an <see cref="PatientDirection"/> to a marker string.
 		/// </summary>
 		/// <param name="direction">the direction (patient based system)</param>
 		/// <returns>marker text</returns>
 		private static string GetMarkerText(PatientDirection direction)
 		{
-			// TODO fix these display values to standard codes
 			if (direction == PatientDirection.QuadrupedLeft)
-				return "Le";
+				return SR.ValueDirectionalMarkersQuadrupedLeft;
 			else if (direction == PatientDirection.QuadrupedRight)
-				return "Rt";
+				return SR.ValueDirectionalMarkersQuadrupedRight;
 			else if (direction == PatientDirection.QuadrupedCranial)
-				return "Cr";
+				return SR.ValueDirectionalMarkersQuadrupedCranial;
 			else if (direction == PatientDirection.QuadrupedCaudal)
-				return "Cd";
+				return SR.ValueDirectionalMarkersQuadrupedCaudal;
 			else if (direction == PatientDirection.QuadrupedRostral)
-				return "R";
+				return SR.ValueDirectionalMarkersQuadrupedRostral;
 			else if (direction == PatientDirection.QuadrupedDorsal)
-				return "D";
+				return SR.ValueDirectionalMarkersQuadrupedDorsal;
 			else if (direction == PatientDirection.QuadrupedVentral)
-				return "V";
+				return SR.ValueDirectionalMarkersQuadrupedVentral;
 			else if (direction == PatientDirection.QuadrupedLateral)
-				return "L";
+				return SR.ValueDirectionalMarkersQuadrupedLateral;
 			else if (direction == PatientDirection.QuadrupedMedial)
-				return "M";
+				return SR.ValueDirectionalMarkersQuadrupedMedial;
 			else if (direction == PatientDirection.QuadrupedProximal)
-				return "Pr";
+				return SR.ValueDirectionalMarkersQuadrupedProximal;
 			else if (direction == PatientDirection.QuadrupedDistal)
-				return "Di";
+				return SR.ValueDirectionalMarkersQuadrupedDistal;
 			else if (direction == PatientDirection.QuadrupedPalmar)
-				return "Pa";
+				return SR.ValueDirectionalMarkersQuadrupedPalmar;
 			else if (direction == PatientDirection.QuadrupedPlantar)
-				return "Pl";
+				return SR.ValueDirectionalMarkersQuadrupedPlantar;
 			else if (direction == PatientDirection.Left)
 				return SR.ValueDirectionalMarkersLeft;
 			else if (direction == PatientDirection.Right)
@@ -273,8 +258,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 				return SR.ValueDirectionalMarkersAnterior;
 			else if (direction == PatientDirection.Posterior)
 				return SR.ValueDirectionalMarkersPosterior;
-
-			return "";
+			return string.Empty;
 		}
 	}
 }

@@ -88,6 +88,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		#region General Series Module
+
+		/// <summary>
+		/// Gets the Anatomical Orientation Type.
+		/// </summary>
+		public string AnatomicalOrientationType
+		{
+			get { return this[DicomTags.AnatomicalOrientationType].ToString(); }
+		}
+
+		#endregion
+
 		#region General Image Module
 
 		/// <summary>

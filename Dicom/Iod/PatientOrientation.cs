@@ -46,6 +46,17 @@ namespace ClearCanvas.Dicom.Iod
 		public PatientOrientation(string row, string column, AnatomicalOrientationType anatomicalOrientationType)
 			: this(new PatientDirection(row, anatomicalOrientationType), new PatientDirection(column, anatomicalOrientationType)) {}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PatientOrientation(string row, string column, string anatomicalOrientationType)
+			: this(new PatientDirection(row, ParseAnatomicalOrientationType(anatomicalOrientationType)), new PatientDirection(column, ParseAnatomicalOrientationType(anatomicalOrientationType))) {}
+
+		private static AnatomicalOrientationType ParseAnatomicalOrientationType(string anatomicalOrientationType)
+		{
+			return IodBase.ParseEnum(anatomicalOrientationType, AnatomicalOrientationType.None);
+		}
+
 		#region Public Properties
 
 		/// <summary>
