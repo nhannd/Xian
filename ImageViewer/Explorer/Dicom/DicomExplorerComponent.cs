@@ -61,12 +61,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_activeComponents.Add(this);
 			}
 
-			_searchPanelComponent.SearchRequestEvent += OnSearchPanelComponentSearchRequested;
+			_searchPanelComponent.SearchRequested += OnSearchPanelComponentSearchRequested;
 		}
 
 		public override void Stop()
 		{
-			_searchPanelComponent.SearchRequestEvent -= OnSearchPanelComponentSearchRequested;
+			_searchPanelComponent.SearchRequested -= OnSearchPanelComponentSearchRequested;
 
 			lock (_syncLock)
 			{
@@ -92,13 +92,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
 			serverTreeComponent.IsReadOnly = !hasEditPermission;
 
-			var studyBrowserComponent = CreateComponentFromExtension<StudyBrowserComponentExtensionPoint, IStudyBrowserComponent>()
+			var studyBrowserComponent = CreateComponentFromExtensionPoint<StudyBrowserComponentExtensionPoint, IStudyBrowserComponent>()
 				?? new StudyBrowserComponent();
 
 			serverTreeComponent.SelectedServerChanged +=
 				delegate { studyBrowserComponent.SelectedServerGroup = serverTreeComponent.SelectedServers; };
 
-			var searchPanelComponent = CreateComponentFromExtension<SearchPanelComponentExtensionPoint, ISearchPanelComponent>()
+			var searchPanelComponent = CreateComponentFromExtensionPoint<SearchPanelComponentExtensionPoint, ISearchPanelComponent>()
 				?? new SearchPanelComponent();
 			SelectDefaultServerNode(serverTreeComponent);
 
@@ -139,12 +139,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return component;
 		}
 
-		private void OnSearchPanelComponentSearchRequested(object sender, SearchRequestEventArgs e)
+		private void OnSearchPanelComponentSearchRequested(object sender, SearchRequestedEventArgs e)
 		{
 			try
 			{
 				BlockingOperation.Run(
-					() => _studyBrowserComponent.Search(e.QueryParametersList));
+					() => _studyBrowserComponent.Search(new List<QueryParameters>(e.QueryParametersList)));
 			}
 			catch (Exception ex)
 			{
@@ -249,8 +249,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		private static TComponent CreateComponentFromExtension<TExtensionPoint, TComponent>()
-			where TExtensionPoint : ExtensionPoint, new()
+		private static TComponent CreateComponentFromExtensionPoint<TExtensionPoint, TComponent>()
+			where TExtensionPoint : IExtensionPoint, new()
 			where TComponent : class, IApplicationComponent
 		{
 			try

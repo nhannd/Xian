@@ -22,14 +22,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	{
 	}
 
-	public class SearchRequestEventArgs : EventArgs
+	public class SearchRequestedEventArgs : EventArgs
 	{
-		public SearchRequestEventArgs(List<QueryParameters> queryParametersList)
+		public SearchRequestedEventArgs(IList<QueryParameters> queryParametersList)
 		{
 			this.QueryParametersList = queryParametersList;
 		}
 
-		public List<QueryParameters> QueryParametersList { get; private set; }
+		public IList<QueryParameters> QueryParametersList { get; private set; }
 	}
 
 	public interface ISearchPanelComponent : IApplicationComponent
@@ -37,6 +37,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		void Search();
 		void Clear();
 
-		event EventHandler<SearchRequestEventArgs> SearchRequestEvent;
+		event EventHandler<SearchRequestedEventArgs> SearchRequested;
 	}
 }

@@ -11,11 +11,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
-using System.Text.RegularExpressions;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private readonly List<string> _searchModalities;
 		private readonly ICollection<string> _availableModalities;
 
-		private event EventHandler<SearchRequestEventArgs> _searchRequestEvent;
+		private event EventHandler<SearchRequestedEventArgs> _searchRequested;
 
 		/// <summary>
 		/// Constructor
@@ -252,8 +252,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			var queryParams = PrepareBaseQueryParameters();
-			var eventArgs = new SearchRequestEventArgs(new List<QueryParameters> { queryParams });
-			NotifySearchRequested(eventArgs);
+			var eventArgs = new SearchRequestedEventArgs(new List<QueryParameters> { queryParams });
+			OnSearchRequested(eventArgs);
 		}
 
 		public void SearchToday()
@@ -271,10 +271,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			InternalSearchLastXDays(numberOfDays);
 		}
 
-		public event EventHandler<SearchRequestEventArgs> SearchRequestEvent
+		public event EventHandler<SearchRequestedEventArgs> SearchRequested
 		{
-			add { _searchRequestEvent += value; }
-			remove { _searchRequestEvent -= value; }
+			add { _searchRequested += value; }
+			remove { _searchRequested -= value; }
 		}
 
 		private void InternalSearchLastXDays(int numberOfDays)
@@ -381,9 +381,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return queryParams;
 		}
 
-		protected void NotifySearchRequested(SearchRequestEventArgs e)
+		protected virtual void OnSearchRequested(SearchRequestedEventArgs e)
 		{
-			EventsHelper.Fire(_searchRequestEvent, this, e);
+			EventsHelper.Fire(_searchRequested, this, e);
 		}
 	}
 }

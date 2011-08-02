@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the Anatomical Orientation Type.
 		/// </summary>
-		public string AnatomicalOrientationType
+		public virtual string AnatomicalOrientationType
 		{
 			get { return this[DicomTags.AnatomicalOrientationType].ToString(); }
 		}
