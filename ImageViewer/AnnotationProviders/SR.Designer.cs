@@ -2050,6 +2050,123 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cd.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedCaudal {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedCaudal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cr.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedCranial {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedCranial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Di.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedDistal {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedDistal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to D.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedDorsal {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedDorsal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedLateral {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedLateral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedLeft {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to M.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedMedial {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedMedial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pa.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedPalmar {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedPalmar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pl.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedPlantar {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedPlantar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pr.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedProximal {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedProximal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rt.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedRight {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedRostral {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedRostral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to V.
+        /// </summary>
+        public static string ValueDirectionalMarkersQuadrupedVentral {
+            get {
+                return ResourceManager.GetString("ValueDirectionalMarkersQuadrupedVentral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to R.
         /// </summary>
         public static string ValueDirectionalMarkersRight {

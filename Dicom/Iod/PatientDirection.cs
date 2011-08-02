@@ -110,6 +110,9 @@ namespace ClearCanvas.Dicom.Iod
 		}
 
 		private readonly AnatomicalOrientationType _anatomicalOrientationType;
+		private readonly PatientDirection _primaryComponent;
+		private readonly PatientDirection _secondaryComponent;
+		private readonly PatientDirection _tertiaryComponent;
 		private readonly string _code;
 		private readonly string _description;
 		private readonly bool _isValid;
@@ -120,10 +123,9 @@ namespace ClearCanvas.Dicom.Iod
 		/// </summary>
 		private PatientDirection(string code, string description, AnatomicalOrientationType anatomicalOrientationType)
 		{
-			Primary = this;
-			Secondary = Empty;
-			Tertiary = Empty;
-
+			_primaryComponent = this;
+			_secondaryComponent = null;
+			_tertiaryComponent = null;
 			_isValid = true;
 			_code = code;
 			_description = description;
@@ -151,17 +153,17 @@ namespace ClearCanvas.Dicom.Iod
 			}
 
 			// set the parsed components
-			Primary = components.Length > 0 ? components[0] : Empty;
-			Secondary = components.Length > 1 ? components[1] : Empty;
-			Tertiary = components.Length > 2 ? components[2] : Empty;
+			_primaryComponent = components.Length > 0 ? components[0] : null;
+			_secondaryComponent = components.Length > 1 ? components[1] : null;
+			_tertiaryComponent = components.Length > 2 ? components[2] : null;
 
 			_isValid = components.Length > 0;
 			_code = code ?? string.Empty;
 			_description = string.Join(SR.LabelPatientDirectionSeparator, CollectionUtils.Map<PatientDirection, string>(components, d => d.Description).ToArray());
 			_componentCount = components.Length;
 
-			// consider orientation type to be NONE if direction is empty or unspecified
-			_anatomicalOrientationType = Primary.IsEmpty || Primary.IsUnspecified ? AnatomicalOrientationType.None : anatomicalOrientationType;
+			// consider orientation type to be NONE if direction is empty or unspecified (and not just empty because of parse error)
+			_anatomicalOrientationType = string.IsNullOrEmpty(code) || Primary.IsUnspecified ? AnatomicalOrientationType.None : anatomicalOrientationType;
 		}
 
 		/// <summary>
@@ -245,17 +247,26 @@ namespace ClearCanvas.Dicom.Iod
 		/// <summary>
 		/// Gets the primary component of this direction.
 		/// </summary>
-		public PatientDirection Primary { get; private set; }
+		public PatientDirection Primary
+		{
+			get { return _primaryComponent ?? Empty; }
+		}
 
 		/// <summary>
 		/// Gets the secondary component of this direction.
 		/// </summary>
-		public PatientDirection Secondary { get; private set; }
+		public PatientDirection Secondary
+		{
+			get { return _secondaryComponent ?? Empty; }
+		}
 
 		/// <summary>
 		/// Gets the tertiary component of this direction.
 		/// </summary>
-		public PatientDirection Tertiary { get; private set; }
+		public PatientDirection Tertiary
+		{
+			get { return _tertiaryComponent ?? Empty; }
+		}
 
 		/// <summary>
 		/// Checks whether or not <paramref name="obj"/> is an equivalent <see cref="PatientDirection"/>.
