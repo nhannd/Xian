@@ -121,13 +121,19 @@
     <value>Attempted to autoroute to Device {0} with autoroute support disabled on partition {1}</value>
   </data>
   <data name="AlertAutoRouteUnknownDestination" xml:space="preserve">
-    <value>Attempted to autoroute to unknown device '{0}' on partition '{1}</value>
+    <value>Attempted to autoroute to unknown device '{0}' on partition '{1}'</value>
   </data>
   <data name="AlertComponentAutorouteRule" xml:space="preserve">
     <value>Auto Route Rule</value>
   </data>
+  <data name="AlertComponentDataAccessRule" xml:space="preserve">
+    <value>Data Access Rule</value>
+  </data>
   <data name="AlertComponentRules" xml:space="preserve">
     <value>Server Rules</value>
+  </data>
+  <data name="AlertDataAccessUnknownAuthorityGroup" xml:space="preserve">
+    <value>Attempted to Grant Access to unknown Authority Group OID '{0}' on partition '{1}'</value>
   </data>
   <data name="AlertRuleInvalid" xml:space="preserve">
     <value>Bad server rule configuration: specified tag '{0}' is invalid</value>

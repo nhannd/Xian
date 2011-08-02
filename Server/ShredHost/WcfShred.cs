@@ -41,10 +41,10 @@ namespace ClearCanvas.Server.ShredHost
                 throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
             ServiceEndpointDescription sed =
-                WcfHelper.StartHttpHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort);
+				WcfHelper.StartHttpHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
-            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+			Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
 
             return sed;
         }
@@ -57,10 +57,10 @@ namespace ClearCanvas.Server.ShredHost
                 throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
             ServiceEndpointDescription sed =
-                WcfHelper.StartBasicHttpHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort);
+				WcfHelper.StartBasicHttpHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
-            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+			Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
 
             return sed;
         }
@@ -74,10 +74,10 @@ namespace ClearCanvas.Server.ShredHost
                 throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
             ServiceEndpointDescription sed =
-                WcfHelper.StartHttpDualHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort);
+				WcfHelper.StartHttpDualHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
-            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+			Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
 
             return sed;
         }
@@ -91,10 +91,10 @@ namespace ClearCanvas.Server.ShredHost
                 throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
             ServiceEndpointDescription sed =
-                WcfHelper.StartNetTcpHost<TServiceType, TServiceInterfaceType>(name, description, SharedTcpPort, SharedHttpPort);
+				WcfHelper.StartNetTcpHost<TServiceType, TServiceInterfaceType>(name, description, SharedTcpPort, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
-            Platform.Log(LogLevel.Info, "WCF Shred {0}is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+			Platform.Log(LogLevel.Info, "WCF Shred {0}is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
 
 
             return sed;
@@ -109,11 +109,11 @@ namespace ClearCanvas.Server.ShredHost
                 throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
             ServiceEndpointDescription sed =
-                WcfHelper.StartNetPipeHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort);
+				WcfHelper.StartNetPipeHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
 
-            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
 
             return sed;
         }
@@ -147,6 +147,7 @@ namespace ClearCanvas.Server.ShredHost
 
         private int _httpPort;
         private int _tcpPort;
+    	private string _serviceAddressBase;
 
         public int SharedHttpPort
         {
@@ -159,6 +160,12 @@ namespace ClearCanvas.Server.ShredHost
             get { return _tcpPort; }
             set { _tcpPort = value; }
         }
+
+		public string ServiceAddressBase
+    	{
+			get { return _serviceAddressBase; }
+			set { _serviceAddressBase = value; }
+    	}
 
         #endregion
     }

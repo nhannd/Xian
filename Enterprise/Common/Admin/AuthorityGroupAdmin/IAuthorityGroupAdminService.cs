@@ -19,16 +19,8 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 	/// </summary>
 	[EnterpriseCoreService]
 	[ServiceContract]
-	public interface IAuthorityGroupAdminService
-	{
-		/// <summary>
-		/// Summary list of all authority groups
-		/// </summary>
-		/// <param name="request"><see cref="ListAuthorityGroupsRequest"/></param>
-		/// <returns><see cref="ListAuthorityGroupsResponse"/></returns>
-		[OperationContract]
-		ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request);
-
+    public interface IAuthorityGroupAdminService : IAuthorityGroupReadService
+	{		
 		/// <summary>
 		/// Add a new authority group
 		/// </summary>

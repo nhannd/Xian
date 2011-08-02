@@ -12,11 +12,12 @@
 
     <siteMapNode url="" title="$Resources: Titles, Admin" roles="Enterprise/Admin/System/Configuration,Enterprise/Admin/Security/Authority Group,Enterprise/Admin/Security/User,PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,PACS/Configure/PartitionArchive,PACS/StudyDeleteHistory/Search,PACS/Configure/ServiceScheduling,PACS/Alert/View">
 
-      <siteMapNode url="" title="$Resources: Titles, Configure" roles="PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,PACS/Configure/PartitionArchive">
+      <siteMapNode url="" title="$Resources: Titles, Configure" roles="PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,Enterprise/Admin/Security/Authority Group,PACS/Configure/PartitionArchive">
         <siteMapNode url="~/Pages/Admin/Configure/Devices/Default.aspx" title="$Resources: Titles, Devices" roles="PACS/Configure/Devices" />
         <siteMapNode url="~/Pages/Admin/Configure/ServerPartitions/Default.aspx" title="$Resources: Titles, ServerPartitions" roles="PACS/Configure/ServerPartitions" />
         <siteMapNode url="~/Pages/Admin/Configure/FileSystems/Default.aspx" title="$Resources: Titles, FileSystems" roles="PACS/Configure/FileSystems" />
         <siteMapNode url="~/Pages/Admin/Configure/ServerRules/Default.aspx" title="$Resources: Titles, ServerRules" roles="PACS/Configure/ServerRules" />
+        <siteMapNode url="~/Pages/Admin/Configure/DataRules/Default.aspx" title="$Resources: Titles, DataRules" roles="Enterprise/Admin/Security/Authority Group" />
         <siteMapNode url="~/Pages/Admin/Configure/PartitionArchive/Default.aspx" title="$Resources: Titles, PartitionArchive" roles="PACS/Configure/PartitionArchive" />
       </siteMapNode>
 

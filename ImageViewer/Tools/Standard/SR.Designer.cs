@@ -1414,6 +1414,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Acquisition Time (Reverse).
+        /// </summary>
+        internal static string SortByReverseAcquisitionTimeDescription {
+            get {
+                return ResourceManager.GetString("SortByReverseAcquisitionTimeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image Number (Reverse).
+        /// </summary>
+        internal static string SortByReverseImageNumberDescription {
+            get {
+                return ResourceManager.GetString("SortByReverseImageNumberDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slice Location (Reverse).
+        /// </summary>
+        internal static string SortByReverseSliceLocationDescription {
+            get {
+                return ResourceManager.GetString("SortByReverseSliceLocationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Slice Location.
         /// </summary>
         internal static string SortBySliceLocationDescription {

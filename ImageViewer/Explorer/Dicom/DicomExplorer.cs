@@ -30,6 +30,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return new AuthorityGroupDefinition[]
             {
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
+                    DefaultAuthorityGroups.HealthcareAdministrators,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.DicomExplorer,
