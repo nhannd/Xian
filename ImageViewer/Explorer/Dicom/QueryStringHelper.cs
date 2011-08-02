@@ -19,11 +19,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		/// Converts the query string into a DICOM search criteria.
 		/// Appended with a wildcard character.
 		/// </summary>
-		public static string ConvertStringToWildcardSearchCriteria(string userQueryString)
+		public static string ConvertStringToWildcardSearchCriteria(string userQueryString, bool leadingWildcard, bool trailingWildcard)
 		{
 			var dicomSearchCriteria = "";
-			if (!String.IsNullOrEmpty(userQueryString))
-				dicomSearchCriteria = userQueryString + "*";
+			if (String.IsNullOrEmpty(userQueryString))
+				return dicomSearchCriteria;
+
+			dicomSearchCriteria = userQueryString;
+			if (leadingWildcard)
+				dicomSearchCriteria = "*" + dicomSearchCriteria;
+
+			if (trailingWildcard)
+				dicomSearchCriteria = dicomSearchCriteria + "*";
 
 			return dicomSearchCriteria;
 		}
