@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
@@ -54,13 +50,16 @@ namespace ClearCanvas.Enterprise.Desktop
     public class PasswordConfirmComponent : ApplicationComponent
     {
         private string _description;
-      
-        /// <summary>
-        /// Constructor.
-        /// </summary>
+        private string _password;
+
+        #region Constructor
+
         public PasswordConfirmComponent()
         {
+            Description = SR.DescriptionDataAccessGroupChange;
         }
+
+        #endregion
 
         #region Presentation Model
 
@@ -82,29 +81,32 @@ namespace ClearCanvas.Enterprise.Desktop
         {
             get
             {
-                return string.Empty;   
+                return _password;
+            }
+            set
+            {
+                _password = value;
+                Modified = true;
             }
         }
 
+
+        public void Accept()
+        {
+            if (HasValidationErrors)
+            {
+                ShowValidation(true);
+                return;
+            }
+            Exit(ApplicationComponentExitCode.Accepted);
+        }
+
+        public void Cancel()
+        {
+            ExitCode = ApplicationComponentExitCode.None;
+            Host.Exit();
+        }
+  
         #endregion
-
-        /// <summary>
-        /// Called by the host to initialize the application component.
-        /// </summary>
-        public override void Start()
-        {
-            // TODO prepare the component for its live phase
-            base.Start();
-        }
-
-        /// <summary>
-        /// Called by the host when the application component is being terminated.
-        /// </summary>
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
     }
 }

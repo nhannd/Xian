@@ -61,7 +61,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PasswordConfirmComponentControl));
             this._passwordField = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this._confirmDescription = new System.Windows.Forms.TextBox();
             this._okButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -73,23 +73,26 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
             this._passwordField.ToolTip = null;
             this._passwordField.Value = null;
             // 
-            // textBox1
+            // _confirmDescription
             // 
-            resources.ApplyResources(this.textBox1, "textBox1");
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
+            resources.ApplyResources(this._confirmDescription, "_confirmDescription");
+            this._confirmDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._confirmDescription.Name = "_confirmDescription";
+            this._confirmDescription.ReadOnly = true;
             // 
             // _okButton
             // 
             resources.ApplyResources(this._okButton, "_okButton");
             this._okButton.Name = "_okButton";
             this._okButton.UseVisualStyleBackColor = true;
+            this._okButton.Click += new System.EventHandler(this._okButton_Click);
             // 
             // _cancelButton
             // 
             resources.ApplyResources(this._cancelButton, "_cancelButton");
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.UseVisualStyleBackColor = true;
+            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
             // PasswordConfirmComponentControl
             // 
@@ -97,7 +100,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._okButton);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this._confirmDescription);
             this.Controls.Add(this._passwordField);
             this.Name = "PasswordConfirmComponentControl";
             this.ResumeLayout(false);
@@ -108,7 +111,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.TextField _passwordField;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox _confirmDescription;
         private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Button _cancelButton;
     }

@@ -25,10 +25,34 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 	[ExtensionOf(typeof(CoreServiceExtensionPoint))]
 	[ServiceImplementsContract(typeof(IAuthorityGroupAdminService))]
 	public class AuthorityGroupAdminService : CoreServiceLayer, IAuthorityGroupAdminService
-	{
-		#region IAuthorityGroupAdminService Members
+    {
+        #region Private Members
+        
+        /// <summary>
+        /// Gets the user specified by the user name, or null if no such user exists.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="persistenceContext"
+        /// <returns></returns>
+        private User GetUser(string userName, IPersistenceContext persistenceContext)
+        {
+            var criteria = new UserSearchCriteria();
+            criteria.UserName.EqualTo(userName);
 
-		[ReadOperation]
+            // use query caching here to make this fast (assuming the user table is not often updated)
+            var users = persistenceContext.GetBroker<IUserBroker>().Find(
+                criteria, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true });
+
+            // bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
+            // returns null if no match
+            return CollectionUtils.SelectFirst(users, u => u.UserName == userName);
+        }
+        
+        #endregion
+
+        #region IAuthorityGroupAdminService Members
+
+        [ReadOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
 		public ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request)
@@ -89,6 +113,16 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 		public UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request)
 		{
 			var authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupDetail.AuthorityGroupRef);
+
+            if (authorityGroup.DataGroup && !request.AuthorityGroupDetail.DataGroup)
+            {
+                var user = GetUser(request.UserName, PersistenceContext);
+                if (!user.Password.Verify(request.Password))
+                {
+                    // the error message is deliberately vague
+                    throw new UserAccessDeniedException(); 
+                }
+            }
 
 			// set properties from request
 			var assembler = new AuthorityGroupAssembler();

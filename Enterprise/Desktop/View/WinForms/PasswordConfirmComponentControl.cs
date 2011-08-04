@@ -30,12 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
@@ -47,41 +41,31 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
     /// </summary>
     public partial class PasswordConfirmComponentControl : ApplicationComponentUserControl
     {
-        private PasswordConfirmComponent _component;
+        private readonly PasswordConfirmComponent _component;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public PasswordConfirmComponentControl(PasswordConfirmComponent component)
-            :base(component)
+            : base(component)
         {
-			_component = component;
+            _component = component;
             InitializeComponent();
-
-            BindingSource bindingSource = new BindingSource();
-			bindingSource.DataSource = _component;
-
-            // TODO add .NET databindings to bindingSource
+            _confirmDescription.DataBindings.Add("Text", _component, "Description", true,
+                                                 DataSourceUpdateMode.OnPropertyChanged);
+            _passwordField.DataBindings.Add("Value", _component, "Password", true,
+                                                 DataSourceUpdateMode.OnPropertyChanged);
+            AcceptButton = _okButton;
         }
 
-        public string Password
+        private void _okButton_Click(object sender, EventArgs e)
         {
-            get
-            {
-               // using (var password = _loginPane.GetPassword())
-                {
-                    var unmanagedString = IntPtr.Zero;
-                    try
-                    {
-                      //  unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(password);
-                        return Marshal.PtrToStringUni(unmanagedString);
-                    }
-                    finally
-                    {
-                        Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
-                    }
-                }
-            }
+            _component.Accept();
+        }
+
+        private void _cancelButton_Click(object sender, EventArgs e)
+        {
+            _component.Cancel();
         }
     }
 }

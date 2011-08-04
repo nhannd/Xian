@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -229,6 +230,8 @@ namespace ClearCanvas.Enterprise.Desktop
 
             try
             {
+                bool closeAborted = false;
+
 				Platform.GetService<IAuthorityGroupAdminService>(
 					delegate(IAuthorityGroupAdminService service)
                     {
@@ -253,6 +256,7 @@ namespace ClearCanvas.Enterprise.Desktop
                                 }
                                 else
                                 {
+                                    closeAborted = true;
                                     return;
                                 }
                             }
@@ -261,8 +265,13 @@ namespace ClearCanvas.Enterprise.Desktop
                             _authorityGroupSummary = response.AuthorityGroupSummary;
                         }
                     });
-
+                if (closeAborted)
+                    return;
                 Exit(ApplicationComponentExitCode.Accepted);
+            }
+            catch (FaultException<UserAccessDeniedException>)
+            {
+                Host.ShowMessageBox(SR.ExceptionUserAccessDenied, MessageBoxActions.Ok);        
             }
             catch (Exception e)
             {

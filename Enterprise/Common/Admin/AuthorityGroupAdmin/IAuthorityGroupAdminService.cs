@@ -38,7 +38,8 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 		[OperationContract]
 		[FaultContract(typeof(ConcurrentModificationException))]
 		[FaultContract(typeof(RequestValidationException))]
-		UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request);
+        [FaultContract(typeof(UserAccessDeniedException))]
+        UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request);
 
 		/// <summary>
 		/// Deletes an authority group

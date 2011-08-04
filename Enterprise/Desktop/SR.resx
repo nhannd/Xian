@@ -148,7 +148,7 @@
     <value>Display Name</value>
   </data>
   <data name="DescriptionDataAccessGroupChange" xml:space="preserve">
-    <value>Changing the Data Access field for an Authority Group requires manually associating the studies with the Authority Group in the future.  Please re-enter your password to confirm.</value>
+    <value>Disabling Data Access for an Authority Group removes the association between the Authority Group and imaging studies.  Studies will have to be manually associated with the Authority Group in the future.  Please re-enter your password to confirm this change.</value>
   </data>
   <data name="ExceptionAuthorityGroupIsNotEmpty_MultitpleUsers" xml:space="preserve">
     <value>There are currently {0} users in '{1}' user group. Are you sure you want to delete this group?</value>
@@ -161,6 +161,9 @@
   </data>
   <data name="ExceptionSaveUser" xml:space="preserve">
     <value>Unable to save User</value>
+  </data>
+  <data name="ExceptionUserAccessDenied" xml:space="preserve">
+    <value>Unable to update Authority Group, the password entered is incorrect.</value>
   </data>
   <data name="MenuAdmin" xml:space="preserve">
     <value>Admin</value>

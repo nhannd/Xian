@@ -151,7 +151,7 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Changing the Data Access field for an Authority Group requires manually associating the studies with the Authority Group in the future.  Please re-enter your password to confirm..
+        ///   Looks up a localized string similar to Disabling Data Access for an Authority Group removes the association between the Authority Group and imaging studies.  Studies will have to be manually associated with the Authority Group in the future.  Please re-enter your password to confirm this change..
         /// </summary>
         public static string DescriptionDataAccessGroupChange {
             get {
@@ -192,6 +192,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         public static string ExceptionSaveUser {
             get {
                 return ResourceManager.GetString("ExceptionSaveUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to update Authority Group, the password entered is incorrect..
+        /// </summary>
+        public static string ExceptionUserAccessDenied {
+            get {
+                return ResourceManager.GetString("ExceptionUserAccessDenied", resourceCulture);
             }
         }
         
