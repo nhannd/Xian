@@ -11,13 +11,15 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
+using ClearCanvas.Enterprise.Common.Authentication;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
@@ -203,7 +205,13 @@ namespace ClearCanvas.Enterprise.Desktop
             {
                 _authorityGroupDetail.DataGroup = value;
                 Modified = true;
+                DataGroupModified = true;
             }
+        }
+
+        public bool DataGroupModified
+        {
+            get; set;
         }
 
         public List<AuthorityTokenTableEntry> AuthorityTokens
@@ -231,7 +239,25 @@ namespace ClearCanvas.Enterprise.Desktop
                         }
                         else
                         {
-                            UpdateAuthorityGroupResponse response = service.UpdateAuthorityGroup(new UpdateAuthorityGroupRequest(_authorityGroupDetail));
+                            UpdateAuthorityGroupRequest request = new UpdateAuthorityGroupRequest(_authorityGroupDetail);
+                            if (DataGroupModified && DataGroup == false)
+                            {
+                                var optionsComponent = new PasswordConfirmComponent
+                                {
+                                    Description = SR.DescriptionDataAccessGroupChange
+                                };
+                                if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(Host.DesktopWindow, optionsComponent, SR.TitlePasswordConfirm))
+                                {
+                                    request.UserName = Thread.CurrentPrincipal.Identity.Name;
+                                    request.Password = optionsComponent.Password;
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+
+                            UpdateAuthorityGroupResponse response = service.UpdateAuthorityGroup(request);
                             _authorityGroupSummary = response.AuthorityGroupSummary;
                         }
                     });

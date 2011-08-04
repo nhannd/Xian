@@ -151,6 +151,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing the Data Access field for an Authority Group requires manually associating the studies with the Authority Group in the future.  Please re-enter your password to confirm..
+        /// </summary>
+        public static string DescriptionDataAccessGroupChange {
+            get {
+                return ResourceManager.GetString("DescriptionDataAccessGroupChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are currently {0} users in &apos;{1}&apos; user group. Are you sure you want to delete this group?.
         /// </summary>
         public static string ExceptionAuthorityGroupIsNotEmpty_MultitpleUsers {
@@ -273,6 +282,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         public static string TitleImport {
             get {
                 return ResourceManager.GetString("TitleImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please Confirm Update.
+        /// </summary>
+        public static string TitlePasswordConfirm {
+            get {
+                return ResourceManager.GetString("TitlePasswordConfirm", resourceCulture);
             }
         }
         

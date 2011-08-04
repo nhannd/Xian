@@ -26,5 +26,12 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 
         [DataMember]
         public AuthorityGroupDetail AuthorityGroupDetail;
+
+        [DataMember] 
+        public string UserName;
+
+        [DataMember]
+        public string Password;
+
     }
 }
