@@ -70,6 +70,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AddEditUserGroups_DataAccessChanged {
+            get {
+                return ResourceManager.GetString("AddEditUserGroups_DataAccessChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Check Server Partition configuration to ensure a copy of the study is maintained after deletion..
         /// </summary>
         internal static string AdminDeletedStudies_CheckPartitionConfiguration {

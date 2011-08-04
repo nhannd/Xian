@@ -767,4 +767,7 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="StudyDetails_NoAuthorityGroupsForThisStudy" xml:space="preserve">
     <value>No Data Access Authority Groups assigned to this study.</value>
   </data>
+  <data name="AddEditUserGroups_DataAccessChanged" xml:space="preserve">
+    <value />
+  </data>
 </root>
