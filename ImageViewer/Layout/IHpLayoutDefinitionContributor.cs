@@ -10,6 +10,7 @@
 #endregion
 
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Collections.Generic;
 namespace ClearCanvas.ImageViewer.Layout
 {
 	public interface IHpLayoutDefinitionContext
@@ -18,6 +19,11 @@ namespace ClearCanvas.ImageViewer.Layout
         /// Gets the study tree.
         /// </summary>
         StudyTree StudyTree { get; }
+
+		/// <summary>
+		/// Gets the primary study.
+		/// </summary>
+		Study PrimaryStudy { get; }
 
         /// <summary>
         /// Gets the relevant logical workspace.
