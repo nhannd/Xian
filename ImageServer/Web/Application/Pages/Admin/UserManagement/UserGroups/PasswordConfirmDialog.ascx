@@ -10,14 +10,15 @@
 --%>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PasswordConfirmDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.PasswordConfirmDialog" %>
-<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="750px">
+    <ccAsp:ModalDialog ID="ModalDialog" runat="server"></ccAsp:ModalDialog>
+    
+<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="350px" Title="<%$Resources: SR, AddEditUserGroups_PasswordConfirmTitle %>">
     <ContentTemplate>
         <div class="DialogPanelContent">
             <table cellpadding="5">
                 <tr>
-                    <td class="DialogTextBoxLabel" nowrap="nowrap" colspan="2">
-                        <asp:Label ID="Label1" runat="server" Text="<%$Resources: SR, AddEditUserGroups_DataAccessChanged %>"
-                            CssClass="DialogTextBoxLabel" Height="120px" Width="500px" />
+                    <td class="DialogTextBoxLabelScroll" nowrap="nowrap" colspan="2">                    
+                        <asp:TextBox ID="Description" runat="server" Text="<%$Resources: SR, AddEditUserGroups_DataAccessChanged %>" Rows="8" Wrap="true" ReadOnly="true" TextMode="MultiLine" BorderStyle="None" BorderWidth="0" CssClass="DialogTextBoxLabelScroll" Width="100%" Height="100%" />
                     </td>
                 </tr>
                 <tr>
@@ -25,7 +26,7 @@
                         <asp:Label ID="Label2" runat="server" Text="<%$Resources: Labels, Password %>" CssClass="DialogTextBoxLabel" />
                     </td>
                     <td>
-                        <asp:TextBox runat="server" ID="GroupDescription" CssClass="DialogTextBox" Width="350px"></asp:TextBox>
+                        <asp:TextBox runat="server" ID="Password" TextMode="password" CssClass="LoginTextInput" Width="250px"></asp:TextBox>
                     </td>
                 </tr>
                 <tr>

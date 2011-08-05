@@ -11,6 +11,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.AddEditUserGroupsDialog"
     Codebehind="AddEditUserGroupsDialog.ascx.cs" %>
+<%@ Register Src="~/Pages/Admin/UserManagement/UserGroups/PasswordConfirmDialog.ascx" TagName="PasswordConfirmDialog" TagPrefix="localAsp" %>
 
 <script type="text/javascript">
 function ValidationUserGroupNameParams()
@@ -102,3 +103,6 @@ function ValidationUserGroupNameParams()
         </table>
     </ContentTemplate>
 </ccAsp:ModalDialog>
+
+<localAsp:PasswordConfirmDialog ID="PasswordConfirmDialog" runat="server" />
+<ccAsp:MessageBox ID="PasswordFailErrorMessage" runat="server" />  

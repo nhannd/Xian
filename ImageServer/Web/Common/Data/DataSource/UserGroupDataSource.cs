@@ -170,6 +170,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         public bool DataGroup { get; set; }
 
+        public string Password { get; set; }
+
         public int TokenCount
         {
             get { return _tokenCount; }
