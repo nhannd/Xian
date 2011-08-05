@@ -10,7 +10,7 @@
 #endregion
 
 using System.Security.Permissions;
-
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
@@ -116,7 +116,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 
             if (authorityGroup.DataGroup && !request.AuthorityGroupDetail.DataGroup)
             {
-                var user = GetUser(request.UserName, PersistenceContext);
+                var user = GetUser(Thread.CurrentPrincipal.Identity.Name, PersistenceContext);
                 if (!user.Password.Verify(request.Password))
                 {
                     // the error message is deliberately vague
