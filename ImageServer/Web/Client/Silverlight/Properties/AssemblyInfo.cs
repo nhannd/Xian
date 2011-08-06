@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Silverlight")]
+[assembly: AssemblyTitle("ClearCanvas.ImageServer.Web.Client.Silverlight")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Silverlight")]
+[assembly: AssemblyProduct("ClearCanvas.ImageServer.Web.Client.Silverlight")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e4eecea0-2394-45af-8e9e-cd953e69cd5a")]
+[assembly: Guid("45805254-04d7-4569-9202-1df9c6a6194d")]
 
 // Version information for an assembly consists of the following four values:
 //

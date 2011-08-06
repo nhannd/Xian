@@ -28,7 +28,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<ImageViewerWebClientSilverlightXAPOutputDir>$(TrunkDirectory)\ImageViewer\Web\Client\Silverlight\bin\$(Configuration)</ImageViewerWebClientSilverlightXAPOutputDir>
+		<ImageViewerWebClientSilverlightXAPOutputDir>$(TrunkDirectory)\ImageServer\Web\Client\Silverlight\bin\$(Configuration)</ImageViewerWebClientSilverlightXAPOutputDir>
 	</PropertyGroup>
 
 
