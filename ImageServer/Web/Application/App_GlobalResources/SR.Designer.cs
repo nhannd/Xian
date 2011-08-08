@@ -70,11 +70,29 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Unable to update Authority Group, the password entered is incorrect..
+        /// </summary>
+        internal static string AddEditUserGroupsDialog_InvalidPassword {
+            get {
+                return ResourceManager.GetString("AddEditUserGroupsDialog_InvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabling Data Access for an Authority Group removes the association between the Authority Group and imaging studies.  Studies will have to be manually associated with the Authority Group in the future.  Please re-enter your password to confirm this change..
         /// </summary>
         internal static string AddEditUserGroups_DataAccessChanged {
             get {
                 return ResourceManager.GetString("AddEditUserGroups_DataAccessChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please Confirm Update.
+        /// </summary>
+        internal static string AddEditUserGroups_PasswordConfirmTitle {
+            get {
+                return ResourceManager.GetString("AddEditUserGroups_PasswordConfirmTitle", resourceCulture);
             }
         }
         

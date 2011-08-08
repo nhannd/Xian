@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -20,7 +19,6 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.Enterprise.Common.Authentication;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
@@ -251,7 +249,6 @@ namespace ClearCanvas.Enterprise.Desktop
                                 };
                                 if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(Host.DesktopWindow, optionsComponent, SR.TitlePasswordConfirm))
                                 {
-                                    request.UserName = Thread.CurrentPrincipal.Identity.Name;
                                     request.Password = optionsComponent.Password;
                                 }
                                 else

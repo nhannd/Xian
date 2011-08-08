@@ -99,6 +99,17 @@
 	color: #16425D;
 }
 
+.DialogTextBoxLabelScroll
+{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 3px;
+	margin-right: 3px;
+	color: #16425D;
+	overflow: auto
+}
+
 .DialogLabelBackground
 {
     background-color: #dfdfdf;

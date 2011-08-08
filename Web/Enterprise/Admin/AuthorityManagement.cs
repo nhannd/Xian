@@ -72,9 +72,9 @@ namespace ClearCanvas.Web.Enterprise.Admin
             _service.AddAuthorityGroup(new AddAuthorityGroupRequest(details));
         }
 
-        public void UpdateAuthorityGroup(AuthorityGroupDetail detail)
+        public void UpdateAuthorityGroup(AuthorityGroupDetail detail, string password)
         {
-            _service.UpdateAuthorityGroup(new UpdateAuthorityGroupRequest(detail));
+            _service.UpdateAuthorityGroup(new UpdateAuthorityGroupRequest(detail) {Password = password});
         }
 
         public void DeleteAuthorityGroup(EntityRef entityRef, bool checkIfGroupIsEmpty)

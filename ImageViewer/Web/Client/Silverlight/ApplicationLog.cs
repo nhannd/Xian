@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
         }
 
-        internal static void Initialize()
+        public static void Initialize()
         {
             Logger.SetWriteMethod(LogMessage);
         }

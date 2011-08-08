@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     detail.AuthorityTokens.Add(new AuthorityTokenSummary(token.Name, token.Description));
                 }
 
-                service.UpdateAuthorityGroup(detail);
+                service.UpdateAuthorityGroup(detail, userGroup.Password);
                 success = true;
             }
 

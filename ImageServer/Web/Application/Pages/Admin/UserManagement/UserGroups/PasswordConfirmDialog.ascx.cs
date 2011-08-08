@@ -10,33 +10,51 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups
 {
     public partial class PasswordConfirmDialog : System.Web.UI.UserControl
     {
+
+        public delegate void OnOKClickedEventHandler();
+        public event OnOKClickedEventHandler OKClicked;
+
+        public string PasswordString
+        {
+            get
+            {
+                return Password.Text;
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
-
         }
 
         protected void OKButton_Click(object sender, ImageClickEventArgs e)
         {
-            throw new NotImplementedException();
+            if (OKClicked != null)
+                OKClicked();
+
+            Close();
         }
 
         protected void CancelButton_Click(object sender, ImageClickEventArgs e)
         {
-            throw new NotImplementedException();
+            Close();
+        }
+
+
+        public void Show()
+        {
+            ModalDialog1.Show();
+        }
+
+
+        public void Close()
+        {
+            ModalDialog1.Hide();
         }
     }
 }
