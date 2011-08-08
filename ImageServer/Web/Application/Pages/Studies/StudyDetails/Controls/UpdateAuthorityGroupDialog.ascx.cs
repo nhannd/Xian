@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common.Utilities;
@@ -42,29 +43,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Page.IsPostBack || Study == null) return;
-
-            StudyDataAccessController controller = new StudyDataAccessController();
-            IList<StudyDataAccessSummary> list = controller.LoadStudyDataAccess(Study.TheStudyStorage.Key);
-
-            using (AuthorityManagement service = new AuthorityManagement())
+            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup))
             {
-                IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
-                IList<ListItem> items = CollectionUtils.Map(
-                    tokens,
-                    delegate(AuthorityGroupSummary group)
-                        {
-                            ListItem item = new ListItem(group.Name, group.AuthorityGroupRef.ToString(false, false));
-                            item.Attributes["title"] = group.Description;
-                                
-                            foreach (StudyDataAccessSummary s in list)
-                            {
-                                if (s.AuthorityGroupOID.Equals(group.AuthorityGroupRef.ToString(false, false)))
-                                    item.Selected = true;
-                            }
-                            return item;
-                        });
 
-                AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
+                StudyDataAccessController controller = new StudyDataAccessController();
+                IList<StudyDataAccessSummary> list = controller.LoadStudyDataAccess(Study.TheStudyStorage.Key);
+
+                using (AuthorityManagement service = new AuthorityManagement())
+                {
+                    IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
+                    IList<ListItem> items = CollectionUtils.Map(
+                        tokens,
+                        delegate(AuthorityGroupSummary group)
+                            {
+                                ListItem item = new ListItem(group.Name, group.AuthorityGroupRef.ToString(false, false));
+                                item.Attributes["title"] = group.Description;
+
+                                foreach (StudyDataAccessSummary s in list)
+                                {
+                                    if (s.AuthorityGroupOID.Equals(group.AuthorityGroupRef.ToString(false, false)))
+                                        item.Selected = true;
+                                }
+                                return item;
+                            });
+
+                    AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
+                }
             }
         }
 

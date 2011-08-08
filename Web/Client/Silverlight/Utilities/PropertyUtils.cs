@@ -1,13 +1,4 @@
 ﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Reflection;
 
 namespace ClearCanvas.Web.Client.Silverlight.Utilities
@@ -18,8 +9,6 @@ namespace ClearCanvas.Web.Client.Silverlight.Utilities
                                        object fromRecord,
                                        object toRecord)
         {
-            PropertyInfo fromField = null;
-
             try
             {
                 if (fromFields == null)
@@ -27,9 +16,9 @@ namespace ClearCanvas.Web.Client.Silverlight.Utilities
                     return;
                 }
 
-                for (int f = 0; f < fromFields.Length; f++)
+                foreach (PropertyInfo t in fromFields)
                 {
-                    fromField = (PropertyInfo)fromFields[f];
+                    PropertyInfo fromField = t;
                     if (fromField.Name == "EntityConflict")
                         continue;  // Entity objects have this field and it throws an exception when copying
 
@@ -49,7 +38,7 @@ namespace ClearCanvas.Web.Client.Silverlight.Utilities
 
         public static void Copy(object source, object destination)
         {
-            PropertyInfo[] fromFields = null;
+            PropertyInfo[] fromFields;
 
             fromFields = source.GetType().GetProperties();
 

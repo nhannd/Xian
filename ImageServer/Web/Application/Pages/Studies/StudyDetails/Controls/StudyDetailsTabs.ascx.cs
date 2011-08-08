@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
+using System.Threading;
 using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
@@ -174,16 +175,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             UpdateAuthorityGroupDialog.AuthorityGroupsEdited += UpdateAuthorityGroupDialog_AuthorityGroupsEdited;
 
-            try
-            {
-                PrincipalPermission perm = new PrincipalPermission(null,ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
-                perm.Demand();
-                DataAccessTabPanel.Visible = true;
-            }
-            catch (Exception)
-            {
-                DataAccessTabPanel.Visible = false;
-            }                       
+            //DataAccessTabPanel.Visible = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+            DataAccessTabPanel.Enabled = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+            
         }
 
         private void UpdateAuthorityGroupDialog_AuthorityGroupsEdited(object sender, EventArgs e)

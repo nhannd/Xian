@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -82,8 +83,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (Study != null)
             {
                 StudyDataAccessController controller = new StudyDataAccessController();
-                
-                DataAccessGroups = controller.LoadStudyDataAccess(Study.TheStudyStorage.Key);
+
+                DataAccessGroups = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup) 
+                    ? controller.LoadStudyDataAccess(Study.TheStudyStorage.Key) 
+                    : new List<StudyDataAccessSummary>();
 
                 GridView1.DataSource = DataAccessGroups;
             }
@@ -111,7 +114,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             var studyInstanceUID = Request.QueryString[ImageServerConstants.QueryStrings.StudyInstanceUID];
             var serverAE = Request.QueryString[ImageServerConstants.QueryStrings.ServerAE];
 
-            if (!String.IsNullOrEmpty(studyInstanceUID) && !String.IsNullOrEmpty(serverAE))
+            if (!String.IsNullOrEmpty(studyInstanceUID) && !String.IsNullOrEmpty(serverAE)
+              && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup))
             {
                 var adaptor = new ServerPartitionDataAdapter();
                 var partitionCriteria = new ServerPartitionSelectCriteria();
@@ -129,13 +133,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         studyCriteria.ServerPartitionKey.EqualTo(partition.GetKey());
                         var study = studyAdaptor.GetFirst(studyCriteria);
 
-                        if (study!=null)
+                        if (study != null)
                         {
                             StudyDataAccessController controller = new StudyDataAccessController();
                             DataAccessGroups = controller.LoadStudyDataAccess(study.Key);
                             if (DataAccessGroups.Count > 0)
                                 GridView1.PageSize = DataAccessGroups.Count;
-                        }                        
+                        }
                     }
                 }
             }

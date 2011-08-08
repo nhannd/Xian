@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
@@ -22,7 +23,6 @@ using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
-
     public partial class AddAuthorityGroupsDialog : UserControl
     {
         public IList<StudySummary> AuthorityGroupStudies
@@ -38,20 +38,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (Page.IsPostBack) return;
 
-            using (AuthorityManagement service = new AuthorityManagement())
+            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup))
             {
-                IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
-                IList<ListItem> items = CollectionUtils.Map(
-                    tokens,
-                    delegate(AuthorityGroupSummary group)
-                    {
-                        ListItem item = new ListItem(group.Name, group.AuthorityGroupRef.ToString(false, false));
-                        item.Attributes["title"] = group.Description;
-                        item.Selected = false;
-                        return item;
-                    });
+                using (AuthorityManagement service = new AuthorityManagement())
+                {
+                    IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
+                    IList<ListItem> items = CollectionUtils.Map(
+                        tokens,
+                        delegate(AuthorityGroupSummary group)
+                            {
+                                ListItem item = new ListItem(group.Name, group.AuthorityGroupRef.ToString(false, false));
+                                item.Attributes["title"] = group.Description;
+                                item.Selected = false;
+                                return item;
+                            });
 
-                AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
+                    AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
+                }
             }
         }
 
