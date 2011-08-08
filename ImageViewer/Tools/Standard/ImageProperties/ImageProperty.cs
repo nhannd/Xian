@@ -161,6 +161,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 					var subproperties = new List<IImageProperty>();
 					foreach (var subattribute in values[0])
 						subproperties.Add(Create(subattribute, string.Empty, null, null, null));
+					subproperties.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.CurrentCultureIgnoreCase));
 					value = subproperties.ToArray();
 				}
 			}
