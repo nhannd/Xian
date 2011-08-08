@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
@@ -94,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 			if (String.IsNullOrEmpty(separator))
 				separator = ", ";
 
-			string value;
+			object value;
 			if (attribute.Tag.VR.Name == DicomVr.DAvr.Name)
 			{
 				value = StringUtilities.Combine(attribute.Values as string[], separator,
@@ -139,6 +140,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 				                                		PersonName personName = new PersonName(nameString ?? "");
 				                                		return personName.FormattedName;
 				                                	}, true);
+			}
+			else if (attribute.Tag.VR == DicomVr.SQvr)
+			{
+				value = string.Empty;
+
+				var values = attribute.Values as DicomSequenceItem[];
+				if (values != null && values.Length > 0)
+				{
+					var subproperties = new List<IImageProperty>();
+					foreach (var subattribute in values[0])
+						subproperties.Add(Create(subattribute, string.Empty, subattribute.Tag.Name, string.Empty, string.Empty));
+					value = subproperties.ToArray();
+				}
 			}
 			else if (attribute.Tag.VR.IsTextVR && attribute.GetValueType() == typeof(string[]))
 			{
