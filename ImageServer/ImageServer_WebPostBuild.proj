@@ -45,6 +45,7 @@
     </When>
     <Otherwise>
       <!-- assumes Win32 -->
+      
       <PropertyGroup>
         <PlatformSubFolder></PlatformSubFolder>
       </PropertyGroup>
@@ -98,7 +99,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <CodecPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+    <CodecPlugins Condition=" '$(TargetPlatform)' == 'x86' " Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
     <CodecPlugins Include="$(TrunkDirectory)\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll"/>
   </ItemGroup>
 
