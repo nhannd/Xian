@@ -178,6 +178,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The meaning of the coded identifier value.
+        /// </summary>
+        internal static string DescriptionCodeMeaning {
+            get {
+                return ResourceManager.GetString("DescriptionCodeMeaning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The coded identifier value.
+        /// </summary>
+        internal static string DescriptionCodeValue {
+            get {
+                return ResourceManager.GetString("DescriptionCodeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The identifier of the coding scheme.
+        /// </summary>
+        internal static string DescriptionCodingSchemeDesignator {
+            get {
+                return ResourceManager.GetString("DescriptionCodingSchemeDesignator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The serial number of the equipment on which the study/exam was performed.
         /// </summary>
         internal static string DescriptionDeviceSerialNumber {
@@ -340,7 +367,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Identification code of the breed of the patient.
+        ///   Looks up a localized string similar to Coded identifier of the breed of the patient.
         /// </summary>
         internal static string DescriptionPatientBreedCodeSequence {
             get {
@@ -403,7 +430,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Identification code of the species of the patient.
+        ///   Looks up a localized string similar to Coded identifier of the species of the patient.
         /// </summary>
         internal static string DescriptionPatientSpeciesCodeSequence {
             get {
@@ -642,6 +669,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties {
         internal static string NameBodyPartExamined {
             get {
                 return ResourceManager.GetString("NameBodyPartExamined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code Meaning.
+        /// </summary>
+        internal static string NameCodeMeaning {
+            get {
+                return ResourceManager.GetString("NameCodeMeaning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code Value.
+        /// </summary>
+        internal static string NameCodeValue {
+            get {
+                return ResourceManager.GetString("NameCodeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Coding Scheme Designator.
+        /// </summary>
+        internal static string NameCodingSchemeDesignator {
+            get {
+                return ResourceManager.GetString("NameCodingSchemeDesignator", resourceCulture);
             }
         }
         
