@@ -8,10 +8,8 @@
 -->
 <UserControl x:Class="ClearCanvas.ImageViewer.Web.Client.Silverlight.ImageViewer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-             
-    xmlns:Views="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Views"
-             xmlns:local="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"              
+    xmlns:Views="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Views">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -26,7 +24,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Views:ToolstripView x:Name="ToolstripViewComponent" Grid.Column="0"></Views:ToolstripView>               
+                <Views:ToolstripView x:Name="ToolstripViewComponent" Grid.Column="0" />
             </Grid>
             <Grid x:Name="StudyViewContainer"  Grid.Row="1" Background="Black" >
             </Grid>
