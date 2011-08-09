@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				//explicitly check and make sure we're querying local only.
 				if (serverTreeComponent.ShowLocalDataStoreNode && serverTreeComponent.SelectedServers.IsLocalDatastore)
 				{
-					var queryParamList = new List<QueryParameters> { studyBrowserComponent.OpenSearchQueryParams };
+					var queryParamList = new List<QueryParameters> { studyBrowserComponent.CreateOpenSearchQueryParams() };
 					studyBrowserComponent.Search(queryParamList);
 				}
 			}
