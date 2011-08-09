@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
-using ClearCanvas.Dicom.Iod.Sequences;
 
 namespace ClearCanvas.Dicom.Iod.ContextGroups
 {
@@ -112,17 +111,5 @@ namespace ClearCanvas.Dicom.Iod.ContextGroups
 		/// <exception cref="ArgumentException">Thrown if <paramref name="codeSequence.CodingSchemeDesignator"/> or <paramref name="codeSequence.CodeValue"/> are <code>null</code> or empty.</exception>
 		public Species(CodeSequenceMacro codeSequence)
 			: base(codeSequence.CodingSchemeDesignator, codeSequence.CodingSchemeVersion, codeSequence.CodeValue, codeSequence.CodeMeaning) { }
-
-		/// <summary>
-		/// Converts a <see cref="Species"/> to a <see cref="PatientSpeciesCodeSequence"/>.
-		/// </summary>
-		/// <param name="species"></param>
-		/// <returns></returns>
-		public static implicit operator PatientSpeciesCodeSequence(Species species)
-		{
-			var codeSequence = new PatientSpeciesCodeSequence();
-			species.WriteToCodeSequence(codeSequence);
-			return codeSequence;
-		}
 	}
 }

@@ -142,17 +142,5 @@ namespace ClearCanvas.Dicom.Iod.ContextGroups
 		/// <exception cref="ArgumentException">Thrown if <paramref name="codeSequence.CodingSchemeDesignator"/> or <paramref name="codeSequence.CodeValue"/> are <code>null</code> or empty.</exception>
 		public BreedRegistry(CodeSequenceMacro codeSequence)
 			: base(codeSequence.CodingSchemeDesignator, codeSequence.CodingSchemeVersion, codeSequence.CodeValue, codeSequence.CodeMeaning) { }
-
-		/// <summary>
-		/// Converts a <see cref="BreedRegistry"/> to a <see cref="BreedRegistryCodeSequence"/>.
-		/// </summary>
-		/// <param name="breedRegistry"></param>
-		/// <returns></returns>
-		public static implicit operator BreedRegistryCodeSequence(BreedRegistry breedRegistry)
-		{
-			var codeSequence = new BreedRegistryCodeSequence();
-			breedRegistry.WriteToCodeSequence(codeSequence);
-			return codeSequence; 
-		}
 	}
 }

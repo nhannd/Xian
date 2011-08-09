@@ -10,8 +10,8 @@
 #endregion
 
 using System;
-using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.ContextGroups;
+using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom.Iod.Sequences
 {
@@ -47,6 +47,18 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		public static implicit operator Breed(PatientBreedCodeSequence code)
 		{
 			return new Breed(code.CodingSchemeDesignator, code.CodingSchemeVersion, code.CodeValue, code.CodeMeaning);
+		}
+
+		/// <summary>
+		/// Converts a <see cref="Breed"/> to a <see cref="PatientBreedCodeSequence"/>.
+		/// </summary>
+		/// <param name="breed"></param>
+		/// <returns></returns>
+		public static implicit operator PatientBreedCodeSequence(Breed breed)
+		{
+			var codeSequence = new PatientBreedCodeSequence();
+			breed.WriteToCodeSequence(codeSequence);
+			return codeSequence;
 		}
 	}
 }
