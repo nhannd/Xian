@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			SynchronizationContext.Current.Post(
 				delegate
 				{
-					var queryParams = explorerComponent.StudyBrowserComponent.OpenSearchQueryParams;
-					PrepareQueryParameters(request.SearchCriteria, ref queryParams);
+					var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
+					PrepareQueryParameters(request.SearchCriteria, queryParams);
 					explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
 				}, null); 
 
@@ -119,8 +119,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			SynchronizationContext.Current.Post(
 				delegate
 					{
-						var queryParams = explorerComponent.StudyBrowserComponent.OpenSearchQueryParams;
-						PrepareQueryParameters(request.SearchCriteria, ref queryParams);
+						var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
+						PrepareQueryParameters(request.SearchCriteria, queryParams);
 						explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
 					}, null); 
 			
@@ -195,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return null;
 		}
 
-		private static void PrepareQueryParameters(DicomExplorerSearchCriteria searchCriteria, ref QueryParameters queryParams)
+		private static void PrepareQueryParameters(DicomExplorerSearchCriteria searchCriteria, QueryParameters queryParams)
 		{
 			queryParams["PatientsName"] = QueryStringHelper.ConvertNameToSearchCriteria(searchCriteria.PatientsName);
 			queryParams["ReferringPhysiciansName"] = QueryStringHelper.ConvertNameToSearchCriteria(searchCriteria.ReferringPhysiciansName);

@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			_dummyStudyTable = new Table<StudyItem>();
 			_searchResults = new Dictionary<string, SearchResult>();
-			_lastQueryParametersList = new List<QueryParameters> { OpenSearchQueryParams };
+			_lastQueryParametersList = new List<QueryParameters> { CreateOpenSearchQueryParams() };
 
 			_localDataStoreCleared = false;
 			_setStudiesArrived = new Dictionary<string, string>();
@@ -189,6 +189,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
 				{
 					SearchResult searchResult = CreateSearchResult();
+					searchResult.Initialize();
 					_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
 				}
 
@@ -211,26 +212,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						UpdateResultsTitle();
 					}
 				}
-			}
-		}
-
-		public virtual QueryParameters OpenSearchQueryParams
-		{
-			get
-			{
-				var queryParams = new QueryParameters
-					{
-						{"PatientsName", ""},
-						{"ReferringPhysiciansName", ""},
-						{"PatientId", ""},
-						{"AccessionNumber", ""},
-						{"StudyDescription", ""},
-						{"ModalitiesInStudy", ""},
-						{"StudyDate", ""},
-						{"StudyInstanceUid", ""},
-					};
-
-				return queryParams;
 			}
 		}
 
@@ -455,6 +436,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			NotifyPropertyChanged("ResultsTitle");
 		}
 
+		public virtual QueryParameters CreateOpenSearchQueryParams()
+		{
+			var queryParams = new QueryParameters
+			                  	{
+			                  		{"PatientsName", ""},
+			                  		{"ReferringPhysiciansName", ""},
+			                  		{"PatientId", ""},
+			                  		{"AccessionNumber", ""},
+			                  		{"StudyDescription", ""},
+			                  		{"ModalitiesInStudy", ""},
+			                  		{"StudyDate", ""},
+			                  		{"StudyInstanceUid", ""},
+			                  	};
+
+			return queryParams;
+		}
+
 		private StudyItemList Query(List<QueryParameters> queryParamsList, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
 		{
 			StudyItemList aggregateStudyItemList = new StudyItemList();
@@ -470,7 +468,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					{
 						// Make sure the query parameters sent contains all user specified parameters, plus any keys defined in 
 						// OpenSearchQueryParams but not in user specified parameters.
-						var queryParams = MergeQueryParams(q, this.OpenSearchQueryParams);
+						var queryParams = MergeQueryParams(q, this.CreateOpenSearchQueryParams());
 
 						if (serverNode.IsLocalDataStore)
 						{
@@ -556,7 +554,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				string studyUids = DicomStringHelper.GetDicomStringArray(studyUidList);
 				if (!String.IsNullOrEmpty(studyUids))
 				{
-					var queryParams = new QueryParameters(this.OpenSearchQueryParams);
+					var queryParams = new QueryParameters(this.CreateOpenSearchQueryParams());
 					queryParams["StudyInstanceUid"] = studyUids;
 
 					try
