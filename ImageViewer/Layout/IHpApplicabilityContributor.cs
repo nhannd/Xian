@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		HpMatchResult Test(IHpProtocolApplicabilityContext context);
+		HpApplicabilityResult Test(IHpProtocolApplicabilityContext context);
 	}
 
 	public interface IHpLayoutApplicabilityContext : IHpProtocolApplicabilityContext
