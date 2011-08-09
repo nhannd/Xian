@@ -87,9 +87,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt))
                     {
                         //TODO: close this on error/timeout
-                        StackPanel panel = new StackPanel() { Orientation = Orientation.Horizontal };
-                        panel.Children.Add(new StatisticsPanel() { Margin = new Thickness(10) });
-                        panel.Children.Add(new ThrottlePanel(){ Margin = new Thickness(10)});
+                        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+                        panel.Children.Add(new StatisticsPanel { Margin = new Thickness(10) });
+                        panel.Children.Add(new ThrottlePanel { Margin = new Thickness(10)});
 
                         PopupHelper.PopupContent(DialogTitles.ThrottleSettings, panel);
                     }
@@ -124,21 +124,21 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             UIThread.Execute(() =>
             {
-                SessionUpdatedEvent @event = ev.ServerEvent as SessionUpdatedEvent;
+                var @event = ev.ServerEvent as SessionUpdatedEvent;
                 ApplicationBridge.Current.OnViewerSessionUpdated(this, @event);
             });
         }
 
         private void OnMessageBox(object sender, ServerEventArgs ev)
         {
-            MessageBoxShownEvent @event = ev.ServerEvent as MessageBoxShownEvent;
+            var @event = ev.ServerEvent as MessageBoxShownEvent;
 
 			//TODO (CR May 2010): can this be consolidate or split up?
             List<Button> buttonList = new List<Button>();
 
             if (@event.MessageBox.Actions == WebMessageBoxActions.Ok)
             {
-                Button okButton = new Button { Content = Labels.ButtonOK, Margin = new Thickness(5) };
+                var okButton = new Button { Content = Labels.ButtonOK, Margin = new Thickness(5) };
                 okButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage
                                                                                                              {
                                                                                                                  TargetId = @event.MessageBox.Identifier,
@@ -149,16 +149,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             else if (@event.MessageBox.Actions == WebMessageBoxActions.OkCancel)
             {
-                Button okButton = new Button { Content = Labels.ButtonOK, Margin = new Thickness(5) };
-                okButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
+                var okButton = new Button { Content = Labels.ButtonOK, Margin = new Thickness(5) };
+                okButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage
                                                                                                              {
                                                                                                                  TargetId = @event.MessageBox.Identifier,
                                                                                                                  Result = WebDialogBoxAction.Ok,
                                                                                                                  Identifier = Guid.NewGuid()
                                                                                                              });
                 buttonList.Add(okButton);
-                Button cancelButton = new Button { Content = Labels.ButtonCancel, Margin = new Thickness(5) };
-                cancelButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
+                var cancelButton = new Button { Content = Labels.ButtonCancel, Margin = new Thickness(5) };
+                cancelButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage
                                                                                                                  {
                                                                                                                      TargetId = @event.MessageBox.Identifier,
                                                                                                                      Result = WebDialogBoxAction.Cancel,
@@ -168,16 +168,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             else if (@event.MessageBox.Actions == WebMessageBoxActions.YesNo)
             {
-                Button yesButton = new Button { Content = Labels.ButtonYes, Margin = new Thickness(5) };
-                yesButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
+                var yesButton = new Button { Content = Labels.ButtonYes, Margin = new Thickness(5) };
+                yesButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage
                                                                                                               {
                                                                                                                   TargetId = @event.MessageBox.Identifier,
                                                                                                                   Result = WebDialogBoxAction.Yes,
                                                                                                                   Identifier = Guid.NewGuid()
                                                                                                               });
                 buttonList.Add(yesButton);
-                Button noButton = new Button { Content = Labels.ButtonNo, Margin = new Thickness(5) };
-                noButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
+                var noButton = new Button { Content = Labels.ButtonNo, Margin = new Thickness(5) };
+                noButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage
                                                                                                              {
                                                                                                                  TargetId = @event.MessageBox.Identifier,
                                                                                                                  Result = WebDialogBoxAction.No,
@@ -187,17 +187,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             else if (@event.MessageBox.Actions == WebMessageBoxActions.YesNoCancel)
             {
-                Button yesButton = new Button { Content = Labels.ButtonYes, Margin = new Thickness(5) };
-                yesButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
+                var yesButton = new Button { Content = Labels.ButtonYes, Margin = new Thickness(5) };
+                yesButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage
                                                                                                               {
                                                                                                                   TargetId = @event.MessageBox.Identifier,
                                                                                                                   Result = WebDialogBoxAction.Yes,
                                                                                                                   Identifier = Guid.NewGuid()
                                                                                                               });
                 buttonList.Add(yesButton);
-                Button noButton = new Button { Content = Labels.ButtonNo, Margin = new Thickness(5) };
-                noButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage()
-                                                                                     {
+                var noButton = new Button { Content = Labels.ButtonNo, Margin = new Thickness(5) };
+                noButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new DismissMessageBoxMessage
+                                                                                                             {
                                                                                          TargetId =
                                                                                              @event.MessageBox.
                                                                                              Identifier,
@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                                                                                          Identifier = Guid.NewGuid()
                                                                                      });
                 buttonList.Add(noButton);
-                Button cancelButton = new Button { Content = Labels.ButtonCancel, Margin = new Thickness(5) };
+                var cancelButton = new Button { Content = Labels.ButtonCancel, Margin = new Thickness(5) };
                 cancelButton.Click += (s, e) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(
                     new DismissMessageBoxMessage()
                         {
@@ -226,7 +226,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 return;
             }
 
-			ApplicationStartedEvent ev = (ApplicationStartedEvent)e.ServerEvent;
+			var ev = (ApplicationStartedEvent)e.ServerEvent;
             if (ev == null)
             {
                 ErrorHandler.HandleCriticalError("Unexpected event type: {0}", e.ServerEvent);
@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (!(e.ServerEvent is PropertyChangedEvent))
                 return;
 
-            PropertyChangedEvent ev = (PropertyChangedEvent)e.ServerEvent;
+            var ev = (PropertyChangedEvent)e.ServerEvent;
 
             if (ev.PropertyName == "Application")
             {
@@ -275,7 +275,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 			if (!(e.ServerEvent is PropertyChangedEvent))
 				return;
 
-			PropertyChangedEvent ev = (PropertyChangedEvent)e.ServerEvent;
+			var ev = (PropertyChangedEvent)e.ServerEvent;
 
 			//TODO (CR May 2010): this is in the method above, too.  Which one works?
             if (ev.PropertyName == "Application")

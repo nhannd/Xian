@@ -9,10 +9,8 @@
 
 #endregion
 
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
 {

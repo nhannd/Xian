@@ -28,7 +28,7 @@
         
         <ScrollBar Grid.Row="0" x:Name="ImageScrollBar" Orientation="Vertical" Width="17"  HorizontalAlignment="Right"
                SmallChange="1" Style="{StaticResource ScrollBarStyle}"
-               Scroll="ImageScrollBar_Scroll" LargeChange="5"  >       
+               Scroll="ImageScrollBarScroll" LargeChange="5"  >       
         </ScrollBar>
     </Grid>
 </UserControl>

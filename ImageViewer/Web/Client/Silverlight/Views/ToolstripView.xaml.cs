@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
@@ -20,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
     public partial class ToolstripView : UserControl
     {
-        private Dictionary<Guid, IToolstripButton> _buttonLookup = new Dictionary<Guid, IToolstripButton>();
+        private readonly Dictionary<Guid, IToolstripButton> _buttonLookup = new Dictionary<Guid, IToolstripButton>();
         private ActionDispatcher _dispatcher;
         private ServerEventDispatcher _eventDispatcher;
         WebIconSize _desiredIconSize = WebIconSize.Medium;
@@ -39,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             InitializeComponent();
             System.Windows.Application.Current.Host.Content.Resized += OnApplicationResized;
 
-            EventBroker.TileHasCaptureChanged += new EventHandler(EventBroker_TileHasCapture);
+            EventBroker.TileHasCaptureChanged += EventBrokerTileHasCapture;
         }
 
         public void OnLoseFocus(object sender, EventArgs e)
@@ -77,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 				//TODO: what if there are children?
 				if (action is WebDropDownButtonAction)
                 {
-                    DropDownButton theButton = new DropDownButton(_dispatcher, action as WebDropDownButtonAction,_desiredIconSize);
+                    var theButton = new DropDownButton(_dispatcher, action as WebDropDownButtonAction,_desiredIconSize);
 
 					_buttonLookup.Add(action.Identifier, theButton);
                     theButton.RegisterOnMouseEnter(OnMouseEnter);
@@ -88,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 else if (action is WebDropDownAction)
                 {
 
-                    LayoutDropDown theButton = new LayoutDropDown(_dispatcher, action as WebDropDownAction,_desiredIconSize);
+                    var theButton = new LayoutDropDown(_dispatcher, action as WebDropDownAction,_desiredIconSize);
 
                     _buttonLookup.Add(action.Identifier, theButton);
                     theButton.RegisterOnMouseEnter(OnMouseEnter);
@@ -98,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 }
                 else
                 {
-                    StandardButton theButton = new StandardButton(_dispatcher, action as WebClickAction, _desiredIconSize);
+                    var theButton = new StandardButton(_dispatcher, action as WebClickAction, _desiredIconSize);
 
                     _buttonLookup.Add(action.Identifier, theButton);
                     theButton.RegisterOnMouseEnter(OnMouseEnter);
@@ -122,20 +121,18 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void AddHelpButton()
         {
-            HelpButton theButton = new HelpButton();
+            var theButton = new HelpButton();
             theButton.SetIconSize(_desiredIconSize);
             LayoutRoot.Children.Add(theButton);
             theButton.RegisterOnMouseEnter(OnMouseEnter);
             theButton.RegisterOnMouseLeave(OnMouseLeave);
         }
         
-        void EventBroker_TileHasCapture(object sender, EventArgs e)
+        void EventBrokerTileHasCapture(object sender, EventArgs e)
         {
-            Tile tile = sender as Tile;
+            var tile = sender as Tile;
             LayoutRoot.IsHitTestVisible = !tile.HasCapture;
         }
-
-        
 
 		private void OnMouseEnter(IToolstripButton button)
         {

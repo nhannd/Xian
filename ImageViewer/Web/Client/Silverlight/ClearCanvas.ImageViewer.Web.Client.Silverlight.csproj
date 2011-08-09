@@ -112,7 +112,6 @@
       <DependentUpon>StudyBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="DelayedEventPublisher.cs" />
-    <Compile Include="Controls\DialogControl.cs" />
     <Compile Include="EventBroker.cs" />
     <Compile Include="Helpers\BrowserExtensions.cs" />
     <Compile Include="Helpers\Cookies.cs" />
@@ -239,10 +238,6 @@
     <Page Include="Resources\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ImageBoxScrollbarView.xaml">
       <SubType>Designer</SubType>
