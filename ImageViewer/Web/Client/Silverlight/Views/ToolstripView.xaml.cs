@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void AddHelpButton()
         {
-            var theButton = new HelpButton();
+            var theButton = new HelpButton(_dispatcher);
             theButton.SetIconSize(_desiredIconSize);
             LayoutRoot.Children.Add(theButton);
             theButton.RegisterOnMouseEnter(OnMouseEnter);

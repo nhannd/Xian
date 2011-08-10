@@ -21,7 +21,7 @@ using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
-	public partial class StandardButton : IActionUpdate, IToolstripButton
+	public partial class StandardButton : IActionUpdate, IToolstripButton, IDisposable
 	{
 	    private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 			_actionItem = icon;
             _actionDispatcher = dispatcher;
 
-			dispatcher.Register(_actionItem.Identifier, this);
+            _actionDispatcher.Register(_actionItem.Identifier, this);
 
             SetIconSize(iconSize); 
             SetIcon();
@@ -67,6 +67,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
             OverlayCheckedIndicator.Opacity = _actionItem.IconSet.HasOverlay ? 1 : 0;
 		}
+
+        public void Dispose()
+        {
+            if (_actionDispatcher != null)
+            {
+                _actionDispatcher.Remove(_actionItem.Identifier);
+            }            
+        }
 
         void ButtonComponentMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {

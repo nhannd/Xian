@@ -160,16 +160,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         {
             for (int cols = 0; cols < _imageBoxAction.MaxColumns; cols++)
             {
-                ColumnDefinition coldef = new ColumnDefinition();
-                coldef.Width = GridLength.Auto;
+                ColumnDefinition coldef = new ColumnDefinition {Width = GridLength.Auto};
                 ImageBoxGrid.ColumnDefinitions.Add(coldef);
             }
 
             for (int rows = 0; rows < _imageBoxAction.MaxRows; rows++)
             {
                 //do this for each row
-                RowDefinition rowDef = new RowDefinition();
-                rowDef.Height = GridLength.Auto;
+                RowDefinition rowDef = new RowDefinition {Height = GridLength.Auto};
                 ImageBoxGrid.RowDefinitions.Add(rowDef);
             }
 
@@ -184,16 +182,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
             for (int cols = 0; cols < _tilesAction.MaxColumns; cols++)
             {
-                ColumnDefinition coldef = new ColumnDefinition();
-                coldef.Width = GridLength.Auto;
+                ColumnDefinition coldef = new ColumnDefinition {Width = GridLength.Auto};
                 TileGrid.ColumnDefinitions.Add(coldef);
             }
 
             for (int rows = 0; rows < _tilesAction.MaxRows; rows++)
             {
                 //do this for each row
-                RowDefinition rowDef = new RowDefinition();
-                rowDef.Height = GridLength.Auto;
+                RowDefinition rowDef = new RowDefinition {Height = GridLength.Auto};
                 TileGrid.RowDefinitions.Add(rowDef);
             }
 

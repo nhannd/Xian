@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,14 +23,15 @@ using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
-    public partial class LayoutDropDown : UserControl, IToolstripDropdownButton, IActionUpdate
+    public partial class LayoutDropDown : UserControl, IToolstripDropdownButton, IActionUpdate, IDisposable
     {
         private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
         private readonly WebDropDownAction _actionItem;
         private readonly IPopup _popup;
         private WebIconSize _iconSize;
-
+        private readonly ActionDispatcher _actionDispatcher;
+       
         private WebIconSize IconSize
         {
             set
@@ -47,6 +49,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 			InitializeComponent();
             
             _iconSize = iconSize;
+            _actionDispatcher = dispatcher;
             _actionItem = action;
             _popup = new LayoutPopup(dispatcher, action.DropDownActions).AsSingleton();
 
@@ -67,6 +70,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
             IndicateChecked(false); //This button doesn't have a checked state.
 		}
+
+        public void Dispose()
+        {
+            if (_actionDispatcher != null)
+            {
+                _actionDispatcher.Remove(_actionItem.Identifier);
+            }
+            LayoutDropDownButton.MouseEnter -= ButtonComponent_MouseEnter;
+            LayoutDropDownButton.MouseLeave -= ButtonComponent_MouseLeave;
+        }
 
         void ButtonComponent_MouseLeave(object sender, MouseEventArgs e)
         {
