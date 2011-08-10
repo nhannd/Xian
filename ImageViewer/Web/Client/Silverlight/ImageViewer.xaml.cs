@@ -40,6 +40,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             InitializeComponent();
 
+            if (ApplicationContext.Current != null)
+                ApplicationContext.Initialize();
+
 			_context = ApplicationContext.Current;
             ErrorHandler.OnCriticalError += ErrorHandler_OnCriticalError;
 
