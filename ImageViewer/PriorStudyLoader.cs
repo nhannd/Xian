@@ -82,17 +82,15 @@ namespace ClearCanvas.ImageViewer
 			private readonly ImageViewerComponent _imageViewer;
 			private readonly List<SingleStudyLoader> _singleStudyLoaders;
 
-			private volatile bool _isActive = false;
-			private event EventHandler _isActiveChanged;
-
-			private volatile bool _stop = false;
+			private volatile bool _isActive;
+			private volatile bool _stop;
 
 			private Thread _thread;
 			private SynchronizationContext _synchronizationContext;
 
 			private readonly IPriorStudyFinder _priorStudyFinder;
 			private volatile StudyItemList _queryResults;
-			private volatile bool _findFailed = false;
+			private volatile bool _findFailed;
 
 			public AsynchronousPriorStudyLoader(ImageViewerComponent imageViewer, IPriorStudyFinder priorStudyFinder)
 			{
@@ -104,24 +102,8 @@ namespace ClearCanvas.ImageViewer
 
 			#region IPriorStudyLoader
 
-			public bool IsActive
-			{
-				get { return _isActive; }
-				private set
-				{
-					if (_isActive == value)
-						return;
-
-					_isActive = value;
-					EventsHelper.Fire(_isActiveChanged, this, EventArgs.Empty);
-				}
-			}
-
-			public event EventHandler IsActiveChanged
-			{
-				add { _isActiveChanged += value; }
-				remove { _isActiveChanged -= value; }
-			}
+            public bool IsActive { get { return _isActive; } }
+		    public event EventHandler IsActiveChanged;
 
 			#endregion
 
@@ -134,12 +116,12 @@ namespace ClearCanvas.ImageViewer
 					return;
 
 				_stop = false;
-				IsActive = true;
+				_isActive = true;
+                EventsHelper.Fire(IsActiveChanged, this, EventArgs.Empty);
+
 				_synchronizationContext = SynchronizationContext.Current;
-				_thread = new Thread(Run);
-				_thread.Priority = ThreadPriority.BelowNormal;
-				_thread.IsBackground = false;
-				_thread.Start();
+				_thread = new Thread(Run) {Priority = ThreadPriority.BelowNormal, IsBackground = false};
+			    _thread.Start();
 			}
 
 			public void Stop()
@@ -166,6 +148,7 @@ namespace ClearCanvas.ImageViewer
 				}
 				finally
 				{
+				    _isActive = false;
 					_synchronizationContext.Post(OnComplete, null);
 				}
 			}
@@ -191,8 +174,7 @@ namespace ClearCanvas.ImageViewer
 					if (_stop)
 						break;
 
-					SingleStudyLoader loader = 
-						new SingleStudyLoader(_synchronizationContext, _imageViewer, result){ LoadOnlineOnly = true };
+					var loader = new SingleStudyLoader(_synchronizationContext, _imageViewer, result){ LoadOnlineOnly = true };
 
 					_singleStudyLoaders.Add(loader);
 					loader.LoadStudy();
@@ -202,8 +184,13 @@ namespace ClearCanvas.ImageViewer
 
 			private void OnComplete(object nothing)
 			{
-				IsActive = false;
-				if (_stop)
+                //We set the _isActive member on the worker thread so that code blocking on the UI thread
+                //waiting for the flag to be set could see the change without having to "Post" or show a progress
+                //dialog, or something to that effect.  However, so client code does not have to worry about multiple
+                //threads, we fire this event on the UI thread.
+                EventsHelper.Fire(IsActiveChanged, this, EventArgs.Empty);
+
+                if (_stop)
 					return;
 
 				try
@@ -230,7 +217,7 @@ namespace ClearCanvas.ImageViewer
 
 			private List<Exception> GetLoadErrors()
 			{
-				List<Exception> errors = new List<Exception>();
+				var errors = new List<Exception>();
 
 				foreach (SingleStudyLoader loader in _singleStudyLoaders)
 				{
@@ -244,15 +231,11 @@ namespace ClearCanvas.ImageViewer
 			private void VerifyLoadPriors()
 			{
 				if (_findFailed)
-				{
 					throw new LoadPriorStudiesException();
-				}
-				else
-				{
-					List<Exception> errors = GetLoadErrors();
-					if (errors.Count > 0)
-						throw new LoadPriorStudiesException(errors, GetValidPriorCount());
-				}
+
+                var errors = GetLoadErrors();
+				if (errors.Count > 0)
+					throw new LoadPriorStudiesException(errors, GetValidPriorCount());
 			}
 
 			private void DisposeLoaders()
