@@ -63,12 +63,12 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 			{
 				string result = provider.GetIdentifier();
 				if (uniqueIdentifiers.Contains(result))
-					Assert.Fail();
+					Assert.Fail("non-unique value \"{1}\" for {0}", provider, result);
 
 				uniqueIdentifiers.Add(result);
 
 				if (string.IsNullOrEmpty(result))
-					Assert.Fail();
+					Assert.Fail("null or empty value for {0}", provider);
 			}
 		}
 
@@ -81,12 +81,12 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 			{
 				string result = provider.GetDisplayName();
 				if (uniqueDisplayNames.Contains(result))
-					Assert.Fail();
+					Assert.Fail("non-unique value \"{1}\" for {0}", provider.GetDisplayName(), result);
 
 				uniqueDisplayNames.Add(result);
 
 				if (string.IsNullOrEmpty(result))
-					Assert.Fail();
+					Assert.Fail("null or empty value for {0}", provider);
 			}
 		}
 
@@ -101,12 +101,12 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 				{
 					string result = item.GetIdentifier();
 					if (uniqueIdentifiers.Contains(result))
-						Assert.Fail();
+						Assert.Fail("non-unique value \"{1}\" for {0}", item, result);
 
 					uniqueIdentifiers.Add(result);
 
 					if (string.IsNullOrEmpty(result))
-						Assert.Fail();
+						Assert.Fail("null or empty value for {0}", item);
 				}
 			}
 		}
@@ -122,12 +122,12 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 				{
 					string result = item.GetDisplayName();
 					if (uniqueDisplayNames.Contains(result))
-						Assert.Fail();
+						Assert.Fail("non-unique value \"{1}\" for {0}", item.GetDisplayName(), result);
 
 					uniqueDisplayNames.Add(result);
 
 					if (string.IsNullOrEmpty(result))
-						Assert.Fail();
+						Assert.Fail("null or empty value for {0}", item);
 				}
 			}
 		}
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 				{
 					string result = item.GetAnnotationText(null);
 					if (!string.IsNullOrEmpty(result))
-						Assert.Fail();
+						Assert.Fail("non-null and non-empty value for {0}", item);
 				}
 			}
 		}

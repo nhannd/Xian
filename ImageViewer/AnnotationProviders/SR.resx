@@ -736,7 +736,7 @@
     <value>Filter</value>
   </data>
   <data name="Dicom_DXImage_KVP_DisplayName" xml:space="preserve">
-    <value>KVP</value>
+    <value>DX_KVP</value>
   </data>
   <data name="Dicom_DXImage_KVP_Label" xml:space="preserve">
     <value>KVP</value>
