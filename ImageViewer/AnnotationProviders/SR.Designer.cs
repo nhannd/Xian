@@ -385,7 +385,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to KVP.
+        ///   Looks up a localized string similar to DX_KVP.
         /// </summary>
         public static string Dicom_DXImage_KVP_Label {
             get {
