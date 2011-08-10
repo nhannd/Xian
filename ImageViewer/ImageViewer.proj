@@ -1,6 +1,7 @@
 <Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineStrings" AssemblyFile="$(MSBuildProjectDirectory)\..\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll" />
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.XmlInsert" AssemblyFile="$(MSBuildProjectDirectory)\..\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(MSBuildProjectDirectory)\..\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
 
   <Choose>
@@ -119,10 +120,29 @@
     </Otherwise>
   </Choose>
 
+  <Target Name="CreateNUnitProject">
+    <PropertyGroup>
+      <UnitTestProjectFile>$(DistributionDir)\UnitTests.nunit</UnitTestProjectFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <UnitTestAssemblyFiles Include="$(DistributionDir)\**\ClearCanvas.*.exe" />
+      <UnitTestAssemblyFiles Include="$(DistributionDir)\**\ClearCanvas.*.dll" />
+    </ItemGroup>
+    <Delete Files="$(UnitTestProjectFile)" />
+    <XmlInsert File="$(UnitTestProjectFile)" XPath="/" Type="Element" Name="NUnitProject" />
+    <XmlInsert File="$(UnitTestProjectFile)" XPath="/NUnitProject" Type="Element" Name="Settings" Attribute="activeconfig" Value="Debug" />
+    <XmlInsert File="$(UnitTestProjectFile)" XPath="/NUnitProject" Type="Element" Name="Config" Attribute="name" Value="Debug" />
+    <XmlInsert File="$(UnitTestProjectFile)" XPath="/NUnitProject/Config[@name='Debug']" Type="Element" Name="assembly" Attribute="path" Value="@(UnitTestAssemblyFiles->'%(RecursiveDir)%(Filename)%(Extension)')" />
+    <XmlInsert File="$(UnitTestProjectFile)" XPath="/NUnitProject/Config" Type="Attribute" Name="binpathtype" Value="Auto" />
+  </Target>
+
   <Target Name="BuildSolution" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
 
     <MSBuild Projects="ImageViewer.sln" Properties="$(ImageViewerProperties)" />
+
+    <!-- Create NUnit project file for debug configurations -->
+    <CallTarget Targets="CreateNUnitProject" Condition="'$(Configuration)' == 'Debug'"/>
   </Target>
 
 </Project>
