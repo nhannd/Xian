@@ -151,7 +151,7 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disabling Data Access for an Authority Group removes the association between the Authority Group and imaging studies.  Studies will have to be manually associated with the Authority Group in the future.  Please re-enter your password to confirm this change..
+        ///   Looks up a localized string similar to Disabling data access for an authority group removes the association between the authority group and imaging studies.  Users associated with the authority group will no longer be able to see the imaging studies.  Please re-enter your password to confirm this change..
         /// </summary>
         public static string DescriptionDataAccessGroupChange {
             get {

@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Threading;
 using ClearCanvas.Enterprise.Common;
 
@@ -23,6 +24,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
         public string DisplayName;
         public SessionToken SessionToken;
         public string[] Authorities;
+        public Guid[] DataAccessAuthorityGroups;
 
         /// <summary>
         /// Gets the credentials for the current user
@@ -37,10 +39,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                     return p.Credentials;
 
                 }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
             set
             {

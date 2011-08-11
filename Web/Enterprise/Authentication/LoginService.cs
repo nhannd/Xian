@@ -47,13 +47,17 @@ namespace ClearCanvas.Web.Enterprise.Authentication
 
                             if (response != null)
                             {
-                                
-                                LoginCredentials credentials = new LoginCredentials();
-                                credentials.UserName = userName;
-                                credentials.DisplayName = response.DisplayName;
-                                credentials.SessionToken = response.SessionToken;
-                                credentials.Authorities = response.AuthorityTokens;
+
+                                LoginCredentials credentials = new LoginCredentials
+                                                                   {
+                                                                       UserName = userName,
+                                                                       DisplayName = response.DisplayName,
+                                                                       SessionToken = response.SessionToken,
+                                                                       Authorities = response.AuthorityTokens,
+                                                                       DataAccessAuthorityGroups = response.DataGroupOids
+                                                                   };
                                 CustomPrincipal user = new CustomPrincipal(new CustomIdentity(userName, response.DisplayName),credentials);
+                                Thread.CurrentPrincipal = user;
 
                                 session = new SessionInfo(user);
 
@@ -62,9 +66,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                                 session.Validate();
                                 
                                 Platform.Log(LogLevel.Info, "{0} has successfully logged in.", userName);                                
-                            }
-
-                            
+                            }                            
                         }
                         catch (FaultException<PasswordExpiredException> ex)
                         {

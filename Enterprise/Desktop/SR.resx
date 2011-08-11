@@ -148,7 +148,7 @@
     <value>Display Name</value>
   </data>
   <data name="DescriptionDataAccessGroupChange" xml:space="preserve">
-    <value>Disabling Data Access for an Authority Group removes the association between the Authority Group and imaging studies.  Studies will have to be manually associated with the Authority Group in the future.  Please re-enter your password to confirm this change.</value>
+    <value>Disabling data access for an authority group removes the association between the authority group and imaging studies.  Users associated with the authority group will no longer be able to see the imaging studies.  Please re-enter your password to confirm this change.</value>
   </data>
   <data name="ExceptionAuthorityGroupIsNotEmpty_MultitpleUsers" xml:space="preserve">
     <value>There are currently {0} users in '{1}' user group. Are you sure you want to delete this group?</value>

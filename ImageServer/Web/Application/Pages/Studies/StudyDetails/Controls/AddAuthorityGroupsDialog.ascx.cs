@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     {
                         if (item.Selected)
                             assignedGroups.Add(item.Value);
+                        item.Selected = false;
                     }
 
                     foreach (StudySummary study in AuthorityGroupStudies)
