@@ -768,7 +768,7 @@ At least one server partition is required. Please add a new server partition.</v
     <value>No Data Access Authority Groups assigned to this study.</value>
   </data>
   <data name="AddEditUserGroups_DataAccessChanged" xml:space="preserve">
-    <value>Disabling data access for an authority group removes the association between the authority group and imaging studies.  Users associated with the authority group will no longer be able to see the imaging studies.  Please re-enter your password to confirm this change.</value>
+    <value>Disabling data access for an authority group removes the association between the authority group and imaging studies.  Users associated with the authority group will no longer be able to see their imaging studies.  Please re-enter your password to confirm this change.</value>
   </data>
   <data name="AddEditUserGroupsDialog_InvalidPassword" xml:space="preserve">
     <value>Unable to update Authority Group, the password entered is incorrect.</value>
