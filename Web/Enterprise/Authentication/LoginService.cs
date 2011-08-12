@@ -40,14 +40,16 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                         try
                         {
 
-                            InitiateSessionRequest request = new InitiateSessionRequest(userName, appName, Dns.GetHostName(), password);
+                            InitiateSessionRequest request = new InitiateSessionRequest(userName, appName,
+                                                                                        Dns.GetHostName(), password)
+                                                                 {
+                                                                     GetAuthorizations = true
+                                                                 };
 
-                            request.GetAuthorizations = true;
                             InitiateSessionResponse response = service.InitiateSession(request);
 
                             if (response != null)
                             {
-
                                 LoginCredentials credentials = new LoginCredentials
                                                                    {
                                                                        UserName = userName,
@@ -87,7 +89,6 @@ namespace ClearCanvas.Web.Enterprise.Authentication
         {
             var sessionInfo = SessionCache.Instance.Find(id);
             return sessionInfo;
-
         }
 
         public void Logout(string tokenId)
@@ -160,15 +161,11 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                 // All exceptions are treated the same: we can't verify the login.
                 SessionValidationException e = new SessionValidationException(ex);
                 throw e;
-            }
-            
-
-            
+            }            
         }
 
         public void ChangePassword(string userName, string oldPassword, string newPassword)
         {
-
             ChangePasswordRequest request = new ChangePasswordRequest(userName, oldPassword, newPassword);
             Platform.GetService(
                 delegate(IAuthenticationService service)
@@ -191,7 +188,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
     /// <summary>
     /// Internal session cache. 
     /// </summary>
-    class SessionCache : IDisposable
+    public class SessionCache : IDisposable
     {
         private static readonly SessionCache _instance = new SessionCache();
         private static readonly Dictionary<string, SessionInfo> _cacheSessionInfo = new Dictionary<string, SessionInfo>();
@@ -312,6 +309,18 @@ namespace ClearCanvas.Web.Enterprise.Authentication
             {
                 if (_cacheSessionInfo.ContainsKey(id))
                     return _cacheSessionInfo[id];
+
+                return null;
+            }
+        }
+
+        public SessionInfo FindByUsername(string username)
+        {
+            lock (_sync)
+            {
+                foreach (SessionInfo info in _cacheSessionInfo.Values)
+                    if (info.Credentials.UserName.Equals(username))
+                        return info;
 
                 return null;
             }

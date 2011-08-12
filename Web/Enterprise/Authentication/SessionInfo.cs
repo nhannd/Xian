@@ -9,8 +9,6 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Web.Enterprise.Authentication
@@ -62,10 +60,12 @@ namespace ClearCanvas.Web.Enterprise.Authentication
 
         private static LoginCredentials CreateLoginCredentials(string loginId, string name, SessionToken token)
         {
-            LoginCredentials credentials = new LoginCredentials();
-            credentials.UserName = loginId;
-            credentials.DisplayName = name;
-            credentials.SessionToken = token;
+            LoginCredentials credentials = new LoginCredentials
+                                               {
+                                                   UserName = loginId, 
+                                                   DisplayName = name, 
+                                                   SessionToken = token
+                                               };
             return credentials;
         }
 
@@ -75,7 +75,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
 
             using(LoginService service = new LoginService())
             {
-                SessionInfo sessionInfo = service.Query(this.Credentials.SessionToken.Id);
+                SessionInfo sessionInfo = service.Query(Credentials.SessionToken.Id);
 
                 if (sessionInfo == null)
                 {
@@ -83,7 +83,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                 }
 
                 _user.Credentials = sessionInfo.Credentials;
-                SessionToken newToken = service.Renew(this.Credentials.SessionToken.Id);
+                SessionToken newToken = service.Renew(Credentials.SessionToken.Id);
                 _user.Credentials.SessionToken = newToken;
                 _valid = true;
             }   
