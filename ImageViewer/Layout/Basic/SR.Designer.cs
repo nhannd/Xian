@@ -305,7 +305,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The search for prior studies did not complete successfully because one or more of your default servers could not be queried.  Although some priors may be available, please be aware that you may be working with an incomplete patient history..
+        ///   Looks up a localized string similar to The search for prior studies did not complete successfully because at least one of your default servers was unreachable. Although some priors may be available, please be aware that you may be working with an incomplete patient history.
+        ///
+        ///PLEASE NOTE that you will not be notified of this problem again for as long as this problem persists..
         /// </summary>
         public static string MessagePriorsIncomplete {
             get {
