@@ -542,4 +542,7 @@ Use image with caution.</value>
   <data name="FormatDescriptionNamedLinearLut" xml:space="preserve">
     <value>W:{0} L:{1} ({2})</value>
   </data>
+  <data name="LabelUnknownServer" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
 </root>

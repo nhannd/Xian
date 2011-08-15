@@ -12,12 +12,10 @@
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer
 {
 	//NOTE: keep this internal for now, as I'm not too sure of their usefulness right now.
-
 	internal interface IImageSetFactory
 	{
 		void SetStudyTree(StudyTree studyTree);
@@ -65,7 +63,7 @@ namespace ClearCanvas.ImageViewer
 
 			if (displaySets.Count > 0)
 			{
-				imageSet = new ImageSet(CreateImageSetDescriptor(study.GetIdentifier()));
+				imageSet = new ImageSet(CreateImageSetDescriptor(study));
 				
 				foreach (IDisplaySet displaySet in displaySets)
 					imageSet.DisplaySets.Add(displaySet);
@@ -84,9 +82,9 @@ namespace ClearCanvas.ImageViewer
 			return displaySets;
 		}
 
-		protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyIdentifier)
+        protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(Study study)
 		{
-			return new DicomImageSetDescriptor(studyIdentifier);
+			return new DicomImageSetDescriptor(study.GetIdentifier());
 		}
 	}
 }
