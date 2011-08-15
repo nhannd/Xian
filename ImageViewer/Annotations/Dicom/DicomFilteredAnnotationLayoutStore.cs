@@ -15,6 +15,7 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
@@ -237,12 +238,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			if (dicomImage == null)
 				return null;
 
-			List<KeyValuePair<string, string>> filterCandidates = new List<KeyValuePair<string, string>>();
+			var filterCandidates = new List<KeyValuePair<string, string>>
+            {new KeyValuePair<string, string>("Modality", dicomImage.ImageSop.Modality)};
 
 			// these are hard-coded as the only filter candidates for now, until more general use cases are identified.
-			filterCandidates.Add(new KeyValuePair<string, string>("Modality", dicomImage.ImageSop.Modality));
-			filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Row", dicomImage.Frame.PatientOrientation != null ? dicomImage.Frame.PatientOrientation.PrimaryRow : string.Empty));
-			filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", dicomImage.Frame.PatientOrientation != null ? dicomImage.Frame.PatientOrientation.PrimaryColumn : string.Empty));
+		    var patientOrientation = dicomImage.Frame.PatientOrientation;
+            filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Row", patientOrientation.PrimaryRow));
+		    filterCandidates.Add(new KeyValuePair<string, string>("PatientOrientation_Col", patientOrientation.PrimaryColumn));
 
 			return GetMatchingStoredLayoutId(filterCandidates);
 		}

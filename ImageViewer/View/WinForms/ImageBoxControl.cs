@@ -11,11 +11,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -29,15 +30,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private bool _imageScrollerVisible;
 		private CompositeUndoableCommand _historyCommand;
 		private MemorableUndoableCommand _imageBoxCommand;
-
+        private Dictionary<IImageBoxExtension, IImageBoxExtensionView> _extensionViews = new Dictionary<IImageBoxExtension, IImageBoxExtensionView>();
+            
         /// <summary>
         /// Constructor
         /// </summary>
 		internal ImageBoxControl(ImageBox imageBox, Rectangle parentRectangle)
         {
 			_imageBox = imageBox;
+            
 			this.ParentRectangle = parentRectangle;
-
+             
 			InitializeComponent();
 
 			_imageScrollerVisible = _imageScroller.Visible;
@@ -54,6 +57,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_imageBox.Drawing += OnDrawing;
 			_imageBox.SelectionChanged += OnImageBoxSelectionChanged;
 			_imageBox.LayoutCompleted += OnLayoutCompleted;
+
+            foreach (var extension in ImageBox.Extensions)
+            {
+                AttachExtension(extension);
+            }
         }
 
 		internal ImageBox ImageBox
@@ -79,8 +87,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Size = new Size(right - left, bottom - top);
 
 				this.ResumeLayout(false);
+
+                foreach (var view in _extensionViews.Values)
+                {
+                    view.Size = Size;
+                }
 			}
 		}
+
 
     	private IEnumerable<TileControl> TileControls
     	{
@@ -112,13 +126,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void DoDraw()
 		{
-			foreach (TileControl control in this.TileControls)
-				control.Draw();
-			
-			Invalidate();
+            foreach (TileControl control in this.TileControls)
+                control.Draw(); 
+            Invalidate();
 		}
 
-		#region Protected methods
+        #region Protected methods
 
 		protected override void OnLoad(EventArgs e)
 		{
@@ -148,6 +161,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
+            if (_imageBox == null)
+                return;
+
 			e.Graphics.Clear(Color.Black);
 
 			DrawImageBoxBorder(e);
@@ -190,6 +206,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			foreach (TileControl control in controls)
 			{
 				this.Controls.Remove(control);
+			    control.MouseMove -= OnTileMouseMove;
 				control.Tile.SelectionChanged -= OnTileSelectionChanged;
 				control.Drawing -= OnTileControlDrawing;
 				control.Dispose();
@@ -198,6 +215,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void PerformDispose()
 		{
+            if (_imageBox.Extensions!=null)
+            {
+                foreach(IImageBoxExtension extension in _imageBox.Extensions)
+                {
+                    DetachExtension(extension);
+                }
+            }
+
 			if (_imageBox != null)
 			{
 				_imageBox.Drawing -= OnDrawing;
@@ -309,12 +334,22 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			TileControl control = view.GuiElement as TileControl;
 			control.Tile.SelectionChanged += OnTileSelectionChanged;
+            control.MouseMove += OnTileMouseMove;
 			control.Drawing += OnTileControlDrawing;
 
 			control.SuspendLayout();
 			this.Controls.Add(control);
 			control.ResumeLayout(false);
 		}
+
+        void OnTileMouseMove(object sender, MouseEventArgs e)
+        {
+            TileControl tileControl = sender as TileControl;
+            var screenPt = tileControl.PointToScreen(new Point(e.X, e.Y));
+            var imageBoxPos = this.PointToClient(screenPt);
+            MouseEventArgs @event = new MouseEventArgs(e.Button, e.Clicks, imageBoxPos.X, imageBoxPos.Y, e.Delta);
+            OnMouseMove(@event);
+        }
 
 		private void SetTileParentImageBoxRectangles(bool suppressDraw)
 		{
@@ -341,7 +376,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		/// <summary>
 		/// Gets the <see cref="Control.ClientRectangle"/> of this control, less any area dedicated to the ImageBoxControl scrollbar.
 		/// </summary>
-    	private Rectangle AvailableClientRectangle
+    	public Rectangle AvailableClientRectangle
     	{
     		get
     		{
@@ -423,6 +458,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void UpdateImageScroller()
 		{
+
 			//This method can be called repeatedly and will essentially be a no-op if nothing needs to change.
 			//In tiled mode, it could be a little inefficient to call repeatedly, but it's the lesser of the evils.
 			//Otherwise, we're subscribing to a multitude of events and updating different things at different times.
@@ -464,5 +500,146 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		}
 
 		#endregion
-	}
+
+        #region ImageBox Extension support
+
+        
+        void AttachExtension(IImageBoxExtension extension)
+        {
+            IImageBoxExtensionView view;
+            if (!_extensionViews.TryGetValue(extension, out view))
+            {
+                extension.PropertyChanged += OnExtensionPropertyChanged;
+
+                view = extension.CreateView();
+                if (view!=null)
+                {
+                    view.Size = Size;
+                    _extensionViews.Add(extension, view);
+
+                    if (extension.Visible)
+                    {
+                        Control ctrl = view.GuiElement as Control;
+                        if (ctrl != null)
+                        {
+                            AddExtensionControl(ctrl);
+                        }
+                    }
+                }
+            }
+      
+        }
+
+        void AddExtensionControl(Control control)
+        {
+            if (Controls.Contains(control))
+                return;
+
+            // TODO: We should let extension decide if it wants to handle these events first
+            control.MouseDown += OnExtensionMouseDown;
+            control.KeyDown += OnExtensionKeyDown;
+            control.KeyUp += OnExtensionKeyUp;
+            Controls.Add(control);
+        }
+
+
+        IImageBoxExtensionView FindExtensionView(IImageBoxExtension extension)
+        {
+            IImageBoxExtensionView view;
+            if (_extensionViews.TryGetValue(extension, out view))
+            {
+                return view;
+            }
+
+            return null;
+        }
+        
+        void DetachExtension(IImageBoxExtension extension)
+        {
+            extension.PropertyChanged -= OnExtensionPropertyChanged;
+
+            // Dispose the extenion's view which was obtained using CreateView()
+            // The extension itself will be disposed when the image box is disposed
+            IImageBoxExtensionView view;
+            if (_extensionViews.TryGetValue(extension, out view))
+            {
+                _extensionViews.Remove(extension);
+                view.Dispose();
+            }
+        }
+
+        void OnExtensionPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var extension = sender as IImageBoxExtension;
+
+            Platform.CheckForNullReference(extension, "extension");
+            
+            if (e.PropertyName == "Visible")
+            {
+                var view = FindExtensionView(extension);
+                if (view!=null)
+                {
+                    Control ctrl = view.GuiElement as Control;
+                    if (ctrl!=null)
+                    {
+                        if (extension.Visible)
+                        {
+                            AddExtensionControl(ctrl);
+
+                            // make sure it's on top of the images or if the display set is empty, 
+                            // it's on top of the empty tiles
+                            ctrl.BringToFront();
+                        }
+                        else
+                        {
+                            Draw();
+                            Update();
+                        }
+                    }
+                    
+                }
+            }
+        }
+
+        void OnExtensionKeyUp(object sender, KeyEventArgs e)
+        {
+            // let tile controls handle it first
+            foreach (var tileControl in TileControls)
+            {
+                tileControl.ProcessKeyUp(e);
+                if (e.Handled)
+                    return;
+            }
+
+            if (e.Handled)
+                return;
+
+            OnKeyUp(e);
+        }
+
+        void OnExtensionKeyDown(object sender, KeyEventArgs e)
+        {
+            // let tile controls handle it first
+            foreach (var tileControl in TileControls)
+            {
+                tileControl.ProcessKeyDown(e);
+                if (e.Handled)
+                    return;
+            }
+
+            if (e.Handled)
+                return;
+
+            OnKeyDown(e);
+        }
+
+        void OnExtensionMouseDown(object sender, MouseEventArgs e)
+        {
+            _imageBox.SelectDefaultTile();
+        }
+
+        #endregion
+    }
+
+    
 }

@@ -132,6 +132,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			set { }
 		}
 
+        bool IVoiLutInstaller.DefaultInvert
+        {
+            get { return false; }
+        }
+
 		#endregion
 
 		#region IMemorable Members
@@ -165,17 +170,18 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private class XVoiLutInstaller : IVoiLutInstaller
 		{
 			public bool Invert { get; set; }
-			public IComposableLut VoiLut { get; set; }
+            public bool DefaultInvert { get; private set; }
+            public IComposableLut VoiLut { get; set; }
 
 			public XVoiLutInstaller()
 			{
-				this.Invert = false;
+				DefaultInvert = this.Invert = false;
 				this.VoiLut = new BasicVoiLutLinear(ushort.MaxValue + 1, 0);
 			}
 
 			public XVoiLutInstaller(IVoiLutInstaller source)
 			{
-				this.Invert = source.Invert;
+                DefaultInvert = this.Invert = source.Invert;
 				this.VoiLut = source.VoiLut.Clone();
 			}
 

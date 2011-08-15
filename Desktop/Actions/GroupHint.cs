@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 namespace ClearCanvas.Desktop.Actions
 {
 	/// <summary>
@@ -31,7 +32,8 @@ namespace ClearCanvas.Desktop.Actions
 	///	3.	Tools.Image.Manipulation.Zoom			DisplaySets								0
 	/// 4.  ""										""										1
 	/// 5.  ""										DisplaySets								0
-	/// </para>
+    ///	6.	Tools.Image.Manipulation.Pan			Tools.Image.Manipulation.Zoom			-4
+    /// </para>
 	/// <para>
 	/// A brief explanation of the logic:
 	/// <list type="bullet">
@@ -44,15 +46,19 @@ namespace ClearCanvas.Desktop.Actions
 	/// Actions with GroupHints that have similar components (separated by '.') are given a score
 	/// equal to the number of (consecutive) matching components + 1.  The +1 accounts for the fact 
 	/// that any number of equal components is a better score than the first example, whose score is 1.
+	/// When all components in LHS are a match, but RHS has more components, the score is negative (less).
+	/// When all components in RHS are a match, meaning LHS has at least the same number of components,
+	/// the score is positive (greater).  Otherwise, the sign of the score is determined by examining the
+	/// first non-matching component (same position in LHS and RHS) encountered and performing a string
+	/// comparison of the two.  If the component in LHS is "less" than RHS, the return value is negative (less).
 	/// </item>
-	/// <item>
+	///  <item>
 	/// Actions with completely different components are given an automatic score of zero (0).
 	/// Two actions with GroupHints = "" are considered equal, so a score of 1 is given.
 	/// </item>
 	/// <item>
-	/// In this case, an existing action with an empty GroupHint is being matched to a non-empty
-	/// GroupHint.  So, the LHS cannot be considered at all similar to RHS and the 
-	/// score is automatically zero (0).
+	/// In the case where an existing action with an empty GroupHint is being matched to a non-empty
+	/// GroupHint, the LHS cannot be considered at all similar to RHS and the score is automatically zero (0).
 	/// </item>
 	/// </list>
 	/// </para>
@@ -105,24 +111,44 @@ namespace ClearCanvas.Desktop.Actions
 
 			foreach (string otherComponent in other.Components)
 			{
-				if (_components.Length > i)
-				{
-					if (otherComponent == _components[i])
-						++i;
-					else 
-						break;
-				}
-				else 
-					break;
+			    if (_components.Length <= i)
+			    {
+                    if (i > 0) //at least one component the same, and "other" has more components.
+                        i = -i;
+
+                    break;
+			    }
+
+		        if (otherComponent == _components[i])
+		        {
+		            ++i;
+		        }
+		        else if (i > 0) //at least one component the same
+		        {
+		            //Use alphabetical comparison to determine sign.
+		            var compare = String.Compare(_components[i], otherComponent, true);
+		            if (compare < 0)
+		                i = -i;
+		            break;
+		        }
+		        else
+		            break;
 			}
 
 			// if there were any matching components, the score is increased by 1 (because
 			// the 'default' score is 1.  If the 'other component' is not a default component
 			// then the score remains at 0, because there are no matches.
-			if (i != 0)
+			if (i > 0)
 				++i;
+            else if (i < 0)
+                --i;
 
 			return i;
 		}
+
+        public override string ToString()
+        {
+            return _hint;
+        }
 	}
 }

@@ -24,8 +24,38 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// A corollary is that these objects are intended to be short-lived, not spanning more than a
 	/// single request.
 	/// </remarks>
-	public class DomainObjectValidator
+	public class DomainObjectValidator : IDomainObjectValidator
 	{
+		private class NullDomainObjectValidator : IDomainObjectValidator
+		{
+			#region Implementation of IDomainObjectValidator
+
+			public void Validate(DomainObject obj)
+			{
+			}
+
+			public void ValidateRequiredFieldsPresent(DomainObject obj)
+			{
+			}
+
+			public void ValidateLowLevel(DomainObject obj, Predicate<ISpecification> ruleFilter)
+			{
+			}
+
+			public void ValidateHighLevel(DomainObject obj)
+			{
+			}
+
+			#endregion
+		}
+
+		/// <summary>
+		/// Gets an instance of <see cref="IDomainObjectValidator"/> that does nothing.
+		/// </summary>
+		public static IDomainObjectValidator NullValidator = new NullDomainObjectValidator();
+
+
+
 		[Flags]
 		enum RuleLevel
 		{
@@ -38,6 +68,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 		#region Public API
 
+
 		/// <summary>
 		/// Checks whether validation is enabled on the specified domain class.
 		/// </summary>
@@ -45,6 +76,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// <returns></returns>
 		public static bool IsValidationEnabled(Type domainClass)
 		{
+			// then check the attributes
 			var a = AttributeUtils.GetAttribute<ValidationAttribute>(domainClass, true);
 
 			// if no attribute present, then by default validation is enabled
@@ -134,20 +166,20 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 			if (CheckLevel(level, RuleLevel.High))
 			{
-			// first check for a cached rule-set
+				// first check for a cached rule-set
 				ValidationRuleSet highLevelRules;
 				if (!_highLevelRuleSets.TryGetValue(domainClass, out highLevelRules))
-			{
-				// otherwise build it
-					highLevelRules = IsValidationEnabled(domainClass) ?
-						ValidationRuleSetCache.GetHighLevelRules(domainClass)
-					: new ValidationRuleSet();
+				{
+					// otherwise build it
+						highLevelRules = IsValidationEnabled(domainClass) ?
+							ValidationRuleSetCache.GetHighLevelRules(domainClass)
+						: new ValidationRuleSet();
 
-					// cache for future use
-					_highLevelRuleSets.Add(domainClass, highLevelRules);
+						// cache for future use
+						_highLevelRuleSets.Add(domainClass, highLevelRules);
+					}
+					ruleSets.Add(highLevelRules);
 				}
-				ruleSets.Add(highLevelRules);
-			}
 
 			var rules = new ValidationRuleSet(ruleSets);
 			var result = rules.Test(obj, ruleFilter);

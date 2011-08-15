@@ -12,17 +12,13 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
-using System.Windows;
-using System.Windows.Media.Animation;
 using System;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
-using System.Reflection;
-using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
-    public partial class ImageBoxView : UserControl
+    public partial class ImageBoxView
     {
         private List<TileView> _tileViews;
 		private System.Windows.Size _parentSize;
@@ -50,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 			// No Need for dispatcher here, this is called from a routine that is already in a dispatcher
             foreach (Tile tile in ServerEntity.Tiles)
             {
-				TileView tileView = new TileView(tile);
+				var tileView = new TileView(tile);
 				TileContainer.Children.Add(tileView);
                 _tileViews.Add(tileView);
             }
@@ -117,15 +113,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             ImageBoxRightColumn.Children.Add(_scrollbarView);
         }
 
-        private void UpdateScrollbar()
-        {
-            if (_scrollbarView == null)
-            {
-                CreateScrollbar();
-            }
-        }
-
-		private void UpdateBorder()
+        private void UpdateBorder()
 		{
 			ImageBoxBorder.BorderBrush = ServerEntity.Selected ? new SolidColorBrush(Colors.Orange) : new SolidColorBrush(Colors.Gray);
 		}
@@ -162,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             if (@event.PropertyName == "ImageCount")
             {
-                int count = (int)@event.Value;
+                var count = (int)@event.Value;
                 if (ServerEntity.ImageCount!=count)
                 {
                     ServerEntity.ImageCount = count;

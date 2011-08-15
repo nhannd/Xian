@@ -15,11 +15,14 @@ using ClearCanvas.Enterprise.Core.Upgrade;
 
 namespace ClearCanvas.ImageServer.Model.SqlServer.UpgradeScripts
 {
+    /// <summary>
+    /// Kirk Release upgrade script
+    /// </summary>
     [ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
     public class UpgradeFrom_2_2_14734_44343 : BaseUpgradeScript
     {
         public UpgradeFrom_2_2_14734_44343()
-            : base(new Version(2, 2, 14734, 44343), null, "UpgradeFrom_2_2_14734_44343.sql")
+            : base(new Version(2, 2, 14734, 44343), new Version(3, 5, 16130, 48592), "UpgradeFrom_2_2_14734_44343.sql")
         {
         }
     }

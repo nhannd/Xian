@@ -11,7 +11,6 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Core;
@@ -22,7 +21,8 @@ namespace ClearCanvas.Enterprise.Authentication.Admin
     {
         internal AuthorityGroupSummary CreateAuthorityGroupSummary(AuthorityGroup authorityGroup)
         {
-            return new AuthorityGroupSummary(authorityGroup.GetRef(), authorityGroup.Name);
+            return new AuthorityGroupSummary(authorityGroup.GetRef(), authorityGroup.Name, authorityGroup.Description,
+                                             authorityGroup.DataGroup);
         }
 
         internal AuthorityGroupDetail CreateAuthorityGroupDetail(AuthorityGroup authorityGroup)
@@ -31,20 +31,21 @@ namespace ClearCanvas.Enterprise.Authentication.Admin
             AuthorityTokenAssembler assembler = new AuthorityTokenAssembler();
         	List<AuthorityTokenSummary> tokens = CollectionUtils.Map<AuthorityToken, AuthorityTokenSummary>(
         		authorityGroup.AuthorityTokens,
-        		delegate(AuthorityToken token)
-        		{
-        			return assembler.GetAuthorityTokenSummary(token);
-        		});
+        		assembler.GetAuthorityTokenSummary);
 
             return new AuthorityGroupDetail(
                 authorityGroup.GetRef(),
                 authorityGroup.Name,
+                authorityGroup.Description,
+                authorityGroup.DataGroup,
                 tokens);
         }
 
         internal void UpdateAuthorityGroup(AuthorityGroup authorityGroup, AuthorityGroupDetail detail, IPersistenceContext persistenceContext)
         {
             authorityGroup.Name = detail.Name;
+            authorityGroup.Description = detail.Description;
+            authorityGroup.DataGroup = detail.DataGroup;
 			authorityGroup.AuthorityTokens.Clear();
 
 			if (detail.AuthorityTokens.Count > 0)
@@ -52,10 +53,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin
 				// process authority tokens
 				List<string> tokenNames = CollectionUtils.Map<AuthorityTokenSummary, string>(
 					detail.AuthorityTokens,
-					delegate(AuthorityTokenSummary token)
-					{
-						return token.Name;
-					});
+					token => token.Name);
 
 				AuthorityTokenSearchCriteria where = new AuthorityTokenSearchCriteria();
 				where.Name.In(tokenNames);

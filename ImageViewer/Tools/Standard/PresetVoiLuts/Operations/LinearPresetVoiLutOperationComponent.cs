@@ -96,15 +96,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			if (!AppliesTo(presentationImage))
 				throw new InvalidOperationException(String.Format(SR.ExceptionFormatInputPresentationImageMustImplement, typeof(IVoiLutProvider).Name));
 
-			IVoiLutManager manager = (IVoiLutManager)GetOriginator(presentationImage);
-
-			PresetVoiLutLinear.PresetVoiLutLinearParameters parameters = new PresetVoiLutLinear.PresetVoiLutLinearParameters(this.Name, this.WindowWidth, this.WindowCenter);
-
-			PresetVoiLutLinear currentLut = manager.VoiLut as PresetVoiLutLinear;
+			var manager = (IVoiLutManager)GetOriginator(presentationImage);
+            var currentLut = manager.VoiLut as NamedVoiLutLinear;
 			if (currentLut == null)
-				manager.InstallVoiLut(new PresetVoiLutLinear(parameters));
+			{
+			    manager.InstallVoiLut(new NamedVoiLutLinear(Name, WindowWidth, WindowCenter));
+			}
 			else
-				currentLut.Parameters = parameters;
+			{
+			    currentLut.Name = Name;
+			    currentLut.WindowWidth = WindowWidth;
+			    currentLut.WindowCenter = WindowCenter;
+			}
 		}
 
 		public override void Start()

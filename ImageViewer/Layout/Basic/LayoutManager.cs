@@ -19,12 +19,38 @@ using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	[ExtensionOf(typeof(LayoutManagerExtensionPoint))]
 	public class LayoutManager : ImageViewer.LayoutManager
 	{
+		#region LayoutHookContext
+
+		class LayoutHookContext : IHpLayoutHookContext
+		{
+		    private readonly LayoutManager _layoutManager;
+
+		    public LayoutHookContext(IImageViewer viewer, LayoutManager layoutManager)
+			{
+				this.ImageViewer = viewer;
+		        this._layoutManager = layoutManager;
+			}
+
+			public IImageViewer ImageViewer { get; private set; }
+
+		    public void PerformDefaultPhysicalWorkspaceLayout()
+		    {
+		        if (_layoutManager!=null)
+		        {
+		            _layoutManager.LayoutPhysicalWorkspace();
+		        }
+		    }
+		}
+
+		#endregion
+
 		private class DisplaySetFactory : ImageViewer.DisplaySetFactory
 		{
 			private readonly StoredDisplaySetCreationSetting _creationSetting;
@@ -39,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				_creationSetting = creationSetting;
 
-				PresentationState defaultPresentationState = new BasicDicomPresentationState 
+				PresentationState defaultPresentationState = new DicomPresentationState
 																{ ShowGrayscaleInverted = creationSetting.ShowGrayscaleInverted };
 
 				var imageFactory = (PresentationImageFactory)PresentationImageFactory;
@@ -182,6 +208,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		}
 
 		#endregion
+
+		protected override void LayoutAndFillPhysicalWorkspace()
+		{
+            var hookContext = new LayoutHookContext(this.ImageViewer, this);
+			foreach (IHpLayoutHook hook in new HpLayoutHookExtensionPoint().CreateExtensions())
+			{
+				if(hook.HandleLayout(hookContext))
+					return;
+			}
+
+			// hooks did not handle it, so call base class
+			base.LayoutAndFillPhysicalWorkspace();
+		}
 
 		protected override void LayoutPhysicalWorkspace()
 		{

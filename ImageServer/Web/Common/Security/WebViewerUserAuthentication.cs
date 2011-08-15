@@ -11,7 +11,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
+using ClearCanvas.Web.Enterprise.Authentication;
 using ClearCanvas.Web.Services;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security

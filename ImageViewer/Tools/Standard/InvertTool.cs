@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[Tooltip("activate", "TooltipInvert")]
 	[IconSet("activate", IconScheme.Colour, "Icons.InvertToolSmall.png", "Icons.InvertToolMedium.png", "Icons.InvertToolLarge.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+    [GroupHint("activate", "Tools.Image.Manipulation.Invert")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class InvertTool : ImageViewerTool

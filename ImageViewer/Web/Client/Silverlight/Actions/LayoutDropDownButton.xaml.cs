@@ -10,38 +10,30 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Windows.Media.Effects;
 using System.IO;
 using System.Windows.Media.Imaging;
-using System.Collections.ObjectModel;
 using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
-    public partial class LayoutDropDown : UserControl, IToolstripDropdownButton, IActionUpdate
+    public partial class LayoutDropDown : UserControl, IToolstripDropdownButton, IActionUpdate, IDisposable
     {
         private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
         private readonly WebDropDownAction _actionItem;
-        private readonly ActionDispatcher _actionDispatcher;
-        private IPopup _popup;
+        private readonly IPopup _popup;
         private WebIconSize _iconSize;
-
+        private readonly ActionDispatcher _actionDispatcher;
+       
         private WebIconSize IconSize
         {
-            get { return _iconSize; }
             set
             {
                 if (_iconSize != value)
@@ -56,9 +48,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 		{
 			InitializeComponent();
             
-            _iconSize = iconSize;             
+            _iconSize = iconSize;
             _actionDispatcher = dispatcher;
-			_actionItem = action;
+            _actionItem = action;
             _popup = new LayoutPopup(dispatcher, action.DropDownActions).AsSingleton();
 
 			dispatcher.Register(_actionItem.Identifier, this);
@@ -78,6 +70,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
             IndicateChecked(false); //This button doesn't have a checked state.
 		}
+
+        public void Dispose()
+        {
+            if (_actionDispatcher != null)
+            {
+                _actionDispatcher.Remove(_actionItem.Identifier);
+            }
+            LayoutDropDownButton.MouseEnter -= ButtonComponent_MouseEnter;
+            LayoutDropDownButton.MouseLeave -= ButtonComponent_MouseLeave;
+        }
 
         void ButtonComponent_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -164,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
                 }
             }
 
-            Image theImage = new Image
+            var theImage = new Image
             {
                 Source = bi
             };
@@ -186,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
         public void Show()
         {
-            System.Windows.Point p = StackPlaceHolder.TransformOriginToRootVisual();
+            Point p = StackPlaceHolder.TransformOriginToRootVisual();
             p.X = p.X - 1;
             p.Y = p.Y;
             _popup.Open(p);

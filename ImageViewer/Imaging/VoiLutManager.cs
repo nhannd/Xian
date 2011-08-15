@@ -95,6 +95,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set { _voiLutInstaller.Invert = value; }
 		}
 
+	    /// <summary>
+	    /// Gets the default value of <see cref="Invert"/>.  In DICOM, this would be true
+	    /// for all MONOCHROME1 images.
+	    /// </summary>
+	    public bool DefaultInvert
+        {
+            get { return _voiLutInstaller.DefaultInvert; }
+        }
+
 		/// <summary>
 		/// Toggles the state of the <see cref="IVoiLutInstaller.Invert"/> property.
 		/// </summary>

@@ -60,8 +60,13 @@ namespace ClearCanvas.Enterprise.Authentication
 			// get authority tokens if requested
 			var authorizations = request.GetAuthorizations ?
 				PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName) : new string[0];
+		    
+            // Get DataAccess authority groups if requested
+            var groups = request.GetAuthorizations
+		                     ? PersistenceContext.GetBroker<IAuthorityGroupBroker>().FindDataGroupsByUserName(request.UserName)
+		                     : new Guid[0];
 
-			return new InitiateSessionResponse(session.GetToken(), authorizations, user.DisplayName);
+			return new InitiateSessionResponse(session.GetToken(), authorizations, groups, user.DisplayName);
 		}
 
 		[UpdateOperation(ChangeSetAuditable = false)]

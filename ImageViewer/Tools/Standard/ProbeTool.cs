@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.ProbeToolSmall.png", "Icons.ProbeToolMedium.png", "Icons.ProbeToolLarge.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
-	[GroupHint("activate", "Tools.Image.Interrogation.Probe")]
+    [GroupHint("activate", "Tools.Image.Inspection.Probe")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 
@@ -42,17 +42,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("showCTPix", "probetool-dropdown/ShowCTPix", "ToggleShowCTPix")]
 	[CheckedStateObserver("showCTPix", "ShowCTPix", "ShowCTPixChanged")]
 	[Tooltip("showCTPix", "TooltipShowCTPix")]
-	[GroupHint("showCTPix", "Tools.Image.Interrogation.Probe.Modality.CT.ShowPixel")]
+    [GroupHint("showCTPix", "Tools.Image.Inspection.Probe.Modality.CT.ShowPixel")]
 
 	[MenuAction("showNonCTMod", "probetool-dropdown/ShowNonCTMod", "ToggleShowNonCTMod")]
 	[CheckedStateObserver("showNonCTMod", "ShowNonCTMod", "ShowNonCTModChanged")]
 	[Tooltip("showNonCTMod", "TooltipShowNonCTMod")]
-	[GroupHint("showNonCTMod", "Tools.Image.Interrogation.Probe.Modality.NonCT.ShowMod")]
+    [GroupHint("showNonCTMod", "Tools.Image.Inspection.Probe.Modality.NonCT.ShowMod")]
 
 	[MenuAction("showVoiLut", "probetool-dropdown/ShowVoiLut", "ToggleShowVoiLut")]
 	[CheckedStateObserver("showVoiLut", "ShowVoiLut", "ShowVoiLutChanged")]
 	[Tooltip("showVoiLut", "TooltipShowVoiLut")]
-	[GroupHint("showVoiLut", "Tools.Image.Interrogation.Probe.General.ShowVoiLut")]
+    [GroupHint("showVoiLut", "Tools.Image.Inspection.Probe.General.ShowVoiLut")]
 
 	#endregion
 

@@ -24,7 +24,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
 	public class RoiStatisticsAnalyzer : IRoiAnalyzer
 	{
-		/// <summary>
+	    private RoiAnalyzerUpdateCallback _updateCallback;
+
+	    /// <summary>
 		/// This property is not applicable to this analyzer.
 		/// </summary>
 		Units IRoiAnalyzer.Units
@@ -99,5 +101,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 
 			return sb.ToString();
 		}
+
+        public void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback)
+        {
+            _updateCallback = callback;
+        }
 	}
 }

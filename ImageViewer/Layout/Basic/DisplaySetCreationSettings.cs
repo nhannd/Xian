@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 	[SettingsGroupDescription("Stores user options for how display sets are created.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
-	internal sealed partial class DisplaySetCreationSettings : IMigrateSettings
+	public sealed partial class DisplaySetCreationSettings : IMigrateSettings
 	{
 		private DisplaySetCreationSettings()
 		{

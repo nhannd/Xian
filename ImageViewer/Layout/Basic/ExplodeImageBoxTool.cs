@@ -216,11 +216,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			newImageBox.TopLeftPresentationImage = selectedImage;
 			newImageBox.DisplaySetLocked = locked;
 
-			workspace.SelectDefaultImageBox();
-			
 			_imageBoxesObserver.SuppressChangedEvent = false;
 
 			workspace.Draw();
+            workspace.SelectDefaultImageBox();
 
 			memorableCommand.EndState = workspace.CreateMemento();
 			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(workspace);
