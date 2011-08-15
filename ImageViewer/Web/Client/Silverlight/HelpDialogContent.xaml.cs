@@ -9,25 +9,15 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
     public partial class HelpDialogContent : UserControl
     {
-        public HelpDialogContent()
+        public HelpDialogContent(ActionDispatcher dispatcher)
         {
             InitializeComponent();
 
@@ -36,9 +26,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             CompanyAddressTextBlock.Text = SR.CompanyAddress;
             CompanyWebAddressTextBlock.Text = SR.CompanyWebAddress;
             CopyrightTextBlock.Text = SR.Copyright;
-
-
-        }
-        
+        }        
     }
 }

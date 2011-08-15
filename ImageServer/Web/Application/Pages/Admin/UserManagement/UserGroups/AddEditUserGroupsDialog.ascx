@@ -11,6 +11,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.AddEditUserGroupsDialog"
     Codebehind="AddEditUserGroupsDialog.ascx.cs" %>
+<%@ Register Src="~/Pages/Admin/UserManagement/UserGroups/PasswordConfirmDialog.ascx" TagName="PasswordConfirmDialog" TagPrefix="localAsp" %>
 
 <script type="text/javascript">
 function ValidationUserGroupNameParams()
@@ -34,8 +35,8 @@ function ValidationUserGroupNameParams()
     
         <table cellpadding="5">           
             <tr>
-                <td class="DialogTextBoxLabel" nowrap="nowrap"><asp:Label ID="Label1" runat="server" Text="<%$Resources: InputLabels, AdminUserGroups_GroupName %>" CssClass="DialogTextBoxLabel" /></td><td><asp:TextBox runat="server" ID="GroupName" CssClass="DialogTextBox"></asp:TextBox><asp:HiddenField ID="OriginalGroupName" runat="server" /></td>
-                <td width="100%">
+                <td class="DialogTextBoxLabel" nowrap="nowrap"><asp:Label ID="Label1" runat="server" Text="<%$Resources: InputLabels, AdminUserGroups_GroupName %>" CssClass="DialogTextBoxLabel" /></td><td><asp:TextBox runat="server" ID="GroupName" CssClass="DialogTextBox" Width="350px"></asp:TextBox><asp:HiddenField ID="OriginalGroupName" runat="server" /></td>
+                <td >
                     <ccAsp:InvalidInputIndicator ID="GroupNameHelpId" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="GroupName" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditUserGroupsValidationGroup"
@@ -48,6 +49,28 @@ function ValidationUserGroupNameParams()
                                                         ParamsFunction="ValidationUserGroupNameParams"/>                                                        
                                                             
                 </td>
+            </tr>
+            <tr>
+                <td class="DialogTextBoxLabel" nowrap="nowrap">
+                <asp:Label ID="Label2" runat="server" Text="<%$Resources: InputLabels, AdminUserGroups_GroupDescription %>" CssClass="DialogTextBoxLabel" />
+                </td>
+                <td><asp:TextBox runat="server" ID="GroupDescription" CssClass="DialogTextBox" Width="350px"></asp:TextBox>
+                </td>
+                <td >
+                    <ccAsp:InvalidInputIndicator ID="GroupDescriptionHelpId" runat="server" SkinID="InvalidInputIndicator" />
+                    <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1" runat="server"
+                                                        ControlToValidate="GroupDescription" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditUserGroupsValidationGroup"
+                                                        InvalidInputIndicatorID="GroupDescriptionHelpId" Text="<%$Resources: InputValidation, ThisFieldIsRequired %>" Display="None"
+                                                        RequiredWhenChecked="False"/>                                                            
+                </td>
+            </tr>
+            <tr>
+                <td class="DialogTextBoxLabel" nowrap="nowrap">
+                <asp:Label ID="Label4" runat="server" Text="<%$Resources: InputLabels, AdminUserGroups_DataGroup %>" CssClass="DialogTextBoxLabel" />
+                </td>
+                <td> <asp:CheckBox ID="DataGroupCheckBox" runat="server" Text="" Checked="false" CssClass="DialogCheckBox" />
+                </td>
+                <td width="100%"></td>
             </tr>
             <tr>
                 <td valign="top" class="DialogTextBoxLabel"><asp:Label ID="Label3" runat="server" Text="<%$Resources: InputLabels, AdminUserGroups_Tokens %>" CssClass="DialogTextBoxLabel" /></td>
@@ -80,3 +103,6 @@ function ValidationUserGroupNameParams()
         </table>
     </ContentTemplate>
 </ccAsp:ModalDialog>
+
+<localAsp:PasswordConfirmDialog ID="PasswordConfirmDialog" runat="server" />
+<ccAsp:MessageBox ID="PasswordFailErrorMessage" runat="server" />  

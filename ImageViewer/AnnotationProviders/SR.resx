@@ -567,6 +567,9 @@
   <data name="Dicom_PatientStudy_PatientsWeight_Label" xml:space="preserve">
     <value>Weight</value>
   </data>
+  <data name="ExceptionTransformedEdgeDoesNotMatch" xml:space="preserve">
+    <value>The transformed edge does not have a corresponding value.</value>
+  </data>
   <data name="FormatDegrees" xml:space="preserve">
     <value>{0}°</value>
     <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
@@ -801,5 +804,71 @@
   </data>
   <data name="SeparatorLossyCompressionRatio" xml:space="preserve">
     <value>/</value>
+  </data>
+  <data name="Dicom_Patient_PatientBreed_DisplayName" xml:space="preserve">
+    <value>Patient Breed</value>
+  </data>
+  <data name="Dicom_Patient_PatientBreed_Label" xml:space="preserve">
+    <value>Breed</value>
+  </data>
+  <data name="Dicom_Patient_PatientSpecies_DisplayName" xml:space="preserve">
+    <value>Patient Species</value>
+  </data>
+  <data name="Dicom_Patient_PatientSpecies_Label" xml:space="preserve">
+    <value>Species</value>
+  </data>
+  <data name="Dicom_Patient_ResponsibleOrganization_DisplayName" xml:space="preserve">
+    <value>Responsible Organization</value>
+  </data>
+  <data name="Dicom_Patient_ResponsibleOrganization_Label" xml:space="preserve">
+    <value>Responsible Organization</value>
+  </data>
+  <data name="Dicom_Patient_ResponsiblePerson_DisplayName" xml:space="preserve">
+    <value>Responsible Person</value>
+  </data>
+  <data name="Dicom_Patient_ResponsiblePerson_Label" xml:space="preserve">
+    <value>Responsible Person</value>
+  </data>
+  <data name="FormatCodeSequence" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedCaudal" xml:space="preserve">
+    <value>Cd</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedCranial" xml:space="preserve">
+    <value>Cr</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedDistal" xml:space="preserve">
+    <value>Di</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedDorsal" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedLateral" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedLeft" xml:space="preserve">
+    <value>Le</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedMedial" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedPalmar" xml:space="preserve">
+    <value>Pa</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedPlantar" xml:space="preserve">
+    <value>Pl</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedProximal" xml:space="preserve">
+    <value>Pr</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedRight" xml:space="preserve">
+    <value>Rt</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedRostral" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedVentral" xml:space="preserve">
+    <value>V</value>
   </data>
 </root>

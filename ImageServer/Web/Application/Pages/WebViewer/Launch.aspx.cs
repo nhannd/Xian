@@ -15,17 +15,15 @@ using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
 {
     public partial class Launch : System.Web.UI.Page
     {
-        //private string _sessionId;
-        
         public string UserID
         {
             get;

@@ -13,8 +13,8 @@ using System;
 using System.Web.Security;
 using System.Web.UI;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using ClearCanvas.Web.Enterprise.Authentication;
 using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login

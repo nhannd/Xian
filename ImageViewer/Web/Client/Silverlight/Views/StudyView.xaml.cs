@@ -21,14 +21,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 	public partial class StudyView : UserControl
     {
         private List<ImageBoxView> _imageBoxViews;
-        private DelayedEventPublisher<EventArgs> _resizePublisher;
+        private readonly DelayedEventPublisher<EventArgs> _resizePublisher;
 
         public StudyView()
         {
             InitializeComponent();
             _imageBoxViews = new List<ImageBoxView>();
 
-			SizeChanged += new SizeChangedEventHandler(OnSizeChanged);
+			SizeChanged += OnSizeChanged;
             _resizePublisher = new DelayedEventPublisher<EventArgs>(ResizeEvent, 350);
         }
 
@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void ResizeEvent(object s, EventArgs a)
         {
-            Dispatcher.BeginInvoke(() => SetImageBoxesParentSize());
+            Dispatcher.BeginInvoke(SetImageBoxesParentSize);
         }
 		
         private void SetImageBoxesParentSize()
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             foreach (ImageBox box in imageBoxes)
             {
-                ImageBoxView boxView = new ImageBoxView(box);
+                var boxView = new ImageBoxView(box);
                 StudyViewCanvas.Children.Add(boxView);
                 _imageBoxViews.Add(boxView);
 

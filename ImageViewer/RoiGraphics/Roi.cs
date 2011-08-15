@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <param name="presentationImage">The image containing the source pixel data.</param>
 		protected Roi(IPresentationImage presentationImage)
 		{
+            PresentationImage = presentationImage;
 			IImageGraphicProvider provider = presentationImage as IImageGraphicProvider;
 			if (provider == null)
 				return;
@@ -79,6 +80,15 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				_pixelAspectRatio = new PixelAspectRatio(0, 0);
 			}
 		}
+
+        ///<summary>
+        /// Gets the presentation image
+        ///</summary>
+        public IPresentationImage PresentationImage
+        {
+            get;
+            private set;
+        }
 
 		/// <summary>
 		/// Gets the number of rows in the entire image.
@@ -202,7 +212,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			get { return IsBoundingBoxInImage(); }
 		}
 
-		/// <summary>
+        
+
+	    /// <summary>
 		/// Tests to see if the given point is contained within the region of interest.
 		/// </summary>
 		/// <remarks>

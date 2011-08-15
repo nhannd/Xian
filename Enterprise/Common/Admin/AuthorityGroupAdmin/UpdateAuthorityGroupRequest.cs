@@ -9,10 +9,7 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 {
@@ -26,5 +23,8 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 
         [DataMember]
         public AuthorityGroupDetail AuthorityGroupDetail;
+
+        [DataMember]
+        public string Password;
     }
 }

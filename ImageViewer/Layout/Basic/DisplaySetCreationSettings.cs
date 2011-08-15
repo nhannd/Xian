@@ -207,7 +207,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			switch (migrationValues.PropertyName)
 			{
 				case "DisplaySetCreationSettingsXml":
-					migrationValues.CurrentValue = migrationValues.PreviousValue;
+					var previousDocument = migrationValues.PreviousValue as XmlDocument;
+					if (previousDocument != null && !string.IsNullOrEmpty(previousDocument.InnerXml))
+						migrationValues.CurrentValue = migrationValues.PreviousValue;
 					break;
 				case "SingleImageModalities":
 				case "MixedMultiframeModalities":

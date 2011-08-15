@@ -23,8 +23,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	public class RoiLengthAnalyzer : IRoiAnalyzer
 	{
 		private Units _units = Units.Centimeters;
+	    private RoiAnalyzerUpdateCallback _updateCallback;
 
-		/// <summary>
+	    /// <summary>
 		/// Gets or sets the base unit of measurement in which analysis is performed.
 		/// </summary>
 		public Units Units
@@ -74,7 +75,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			return text;
 		}
 
-		#region Public Static Helpers
+        public void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback)
+        {
+            _updateCallback = callback;
+        }
+	    #region Public Static Helpers
 
 		/// <summary>
 		/// Helper method to compute the physical distance between two pixels.

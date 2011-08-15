@@ -126,7 +126,7 @@ namespace ClearCanvas.Enterprise.Desktop
 								new ImportAuthorityGroupsRequest(
 									CollectionUtils.Map(groups,
 									                    (AuthorityGroupDefinition g) => 
-                                                                new AuthorityGroupDetail(null, g.Name, CollectionUtils.Map(g.Tokens, (string t) => new AuthorityTokenSummary(t,null))))));
+                                                                new AuthorityGroupDetail(null, g.Name, g.Description, g.DataGroup, CollectionUtils.Map(g.Tokens, (string t) => new AuthorityTokenSummary(t,null))))));
 						});
 
 				}

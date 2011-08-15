@@ -95,6 +95,16 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
         }
 
         /// <summary>
+        /// Tokens that specify data access
+        /// </summary>
+        public static class DataAccess
+        {
+            [AuthorityToken(Description = "Allow Access to all Studies.")]
+            public const string AllStudies = "PACS/Data Access/Access to all Studies";
+
+        }
+
+        /// <summary>
         /// Tokens that allow access to study functionalities.
         /// </summary>
         public static class Study
@@ -122,7 +132,6 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
             [AuthorityToken(Description = "Allow saving of reasons for study edit/delete.")]
             public const string SaveReason = "PACS/Study/SaveReason";
-
         }
 
         /// <summary>

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Services.Auditing;
@@ -51,6 +52,38 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			requestCollection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
 			requestCollection[DicomTags.InstanceAvailability].SetStringValue("");
 
+			requestCollection[DicomTags.PatientSpeciesDescription].SetStringValue(GetString(queryParams, "PatientSpeciesDescription"));
+			var codeValue = GetString(queryParams, "PatientSpeciesCodeSequenceCodeValue");
+			var codeMeaning = GetString(queryParams, "PatientSpeciesCodeSequenceCodeMeaning");
+			if (codeValue != null || codeMeaning != null)
+			{
+				var codeSequenceMacro = new CodeSequenceMacro
+				{
+					CodingSchemeDesignator = "",
+					CodeValue = codeValue,
+					CodeMeaning = codeMeaning
+				};
+				requestCollection[DicomTags.PatientSpeciesCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
+			}
+
+			requestCollection[DicomTags.PatientBreedDescription].SetStringValue(GetString(queryParams, "PatientBreedDescription"));
+			codeValue = GetString(queryParams, "PatientBreedCodeSequenceCodeValue");
+			codeMeaning = GetString(queryParams, "PatientBreedCodeSequenceCodeMeaning");
+			if (codeValue != null || codeMeaning != null)
+			{
+				var codeSequenceMacro = new CodeSequenceMacro
+				{
+					CodingSchemeDesignator = "",
+					CodeValue = codeValue,
+					CodeMeaning = codeMeaning
+				};
+				requestCollection[DicomTags.PatientBreedCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
+			}
+
+			requestCollection[DicomTags.ResponsiblePerson].SetStringValue(GetString(queryParams, "ResponsiblePerson"));
+			requestCollection[DicomTags.ResponsiblePersonRole].SetStringValue("");
+			requestCollection[DicomTags.ResponsibleOrganization].SetStringValue(GetString(queryParams,"ResponsibleOrganization"));
+
 			IList<DicomAttributeCollection> results = Query(selectedServer, requestCollection);
 			
 			StudyItemList studyItemList = new StudyItemList();
@@ -77,6 +110,29 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				if (String.IsNullOrEmpty(item.InstanceAvailability))
 					item.InstanceAvailability = "ONLINE";
 
+				item.PatientSpeciesDescription = result[DicomTags.PatientSpeciesDescription].GetString(0, "");
+				var patientSpeciesCodeSequence = result[DicomTags.PatientSpeciesCodeSequence];
+				if (!patientSpeciesCodeSequence.IsNull && patientSpeciesCodeSequence.Count > 0)
+				{
+					var codeSequenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])result[DicomTags.PatientSpeciesCodeSequence].Values)[0]);
+					item.PatientSpeciesCodeSequenceCodingSchemeDesignator = codeSequenceMacro.CodingSchemeDesignator;
+					item.PatientSpeciesCodeSequenceCodeValue = codeSequenceMacro.CodeValue;
+					item.PatientSpeciesCodeSequenceCodeMeaning = codeSequenceMacro.CodeMeaning;
+				}
+
+				item.PatientBreedDescription = result[DicomTags.PatientBreedDescription].GetString(0, "");
+				var patientBreedCodeSequence = result[DicomTags.PatientBreedCodeSequence];
+				if (!patientBreedCodeSequence.IsNull && patientBreedCodeSequence.Count > 0)
+				{
+					var codeSequenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])result[DicomTags.PatientBreedCodeSequence].Values)[0]);
+					item.PatientBreedCodeSequenceCodingSchemeDesignator = codeSequenceMacro.CodingSchemeDesignator;
+					item.PatientBreedCodeSequenceCodeValue = codeSequenceMacro.CodeValue;
+					item.PatientBreedCodeSequenceCodeMeaning = codeSequenceMacro.CodeMeaning;
+				}
+
+				item.ResponsiblePerson = new PersonName(result[DicomTags.ResponsiblePerson].GetString(0, ""));
+				item.ResponsiblePersonRole = result[DicomTags.ResponsiblePersonRole].GetString(0, "");
+				item.ResponsibleOrganization = result[DicomTags.ResponsibleOrganization].GetString(0, "");
 				studyItemList.Add(item);
 			}
 
@@ -243,6 +299,14 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			}
 
 			return everythingMatches;
+		}
+
+		private static string GetString(QueryParameters queryParams, string key)
+		{
+			string sResult;
+			if (queryParams.TryGetValue(key, out sResult))
+				return sResult;
+			return "";
 		}
 	}
 }

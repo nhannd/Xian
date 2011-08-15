@@ -309,6 +309,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton RestoreStudyButton;
+
+        /// <summary>
+        /// AssignAuthorityGroupsButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AssignAuthorityGroupsButton;
         
         /// <summary>
         /// Panel2 control.
