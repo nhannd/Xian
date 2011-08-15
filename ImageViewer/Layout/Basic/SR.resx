@@ -199,6 +199,9 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="MessageLoadPriorsErrorPrefix" xml:space="preserve">
     <value>The following errors occurred while loading prior studies:</value>
   </data>
+  <data name="MessagePriorsIncomplete" xml:space="preserve">
+    <value>The search for prior studies did not complete successfully because one or more of your default servers could not be queried.  Although some priors may be available, please be aware that you may be working with an incomplete patient history.</value>
+  </data>
   <data name="MessageSearchForPriorsFailed" xml:space="preserve">
     <value>The search for prior studies has failed.  Try reopening the study or select a different default server.</value>
   </data>

@@ -12,19 +12,13 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Configuration;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.StudyLocator
+namespace ClearCanvas.ImageViewer.Configuration
 {
-	//This stuff is temporary until we can fix the server tree.  Really need to do that soon.
-
-	public sealed class LocalStudyRootQueryExtensionPoint : ExtensionPoint<IStudyRootQuery>
-	{
-	}
+    //Configuration is not the right place for this, but it was in a lonely plugin
+    //all by itself, which seems ridiculous.  Badly need to do some code reorg and refactoring.
 
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = false, ConfigurationName = "StudyLocator", Namespace = QueryNamespace.Value)]
 	public class StudyLocator : IStudyRootQuery
@@ -56,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 				try
 				{
-					foreach (IStudyRootQuery query in GetQueryInterfaces())
+					foreach (IStudyRootQuery query in DefaultServers.GetQueryInterfaces(true))
 					{
 						try
 						{
@@ -156,42 +150,5 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 		}
 
 		#endregion
-
-		private static IEnumerable<IStudyRootQuery> GetQueryInterfaces()
-		{
-			IStudyRootQuery localDataStoreQuery;
-			try
-			{
-				localDataStoreQuery = (IStudyRootQuery)new LocalStudyRootQueryExtensionPoint().CreateExtension();
-			}
-			catch(NotSupportedException)
-			{
-				localDataStoreQuery = null;
-			}
-
-			if (localDataStoreQuery != null)
-				yield return localDataStoreQuery;
-
-			string localAE = ServerTree.GetClientAETitle();
-
-			List<Server> defaultServers = DefaultServers.SelectFrom(new ServerTree());
-			List<Server> streamingServers = CollectionUtils.Select(defaultServers, 
-				delegate(Server server) { return server.IsStreaming; });
-
-			List<Server> nonStreamingServers = CollectionUtils.Select(defaultServers,
-				delegate(Server server) { return !server.IsStreaming; });
-
-			foreach (Server server in streamingServers)
-			{
-				DicomStudyRootQuery remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.Host, server.Port);
-				yield return remoteQuery;
-			}
-
-			foreach (Server server in nonStreamingServers)
-			{
-				DicomStudyRootQuery remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.Host, server.Port);
-				yield return remoteQuery;
-			}
-		}
 	}
 }
