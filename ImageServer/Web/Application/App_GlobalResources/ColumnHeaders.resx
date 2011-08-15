@@ -451,9 +451,8 @@
   </data>
   <data name="AdminUserGroups_GroupDescription" xml:space="preserve">
     <value>Authority Group Description</value>
-
-
-
-
+  </data>
+  <data name="StudyDetails_GroupName" xml:space="preserve">
+    <value>Authority Groups with Access to This Study</value>
   </data>
 </root>

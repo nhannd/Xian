@@ -25,7 +25,7 @@
                         OnPageIndexChanging="GridView1_PageIndexChanging" MouseHoverRowHighlightEnabled="true"
                         RowHighlightColor="#EEEEEE" SelectionMode="Multiple" GridLines="Horizontal" BackColor="White">
                         <Columns>
-                            <asp:BoundField DataField="Name" HeaderText="<%$Resources: ColumnHeaders, AdminUserGroups_GroupName%>">
+                            <asp:BoundField DataField="Name" HeaderText="<%$Resources: ColumnHeaders, StudyDetails_GroupName%>">
                                 <HeaderStyle Wrap="False" HorizontalAlign="Left" />
                                 <ItemStyle HorizontalAlign="Left" />
                             </asp:BoundField>
