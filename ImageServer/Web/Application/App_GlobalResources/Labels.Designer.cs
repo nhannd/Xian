@@ -70,7 +70,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To the following data access authority groups:.
+        ///   Looks up a localized string similar to To the following data access authority groups (The below does not reflect the current state of data access.  See Study Details for the study of interest to determine current access.):.
         /// </summary>
         internal static string AddAuthorityGroupsDialog_AuthorityGroupsLabel {
             get {
