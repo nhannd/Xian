@@ -22,9 +22,10 @@
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation />
-    <OldToolsVersion>3.5</OldToolsVersion>
+    <OldToolsVersion>4.0</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -39,7 +40,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -178,16 +178,16 @@
     <Compile Include="Imaging\NamedVoiLutLinear.cs" />
     <Compile Include="Layout\HpDataContractAttribute.cs" />
     <Compile Include="Layout\HpExtensionPoints.cs" />
-    <Compile Include="Layout\HpMatchResult.cs" />
+    <Compile Include="Layout\HpApplicabilityResult.cs" />
     <Compile Include="Layout\HpProperty.cs" />
+    <Compile Include="Layout\IHpApplicabilityContributor.cs" />
     <Compile Include="Layout\IHpContributor.cs" />
     <Compile Include="Layout\IHpImageBoxDefinitionContributor.cs" />
     <Compile Include="Layout\IHpLayoutDefinitionContributor.cs" />
     <Compile Include="Layout\IHpLayoutHook.cs" />
-    <Compile Include="Layout\IHpMatchCriteriaContributor.cs" />
     <Compile Include="Layout\IHpProperty.cs" />
     <Compile Include="Layout\IHpSerializableElement.cs" />
-    <Compile Include="Layout\Tests\HpMatchResultTests.cs" />
+    <Compile Include="Layout\Tests\HpApplicabilityResultTests.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />

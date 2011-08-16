@@ -41,5 +41,11 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// </summary>
 		/// <returns></returns>
 		IHpProperty[] GetProperties();
+
+		/// <summary>
+		/// Gets a value indicating whether this contributor requires the patient history (prior studies)
+		/// to be loaded.
+		/// </summary>
+		bool RequiresPatientHistory { get; }
 	}
 }

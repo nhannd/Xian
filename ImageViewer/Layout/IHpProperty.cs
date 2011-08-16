@@ -39,6 +39,11 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// </summary>
 		string Description { get; }
 
+		/// <summary>
+		/// Gets the category of this property for display in the user-interface.
+		/// </summary>
+		string Category { get; }
+
         /// <summary>
         /// Gets whether or not <see cref="Value"/> can be set.
         /// </summary>

@@ -228,8 +228,13 @@
     <Compile Include="DirectoryRecordCollection.cs" />
     <Compile Include="DirectoryRecordSequenceItem.cs" />
     <Compile Include="IDicomAttributeProvider.cs" />
+    <Compile Include="Iod\AnatomicalOrientationType.cs" />
+    <Compile Include="Iod\ContextGroups\BreedContextGroup.cs" />
+    <Compile Include="Iod\ContextGroups\BreedRegistryContextGroup.cs" />
     <Compile Include="Iod\ContextGroups\ContextGroupItemBase.cs" />
     <Compile Include="Iod\ContextGroups\IsotopesInRadiopharmaceuticals.cs" />
+    <Compile Include="Iod\ContextGroups\MixBreedsContextGroup.cs" />
+    <Compile Include="Iod\ContextGroups\SpeciesContextGroup.cs" />
     <Compile Include="Iod\DataLut.cs" />
     <Compile Include="Iod\ContextGroups\ContextGroupBase.cs" />
     <Compile Include="Iod\ContextGroups\KeyObjectSelectionDocumentTitle.cs" />
@@ -361,6 +366,9 @@
     <Compile Include="Iod\SeriesReferenceDictionary.cs" />
     <Compile Include="Iod\ShutterShape.cs" />
     <Compile Include="Iod\StandardPaletteColorLuts.cs" />
+    <Compile Include="Iod\Tests\ModuleIodAttributeTests.cs" />
+    <Compile Include="Iod\Tests\PatientDirectionTests.cs" />
+    <Compile Include="Iod\Tests\QuadrupedPatientDirectionTests.cs" />
     <Compile Include="Iod\VoiDataLut.cs" />
     <Compile Include="Iod\PatientIdentityRemoved.cs" />
     <Compile Include="Iod\PatientsSex.cs" />

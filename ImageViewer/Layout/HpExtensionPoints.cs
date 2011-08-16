@@ -22,10 +22,18 @@ namespace ClearCanvas.ImageViewer.Layout
 	}
 
 	/// <summary>
-	/// Defines an extension point for match-criteria contributors.
+	/// Defines an extension point for protocol applicability contributors.
 	/// </summary>
 	[ExtensionPoint]
-	public class HpMatchCriteriaContributorExtensionPoint : ExtensionPoint<IHpMatchCriteriaContributor>
+	public class HpProtocolApplicabilityContributorExtensionPoint : ExtensionPoint<IHpProtocolApplicabilityContributor>
+	{
+	}
+
+	/// <summary>
+	/// Defines an extension point for layout applicability contributors.
+	/// </summary>
+	[ExtensionPoint]
+	public class HpLayoutApplicabilityContributorExtensionPoint : ExtensionPoint<IHpLayoutApplicabilityContributor>
 	{
 	}
 

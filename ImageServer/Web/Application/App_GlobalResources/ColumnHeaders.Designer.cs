@@ -349,15 +349,6 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted By.
-        /// </summary>
-        internal static string DeletedBy {
-            get {
-                return ResourceManager.GetString("DeletedBy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         internal static string DeviceDescription {
@@ -381,24 +372,6 @@ namespace Resources {
         internal static string DHCP {
             get {
                 return ResourceManager.GetString("DHCP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Details.
-        /// </summary>
-        internal static string DicomTagDetails {
-            get {
-                return ResourceManager.GetString("DicomTagDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tag.
-        /// </summary>
-        internal static string DicomTagName {
-            get {
-                return ResourceManager.GetString("DicomTagName", resourceCulture);
             }
         }
         
@@ -862,15 +835,6 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type.
-        /// </summary>
-        internal static string ServerRuleType {
-            get {
-                return ResourceManager.GetString("ServerRuleType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         internal static string ServiceDescription {
@@ -975,6 +939,15 @@ namespace Resources {
         internal static string StudyDescription {
             get {
                 return ResourceManager.GetString("StudyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authority Groups with Access to This Study.
+        /// </summary>
+        internal static string StudyDetails_GroupName {
+            get {
+                return ResourceManager.GetString("StudyDetails_GroupName", resourceCulture);
             }
         }
         

@@ -44,6 +44,24 @@ namespace ClearCanvas.ImageViewer.Layout
             _setter = setter;
         }
 
+		///<summary>
+		/// Constructor
+		///</summary>
+		///<param name="name"></param>
+		///<param name="description"></param>
+		///<param name="category"></param>
+		///<param name="getter"></param>
+		///<param name="setter"></param>
+		public HpProperty(string name, string description, string category, ValueGetter getter, ValueSetter setter)
+		{
+			Type = typeof(TProperty);
+			DisplayName = name;
+			Description = description;
+			Category = category;
+			_getter = getter;
+			_setter = setter;
+		}
+
 	    #region Implementation of IHpProperty
 
         public Type Type { get; protected set; }
@@ -57,6 +75,11 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// Gets the description of this property for display in the user-interface.
 		/// </summary>
 		public string Description { get; private set; }
+
+		/// <summary>
+		/// Gets the category of this property for display in the user-interface.
+		/// </summary>
+		public string Category { get; private set; }
 
 		/// <summary>
 		/// Gets a value indicating whether this property can be edited by a custom dialog box.

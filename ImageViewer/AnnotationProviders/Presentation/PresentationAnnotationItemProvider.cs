@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.ImageViewer.StudyManagement;
+//using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {
@@ -28,10 +28,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			                       {
 			                           new ZoomAnnotationItem(),
 			                           new AppliedLutAnnotationItem(),
-			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Left),
-			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Top),
-			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Right),
-			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Bottom),
+			                           new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left),
+			                           new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top),
+			                           new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right),
+			                           new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom),
 			                           new DFOVAnnotationItem(),
 			                           new DisplaySetDescriptionAnnotationItem(),
 			                           new DisplaySetNumberAnnotationItem()

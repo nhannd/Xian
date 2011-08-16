@@ -15,33 +15,33 @@ using System.Collections.Generic;
 namespace ClearCanvas.ImageViewer.Layout
 {
 	/// <summary>
-	/// Represents the result of a HP match operation.
+	/// Represents the result of a HP applicability test.
 	/// </summary>
-	public struct HpMatchResult : IEquatable<HpMatchResult>
+	public struct HpApplicabilityResult : IEquatable<HpApplicabilityResult>
 	{
 		/// <summary>
-		/// The <see cref="HpMatchResult"/> value representing a non-match.
+		/// The <see cref="HpApplicabilityResult"/> value representing "not applicable".
 		/// </summary>
-		public static HpMatchResult Negative = new HpMatchResult(false, 0);
+		public static HpApplicabilityResult Negative = new HpApplicabilityResult(false, 0);
 
 		/// <summary>
-		/// The <see cref="HpMatchResult"/> value, representing a match with a quality of zero.
+		/// The <see cref="HpApplicabilityResult"/> value representing neutral applicability (contributes nothing to the quality score).
 		/// </summary>
-		public static HpMatchResult Zero = new HpMatchResult(true, 0);
+		public static HpApplicabilityResult Neutral = new HpApplicabilityResult(true, 0);
 
 		/// <summary>
-		/// The <see cref="HpMatchResult"/> value, representing a match with a quality of one.
+		/// The <see cref="HpApplicabilityResult"/> value representing positive applicability (contributes 1 point to the quality score).
 		/// </summary>
-		public static HpMatchResult Positive = new HpMatchResult(true, 1);
+		public static HpApplicabilityResult Positive = new HpApplicabilityResult(true, 1);
 
 		/// <summary>
 		/// Computes a result representing the sum of the specified sequence of results.
 		/// </summary>
 		/// <param name="results"></param>
 		/// <returns></returns>
-		public static HpMatchResult Sum(IEnumerable<HpMatchResult> results)
+		public static HpApplicabilityResult Sum(IEnumerable<HpApplicabilityResult> results)
 		{
-			var sum = Zero;
+			var sum = Neutral;
 			foreach (var score in results)
 			{
 				sum = sum + score;
@@ -51,37 +51,37 @@ namespace ClearCanvas.ImageViewer.Layout
 
 
 		private readonly int _quality;
-		private readonly bool _match;
+		private readonly bool _applicable;
 
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="match"></param>
+		/// <param name="applicable"></param>
 		/// <param name="quality"></param>
-		private HpMatchResult(bool match, int quality)
+		private HpApplicabilityResult(bool applicable, int quality)
 		{
-			_match = match;
+			_applicable = applicable;
 			_quality = quality;
 		}
 
 		/// <summary>
 		/// Gets a value indicating whether this result represents a match or not.
 		/// </summary>
-		public bool IsMatch
+		public bool IsApplicable
 		{
-			get { return _match; }
+			get { return _applicable; }
 		}
 
 		/// <summary>
-		/// Gets a value indicating the quality of this match (assuming that <see cref="IsMatch"/> returns true.
+		/// Gets a value indicating the quality of applicability (assuming that <see cref="IsApplicable"/> returns true.
 		/// </summary>
-		/// <exception cref="InvalidOperationException">If this property is invoked when <see cref="IsMatch"/> returns false.</exception>
+		/// <exception cref="InvalidOperationException">If this property is invoked when <see cref="IsApplicable"/> returns false.</exception>
 		public int Quality
 		{
 			get
 			{
-				if(!_match)
+				if(!_applicable)
 					throw new InvalidOperationException("A non-match does not have a quality value.");
 				return _quality;
 			}
@@ -95,10 +95,10 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// </returns>
 		/// <param name="other">An object to compare with this object.
 		///                 </param>
-		public bool Equals(HpMatchResult other)
+		public bool Equals(HpApplicabilityResult other)
 		{
 			// all non-matches are equal, regardless of score
-			return _match == false ? other._match == false : _quality == other._quality;
+			return _applicable == false ? other._applicable == false : _quality == other._quality;
 		}
 
 		/// <summary>
@@ -112,8 +112,8 @@ namespace ClearCanvas.ImageViewer.Layout
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
-			if (obj.GetType() != typeof(HpMatchResult)) return false;
-			return Equals((HpMatchResult)obj);
+			if (obj.GetType() != typeof(HpApplicabilityResult)) return false;
+			return Equals((HpApplicabilityResult)obj);
 		}
 
 		/// <summary>
@@ -127,41 +127,41 @@ namespace ClearCanvas.ImageViewer.Layout
 		{
 			unchecked
 			{
-				return _match == false ? _match.GetHashCode() : (_quality * 397) ^ _match.GetHashCode();
+				return _applicable == false ? _applicable.GetHashCode() : (_quality * 397) ^ _applicable.GetHashCode();
 			}
 		}
 
 		/// <summary>
-		/// Determines if two <see cref="HpMatchResult"/> have the same value.
+		/// Determines if two <see cref="HpApplicabilityResult"/> have the same value.
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator ==(HpMatchResult left, HpMatchResult right)
+		public static bool operator ==(HpApplicabilityResult left, HpApplicabilityResult right)
 		{
 			return left.Equals(right);
 		}
 
 		/// <summary>
-		/// Determines if two <see cref="HpMatchResult"/> have a different value.
+		/// Determines if two <see cref="HpApplicabilityResult"/> have a different value.
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator !=(HpMatchResult left, HpMatchResult right)
+		public static bool operator !=(HpApplicabilityResult left, HpApplicabilityResult right)
 		{
 			return !left.Equals(right);
 		}
 
 		/// <summary>
-		/// Computes an <see cref="HpMatchResult"/> representing the sum of two <see cref="HpMatchResult"/>.
+		/// Computes an <see cref="HpApplicabilityResult"/> representing the sum of two <see cref="HpApplicabilityResult"/>.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		public static HpMatchResult operator +(HpMatchResult x, HpMatchResult y)
+		public static HpApplicabilityResult operator +(HpApplicabilityResult x, HpApplicabilityResult y)
 		{
-			return x.IsMatch && y.IsMatch ? new HpMatchResult(true, x.Quality + y.Quality) : Negative;
+			return x.IsApplicable && y.IsApplicable ? new HpApplicabilityResult(true, x.Quality + y.Quality) : Negative;
 		}
 	}
 }
