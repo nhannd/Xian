@@ -187,7 +187,6 @@
 
   <ItemGroup>
     <DesktopServiceFiles Include="$(TrunkDirectory)\ImageViewer\DesktopServices\bin\$(Configuration)\ClearCanvas.ImageViewer.DesktopServices.dll" />
-    <DesktopServiceFiles Include="$(TrunkDirectory)\ImageViewer\StudyLocator\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLocator.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -324,7 +323,6 @@
 
   <ItemGroup Condition="$(ShredHostBuild)">
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Shreds\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyLocator\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLocator.dll" />
   </ItemGroup>
 
   <ItemGroup>
