@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer
 	public class LoadPriorStudiesException : LoadMultipleStudiesException
 	{
 		internal LoadPriorStudiesException(ICollection<Exception> exceptions, int totalStudies, bool findResultsComplete)
-			: base(FormatMessage(exceptions, totalStudies), exceptions, totalStudies)
+			: base(FormatMessage(exceptions, totalStudies, findResultsComplete), exceptions, totalStudies)
 		{
 			FindFailed = false;
             FindResultsComplete = findResultsComplete;
@@ -53,8 +53,16 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public readonly bool FindFailed;
 
-		private static string FormatMessage(ICollection<Exception> exceptions, int totalStudies)
+        private static string FormatMessage(ICollection<Exception> exceptions, int totalStudies, bool findResultsComplete)
 		{
+            if (!findResultsComplete)
+            {
+                if (exceptions.Count == 0)
+                    return "Prior study search results may be incomplete.";
+
+                return String.Format("Prior study search results may be incomplete, and {0} of {1} prior studies produced one or more errors while loading.", exceptions.Count, totalStudies);
+            }
+
 			return String.Format("{0} of {1} prior studies produced one or more errors while loading.", exceptions.Count, totalStudies);
 		}
 	}

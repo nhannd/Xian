@@ -78,10 +78,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 context.ShowMessageBox(summary.ToString());
 		}
 
-		private static bool ShouldShowLoadErrorMessage(LoadPriorStudiesException exception)
+		private static bool ShouldShowLoadErrorMessage(LoadMultipleStudiesException exception)
 		{
-            if (exception.FindResultsComplete)
-
 			if (exception.IncompleteCount > 0)
 				return true;
 

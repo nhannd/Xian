@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         {
         }
 
-        public override StudyItemList FindPriorStudies()
+        public override PriorStudyFinderResult FindPriorStudies()
 		{
 			_cancel = false;
 
@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 }
             }
           
-			return results;
+			return new PriorStudyFinderResult(results, true);
 		}
 
 		public override void Cancel()
