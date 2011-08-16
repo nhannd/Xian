@@ -52,8 +52,7 @@
 //     of merchantability, fitness for a particular purpose and non-infringement.
 
     -->
-<ResourceDictionary xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit" 
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vsm="clr-namespace:System.Windows;assembly=System.Windows"
     xmlns:local="clr-namespace:ClearCanvas.Web.Client.Silverlight">

@@ -3,6 +3,10 @@
              x:Class="ClearCanvas.ImageServer.Web.Client.Silverlight.App"
              >
     <Application.Resources>
-        
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Resources/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
