@@ -124,6 +124,10 @@
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Web\Enterprise\ClearCanvas.Web.Enterprise.csproj">
+      <Project>{22444EF5-740E-41C2-B6DD-0029BD616338}</Project>
+      <Name>ClearCanvas.Web.Enterprise</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
