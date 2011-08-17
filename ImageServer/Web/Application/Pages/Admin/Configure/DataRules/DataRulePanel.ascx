@@ -61,6 +61,8 @@
                                                 OnClick="AddDataRuleButton_Click" />
                                             <ccUI:ToolbarButton ID="EditDataRuleButton" runat="server" SkinID="<%$Image:EditButton%>"
                                                 OnClick="EditDataRuleButton_Click" />
+                                            <ccUI:ToolbarButton ID="CopyDataRuleButton" runat="server" SkinID="<%$Image:CopyButton%>"
+                                                OnClick="CopyDataRuleButton_Click" />
                                             <ccUI:ToolbarButton ID="DeleteDataRuleButton" runat="server" SkinID="<%$Image:DeleteButton%>"
                                                 OnClick="DeleteDataRuleButton_Click" />
                                         </asp:Panel>

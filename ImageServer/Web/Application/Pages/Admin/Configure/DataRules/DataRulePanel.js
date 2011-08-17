@@ -93,6 +93,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
 
             this._enableEditButton(false);
             this._enableDeleteButton(false);
+            this._enableCopyButton(false);
 
             if (serverRulelist != null) {
                 var rows = serverRulelist.getSelectedRowElements();
@@ -100,6 +101,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
                 if (rows != null && rows.length > 0) {
                     this._enableEditButton(true);
                     this._enableDeleteButton(true);
+                    this._enableCopyButton(true); 
                 }
             }
         },
@@ -113,6 +115,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
             var editButton = $find(this._EditButtonClientID);
             editButton.set_enable(en);
         },
+
+        _enableCopyButton: function(en) {
+            var editButton = $find(this._CopyButtonClientID);
+            editButton.set_enable(en);
+        },
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -146,6 +154,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
             this.raisePropertyChanged('EditButtonClientID');
         },
 
+        get_CopyButtonClientID: function() {
+            return this._CopyButtonClientID;
+        },
+
+        set_CopyButtonClientID: function(value) {
+            this._CopyButtonClientID = value;
+            this.raisePropertyChanged('CopyButtonClientID');
+        },
+        
         get_DataRuleListClientID: function() {
             return this._DataRuleListClientID;
         },

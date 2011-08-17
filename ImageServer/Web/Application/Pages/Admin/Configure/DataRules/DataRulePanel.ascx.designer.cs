@@ -159,6 +159,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteDataRuleButton;
 
         /// <summary>
+        /// CopyDataRuleButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton CopyDataRuleButton;
+
+        /// <summary>
         /// Panel1 control.
         /// </summary>
         /// <remarks>

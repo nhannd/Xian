@@ -49,6 +49,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         }
 
         [ExtenderControlProperty]
+        [ClientPropertyName("CopyButtonClientID")]
+        public string CopyButtonClientID
+        {
+            get { return CopyDataRuleButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
         [ClientPropertyName("DataRuleListClientID")]
         public string DataRuleListClientID
         {
@@ -183,6 +190,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         {
             if (DataRuleGridViewControl.SelectedRule != null)
                 EnclosingPage.OnEditRule(DataRuleGridViewControl.SelectedRule, ServerPartition);
+        }
+
+        protected void CopyDataRuleButton_Click(object sender, ImageClickEventArgs e)
+        {
+            if (DataRuleGridViewControl.SelectedRule != null)
+                EnclosingPage.OnCopyRule(DataRuleGridViewControl.SelectedRule, ServerPartition);
         }
 
         protected void DeleteDataRuleButton_Click(object sender, ImageClickEventArgs e)

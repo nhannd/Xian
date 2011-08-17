@@ -27,6 +27,13 @@ using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRules
 {
+    public enum AddEditDataRuleDialogMode
+    {
+        Copy,
+        Edit,
+        New
+    }
+
     public partial class AddEditDataRuleDialog : UserControl
     {
         #region private variables
@@ -34,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         // The server partitions that the new device can be associated with
         // This list will be determined by the user level permission.
 
-        private bool _editMode;
+        private AddEditDataRuleDialogMode _mode;
         private ServerPartition _partition;
         private ServerRule _rule;
 
@@ -59,13 +66,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// <summary>
         /// Sets or gets the value which indicates whether the dialog is in edit mode.
         /// </summary>
-        public bool EditMode
+        public AddEditDataRuleDialogMode Mode
         {
-            get { return _editMode; }
+            get { return _mode; }
             set
             {
-                _editMode = value;
-                ViewState["_EditMode"] = value;
+                _mode = value;
+                ViewState["_Mode"] = value;
             }
         }
 
@@ -281,7 +288,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 using (AuthorityManagement service = new AuthorityManagement())
                 {
                     IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
-                    IList<ListItem> items = CollectionUtils.Map<AuthorityGroupSummary, ListItem>(
+                    IList<ListItem> items = CollectionUtils.Map(
                                             tokens,
                                             delegate(AuthorityGroupSummary group)
                                             {
@@ -295,8 +302,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             }
             else
             {
-                if (ViewState["_EditMode"] != null)
-                    _editMode = (bool)ViewState["_EditMode"];
+                if (ViewState["_Mode"] != null)
+                    _mode = (AddEditDataRuleDialogMode)ViewState["_Mode"];
 
                 if (ViewState["_ServerPartition"] != null)
                     _partition = (ServerPartition)ViewState["_ServerPartition"];
@@ -403,7 +410,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             var ep = new SampleRuleExtensionPoint();
             object[] extensions = ep.CreateExtensions();
 
-            if (EditMode)
+            if (Mode == AddEditDataRuleDialogMode.Edit)
             {
                 ModalDialog.Title = SR.DialogEditDataRuleTitle;
                 OKButton.Visible = false;
@@ -413,15 +420,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 EnabledCheckBox.Checked = _rule.Enabled;
                 ExemptRuleCheckBox.Checked = _rule.ExemptRule;
 
-                //if (_rule.DefaultRule)
-                //	DefaultCheckBox.Enabled = false;
 
                 RuleNameTextBox.Text = _rule.RuleName;
 
                 SampleRuleDropDownList.Visible = false;
                 SelectSampleRuleLabel.Visible = false;
-
-                // Fill in the drop down menus
 
 
                 // Fill in the Rule XML
@@ -458,11 +461,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                     if (item != null) item.Selected = true;
                 }
             }
-            else
+            else if (Mode == AddEditDataRuleDialogMode.New)
             {
                 ModalDialog.Title = SR.DialogAddDataRuleTitle;
-                OKButton.Visible = false;
-                UpdateButton.Visible = true;
+                OKButton.Visible = true;
+                UpdateButton.Visible = false;
 
                 DefaultCheckBox.Checked = false;
                 EnabledCheckBox.Checked = true;
@@ -486,6 +489,57 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 }
 
                 DataRuleValidator.RuleTypeControl = ServerRuleTypeEnum.DataAccess.Lookup;
+            }
+            else
+            {
+                ModalDialog.Title = SR.DialogAddDataRuleTitle;
+                OKButton.Visible = true;
+                UpdateButton.Visible = false;
+
+                DefaultCheckBox.Checked = _rule.DefaultRule;
+                EnabledCheckBox.Checked = _rule.Enabled;
+                ExemptRuleCheckBox.Checked = _rule.ExemptRule;
+
+
+                RuleNameTextBox.Text = _rule.RuleName;
+
+                SampleRuleDropDownList.Visible = false;
+                SelectSampleRuleLabel.Visible = false;
+
+
+                // Fill in the Rule XML
+                var sw = new StringWriter();
+
+                var xmlSettings = new XmlWriterSettings
+                {
+                    Encoding = Encoding.UTF8,
+                    ConformanceLevel = ConformanceLevel.Fragment,
+                    Indent = true,
+                    NewLineOnAttributes = false,
+                    CheckCharacters = true,
+                    IndentChars = "  "
+                };
+
+                XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+
+                XmlNode node2 = _rule.RuleXml.SelectSingleNode("/rule/condition");
+
+                node2.WriteTo(tw);
+
+                tw.Close();
+
+                RuleXmlTextBox.Text = sw.ToString();
+
+                DataRuleValidator.RuleTypeControl = ServerRuleTypeEnum.DataAccess.Lookup;
+
+                AuthorityGroupCheckBoxList.ClearSelection();
+
+                foreach (XmlNode node in _rule.RuleXml.SelectNodes("/rule/action/grant-access"))
+                {
+                    string oid = node.Attributes["authorityGroupOid"].Value;
+                    ListItem item = AuthorityGroupCheckBoxList.Items.FindByValue(oid);
+                    if (item != null) item.Selected = true;
+                }
             }
 
             ModalDialog.Show();

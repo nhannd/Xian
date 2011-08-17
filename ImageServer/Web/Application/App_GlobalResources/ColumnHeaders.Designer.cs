@@ -835,6 +835,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        internal static string ServerRuleType {
+            get {
+                return ResourceManager.GetString("ServerRuleType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         internal static string ServiceDescription {

@@ -1529,6 +1529,9 @@
     <Content Include="App_Themes\Default\images\Buttons\CancelEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\CancelHover.png" />
     <Content Include="App_Themes\Default\images\Buttons\ClearButtonBackground.png" />
+    <Content Include="App_Themes\Default\images\Buttons\CopyDisabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\CopyEnabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\CopyHover.png" />
     <Content Include="App_Themes\Default\images\Buttons\DeleteAllDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\DeleteAllEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\DeleteAllHover.png" />

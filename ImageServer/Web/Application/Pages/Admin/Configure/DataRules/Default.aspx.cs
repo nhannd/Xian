@@ -11,6 +11,7 @@
 
 using System;
 using System.Security.Permissions;
+using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
@@ -59,7 +60,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
             AddEditDataRuleControl.OKClicked += delegate(ServerRule rule)
             {
-                if (AddEditDataRuleControl.EditMode)
+                if (AddEditDataRuleControl.Mode == AddEditDataRuleDialogMode.Edit)
                 {
                     // Commit the change into database
                     if (_controller.UpdateServerRule(rule))
@@ -113,8 +114,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// <param name="partition"></param>
         public void OnEditRule(ServerRule rule, ServerPartition partition)
         {
-            AddEditDataRuleControl.EditMode = true;
+            AddEditDataRuleControl.Mode = AddEditDataRuleDialogMode.Edit;
             AddEditDataRuleControl.ServerRule = rule;
+            AddEditDataRuleControl.Partition = partition;
+            AddEditDataRuleControl.Show();
+        }
+
+        /// <summary>
+        /// Displays a popup dialog box for users to edit a rule
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <param name="partition"></param>
+        public void OnCopyRule(ServerRule rule, ServerPartition partition)
+        {
+            ServerRule copiedRule = new ServerRule(rule.RuleName + " (Copy)",rule.ServerPartitionKey,rule.ServerRuleTypeEnum, rule.ServerRuleApplyTimeEnum, rule.Enabled, rule.DefaultRule, rule.ExemptRule, (XmlDocument)rule.RuleXml.CloneNode(true));
+
+            // Store a dummy entity key
+            copiedRule.SetKey(new ServerEntityKey("ServerRule",Guid.NewGuid()));
+ 
+            AddEditDataRuleControl.Mode = AddEditDataRuleDialogMode.Copy;
+            AddEditDataRuleControl.ServerRule = copiedRule;
             AddEditDataRuleControl.Partition = partition;
             AddEditDataRuleControl.Show();
         }
@@ -139,7 +158,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// <param name="partition"></param>
         public void OnAddRule(ServerRule rule, ServerPartition partition)
         {
-            AddEditDataRuleControl.EditMode = false;
+            AddEditDataRuleControl.Mode = AddEditDataRuleDialogMode.New;
             AddEditDataRuleControl.ServerRule = null;
             AddEditDataRuleControl.Partition = partition;
             AddEditDataRuleControl.Show();

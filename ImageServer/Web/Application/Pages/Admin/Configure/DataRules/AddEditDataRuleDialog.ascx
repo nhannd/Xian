@@ -15,7 +15,7 @@
         <asp:ServiceReference Path="DataRuleSamples.asmx" />
     </Services>
 </asp:ScriptManagerProxy>
-<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="950px">
+<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="1000px">
     <ContentTemplate>
         <asp:ValidationSummary ID="EditDataRuleValidationSummary" ShowMessageBox="false"
             ShowSummary="true" DisplayMode="SingleParagraph" EnableClientScript="true" runat="server"
