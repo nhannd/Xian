@@ -802,4 +802,37 @@
   <data name="SeparatorLossyCompressionRatio" xml:space="preserve">
     <value>/</value>
   </data>
+  <data name="Presentation_ImageCalibration_DisplayName" xml:space="preserve">
+    <value>Image Calibration</value>
+  </data>
+  <data name="Presentation_ImageCalibration_Label" xml:space="preserve">
+    <value>Calibration</value>
+  </data>
+  <data name="FormatCalibrationDetails" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="ValueActualSpacingCalibration" xml:space="preserve">
+    <value>Actual</value>
+  </data>
+  <data name="ValueDetectorSpacingCalibration" xml:space="preserve">
+    <value>Detector</value>
+  </data>
+  <data name="ValueFiducialCalibration" xml:space="preserve">
+    <value>Fiducial</value>
+  </data>
+  <data name="ValueGeometricCalibration" xml:space="preserve">
+    <value>Geometry</value>
+  </data>
+  <data name="ValueMagnifiedCalibration" xml:space="preserve">
+    <value>Magnification</value>
+  </data>
+  <data name="ValueManualCalibration" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="ValueNoCalibration" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ValueUnknownCalibration" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
 </root>

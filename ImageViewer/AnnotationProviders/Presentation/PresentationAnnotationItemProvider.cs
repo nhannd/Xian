@@ -33,6 +33,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Right),
 			                           new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Bottom),
 			                           new DFOVAnnotationItem(),
+			                           new ImageCalibrationAnnotationItem(),
 			                           new DisplaySetDescriptionAnnotationItem(),
 			                           new DisplaySetNumberAnnotationItem()
 			                       };
