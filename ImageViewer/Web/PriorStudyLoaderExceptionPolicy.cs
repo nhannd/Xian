@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
@@ -34,14 +35,28 @@ namespace ClearCanvas.ImageViewer.Web
             if (exception.FindFailed)
             {
                 context.ShowMessageBox(SR.MessageLoadPriorsFindErrors);
+                return;
             }
-            else if (ShouldShowErrorMessage(exception))
+            
+            var summary = new StringBuilder();
+            if (!exception.FindResultsComplete)
+                summary.Append(SR.MessagePriorsIncomplete);
+
+            if (ShouldShowLoadErrorMessage(exception))
             {
-                context.ShowMessageBox(ClearCanvas.Web.Services.ExceptionTranslator.Translate(exception));
+                if (summary.Length > 0)
+                {
+                    summary.AppendLine(); summary.AppendLine("----"); summary.AppendLine();
+                }
+
+                summary.Append(ClearCanvas.Web.Services.ExceptionTranslator.Translate(exception));
             }
+
+            if (summary.Length > 0)
+                context.ShowMessageBox(summary.ToString());
         }
 
-        private static bool ShouldShowErrorMessage(LoadPriorStudiesException exception)
+        private static bool ShouldShowLoadErrorMessage(LoadPriorStudiesException exception)
         {
             if (exception.IncompleteCount > 0)
                 return true;

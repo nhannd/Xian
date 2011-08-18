@@ -398,22 +398,20 @@ namespace ClearCanvas.ImageViewer
 
 		private void BuildFromStudy(Study study)
 		{
-			IImageSet imageSet = GetImageSet(study.StudyInstanceUid);
-		    bool exists = imageSet != null;
-            if (exists)
+			IImageSet existing = GetImageSet(study.StudyInstanceUid);
+            if (existing != null)
 			{
-			    var descriptor = (IDicomImageSetDescriptor) imageSet.Descriptor;
+                var descriptor = (IDicomImageSetDescriptor)existing.Descriptor;
                 if (descriptor.LoadStudyError == null)
                 {
                     // Abort if valid image set has already been added.
                     return;
                 }
 			}
-            else
-			    imageSet = CreateImageSet(GetStudyIdentifier(study));
 
-			if (imageSet.Uid != study.StudyInstanceUid)
-				throw new InvalidOperationException("ImageSet Uid must be the same as Study Instance Uid.");
+            var imageSet = CreateImageSet(GetStudyIdentifier(study));
+            if (imageSet.Uid != study.StudyInstanceUid)
+			    throw new InvalidOperationException("ImageSet Uid must be the same as Study Instance Uid.");
 
 			SortSeries(study.Series);
 
@@ -423,18 +421,14 @@ namespace ClearCanvas.ImageViewer
 				UpdateImageSet(imageSet, series);
 			}
 
-            if (!exists)
+            if (existing == null)
             {
-                if (imageSet.DisplaySets.Count == 0)
-                    imageSet.Dispose();
-                else
-                    AddImageSet(imageSet);
+                AddImageSet(imageSet);
             }
             else
             {
-                //We've updated a previously unavailable image set with real data - just swap the descriptor.
-                //TODO: account for the possibility that it's empty?
-                ((ImageSet)imageSet).Descriptor = CreateImageSetDescriptor(study.GetIdentifier());
+                LogicalWorkspace.ImageSets[LogicalWorkspace.ImageSets.IndexOf(existing)] = imageSet;
+                existing.Dispose();
             }
 		}
 

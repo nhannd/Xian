@@ -68,7 +68,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             if (ShouldShowLoadErrorMessage(exception))
             {
                 if (summary.Length > 0)
-                    summary.AppendLine(); summary.AppendLine();
+                {
+                    summary.AppendLine(); summary.AppendLine("----"); summary.AppendLine();
+                }
 
                 summary.AppendLine(SR.MessageLoadPriorsErrorPrefix);
                 summary.Append(exception.GetExceptionSummary());
