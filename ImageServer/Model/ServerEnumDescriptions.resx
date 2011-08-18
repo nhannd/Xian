@@ -513,6 +513,12 @@
   <data name="ServiceLockTypeEnum_ImportFiles_LongDescription" xml:space="preserve">
     <value>This service periodically scans the filesystem for dicom files and imports them into the system.</value>
   </data>
+  <data name="ServiceLockTypeEnum_SyncDataAccess_Description" xml:space="preserve">
+    <value>Synchronize Data Access</value>
+  </data>
+  <data name="ServiceLockTypeEnum_SyncDataAccess_LongDescription" xml:space="preserve">
+    <value>This service periodically synchronizes the deletion status of Authority Groups on the Administrative Services with Data Access granted to studies on the ImageServer.</value>
+  </data>
   <data name="ServerRuleTypeEnum_AutoRoute_Description" xml:space="preserve">
     <value>Auto Routing</value>
   </data>

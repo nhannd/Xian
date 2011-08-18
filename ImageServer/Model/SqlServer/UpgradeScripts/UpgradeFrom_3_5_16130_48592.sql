@@ -13,7 +13,20 @@ GO
 BEGIN TRANSACTION
 GO
 
-PRINT N'Adding new ServerRuleTypeEnum'
+PRINT N'Adding new ServiceLockTypeEnum, SyncDataAccess'
+GO
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),300,'SyncDataAccess','Synchronize Data Access','This service periodically synchronizes the deletion status of Authority Groups on the Administrative Services with Data Access granted to studies on the ImageServer.')
+GO
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+PRINT N'Adding new ServerRuleTypeEnum, DataAccess'
 GO
 INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
@@ -25,7 +38,7 @@ GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
 
-PRINT N'Adding DataAccessGroup'
+PRINT N'Adding Table DataAccessGroup'
 
 CREATE TABLE dbo.DataAccessGroup
 	(
@@ -54,7 +67,8 @@ CREATE NONCLUSTERED INDEX IX_DataAccessGroup_AuthorityGroupOID ON dbo.DataAccess
 GO
 ALTER TABLE dbo.DataAccessGroup SET (LOCK_ESCALATION = TABLE)
 GO
-PRINT N'Adding StudyDataAccess'
+
+PRINT N'Adding Table StudyDataAccess'
 GO
 CREATE TABLE dbo.StudyDataAccess
 	(

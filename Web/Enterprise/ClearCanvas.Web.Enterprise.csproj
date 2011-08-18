@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\AuthorityManagement.cs" />
+    <Compile Include="Admin\AuthorityRead.cs" />
     <Compile Include="Admin\UserManagement.cs" />
     <Compile Include="Authentication\CustomIdentity.cs" />
     <Compile Include="Authentication\CustomPrincipal.cs" />
