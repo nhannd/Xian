@@ -357,6 +357,7 @@
     <Compile Include="Iod\SeriesReferenceDictionary.cs" />
     <Compile Include="Iod\ShutterShape.cs" />
     <Compile Include="Iod\StandardPaletteColorLuts.cs" />
+    <Compile Include="Iod\Tests\PatientDirectionTests.cs" />
     <Compile Include="Iod\VoiDataLut.cs" />
     <Compile Include="Iod\PatientIdentityRemoved.cs" />
     <Compile Include="Iod\PatientsSex.cs" />
