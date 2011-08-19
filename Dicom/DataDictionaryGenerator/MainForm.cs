@@ -316,6 +316,8 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             gen.WriteTagDictionary("DicomTagDictionary.cs");
 
             gen.WriteSqlInsert("sopClassInsert.sql");
+
+            gen.WriteTagsText("dtags.txt");
         }
     }
 }
