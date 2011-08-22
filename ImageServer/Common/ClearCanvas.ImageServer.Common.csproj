@@ -114,6 +114,7 @@
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="InProcessImageServerServiceProvider.cs" />
+    <Compile Include="ServerAuditHelper.cs" />
     <Compile Include="ServiceModel\IFilesystemService.cs" />
     <Compile Include="ServiceModel\IProductVerificationService.cs" />
     <Compile Include="ServiceModel\ProductVerificationResponse.cs" />

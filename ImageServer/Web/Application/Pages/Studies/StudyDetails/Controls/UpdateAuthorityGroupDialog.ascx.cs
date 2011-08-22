@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 }
 
                 StudyDataAccessController controller = new StudyDataAccessController();
-                controller.UpdateStudyAuthorityGroups(Study.TheStudyStorage.Key, assignedGroups);
+                controller.UpdateStudyAuthorityGroups(Study.StudyInstanceUid, Study.AccessionNumber, Study.TheStudyStorage.Key, assignedGroups);
                 
                 OnAuthorityGroupsUpdated();
                 

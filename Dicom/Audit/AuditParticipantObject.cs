@@ -101,9 +101,9 @@ namespace ClearCanvas.Dicom.Audit
 		protected string _participantObjectId = null;
 		protected string _participantObjectName = null;
 		protected byte[] _participantObjectQuery = null;
-		protected TypeValuePairType _participantObjectDetail = null;
+        protected ParticipantObjectDetail _participantObjectDetail = null;
 		protected string _participantObjectDetailString = null;
-		protected CodedValueType _typeCodeCodedValue;
+        protected ParticipantObjectIDTypeCode _typeCodeCodedValue;
 		protected Dictionary<string,AuditSopClass> _sopClassList = new Dictionary<string, AuditSopClass>();
 		protected string _accession = null;
 		protected string _mppsUid = null;
@@ -159,7 +159,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// Coded value representing the participating object type being audited.  Can be
 		/// used instead of 
 		/// </summary>
-		public CodedValueType ParticipantObjectIdTypeCodedValue
+		public ParticipantObjectIDTypeCode ParticipantObjectIdTypeCodedValue
 		{
 			get { return _typeCodeCodedValue; }
 			set { _typeCodeCodedValue = value; }
@@ -209,7 +209,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// Used as defined in RFC 3881.  DICOM does not specify any additional use for this attribute.
 		/// Note: The value field is base64 encoded, making this attribute suitable for conveying binary data.
 		/// </remarks>
-		public TypeValuePairType ParticipantObjectDetail
+        public ParticipantObjectDetail ParticipantObjectDetail
 		{
 			get { return _participantObjectDetail; }
 			set { _participantObjectDetail = value; }
@@ -290,7 +290,7 @@ namespace ClearCanvas.Dicom.Audit
 		public AuditStudyParticipantObject(string studyInstanceUid)
 		{
 			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
-			ParticipantObjectIdTypeCodedValue = CodedValueType.StudyInstanceUID;
+			ParticipantObjectIdTypeCodedValue = ParticipantObjectIDTypeCode.StudyInstanceUID;
 			_participantObjectId = studyInstanceUid;
 		}
 
@@ -298,7 +298,7 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
 
-			ParticipantObjectIdTypeCodedValue = CodedValueType.StudyInstanceUID;
+            ParticipantObjectIdTypeCodedValue = ParticipantObjectIDTypeCode.StudyInstanceUID;
 			_participantObjectId = studyInstanceUid;
 			_accession = accession;
 		}
@@ -308,7 +308,7 @@ namespace ClearCanvas.Dicom.Audit
 			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
 			Platform.CheckForNullReference(mppsUid, "mppsUid");
 
-			ParticipantObjectIdTypeCodedValue = CodedValueType.StudyInstanceUID;
+            ParticipantObjectIdTypeCodedValue = ParticipantObjectIDTypeCode.StudyInstanceUID;
 			_participantObjectId = studyInstanceUid;
 			_accession = accession;
 			_mppsUid = mppsUid;
@@ -360,6 +360,16 @@ namespace ClearCanvas.Dicom.Audit
 			_participantObjectId = participantObjectId;
 			_participantObjectName = participantObjectName;
 		}
+
+        public AuditSecurityAlertParticipantObject(ParticipantObjectTypeCodeRoleEnum role, ParticipantObjectIDTypeCode objectIdType, string participantObjectId)
+        {
+            Platform.CheckForNullReference(participantObjectId, "participantObjectId");
+
+            ParticipantObjectTypeCode = ParticipantObjectTypeCodeEnum.SystemObject;
+            ParticipantObjectTypeCodeRole = role;
+            ParticipantObjectIdTypeCodedValue = objectIdType;
+            _participantObjectId = participantObjectId;
+        }
 	}
 
 	public class AuditQueryMessageParticipantObject : AuditParticipantObject
@@ -368,9 +378,9 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			ParticipantObjectTypeCode = ParticipantObjectTypeCodeEnum.SystemObject;
 			ParticipantObjectTypeCodeRole = ParticipantObjectTypeCodeRoleEnum.Report;
-			ParticipantObjectIdTypeCodedValue = CodedValueType.ClassUID;
+            ParticipantObjectIdTypeCodedValue = ParticipantObjectIDTypeCode.ClassUID;
 			ParticipantObjectId = sopClassUid;
-			ParticipantObjectDetail = new TypeValuePairType()
+			ParticipantObjectDetail = new ParticipantObjectDetail()
 			                          	{
 			                          		type = "TransferSyntax",
 			                          		value = System.Text.Encoding.ASCII.GetBytes(TransferSyntax.ExplicitVrLittleEndianUid)

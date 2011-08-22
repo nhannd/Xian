@@ -84,19 +84,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     {
                         try
                         {
-
                             StudyDataAccessController controller = new StudyDataAccessController();                            
-                            controller.AddStudyAuthorityGroups(study.TheStudyStorage.Key, assignedGroups);
-
-                            // Audit log?
-              
+                            controller.AddStudyAuthorityGroups(study.StudyInstanceUid, study.AccessionNumber, study.TheStudyStorage.Key, assignedGroups);
                         }
                         catch (Exception ex)
                         {
                             Platform.Log(LogLevel.Error, ex, "AddClicked failed: Unable to add authority groups to studies");
                             throw;
                         }
-                    }
+                    }           
                 }
                 finally
                 {
@@ -107,7 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 EnsureDialogVisible();
             }
-        }       
+        }
 
         protected void CancelButton_Clicked(object sender, ImageClickEventArgs e)
         {

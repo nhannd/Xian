@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 
                 UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(
                     ServerPlatform.AuditSource,
-                    EventIdentificationTypeEventOutcomeIndicator.Success,
+                    EventIdentificationContentsEventOutcomeIndicator.Success,
                     UserAuthenticationEventType.Logout);
                 audit.AddUserParticipant(new AuditPersonActiveParticipant(
                                              session.Credentials.UserName,

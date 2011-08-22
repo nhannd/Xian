@@ -351,8 +351,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             var helper =
                 new DicomInstancesAccessedAuditHelper(ServerPlatform.AuditSource,
-                                                      EventIdentificationTypeEventOutcomeIndicator.Success,
-                                                      EventIdentificationTypeEventActionCode.U);
+                                                      EventIdentificationContentsEventOutcomeIndicator.Success,
+                                                      EventIdentificationContentsEventActionCode.U);
             helper.AddUser(new AuditPersonActiveParticipant(
                                SessionManager.Current.Credentials.UserName,
                                null,

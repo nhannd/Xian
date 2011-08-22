@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -37,9 +38,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         //private readonly StudyDataAccessAdaptor _adaptor = new StudyDataAccessAdaptor();
 
 
-        private static Dictionary<ServerEntityKey,AuthorityGroupSummary> LoadAuthorityGroups()
+        private static Dictionary<ServerEntityKey,AuthorityGroupSummary> LoadAuthorityGroups(out List<AuthorityGroupSummary> otherSummaries )
         {
             Dictionary<ServerEntityKey, AuthorityGroupSummary> dic = new Dictionary<ServerEntityKey, AuthorityGroupSummary>();
+            var summaries = new List<AuthorityGroupSummary>();
 
             using (AuthorityManagement service = new AuthorityManagement())
             {
@@ -54,8 +56,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                                                         {
                                                             dic.Add(accessGroup.Key, group);    
                                                         }
+                                                        else
+                                                        {
+                                                            summaries.Add(group);
+                                                        }
                                                     });
             }
+
+            otherSummaries = summaries;
 
             return dic;
         }
@@ -101,13 +109,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public IList<StudyDataAccessSummary> LoadStudyDataAccess(ServerEntityKey studyStorageKey)
         {
+            List<AuthorityGroupSummary> nonAddedAuthorityGroups;
+            Dictionary<ServerEntityKey, AuthorityGroupSummary> dictionary = LoadAuthorityGroups(out nonAddedAuthorityGroups);
+            return LoadStudyDataAccess(dictionary, studyStorageKey);
+        }
+
+        public IList<StudyDataAccessSummary> LoadStudyDataAccess(Dictionary<ServerEntityKey, AuthorityGroupSummary> dictionary, ServerEntityKey studyStorageKey)
+        {
             List<StudyDataAccessSummary> summaryList = new List<StudyDataAccessSummary>();
 
             StudyDataAccessSelectCriteria select = new StudyDataAccessSelectCriteria();
             select.StudyStorageKey.EqualTo(studyStorageKey);
-            IStudyDataAccessEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDataAccessEntityBroker>();
-
-            Dictionary<ServerEntityKey, AuthorityGroupSummary> dictionary = LoadAuthorityGroups();
+            IStudyDataAccessEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDataAccessEntityBroker>();             
 
             broker.Find(select, delegate(StudyDataAccess dataAccess)
                                               {
@@ -127,10 +140,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return summaryList;              
         }
 
-        public bool UpdateStudyAuthorityGroups(ServerEntityKey studyStorageKey, IList<string> assignedGroupOids)
+        public bool UpdateStudyAuthorityGroups(string studyInstanceUid, string accessionNumber, ServerEntityKey studyStorageKey, IList<string> assignedGroupOids)
         {
-            IList<StudyDataAccessSummary> assignedList = LoadStudyDataAccess(studyStorageKey);
+            List<AuthorityGroupSummary> nonAddedAuthorityGroups;
+            Dictionary<ServerEntityKey,AuthorityGroupSummary> dic = LoadAuthorityGroups(out nonAddedAuthorityGroups);
+            IList<StudyDataAccessSummary> assignedList = LoadStudyDataAccess(dic, studyStorageKey);
 
+            List<string> groupList = new List<string>();
             foreach (StudyDataAccessSummary summary in assignedList)
             {
                 bool found = false;
@@ -150,8 +166,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         broker.Delete(summary.StudyDataAccess.Key);
                         update.Commit();
                     }
+
+                    groupList.Add(summary.Description);
                 }
             }
+
+            if (groupList.Count > 0)
+            {
+                ServerAuditHelper.RemoveAuthorityGroupAccess(studyInstanceUid, accessionNumber, groupList);
+                groupList.Clear();
+            }
+
             foreach (var oid in assignedGroupOids)
             {
                 bool found = false;
@@ -179,15 +204,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         insert.Insert(insertColumns);
                         updateContext.Commit();
                     }
+
+                    foreach (AuthorityGroupSummary group in nonAddedAuthorityGroups)
+                    {
+                        if (group.AuthorityGroupRef.ToString(false,false).Equals(accessGroup.AuthorityGroupOID.Key.ToString()))
+                            groupList.Add(group.Name);
+                    }
                 }
             }
+
+            if (groupList.Count > 0)
+                ServerAuditHelper.AddAuthorityGroupAccess(studyInstanceUid, accessionNumber, groupList);
+
             return true;
         }
 
-        public bool AddStudyAuthorityGroups(ServerEntityKey studyStorageKey, IList<string> assignedGroupOids)
+        public bool AddStudyAuthorityGroups(string studyInstanceUid, string accessionNumber, ServerEntityKey studyStorageKey, IList<string> assignedGroupOids)
         {
-            IList<StudyDataAccessSummary> assignedList = LoadStudyDataAccess(studyStorageKey);
+            List<AuthorityGroupSummary> nonAddedSummaries;
+            Dictionary<ServerEntityKey, AuthorityGroupSummary> dic = LoadAuthorityGroups(out nonAddedSummaries);
+            IList<StudyDataAccessSummary> assignedList = LoadStudyDataAccess(dic, studyStorageKey);
 
+            List<string> assignedGroups = new List<string>();
             foreach (var oid in assignedGroupOids)
             {
                 bool found = false;
@@ -215,8 +253,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         insert.Insert(insertColumns);
                         updateContext.Commit();
                     }
+
+                      AuthorityGroupSummary groupSummary;
+                      if (dic.TryGetValue(accessGroup.Key, out groupSummary))
+                      {
+                          assignedGroups.Add(groupSummary.Name);
+                      }
                 }
             }
+            if (assignedGroups.Count > 0)
+                ServerAuditHelper.AddAuthorityGroupAccess(studyInstanceUid, accessionNumber, assignedGroups);
             return true;
         }
     }

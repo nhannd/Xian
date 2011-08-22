@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 	/// Represents the action taken by the application entity upon receiving a transfer of DICOM instances.
 	/// </summary>
 	/// <remarks>
-	/// In actuality, each <see cref="EventReceiptAction"/> has a 1-to-1 mapping with a <see cref="EventIdentificationTypeEventActionCode"/>,
+	/// In actuality, each <see cref="EventReceiptAction"/> has a 1-to-1 mapping with a <see cref="EventIdentificationContentsEventActionCode"/>,
 	/// but <see cref="AuditHelper"/> uses <see cref="EventReceiptAction"/> to abstract away any requirement for knowledge of the
 	/// underlying audit types defined in the DICOM toolkit.
 	/// </remarks>
@@ -26,31 +26,31 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <summary>
 		/// The device does not already have these instances, and hence created new ones.
 		/// </summary>
-		public static readonly EventReceiptAction CreateNew = new EventReceiptAction(EventIdentificationTypeEventActionCode.C);
+		public static readonly EventReceiptAction CreateNew = new EventReceiptAction(EventIdentificationContentsEventActionCode.C);
 
 		/// <summary>
 		/// The device already has these instances, has determined them to be no different from the arriving ones, and hence did not perform any action.
 		/// </summary>
-		public static readonly EventReceiptAction KeepExisting = new EventReceiptAction(EventIdentificationTypeEventActionCode.R);
+		public static readonly EventReceiptAction KeepExisting = new EventReceiptAction(EventIdentificationContentsEventActionCode.R);
 
 		/// <summary>
 		/// The device already has these instances, has determined them to be different from the arriving ones, and hence updated the existing ones.
 		/// </summary>
-		public static readonly EventReceiptAction UpdateExisting = new EventReceiptAction(EventIdentificationTypeEventActionCode.U);
+		public static readonly EventReceiptAction UpdateExisting = new EventReceiptAction(EventIdentificationContentsEventActionCode.U);
 
 		/// <summary>
 		/// The action that the receiving device took is unknown.
 		/// </summary>
-		public static readonly EventReceiptAction ActionUnknown = new EventReceiptAction(EventIdentificationTypeEventActionCode.E);
+		public static readonly EventReceiptAction ActionUnknown = new EventReceiptAction(EventIdentificationContentsEventActionCode.E);
 
-		private readonly EventIdentificationTypeEventActionCode _action;
+		private readonly EventIdentificationContentsEventActionCode _action;
 
-		private EventReceiptAction(EventIdentificationTypeEventActionCode action)
+		private EventReceiptAction(EventIdentificationContentsEventActionCode action)
 		{
 			_action = action;
 		}
 
-		public static implicit operator EventIdentificationTypeEventActionCode(EventReceiptAction operand)
+		public static implicit operator EventIdentificationContentsEventActionCode(EventReceiptAction operand)
 		{
 			return operand._action;
 		}

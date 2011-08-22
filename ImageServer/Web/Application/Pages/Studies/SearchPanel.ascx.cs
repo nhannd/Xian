@@ -362,7 +362,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 					sb.Append(';');
 			}
 
-        	QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationTypeEventOutcomeIndicator.Success,
+        	QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationContentsEventOutcomeIndicator.Success,
 				new AuditPersonActiveParticipant(SessionManager.Current.Credentials.UserName,
 											 null,
 											 SessionManager.Current.Credentials.DisplayName),

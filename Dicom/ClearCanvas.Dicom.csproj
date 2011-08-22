@@ -198,9 +198,6 @@
     <Compile Include="Audit\DicomInstancesTransferredAuditHelper.cs" />
     <Compile Include="Audit\DicomStudyDeletedAuditHelper.cs" />
     <Compile Include="Audit\NetworkEntryAuditHelper.cs" />
-    <Compile Include="Audit\OrderRecordAuditHelper.cs" />
-    <Compile Include="Audit\PatientRecordAuditHelper.cs" />
-    <Compile Include="Audit\ProcedureRecordAuditHelper.cs" />
     <Compile Include="Audit\QueryAuditHelper.cs" />
     <Compile Include="Audit\SecurityAlertAuditHelper.cs" />
     <Compile Include="Audit\Test\AuditTest.cs" />
