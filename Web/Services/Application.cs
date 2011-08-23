@@ -620,7 +620,7 @@ namespace ClearCanvas.Web.Services
 		public static Application Find(Guid identifier)
 		{
             var application = Cache.Instance.Find(identifier);
-            if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
+            if (application != null && String.IsNullOrEmpty(Thread.CurrentThread.Name))
             {
                 Thread.CurrentThread.Name = String.Format("{0} [{1}]", application.InstanceName, Thread.CurrentThread.ManagedThreadId);
             }
