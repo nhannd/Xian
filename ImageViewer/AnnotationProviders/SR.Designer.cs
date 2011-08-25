@@ -1662,6 +1662,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
             }
         }
         
+         /// <summary>
+        ///   Looks up a localized string similar to {0} ({1}).
+        /// </summary>
+        public static string FormatCalibrationDetails {
+            get {
+                return ResourceManager.GetString("FormatCalibrationDetails", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to {0}°.
         /// </summary>
@@ -1915,6 +1924,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image Calibration.
+        /// </summary>
+        public static string Presentation_ImageCalibration_DisplayName {
+            get {
+                return ResourceManager.GetString("Presentation_ImageCalibration_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calibration.
+        /// </summary>
+        public static string Presentation_ImageCalibration_Label {
+            get {
+                return ResourceManager.GetString("Presentation_ImageCalibration_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zoom.
         /// </summary>
         public static string Presentation_Zoom_DisplayName {
@@ -1938,6 +1965,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         public static string Presentation_Zoom_Label {
             get {
                 return ResourceManager.GetString("Presentation_Zoom_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actual.
+        /// </summary>
+        public static string ValueActualSpacingCalibration {
+            get {
+                return ResourceManager.GetString("ValueActualSpacingCalibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detector.
+        /// </summary>
+        public static string ValueDetectorSpacingCalibration {
+            get {
+                return ResourceManager.GetString("ValueDetectorSpacingCalibration", resourceCulture);
             }
         }
         
@@ -1996,11 +2041,47 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fiducial.
+        /// </summary>
+        public static string ValueFiducialCalibration {
+            get {
+                return ResourceManager.GetString("ValueFiducialCalibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Geometry.
+        /// </summary>
+        public static string ValueGeometricCalibration {
+            get {
+                return ResourceManager.GetString("ValueGeometricCalibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LOSSY.
         /// </summary>
         public static string ValueLossy {
             get {
                 return ResourceManager.GetString("ValueLossy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Magnification.
+        /// </summary>
+        public static string ValueMagnifiedCalibration {
+            get {
+                return ResourceManager.GetString("ValueMagnifiedCalibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User.
+        /// </summary>
+        public static string ValueManualCalibration {
+            get {
+                return ResourceManager.GetString("ValueManualCalibration", resourceCulture);
             }
         }
         
@@ -2014,11 +2095,29 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string ValueNoCalibration {
+            get {
+                return ResourceManager.GetString("ValueNoCalibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to N/A.
         /// </summary>
         public static string ValueNotApplicable {
             get {
                 return ResourceManager.GetString("ValueNotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        public static string ValueUnknownCalibration {
+            get {
+                return ResourceManager.GetString("ValueUnknownCalibration", resourceCulture);
             }
         }
     }

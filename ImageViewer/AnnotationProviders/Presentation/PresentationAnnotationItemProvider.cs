@@ -34,7 +34,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
 
 			_annotationItems.Add(new DFOVAnnotationItem());
-			_annotationItems.Add(new DisplaySetDescriptionAnnotationItem());
+            _annotationItems.Add(new ImageCalibrationAnnotationItem());
+            _annotationItems.Add(new DisplaySetDescriptionAnnotationItem());
 			_annotationItems.Add(new DisplaySetNumberAnnotationItem());
 		}
 
