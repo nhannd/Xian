@@ -86,6 +86,11 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             return new GetAuthorizationsResponse(authorities);
         }
 
+        public ResetPasswordResponse ResetPassword(ResetPasswordRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

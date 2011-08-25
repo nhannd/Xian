@@ -133,6 +133,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email Address.
+        /// </summary>
+        internal static string AdminUsers_AddEditDialog_EmailAddress {
+            get {
+                return ResourceManager.GetString("AdminUsers_AddEditDialog_EmailAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Authority Groups.
         /// </summary>
         internal static string AdminUsers_AddEditDialog_Groups {

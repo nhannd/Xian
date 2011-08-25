@@ -56,10 +56,23 @@ function ValidationUsernameParams()
                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1" runat="server"
                                                         ControlToValidate="DisplayName" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditUserValidationGroup"
                                                         InvalidInputIndicatorID="UserDisplayNameHelp" Text="<%$Resources: InputValidation, ThisFieldIsRequired %>" Display="None"
-                                                        RequiredWhenChecked="False"/>
+                                                        RequiredWhenChecked="False"/>                                                       
                 </asp:TableCell>
             </asp:TableRow>
-                        
+                 
+            <asp:TableRow>
+                <asp:TableCell CssClass="DialogTextBoxLabel" Wrap="false"><asp:Label runat="server" Text="<%$Resources: InputLabels, AdminUsers_AddEditDialog_EmailAddress %>" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell><asp:TextBox runat="server" ID="EmailAddressId" CssClass="DialogTextBox"></asp:TextBox></asp:TableCell>
+                <asp:TableCell HorizontalAlign="left" width="100%">
+                    <ccAsp:InvalidInputIndicator ID="UserEmailAddressHelp" runat="server" SkinID="InvalidInputIndicator" />
+                    <ccValidator:RegularExpressionFieldValidator ID="UserEmailAddressValidator"
+                        runat="server" ControlToValidate="EmailAddressId" InvalidInputCSS="DialogTextBoxInvalidInput"
+                        IgnoreEmptyValue="true" ValidationGroup="AddEditUserValidationGroup"
+                        InvalidInputIndicatorID="UserEmailAddressHelp" ValidationExpression="^[\w-]+(\.[\w-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*?\.[a-z]{2,6}|(\d{1,3}\.){3}\d{1,3})(:\d{4})?$"
+                        Text="<%$Resources: InputValidation,EmailAddressInvalid %>"
+                        Display="None" />
+                </asp:TableCell>
+            </asp:TableRow>
+                   
             <asp:TableRow><asp:TableCell VerticalAlign="top" CssClass="DialogTextBoxLabel"><asp:Label ID="Label3" runat="server" Text="<%$Resources: InputLabels, AdminUsers_AddEditDialog_Groups %>" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell ColumnSpan="2">
             <div  class="DialogCheckBoxList">
             <asp:CheckBoxList runat="server" ID="UserGroupListBox" />

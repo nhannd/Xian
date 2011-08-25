@@ -103,10 +103,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             if (Page.IsPostBack == false)
             {
-                using (AuthorityManagement service = new AuthorityManagement())
+                using (var service = new AuthorityManagement())
                  {
                     IList<AuthorityGroupSummary> list = service.ListAllAuthorityGroups();
-                    IList<ListItem> items = CollectionUtils.Map<AuthorityGroupSummary, ListItem>(
+                    IList<ListItem> items = CollectionUtils.Map(
                         list,
                         delegate(AuthorityGroupSummary summary)
                         {
@@ -115,7 +115,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                         );
                     UserGroupListBox.Items.AddRange(CollectionUtils.ToArray(items));
                 };
-
             }
             else
             {
@@ -186,6 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
 
             User.DisplayName = DisplayName.Text;
+            User.EmailAddress = EmailAddressId.Text;
 
             User.UserGroups.Clear();
             foreach (ListItem item in UserGroupListBox.Items)
@@ -195,8 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                     User.UserGroups.Add(new UserGroup(
                         item.Value, item.Text));
                 }
-            } 
-  
+            }
         }
 
         #endregion Protected methods
@@ -218,6 +217,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 OriginalUserLoginId.Value = User.UserName;
                 DisplayName.Text = User.DisplayName;
                 UserEnabledCheckbox.Checked = User.Enabled;
+                EmailAddressId.Text = User.EmailAddress;
 
                 List<UserGroup> groups = User.UserGroups;
 
@@ -245,7 +245,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 UserLoginId.Text = string.Empty;
                 OriginalUserLoginId.Value = string.Empty;
                 DisplayName.Text = string.Empty;
-                UserEnabledCheckbox.Checked = false;
+                EmailAddressId.Text = string.Empty; 
+                UserEnabledCheckbox.Checked = false;                
                 UserGroupListBox.SelectedIndex = -1;
             }
         }

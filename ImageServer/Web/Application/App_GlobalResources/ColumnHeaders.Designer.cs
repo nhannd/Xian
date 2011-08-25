@@ -997,6 +997,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email Address.
+        /// </summary>
+        internal static string UserEmailAddress {
+            get {
+                return ResourceManager.GetString("UserEmailAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Authority Groups.
         /// </summary>
         internal static string UserGroups {

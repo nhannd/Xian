@@ -159,6 +159,9 @@
   <data name="EditStudyDialog_MissingReason" xml:space="preserve">
     <value>You must specify the reason for editing the studies for future auditing purposes.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>The email address is invalidly formatted.</value>
+  </data>
   <data name="InvalidAETitle" xml:space="preserve">
     <value>Invalid AE Title</value>
   </data>

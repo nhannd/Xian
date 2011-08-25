@@ -294,4 +294,7 @@
   <data name="AdminUserGroups_GroupDescription" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="AdminUsers_AddEditDialog_EmailAddress" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
 </root>

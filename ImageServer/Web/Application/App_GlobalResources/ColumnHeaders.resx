@@ -458,4 +458,7 @@
   <data name="ServerRuleType" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="UserEmailAddress" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
 </root>

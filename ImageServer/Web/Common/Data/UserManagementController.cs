@@ -93,6 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                                                 {
                                                     UserName = user.UserName,
                                                     DisplayName = user.DisplayName,
+                                                    EmailAddress = user.EmailAddress,
                                                     Enabled = user.Enabled
                                                 };
 

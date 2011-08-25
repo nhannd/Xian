@@ -187,6 +187,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The email address is invalidly formatted..
+        /// </summary>
+        internal static string EmailAddressInvalid {
+            get {
+                return ResourceManager.GetString("EmailAddressInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid AE Title.
         /// </summary>
         internal static string InvalidAETitle {
