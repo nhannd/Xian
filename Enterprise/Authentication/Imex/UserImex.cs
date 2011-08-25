@@ -36,6 +36,9 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
             public string DisplayName;
 
             [DataMember]
+            public string EmailAddress;
+
+            [DataMember]
             public DateTime? ValidFrom;
 
             [DataMember]
@@ -80,7 +83,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 
         protected override void Import(UserData data, IUpdateContext context)
         {
-            UserInfo info = new UserInfo(data.UserName, data.DisplayName, data.ValidFrom, data.ValidUntil);
+            UserInfo info = new UserInfo(data.UserName, data.DisplayName, data.EmailAddress, data.ValidFrom, data.ValidUntil);
             User user = LoadOrCreateUser(info, context);
             user.Enabled = data.Enabled;
 

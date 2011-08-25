@@ -134,6 +134,8 @@
     <Compile Include="Authentication\GetAuthorizationsResponse.cs" />
     <Compile Include="Authentication\InitiateSessionRequest.cs" />
     <Compile Include="Authentication\InitiateSessionResponse.cs" />
+    <Compile Include="Authentication\ResetPasswordRequest.cs" />
+    <Compile Include="Authentication\ResetPasswordResponse.cs" />
     <Compile Include="Authentication\TerminateSessionRequest.cs" />
     <Compile Include="Authentication\TerminateSessionResponse.cs" />
     <Compile Include="Authentication\ValidateSessionRequest.cs" />

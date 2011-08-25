@@ -71,5 +71,8 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
         [DataMember]
         public DateTime? PasswordExpiryTime;
 
+        [DataMember]
+        public string EmailAddress;
+
     }
 }

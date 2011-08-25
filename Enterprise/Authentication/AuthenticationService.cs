@@ -100,6 +100,35 @@ namespace ClearCanvas.Enterprise.Authentication
 			return new ChangePasswordResponse();
 		}
 
+        [UpdateOperation(ChangeSetAuditable = false)]
+        public ResetPasswordResponse ResetPassword(ResetPasswordRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.UserName, "UserName");
+
+            var now = Platform.Time;
+            var user = GetUser(request.UserName);
+
+            // ensure user found, account is active and the current password is correct
+            if (user == null || !user.IsActive(now) || string.IsNullOrEmpty(user.EmailAddress))
+            {
+                // no such user, account not active, or invalid password
+                // the error message is deliberately vague
+                throw new UserAccessDeniedException();
+            }
+
+            // TODO Password generation algorithm!
+            string newPassword = "123ABC";
+
+            var expiryTime = Platform.Time;
+
+            // change the password
+            user.ChangePassword(newPassword, expiryTime);
+            
+            // TODO Send email!
+            return new ResetPasswordResponse(user.EmailAddress);
+        }
+
 		[UpdateOperation(ChangeSetAuditable = false)]
 		[ResponseCaching("GetSessionTokenCacheDirective")]
 		public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
