@@ -22,7 +22,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
     {
         internal UserSummary GetUserSummary(User user)
         {
-            return new UserSummary(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
+            return new UserSummary(user.UserName, user.DisplayName, user.EmailAddress, user.CreationTime, user.ValidFrom, user.ValidUntil,
                                    user.LastLoginTime, user.Password.ExpiryTime, user.Enabled);
         }
 
@@ -34,7 +34,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
         		user.AuthorityGroups,
         		(AuthorityGroup group) => assembler.CreateAuthorityGroupSummary(group));
 				
-            return new UserDetail(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
+            return new UserDetail(user.UserName, user.DisplayName, user.EmailAddress, user.CreationTime, user.ValidFrom, user.ValidUntil,
                 user.LastLoginTime, user.Enabled, user.Password.ExpiryTime, groups);
         }
 
@@ -47,6 +47,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
             user.ValidUntil = detail.ValidUntil;
             user.Enabled = detail.Enabled;
             user.Password.ExpiryTime = detail.PasswordExpiryTime;
+            user.EmailAddress = detail.EmailAddress;
 
             // process authority groups
 			List<AuthorityGroup> authGroups = CollectionUtils.Map(

@@ -138,6 +138,9 @@
   <data name="ColumnAuthorityTokenName" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="ColumnEmailAddress" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
   <data name="ColumnUser" xml:space="preserve">
     <value>User</value>
   </data>

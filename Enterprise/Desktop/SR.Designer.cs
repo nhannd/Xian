@@ -124,6 +124,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email Address.
+        /// </summary>
+        public static string ColumnEmailAddress {
+            get {
+                return ResourceManager.GetString("ColumnEmailAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         public static string ColumnUser {
