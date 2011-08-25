@@ -96,6 +96,12 @@
     <Compile Include="Imex\UserImex.cs" />
     <Compile Include="Imex\UserImporter.cs" />
     <Compile Include="Password.cs" />
+    <Compile Include="PasswordResetEmailSettings.cs" />
+    <Compile Include="PasswordResetEmailSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PasswordResetEmailSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionStatistics.cs" />
     <Compile Include="Setup\SetupApplication.cs" />
@@ -138,6 +144,10 @@
     <None Include="AuthenticationSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>AuthenticationSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PasswordResetEmailSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PasswordResetEmailSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

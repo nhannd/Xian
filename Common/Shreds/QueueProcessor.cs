@@ -123,6 +123,22 @@ namespace ClearCanvas.Common.Shreds
 		protected abstract IList<TItem> GetNextBatch(int batchSize);
 
 		/// <summary>
+		/// Claims the item for processing.
+		/// </summary>
+		/// <remarks>
+		/// This method is provided to enable the possibility of clustered queue processing - that is,
+		/// having multiple processes operate on the same queue concurrently.  In this case,
+		/// a process needs to claim a given item to ensure that no other process operates on it.
+		/// The default implementation of this method does nothing and returns true.
+		/// </remarks>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		protected virtual bool ClaimItem(TItem item)
+		{
+			return true;
+		}
+
+		/// <summary>
 		/// Called to process a queue item.
 		/// </summary>
 		/// <param name="item"></param>
@@ -177,8 +193,12 @@ namespace ClearCanvas.Common.Shreds
 							if (StopRequested)
 								break;
 
-							// process the item
-							ProcessItem(item);
+							// attempt to claim the item for processing
+							if(ClaimItem(item))
+							{
+								// process the item
+								ProcessItem(item);
+							}
 
 							// Suspend if requested
 							// (unprocessed items will remain in queue and be picked up next time)

@@ -127,10 +127,15 @@ namespace ClearCanvas.Enterprise.Authentication
             user.ChangePassword(newPassword, expiryTime);
 
 			// send email
-			// todo: could probably put a bit more abstract around this
-        	var mailItem = new MailQueueItem(user.EmailAddress, "reset password", newPassword, false);
-			PersistenceContext.Lock(mailItem, DirtyState.New);
-            
+        	var settings = new PasswordResetEmailSettings();
+			var mail = new OutgoingMailMessage(
+				settings.FromAddress,
+				user.EmailAddress,
+				settings.SubjectTemplate.Replace("$USER", user.UserName),
+				settings.BodyTemplate.Replace("$USER", user.UserName).Replace("$PASSWORD", newPassword),
+				false);
+            mail.Enqueue();
+
             return new ResetPasswordResponse(user.EmailAddress);
         }
 
