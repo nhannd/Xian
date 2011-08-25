@@ -148,6 +148,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="TaskQueueItemStatusEnumHbm.cs" />
     <Compile Include="UniqueConstraintValidationBroker.cs" />
     <Compile Include="UpdateContext.cs" />
     <Compile Include="UpdateContextInterceptor.cs" />
@@ -183,6 +184,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Ddl\AdditionalIndexProcessor.dbi.xml" />
+    <EmbeddedResource Include="Mappings\MailQueueItem.hbm.xml" />
+    <EmbeddedResource Include="Mappings\TaskQueueItem.hbm.xml" />
+    <EmbeddedResource Include="Mappings\TaskQueueItemStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PersistentStoreVersion.hbm.xml" />
     <EmbeddedResource Include="Mappings\AuditLogEntry.dbi.xml" />
     <EmbeddedResource Include="Mappings\ExceptionLogEntry.hbm.xml" />

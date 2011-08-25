@@ -17,6 +17,7 @@ using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core.Mail;
 
 namespace ClearCanvas.Enterprise.Authentication
 {
@@ -124,8 +125,12 @@ namespace ClearCanvas.Enterprise.Authentication
 
             // change the password
             user.ChangePassword(newPassword, expiryTime);
+
+			// send email
+			// todo: could probably put a bit more abstract around this
+        	var mailItem = new MailQueueItem(user.EmailAddress, "reset password", newPassword, false);
+			PersistenceContext.Lock(mailItem, DirtyState.New);
             
-            // TODO Send email!
             return new ResetPasswordResponse(user.EmailAddress);
         }
 
