@@ -250,6 +250,7 @@
     <Compile Include="Iod\Iods\SeriesQueryIod.cs" />
     <Compile Include="Iod\Iods\StudyQueryIod.cs" />
     <Compile Include="Iod\MacAlgorithm.cs" />
+    <Compile Include="Iod\Macros\BasicPixelSpacingCalibrationMacro.cs" />
     <Compile Include="Iod\Macros\CompositeObjectReferenceMacro.cs" />
     <Compile Include="Iod\Macros\ContainerMacro.cs" />
     <Compile Include="Iod\Macros\ContentIdentificationMacro.cs" />
