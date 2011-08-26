@@ -166,13 +166,25 @@ namespace ClearCanvas.Web.Enterprise.Authentication
 
         public void ChangePassword(string userName, string oldPassword, string newPassword)
         {
-            ChangePasswordRequest request = new ChangePasswordRequest(userName, oldPassword, newPassword);
+            var request = new ChangePasswordRequest(userName, oldPassword, newPassword);
             Platform.GetService(
                 delegate(IAuthenticationService service)
                     {
                         service.ChangePassword(request);
                         Platform.Log(LogLevel.Info, "Password for {0} has been changed.", userName);
                     });
+        }
+
+        public void ResetPassword(string userName)
+        {
+            ResetPasswordResponse response;
+            var request = new ResetPasswordRequest(userName);
+            Platform.GetService(
+                delegate(IAuthenticationService service)
+                {
+                    response = service.ResetPassword(request);
+                    Platform.Log(LogLevel.Info, "Password for {0} has been reset and email sent to {1}.", userName, response.EmailAddress);
+                });
         }
 
         #region IDisposable Members
