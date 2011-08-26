@@ -11,6 +11,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using System.Web.Security;
 using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Authentication.Brokers;
@@ -118,8 +119,8 @@ namespace ClearCanvas.Enterprise.Authentication
                 throw new UserAccessDeniedException();
             }
 
-            // TODO Password generation algorithm!
-            string newPassword = "123ABC";
+            // Just use the .NET routine
+            string newPassword = Membership.GeneratePassword(8,1);
 
             var expiryTime = Platform.Time;
 
@@ -131,9 +132,9 @@ namespace ClearCanvas.Enterprise.Authentication
 			var mail = new OutgoingMailMessage(
 				settings.FromAddress,
 				user.EmailAddress,
-				settings.SubjectTemplate.Replace("$USER", user.UserName),
-				settings.BodyTemplate.Replace("$USER", user.UserName).Replace("$PASSWORD", newPassword),
-				false);
+				settings.SubjectTemplate.Replace("$USER", user.DisplayName),
+                settings.BodyTemplate.Replace("$USER", user.DisplayName).Replace("$PASSWORD", newPassword),
+				settings.BodyTemplate.ToLower().Contains("html"));
             mail.Enqueue();
 
             return new ResetPasswordResponse(user.EmailAddress);
