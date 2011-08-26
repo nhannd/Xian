@@ -38,5 +38,14 @@
     <Setting Name="AuthorityTokenCachingTimeToLiveSeconds" Description="Specifies authority token cache TTL in seconds.  Authority token changes may not take effect until this time elapses." Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">180</Value>
     </Setting>
+    <Setting Name="PasswordResetEmailSubjectTemplate" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Your password has been reset</Value>
+    </Setting>
+    <Setting Name="PasswordResetEmailBodyTemplate" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Dear @username,\nYour new temporary password is @password.</Value>
+    </Setting>
+    <Setting Name="PasswordResetEmailFromAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">noreply@example.com</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

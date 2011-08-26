@@ -17,6 +17,7 @@ using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core.Mail;
 
 namespace ClearCanvas.Enterprise.Authentication
 {
@@ -124,8 +125,17 @@ namespace ClearCanvas.Enterprise.Authentication
 
             // change the password
             user.ChangePassword(newPassword, expiryTime);
-            
-            // TODO Send email!
+
+			// send email
+        	var settings = new PasswordResetEmailSettings();
+			var mail = new OutgoingMailMessage(
+				settings.FromAddress,
+				user.EmailAddress,
+				settings.SubjectTemplate.Replace("$USER", user.UserName),
+				settings.BodyTemplate.Replace("$USER", user.UserName).Replace("$PASSWORD", newPassword),
+				false);
+            mail.Enqueue();
+
             return new ResetPasswordResponse(user.EmailAddress);
         }
 
