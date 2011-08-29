@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Shreds;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -44,10 +43,10 @@ namespace ClearCanvas.Enterprise.Core
 		protected abstract IList<TItem> GetNextEntityBatch(int batchSize);
 
 		/// <summary>
-		/// Called to mark a queue item as being in process.
+		/// Called to mark a queue item as being claimed for processing.
 		/// </summary>
 		/// <param name="item"></param>
-		protected abstract void MarkItemInProcess(TItem item);
+		protected abstract void MarkItemClaimed(TItem item);
 
 		/// <summary>
 		/// Called to act on a queue item.
@@ -96,7 +95,7 @@ namespace ClearCanvas.Enterprise.Core
 
 		#region Override Methods
 
-		protected override IList<TItem> GetNextBatch(int batchSize)
+		protected sealed override IList<TItem> GetNextBatch(int batchSize)
 		{
 			using (var scope = new PersistenceScope(PersistenceContextType.Read))
 			{
@@ -120,7 +119,7 @@ namespace ClearCanvas.Enterprise.Core
 					context.Lock(item);
 
 					// mark item as being in process
-					MarkItemInProcess(item);
+					MarkItemClaimed(item);
 
 					// complete the transaction
 					scope.Complete();
@@ -135,7 +134,7 @@ namespace ClearCanvas.Enterprise.Core
 			}
 		}
 
-		protected override void ProcessItem(TItem item)
+		protected sealed override void ProcessItem(TItem item)
 		{
 			Exception error = null;
 			using (var scope = new PersistenceScope(PersistenceContextType.Update))
@@ -148,7 +147,7 @@ namespace ClearCanvas.Enterprise.Core
 
 				try
 				{
-					// take action base on item
+					// take action based on item
 					ActOnItem(item);
 
 					// ensure that the commit will ultimately succeed
@@ -168,7 +167,7 @@ namespace ClearCanvas.Enterprise.Core
 				}
 			}
 
-			// exceptions thrown upon exiting the using block are intentionally not caught here,
+			// exceptions thrown upon exiting the using block above are intentionally not caught here,
 			// allow them to be caught by the calling method
 
 			// post-processing
@@ -178,13 +177,13 @@ namespace ClearCanvas.Enterprise.Core
 			}
 			else
 			{
-				UpdateQueueItemOnError(item, error);
+				UpdateItemOnError(item, error);
 			}
 		}
 
 		#endregion
 
-		private void UpdateQueueItemOnError(TItem item, Exception error)
+		private void UpdateItemOnError(TItem item, Exception error)
 		{
 			// use a new scope to mark the item as failed, because we don't want to commit any changes made in the outer scope
 			using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
