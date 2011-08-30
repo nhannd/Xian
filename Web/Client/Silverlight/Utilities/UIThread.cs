@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -10,18 +10,9 @@
 #endregion
 
 using System;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Threading;
 
-namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
+namespace ClearCanvas.Web.Client.Silverlight.Utilities
 {
     public static class UIThread
     {

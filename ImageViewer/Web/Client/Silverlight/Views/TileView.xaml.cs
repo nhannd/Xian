@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                         WriteableBitmap bitmap = new WriteableBitmap((int)TileCanvas.ActualWidth, (int)TileCanvas.ActualHeight);
                         TileImage.Source = bitmap;
 #if DEBUG
-                        Logger.Write(String.Format("{0} T{1} : @@@@@@ tile image size {2}x{3}\n", Environment.TickCount, Thread.CurrentThread.ManagedThreadId, bitmap.PixelHeight, bitmap.PixelWidth));
+                        Platform.Log(LogLevel.Debug, "{0} T{1} : @@@@@@ tile image size {2}x{3}", Environment.TickCount, Thread.CurrentThread.ManagedThreadId, bitmap.PixelHeight, bitmap.PixelWidth);
 #endif
                     }
                 }

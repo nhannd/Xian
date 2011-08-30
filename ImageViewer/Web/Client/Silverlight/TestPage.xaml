@@ -13,11 +13,12 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:CCControls="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls" 
-    xmlns:SLControls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit" 
+    xmlns:SLControls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
+    xmlns:Views="clr-namespace:ClearCanvas.Web.Client.Silverlight.Views;assembly=ClearCanvas.Web.Client.Silverlight"
     mc:Ignorable="d" d:DesignWidth="1040" d:DesignHeight="480">
 
     <SLControls:DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <CCControls:DiagnosticPanel x:Name="DiagnosticPanel" Width="300"  Visibility="Collapsed"/>
+        <Views:LogPanel x:Name="DiagnosticPanel" Width="300"  Visibility="Collapsed"/>
         <Grid x:Name="LayoutRoot" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>

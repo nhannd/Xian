@@ -16,11 +16,11 @@ using System.ServiceModel;
 using System.Text;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 using System.Windows.Browser;
 using System.Windows.Controls;
-using System.Windows.Threading;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
+using ClearCanvas.Web.Client.Silverlight;
+using ClearCanvas.Web.Client.Silverlight.Utilities;
 using Message = ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message;
 using System.ServiceModel.Channels;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
@@ -58,8 +58,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 		private readonly object _sync = new object();
 		private ApplicationServiceClient _proxy;
 		private MessageQueue _queue;
-	    private Dispatcher _dispatcher;
-        private ApplicationContext _context;
+	    private readonly ApplicationContext _context;
         private StartApplicationRequest _startRequest;
         private bool _connectionOpened;
 
@@ -98,7 +97,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public ServerEventDispatcher(ApplicationContext context)
         {
             _context = context;
-            _dispatcher = Deployment.Current.Dispatcher;
         }
 
         public void Initialize(ApplicationStartupParameters appParameters)
@@ -255,7 +253,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                     if (HtmlPage.Document.DocumentUri.Scheme.Equals(Uri.UriSchemeHttp))
                     {
-                        var http = new HttpTransportBindingElement()
+                        var http = new HttpTransportBindingElement
                                        {
                                            MaxReceivedMessageSize = int.MaxValue,
                                            MaxBufferSize = int.MaxValue,
@@ -264,7 +262,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         _binding = new CustomBinding(binaryMessageEncoding, http);
                         return _binding;
                     }
-                    var https = new HttpsTransportBindingElement()
+                    var https = new HttpsTransportBindingElement
                                     {
                                         MaxReceivedMessageSize = int.MaxValue,
                                         MaxBufferSize = int.MaxValue,
@@ -389,11 +387,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     {
                         OnServerEventReceived(e.Result.EventSet);
                     }
-                }
-                
+                }                
             }
-            
-
 	    }
         
         //TODO (CR May 2010): see my comments at the top RE: separation of responsibilities.
@@ -463,19 +458,21 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 {
                     MessageSet msgset = _outboundQueue.Dequeue();
                     msgset.Tick = Environment.TickCount;
-                    msgset.Timestamp = DateTime.Now; 
-                    
+                    msgset.Timestamp = DateTime.Now;
+
+                    Platform.Log(LogLevel.Debug, "<== Background {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
                     _proxy.ProcessMessagesAsync(msgset, msgset);
+                    Platform.Log(LogLevel.Debug, "<Complete Background {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
 
                     ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
                 }
             }
         }
-        
-	    private void DoSend(List<Message> msgs)
-	    {
-			if (Faulted)
-				return;
+
+        private void DoSend(List<Message> msgs)
+        {
+            if (Faulted)
+                return;
 
             //TODO (CR May 2010): we just checked Faulted and returned, so this probably will never happen.
             if (_proxy.State == CommunicationState.Faulted
@@ -485,58 +482,61 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 return;
             }
 
-            
-                MessageSet msgset = new MessageSet();
-                msgset.Messages = new System.Collections.ObjectModel.ObservableCollection<Message>();
-                msgset.ApplicationId = _context.ID;
-                msgset.Number = _nextMessageId++;
 
-                foreach (Message msg in msgs)
+            var msgset = new MessageSet
+                             {
+                                 Messages = new System.Collections.ObjectModel.ObservableCollection<Message>(),
+                                 ApplicationId = _context.ID,
+                                 Number = _nextMessageId++
+                             };
+
+            foreach (Message msg in msgs)
+            {
+                if (msg != null)
+                    msgset.Messages.Add(msg);
+            }
+            try
+            {
+
+                // TODO: REVIEW THIS
+                // Per MSDN:
+                // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+                // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+                msgset.Tick = Environment.TickCount;
+                msgset.Timestamp = DateTime.Now;
+
+                if (ThrottleSettings.Default.SimulateNetworkTrafficOrder)
                 {
-                    if (msg != null)
-                        msgset.Messages.Add(msg);
+                    lock (_outboundQueueSync)
+                    {
+                        _outboundQueue.Enqueue(msgset);
+                        Monitor.Pulse(_outboundQueueSync);
+                    }
                 }
-                try
-                    {
+                else
+                {
+                    Platform.Log(LogLevel.Debug, "<== {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
+                    _proxy.ProcessMessagesAsync(msgset, msgset);
+                    Platform.Log(LogLevel.Debug, "<Complete {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
+                  
+                    // TODO: REVIEW THIS
+                    // Per MSDN:
+                    // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+                    // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+                    ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
+                }
 
-                        // TODO: REVIEW THIS
-                        // Per MSDN:
-                        // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-                        // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
-                        msgset.Tick = Environment.TickCount;
-                        msgset.Timestamp = DateTime.Now;
+            }
+            catch (Exception e)
+            {
+                // happens on timeout of connection
+                ErrorHandler.HandleException(e);
+                if (_proxy.State == CommunicationState.Faulted)
+                    DisplayFaulted(DialogTitles.Error, e.Message);
+            }
+        }
 
-                        if (ThrottleSettings.Default.SimulateNetworkTrafficOrder)
-                        {
-                            lock (_outboundQueueSync)
-                            {
-                                _outboundQueue.Enqueue(msgset);
-                                Monitor.Pulse(_outboundQueueSync);
-                            }
-                        }
-                        else
-                        {
-                            Logger.Write(String.Format("<== {0}: MSG # {1}\n", Environment.TickCount, msgset.Number));
-                            _proxy.ProcessMessagesAsync(msgset, msgset);
-
-                            // TODO: REVIEW THIS
-                            // Per MSDN:
-                            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-                            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
-                            ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
-                        }
-                        
-                    }
-                    catch (Exception e)
-                    {
-                        // happens on timeout of connection
-                        ErrorHandler.HandleException(e);
-                        if (_proxy.State == CommunicationState.Faulted)
-                            DisplayFaulted(DialogTitles.Error, e.Message);
-                    }
-	    }
-
-		/// <summary>
+	    /// <summary>
 		/// Register an event handler for a specific type of event from the server
 		/// </summary>
 		/// <param name="eventType"></param>
@@ -554,6 +554,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 }
                 else
 				    _typeHandlers.Add(eventType, handler);
+
+                Platform.Log(LogLevel.Debug, "Register event handler for type {0}", eventType);
+
 			}
 		}
 
@@ -562,14 +565,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 		{
 			lock (_sync)
 			{
-				if (_typeHandlers.ContainsKey(eventType))
-				{
-					EventHandler<ServerEventArgs> h = _typeHandlers[eventType];
-					h -= handler;
-                    //TODO (CR May 2010) Assign h back to _typeHanders[eventType], like above?
-                    //  _typeHandlers[eventType] = h;
+			    if (!_typeHandlers.ContainsKey(eventType)) return;
 
-                }
+			    EventHandler<ServerEventArgs> h = _typeHandlers[eventType];
+			    h -= handler;
+			    _typeHandlers[eventType] = h;
+                Platform.Log(LogLevel.Debug, "Release event handler for type {0}", eventType);
 			}
 		}
 
@@ -583,7 +584,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 			lock (_sync)
 			{
 				_sourceHandlers.Add(sender, handler);
-			    Logger.Write(String.Format("Register event handler for {0}\n", sender));
+			    Platform.Log(LogLevel.Debug, "Register event handler for {0}", sender);
 			}
 		}
 
@@ -597,7 +598,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             lock (_sync)
             {
                 _sourceHandlers.Remove(sender);
-                Logger.Write(String.Format("Release event handler for {0}\n", sender));
+                Platform.Log(LogLevel.Debug, "Release event handler for {0}", sender);
             }
         }
 
@@ -613,7 +614,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 #if DEBUG
             if (eventSet.Events!=null)
             {
-                int updateEvents =  eventSet.Events.Count((i)=> i is TileUpdatedEvent);
+                int updateEvents =  eventSet.Events.Count(i => i is TileUpdatedEvent);
                 if (updateEvents>1)
                 {
                     //UIThread.Execute(()=> System.Windows.MessageBox.Show(String.Format("Multiple tile update events in message set #{0}", eventSet.Number)));
@@ -722,7 +723,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 _startRequest = request;
 
                 request.MetaInformation = new MetaInformation() { Language = Thread.CurrentThread.CurrentUICulture.Name };
-                _proxy.StartApplicationAsync(request);
+                _proxy.StartApplicationAsync(_startRequest);
             }
 		}
 
@@ -785,7 +786,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private void OnServerEventReceived(EventSet eventSet)
         {
-            Logger.Write(String.Format("==> {0}: IN MSG # {1}\n", Environment.TickCount, eventSet.Number));
+            Platform.Log(LogLevel.Debug, "==> {0}: IN MSG # {1}", Environment.TickCount, eventSet.Number);
             
             if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenMouseMoveIsProcessed)
                 PerformanceMonitor.CurrentInstance.DecrementSendLag(eventSet.Events.Count((i) => i is MouseMoveProcessedEvent));
@@ -798,7 +799,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                 PerformanceMonitor.CurrentInstance.RenderingLag += tileUpdateEvCount;
                 if (tileUpdateEvCount>1)
-                    Logger.Write(String.Format("########## {0} tile update events received ###########\n",tileUpdateEvCount));
+                    Platform.Log(LogLevel.Debug, "########## {0} tile update events received ###########",tileUpdateEvCount);
             }
 
 
@@ -931,9 +932,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 {
                     if (sendDelegate != null) sendDelegate(msgs);
                 }
-                catch (Exception)
+                catch (Exception x)
                 {
-                    //??
+                    Platform.Log(LogLevel.Error,x,"Unexpected exception with sendDelegate");
                 }
             }
         }

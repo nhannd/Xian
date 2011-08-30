@@ -13,6 +13,7 @@ using System;
 using System.Net;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
+using ClearCanvas.Web.Client.Silverlight.Utilities;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {

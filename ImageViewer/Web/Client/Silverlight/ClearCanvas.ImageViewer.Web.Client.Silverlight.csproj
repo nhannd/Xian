@@ -87,7 +87,6 @@
       <DependentUpon>HelpButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationActivityMonitor.cs" />
-    <Compile Include="ApplicationLog.cs" />
     <Compile Include="Resources\DialogTitles.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -122,9 +121,6 @@
     <Compile Include="ApplicationSettings.cs" />
     <Compile Include="ClearCanvasStyle.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Controls\DiagnosticPanel.xaml.cs">
-      <DependentUpon>DiagnosticPanel.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\StudyBrowser.xaml.cs">
       <DependentUpon>StudyBrowser.xaml</DependentUpon>
     </Compile>
@@ -138,7 +134,6 @@
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ConnectionTester.cs" />
     <Compile Include="Helpers\UIElementExtensions.cs" />
-    <Compile Include="Helpers\UIThread.cs" />
     <Compile Include="ImageViewer.xaml.cs">
       <DependentUpon>ImageViewer.xaml</DependentUpon>
     </Compile>
@@ -153,7 +148,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Labels.resx</DependentUpon>
     </Compile>
-    <Compile Include="Logger.cs" />
     <Compile Include="ServerMessagePoller.cs" />
     <Compile Include="PerformanceLogger.cs" />
     <Compile Include="PerformanceMonitor.cs" />
@@ -229,12 +223,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Actions\StandardButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:MarkupCompilePass1</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\DiagnosticPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <Generator>MSBuild:Compile</Generator>

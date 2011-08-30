@@ -21,6 +21,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Threading;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
+using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -145,9 +146,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         Monitor.Wait(_syncLock, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
                     } 
                 }
-                catch (Exception)
+                catch (Exception x)
                 {
                     // catch exception to prevent crashing
+                    Platform.Log(LogLevel.Error, x, "Unexpected exception polling for server data");
                 }
                 finally
                 {

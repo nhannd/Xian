@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
+using ClearCanvas.Web.Client.Silverlight.Utilities;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
 {

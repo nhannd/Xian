@@ -20,6 +20,7 @@ using System.Windows.Input;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
+using ClearCanvas.Web.Client.Silverlight.Utilities;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
