@@ -37,7 +37,11 @@ namespace ClearCanvas.Enterprise.Authentication {
         [global::System.Configuration.DefaultSettingValueAttribute(@"
 <!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.0 Transitional//EN"" ""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd""> 
  
-<html xmlns=""http://www.w3.org/1999/xhtml""> <body>Dear $USER,<br/><br>Your new temporary password to the Web Portal is <b>$PASSWORD</b>. You will be required to reset your password the next time you login the system.</body></html>")]
+<html xmlns=""http://www.w3.org/1999/xhtml""> <body>Dear $USER,<br/><br>Your new temporary password to the Web Portal is:<br/>
+<br/>
+ <b>$PASSWORD</b>
+<br/>
+<br/>You will be required to reset your password the next time you login the system.</body></html>")]
         public string BodyTemplate {
             get {
                 return ((string)(this["BodyTemplate"]));
