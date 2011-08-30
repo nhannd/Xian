@@ -587,7 +587,7 @@ namespace ClearCanvas.ImageViewer
                     }
                     catch(Exception ex)
                     {
-                        Platform.Log(LogLevel.Warn, "Error occurred while disposing {0} ImageBox extension", ext.Name);
+                        Platform.Log(LogLevel.Warn, ex, "Error occurred while disposing {0} ImageBox extension", ext.Name);
                     }
                 }
             }

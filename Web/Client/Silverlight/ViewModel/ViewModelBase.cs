@@ -11,16 +11,6 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Diagnostics;
@@ -97,7 +87,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
         //[DebuggerStepThrough]
         public void VerifyPropertyName(string propertyName)
         {
-            var myType = this.GetType();
+            var myType = GetType();
             if (myType.GetProperty(propertyName) == null)
             {
                 throw new ArgumentException("Property not found", propertyName);
@@ -143,8 +133,12 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             if (handler != null)
             {
                 var body = propertyExpression.Body as MemberExpression;
-                var expression = body.Expression as ConstantExpression;
-                handler(expression.Value, new PropertyChangedEventArgs(body.Member.Name));
+                if (body != null)
+                {
+                    var expression = body.Expression as ConstantExpression;
+                    if (expression != null)
+                        handler(expression.Value, new PropertyChangedEventArgs(body.Member.Name));
+                }
             }
         }
 
