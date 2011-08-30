@@ -45,8 +45,6 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 
         private void OnAppStartup(object sender, StartupEventArgs e)
         {
-            ApplicationLog.Initialize();
-
             if (!String.IsNullOrEmpty(ApplicationStartupParameters.Current.Language) && 
                 !ApplicationStartupParameters.Current.Language.StartsWith("EN", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -217,7 +215,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 			}
 			catch (Exception x)
 			{
-                ApplicationLog.LogError(x);
+                Platform.Log(LogLevel.Error,x,"Exception reporting Error to the DOM");
 			}
 		}
     }
