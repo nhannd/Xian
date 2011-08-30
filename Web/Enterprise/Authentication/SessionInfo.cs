@@ -60,12 +60,12 @@ namespace ClearCanvas.Web.Enterprise.Authentication
 
         private static LoginCredentials CreateLoginCredentials(string loginId, string name, SessionToken token)
         {
-            LoginCredentials credentials = new LoginCredentials
-                                               {
-                                                   UserName = loginId, 
-                                                   DisplayName = name, 
-                                                   SessionToken = token
-                                               };
+            var credentials = new LoginCredentials
+                                  {
+                                      UserName = loginId,
+                                      DisplayName = name,
+                                      SessionToken = token
+                                  };
             return credentials;
         }
 
@@ -73,7 +73,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
         {
             _valid = false;
 
-            using(LoginService service = new LoginService())
+            using(var service = new LoginService())
             {
                 SessionInfo sessionInfo = service.Query(Credentials.SessionToken.Id);
 

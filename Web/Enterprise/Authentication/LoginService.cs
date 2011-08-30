@@ -40,25 +40,25 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                         try
                         {
 
-                            InitiateSessionRequest request = new InitiateSessionRequest(userName, appName,
-                                                                                        Dns.GetHostName(), password)
-                                                                 {
-                                                                     GetAuthorizations = true
-                                                                 };
+                            var request = new InitiateSessionRequest(userName, appName,
+                                                                     Dns.GetHostName(), password)
+                                              {
+                                                  GetAuthorizations = true
+                                              };
 
                             InitiateSessionResponse response = service.InitiateSession(request);
 
                             if (response != null)
                             {
-                                LoginCredentials credentials = new LoginCredentials
-                                                                   {
-                                                                       UserName = userName,
-                                                                       DisplayName = response.DisplayName,
-                                                                       SessionToken = response.SessionToken,
-                                                                       Authorities = response.AuthorityTokens,
-                                                                       DataAccessAuthorityGroups = response.DataGroupOids
-                                                                   };
-                                CustomPrincipal user = new CustomPrincipal(new CustomIdentity(userName, response.DisplayName),credentials);
+                                var credentials = new LoginCredentials
+                                                      {
+                                                          UserName = userName,
+                                                          DisplayName = response.DisplayName,
+                                                          SessionToken = response.SessionToken,
+                                                          Authorities = response.AuthorityTokens,
+                                                          DataAccessAuthorityGroups = response.DataGroupOids
+                                                      };
+                                var user = new CustomPrincipal(new CustomIdentity(userName, response.DisplayName),credentials);
                                 Thread.CurrentPrincipal = user;
 
                                 session = new SessionInfo(user);
@@ -76,7 +76,6 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                         }
                         catch(FaultException<UserAccessDeniedException> ex)
                         {
-
                             throw ex.Detail;
                         }
                     }
@@ -99,8 +98,8 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                 throw new Exception(String.Format("Unexpected error: session {0} does not exist in the cache", tokenId));
             }
 
-            TerminateSessionRequest request = new TerminateSessionRequest(session.Credentials.UserName,
-                                                                          session.Credentials.SessionToken);
+            var request = new TerminateSessionRequest(session.Credentials.UserName,
+                                                      session.Credentials.SessionToken);
 
 
             Platform.GetService(
@@ -119,8 +118,11 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                 throw new Exception(String.Format("Unexpected error: session {0} does not exist in the cache", tokenId));
             }
 
-            ValidateSessionRequest request = new ValidateSessionRequest(sessionInfo.Credentials.UserName, sessionInfo.Credentials.SessionToken);
-            request.GetAuthorizations = true;
+            var request = new ValidateSessionRequest(sessionInfo.Credentials.UserName,
+                                                     sessionInfo.Credentials.SessionToken)
+                              {
+                                  GetAuthorizations = true
+                              };
 
             try
             {
@@ -159,7 +161,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
             {
                 //TODO: for now we can't distinguish communicate errors and credential validation errors.
                 // All exceptions are treated the same: we can't verify the login.
-                SessionValidationException e = new SessionValidationException(ex);
+                var e = new SessionValidationException(ex);
                 throw e;
             }            
         }
@@ -222,10 +224,10 @@ namespace ClearCanvas.Web.Enterprise.Authentication
             if (_cacheSessionInfo.Count == 0)
                 return;
 
-            List<SessionInfo> list = new List<SessionInfo>(_cacheSessionInfo.Values);
-            StringBuilder active = new StringBuilder();
+            var list = new List<SessionInfo>(_cacheSessionInfo.Values);
+            var active = new StringBuilder();
             active.AppendLine("Active Sessions:");
-            StringBuilder inactive = new StringBuilder();
+            var inactive = new StringBuilder();
             inactive.AppendLine("Inactive Sessions:");
 
             int activeCount = 0;
@@ -280,7 +282,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
         {
             lock (_sync)
             {
-                using (LoginService service = new LoginService())
+                using (var service = new LoginService())
                 {
                     try
                     {
@@ -342,8 +344,8 @@ namespace ClearCanvas.Web.Enterprise.Authentication
         {
             lock (_sync)
             {
-                SessionInfo sessionInfo = _cacheSessionInfo[tokenId];
-                SessionToken newToken = new SessionToken(sessionInfo.Credentials.SessionToken.Id, time);
+                var sessionInfo = _cacheSessionInfo[tokenId];
+                var newToken = new SessionToken(sessionInfo.Credentials.SessionToken.Id, time);
                 sessionInfo.Credentials.SessionToken = newToken;
 
                 if (Platform.IsLogLevelEnabled(LogLevel.Debug))
