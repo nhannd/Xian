@@ -250,52 +250,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study is on a non-streaming server and must be retrieved to view it..
-        /// </summary>
-        public static string MessageActionNoStudyLoader {
-            get {
-                return ResourceManager.GetString("MessageActionNoStudyLoader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study could not be loaded.  Please contact your PACS administrator..
-        /// </summary>
-        public static string MessageActionStudyCouldNotBeLoaded {
-            get {
-                return ResourceManager.GetString("MessageActionStudyCouldNotBeLoaded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study is in use.  Please close the current study, wait a few minutes, then try loading the study again..
-        /// </summary>
-        public static string MessageActionStudyInUse {
-            get {
-                return ResourceManager.GetString("MessageActionStudyInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study is nearline.  If your PACS is a ClearCanvas ImageServer, please try opening the study manually, then wait a few minutes before trying again.
-        ///Alternately, the study can be brought back online by a PACS administrator..
-        /// </summary>
-        public static string MessageActionStudyNearline {
-            get {
-                return ResourceManager.GetString("MessageActionStudyNearline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study is offline and must be brought back online by a PACS administrator..
-        /// </summary>
-        public static string MessageActionStudyOffline {
-            get {
-                return ResourceManager.GetString("MessageActionStudyOffline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The following errors occurred while loading prior studies:.
         /// </summary>
         public static string MessageLoadPriorsErrorPrefix {

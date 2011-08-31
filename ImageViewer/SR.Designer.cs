@@ -990,6 +990,52 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The study is on a non-streaming server and must be retrieved to view it..
+        /// </summary>
+        public static string MessageInfoNoStudyLoader {
+            get {
+                return ResourceManager.GetString("MessageInfoNoStudyLoader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study could not be loaded.  Please contact your PACS administrator..
+        /// </summary>
+        public static string MessageInfoStudyCouldNotBeLoaded {
+            get {
+                return ResourceManager.GetString("MessageInfoStudyCouldNotBeLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is in use.  Please close the current study, wait a few minutes, then try loading the study again..
+        /// </summary>
+        public static string MessageInfoStudyInUse {
+            get {
+                return ResourceManager.GetString("MessageInfoStudyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is nearline.  If your PACS is a ClearCanvas ImageServer, please try opening the study manually, then wait a few minutes before trying again.
+        ///Alternately, the study can be brought back online by a PACS administrator..
+        /// </summary>
+        public static string MessageInfoStudyNearline {
+            get {
+                return ResourceManager.GetString("MessageInfoStudyNearline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is offline and must be brought back online by a PACS administrator..
+        /// </summary>
+        public static string MessageInfoStudyOffline {
+            get {
+                return ResourceManager.GetString("MessageInfoStudyOffline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following failures occurred while loading studies:.
         /// </summary>
         public static string MessageLoadMultipleStudiesFailurePrefix {
@@ -1004,6 +1050,51 @@ namespace ClearCanvas.ImageViewer {
         public static string MessageLoadStudyCompleteFailure {
             get {
                 return ResourceManager.GetString("MessageLoadStudyCompleteFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is being processed by the server and cannot be loaded at this time.  Please try again later..
+        /// </summary>
+        public static string MessageLoadStudyFailedInUse {
+            get {
+                return ResourceManager.GetString("MessageLoadStudyFailedInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is currently being restored from archive and cannot be loaded at this time.  Please try again later..
+        /// </summary>
+        public static string MessageLoadStudyFailedNearline {
+            get {
+                return ResourceManager.GetString("MessageLoadStudyFailedNearline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is nearline and cannot be restored at this time.  Please contact your PACS administrator to restore the study..
+        /// </summary>
+        public static string MessageLoadStudyFailedNearlineNoRestore {
+            get {
+                return ResourceManager.GetString("MessageLoadStudyFailedNearlineNoRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study could not be found..
+        /// </summary>
+        public static string MessageLoadStudyFailedNotFound {
+            get {
+                return ResourceManager.GetString("MessageLoadStudyFailedNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study cannot be loaded because it is offline. Please contact your PACS administrator to restore the study..
+        /// </summary>
+        public static string MessageLoadStudyFailedOffline {
+            get {
+                return ResourceManager.GetString("MessageLoadStudyFailedOffline", resourceCulture);
             }
         }
         
@@ -1140,51 +1231,6 @@ namespace ClearCanvas.ImageViewer {
         public static string MessageRoiAnalysisError {
             get {
                 return ResourceManager.GetString("MessageRoiAnalysisError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study is being processed by the server and cannot be loaded at this time.  Please try again later..
-        /// </summary>
-        public static string MessageStudyInUse {
-            get {
-                return ResourceManager.GetString("MessageStudyInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study is currently being restored from archive and cannot be loaded at this time.  Please try again later..
-        /// </summary>
-        public static string MessageStudyNearline {
-            get {
-                return ResourceManager.GetString("MessageStudyNearline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study is nearline and cannot be restored at this time.  Please contact your PACS administrator to restore the study..
-        /// </summary>
-        public static string MessageStudyNearlineNoRestore {
-            get {
-                return ResourceManager.GetString("MessageStudyNearlineNoRestore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study could not be found..
-        /// </summary>
-        public static string MessageStudyNotFound {
-            get {
-                return ResourceManager.GetString("MessageStudyNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The study cannot be loaded because it is offline. Please contact your PACS administrator to restore the study..
-        /// </summary>
-        public static string MessageStudyOffline {
-            get {
-                return ResourceManager.GetString("MessageStudyOffline", resourceCulture);
             }
         }
         

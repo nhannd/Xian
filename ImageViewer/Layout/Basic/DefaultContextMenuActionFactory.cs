@@ -29,15 +29,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			private string GetActionMessage(IDicomImageSetDescriptor descriptor)
 			{
 				if (descriptor.IsOffline)
-					return SR.MessageActionStudyOffline;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoStudyOffline;
 				else if (descriptor.IsNearline)
-					return SR.MessageActionStudyNearline;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoStudyNearline;
 				else if (descriptor.IsInUse)
-					return SR.MessageActionStudyInUse;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoStudyInUse;
 				else if (descriptor.IsNotLoadable)
-					return SR.MessageActionNoStudyLoader;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoNoStudyLoader;
 				else
-					return SR.MessageActionStudyCouldNotBeLoaded;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoStudyCouldNotBeLoaded;
 			}
 
             private string GetActionLabel(IDicomImageSetDescriptor descriptor)
