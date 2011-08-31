@@ -212,6 +212,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		{
 			ImageSetTreeGroupItem Parent { get; }
 
+            string Name { get; }
 			string Description { get; }
 		}
 
@@ -223,12 +224,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		{
 			public override string GetNodeText(object item)
 			{
-				return ((IImageSetTreeItem) item).Description;
+				return ((IImageSetTreeItem) item).Name;
 			}
 
 			public override string GetTooltipText(object item)
 			{
-				return GetNodeText(item);
+                return ((IImageSetTreeItem)item).Description;
 			}
 
 			public override bool GetExpanded(object item)
@@ -322,10 +323,15 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				get { return _parent; }
 			}
 
-			public string Description
+			public string Name
 			{
 				get { return _group.Label; }
 			}
+
+            public string Description
+            {
+                get { return _group.Label; }
+            }
 
 			#endregion
 			#endregion
@@ -545,10 +551,41 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				get { return _parent; }
 			}
 
-			public string Description
+			public string Name
 			{
 				get { return _imageSet.Name; }
 			}
+
+            public string Description
+            {
+                get
+                {
+                    /// TODO (CR Aug 2011): Should put this kind of thing into a centralized helper class of some kind
+                    /// because the same logic appears in RCCM and here.
+                    if (_imageSet.Descriptor is IDicomImageSetDescriptor)
+                    {
+                        var descriptor = (IDicomImageSetDescriptor) _imageSet.Descriptor;
+                        if (descriptor.LoadStudyError != null)
+                        {
+                            string message;
+                            if (descriptor.IsOffline)
+                                message = ImageViewer.SR.MessageInfoStudyOffline;
+                            else if (descriptor.IsNearline)
+                                message = ImageViewer.SR.MessageInfoStudyNearline;
+                            else if (descriptor.IsInUse)
+                                message = ImageViewer.SR.MessageInfoStudyInUse;
+                            else if (descriptor.IsNotLoadable)
+                                message = ImageViewer.SR.MessageInfoNoStudyLoader;
+                            else
+                                message = ImageViewer.SR.MessageInfoStudyCouldNotBeLoaded;
+
+                            return String.Format(SR.MessageFormatStudyNotLoadable, Name, message);
+                        }
+                    }
+
+                    return Name;
+                }
+            }
 
 			#endregion
 			#endregion

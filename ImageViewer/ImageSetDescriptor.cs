@@ -17,6 +17,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Common;
 using System.Text;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -31,15 +32,21 @@ namespace ClearCanvas.ImageViewer
 		/// the <see cref="IImageSet"/> was created.
 		/// </summary>
 		IStudyRootStudyIdentifier SourceStudy { get; }
-	}
+        
+        object Server { get; }
+
+        Exception LoadStudyError { get; }
+        bool IsOffline { get; }
+        bool IsNearline { get; }
+        bool IsInUse { get; }
+        bool IsNotLoadable { get; }
+    }
 
 	/// <summary>
 	/// Implementation of <see cref="IDicomImageSetDescriptor"/>.
 	/// </summary>
 	public class DicomImageSetDescriptor : ImageSetDescriptor, IDicomImageSetDescriptor
 	{
-		private readonly IStudyRootStudyIdentifier _sourceStudy;
-
 		private string _name;
 		private string _patientInfo;
 		private string _uid;
@@ -48,21 +55,43 @@ namespace ClearCanvas.ImageViewer
 		/// Constructor.
 		/// </summary>
 		public DicomImageSetDescriptor(IStudyRootStudyIdentifier sourceStudy)
+            : this(sourceStudy, null, null)
 		{
-			Platform.CheckForNullReference(sourceStudy, "sourceStudy");
-			_sourceStudy = sourceStudy;
+        }
+
+	    /// <summary>
+        /// Constructor.
+        /// </summary>
+        public DicomImageSetDescriptor(IStudyRootStudyIdentifier sourceStudy, object server, Exception loadStudyError)
+		{
+            Platform.CheckForNullReference(sourceStudy, "sourceStudy");
+            SourceStudy = sourceStudy;
+	        Server = server;
+	        LoadStudyError = loadStudyError;
+            IsOffline = loadStudyError is OfflineLoadStudyException;
+            IsNearline = loadStudyError is NearlineLoadStudyException;
+            IsInUse = loadStudyError is InUseLoadStudyException;
+            IsNotLoadable = loadStudyError is StudyLoaderNotFoundException;
 		}
 
-		/// <summary>
+	    #region IDicomImageSetDescriptor Members
+
+        /// <summary>
 		/// Gets the <see cref="IStudyRootStudyIdentifier"/> for the DICOM study from which
 		/// the <see cref="IImageSet"/> was created.
 		/// </summary>
-		public IStudyRootStudyIdentifier SourceStudy
-		{
-			get { return _sourceStudy; }
-		}
+		public IStudyRootStudyIdentifier SourceStudy { get; private set; }
+	    public object Server { get; private set; }
+	    public Exception LoadStudyError { get; private set; }
 
-		/// <summary>
+        public bool IsOffline { get; private set; }
+        public bool IsNearline { get; private set; }
+        public bool IsInUse { get; private set; }
+        public bool IsNotLoadable { get; private set; }
+
+        #endregion
+
+        /// <summary>
 		/// Gets the descriptive name of the <see cref="IImageSet"/>.
 		/// </summary>
 		public override string Name
@@ -104,28 +133,39 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Uid property cannot be set publicly."); }
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Gets the descriptive name of the <see cref="IImageSet"/>.
 		/// </summary>
 		protected virtual string GetName()
 		{
 			DateTime studyDate;
-			DateParser.Parse(_sourceStudy.StudyDate, out studyDate);
+			DateParser.Parse(SourceStudy.StudyDate, out studyDate);
 			DateTime studyTime;
-			TimeParser.Parse(_sourceStudy.StudyTime, out studyTime);
+            TimeParser.Parse(SourceStudy.StudyTime, out studyTime);
 
-			string modalitiesInStudy = StringUtilities.Combine(_sourceStudy.ModalitiesInStudy, ", ");
+            string modalitiesInStudy = StringUtilities.Combine(SourceStudy.ModalitiesInStudy, ", ");
 
 			StringBuilder nameBuilder = new StringBuilder();
 			nameBuilder.AppendFormat("{0} {1}", studyDate.ToString(Format.DateFormat), 
 												studyTime.ToString(Format.TimeFormat));
 
-			if (!String.IsNullOrEmpty(_sourceStudy.AccessionNumber))
-				nameBuilder.AppendFormat(", A#: {0}", _sourceStudy.AccessionNumber);
+            if (!String.IsNullOrEmpty(SourceStudy.AccessionNumber))
+                nameBuilder.AppendFormat(", A#: {0}", SourceStudy.AccessionNumber);
 
-			nameBuilder.AppendFormat(", [{0}] {1}", modalitiesInStudy ?? "", _sourceStudy.StudyDescription);
+            nameBuilder.AppendFormat(", [{0}] {1}", modalitiesInStudy ?? "", SourceStudy.StudyDescription);
 
-			return nameBuilder.ToString();
+            if (LoadStudyError != null)
+            {
+                string serverName;
+                if (Server == null)
+                    serverName = SR.LabelUnknownServer;
+                else
+                    serverName = Server.ToString();
+
+                nameBuilder.Insert(0, String.Format("({0}) ", serverName));
+            }
+
+	        return nameBuilder.ToString();
 		}
 
 		/// <summary>
@@ -133,7 +173,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected virtual string GetPatientInfo()
 		{
-			return String.Format("{0} \u00B7 {1}", new PersonName(_sourceStudy.PatientsName).FormattedName, _sourceStudy.PatientId);
+            return String.Format("{0} \u00B7 {1}", new PersonName(SourceStudy.PatientsName).FormattedName, SourceStudy.PatientId);
 		}
 
 		/// <summary>
@@ -141,7 +181,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected virtual string GetUid()
 		{
-			return _sourceStudy.StudyInstanceUid;
+            return SourceStudy.StudyInstanceUid;
 		}
 	}
 
@@ -238,7 +278,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the <see cref="IImageSet"/> that this object describes.
 		/// </summary>
-		public virtual ImageSet ImageSet
+		public ImageSet ImageSet
 		{
 			get { return _imageSet; }
 			internal set { _imageSet = value; }

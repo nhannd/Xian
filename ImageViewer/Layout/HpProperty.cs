@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
@@ -80,6 +81,11 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// Gets the category of this property for display in the user-interface.
 		/// </summary>
 		public string Category { get; private set; }
+
+		/// <summary>
+		/// Gets the type converter for this property.
+		/// </summary>
+		public TypeConverter Converter { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether this property can be edited by a custom dialog box.

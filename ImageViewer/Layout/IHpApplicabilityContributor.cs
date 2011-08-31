@@ -22,7 +22,10 @@ namespace ClearCanvas.ImageViewer.Layout
 
 	public interface IHpProtocolApplicabilityContext
 	{
-		Study Study { get; }
+        /// <summary>
+        /// The "primary" study for which the protocol applicability will be tested.
+        /// </summary>
+		Study PrimaryStudy { get; }
 	}
 
 
@@ -47,6 +50,7 @@ namespace ClearCanvas.ImageViewer.Layout
 
 	public interface IHpLayoutApplicabilityContext : IHpProtocolApplicabilityContext
 	{
+        StudyTree StudyTree { get; }
 		ILogicalWorkspace LogicalWorkspace { get; }
 	}
 

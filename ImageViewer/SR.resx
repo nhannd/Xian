@@ -444,16 +444,16 @@
     <value>An error has occurred while analyzing the Roi.
 Please check the log for more details.</value>
   </data>
-  <data name="MessageStudyInUse" xml:space="preserve">
+  <data name="MessageLoadStudyFailedInUse" xml:space="preserve">
     <value>The study is being processed by the server and cannot be loaded at this time.  Please try again later.</value>
   </data>
-  <data name="MessageStudyNearlineNoRestore" xml:space="preserve">
+  <data name="MessageLoadStudyFailedNearlineNoRestore" xml:space="preserve">
     <value>The study is nearline and cannot be restored at this time.  Please contact your PACS administrator to restore the study.</value>
   </data>
-  <data name="MessageStudyNotFound" xml:space="preserve">
+  <data name="MessageLoadStudyFailedNotFound" xml:space="preserve">
     <value>The study could not be found.</value>
   </data>
-  <data name="MessageStudyOffline" xml:space="preserve">
+  <data name="MessageLoadStudyFailedOffline" xml:space="preserve">
     <value>The study cannot be loaded because it is offline. Please contact your PACS administrator to restore the study.</value>
   </data>
   <data name="NamePrefetchingStrategyVisibleDisplaySet" xml:space="preserve">
@@ -518,7 +518,7 @@ Please check the log for more details.</value>
 cannot be displayed.
 Use image with caution.</value>
   </data>
-  <data name="MessageStudyNearline" xml:space="preserve">
+  <data name="MessageLoadStudyFailedNearline" xml:space="preserve">
     <value>The study is currently being restored from archive and cannot be loaded at this time.  Please try again later.</value>
   </data>
   <data name="MessageFailedToOpenImages" xml:space="preserve">
@@ -541,5 +541,24 @@ Use image with caution.</value>
   </data>
   <data name="FormatDescriptionNamedLinearLut" xml:space="preserve">
     <value>W:{0} L:{1} ({2})</value>
+  </data>
+  <data name="LabelUnknownServer" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="MessageInfoNoStudyLoader" xml:space="preserve">
+    <value>The study is on a non-streaming server and must be retrieved to view it.</value>
+  </data>
+  <data name="MessageInfoStudyCouldNotBeLoaded" xml:space="preserve">
+    <value>The study could not be loaded.  Please contact your PACS administrator.</value>
+  </data>
+  <data name="MessageInfoStudyInUse" xml:space="preserve">
+    <value>The study is in use.  Please close the current study, wait a few minutes, then try loading the study again.</value>
+  </data>
+  <data name="MessageInfoStudyNearline" xml:space="preserve">
+    <value>The study is nearline.  If your PACS is a ClearCanvas ImageServer, please try opening the study manually, then wait a few minutes before trying again.
+Alternately, the study can be brought back online by a PACS administrator.</value>
+  </data>
+  <data name="MessageInfoStudyOffline" xml:space="preserve">
+    <value>The study is offline and must be brought back online by a PACS administrator.</value>
   </data>
 </root>

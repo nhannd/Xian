@@ -240,12 +240,10 @@ namespace ClearCanvas.ImageViewer
 			foreach (var action in actions)
 			{
 				var clickAction = action as IClickAction;
-				if (clickAction != null && clickAction.Available)
-				{
-					if (shortcut.Equals(clickAction.KeyStroke))
+				if (clickAction != null && shortcut.Equals(clickAction.KeyStroke))
 						return clickAction;
-				}
 			}
+
 			return null;
 		}
 
