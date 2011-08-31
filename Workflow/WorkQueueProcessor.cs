@@ -41,6 +41,15 @@ namespace ClearCanvas.Workflow
 		}
 
 		/// <summary>
+		/// Called to mark a queue item as being claimed for processing.
+		/// </summary>
+		/// <param name="item"></param>
+		protected override void MarkItemClaimed(WorkQueueItem item)
+		{
+			// do nothing
+		}
+
+		/// <summary>
 		/// Called when <see cref="QueueProcessor{TItem}.ProcessItem"/> succeeds.
 		/// </summary>
 		/// <remarks>
