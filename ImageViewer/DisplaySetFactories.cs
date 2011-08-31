@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer
 			if (string.IsNullOrEmpty(viewPosition))
 			{
 				DicomAttributeSQ codeSequence = imageSop[DicomTags.ViewCodeSequence] as DicomAttributeSQ;
-				if (codeSequence != null && codeSequence.Count > 0)
+                if (codeSequence != null && !codeSequence.IsNull && codeSequence.Count > 0)
 					viewPosition = codeSequence[0][DicomTags.CodeMeaning].GetString(0, null);
 			}
 
