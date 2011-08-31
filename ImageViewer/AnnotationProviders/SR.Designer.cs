@@ -1743,6 +1743,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
             }
         }
         
+         /// <summary>
+        ///   Looks up a localized string similar to {0} ({1}).
+        /// </summary>
+        public static string FormatCalibrationDetails {
+            get {
+                return ResourceManager.GetString("FormatCalibrationDetails", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to {0} ({1}).
         /// </summary>
