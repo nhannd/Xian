@@ -66,24 +66,28 @@
     </Compile>
     <Compile Include="ContextMenuConfigurationPageView.cs" />
     <Compile Include="CustomizeViewerActionModelsComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CustomizeViewerActionModelsComponentControl.Designer.cs">
       <DependentUpon>CustomizeViewerActionModelsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomizeViewerActionModelsComponentView.cs" />
     <Compile Include="DicomServerEditComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerEditComponentControl.Designer.cs">
       <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerEditComponentView.cs" />
     <Compile Include="DicomServerGroupEditComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentControl.Designer.cs">
       <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentView.cs" />
     <Compile Include="MonitorConfigurationApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MonitorConfigurationApplicationComponentControl.Designer.cs">
       <DependentUpon>MonitorConfigurationApplicationComponentControl.cs</DependentUpon>

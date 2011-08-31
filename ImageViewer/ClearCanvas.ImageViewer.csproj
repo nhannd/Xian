@@ -200,6 +200,7 @@
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
+    <Compile Include="StudyManagement\Tests\NormalizedPixelSpacingTests.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />
     <Compile Include="StudyManagement\WeightedWindowPrefetchingStrategy.cs" />

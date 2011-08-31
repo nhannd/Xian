@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				{
 					//TODO: later, we could translate to ACR MCQM equivalent, at least for mammo.
 					DicomAttributeSQ codeSequence = provider.ImageSop[DicomTags.ViewCodeSequence] as DicomAttributeSQ;
-					if (codeSequence != null && codeSequence.Count > 0)
+					if (codeSequence != null && !codeSequence.IsNull && codeSequence.Count > 0)
 						viewPosition = codeSequence[0][DicomTags.CodeMeaning].GetString(0, null);
 				}
 			}

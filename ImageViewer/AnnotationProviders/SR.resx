@@ -826,7 +826,10 @@
   <data name="Dicom_Patient_ResponsiblePerson_DisplayName" xml:space="preserve">
     <value>Responsible Person</value>
   </data>
-  <data name="Dicom_Patient_ResponsiblePerson_Label" xml:space="preserve">
+  <data name="Presentation_ImageCalibration_DisplayName" xml:space="preserve">
+    <value>Image Calibration</value>
+  </data>
+ <data name="Dicom_Patient_ResponsiblePerson_Label" xml:space="preserve">
     <value>Responsible Person</value>
   </data>
   <data name="FormatCodeSequence" xml:space="preserve">

@@ -10,12 +10,18 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout
 {
     public interface IHpPropertyEditContext
     {
+		/// <summary>
+		/// Launches the specified editor component as a modal dialog.
+		/// </summary>
+		/// <param name="editorComponent"></param>
+		/// <returns></returns>
         ApplicationComponentExitCode ShowModalEditor(IApplicationComponent editorComponent);
     }
 
@@ -43,6 +49,11 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// Gets the category of this property for display in the user-interface.
 		/// </summary>
 		string Category { get; }
+
+		/// <summary>
+		/// Gets the type converter for this property, or null if this property does not require a custom converter.
+		/// </summary>
+		TypeConverter Converter { get; }
 
         /// <summary>
         /// Gets whether or not <see cref="Value"/> can be set.
