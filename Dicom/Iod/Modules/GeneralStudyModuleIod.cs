@@ -76,11 +76,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				if (base.DicomAttributeProvider[DicomTags.ReferringPhysicianIdentificationSequence].Count == 0)
+				var dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferringPhysicianIdentificationSequence];
+				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
-				return new PersonIdentificationMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.ReferringPhysicianIdentificationSequence].Values)[0]);
+				return new PersonIdentificationMacro(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
@@ -136,11 +137,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				if (base.DicomAttributeProvider[DicomTags.PhysiciansOfRecordIdentificationSequence].Count == 0)
+				var dicomAttribute = base.DicomAttributeProvider[DicomTags.PhysiciansOfRecordIdentificationSequence];
+				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
-				return new PersonIdentificationMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.PhysiciansOfRecordIdentificationSequence].Values)[0]);
+				return new PersonIdentificationMacro(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
@@ -169,11 +171,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				if (base.DicomAttributeProvider[DicomTags.PhysiciansReadingStudyIdentificationSequence].Count == 0)
+				var dicomAttribute = base.DicomAttributeProvider[DicomTags.PhysiciansReadingStudyIdentificationSequence];
+				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
-				return new PersonIdentificationMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.PhysiciansReadingStudyIdentificationSequence].Values)[0]);
+				return new PersonIdentificationMacro(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
@@ -193,11 +196,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				if (base.DicomAttributeProvider[DicomTags.ReferencedStudySequence].Count == 0)
+				var dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedStudySequence];
+				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
-				return new SopInstanceReferenceMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.ReferencedStudySequence].Values)[0]);
+				return new SopInstanceReferenceMacro(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
@@ -217,11 +221,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				if (base.DicomAttributeProvider[DicomTags.ProcedureCodeSequence].Count == 0)
+				var dicomAttribute = DicomAttributeProvider[DicomTags.ProcedureCodeSequence];
+				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
-				return new CodeSequenceMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.ProcedureCodeSequence].Values)[0]);
+				return new CodeSequenceMacro(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
