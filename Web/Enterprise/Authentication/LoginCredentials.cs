@@ -22,6 +22,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
     {
         public string UserName;
         public string DisplayName;
+        public string EmailAddress;
         public SessionToken SessionToken;
         public string[] Authorities;
         public Guid[] DataAccessAuthorityGroups;

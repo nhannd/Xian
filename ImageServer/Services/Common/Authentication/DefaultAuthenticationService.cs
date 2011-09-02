@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
                 string[] authority = Roles.GetRolesForUser(request.UserName);
                 string displayName = request.UserName;
 
-                var rsp = new InitiateSessionResponse(token, authority, new Guid[0], displayName);
+                var rsp = new InitiateSessionResponse(token, authority, new Guid[0], displayName,string.Empty);
 
                 SessionTokenManager.Instance.AddSession(token);
 
