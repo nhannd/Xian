@@ -189,33 +189,29 @@ namespace ClearCanvas.ImageViewer
 
     
     /// <summary>
-    /// Defines the interface to the host's context menu.
+    /// Defines interface to the view of an image box extension.
     /// </summary>
-    public interface IHostContextMenuAdapter
-    {
-        ///<summary>
-        /// Shows the host's context menu at the specified location
-        ///</summary>
-        ///<param name="screenLocation"></param>
-        void Show(Point screenLocation);
-
-        ///<summary>
-        /// Occurs when the host's context menu is opened.
-        ///</summary>
-        event EventHandler ContextMenuOpened;
-
-        ///<summary>
-        /// Occurs when the host's context menu is closed.
-        ///</summary>
-        event EventHandler ContextMenuClosed;
-    }
-
     public interface IImageBoxExtensionView:IView,IDisposable
     {
         ///<summary>
-        /// Set the rendering size for the view
+        /// Sets the parent size for the view
         ///</summary>
-        Size Size{ set; }
+        Size ParentSize{ set; }
+
+        /// <summary>
+        /// Gets the render size of the view
+        /// </summary>
+        Size ActualSize { get; }
+
+        ///<summary>
+        /// Updates the view
+        ///</summary>
+        void UpdateLayout();
+
+        ///<summary>
+        /// Gets a boolean indicating whether the view is visible
+        ///</summary>
+        bool Visible { get; }
     }
    
     /// <summary>
@@ -249,7 +245,7 @@ namespace ClearCanvas.ImageViewer
         /// <remarks>
         /// It is up to the image box control implementation to decide whether it's feasible 
         /// to display the extension's view on the screen.
-        /// The extension must fire <see cref="VisibilityChanged"/> if it wants to change its visibility. 
+        /// The extension must fire <see cref="PropertyChanged"/> if it wants to change its visibility. 
         /// </remarks>
         bool Visible { get; set; }
 
