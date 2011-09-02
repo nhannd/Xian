@@ -53,16 +53,7 @@
 
 #endregion
 
-using System;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Windows.Browser;
 
 namespace ClearCanvas.Web.Client.Silverlight
@@ -85,7 +76,7 @@ namespace ClearCanvas.Web.Client.Silverlight
         #region Attached Context Menu
     
         public static DependencyProperty AttachedContextMenuProperty = DependencyProperty.RegisterAttached("AttachedContextMenu", typeof(ContextMenu), typeof(MenuManager),
-                new PropertyMetadata(null, new PropertyChangedCallback(MenuManager.OnAttachedContextMenuChanged)));
+                new PropertyMetadata(null, OnAttachedContextMenuChanged));
 
         public static ContextMenu GetAttachedContextMenu(DependencyObject obj)
         {
@@ -99,15 +90,15 @@ namespace ClearCanvas.Web.Client.Silverlight
 
         private static void OnAttachedContextMenuChanged(DependencyObject owner, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement element = owner as FrameworkElement;
+            var element = owner as FrameworkElement;
             if (element == null)
                 return;
 
-            ContextMenu old = e.OldValue as ContextMenu;
+            var old = e.OldValue as ContextMenu;
             if (old != null)
                 old.Owner = null;
 
-            ContextMenu @new = e.NewValue as ContextMenu;
+            var @new = e.NewValue as ContextMenu;
             if (@new != null)
                 @new.Owner = element;
         }

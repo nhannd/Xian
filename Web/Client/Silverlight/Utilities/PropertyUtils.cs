@@ -10,13 +10,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ClearCanvas.Web.Client.Silverlight.Utilities
 {
     public static class PropertyUtils
     {
-        private static void SetProperties(PropertyInfo[] fromFields,
+        private static void SetProperties(IEnumerable<PropertyInfo> fromFields,
                                        object fromRecord,
                                        object toRecord)
         {
