@@ -10,16 +10,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Windows.Controls.Primitives;
 
 namespace ClearCanvas.Web.Client.Silverlight
@@ -34,12 +28,14 @@ namespace ClearCanvas.Web.Client.Silverlight
         private Popup _backgroundPopup;
         private Canvas _backgroundCanvas;
 
-        private event EventHandler _clickOutsideContent;
+        private event EventHandler ClickOutsideContent;
 
         public BlackoutPopup()
         {
-            _backgroundCanvas = new Canvas();
-            _backgroundCanvas.Background = new SolidColorBrush(Colors.Transparent);
+            _backgroundCanvas = new Canvas
+                                    {
+                                        Background = new SolidColorBrush(Colors.Transparent)
+                                    };
             _backgroundCanvas.MouseLeftButtonDown += OnCanvasButtonDown;
             _backgroundCanvas.MouseRightButtonDown += OnCanvasButtonDown;
             _backgroundCanvas.MouseLeftButtonUp += OnCanvasButtonUp;
@@ -79,8 +75,8 @@ namespace ClearCanvas.Web.Client.Silverlight
 
         public event EventHandler ClickOutsideChild
         {
-            add { _clickOutsideContent += value; }
-            remove { _clickOutsideContent -= value; }
+            add { ClickOutsideContent += value; }
+            remove { ClickOutsideContent -= value; }
         }
 
         private void ResizeBackgroundCanvas()
@@ -112,8 +108,8 @@ namespace ClearCanvas.Web.Client.Silverlight
         private void OnCanvasButtonUp(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            if (_clickOutsideContent != null)
-                _clickOutsideContent(sender, EventArgs.Empty);
+            if (ClickOutsideContent != null)
+                ClickOutsideContent(sender, EventArgs.Empty);
         }
     }
 }

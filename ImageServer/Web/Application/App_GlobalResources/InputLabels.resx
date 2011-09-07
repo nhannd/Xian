@@ -238,7 +238,7 @@
     <value>Exempt Rule</value>
   </data>
   <data name="ServerRuleName" xml:space="preserve">
-    <value>Name</value>
+    <value>Rule Name</value>
   </data>
   <data name="ServerRuleType" xml:space="preserve">
     <value>Type</value>
@@ -256,13 +256,13 @@
     <value>Type</value>
   </data>
   <data name="AdminUserGroups_GroupName" xml:space="preserve">
-    <value>Group Name</value>
+    <value>Authority Group Name</value>
   </data>
   <data name="AdminUserGroups_Tokens" xml:space="preserve">
     <value>Tokens</value>
   </data>
   <data name="AdminUsers_AddEditDialog_Groups" xml:space="preserve">
-    <value>Groups</value>
+    <value>Authority Groups</value>
   </data>
   <data name="AdminUsers_AddEditDialog_Name" xml:space="preserve">
     <value>Name</value>
@@ -281,5 +281,20 @@
   </data>
   <data name="SIQ_ReconcileDuplicateDialog_UseExistingDemographics" xml:space="preserve">
     <value>Use Existing Demographics</value>
+  </data>
+  <data name="AuthorityGroupsDataAccess" xml:space="preserve">
+    <value>Authority Groups Granted Access</value>
+  </data>
+  <data name="RuleCheckBoxes" xml:space="preserve">
+    <value>Rule Options</value>
+  </data>
+  <data name="AdminUserGroups_DataGroup" xml:space="preserve">
+    <value>Data Access Authority Group</value>
+  </data>
+  <data name="AdminUserGroups_GroupDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="AdminUsers_AddEditDialog_EmailAddress" xml:space="preserve">
+    <value>Email Address</value>
   </data>
 </root>

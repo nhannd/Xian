@@ -16,10 +16,10 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Core.Process
 {

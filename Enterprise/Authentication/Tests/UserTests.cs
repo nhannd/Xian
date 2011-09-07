@@ -42,6 +42,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				"Mr. Foo",
+                "test@clearcanvas.ca",                
 				null,
 				null);
 
@@ -82,6 +83,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				"Mr. Foo",
+                "test@clearcanvas.ca",
 				now,
 				tomorrow);
 
@@ -106,6 +108,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				"Mr. Foo",
+                "test@clearcanvas.ca",                
 				null,
 				null);
 
@@ -142,6 +145,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				null,
 				"Mr. Foo",
+                "test@clearcanvas.ca",                
 				null,
 				null);
 
@@ -155,6 +159,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"",
 				"Mr. Foo",
+                "test@clearcanvas.ca",
 				null,
 				null);
 
@@ -167,6 +172,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				null,
+                "test@clearcanvas.ca",
 				null,
 				null);
 
@@ -179,6 +185,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				"",
+                "test@clearcanvas.ca",
 				null,
 				null);
 
@@ -192,6 +199,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				"Mr. Foo",
+                "test@clearcanvas.ca",
 				null,
 				null);
 
@@ -205,6 +213,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				"Mr. Foo",
+                "test@clearcanvas.ca",
 				null,
 				null);
 
@@ -218,6 +227,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				"Mr. Foo",
+                null,
 				DateTime.Now + TimeSpan.FromDays(1),
 				DateTime.Now - TimeSpan.FromDays(1));
 
@@ -563,6 +573,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				"foo",
 				"Mr. Foo",
+                "test@clearcanvas.ca",
 				validFrom,
 				validUntil);
 

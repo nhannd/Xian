@@ -34,68 +34,231 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	/// </summary>
 	internal sealed class DirectionalMarkerAnnotationItem : AnnotationItem
 	{
-	    private readonly PatientOrientationHelper.ImageEdge _viewportEdge;
-
-	    public DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge viewportEdge)
-			: base("Presentation.DirectionalMarkers." + viewportEdge, new AnnotationResourceResolver(typeof(DirectionalMarkerAnnotationItem).Assembly))
+		public enum ImageEdge
 		{
-		    _viewportEdge = viewportEdge;
+			Left = 0,
+			Top = 1,
+			Right = 2,
+			Bottom = 3
+		} ;
+
+		private static readonly SizeF[] _edgeVectors = new SizeF[] {new SizeF(-1, 0), new SizeF(0, -1), new SizeF(1, 0), new SizeF(0, 1)};
+
+		private ImageEdge _viewportEdge;
+
+		public DirectionalMarkerAnnotationItem(ImageEdge viewportEdge)
+			: base("Presentation.DirectionalMarkers." + viewportEdge.ToString(), new AnnotationResourceResolver(typeof (DirectionalMarkerAnnotationItem).Assembly))
+		{
+			_viewportEdge = viewportEdge;
 		}
 
-	    /// <summary>
+		/// <summary>
 		/// Gets the annotation text.
 		/// </summary>
 		/// <param name="presentationImage">the input presentation image.</param>
 		/// <returns>the annotation text.</returns>
 		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
+			string markerText = "";
+
 			if (presentationImage != null)
 			{
-				var associatedTransform = presentationImage as ISpatialTransformProvider;
-				var associatedDicom = presentationImage as IImageSopProvider;
+				ISpatialTransformProvider associatedTransform = presentationImage as ISpatialTransformProvider;
+				IImageSopProvider associatedDicom = presentationImage as IImageSopProvider;
 
 				if (associatedDicom != null && associatedTransform != null)
-				    return GetAnnotationTextInternal((SpatialTransform)associatedTransform.SpatialTransform, associatedDicom.Frame.ImageOrientationPatient);
+				{
+					var spatialTransform = associatedTransform.SpatialTransform as SpatialTransform;
+					if (spatialTransform != null)
+					{
+						var imageOrientationPatient = associatedDicom.Frame.ImageOrientationPatient;
+						var patientOrientation = associatedDicom.Frame.PatientOrientation;
+
+						if (imageOrientationPatient != null && !imageOrientationPatient.IsNull)
+							markerText = GetAnnotationTextInternal(spatialTransform, imageOrientationPatient);
+						else if (patientOrientation != null && patientOrientation.IsValid)
+							markerText = GetAnnotationTextInternal(spatialTransform, patientOrientation);
+					}
+				}
 			}
 
-	        return String.Empty;
+			return markerText;
 		}
 
-        internal string GetAnnotationTextInternal(SpatialTransform spatialTransform, ImageOrientationPatient imageOrientationPatient)
-        {
-            var helper = new PatientOrientationHelper(spatialTransform, imageOrientationPatient);
-            var edgeDirection = helper.GetEdgeDirection(_viewportEdge);
-            var translatedDirection = String.Empty;
-            foreach (var directionComponent in edgeDirection.Code)
-                translatedDirection += GetMarkerText(directionComponent);
+		/// <summary>
+		/// Called by GetAnnotationText (and also by Unit Test code).  Making this function internal simply makes it easier
+		/// to write unit tests for this class (don't have to implement a fake PresentationImage).
+		/// </summary>
+		/// <param name="imageTransform">the image transform</param>
+		/// <param name="imageOrientationPatient">the image orientation patient (direction cosines)</param>
+		/// <returns></returns>
+		internal string GetAnnotationTextInternal(SpatialTransform imageTransform, ImageOrientationPatient imageOrientationPatient)
+		{
+			SizeF[] imageEdgeVectors = new SizeF[4];
+			for (int i = 0; i < 4; ++i)
+				imageEdgeVectors[i] = imageTransform.ConvertToDestination(_edgeVectors[i]);
 
-            return translatedDirection;
-        }
+			//find out which source image edge got transformed to coincide with this viewport edge.
+			ImageEdge transformedEdge = GetTransformedEdge(imageEdgeVectors);
+
+			//get the marker for the appropriate (source) image edge.
+			return GetMarker(transformedEdge, imageOrientationPatient);
+		}
 
 		/// <summary>
-        /// Converts direction values from <see cref="PatientDirection"/> to a marker string.
+		/// Called by GetAnnotationText (and also by Unit Test code).  Making this function internal simply makes it easier
+		/// to write unit tests for this class (don't have to implement a fake PresentationImage).
+		/// </summary>
+		/// <param name="imageTransform">the image transform</param>
+		/// <param name="patientOrientation">the image orientation patient (direction cosines)</param>
+		/// <returns></returns>
+		internal string GetAnnotationTextInternal(SpatialTransform imageTransform, PatientOrientation patientOrientation)
+		{
+			SizeF[] imageEdgeVectors = new SizeF[4];
+			for (int i = 0; i < 4; ++i)
+				imageEdgeVectors[i] = imageTransform.ConvertToDestination(_edgeVectors[i]);
+
+			//find out which source image edge got transformed to coincide with this viewport edge.
+			ImageEdge transformedEdge = GetTransformedEdge(imageEdgeVectors);
+
+			//get the marker for the appropriate (source) image edge.
+			return GetMarker(transformedEdge, patientOrientation);
+		}
+
+		/// <summary>
+		/// After undergoing the transformation, the input vectors are now in Destination (viewport) coordinates.
+		/// This function determines which edge in the image has moved to this edge of the viewport.
+		/// That edge's original marker (when there is no transform), becomes this edge's marker.
+		/// </summary>
+		/// <param name="transformedVectors">source vectors transformed to the destination coordinate system</param>
+		/// <returns>the source image edge that has effectively moved to this edge</returns>
+		private ImageEdge GetTransformedEdge(SizeF[] transformedVectors)
+		{
+			//the original (untransformed) vector for this viewport edge.
+			SizeF thisViewportEdge = _edgeVectors[(int) _viewportEdge];
+
+			//find out which edge in the source image has moved to this edge of the viewport.
+			for (int index = 0; index < transformedVectors.Length; ++index)
+			{
+				//normalize the vector before comparing.
+				SizeF transformedVector = transformedVectors[index];
+				double magnitude = Math.Sqrt(transformedVector.Width*transformedVector.Width +
+				                             transformedVector.Height*transformedVector.Height);
+
+				transformedVector.Width = (float) Math.Round(transformedVector.Width/magnitude);
+				transformedVector.Height = (float) Math.Round(transformedVector.Height/magnitude);
+
+				//is it the same as the original vector for this edge?
+				if (transformedVector == thisViewportEdge)
+				{
+					//return the image edge that has now moved to this edge of the viewport.
+					return (ImageEdge) index;
+				}
+			}
+
+			//this should never happen.
+            throw new IndexOutOfRangeException(SR.ExceptionTransformedEdgeDoesNotMatch);
+		}
+
+		/// <summary>
+		/// Determines the (untransformed) marker for a particular image edge.
+		/// </summary>
+		/// <param name="imageEdge">the edge (image coordinates)</param>
+		/// <param name="imageOrientationPatient">the direction cosines of the image</param>
+		/// <returns>a string representation of the direction (a 'marker')</returns>
+		private string GetMarker(ImageEdge imageEdge, ImageOrientationPatient imageOrientationPatient)
+		{
+			bool negativeDirection = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Top);
+			bool rowValues = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Right);
+
+			string markerText = "";
+
+			if (rowValues)
+			{
+				ImageOrientationPatient.Directions primary = imageOrientationPatient.GetPrimaryRowDirection(negativeDirection);
+				ImageOrientationPatient.Directions secondary = imageOrientationPatient.GetSecondaryRowDirection(negativeDirection, 1);
+				markerText += GetMarkerText(primary);
+				markerText += GetMarkerText(secondary);
+			}
+			else
+			{
+				ImageOrientationPatient.Directions primary = imageOrientationPatient.GetPrimaryColumnDirection(negativeDirection);
+				ImageOrientationPatient.Directions secondary = imageOrientationPatient.GetSecondaryColumnDirection(negativeDirection, 1);
+				markerText += GetMarkerText(primary);
+				markerText += GetMarkerText(secondary);
+			}
+
+			return markerText;
+		}
+
+		/// <summary>
+		/// Determines the (untransformed) marker for a particular image edge.
+		/// </summary>
+		/// <param name="imageEdge">the edge (image coordinates)</param>
+		/// <param name="patientOrientation">the patient orientation construct of the image</param>
+		/// <returns>a string representation of the direction (a 'marker')</returns>
+		private string GetMarker(ImageEdge imageEdge, PatientOrientation patientOrientation)
+		{
+			bool negativeDirection = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Top);
+			bool rowValues = (imageEdge == ImageEdge.Left || imageEdge == ImageEdge.Right);
+
+			var direction = (rowValues ? patientOrientation.Row : patientOrientation.Column) ?? PatientDirection.Empty;
+			if (negativeDirection)
+				direction = direction.OpposingDirection;
+
+			string markerText = "";
+			markerText += GetMarkerText(direction.Primary);
+			markerText += GetMarkerText(direction.Secondary);
+
+			return markerText;
+		}
+
+		/// <summary>
+		/// Converts an <see cref="PatientDirection"/> to a marker string.
 		/// </summary>
 		/// <param name="direction">the direction (patient based system)</param>
 		/// <returns>marker text</returns>
-		private static string GetMarkerText(char direction)
+		private static string GetMarkerText(PatientDirection direction)
 		{
-			switch (direction)
-			{
-				case PatientDirection.LeftCode:
-					return SR.ValueDirectionalMarkersLeft;
-                case PatientDirection.RightCode:
-					return SR.ValueDirectionalMarkersRight;
-                case PatientDirection.HeadCode:
-					return SR.ValueDirectionalMarkersHead;
-                case PatientDirection.FootCode:
-					return SR.ValueDirectionalMarkersFoot;
-                case PatientDirection.AnteriorCode:
-					return SR.ValueDirectionalMarkersAnterior;
-                case PatientDirection.PosteriorCode:
-					return SR.ValueDirectionalMarkersPosterior;
-			}
-
-			return "";
+			if (direction == PatientDirection.QuadrupedLeft)
+				return SR.ValueDirectionalMarkersQuadrupedLeft;
+			else if (direction == PatientDirection.QuadrupedRight)
+				return SR.ValueDirectionalMarkersQuadrupedRight;
+			else if (direction == PatientDirection.QuadrupedCranial)
+				return SR.ValueDirectionalMarkersQuadrupedCranial;
+			else if (direction == PatientDirection.QuadrupedCaudal)
+				return SR.ValueDirectionalMarkersQuadrupedCaudal;
+			else if (direction == PatientDirection.QuadrupedRostral)
+				return SR.ValueDirectionalMarkersQuadrupedRostral;
+			else if (direction == PatientDirection.QuadrupedDorsal)
+				return SR.ValueDirectionalMarkersQuadrupedDorsal;
+			else if (direction == PatientDirection.QuadrupedVentral)
+				return SR.ValueDirectionalMarkersQuadrupedVentral;
+			else if (direction == PatientDirection.QuadrupedLateral)
+				return SR.ValueDirectionalMarkersQuadrupedLateral;
+			else if (direction == PatientDirection.QuadrupedMedial)
+				return SR.ValueDirectionalMarkersQuadrupedMedial;
+			else if (direction == PatientDirection.QuadrupedProximal)
+				return SR.ValueDirectionalMarkersQuadrupedProximal;
+			else if (direction == PatientDirection.QuadrupedDistal)
+				return SR.ValueDirectionalMarkersQuadrupedDistal;
+			else if (direction == PatientDirection.QuadrupedPalmar)
+				return SR.ValueDirectionalMarkersQuadrupedPalmar;
+			else if (direction == PatientDirection.QuadrupedPlantar)
+				return SR.ValueDirectionalMarkersQuadrupedPlantar;
+			else if (direction == PatientDirection.Left)
+				return SR.ValueDirectionalMarkersLeft;
+			else if (direction == PatientDirection.Right)
+				return SR.ValueDirectionalMarkersRight;
+			else if (direction == PatientDirection.Head)
+				return SR.ValueDirectionalMarkersHead;
+			else if (direction == PatientDirection.Foot)
+				return SR.ValueDirectionalMarkersFoot;
+			else if (direction == PatientDirection.Anterior)
+				return SR.ValueDirectionalMarkersAnterior;
+			else if (direction == PatientDirection.Posterior)
+				return SR.ValueDirectionalMarkersPosterior;
+			return string.Empty;
 		}
 	}
 }

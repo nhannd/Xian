@@ -25,6 +25,7 @@ using System.Threading;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.ComponentModel;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
+using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -62,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 				}
 				else
 				{
-					Logger.Write("Received event set out of order (received:{0}, expected:{1})", eventSet.Number, NextEventSetNumber);
+					Platform.Log(LogLevel.Warn, "Received event set out of order (received:{0}, expected:{1})", eventSet.Number, NextEventSetNumber);
 					_eventSets[eventSet.Number] = eventSet;
 				}
 			}

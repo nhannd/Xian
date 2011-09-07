@@ -350,7 +350,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
             // Audit log
             DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
                                                 ServerPlatform.AuditSource,
-                                                EventIdentificationTypeEventOutcomeIndicator.Success);
+                                                EventIdentificationContentsEventOutcomeIndicator.Success);
             helper.AddUserParticipant(new AuditProcessActiveParticipant(ServerPartition.AeTitle));
             helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
                                                     StorageLocation.StudyInstanceUid,

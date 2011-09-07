@@ -38,13 +38,13 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="type"></param>
 		/// <param name="idOfApplicationStarted">Add the ID of the Application Started, should be called once.</param>
 		public ApplicationActivityAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome, 
+			EventIdentificationContentsEventOutcomeIndicator outcome, 
 			ApplicationActivityType type,
 			AuditProcessActiveParticipant idOfApplicationStarted) : base("ApplicationActivity")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.ApplicationActivity;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.ApplicationActivity;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.E;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
@@ -52,12 +52,12 @@ namespace ClearCanvas.Dicom.Audit
 			InternalAddAuditSource(auditSource);
 
 			if (type == ApplicationActivityType.ApplicationStarted)
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStart };
+                AuditMessage.EventIdentification.EventTypeCode = new EventTypeCode[] { EventTypeCode.ApplicationStart };
 			else
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStop };
+                AuditMessage.EventIdentification.EventTypeCode = new EventTypeCode[] { EventTypeCode.ApplicationStop };
 
 			idOfApplicationStarted.UserIsRequestor = false;
-			idOfApplicationStarted.RoleIdCode = CodedValueType.Application;
+			idOfApplicationStarted.RoleIdCode = RoleIDCode.Application;
 
 			InternalAddActiveParticipant(idOfApplicationStarted);
 
@@ -69,7 +69,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="participant">The participant.</param>
 		public void AddUserParticipant(AuditActiveParticipant participant)
 		{
-			participant.RoleIdCode = CodedValueType.ApplicationLauncher;
+            participant.RoleIdCode = RoleIDCode.ApplicationLauncher;
 			participant.UserIsRequestor = true;
 
 			InternalAddActiveParticipant(participant);

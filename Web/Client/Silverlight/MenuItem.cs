@@ -54,23 +54,11 @@
 #endregion
 
 using System;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Collections;
 
 namespace ClearCanvas.Web.Client.Silverlight
@@ -279,7 +267,7 @@ namespace ClearCanvas.Web.Client.Silverlight
         public override string ToString()
         {
             if (Header != null)
-                return String.Format("{0} ({1} items)", Header.ToString(), Items.Count);
+                return String.Format("{0} ({1} items)", Header, Items.Count);
 
             return String.Format("{0} items", Items.Count);
         }
@@ -491,11 +479,7 @@ namespace ClearCanvas.Web.Client.Silverlight
 
         internal virtual void ChangeVisualState()
         {
-            
-            if (HasItems)
-                VisualStateManager.GoToState(this, HasItemsState, true);
-            else
-                VisualStateManager.GoToState(this, NoItemsState, true);
+            VisualStateManager.GoToState(this, HasItems ? HasItemsState : NoItemsState, true);
 
             if (!IsChecked)
                 VisualStateManager.GoToState(this, UnCheckedState, true);

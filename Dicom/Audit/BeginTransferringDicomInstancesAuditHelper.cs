@@ -31,14 +31,14 @@ namespace ClearCanvas.Dicom.Audit
 	/// </remarks>
 	public class BeginTransferringDicomInstancesAuditHelper : DicomAuditHelper
 	{
-		public BeginTransferringDicomInstancesAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
+        public BeginTransferringDicomInstancesAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome,
 			AssociationParameters parms,
 			AuditPatientParticipantObject patient)
 			: base("BeginTransferringDicomInstances")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.BeginTransferringDICOMInstances;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.BeginTransferringDICOMInstances;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.E;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
@@ -50,14 +50,14 @@ namespace ClearCanvas.Dicom.Audit
 			InternalAddParticipantObject(patient.PatientId + patient.PatientsName, patient);
 		}
 
-		public BeginTransferringDicomInstancesAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
+        public BeginTransferringDicomInstancesAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome,
 			string sourceAE, string sourceHost, string destinationAE, string destinationHost,
 			AuditPatientParticipantObject patient)
 			: base("BeginTransferringDicomInstances")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.BeginTransferringDICOMInstances;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.BeginTransferringDICOMInstances;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.E;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;

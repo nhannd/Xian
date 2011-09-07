@@ -53,7 +53,10 @@
       <DependentUpon>DicomExplorerConfigurationSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="DicomExplorerConfigurationPageProvider.cs" />
+    <Compile Include="ISearchPanelComponent.cs" />
+    <Compile Include="IStudyBrowserComponent.cs" />
     <Compile Include="IStudyColumn.cs" />
+    <Compile Include="QueryStringHelper.cs" />
     <Compile Include="SearchPanelComponent.cs" />
     <Compile Include="SearchResult.cs" />
     <Compile Include="FilterDuplicateStudiesTool.cs" />

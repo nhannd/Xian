@@ -68,11 +68,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\AuthorityGroupAdminService.cs" />
+    <Compile Include="Admin\AuthorityGroupAdmin\AuthorityGroupReadService.cs" />
     <Compile Include="Admin\AuthorityGroupAssembler.cs" />
     <Compile Include="Admin\AuthorityTokenAssembler.cs" />
     <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
@@ -95,6 +97,12 @@
     <Compile Include="Imex\UserImex.cs" />
     <Compile Include="Imex\UserImporter.cs" />
     <Compile Include="Password.cs" />
+    <Compile Include="PasswordResetEmailSettings.cs" />
+    <Compile Include="PasswordResetEmailSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PasswordResetEmailSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionStatistics.cs" />
     <Compile Include="Setup\SetupApplication.cs" />
@@ -137,6 +145,10 @@
     <None Include="AuthenticationSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>AuthenticationSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PasswordResetEmailSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PasswordResetEmailSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

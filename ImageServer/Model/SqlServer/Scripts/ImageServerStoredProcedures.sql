@@ -1959,6 +1959,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Description:	Completely delete a Study from the database
 -- History
 --	Oct 06, 2009:  Delete StudyHistory record if DestStudyStorageGUID matches
+--  Aug 18, 2011:  Delete StudyDataAccess
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteStudyStorage] 
 	-- Add the parameters for the stored procedure here
@@ -2010,6 +2011,9 @@ BEGIN
 	DELETE FROM WorkQueue 
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
+	DELETE FROM StudyDataAccess
+	WHERE StudyStorageGUID = @StudyStorageGUID
+	
 	DELETE FROM StudyHistory
 	WHERE StudyStorageGUID = @StudyStorageGUID OR DestStudyStorageGUID=@StudyStorageGUID
 

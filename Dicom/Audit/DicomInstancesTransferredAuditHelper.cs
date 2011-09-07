@@ -35,13 +35,13 @@ namespace ClearCanvas.Dicom.Audit
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public DicomInstancesTransferredAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
-			EventIdentificationTypeEventActionCode action,
+        public DicomInstancesTransferredAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome,
+			EventIdentificationContentsEventActionCode action,
 			AssociationParameters parms)
 			: base("DicomInstancesTransferred")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMInstancesTransferred;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.DICOMInstancesTransferred;
 			AuditMessage.EventIdentification.EventActionCode = action;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
@@ -55,13 +55,13 @@ namespace ClearCanvas.Dicom.Audit
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public DicomInstancesTransferredAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
-			EventIdentificationTypeEventActionCode action,
+        public DicomInstancesTransferredAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome,
+			EventIdentificationContentsEventActionCode action,
 			string sourceAE, string sourceHost, string destinationAE, string destinationHost)
 			: base("DicomInstancesTransferred")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMInstancesTransferred;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.DICOMInstancesTransferred;
 			AuditMessage.EventIdentification.EventActionCode = action;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();

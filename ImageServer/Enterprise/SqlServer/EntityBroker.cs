@@ -510,7 +510,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                     sqlColumnName = String.Format("{0}", parm.FieldName);
 
                 else
-                    sqlColumnName = String.Format("{0}GUID", parm.FieldName);
+                    sqlColumnName = String.Format("{0}", parm.FieldName);
             }
             else if (parm is EntityUpdateColumn<ServerEntityKey>)
             {
@@ -521,7 +521,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                     sqlColumnName = String.Format("{0}", parm.FieldName);
 
                 else
-                    sqlColumnName = String.Format("{0}GUID", parm.FieldName);
+                    sqlColumnName = String.Format("{0}", parm.FieldName);
             }
             else if (parm is EntityUpdateColumn<ServerEnum>)
             {
@@ -985,7 +985,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 Platform.Log(LogLevel.Error, e, "Unexpected exception with select: {0}", sql);
 
                 throw new PersistenceException(
-                    String.Format("Unexpected problem with select statment on table {0}: {1}", _entityName, e.Message),
+                    String.Format("Unexpected problem with select count statement on table {0}: {1}", _entityName, e.Message),
                     e);
             }
             finally
@@ -1031,7 +1031,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                              command != null ? command.CommandText : "");
 
                 throw new PersistenceException(
-                    String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message),
+                    String.Format("Unexpected problem with delete statement on table {0}: {1}", _entityName, e.Message),
                     e);
             }
             finally
@@ -1078,7 +1078,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                              command != null ? command.CommandText : "");
 
                 throw new PersistenceException(
-                    String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message),
+                    String.Format("Unexpected problem with update statement on table {0}: {1}", _entityName, e.Message),
                     e);
             }
             finally
@@ -1126,7 +1126,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                              command != null ? command.CommandText : "");
 
                 throw new PersistenceException(
-                    String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message),
+                    String.Format("Unexpected problem with update statement on table {0}: {1}", _entityName, e.Message),
                     e);
             }
             finally
@@ -1174,7 +1174,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                              command != null ? command.CommandText : "");
 
                 throw new PersistenceException(
-                    String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message),
+                    String.Format("Unexpected problem with update statement on table {0}: {1}", _entityName, e.Message),
                     e);
             }
             finally
@@ -1237,7 +1237,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                              command != null ? command.CommandText : "");
 
                 throw new PersistenceException(
-                    String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message),
+                    String.Format("Unexpected problem with insert statement on table {0}: {1}", _entityName, e.Message),
                     e);
             }
             finally
@@ -1331,7 +1331,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 Platform.Log(LogLevel.Error, e, "Unexpected exception with select: {0}", sql);
 
                 throw new PersistenceException(
-                    String.Format("Unexpected problem with select statment on table {0}: {1}", _entityName, e.Message),
+                    String.Format("Unexpected problem with select statement on table {0}: {1}", _entityName, e.Message),
                     e);
             }
             finally

@@ -11,12 +11,13 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 
 namespace ClearCanvas.Enterprise.Desktop
@@ -33,7 +34,7 @@ namespace ClearCanvas.Enterprise.Desktop
             _summary = authorityTokenSummary;
             _selected = false;
             _selectedChanged = onChanged;
-			_path = new Path(_summary.Name, new ResourceResolver(this.GetType().Assembly));
+			_path = new Path(_summary.Name, new ResourceResolver(GetType().Assembly));
         }
 
         public bool Selected
@@ -74,16 +75,16 @@ namespace ClearCanvas.Enterprise.Desktop
     {
         public SelectableAuthorityTokenTable ()
     	{
-            this.Columns.Add(new TableColumn<AuthorityTokenTableEntry, bool>(SR.ColumnActive,
+            Columns.Add(new TableColumn<AuthorityTokenTableEntry, bool>(SR.ColumnActive,
                 delegate(AuthorityTokenTableEntry entry) { return entry.Selected; },
                 delegate(AuthorityTokenTableEntry entry, bool value) { entry.Selected = value; },
                 0.5f));
 
-            this.Columns.Add(new TableColumn<AuthorityTokenTableEntry, string>(SR.ColumnAuthorityTokenName,
+            Columns.Add(new TableColumn<AuthorityTokenTableEntry, string>(SR.ColumnAuthorityTokenName,
                 delegate(AuthorityTokenTableEntry entry) { return entry.Name; },
                 1.5f));
 
-            this.Columns.Add(new TableColumn<AuthorityTokenTableEntry, string>(SR.ColumnAuthorityTokenDescription,
+            Columns.Add(new TableColumn<AuthorityTokenTableEntry, string>(SR.ColumnAuthorityTokenDescription,
                 delegate(AuthorityTokenTableEntry entry) { return entry.Description; },
                 3.5f));
 	    }
@@ -146,14 +147,8 @@ namespace ClearCanvas.Enterprise.Desktop
 
                     _authorityTokens = CollectionUtils.Map<AuthorityTokenSummary, AuthorityTokenTableEntry>(
                         CollectionUtils.Sort(authorityTokenResponse.AuthorityTokens,
-							delegate (AuthorityTokenSummary x, AuthorityTokenSummary y)
-							{
-								return x.Name.CompareTo(y.Name);
-							}),
-                        delegate(AuthorityTokenSummary summary)
-                        {
-                            return new AuthorityTokenTableEntry(summary, this.OnAuthorityTokenChecked);
-                        });
+                                             (x, y) => x.Name.CompareTo(y.Name)),
+                        summary => new AuthorityTokenTableEntry(summary, OnAuthorityTokenChecked));
 
                     if (_isNew && !_duplicate)
                     {
@@ -187,8 +182,35 @@ namespace ClearCanvas.Enterprise.Desktop
             set
             {
                 _authorityGroupDetail.Name = value;
-                this.Modified = true;
+                Modified = true;
             }
+        }
+
+        [ValidateNotNull]
+        public string Description
+        {
+            get { return _authorityGroupDetail.Description; }
+            set
+            {
+                _authorityGroupDetail.Description = value;
+                Modified = true;
+            }
+        }
+
+        public bool DataGroup
+        {
+            get { return _authorityGroupDetail.DataGroup; }
+            set
+            {
+                _authorityGroupDetail.DataGroup = value;
+                Modified = true;
+                DataGroupModified = true;
+            }
+        }
+
+        public bool DataGroupModified
+        {
+            get; set;
         }
 
         public List<AuthorityTokenTableEntry> AuthorityTokens
@@ -198,14 +220,16 @@ namespace ClearCanvas.Enterprise.Desktop
 
         public void Accept()
         {
-            if (this.HasValidationErrors)
+            if (HasValidationErrors)
             {
-                this.ShowValidation(true);
+                ShowValidation(true);
                 return;
             }
 
             try
             {
+                bool closeAborted = false;
+
 				Platform.GetService<IAuthorityGroupAdminService>(
 					delegate(IAuthorityGroupAdminService service)
                     {
@@ -216,39 +240,62 @@ namespace ClearCanvas.Enterprise.Desktop
                         }
                         else
                         {
-                            UpdateAuthorityGroupResponse response = service.UpdateAuthorityGroup(new UpdateAuthorityGroupRequest(_authorityGroupDetail));
+                            UpdateAuthorityGroupRequest request = new UpdateAuthorityGroupRequest(_authorityGroupDetail);
+                            if (DataGroupModified && DataGroup == false)
+                            {
+                                var optionsComponent = new PasswordConfirmComponent
+                                {
+                                    Description = SR.DescriptionDataAccessGroupChange
+                                };
+                                if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(Host.DesktopWindow, optionsComponent, SR.TitlePasswordConfirm))
+                                {
+                                    request.Password = optionsComponent.Password;
+                                }
+                                else
+                                {
+                                    closeAborted = true;
+                                    return;
+                                }
+                            }
+
+                            UpdateAuthorityGroupResponse response = service.UpdateAuthorityGroup(request);
                             _authorityGroupSummary = response.AuthorityGroupSummary;
                         }
                     });
-
-                this.Exit(ApplicationComponentExitCode.Accepted);
+                if (closeAborted)
+                    return;
+                Exit(ApplicationComponentExitCode.Accepted);
+            }
+            catch (FaultException<UserAccessDeniedException>)
+            {
+                Host.ShowMessageBox(SR.ExceptionUserAccessDenied, MessageBoxActions.Ok);        
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, SR.ExceptionSaveAuthorityGroup, this.Host.DesktopWindow,
+                ExceptionHandler.Report(e, SR.ExceptionSaveAuthorityGroup, Host.DesktopWindow,
                     delegate
                     {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        this.Host.Exit();
+                        ExitCode = ApplicationComponentExitCode.Error;
+                        Host.Exit();
                     });
             }
         }
 
         public bool AcceptEnabled
         {
-            get { return this.Modified; }
+            get { return Modified; }
         }
 
         public event EventHandler AcceptEnabledChanged
         {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
+            add { ModifiedChanged += value; }
+            remove { ModifiedChanged -= value; }
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            this.Host.Exit();
+            ExitCode = ApplicationComponentExitCode.None;
+            Host.Exit();
         }
 
         public void OnAuthorityTokenChecked(object sender, EventArgs e)
@@ -259,25 +306,19 @@ namespace ClearCanvas.Enterprise.Desktop
             {
                 CollectionUtils.Remove(
                     _authorityGroupDetail.AuthorityTokens,
-                    delegate(AuthorityTokenSummary summary)
-                    {
-                        return summary.Name == changedEntry.Summary.Name;
-                    });
-                this.Modified = true;
+                    summary => summary.Name == changedEntry.Summary.Name);
+                Modified = true;
             }
             else
             {
                 bool alreadyAdded = CollectionUtils.Contains(
                     _authorityGroupDetail.AuthorityTokens,
-                    delegate(AuthorityTokenSummary summary)
-                    {
-						return summary.Name == changedEntry.Summary.Name;
-                    });
+                    summary => summary.Name == changedEntry.Summary.Name);
 
                 if (alreadyAdded == false)
                 {
 					_authorityGroupDetail.AuthorityTokens.Add(changedEntry.Summary);
-                    this.Modified = true;
+                    Modified = true;
                 }
             }
 
@@ -291,10 +332,7 @@ namespace ClearCanvas.Enterprise.Desktop
             {
                 AuthorityTokenTableEntry foundEntry = CollectionUtils.SelectFirst(
                     _authorityTokens,
-                    delegate(AuthorityTokenTableEntry entry)
-                    {
-                        return selectedToken.Name == entry.Summary.Name;
-                    });
+                    entry => selectedToken.Name == entry.Summary.Name);
 
                 if (foundEntry != null) foundEntry.Selected = true;
             }

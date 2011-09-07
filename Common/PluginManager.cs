@@ -248,9 +248,6 @@ namespace ClearCanvas.Common
 					new object[] { new Zone(SecurityZone.MyComputer) },
 					new object[] { });
 
-				PermissionSet permissions =
-					SecurityManager.ResolvePolicy(evidence);
-
 				AppDomainSetup setup = new AppDomainSetup(); 
 				setup.ApplicationBase =	AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
 
@@ -271,10 +268,18 @@ namespace ClearCanvas.Common
 			    setup.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 			 
                 #endregion 
-
-                domain = AppDomain.CreateDomain(
-					"Secondary", evidence, setup,
-					permissions, new StrongName[] { }); 
+                if (System.Environment.Version.Major == 4)
+                {
+                    domain = AppDomain.CreateDomain("Secondary", evidence, setup);
+                }
+                else
+                {
+                    PermissionSet permissions = SecurityManager.ResolvePolicy(evidence);
+			
+                    domain = AppDomain.CreateDomain(
+                        "Secondary", evidence, setup,
+                        permissions, new StrongName[] { });
+                }
 #endif			
 				Assembly asm = Assembly.GetExecutingAssembly();
 

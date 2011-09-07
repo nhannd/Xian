@@ -10,22 +10,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
+using ClearCanvas.Web.Client.Silverlight.Utilities;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
 {
-    public partial class StatisticsPanel : UserControl
+    public partial class StatisticsPanel
     {
         public StatisticsPanel()
         {
@@ -33,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
 
             DataContext = PerformanceMonitor.CurrentInstance;
 
-            PerformanceMonitor.CurrentInstance.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(Instance_PropertyChanged);
+            PerformanceMonitor.CurrentInstance.PropertyChanged += InstancePropertyChanged;
             Speed.Text = PerformanceMonitor.CurrentInstance.SpeedInMbps > 0 ? String.Format(" : {0:0.0} Mpbs", PerformanceMonitor.CurrentInstance.SpeedInMbps) : "Unknown";
             FPS.Text = String.Format(" : {0:0.0}", PerformanceMonitor.CurrentInstance.AverageClientFps);
 
@@ -45,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls
             LastImageSize.Text = String.Format(" : {0:0.0} KB", PerformanceMonitor.CurrentInstance.LastImageSize / 1024);
         }
 
-        void Instance_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        void InstancePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             UIThread.Execute(() =>
             {

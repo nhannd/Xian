@@ -26,6 +26,10 @@ namespace ClearCanvas.Enterprise.Desktop
                                                              user => user.DisplayName,
                                                              1.0f));
 
+            Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnEmailAddress,
+                                                             user => user.EmailAddress,
+                                                             1.0f));
+
             Columns.Add(new DateTimeTableColumn<UserSummary>("Created On",
                                                              user => user.CreationTime,
                                                              0.75f));

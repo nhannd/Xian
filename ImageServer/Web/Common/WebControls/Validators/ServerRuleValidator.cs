@@ -44,6 +44,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 return false;
             }
 
+            if (RuleTypeControl.Equals(ServerRuleTypeEnum.DataAccess.Lookup))
+            {
+                // Validated DataAccess rules only have the condition.  Make a fake 
+                // rule that includes a non-op action
+                ruleXml = String.Format("<rule>{0}<action><no-op/></action></rule>", ruleXml);
+            }
+
             var theDoc = new XmlDocument();
 
             try
@@ -56,18 +63,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 return false;
             }
 
-            //TODO:  When we added "context" validation of rules, ie the rules are validated
-            // differently depending on the type of rule, it because impossible for this
-            // server side validation to work, because the control doesn't have the rule type
-            // when trying to validate input.  The Web service already does the validation before
-            // we get to this point, so this should be fine that we can't do the check here.
-
             string error;
-            if (false == Rule.ValidateRule(ServerRuleTypeEnum.GetEnum(RuleTypeControl), theDoc, out error))
-            {
-                ErrorMessage = error;
-                return false;
-            }
+                if (false == Rule.ValidateRule(ServerRuleTypeEnum.GetEnum(RuleTypeControl), theDoc, out error))
+                {
+                    ErrorMessage = error;
+                    return false;
+                }
 
             return true;
         }

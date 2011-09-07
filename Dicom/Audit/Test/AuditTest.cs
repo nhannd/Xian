@@ -35,7 +35,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			ApplicationActivityAuditHelper helper =
 				new ApplicationActivityAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success, ApplicationActivityType.ApplicationStarted,
+					EventIdentificationContentsEventOutcomeIndicator.Success, ApplicationActivityType.ApplicationStarted,
 					new AuditProcessActiveParticipant("testApp"));
 
 			helper.AddUserParticipant(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
@@ -56,7 +56,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			AuditLogUsedAuditHelper helper =
 				new AuditLogUsedAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success, 
+					EventIdentificationContentsEventOutcomeIndicator.Success, 
 					"http://www.clearcanvas.ca");
 
 			helper.AddActiveParticipant(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
@@ -84,7 +84,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			BeginTransferringDicomInstancesAuditHelper helper =
 				new BeginTransferringDicomInstancesAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,
+					EventIdentificationContentsEventOutcomeIndicator.Success,
 					parms, new AuditPatientParticipantObject("id1234", "Test Patient"));
 
 			DicomAttributeCollection collection = new DicomAttributeCollection();
@@ -107,7 +107,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DataExportAuditHelper helper =
 				new DataExportAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,
+					EventIdentificationContentsEventOutcomeIndicator.Success,
 					"MEDIA123");
 
 			helper.AddExporter(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
@@ -133,7 +133,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DataImportAuditHelper helper =
 				new DataImportAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,
+					EventIdentificationContentsEventOutcomeIndicator.Success,
 					"MEDIA123");
 
 			helper.AddImporter(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
@@ -160,8 +160,8 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DicomInstancesAccessedAuditHelper helper =
 				new DicomInstancesAccessedAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,
-					EventIdentificationTypeEventActionCode.R);
+					EventIdentificationContentsEventOutcomeIndicator.Success,
+					EventIdentificationContentsEventActionCode.R);
 
 			helper.AddUser(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
 
@@ -194,8 +194,8 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DicomInstancesTransferredAuditHelper helper =
 				new DicomInstancesTransferredAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,
-					EventIdentificationTypeEventActionCode.R,
+					EventIdentificationContentsEventOutcomeIndicator.Success,
+					EventIdentificationContentsEventActionCode.R,
 					parms);
 
 			DicomAttributeCollection collection = new DicomAttributeCollection();
@@ -219,7 +219,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DicomStudyDeletedAuditHelper helper =
 				new DicomStudyDeletedAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success);
+					EventIdentificationContentsEventOutcomeIndicator.Success);
 
 			helper.AddUserParticipant(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
 
@@ -244,74 +244,8 @@ namespace ClearCanvas.Dicom.Audit.Test
 			NetworkEntryAuditHelper helper =
 				new NetworkEntryAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,NetworkEntryType.Attach,
+					EventIdentificationContentsEventOutcomeIndicator.Success,NetworkEntryType.Attach,
 					new AuditProcessActiveParticipant("testAe"));
-
-			string output = helper.Serialize(true);
-
-			Assert.IsNotEmpty(output);
-
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
-		}
-
-		[Test]
-		public void OrderRecordAuditTest()
-		{
-			OrderRecordAuditHelper helper =
-				new OrderRecordAuditHelper(
-					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,EventIdentificationTypeEventActionCode.C);
-
-			helper.AddUserParticipant(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
-			helper.AddPatientParticipantObject(new AuditPatientParticipantObject("id1234", "Test Patient"));
-
-			string output = helper.Serialize(true);
-
-			Assert.IsNotEmpty(output);
-
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
-		}
-
-		[Test]
-		public void PatientRecordAuditTest()
-		{
-			PatientRecordAuditHelper helper =
-				new PatientRecordAuditHelper(
-					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success, EventIdentificationTypeEventActionCode.C);
-
-			helper.AddUserParticipant(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
-			helper.AddPatientParticipantObject(new AuditPatientParticipantObject("id1234", "Test Patient"));
-
-			string output = helper.Serialize(true);
-
-			Assert.IsNotEmpty(output);
-
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
-		}
-
-		[Test]
-		public void ProcedureRecordAuditTest()
-		{
-			ProcedureRecordAuditHelper helper =
-				new ProcedureRecordAuditHelper(
-					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success, EventIdentificationTypeEventActionCode.C);
-
-			helper.AddUserParticipant(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
-			DicomAttributeCollection collection = new DicomAttributeCollection();
-			SetupMR(collection);
-			helper.AddPatientParticipantObject(new AuditPatientParticipantObject(collection));
-			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), collection)));
 
 			string output = helper.Serialize(true);
 
@@ -349,7 +283,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 
     		QueryAuditHelper helper =
     			new QueryAuditHelper(new DicomAuditSource("testApplication"),
-    			                     EventIdentificationTypeEventOutcomeIndicator.Success, parms,
+    			                     EventIdentificationContentsEventOutcomeIndicator.Success, parms,
     			                     SopClass.StudyRootQueryRetrieveInformationModelFindUid, query);
 
 			helper.AddOtherParticipant(new AuditPersonActiveParticipant("testUser","test@test","Test Name"));
@@ -371,7 +305,7 @@ namespace ClearCanvas.Dicom.Audit.Test
     		helper =
     			new QueryAuditHelper(
     				new DicomAuditSource("testApplication2", "enterpriseId", AuditSourceTypeCodeEnum.EndUserInterface),
-    				EventIdentificationTypeEventOutcomeIndicator.Success, parms,
+    				EventIdentificationContentsEventOutcomeIndicator.Success, parms,
     				SopClass.StudyRootQueryRetrieveInformationModelFindUid, query);
 			helper.AddStudyParticipantObject(new AuditStudyParticipantObject("1.2.3.4.5"));
 
@@ -390,7 +324,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			SecurityAlertAuditHelper helper =
 				new SecurityAlertAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,SecurityAlertEventTypeCodeEnum.NodeAuthentication);
+					EventIdentificationContentsEventOutcomeIndicator.Success,SecurityAlertEventTypeCodeEnum.NodeAuthentication);
 			helper.AddReportingUser(new AuditProcessActiveParticipant("serverAe"));
 			helper.AddActiveParticipant(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
 
@@ -410,7 +344,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			UserAuthenticationAuditHelper helper =
 				new UserAuthenticationAuditHelper(
 					new DicomAuditSource("testApp", "Site", AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem),
-					EventIdentificationTypeEventOutcomeIndicator.Success,UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.Success,UserAuthenticationEventType.Login);
 			helper.AddNode(new AuditProcessActiveParticipant("serverAe"));
 			helper.AddUserParticipant(new AuditPersonActiveParticipant("testUser", "test@test", "Test Name"));
 
