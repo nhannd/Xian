@@ -43,12 +43,11 @@ namespace ClearCanvas.ImageViewer.Web
 			//TODO (CR April 2011): Figure out how to share the Exception Policies for these messages ...
 			//Current ExceptionHandler/Policy design just doesn't work for this at all.
 			if (e.GetType().Equals(typeof(InUseLoadStudyException)))
-                return ImageViewer.SR.MessageLoadStudyFailedInUse;
+				return ImageViewer.SR.MessageLoadStudyFailedInUse;
 			if (e.GetType().Equals(typeof(NearlineLoadStudyException)))
 			{
 				return ((NearlineLoadStudyException)e).IsStudyBeingRestored
-                    ? ImageViewer.SR.MessageLoadStudyFailedNearlineNoRestore
-                    : String.Format("{0}  {1}", ImageViewer.SR.MessageLoadStudyFailedNearlineNoRestore, ImageViewer.SR.MessageContactPacsAdmin);
+                    ? ImageViewer.SR.MessageLoadStudyFailedNearline : ImageViewer.SR.MessageLoadStudyFailedNearlineNoRestore;
 			}
 			if (e.GetType().Equals(typeof(OfflineLoadStudyException)))
                 return ImageViewer.SR.MessageLoadStudyFailedOffline;

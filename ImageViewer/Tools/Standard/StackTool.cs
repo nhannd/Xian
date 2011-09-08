@@ -143,6 +143,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (Context.Viewer.SelectedTile == null)
 				return;
 
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
 
 			CaptureBeginState(imageBox);
@@ -154,6 +157,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private void JumpToEnd()
 		{
 			if (Context.Viewer.SelectedTile == null)
+				return;
+
+			if (this.SelectedPresentationImage == null)
 				return;
 
 			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
@@ -172,6 +178,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (Context.Viewer.SelectedTile == null)
 				return;
 
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
 			CaptureBeginState(imageBox);
 			AdvanceImage(-imageBox.Tiles.Count, imageBox);
@@ -181,6 +190,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private void StackDown()
 		{
 			if (Context.Viewer.SelectedTile == null)
+				return;
+
+			if (this.SelectedPresentationImage == null)
 				return;
 
 			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
@@ -200,6 +212,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
+			if (this.SelectedPresentationImage == null)
+				return false;
+
 			base.Start(mouseInformation);
 
 			if (mouseInformation.Tile == null)
@@ -212,6 +227,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
+			if (this.SelectedPresentationImage == null)
+				return false;
+
 			base.Track(mouseInformation);
 
 			if (mouseInformation.Tile == null)
@@ -234,6 +252,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
+			if (this.SelectedPresentationImage == null)
+				return false;
+
 			base.Stop(mouseInformation);
 
 			CaptureEndState();
@@ -243,12 +264,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override void Cancel()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureEndState();
 		}
 
 		public override void StartWheel()
 		{
 			if (Context.Viewer.SelectedTile == null)
+				return;
+
+			if (this.SelectedPresentationImage == null)
 				return;
 
 			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
@@ -260,16 +287,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		protected override void WheelBack()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			AdvanceImage(1, Context.Viewer.SelectedTile.ParentImageBox);
 		}
 
 		protected override void WheelForward()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			AdvanceImage(-1, Context.Viewer.SelectedTile.ParentImageBox);
 		}
 
 		public override void StopWheel()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureEndState();
 		}
 	}

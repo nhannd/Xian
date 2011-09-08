@@ -176,12 +176,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 			lvi.Text = item.Name;
 
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
-			if (item.Image != null)
-				_listView.LargeImageList.Images[keyIndex] = (Image)item.Image;
-			else
-				_listView.LargeImageList.Images.RemoveAt(keyIndex);
+            var existing = _listView.LargeImageList.Images[keyIndex];
+            var @new = (Image)item.Image;
 
-			_listView.RedrawItems(index, index, true);
+            if (existing != @new)
+            {
+                if (@new != null)
+                    _listView.LargeImageList.Images[keyIndex] = @new;
+                else
+                    _listView.LargeImageList.Images.RemoveAt(keyIndex);
+
+                _listView.RedrawItems(index, index, true);
+            }
 		}
 
 		private void AddItem(object item)
@@ -322,19 +328,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		#endregion
 
 		#region Display Issues
-
-		private void OnListViewResize(object sender, EventArgs e)
-		{
-			if (_listView.LargeImageList != null)
-			{
-				// force tile sizing to fit within the control without horizontal scrolling
-				const int tileSpacing = 4;
-				_listView.TileSize = new Size(
-					Math.Max(3*_listView.LargeImageList.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2*tileSpacing),
-					_listView.LargeImageList.ImageSize.Height + tileSpacing
-					);
-			}
-		}
 
 		private void OnAfterLabelEdit(object sender, LabelEditEventArgs e)
 		{

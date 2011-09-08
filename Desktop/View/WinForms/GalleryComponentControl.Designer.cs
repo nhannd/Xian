@@ -63,7 +63,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._listView.ShowItemToolTips = true;
 			this._listView.UseCompatibleStateImageBehavior = false;
 			this._listView.ItemActivate += new System.EventHandler(this.OnItemActivate);
-			this._listView.Resize += new System.EventHandler(this.OnListViewResize);
 			this._listView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnAfterLabelEdit);
 			this._listView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
 			this._listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);

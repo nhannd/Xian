@@ -2113,6 +2113,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to \.
+        /// </summary>
+        public static string SeparatorSingleLine {
+            get {
+                return ResourceManager.GetString("SeparatorSingleLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actual.
         /// </summary>
         public static string ValueActualSpacingCalibration {
