@@ -148,7 +148,6 @@
     <Compile Include="Configuration\ListConfigurationDocumentsResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />
     <Compile Include="EntityRefJsmlSerializerHook.cs" />
-    <Compile Include="FailedEndpointThrottleClientAdvice.cs" />
     <Compile Include="FailoverClientAdvice.cs" />
     <Compile Include="IChannelProvider.cs" />
     <Compile Include="IOfflineCache.cs" />
@@ -156,6 +155,7 @@
     <Compile Include="NullOfflineCache.cs" />
     <Compile Include="PagedDataContractBase.cs" />
     <Compile Include="Ping\IPingService.cs" />
+    <Compile Include="RemoteCoreServiceProvider2.cs" />
     <Compile Include="ResponseCachingAdviceBase.cs" />
     <Compile Include="ResponseCachingClientSideAdvice.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
