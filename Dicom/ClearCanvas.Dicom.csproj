@@ -508,6 +508,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomSettings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="DicomTagDictionary.data" />
     <None Include="Network\NetworkSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>NetworkSettings.Designer.cs</LastGenOutput>
