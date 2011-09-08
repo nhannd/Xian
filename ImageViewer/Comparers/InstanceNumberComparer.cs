@@ -42,6 +42,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 			yield return sop.SeriesInstanceUid;
 
 			yield return sop.InstanceNumber;
+			yield return sop[DicomTags.AcquisitionNumber].GetInt32(0, 0);
 		}
 
 		/// <summary>
