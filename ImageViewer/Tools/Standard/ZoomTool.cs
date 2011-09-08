@@ -135,6 +135,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		
 		private void ZoomIn()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureBeginState();
 
 			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
@@ -145,6 +148,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void ZoomOut()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureBeginState();
 
 			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
@@ -219,6 +225,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
+			if (this.SelectedPresentationImage == null)
+				return false;
+
 			base.Start(mouseInformation);
 
 			CaptureBeginState();
@@ -239,6 +248,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
+			if (this.SelectedPresentationImage == null)
+				return false;
+
 			base.Stop(mouseInformation);
 
 			CaptureEndState();
@@ -248,21 +260,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override void Cancel()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			this.CaptureEndState();
 		}
 
 		public override void StartWheel()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureBeginState();
 		}
 
 		public override void StopWheel()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureEndState();
 		}
 
 		protected override void WheelBack()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
 			increment *= _invertedOperation ? -1f : 1f;
 			IncrementScale(increment);
@@ -270,6 +294,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		protected override void WheelForward()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
 			increment *= _invertedOperation ? -1f : 1f;
 			IncrementScale(increment);

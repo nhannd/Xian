@@ -47,7 +47,6 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                                               };
 
                             InitiateSessionResponse response = service.InitiateSession(request);
-
                             if (response != null)
                             {
                                 var credentials = new LoginCredentials
@@ -56,7 +55,8 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                                                           DisplayName = response.DisplayName,
                                                           SessionToken = response.SessionToken,
                                                           Authorities = response.AuthorityTokens,
-                                                          DataAccessAuthorityGroups = response.DataGroupOids
+                                                          DataAccessAuthorityGroups = response.DataGroupOids,
+                                                          EmailAddress = response.EmailAddress
                                                       };
                                 var user = new CustomPrincipal(new CustomIdentity(userName, response.DisplayName),credentials);
                                 Thread.CurrentPrincipal = user;
@@ -323,18 +323,6 @@ namespace ClearCanvas.Web.Enterprise.Authentication
             {
                 if (_cacheSessionInfo.ContainsKey(id))
                     return _cacheSessionInfo[id];
-
-                return null;
-            }
-        }
-
-        public SessionInfo FindByUsername(string username)
-        {
-            lock (_sync)
-            {
-                foreach (SessionInfo info in _cacheSessionInfo.Values)
-                    if (info.Credentials.UserName.Equals(username))
-                        return info;
 
                 return null;
             }

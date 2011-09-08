@@ -9,18 +9,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Markup;
 
 namespace ClearCanvas.Web.Client.Silverlight
 {
@@ -32,10 +21,6 @@ namespace ClearCanvas.Web.Client.Silverlight
     public class MenuScrollViewer : CustomScrollViewer, IMenuItemsContainer
     {
         private IMenu _parent;
-
-        public MenuScrollViewer()
-        {
-        }
 
         protected override void OnScrolling()
         {

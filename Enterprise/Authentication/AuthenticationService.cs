@@ -68,7 +68,7 @@ namespace ClearCanvas.Enterprise.Authentication
 		                     ? PersistenceContext.GetBroker<IAuthorityGroupBroker>().FindDataGroupsByUserName(request.UserName)
 		                     : new Guid[0];
 
-			return new InitiateSessionResponse(session.GetToken(), authorizations, groups, user.DisplayName);
+		    return new InitiateSessionResponse(session.GetToken(), authorizations, groups, user.DisplayName, user.EmailAddress);
 		}
 
 		[UpdateOperation(ChangeSetAuditable = false)]

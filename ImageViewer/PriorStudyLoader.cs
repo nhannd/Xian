@@ -29,25 +29,40 @@ namespace ClearCanvas.ImageViewer
 	/// </remarks>
 	public class LoadPriorStudiesException : LoadMultipleStudiesException
 	{
-		internal LoadPriorStudiesException(ICollection<Exception> exceptions, int totalStudies)
-			: base(FormatMessage(exceptions, totalStudies), exceptions, totalStudies)
+		internal LoadPriorStudiesException(ICollection<Exception> exceptions, int totalStudies, bool findResultsComplete)
+			: base(FormatMessage(exceptions, totalStudies, findResultsComplete), exceptions, totalStudies)
 		{
 			FindFailed = false;
-		}
+            FindResultsComplete = findResultsComplete;
+        }
 
 		internal LoadPriorStudiesException()
 			: base("The query for prior studies has failed.", new List<Exception>(), 0)
 		{
 			FindFailed = true;
+		    FindResultsComplete = false;
 		}
+
+        /// <summary>
+        /// Gets whether or not the find results can be considered complete.
+        /// </summary>
+        public readonly bool FindResultsComplete;
 
 		/// <summary>
 		/// Gets whether or not it was the find operation that failed (e.g. <see cref="IPriorStudyFinder"/>).
 		/// </summary>
 		public readonly bool FindFailed;
 
-		private static string FormatMessage(ICollection<Exception> exceptions, int totalStudies)
+        private static string FormatMessage(ICollection<Exception> exceptions, int totalStudies, bool findResultsComplete)
 		{
+            if (!findResultsComplete)
+            {
+                if (exceptions.Count == 0)
+                    return "Prior study search results may be incomplete.";
+
+                return String.Format("Prior study search results may be incomplete, and {0} of {1} prior studies produced one or more errors while loading.", exceptions.Count, totalStudies);
+            }
+
 			return String.Format("{0} of {1} prior studies produced one or more errors while loading.", exceptions.Count, totalStudies);
 		}
 	}
@@ -89,8 +104,9 @@ namespace ClearCanvas.ImageViewer
 			private SynchronizationContext _synchronizationContext;
 
 			private readonly IPriorStudyFinder _priorStudyFinder;
-			private volatile StudyItemList _queryResults;
-			private volatile bool _findFailed;
+			private StudyItemList _queryResults;
+		    private bool _findResultsComplete;
+            private bool _findFailed;
 
 			public AsynchronousPriorStudyLoader(ImageViewerComponent imageViewer, IPriorStudyFinder priorStudyFinder)
 			{
@@ -157,7 +173,12 @@ namespace ClearCanvas.ImageViewer
 			{
 				try
 				{
-					_queryResults = _priorStudyFinder.FindPriorStudies() ?? new StudyItemList();
+				    var result = _priorStudyFinder.FindPriorStudies();
+                    if (result == null)
+                        return;
+
+                    _findResultsComplete = result.ResultsComplete;
+				    _queryResults = result.Studies;
 					if (_queryResults.Count == 0)
 						return;
 				}
@@ -165,6 +186,7 @@ namespace ClearCanvas.ImageViewer
 				{
 					_queryResults = new StudyItemList();
 					_findFailed = true;
+				    _findResultsComplete = false;
 					Platform.Log(LogLevel.Error, e, "The search for prior studies has failed.");
 					return;
 				}
@@ -235,7 +257,10 @@ namespace ClearCanvas.ImageViewer
 
                 var errors = GetLoadErrors();
 				if (errors.Count > 0)
-					throw new LoadPriorStudiesException(errors, GetValidPriorCount());
+					throw new LoadPriorStudiesException(errors, GetValidPriorCount(), _findResultsComplete);
+
+                if (!_findResultsComplete)
+                    throw new LoadPriorStudiesException(new List<Exception>(), GetValidPriorCount(), _findResultsComplete);
 			}
 
 			private void DisposeLoaders()

@@ -17,7 +17,6 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Comparers;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
@@ -40,14 +39,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private List<string> _currentPathElements;
 
 		private ImageSetGroups _imageSetGroups;
-		private readonly Dictionary<string, IImageSet> _unavailableImageSets;
 		private readonly IComparer<IImageSet> _comparer = new StudyDateComparer();
 
 		private readonly IPatientReconciliationStrategy _patientReconciliationStrategy = new DefaultPatientReconciliationStrategy();
 
 		public ContextMenuLayoutTool()
 		{
-			_unavailableImageSets = new Dictionary<string, IImageSet>();
 		}
 
 		private static List<IActionFactory> CreateActionFactories()
@@ -84,61 +81,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			_patientReconciliationStrategy.SetStudyTree(base.ImageViewer.StudyTree);
 			_imageSetGroups = new ImageSetGroups(base.Context.Viewer.LogicalWorkspace.ImageSets);
-
-			base.ImageViewer.EventBroker.StudyLoaded += OnStudyLoaded;
-			base.ImageViewer.EventBroker.StudyLoadFailed += OnLoadPriorStudyFailed;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			base.ImageViewer.EventBroker.StudyLoadFailed -= OnLoadPriorStudyFailed;
-			base.ImageViewer.EventBroker.StudyLoaded -= OnStudyLoaded;
-
 			_imageSetGroups.Dispose();
-
-			foreach (IImageSet imageSet in _unavailableImageSets.Values)
-				imageSet.Dispose();
-
 			base.Dispose(disposing);
-		}
-
-		private void OnStudyLoaded(object sender, StudyLoadedEventArgs e)
-		{
-			IImageSet unavailableImageSet;
-			string studyInstanceUid = e.Study.StudyInstanceUid;
-			if (_unavailableImageSets.TryGetValue(studyInstanceUid, out unavailableImageSet))
-			{
-				_imageSetGroups.Root.Remove(unavailableImageSet);
-				_unavailableImageSets.Remove(studyInstanceUid);
-			}
-		}
-
-		private void OnLoadPriorStudyFailed(object sender, StudyLoadFailedEventArgs e)
-		{
-			bool notFoundError = e.Error is NotFoundLoadStudyException;
-			if (!notFoundError && (e.Error is LoadSopsException || e.Error is StudyLoaderNotFoundException))
-			{
-				if (null != CollectionUtils.SelectFirst(base.ImageViewer.LogicalWorkspace.ImageSets,
-				                                        imageSet => imageSet.Uid == e.Study.StudyInstanceUid))
-				{
-					return;
-				}
-
-				if (_unavailableImageSets.ContainsKey(e.Study.StudyInstanceUid))
-					return;
-
-				var reconciled = _patientReconciliationStrategy.ReconcilePatientInformation(e.Study);
-				if (reconciled == null)
-					return;
-
-				var studyItem = new StudyItem(reconciled, e.Study, e.Study.Server, e.Study.StudyLoaderName);
-
-				ImageSetDescriptor descriptor = new UnavailableImageSetDescriptor(studyItem, e.Error);
-				ImageSet unavailableImageSet = new ImageSet(descriptor);
-
-				_imageSetGroups.Root.Add(unavailableImageSet);
-				_unavailableImageSets[studyItem.StudyInstanceUid] = unavailableImageSet;
-			}
 		}
 
     	/// <summary>
@@ -169,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					ActionPlaceholder = actionPlaceholder
 				};
 
-				bool showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1 || _unavailableImageSets.Count > 0;
+			    bool showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1;
 				int loadingPriorsNumber = 0;
 
 				foreach (FilteredGroup<IImageSet> group in TraverseImageSetGroups(rootGroup, rootPath))

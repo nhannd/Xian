@@ -191,13 +191,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			return new CompositeComparer<Series>(new DXSeriesPresentationIntentComparer(), base.GetSeriesComparer());
 		}
 
-		protected override IPatientData ReconcilePatient(Study study)
+        protected override IPatientData ReconcilePatient(IStudyRootData studyData)
 		{
-			var reconciled = _reconciliationStrategy.ReconcilePatientInformation(study.ParentPatient);
+            var reconciled = _reconciliationStrategy.ReconcilePatientInformation(studyData);
 			if (reconciled != null)
-				return new StudyRootStudyIdentifier(reconciled, study.GetIdentifier());
+				return new StudyRootStudyIdentifier(reconciled, new StudyIdentifier());
 
-			return base.ReconcilePatient(study);
+            return base.ReconcilePatient(studyData);
 		}
 
 		protected override void UpdateImageSet(IImageSet imageSet, Series series)

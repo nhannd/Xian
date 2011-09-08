@@ -30,7 +30,6 @@
 #endregion
 
 using System.Configuration;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
@@ -40,7 +39,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 	{
 		private PreLoadingSettings()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

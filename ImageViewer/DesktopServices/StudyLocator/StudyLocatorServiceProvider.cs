@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 				if (AppDomain.CurrentDomain == DesktopServiceHostTool.HostAppDomain)
 				{
 					//just return an instance when in the same process/domain.
-					return new ImageViewer.StudyLocator.StudyLocator();
+					return new Configuration.StudyLocator();
 				}
 				else
 				{

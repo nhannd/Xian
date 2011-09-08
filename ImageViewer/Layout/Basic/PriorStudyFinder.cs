@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -40,24 +41,46 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		#endregion
 
+	    private static bool _lastResultsComplete = true;
+
 		private static void Handle(LoadPriorStudiesException exception, IExceptionHandlingContext context)
 		{
 			if (exception.FindFailed)
 			{
 				context.ShowMessageBox(SR.MessageSearchForPriorsFailed);
+                return;
 			}
-			else if (ShouldShowErrorMessage(exception))
-			{
-				var summary = new StringBuilder();
 
-				summary.AppendLine(SR.MessageLoadPriorsErrorPrefix);
-				summary.Append(exception.GetExceptionSummary());
+            var summary = new StringBuilder();
+            if (!exception.FindResultsComplete)
+            {
+                //Only show the message if the last query was successful/complete.
+                if (_lastResultsComplete)
+                    summary.Append(SR.MessagePriorsIncomplete);
 
-				context.ShowMessageBox(summary.ToString());
-			}
+                _lastResultsComplete = false;
+            }
+            else
+            {
+                _lastResultsComplete = true;
+            }
+
+            if (ShouldShowLoadErrorMessage(exception))
+            {
+                if (summary.Length > 0)
+                {
+                    summary.AppendLine(); summary.AppendLine("----"); summary.AppendLine();
+                }
+
+                summary.AppendLine(SR.MessageLoadPriorsErrorPrefix);
+                summary.Append(exception.GetExceptionSummary());
+            }
+
+            if (summary.Length > 0)
+                context.ShowMessageBox(summary.ToString());
 		}
 
-		private static bool ShouldShowErrorMessage(LoadMultipleStudiesException exception)
+		private static bool ShouldShowLoadErrorMessage(LoadMultipleStudiesException exception)
 		{
 			if (exception.IncompleteCount > 0)
 				return true;
@@ -77,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	{
 		private volatile bool _cancel;
 
-		public override StudyItemList FindPriorStudies()
+		public override PriorStudyFinderResult FindPriorStudies()
 		{
 			_cancel = false;
 			var results = new Dictionary<string, StudyItem>();
@@ -95,34 +118,56 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				patientIds[reconciled.PatientId] = reconciled.PatientId;
 			}
 
-			using (var bridge = new StudyRootQueryBridge(Platform.GetService<IStudyRootQuery>()))
-			{
-				foreach (string patientId in patientIds.Keys)
-				{
-					var identifier = new StudyRootStudyIdentifier {PatientId = patientId};
+		    bool resultsComplete = true;
+		    bool anySuccessful = false;
 
-					IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
-					foreach (StudyRootStudyIdentifier study in studies)
-					{
-						if (_cancel)
-							break;
+		    foreach (var query in DefaultServers.GetQueryInterfaces(true))
+		    {
+                if (_cancel) break;
 
-						//Eliminate false positives right away.
-						IPatientData reconciled = reconciliationStrategy.ReconcilePatientInformation(study);
-						if (reconciled == null)
-							continue;
+		        try
+		        {
+                    using (var bridge = new StudyRootQueryBridge(query))
+                    {
+                        foreach (string patientId in patientIds.Keys)
+                        {
+                            var identifier = new StudyRootStudyIdentifier { PatientId = patientId };
 
-						StudyItem studyItem = ConvertToStudyItem(study);
-						if (studyItem == null || results.ContainsKey(studyItem.StudyInstanceUid))
-							continue;
+                            IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
+                            foreach (StudyRootStudyIdentifier study in studies)
+                            {
+                                if (_cancel)
+                                    break;
 
-						results[studyItem.StudyInstanceUid] = studyItem;
-					}
-				}
-			}
+                                //Eliminate false positives right away.
+                                IPatientData reconciled = reconciliationStrategy.ReconcilePatientInformation(study);
+                                if (reconciled == null)
+                                    continue;
 
-			return new StudyItemList(results.Values);
-		}
+                                StudyItem studyItem = ConvertToStudyItem(study);
+                                if (studyItem == null || results.ContainsKey(studyItem.StudyInstanceUid))
+                                    continue;
+
+                                if (!results.ContainsKey(studyItem.StudyInstanceUid))
+                                    results[studyItem.StudyInstanceUid] = studyItem;
+                            }
+                        }
+                    }
+
+		            anySuccessful = true;
+		        }
+		        catch (Exception e)
+		        {
+		            resultsComplete = false;
+                    Platform.Log(LogLevel.Error, e, "Failed to query server: {0}", query);
+		        }
+		    }
+
+            if (!anySuccessful)
+                throw new Exception("The search for prior studies has failed.");
+
+            return new PriorStudyFinderResult(new StudyItemList(results.Values), resultsComplete);
+        }
 
 		public override void Cancel()
 		{

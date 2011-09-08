@@ -26,21 +26,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			#region Unavailable
 
-			private string GetActionMessage(UnavailableImageSetDescriptor descriptor)
+			private string GetActionMessage(IDicomImageSetDescriptor descriptor)
 			{
 				if (descriptor.IsOffline)
-					return SR.MessageActionStudyOffline;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoStudyOffline;
 				else if (descriptor.IsNearline)
-					return SR.MessageActionStudyNearline;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoStudyNearline;
 				else if (descriptor.IsInUse)
-					return SR.MessageActionStudyInUse;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoStudyInUse;
 				else if (descriptor.IsNotLoadable)
-					return SR.MessageActionNoStudyLoader;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoNoStudyLoader;
 				else
-					return SR.MessageActionStudyCouldNotBeLoaded;
+                    return ClearCanvas.ImageViewer.SR.MessageInfoStudyCouldNotBeLoaded;
 			}
 
-			private string GetActionLabel(UnavailableImageSetDescriptor descriptor)
+            private string GetActionLabel(IDicomImageSetDescriptor descriptor)
 			{
 				if (descriptor.IsOffline)
 					return String.Format(SR.LabelFormatStudyUnavailable, SR.Offline);
@@ -57,12 +57,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			private IClickAction CreateUnavailableStudyAction(IActionFactoryContext context)
 			{
-				UnavailableImageSetDescriptor descriptor = (UnavailableImageSetDescriptor)context.ImageSet.Descriptor;
+			    var descriptor = context.ImageSet.Descriptor as IDicomImageSetDescriptor;
+                if (descriptor == null || descriptor.LoadStudyError == null)
+                    return null;
 
-				MenuAction action = CreateMenuAction(context, GetActionLabel(descriptor),
+				return CreateMenuAction(context, GetActionLabel(descriptor),
 										() => context.DesktopWindow.ShowMessageBox(GetActionMessage(descriptor), MessageBoxActions.Ok));
-
-				return action;
 			}
 
 			#endregion
@@ -121,8 +121,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				List<IAction> actions = new List<IAction>();
 
-				if (context.ImageSet.Descriptor is UnavailableImageSetDescriptor)
-					actions.Add(CreateUnavailableStudyAction(context));
+			    var unavailable = CreateUnavailableStudyAction(context);
+                if (unavailable != null)
+                    actions.Add(unavailable);
 				else
 					actions.AddRange(CreateDisplaySetActions(context));
 

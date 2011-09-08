@@ -59,31 +59,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContextMenuConfigurationPageControl.cs">
-    </Compile>
-    <Compile Include="ContextMenuConfigurationPageControl.Designer.cs">
-      <DependentUpon>ContextMenuConfigurationPageControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ContextMenuConfigurationPageView.cs" />
     <Compile Include="CustomizeViewerActionModelsComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CustomizeViewerActionModelsComponentControl.Designer.cs">
       <DependentUpon>CustomizeViewerActionModelsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomizeViewerActionModelsComponentView.cs" />
     <Compile Include="DicomServerEditComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerEditComponentControl.Designer.cs">
       <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerEditComponentView.cs" />
     <Compile Include="DicomServerGroupEditComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentControl.Designer.cs">
       <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentView.cs" />
     <Compile Include="MonitorConfigurationApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MonitorConfigurationApplicationComponentControl.Designer.cs">
       <DependentUpon>MonitorConfigurationApplicationComponentControl.cs</DependentUpon>
@@ -105,6 +103,7 @@
     </Compile>
     <Compile Include="ServerTreeComponentView.cs" />
     <Compile Include="ServerTreeConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ServerTreeConfigurationComponentControl.Designer.cs">
       <DependentUpon>ServerTreeConfigurationComponentControl.cs</DependentUpon>
@@ -135,9 +134,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ContextMenuConfigurationPageControl.resx">
-      <DependentUpon>ContextMenuConfigurationPageControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="CustomizeViewerActionModelsComponentControl.resx">
       <DependentUpon>CustomizeViewerActionModelsComponentControl.cs</DependentUpon>
     </EmbeddedResource>
