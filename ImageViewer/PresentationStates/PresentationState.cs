@@ -39,7 +39,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
         /// <summary>
         /// Gets the default <see cref="PresentationState"/> for DICOM images.
         /// </summary>
-		public static readonly PresentationState DicomDefault = DicomPresentationState.Default;
+		public static PresentationState DicomDefault
+		{
+			get { return DicomPresentationState.Default; }
+		}
 
 		/// <summary>
 		/// Constructs a new presentation state.
