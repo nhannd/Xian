@@ -30,12 +30,13 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                 if (Equals(_imageData, value))
                     return;
 
-                if (_imageData != null)
-                    _imageData.Dispose();
-
+                var old = _imageData;
                 _imageData = value;
                 EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("Image"));
                 EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("ImageData"));
+
+                if (old != null)
+                    old.Dispose();
             }
         }
 

@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private bool _imageScrollerVisible;
 		private CompositeUndoableCommand _historyCommand;
 		private MemorableUndoableCommand _imageBoxCommand;
-        private Dictionary<IImageBoxExtension, IImageBoxExtensionView> _extensionViews = new Dictionary<IImageBoxExtension, IImageBoxExtensionView>();
+        private readonly Dictionary<IImageBoxExtension, IImageBoxExtensionView> _extensionViews = new Dictionary<IImageBoxExtension, IImageBoxExtensionView>();
             
         /// <summary>
         /// Constructor
@@ -87,11 +87,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Size = new Size(right - left, bottom - top);
 
 				this.ResumeLayout(false);
-
-                foreach (var view in _extensionViews.Values)
-                {
-                    view.Size = Size;
-                }
 			}
 		}
 
@@ -140,13 +135,35 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			base.OnLoad(e);
 		}
 
+
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
 
+            // Notify all extensions of the new size
+            foreach (var view in _extensionViews.Values)
+            {
+                view.ParentSize = Size;
+                if (view.Visible)
+                {
+                    // update the view so that we can decide whether or not we should suppress tile draw
+                    view.UpdateLayout();
+                }
+            }
+
+            // If an extension is being displayed and covers the entire image box, we don't want to draw the tile. 
+            // Doing so will cause the image to briefly appear before being covered by the extension control.
+            // We also don't want to suppress drawing if the extension control is visible but does not cover the entire image box 
+            // (eg, an extension that draws a textbox on the image).
+            bool suppressTileDraw = _imageBox != null && 
+                                    CollectionUtils.Contains(_extensionViews.Values,
+                                                        view => view.Visible &&
+                                                        view.ActualSize.Width >= Size.Width &&
+                                                        view.ActualSize.Height >= Size.Height);
+
 			this.SuspendLayout();
 
-			SetTileParentImageBoxRectangles(false);
+            SetTileParentImageBoxRectangles(suppressTileDraw);
 
 			this.ResumeLayout(false);
 
@@ -156,7 +173,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				_imageScroller.Size = new Size(_imageScroller.Width, this.Height);
 			}
 
-			Invalidate();
+		    Invalidate();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -514,7 +531,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 view = extension.CreateView();
                 if (view!=null)
                 {
-                    view.Size = Size;
+                    view.ParentSize = Size;
                     _extensionViews.Add(extension, view);
 
                     if (extension.Visible)

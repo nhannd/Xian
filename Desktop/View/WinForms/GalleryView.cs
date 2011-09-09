@@ -251,9 +251,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			ListViewItem lvi = _listView.Items[index];
 			IGalleryItem item = (IGalleryItem) _gallery[index];
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
-			_listView.LargeImageList.Images[keyIndex] = (Image)item.Image;
-			// update name, description
-			_listView.RedrawItems(index, index, true);
+		    
+            var existing = _listView.LargeImageList.Images[keyIndex];
+		    var @new = (Image) item.Image;
+
+            if (existing != @new)
+            {
+                _listView.LargeImageList.Images[keyIndex] = @new;
+                // update name, description
+                _listView.RedrawItems(index, index, true);
+            }
 		}
 
 		private void AddItem(object item)
@@ -346,16 +353,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 
 			return null;
-		}
-
-		private void OnListViewResize(object sender, EventArgs e)
-		{
-			// force tile sizing to fit within the control without horizontal scrolling
-			const int tileSpacing = 4;
-			_listView.TileSize = new Size(
-				Math.Max(3*this.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2*tileSpacing),
-				this.ImageSize.Height + tileSpacing
-				);
 		}
 
 		private void OnItemDrag(object sender, ItemDragEventArgs e)

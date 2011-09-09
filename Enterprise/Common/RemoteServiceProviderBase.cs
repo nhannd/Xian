@@ -235,7 +235,6 @@ namespace ClearCanvas.Enterprise.Common
 		private readonly IUserCredentialsProvider _userCredentialsProvider;
 
 		private readonly ResponseCachingClientSideAdvice _responseCachingAdvice;
-		private readonly FailedEndpointThrottleClientAdvice _failedEndpointThrottleAdvice;
 		private readonly FailoverClientAdvice _failoverAdvice;
 
 		/// <summary>
@@ -243,21 +242,20 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		/// <param name="args"></param>
 		protected RemoteServiceProviderBase(RemoteServiceProviderArgs args)
-			: this(new StaticChannelProvider(args), args.UserCredentialsProvider, args.FailedEndpointBlackoutTime)
+			: this(new StaticChannelProvider(args), args.UserCredentialsProvider)
 		{
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider, TimeSpan failedEndpointBlackoutTime)
+		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider)
 		{
 			_channelProvider = channelProvider;
 			_userCredentialsProvider = userCredentialsProvider;
 			_proxyGenerator = new ProxyGenerator();
 
 			_responseCachingAdvice = new ResponseCachingClientSideAdvice();
-			_failedEndpointThrottleAdvice = new FailedEndpointThrottleClientAdvice(failedEndpointBlackoutTime);
 			_failoverAdvice = new FailoverClientAdvice(this);
 		}
 
@@ -313,8 +311,6 @@ namespace ClearCanvas.Enterprise.Common
 				// add response-caching client-side advice
 				interceptors.Add(_responseCachingAdvice);
 			}
-
-			interceptors.Add(_failedEndpointThrottleAdvice);
 
 			// add fail-over advice at the end of the list, closest the target call
 			//TODO: can we avoid adding this advice if no failover is defined?
