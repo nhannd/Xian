@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common
 {
@@ -21,64 +22,48 @@ namespace ClearCanvas.Common
     /// </summary>
     public class PluginInfo : IBrowsable
     {
-        /// <summary>
-        /// Internal method used by the framework to discover the extensions declared in a plugin.
-        /// </summary>
-        /// <param name="asm">The plugin assembly to inspect.</param>
-        /// <returns>An array of <see cref="ExtensionInfo" /> objects describing the extensions.</returns>
-        internal static List<ExtensionInfo> DiscoverExtensions(Assembly asm)
-        {
-            List<ExtensionInfo> extensionList = new List<ExtensionInfo>();
-            foreach (Type type in asm.GetTypes())
-            {
-                object[] attrs = type.GetCustomAttributes(typeof(ExtensionOfAttribute), false);
-                foreach (ExtensionOfAttribute a in attrs)
-                {
-                    extensionList.Add(
-                        new ExtensionInfo(
-                            type,
-                            a.ExtensionPointClass,
-                            a.Name,
-                            a.Description,
-                            ExtensionSettings.Default.IsEnabled(type, a.Enabled)
-                        )
-                    );
-                }
-            }
-            return extensionList;
-        }
+		/// <summary>
+		/// Internal method used by the framework to discover extension points and extensions declared in a plugin.
+		/// </summary>
+		/// <param name="asm"></param>
+		/// <param name="points"></param>
+		/// <param name="extensions"></param>
+		internal static void DiscoverExtensionPointsAndExtensions(Assembly asm, List<ExtensionPointInfo> points, List<ExtensionInfo> extensions)
+		{
+			foreach (var type in asm.GetTypes())
+			{
+				try
+				{
+					var epAttr = AttributeUtils.GetAttribute<ExtensionPointAttribute>(type, false);
+					if (epAttr != null)
+					{
+						ValidateExtensionPointClass(type);
+						var extensionInterface = type.BaseType.GetGenericArguments()[0];
 
-        /// <summary>
-        /// Internal method used by the framework to discover the extension points declared in a plugin.
-        /// </summary>
-        /// <param name="asm">The plugin assembly to inspect.</param>
-        /// <returns>An array of <see cref="ExtensionPointInfo" />objects describing the extension points.</returns>
-        internal static List<ExtensionPointInfo> DiscoverExtensionPoints(Assembly asm)
-        {
-            List<ExtensionPointInfo> extensionPointList = new List<ExtensionPointInfo>();
-            foreach (Type type in asm.GetTypes())
-            {
-                try
-                {
-                    object[] attrs = type.GetCustomAttributes(typeof(ExtensionPointAttribute), false);
-                    if (attrs.Length > 0)
-                    {
-                        ValidateExtensionPointClass(type);
+						points.Add(new ExtensionPointInfo(type, extensionInterface, epAttr.Name, epAttr.Description));
+					}
+				}
+				catch (ExtensionPointException e)
+				{
+					// log and continue
+					Platform.Log(LogLevel.Error, e.Message);
+				}
 
-                        ExtensionPointAttribute a = (ExtensionPointAttribute)attrs[0];
-                        Type extensionInterface = type.BaseType.GetGenericArguments()[0];
-
-                        extensionPointList.Add(new ExtensionPointInfo(type, extensionInterface, a.Name, a.Description));
-                    }
-                }
-                catch (ExtensionPointException e)
-                {
-                    // log and continue discovering extension points
-                    Platform.Log(LogLevel.Error, e.Message);
-                }
-            }
-            return extensionPointList;
-        }
+				var attrs = AttributeUtils.GetAttributes<ExtensionOfAttribute>(type, false);
+				foreach (var a in attrs)
+				{
+					extensions.Add(
+						new ExtensionInfo(
+							type,
+							a.ExtensionPointClass,
+							a.Name,
+							a.Description,
+							ExtensionSettings.Default.IsEnabled(type, a.Enabled)
+						)
+					);
+				}
+			}
+		}
 
         private static void ValidateExtensionPointClass(Type extensionPointClass)
         {
@@ -94,8 +79,8 @@ namespace ClearCanvas.Common
 		private string _icon;
 		private Assembly _assembly;
 
-        private List<ExtensionPointInfo> _extensionPoints;
-        private List<ExtensionInfo> _extensions;
+        private List<ExtensionPointInfo> _extensionPoints = new List<ExtensionPointInfo>();
+        private List<ExtensionInfo> _extensions = new List<ExtensionInfo>();
 
         /// <summary>
         /// Internal constructor.
@@ -107,8 +92,7 @@ namespace ClearCanvas.Common
             _assembly = assembly;
         	_icon = icon;
 
-            _extensionPoints = DiscoverExtensionPoints(assembly);
-            _extensions = DiscoverExtensions(assembly);
+        	DiscoverExtensionPointsAndExtensions(assembly, _extensionPoints, _extensions);
         }
 
         /// <summary>

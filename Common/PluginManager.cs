@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Security.Policy;
@@ -159,32 +160,22 @@ namespace ClearCanvas.Common
 				return;
 			}
 
-            // scan plugins for extensions
-            List<ExtensionInfo> extList = new List<ExtensionInfo>();
-            foreach (PluginInfo plugin in _plugins)
-            {
-                extList.AddRange(plugin.Extensions);
-            }
+            // compile lists of all extension points and extensions
+            var extensions = new List<ExtensionInfo>(_plugins.SelectMany(p => p.Extensions));
+			var points = new List<ExtensionPointInfo>(_plugins.SelectMany(p => p.ExtensionPoints));
 
-            // hack: add extensions from ClearCanvas.Common, which isn't technically a plugin
-            extList.AddRange(PluginInfo.DiscoverExtensions(GetType().Assembly));
+            // hack: add points and extensions from ClearCanvas.Common, which isn't technically a plugin
+			PluginInfo.DiscoverExtensionPointsAndExtensions(GetType().Assembly, points, extensions);
 
             // #742: order the extensions according to the XML configuration
             List<ExtensionInfo> ordered, remainder;
-            ExtensionSettings.Default.OrderExtensions(extList, out ordered, out remainder);
+            ExtensionSettings.Default.OrderExtensions(extensions, out ordered, out remainder);
 
             // create global extension list, with the ordered set appearing first
             _extensions = CollectionUtils.Concat<ExtensionInfo>(ordered, remainder);
 
-            // scan plugins for extension points
-            List<ExtensionPointInfo> epList = new List<ExtensionPointInfo>();
-            foreach (PluginInfo plugin in _plugins)
-            {
-                epList.AddRange(plugin.ExtensionPoints);
-            }
-            // hack: add extension points from ClearCanvas.Common, which isn't technically a plugin
-            epList.AddRange(PluginInfo.DiscoverExtensionPoints(GetType().Assembly));
-            _extensionPoints = epList;
+			// points do not need to be ordered
+            _extensionPoints = points;
         }
 
         private static List<PluginInfo> ProcessAssemblies(Assembly[] assemblies)
