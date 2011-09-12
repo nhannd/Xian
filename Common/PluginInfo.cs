@@ -32,30 +32,45 @@ namespace ClearCanvas.Common
 		{
 			foreach (var type in asm.GetTypes())
 			{
-				try
+				var epAttr = AttributeUtils.GetAttribute<ExtensionPointAttribute>(type, false);
+				if (epAttr != null)
 				{
-					var epAttr = AttributeUtils.GetAttribute<ExtensionPointAttribute>(type, false);
-					if (epAttr != null)
+					if(IsValidExtensionPointClass(type))
 					{
-						ValidateExtensionPointClass(type);
-						var extensionInterface = type.BaseType.GetGenericArguments()[0];
-
-						points.Add(new ExtensionPointInfo(type, extensionInterface, epAttr.Name, epAttr.Description));
+						points.Add(new ExtensionPointInfo(type, GetExtensionInterface(type), epAttr.Name, epAttr.Description));
 					}
-				}
-				catch (ExtensionPointException e)
-				{
-					// log and continue
-					Platform.Log(LogLevel.Error, e.Message);
+					else
+					{
+						Platform.Log(LogLevel.Error, SR.ExceptionExtensionPointMustSubclassExtensionPoint, type.FullName);
+					}
 				}
 
 				var attrs = AttributeUtils.GetAttributes<ExtensionOfAttribute>(type, false);
 				foreach (var a in attrs)
 				{
+					// is the extension a concrete class?
+					if (!IsConcreteClass(type))
+					{
+						Platform.Log(LogLevel.Error, SR.ExceptionExtensionMustBeConcreteClass, type.FullName);
+						continue;
+					}
+
+					var extensionPointClass = a.ExtensionPointClass;
+					var extensionInterface = GetExtensionInterface(extensionPointClass);
+
+					// does the extension implement the required interface?
+					if (!extensionInterface.IsAssignableFrom(type))
+					{
+						Platform.Log(LogLevel.Error, SR.ExceptionExtensionDoesNotImplementRequiredInterface,
+							type.FullName,
+							extensionInterface);
+
+						continue;
+					}
 					extensions.Add(
 						new ExtensionInfo(
 							type,
-							a.ExtensionPointClass,
+							extensionPointClass,
 							a.Name,
 							a.Description,
 							ExtensionSettings.Default.IsEnabled(type, a.Enabled)
@@ -65,13 +80,21 @@ namespace ClearCanvas.Common
 			}
 		}
 
-        private static void ValidateExtensionPointClass(Type extensionPointClass)
+    	private static Type GetExtensionInterface(Type extensionClass)
+    	{
+    		return extensionClass.BaseType.GetGenericArguments()[0];
+    	}
+
+    	private static bool IsValidExtensionPointClass(Type extensionPointClass)
         {
-            Type baseType = extensionPointClass.BaseType;
-            if (!baseType.IsGenericType || !baseType.GetGenericTypeDefinition().Equals(typeof(ExtensionPoint<>)))
-                throw new ExtensionPointException(string.Format(
-                    SR.ExceptionExtensionPointMustSubclassExtensionPoint, extensionPointClass.FullName));
+            var baseType = extensionPointClass.BaseType;
+    		return baseType.IsGenericType && baseType.GetGenericTypeDefinition().Equals(typeof (ExtensionPoint<>));
         }
+		
+		private static bool IsConcreteClass(Type type)
+		{
+			return !type.IsAbstract && type.IsClass;
+		}
 
         
         private readonly string _name;
