@@ -74,13 +74,13 @@ namespace ClearCanvas.Common
         }
 
         
-        private string _name;
-        private string _description;
-		private string _icon;
-		private Assembly _assembly;
+        private readonly string _name;
+        private readonly string _description;
+		private readonly string _icon;
+		private readonly Assembly _assembly;
 
-        private List<ExtensionPointInfo> _extensionPoints = new List<ExtensionPointInfo>();
-        private List<ExtensionInfo> _extensions = new List<ExtensionInfo>();
+        private readonly List<ExtensionPointInfo> _extensionPoints = new List<ExtensionPointInfo>();
+        private readonly List<ExtensionInfo> _extensions = new List<ExtensionInfo>();
 
         /// <summary>
         /// Internal constructor.
