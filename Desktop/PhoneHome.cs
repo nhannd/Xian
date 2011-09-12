@@ -24,11 +24,13 @@ namespace ClearCanvas.Desktop
     {
         #region Private Fields
 
-        private static readonly TimeSpan _repeat24Hours = TimeSpan.FromHours(24);
-        static private Timer _phoneHomeTimer;
-        static private readonly object _sync = new object();
-        static private bool _started;
-        static private DateTime _startTimestamp;
+        private static readonly TimeSpan Repeat24Hours = TimeSpan.FromHours(24);
+    	private static readonly TimeSpan StartUpDelay = TimeSpan.FromSeconds(10);
+        private static Timer _phoneHomeTimer;
+        private static readonly object _sync = new object();
+        private static bool _started;
+        private static DateTime _startTimestamp;
+    	private static bool _sentStartUpMessage;
         #endregion
 
         #region Public Methods
@@ -36,29 +38,22 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Start up the phone home service.
         /// </summary>
-        static internal void Startup()
+		internal static void Startup()
         {
             lock (_sync)
             {
-                try
-                {
-                    OnStartUp();
+                OnStartUp();
 
-                    var msg = CreateUsageMessage(UsageType.Startup);
-                    UsageUtilities.Register(msg, UsageTrackingThread.Background);
+                _phoneHomeTimer = new Timer(ignore =>
+                                                {
+                                                    var msg = CreateUsageMessage(_sentStartUpMessage ? UsageType.Other : UsageType.Startup);
+                                                    UsageUtilities.Register(msg, UsageTrackingThread.Background);
 
-                    _phoneHomeTimer = new Timer(ignore =>
-                                                    {
-                                                        msg = CreateUsageMessage(UsageType.Other);
-                                                        UsageUtilities.Register(msg, UsageTrackingThread.Background);
-                                                    },
-                                                null, _repeat24Hours, _repeat24Hours);
-                }
-                catch (Exception ex)
-                {
-                    // Requirement says log must be in debug
-                    Platform.Log(LogLevel.Debug, ex, "Error occurred when shutting down phone home service");
-                }
+                                                	_sentStartUpMessage = true;
+                                                },
+                                            null,
+											StartUpDelay,
+											Repeat24Hours);
             }
 
         }
@@ -66,7 +61,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Shut down the phone home service.
         /// </summary>
-        static internal void ShutDown()
+		internal static void ShutDown()
         {
             // Guard against incorrect use of this class when Startup() is not called.
             if (!_started)
@@ -78,6 +73,8 @@ namespace ClearCanvas.Desktop
                 {
                     OnShutdown();
                     
+					// note: CR Sep 2011: Ummm... I guess the point of this thread spawn is to have a 10 sec time limit???
+
                     // Note: use a thread to send the message because we don't want to block the app
                     Thread workerThread = new Thread(SendShutdownMessage);
                     workerThread.Start();
@@ -101,7 +98,6 @@ namespace ClearCanvas.Desktop
 
         #region Helpers
 
-
         private static void SendShutdownMessage()
         {
             const string keyProcessUptime = "PROCESSUPTIME";
@@ -123,7 +119,7 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        static UsageMessage CreateUsageMessage(UsageType type)
+        private static UsageMessage CreateUsageMessage(UsageType type)
         {
             var msg = UsageUtilities.GetUsageMessage();
             msg.Certified = ManifestVerification.Valid;
@@ -132,7 +128,7 @@ namespace ClearCanvas.Desktop
         }
 
 
-        static private void OnStartUp()
+        private static void OnStartUp()
         {
             if (!_started)
             {
@@ -142,7 +138,7 @@ namespace ClearCanvas.Desktop
         }
 
 
-        static private void OnShutdown()
+        private static void OnShutdown()
         {
             if (_phoneHomeTimer != null)
             {
