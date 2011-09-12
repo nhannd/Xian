@@ -275,12 +275,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PluginAttribute.cs" />
-    <Compile Include="PluginFinder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="PluginLoader.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PluginManager.cs">
       <SubType>Code</SubType>
     </Compile>
