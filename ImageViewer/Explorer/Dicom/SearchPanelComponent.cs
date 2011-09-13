@@ -56,6 +56,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private readonly ICollection<string> _availableModalities;
 
 		private event EventHandler<SearchRequestedEventArgs> _searchRequested;
+		private event EventHandler _searchCancelled;
+
+		private bool _isSearchEnabled;
 
 		/// <summary>
 		/// Constructor
@@ -97,9 +100,58 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_openNameSearchRegex = new Regex(String.Format(@"\A\s*{0}+\s*\Z", allowedExceptSeparator));
 		}
 
-		public IDesktopWindow DesktopWindow
+		public override void Start()
 		{
-			get { return this.Host.DesktopWindow; }
+			this.Title = SR.TitleSearch;
+
+			base.Start();
+		}
+
+		#region ISearchPanelComponent implementation
+
+		event EventHandler<SearchRequestedEventArgs> ISearchPanelComponent.SearchRequested
+		{
+			add { _searchRequested += value; }
+			remove { _searchRequested -= value; }
+		}
+
+		event EventHandler ISearchPanelComponent.SearchCancelled
+		{
+			add { _searchCancelled += value; }
+			remove { _searchCancelled -= value; }
+		}
+
+		void ISearchPanelComponent.Search()
+		{
+			Search();
+		}
+
+		void ISearchPanelComponent.Clear()
+		{
+			Clear();
+		}
+
+		bool ISearchPanelComponent.SearchInProgress
+		{
+			get { return !IsSearchEnabled; }
+			set { IsSearchEnabled = !value;}
+		}
+
+		#endregion
+
+		#region Presentation Model
+
+		public bool IsSearchEnabled
+		{
+			get { return _isSearchEnabled; }
+			set
+			{
+				if(value != _isSearchEnabled)
+				{
+					_isSearchEnabled = value;
+					NotifyPropertyChanged("IsSearchEnabled");
+				}
+			}
 		}
 
 		public string Title
@@ -220,14 +272,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public override void Start()
-		{
-			this.Title = SR.TitleSearch;
-
-			base.Start();
-		}
-
-		public virtual void Clear()
+		public void Clear()
 		{
 			this.PatientID = "";
 			this.PatientsName = "";
@@ -239,43 +284,62 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			InternalClearDates();
 		}
 
-		public virtual void Search()
+		public void Search()
 		{
-			if (base.HasValidationErrors)
+			try
 			{
-				base.ShowValidation(true);
-				return;
-			}
-			else
-			{
-				base.ShowValidation(false);
-			}
+				if (base.HasValidationErrors)
+				{
+					base.ShowValidation(true);
+					return;
+				}
+				else
+				{
+					base.ShowValidation(false);
+				}
 
-			var queryParams = PrepareBaseQueryParameters();
-			var eventArgs = new SearchRequestedEventArgs(new List<QueryParameters> { queryParams });
-			OnSearchRequested(eventArgs);
+				var queryParams = PrepareBaseQueryParameters();
+				var eventArgs = new SearchRequestedEventArgs(new List<QueryParameters> { queryParams });
+				OnSearchRequested(eventArgs);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
+			}
 		}
 
 		public void SearchToday()
         {
-			InternalSearchLastXDays(0);
-        }
+			try
+			{
+				InternalSearchLastXDays(0);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
+			}
+		}
 
 		public void SearchLastWeek()
 		{
-			InternalSearchLastXDays(7);
+			try
+			{
+				InternalSearchLastXDays(7);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
+			}
 		}
 
-		public void SearchLastXDays(int numberOfDays)
+		public void CancelSearch()
 		{
-			InternalSearchLastXDays(numberOfDays);
+			EventsHelper.Fire(_searchCancelled, this, EventArgs.Empty);
 		}
 
-		public event EventHandler<SearchRequestedEventArgs> SearchRequested
-		{
-			add { _searchRequested += value; }
-			remove { _searchRequested -= value; }
-		}
+		#endregion
+
+		#region Helpers
 
 		private void InternalSearchLastXDays(int numberOfDays)
 		{
@@ -381,9 +445,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return queryParams;
 		}
 
-		protected virtual void OnSearchRequested(SearchRequestedEventArgs e)
+		private void OnSearchRequested(SearchRequestedEventArgs e)
 		{
 			EventsHelper.Fire(_searchRequested, this, e);
 		}
+
+		#endregion
 	}
 }
