@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		{
 			_searchButton.Text = _component.IsSearchEnabled ? SR.ButtonSearch : SR.ButtonCancelSearch;
 			_progressBar.Style = _component.IsSearchEnabled ? ProgressBarStyle.Blocks : ProgressBarStyle.Marquee;
-			_progressBar.Visible = !_component.IsSearchEnabled;
+			_progressBar.Visible = _searchingLabel.Visible = !_component.IsSearchEnabled;
 		}
 
 		private void OnSearchButtonClicked(object sender, EventArgs e)
