@@ -62,11 +62,35 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			_searchPanelComponent.SearchRequested += OnSearchPanelComponentSearchRequested;
+			_searchPanelComponent.SearchCancelled += OnSearchPanelComponentSearchCancelled;
+			_studyBrowserComponent.SearchStarted += OnStudyBrowserComponentSearchStarted;
+			_studyBrowserComponent.SearchEnded += OnStudyBrowserComponentSearchCompleted;
+
+			// if initially selected server is local, begin an initial dicom query
+			if (_serverTreeComponent.ShowLocalDataStoreNode && _serverTreeComponent.SelectedServers.IsLocalDatastore)
+			{
+				try
+				{
+					var queryParamList = new List<QueryParameters> {_studyBrowserComponent.CreateOpenSearchQueryParams()};
+					_studyBrowserComponent.Search(queryParamList);
+				}
+				catch (PolicyException)
+				{
+					//TODO: ignore this on startup or show message?
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				}
+			}
 		}
 
 		public override void Stop()
 		{
 			_searchPanelComponent.SearchRequested -= OnSearchPanelComponentSearchRequested;
+			_searchPanelComponent.SearchCancelled -= OnSearchPanelComponentSearchCancelled;
+			_studyBrowserComponent.SearchStarted -= OnStudyBrowserComponentSearchStarted;
+			_studyBrowserComponent.SearchEnded -= OnStudyBrowserComponentSearchCompleted;
 
 			lock (_syncLock)
 			{
@@ -102,24 +126,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				?? new SearchPanelComponent();
 			SelectDefaultServerNode(serverTreeComponent);
 
-			try
-			{
-				//explicitly check and make sure we're querying local only.
-				if (serverTreeComponent.ShowLocalDataStoreNode && serverTreeComponent.SelectedServers.IsLocalDatastore)
-				{
-					var queryParamList = new List<QueryParameters> { studyBrowserComponent.CreateOpenSearchQueryParams() };
-					studyBrowserComponent.Search(queryParamList);
-				}
-			}
-			catch (PolicyException)
-			{
-				//TODO: ignore this on startup or show message?
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
-			}
-
 			SplitPane leftPane = new SplitPane(SR.TitleServerTreePane, serverTreeComponent, 0.25f);
 			SplitPane rightPane = new SplitPane(SR.TitleStudyBrowserPane, studyBrowserComponent, 0.75f);
 
@@ -139,12 +145,35 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return component;
 		}
 
+		private void OnStudyBrowserComponentSearchStarted(object sender, EventArgs e)
+		{
+			_searchPanelComponent.SearchInProgress = true;
+			_serverTreeComponent.IsEnabled = false;
+		}
+
+		private void OnStudyBrowserComponentSearchCompleted(object sender, EventArgs e)
+		{
+			_searchPanelComponent.SearchInProgress = false;
+			_serverTreeComponent.IsEnabled = true;
+		}
+
 		private void OnSearchPanelComponentSearchRequested(object sender, SearchRequestedEventArgs e)
 		{
 			try
 			{
-				BlockingOperation.Run(
-					() => _studyBrowserComponent.Search(new List<QueryParameters>(e.QueryParametersList)));
+				_studyBrowserComponent.Search(new List<QueryParameters>(e.QueryParametersList));
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
+			}
+		}
+
+		private void OnSearchPanelComponentSearchCancelled(object sender, EventArgs e)
+		{
+			try
+			{
+				_studyBrowserComponent.CancelSearch();
 			}
 			catch (Exception ex)
 			{

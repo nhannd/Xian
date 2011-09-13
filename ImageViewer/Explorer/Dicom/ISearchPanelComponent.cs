@@ -36,7 +36,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	{
 		void Search();
 		void Clear();
+		bool SearchInProgress { get; set; }
 
 		event EventHandler<SearchRequestedEventArgs> SearchRequested;
+		event EventHandler SearchCancelled;
 	}
 }
