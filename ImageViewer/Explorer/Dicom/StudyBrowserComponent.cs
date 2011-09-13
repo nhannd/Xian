@@ -375,7 +375,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			var isOpenSearchQuery = CollectionUtils.TrueForAll(queryParametersList,
 				q => CollectionUtils.TrueForAll(q.Values,
-					v => !string.IsNullOrEmpty(v)));
+					v => string.IsNullOrEmpty(v)));
 
 			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
 			{
