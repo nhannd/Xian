@@ -18,6 +18,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Desktop;
+using Action=ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.Enterprise.Desktop
 {

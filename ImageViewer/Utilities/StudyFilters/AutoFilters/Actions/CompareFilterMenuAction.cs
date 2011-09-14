@@ -16,6 +16,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
+using Action=ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters.Actions
 {
