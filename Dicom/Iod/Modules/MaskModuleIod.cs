@@ -16,20 +16,20 @@ using ClearCanvas.Dicom.Iod.Sequences;
 namespace ClearCanvas.Dicom.Iod.Modules
 {
 	/// <summary>
-	/// PresentationStateMask Module
+	/// Mask Module
 	/// </summary>
-	/// <remarks>As defined in the DICOM Standard 2011, Part 3, Section C.11.13 (Table C.11.13-1)</remarks>
-	public class PresentationStateMaskModuleIod : IodBase
+	/// <remarks>As defined in the DICOM Standard 2011, Part 3, Section C.7.6.10 (Table C.7-16)</remarks>
+	public class MaskModuleIod : IodBase
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PresentationStateMaskModuleIod"/> class.
+		/// Initializes a new instance of the <see cref="MaskModuleIod"/> class.
 		/// </summary>	
-		public PresentationStateMaskModuleIod() {}
+		public MaskModuleIod() {}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PresentationStateMaskModuleIod"/> class.
+		/// Initializes a new instance of the <see cref="MaskModuleIod"/> class.
 		/// </summary>
-		public PresentationStateMaskModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
+		public MaskModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
 
 		/// <summary>
 		/// Gets or sets the value of MaskSubtractionSequence in the underlying collection. Type 1.
@@ -106,5 +106,27 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				yield return DicomTags.RecommendedViewingMode;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Enumerated values for the <see cref="DicomTags.RecommendedViewingMode"/> attribute specifying the recommended viewing protocol(s).
+	/// </summary>
+	/// <remarks>As defined in the DICOM Standard 2011, Part 3, Section C.7.6.10 (Table C.7-16)</remarks>
+	public enum RecommendedViewingMode
+	{
+		/// <summary>
+		/// Represents the empty viewing mode, which is equivalent to the null value.
+		/// </summary>
+		None,
+
+		/// <summary>
+		/// Represents viewing subtraction of image with mask.
+		/// </summary>
+		Sub,
+
+		/// <summary>
+		/// Represents native viewing of image as sent.
+		/// </summary>
+		Nat
 	}
 }

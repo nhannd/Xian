@@ -293,7 +293,7 @@
     <Compile Include="Iod\Modules\IccProfileModule.cs" />
     <Compile Include="Iod\Modules\KeyObjectDocument.cs" />
     <Compile Include="Iod\Modules\KeyObjectDocumentSeries.cs" />
-    <Compile Include="Iod\Modules\Mask.cs" />
+    <Compile Include="Iod\Modules\MaskModuleIod.cs" />
     <Compile Include="Iod\Modules\ModalityLut.cs" />
     <Compile Include="Iod\Modules\MultiframeOverlayModule.cs" />
     <Compile Include="Iod\Modules\OverlayActivation.cs" />
@@ -341,6 +341,7 @@
     <Compile Include="Iod\Sequences\BreedRegistrationSequence.cs" />
     <Compile Include="Iod\Sequences\ContentTemplateSequence.cs" />
     <Compile Include="Iod\Sequences\GraphicAnnotationSequenceItem.cs" />
+    <Compile Include="Iod\Sequences\MaskSubtractionSequenceIod.cs" />
     <Compile Include="Iod\Sequences\OtherPatientIdsSequence.cs" />
     <Compile Include="Iod\Sequences\DeIdentificationMethodCodeSequence.cs" />
     <Compile Include="Iod\Sequences\PatientBreedCodeSequence.cs" />
