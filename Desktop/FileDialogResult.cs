@@ -9,10 +9,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -21,7 +19,7 @@ namespace ClearCanvas.Desktop
 	/// </summary>
 	public class FileDialogResult
 	{
-		private readonly string _filename;
+		private readonly string[] _filenames;
 		private readonly DialogBoxAction _action;
 
 		/// <summary>
@@ -32,15 +30,35 @@ namespace ClearCanvas.Desktop
 		public FileDialogResult(DialogBoxAction action, string filename)
 		{
 			_action = action;
-			_filename = filename;
+			_filenames = new[]{filename};
 		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="filenames"></param>
+		public FileDialogResult(DialogBoxAction action, string[] filenames)
+		{
+			_action = action;
+			_filenames = filenames;
+		}
+
 
 		/// <summary>
 		/// Gets the filename.
 		/// </summary>
 		public string FileName
 		{
-			get { return _filename; }
+			get { return CollectionUtils.FirstElement(_filenames); }
+		}
+
+		/// <summary>
+		/// Gets the filenames (if multi-select was enabled).
+		/// </summary>
+		public string[] FileNames
+		{
+			get { return _filenames; }
 		}
 
 		/// <summary>

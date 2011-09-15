@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -28,5 +29,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		SearchResult CreateSearchResult();
 		AEServerGroup SelectedServerGroup { get; set; }
 		void Search(List<QueryParameters> queryParameters);
+		void CancelSearch();
+
+		event EventHandler SearchStarted;
+		event EventHandler SearchEnded;
 	}
 }

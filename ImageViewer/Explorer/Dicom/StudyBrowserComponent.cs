@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		void RefreshStudyTable();
 	}
-	
+
 	[AssociateView(typeof(StudyBrowserComponentViewExtensionPoint))]
 	public class StudyBrowserComponent : ApplicationComponent, IStudyBrowserComponent
 	{
@@ -83,12 +83,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			public ReadOnlyCollection<StudyItem> SelectedStudies 
+			public ReadOnlyCollection<StudyItem> SelectedStudies
 			{
-				get 
+				get
 				{
 					return _component.SelectedStudies;
-				} 
+				}
 			}
 
 			public AEServerGroup SelectedServerGroup
@@ -123,8 +123,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				try
 				{
-					BlockingOperation.Run(
-						() => _component.Search(_component._lastQueryParametersList));
+					_component.Search(_component._lastQueryParametersList);
 				}
 				catch (Exception e)
 				{
@@ -163,6 +162,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 		private DelayedEventPublisher _processStudiesEventPublisher;
+
+		private bool _isEnabled = true;
+		private bool _searchInProgress;
 
 		#endregion
 
@@ -238,7 +240,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			remove { _selectedServerChangedEvent -= value; }
 		}
 
+		#endregion
+
 		#region Presentation Model
+
+		public bool IsEnabled
+		{
+			get { return _isEnabled; }
+			private set
+			{
+				if(value != _isEnabled)
+				{
+					_isEnabled = value;
+					NotifyPropertyChanged("IsEnabled");
+				}
+			}
+		}
 
 		public Table<StudyItem> StudyTable
 		{
@@ -314,56 +331,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public virtual SearchResult CreateSearchResult()
-		{
-			return new SearchResult();
-		}
-
-		public virtual void Search(List<QueryParameters> queryParametersList)
-		{
-			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
-				_setStudiesArrived.Clear();
-
-			var isOpenSearchQuery = CollectionUtils.TrueForAll(queryParametersList,
-				q => CollectionUtils.TrueForAll(q.Values,
-					v => !string.IsNullOrEmpty(v)));
-
-			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
-			{
-				if (Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
-					return;
-			}
-
-			_lastQueryParametersList = new List<QueryParameters>(queryParametersList);
-			var failedServerInfo = new List<KeyValuePair<string, Exception>>();
-			var aggregateStudyItemList = Query(queryParametersList, failedServerInfo);
-
-			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
-
-			// Re-throw the last exception with a list of failed server name, if any
-			if (failedServerInfo.Count > 0)
-			{
-				StringBuilder aggregateExceptionMessage = new StringBuilder();
-				int count = 0;
-				foreach(KeyValuePair<string, Exception> pair in failedServerInfo)
-				{
-					if (count++ > 0)
-						aggregateExceptionMessage.Append("\n\n");
-
-					aggregateExceptionMessage.AppendFormat(SR.FormatUnableToQueryServer, pair.Key, pair.Value.Message);
-				}
-
-				// this isn't ideal, but since we can operate on multiple entities, we need to aggregate all the
-				// exception messages. We should at least attempt to get at the first inner exception, and that's
-				// what we do here, to aid in debugging
-
-				//NOTE: must use Application.ActiveDesktopWindow instead of Host.DesktopWindow b/c this
-				//method is called on startup before the component is started.
-				Application.ActiveDesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
-			}
-
-			UpdateResultsTitle();
-		}
 
 		public void ItemDoubleClick()
 		{
@@ -372,6 +339,82 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		}
 
 		#endregion
+
+		#region IStudyBrowserComponent implementation
+
+		public virtual SearchResult CreateSearchResult()
+		{
+			return new SearchResult();
+		}
+
+		public virtual QueryParameters CreateOpenSearchQueryParams()
+		{
+			var queryParams = new QueryParameters
+			                  	{
+			                  		{"PatientsName", ""},
+			                  		{"ReferringPhysiciansName", ""},
+			                  		{"PatientId", ""},
+			                  		{"AccessionNumber", ""},
+			                  		{"StudyDescription", ""},
+			                  		{"ModalitiesInStudy", ""},
+			                  		{"StudyDate", ""},
+			                  		{"StudyInstanceUid", ""},
+			                  	};
+
+			return queryParams;
+		}
+
+
+		public virtual void Search(List<QueryParameters> queryParametersList)
+		{
+			// cancel any pending searches
+			Async.CancelPending(this);
+
+			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
+				_setStudiesArrived.Clear();
+
+			var isOpenSearchQuery = CollectionUtils.TrueForAll(queryParametersList,
+				q => CollectionUtils.TrueForAll(q.Values,
+					v => string.IsNullOrEmpty(v)));
+
+			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
+			{
+				if (Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
+					return;
+			}
+
+			// disable the study browser while the search is executing
+			this.IsEnabled = false;
+			_searchInProgress = true;
+
+			EventsHelper.Fire(this.SearchStarted, this, EventArgs.Empty);
+
+			_lastQueryParametersList = new List<QueryParameters>(queryParametersList);
+			var failedServerInfo = new List<KeyValuePair<string, Exception>>();
+			var aggregateStudyItemList = new StudyItemList();
+
+			Async.Invoke(this,
+						 () => aggregateStudyItemList = Query(queryParametersList, failedServerInfo),
+						 () => OnSearchCompleted(aggregateStudyItemList, failedServerInfo));
+		}
+
+		public virtual void CancelSearch()
+		{
+			if(!_searchInProgress)
+				return;
+
+			Async.CancelPending(this);
+			_searchInProgress = false;
+
+			// re-enable the study browser
+			this.IsEnabled = true;
+
+			EventsHelper.Fire(this.SearchEnded, this, EventArgs.Empty);
+		}
+
+		public event EventHandler SearchStarted;
+		public event EventHandler SearchEnded;
+
 		#endregion
 
 		#region IApplicationComponent overrides
@@ -400,6 +443,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Stop()
 		{
+			Async.CancelPending(this);
+
 			_processStudiesEventPublisher.Dispose();
 
 			_toolSet.Dispose();
@@ -416,6 +461,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		}
 
 		#endregion
+
+		#region Private Helpers
 
 		private void OnSelectedServerChanged()
 		{
@@ -434,23 +481,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void UpdateResultsTitle()
 		{
 			NotifyPropertyChanged("ResultsTitle");
-		}
-
-		public virtual QueryParameters CreateOpenSearchQueryParams()
-		{
-			var queryParams = new QueryParameters
-			                  	{
-			                  		{"PatientsName", ""},
-			                  		{"ReferringPhysiciansName", ""},
-			                  		{"PatientId", ""},
-			                  		{"AccessionNumber", ""},
-			                  		{"StudyDescription", ""},
-			                  		{"ModalitiesInStudy", ""},
-			                  		{"StudyDate", ""},
-			                  		{"StudyInstanceUid", ""},
-			                  	};
-
-			return queryParams;
 		}
 
 		private StudyItemList Query(List<QueryParameters> queryParamsList, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
@@ -503,7 +533,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			return aggregateStudyItemList;
 		}
-		
+
 		private static QueryParameters MergeQueryParams(QueryParameters primary, QueryParameters secondary)
 		{
 			// Merge the primary with secondary query parameters.  If the key exist in both, keep the value in the primary
@@ -576,7 +606,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 							}
 						}
 					}
-					catch(StudyFinderNotFoundException e)
+					catch (StudyFinderNotFoundException e)
 					{
 						//should never get here, really.
 						Platform.Log(LogLevel.Error, e);
@@ -588,7 +618,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			foreach(string deleteStudyUid in _setStudiesDeleted.Keys)
+			foreach (string deleteStudyUid in _setStudiesDeleted.Keys)
 			{
 				int foundIndex = studyTable.Items.FindIndex(
 				delegate(StudyItem test)
@@ -610,6 +640,42 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			ProcessReceivedAndRemovedStudies();
 			UpdateResultsTitle();
+		}
+
+		private void OnSearchCompleted(StudyItemList aggregateStudyItemList, List<KeyValuePair<string, Exception>> failedServerInfo)
+		{
+			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
+
+			// Re-throw the last exception with a list of failed server name, if any
+			if (failedServerInfo.Count > 0)
+			{
+				var aggregateExceptionMessage = new StringBuilder();
+				var count = 0;
+				foreach (var pair in failedServerInfo)
+				{
+					if (count++ > 0)
+						aggregateExceptionMessage.Append("\n\n");
+
+					aggregateExceptionMessage.AppendFormat(SR.FormatUnableToQueryServer, pair.Key, pair.Value.Message);
+				}
+
+				// this isn't ideal, but since we can operate on multiple entities, we need to aggregate all the
+				// exception messages. We should at least attempt to get at the first inner exception, and that's
+				// what we do here, to aid in debugging
+
+				//NOTE: must use Application.ActiveDesktopWindow instead of Host.DesktopWindow b/c this
+				//method is called on startup before the component is started.
+				Application.ActiveDesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
+			}
+
+			UpdateResultsTitle();
+
+			_searchInProgress = false;
+
+			// re-enable the study browser
+			this.IsEnabled = true;
+
+			EventsHelper.Fire(this.SearchEnded, this, EventArgs.Empty);
 		}
 
 		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)
@@ -679,5 +745,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			existingItem.ResponsiblePersonRole = sourceItem.ResponsiblePersonRole;
 			existingItem.ResponsiblePerson = sourceItem.ResponsiblePerson;
 		}
+
+		#endregion
 	}
 }
