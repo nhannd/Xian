@@ -416,6 +416,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _iconResourceSize = value; }
     	}
 
+		[DefaultValue(ColorDepth.Depth32Bit)]
         public ColorDepth IconColorDepth
         {
             get { return _imageList.ColorDepth; }
