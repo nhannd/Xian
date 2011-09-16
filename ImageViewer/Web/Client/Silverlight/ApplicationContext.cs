@@ -10,19 +10,6 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
-using System.Windows.Browser;
-using System.Threading;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -33,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     // Either remove this class or pull the stuff out of ImageViewer.
     public class ApplicationContext : IDisposable
     {
-        internal ServerEventDispatcher ServerEventBroker { get; private set; }
+        internal ServerEventMediator ServerEventBroker { get; private set; }
 
         // TODO: Review this
         // [ThreadStatic]   Commented out.. why did it have to be thread static?
@@ -82,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             Parameters = ApplicationStartupParameters.Current;
             
-            ServerEventBroker = new ServerEventDispatcher(this);
+            ServerEventBroker = new ServerEventMediator(this);
             
             ServerEventBroker.Initialize(Parameters);
         }

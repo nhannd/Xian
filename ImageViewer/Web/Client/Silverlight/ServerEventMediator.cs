@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     //of an "application manager", as it pretty much manages all aspects of a remote instance of an application.
     //Also, it is intermixing handling of the communication with display of messages.  Ideally, all messages would be displayed by a UI element based on
     //feedback from this class.
-	public class ServerEventDispatcher : IDisposable
+	public class ServerEventMediator : IDisposable
 	{
         Thread _outboundThread;
 	    public delegate void ServerCallCompletedCallback(AsyncCompletedEventArgs ev);
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             get { return _proxy; }
         }
 
-        public ServerEventDispatcher(ApplicationContext context)
+        public ServerEventMediator(ApplicationContext context)
         {
             _context = context;
         }
@@ -121,17 +121,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (exception is FaultException<SessionValidationFault>)
             {
                 var fault = exception as FaultException<SessionValidationFault>;
-                DisplayFaulted(DialogTitles.Error, fault.Detail.ErrorMessage);
+                ErrorHandler.HandleCriticalError(fault.Detail.ErrorMessage);
             }
             else if (exception is FaultException<OutOfResourceFault>)
             {
                 var fault = exception as FaultException<OutOfResourceFault>;
-                DisplayFaulted(DialogTitles.Error, fault.Detail.ErrorMessage);
+                ErrorHandler.HandleCriticalError(fault.Detail.ErrorMessage);
             }
             else if (exception is CommunicationException)
             {
                 if (!NetworkInterface.GetIsNetworkAvailable())
-                    DisplayFaulted(DialogTitles.Error, ErrorMessages.ConnectionLost);
+                    ErrorHandler.HandleCriticalError(ErrorMessages.ConnectionLost);
                 else
                 {
                     var sb = new StringBuilder();
@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         sb.AppendLine(exception.InnerException.StackTrace);
                     }
 
-                    DisplayFaulted(DialogTitles.Error, sb.ToString());
+                    ErrorHandler.HandleCriticalError(sb.ToString());
                 }
             }
             
@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 }
 
 
-                DisplayFaulted(DialogTitles.Error, sb.ToString());
+                ErrorHandler.HandleCriticalError(sb.ToString());
             }
         }
 
@@ -278,7 +278,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private void OnChannelFaulted(object sender, EventArgs e)
         {
             //TODO (CR May 2010) How to deal with string resources?
-            DisplayFaulted(DialogTitles.Error, _connectionOpened? ErrorMessages.ConnectionLost: String.Format(ErrorMessages.UnableToConnectTo, _proxy.InnerChannel.RemoteAddress.Uri));
+            ErrorHandler.HandleCriticalError(_connectionOpened? ErrorMessages.ConnectionLost: String.Format(ErrorMessages.UnableToConnectTo, _proxy.InnerChannel.RemoteAddress.Uri));
             UIThread.Execute(() =>
             {
                 if (_stateDialog != null)
@@ -345,7 +345,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 //TODO (CR May 2010) This shouldn't be in the else, error could happen when a callback is available.
                 if (e.Error != null && _connectionOpened)
                 {
-                    DisplayFaulted(DialogTitles.Error, e.Error.Message);
+                    ErrorHandler.HandleCriticalError(e.Error.Message);
                 }
             }
         }
@@ -391,29 +391,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
 	    }
         
-        //TODO (CR May 2010): see my comments at the top RE: separation of responsibilities.
-        private void DisplayFaulted(string error, string details)
-        {
-            try
-            {
-                ErrorHandler.HandleCriticalError(details);
-            }
-            finally
-            {
-            	// In some case, this is not necessary because the connection is already faulted.
-            	// But let's do it anyway.
-                Disconnect(details);
-            }
-        }
-
         private void OnApplicationNotFoundEventReceived(ApplicationNotFoundEvent applicationNotFoundEvent)
         {
             //TODO:  Think about if this is the right solution
             // NOTE: _startRequest contains the sessionid which is probably expired by this time.
             if (ApplicationContext.Current.ID.Equals(applicationNotFoundEvent.ApplicationId))
             {
-                DisplayFaulted(DialogTitles.Error,
-                            String.Format(ErrorMessages.ApplicationIDNotFound, applicationNotFoundEvent.ApplicationId));
+                ErrorHandler.HandleCriticalError(ErrorMessages.ApplicationIDNotFound, applicationNotFoundEvent.ApplicationId);
             }
         }
 
@@ -478,7 +462,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (_proxy.State == CommunicationState.Faulted
                 || _proxy.InnerChannel.State == CommunicationState.Faulted)
             {
-                DisplayFaulted(DialogTitles.Error, ErrorMessages.UnexpectedError);
+                ErrorHandler.HandleCriticalError(ErrorMessages.UnexpectedError);
                 return;
             }
 
@@ -531,8 +515,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             {
                 // happens on timeout of connection
                 ErrorHandler.HandleException(e);
-                if (_proxy.State == CommunicationState.Faulted)
-                    DisplayFaulted(DialogTitles.Error, e.Message);
+
+                // In some case, this is not necessary because the connection is already faulted.
+                // But let's do it anyway.
+                Disconnect(e.Message);
             }
         }
 
@@ -682,7 +668,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 				catch (Exception ex)
 				{
 					if (_proxy.State == CommunicationState.Faulted)
-                        DisplayFaulted(DialogTitles.Error, ex.Message);
+                        ErrorHandler.HandleException(ex);
                 }
 			}
 		}

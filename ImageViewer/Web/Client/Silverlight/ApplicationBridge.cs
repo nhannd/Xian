@@ -27,8 +27,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         [ThreadStatic]
         private static volatile ApplicationBridge _current;
 
-        // TODO, CR-2011-08-08, a sync log as ThreadStatic?  Defeats the purpose!
-        [ThreadStatic]
         private static object _syncLock = new object();
 
         private ApplicationBridge()
@@ -77,6 +75,5 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 return _current;
             }
         }
-
     }
 }

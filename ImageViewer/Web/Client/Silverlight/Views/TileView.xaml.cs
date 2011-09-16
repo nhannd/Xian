@@ -11,7 +11,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,14 +18,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
-using System.Windows.Browser;
 using System.Windows.Threading;
 using System.Windows.Resources;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
 using ClearCanvas.Web.Client.Silverlight;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
@@ -106,15 +100,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     }
                     
                     _tileEntity = value;
-                    _tileEntity.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(ServerEntity_PropertyChanged);  
+                    _tileEntity.PropertyChanged += ServerEntity_PropertyChanged;  
 
                 }
             }
         }
 
-        private System.Windows.Point CurrentMousePosition
+        private Point CurrentMousePosition
         {
-            get { return _currentMousePosition; }
             set
             {
                 if (_currentMousePosition == value)
@@ -186,9 +179,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                         TileImage.Source = bmp;
 
 #if DEBUG
-                        //Logger.Write(String.Format("{0} T{1} : @@@@@@ tile image updated. size: {4}x{5}, {2} bytes, evid={3}\n", Environment.TickCount, Thread.CurrentThread.ManagedThreadId, imageBuffer.Length, evid,
-                        //    TileImage.ActualWidth, TileImage.ActualHeight));
-#endif                    
+                        Platform.Log(LogLevel.Debug,
+                                     "{0} : @@@@@@ tile image updated. size: {3}x{4}, {1} bytes, evid={2}\n",
+                                     Environment.TickCount, imageBuffer.Length,
+                                     evid,
+                                     TileImage.ActualWidth, TileImage.ActualHeight);
+#endif
                     }
                     
                 }
@@ -200,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                         WriteableBitmap bitmap = new WriteableBitmap((int)TileCanvas.ActualWidth, (int)TileCanvas.ActualHeight);
                         TileImage.Source = bitmap;
 #if DEBUG
-                        Platform.Log(LogLevel.Debug, "{0} T{1} : @@@@@@ tile image size {2}x{3}", Environment.TickCount, Thread.CurrentThread.ManagedThreadId, bitmap.PixelHeight, bitmap.PixelWidth);
+                        Platform.Log(LogLevel.Debug, "{0} : @@@@@@ tile image size {1}x{2}", Environment.TickCount, bitmap.PixelHeight, bitmap.PixelWidth);
 #endif
                     }
                 }
@@ -246,9 +242,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
             Tile source = sender as Tile;
             if (!source.Identifier.Equals(this.ServerEntity.Identifier) && source.HasCapture)
-                this.LayoutRoot.IsHitTestVisible = false;
+                LayoutRoot.IsHitTestVisible = false;
             else
-                this.LayoutRoot.IsHitTestVisible = true;
+                LayoutRoot.IsHitTestVisible = true;
         }
 
 
@@ -298,7 +294,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 Focus();
                 PerformanceMonitor.CurrentInstance.CurrentTile = this;
 
-                System.Windows.Point curPos = e.GetPosition(TileImage);
+                Point curPos = e.GetPosition(TileImage);
                 _rightClickPosition = curPos;
 
                 bool isDoubleClick = InterpretAsRightDoubleClick(e);
@@ -512,7 +508,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         }
 
 
-        public void OnMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        public void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
 			if (_destroyed)
 				return;
@@ -527,7 +523,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
                 bool isDoubleClick = InterpretAsLeftDoubleClick(e);
 
-                System.Windows.Point pos = e.GetPosition(TileImage);
+                Point pos = e.GetPosition(TileImage);
                 Message msg = new MouseMessage
                 {
                     Identifier = Guid.NewGuid(),
@@ -546,7 +542,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             }
         }
 
-        public void OnMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        public void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
 			if (_destroyed)
 				return;
@@ -557,7 +553,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             {
                 MouseLeftButtonUp(e==null ? new Point() : e.GetPosition(TileImage));
             }
-
         }
 
 

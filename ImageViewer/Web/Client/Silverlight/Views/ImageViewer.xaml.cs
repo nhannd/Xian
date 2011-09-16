@@ -14,18 +14,20 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.ViewModel;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Windows.Input;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
+using ClearCanvas.Web.Client.Silverlight;
 using ClearCanvas.Web.Client.Silverlight.Utilities;
 
-namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
+namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
 	public partial class ImageViewer : UserControl, IDisposable
 	{
+	    public ImageViewerViewModel ViewModel;
 		private volatile ViewerApplication _serverApplication;
 
 		private StudyView _studyView;
@@ -33,13 +35,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private bool _shuttingDown;
 
-        private event EventHandler Shuttingdown;
-
         bool _suppressError;
 
         public ImageViewer(StartViewerApplicationRequest startRequest)
         {
             InitializeComponent();
+            ViewModel = new ImageViewerViewModel();
 
             if (ApplicationContext.Current != null)
                 ApplicationContext.Initialize();
@@ -73,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                 TileView.ApplicationRootVisual = _studyView.StudyViewCanvas;
                 
-                this.LayoutRoot.KeyUp += OnKeyUp;
+                LayoutRoot.KeyUp += OnKeyUp;
             }
 		}
 
@@ -116,10 +117,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     ApplicationStoppedEvent @event = e.ServerEvent;
 
                     String title= @event.IsTimedOut? DialogTitles.Timeout: DialogTitles.Error;
-                    String mesage = @event.Message;
+                    String message = @event.Message;
 
 
-                    var window = PopupHelper.PopupMessage(title, mesage);            
+                    PopupHelper.PopupMessage(title, message);            
                 }
             });
         }
@@ -211,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 buttonList.Add(noButton);
                 var cancelButton = new Button { Content = Labels.ButtonCancel, Margin = new Thickness(5) };
                 cancelButton.Click += (s, e) => _context.ServerEventBroker.DispatchMessage(
-                    new DismissMessageBoxMessage()
+                    new DismissMessageBoxMessage
                         {
                             TargetId = @event.MessageBox.Identifier,
                             Result = WebDialogBoxAction.Cancel,
@@ -237,7 +238,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 return;
             }
 
-			Visibility = System.Windows.Visibility.Visible;
+			Visibility = Visibility.Visible;
 
             if (_serverApplication != null)
             {
@@ -296,7 +297,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             if (ev.PropertyName == "ImageBoxes")
             {
-                Collection<ImageBox> imageBoxes = (Collection<ImageBox>)ev.Value;
+                var imageBoxes = (Collection<ImageBox>)ev.Value;
                 _serverApplication.Viewer.ImageBoxes = imageBoxes;
                 _studyView.SetImageBoxes(imageBoxes);
                 return;
@@ -326,12 +327,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     _studyView = null;
                 }
 
-                if (Shuttingdown != null)
-                {
-                    Shuttingdown(this, EventArgs.Empty);
-                }
-
-
                 try
                 {
                     if (_context.ServerEventBroker.Faulted)
@@ -342,11 +337,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                         _context.ServerEventBroker.Disconnect("WebViewer is actively shutting down");
                     }
                 }
-                catch (Exception)
+                catch (Exception x)
                 {
+                    Platform.Log(LogLevel.Error,x,"Unexpected exception stopping the Webstation application");
                 }  
-            }
-                      
+            }                      
         }
 
 	    public void Dispose()

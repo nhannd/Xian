@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 
     internal class MenuBuilder
     {
-        internal static IPopup BuildContextMenu(WebActionNode model, ServerEventDispatcher dispatcher)
+        internal static IPopup BuildContextMenu(WebActionNode model, ServerEventMediator dispatcher)
         {
             return BuildContextMenu(model, new ActionDispatcher(dispatcher));
         }

@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 using ClearCanvas.Web.Client.Silverlight.Utilities;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
@@ -22,12 +20,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public static void HandleCriticalError(string message, params object[] args)
         {
+            string formattedMessage = string.Format(message, args);
             UIThread.Execute(() =>
             {
-                if (OnCriticalError!=null)
-                    OnCriticalError(null, EventArgs.Empty);
-
-                var window= PopupHelper.PopupMessage(DialogTitles.Error, string.Format(message, args));
+                if (OnCriticalError != null)
+                    OnCriticalError(formattedMessage, EventArgs.Empty);               
             });
         }
 
@@ -36,9 +33,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             UIThread.Execute(() =>
             {
                 if (OnCriticalError != null)
-                    OnCriticalError(null, EventArgs.Empty);
-
-                var window = PopupHelper.PopupMessage(DialogTitles.Error, ex.Message);
+                    OnCriticalError(ex.Message, EventArgs.Empty);
             });
         }
     }

@@ -17,14 +17,14 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
-    public partial class ToolstripView : UserControl
+    public partial class ToolstripView : UserControl, IDisposable
     {
         private readonly Dictionary<Guid, IToolstripButton> _buttonLookup = new Dictionary<Guid, IToolstripButton>();
         private ActionDispatcher _dispatcher;
-        private ServerEventDispatcher _eventDispatcher;
+        private ServerEventMediator _eventDispatcher;
         WebIconSize _desiredIconSize = WebIconSize.Medium;
 
-        public ServerEventDispatcher EventDispatcher
+        public ServerEventMediator EventDispatcher
         {
             set
             {
@@ -160,6 +160,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             {
                 stripButton.SetIconSize(_desiredIconSize);
             }
+        }
+
+        public void Dispose()
+        {
+            EventBroker.TileHasCaptureChanged -= EventBrokerTileHasCapture;    
         }
     }
 }

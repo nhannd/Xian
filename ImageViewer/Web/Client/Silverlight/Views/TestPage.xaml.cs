@@ -13,11 +13,9 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
-using System.Windows.Browser;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
 
-namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
+namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
 	//TODO (CR May 2010): delete this class?
     public partial class TestPage : UserControl, System.IDisposable
@@ -50,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 		{
 			DisposeViewer();
 
-			ImageViewer viewer = new ImageViewer(new StartViewerApplicationRequest 
+			var viewer = new ImageViewer(new StartViewerApplicationRequest 
                 { 
                     StudyInstanceUid = new Collection<string> { studyInfo.StudyInstanceUid },
                     Username = username
@@ -64,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 		{
 			if (ImageViewerContainer.Children.Count > 0)
 			{
-				ImageViewer viewer = (ImageViewer)ImageViewerContainer.Children[0];
+				var viewer = (ImageViewer)ImageViewerContainer.Children[0];
 				viewer.Dispose();
 				ImageViewerContainer.Children.Clear();
 			}

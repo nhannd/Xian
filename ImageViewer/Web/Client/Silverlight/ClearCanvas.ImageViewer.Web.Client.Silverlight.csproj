@@ -99,7 +99,8 @@
     <Compile Include="Controls\ThrottlePanel.xaml.cs">
       <DependentUpon>ThrottlePanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="HelpDialogContent.xaml.cs">
+    <Compile Include="ViewModel\ImageViewerViewModel.cs" />
+    <Compile Include="Views\HelpDialogContent.xaml.cs">
       <DependentUpon>HelpDialogContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\IActionUpdate.cs" />
@@ -134,7 +135,7 @@
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ConnectionTester.cs" />
     <Compile Include="Helpers\UIElementExtensions.cs" />
-    <Compile Include="ImageViewer.xaml.cs">
+    <Compile Include="Views\ImageViewer.xaml.cs">
       <DependentUpon>ImageViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="IncomingEventQueue.cs" />
@@ -151,7 +152,6 @@
     <Compile Include="ServerMessagePoller.cs" />
     <Compile Include="PerformanceLogger.cs" />
     <Compile Include="PerformanceMonitor.cs" />
-    <Compile Include="ServerConfiguration.cs" />
     <Compile Include="ServerEventArgs.cs" />
     <Compile Include="ServerEventDispatcher.cs" />
     <Compile Include="Service References\AppServiceReference\Reference.cs">
@@ -164,7 +164,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StartupArguments.cs" />
     <Compile Include="Helpers\MenuBuilder.cs" />
     <Compile Include="ThrottleSettings.cs" />
     <Compile Include="Diagnostic\TileImageHistory.cs" />
@@ -175,7 +174,7 @@
     <Compile Include="Views\ImageBoxView.xaml.cs">
       <DependentUpon>ImageBoxView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TestPage.xaml.cs">
+    <Compile Include="Views\TestPage.xaml.cs">
       <DependentUpon>TestPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -210,7 +209,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="HelpDialogContent.xaml">
+    <Page Include="Views\HelpDialogContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -234,7 +233,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ImageViewer.xaml">
+    <Page Include="Views\ImageViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -254,7 +253,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="TestPage.xaml">
+    <Page Include="Views\TestPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -343,7 +342,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\DialogTitles.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DialogTitles.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\ErrorMessages.resx">

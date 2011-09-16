@@ -16,6 +16,7 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Windows.Media.Imaging;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
