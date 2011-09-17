@@ -10,47 +10,37 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Threading;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-    internal class MessagePollerEventReceivedEventArgs : EventArgs
+    internal class ServerEventReceivedEventArgs : EventArgs
     {
         public EventSet EventSet { get; set; }
     }
-    internal class MessagePollerErrorEventArgs : EventArgs
+    internal class ServerChannelFaultEventArgs : EventArgs
     {
         public Exception Error { get; set; }
+
+        public String ErrorMessage { get; set; }
     }
 
     internal class ServerMessagePoller : IDisposable
     {
         const int MinPollDelaySinceLastActivity = 100; // 100 ms since last activity
 
-        private ApplicationServiceClient _service;
+        private readonly ServerMessageSender _service;
         private Thread _pollingThread;
         private bool _stop;
-        private object _syncLock = new object();
-        private long _lastPollTick = Environment.TickCount;
+        private readonly object _syncLock = new object();
         private int _pendingPollingCount;
 
-        public event EventHandler<MessagePollerEventReceivedEventArgs> MessageReceived;
-        
-        public ServerMessagePoller(ApplicationServiceClient service)
+        public ServerMessagePoller(ServerMessageSender service)
         {
             _service = service;
-            _service.GetPendingEventCompleted += OnGetPendingEventCompleted;
+            _service.PollCompleted += OnGetPendingEventCompleted;
         }
 
         public void Start()
@@ -63,15 +53,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             while (true)
             {
-                if (_stop || _service.InnerChannel.State != System.ServiceModel.CommunicationState.Opened)
+                if (_stop || _service.Faulted)
                 {
                     return;
-                }
-
-                if (ApplicationContext.Current == null)
-                {
-                    Thread.Sleep(50);
-                    continue;
                 }
 
                 long now = Environment.TickCount;
@@ -99,31 +83,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private void OnGetPendingEventCompleted(object sender, GetPendingEventCompletedEventArgs e)
         {
-            _lastPollTick = Environment.TickCount;
             Interlocked.Decrement(ref _pendingPollingCount);
 
             lock (_syncLock)
             {
                 Monitor.PulseAll(_syncLock);
-            }
-
-            if (e.Error != null)
-            {
-                ErrorHandler.HandleException(e.Error);
-            }
-            else
-            {
-                if (e.Result != null)
-                {
-                    if (e.Result.EventSet != null)
-                    {
-                        if (MessageReceived != null)
-                        {
-                            MessageReceived(this, new MessagePollerEventReceivedEventArgs { EventSet = e.Result.EventSet });
-                        }
-                    }
-                }
-            }
+            }          
         }
 
         private bool DoPoll()
@@ -136,10 +101,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                 try
                 {
-                    
-                    // TODO: the client may have disconnected
-                    // Note: do not call this inside a lock statement. It can cause deadlock
-                    _service.GetPendingEventAsync(new GetPendingEventRequest() { ApplicationId = ApplicationContext.Current.ID, MaxWaitTime = maxWaitTime });
+                    _service.CheckForPendingEvents(maxWaitTime);
 
                     lock (_syncLock)
                     {
@@ -151,11 +113,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     // catch exception to prevent crashing
                     Platform.Log(LogLevel.Error, x, "Unexpected exception polling for server data");
                 }
-                finally
-                {
-                    _lastPollTick = Environment.TickCount;
-                }
-                
+
                 return true;
             }
 
@@ -167,12 +125,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public void Dispose()
         {
             _stop = true;
+            _service.PollCompleted -= OnGetPendingEventCompleted;
+
             if (_pollingThread != null)
             {
-                _service.GetPendingEventCompleted -= OnGetPendingEventCompleted;
-
                 lock (_syncLock)
                     Monitor.PulseAll(_syncLock);
+                _pollingThread = null;
             }
         }
 

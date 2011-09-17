@@ -11,20 +11,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ServiceModel;
 using System.Text;
 using System.Linq;
 using System.Threading;
-using System.Windows.Browser;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.Web.Client.Silverlight;
 using ClearCanvas.Web.Client.Silverlight.Utilities;
 using Message = ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message;
-using System.ServiceModel.Channels;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
-using System.Net.NetworkInformation;
 using System.Windows.Media;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
@@ -47,28 +42,24 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     //feedback from this class.
 	public class ServerEventMediator : IDisposable
 	{
-        Thread _outboundThread;
-	    public delegate void ServerCallCompletedCallback(AsyncCompletedEventArgs ev);
 
+        #region Events
         public event EventHandler<ServerApplicationStopEventArgs> ServerApplicationStopped;
+        public event EventHandler OnCriticalError;
+        #endregion
+
+        #region Members
 
         ///TODO (CR May 2010): we should be able to get rid of these "type handlers" entirely (I have a design change in mind).
         private readonly Dictionary<Type, EventHandler<ServerEventArgs>> _typeHandlers = new Dictionary<Type, EventHandler<ServerEventArgs>>();
         private readonly Dictionary<Guid, EventHandler<ServerEventArgs>> _sourceHandlers = new Dictionary<Guid, EventHandler<ServerEventArgs>>();
 		private readonly object _sync = new object();
-		private ApplicationServiceClient _proxy;
 		private MessageQueue _queue;
-	    private readonly ApplicationContext _context;
-        private StartApplicationRequest _startRequest;
-        private bool _connectionOpened;
-
-        private Binding _binding;
-
+        private Thread _outboundThread;
 		private int _nextMessageId = 1;
 
         private readonly Queue<MessageSet> _outboundQueue = new Queue<MessageSet>();
         private readonly object _outboundQueueSync = new object();
-
 
         private readonly Dictionary<int, EventSet> _incomingEventSets = new Dictionary<int, EventSet>();
         private int _nextEventSetNumber = 1;
@@ -77,27 +68,26 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private readonly Dictionary<Guid, long> _timePrevTileUpdateEvent = new Dictionary<Guid, long>();
         private long _renderLoopCount;
 
-        //TODO: this should not be here. Belong to the app instead?
+        // Poller & Senders
         private ServerMessagePoller _poller;
+        private ServerMessageSender _sender;
 
-		public bool Faulted { 
+        #endregion
+
+        #region Public Properties
+
+        public bool Faulted { 
             get {
-                if (_proxy != null && _proxy.State != CommunicationState.Faulted && _proxy.InnerChannel != null && _proxy.InnerChannel.State != CommunicationState.Faulted)
+                if (_sender != null && !_sender.Faulted)
                     return false;
 
                 return true;
             } 
         }
 
-        public ApplicationServiceClient Proxy
-        {
-            get { return _proxy; }
-        }
+        #endregion
 
-        public ServerEventMediator(ApplicationContext context)
-        {
-            _context = context;
-        }
+        #region Public Methods
 
         public void Initialize(ApplicationStartupParameters appParameters)
 		{
@@ -106,298 +96,255 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 if (_queue == null)
                     _queue = new MessageQueue(DoSend);
 
-                CompositionTarget.Rendering += CompositionTarget_Rendering;
-				SetupChannel();
-
+                CompositionTarget.Rendering += CompositionTargetRendering;
+				
+                _sender = new ServerMessageSender();
+                _sender.ApplicationStarted += StartApplicationCompleted;
+                _sender.ChannelFaulted += ChannelFaulted;
+                _sender.MessageReceived += OnServerEventReceived;
+                _sender.ChannelOpening += OnChannelOpening;
+                _sender.ChannelOpened += OnChannelOpened;
+                _sender.Intialize();
             }
             catch (Exception ex)
             {
-                OnError(ex);
+                var args = new ServerChannelFaultEventArgs
+                               {
+                                   Error = ex
+                               };
+                ChannelFaulted(this,args);
             }
         }
- 
-        private void OnError(Exception exception)
+
+
+	    /// <summary>
+        /// Register an event handler for a specific type of event from the server
+        /// </summary>
+        /// <param name="eventType"></param>
+        /// <param name="handler"></param>
+        public void RegisterEventHandler(Type eventType, EventHandler<ServerEventArgs> handler)
         {
-            if (exception is FaultException<SessionValidationFault>)
+            lock (_sync)
             {
-                var fault = exception as FaultException<SessionValidationFault>;
-                ErrorHandler.HandleCriticalError(fault.Detail.ErrorMessage);
-            }
-            else if (exception is FaultException<OutOfResourceFault>)
-            {
-                var fault = exception as FaultException<OutOfResourceFault>;
-                ErrorHandler.HandleCriticalError(fault.Detail.ErrorMessage);
-            }
-            else if (exception is CommunicationException)
-            {
-                if (!NetworkInterface.GetIsNetworkAvailable())
-                    ErrorHandler.HandleCriticalError(ErrorMessages.ConnectionLost);
+                if (_typeHandlers.ContainsKey(eventType))
+                {
+                    var existingHandlers = _typeHandlers[eventType];
+                    handler += existingHandlers;
+                    // strange but must replace what's in the list or we will lose it.. 
+                    _typeHandlers[eventType] = handler;
+                }
                 else
+                    _typeHandlers.Add(eventType, handler);
+
+                Platform.Log(LogLevel.Debug, "Register event handler for type {0}", eventType);
+
+            }
+        }
+
+        //TODO: this doesn't seem to work even though we kind of need it to
+        public void UnregisterEventHandler(Type eventType, EventHandler<ServerEventArgs> handler)
+        {
+            lock (_sync)
+            {
+                if (!_typeHandlers.ContainsKey(eventType)) return;
+
+                EventHandler<ServerEventArgs> h = _typeHandlers[eventType];
+                h -= handler;
+                _typeHandlers[eventType] = h;
+                Platform.Log(LogLevel.Debug, "Release event handler for type {0}", eventType);
+            }
+        }
+
+        /// <summary>
+        /// Register an event handler from a specific sender/resource from the server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="handler"></param>
+        public void RegisterEventHandler(Guid sender, EventHandler<ServerEventArgs> handler)
+        {
+            lock (_sync)
+            {
+                _sourceHandlers.Add(sender, handler);
+                Platform.Log(LogLevel.Debug, "Register event handler for {0}", sender);
+            }
+        }
+
+        /// <summary>
+        /// Release an event handler from a specific sender/resource from the server
+        /// </summary>
+        /// <param name="sender"></param>
+        public void UnregisterEventHandler(Guid sender)
+        {
+            lock (_sync)
+            {
+                _sourceHandlers.Remove(sender);
+                Platform.Log(LogLevel.Debug, "Release event handler for {0}", sender);
+            }
+        }
+
+        /// <summary>
+        /// Start the application
+        /// </summary>
+        /// <param name="request">The start request.</param>
+        public void StartApplication(StartApplicationRequest request)
+        {
+            if (_sender != null)
+            {
+                _sender.StartApplication(request);
+            }
+        }
+
+        /// <summary>
+        /// Publish performance data to the server.
+        /// </summary>
+        /// <param name="data"></param>
+        internal void PublishPerformance(PerformanceData data)
+        {
+            _sender.PublishPerformance(data);
+        }
+
+        /// <summary>
+        /// Stop the Application
+        /// </summary>
+        public void StopApplication()
+        {
+            _sender.StopApplication();
+        }
+
+        /// <summary>
+        /// Send a message to the server
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <returns>true on success, false if the connection is fauled or an exception occurs</returns>
+        public bool DispatchMessage(Message message)
+        {
+            try
+            {
+                if (!Faulted)
                 {
-                    var sb = new StringBuilder();
-                    sb.AppendLine(String.Format("{0}: {1}", exception.GetType(), exception.Message));
-                    sb.AppendLine(SR.StackTrace +":");
-                    sb.AppendLine(exception.StackTrace);
-
-
-                    if (exception.InnerException != null)
+                    if (message is MouseMoveMessage)
                     {
-                        sb.AppendLine(String.Format("{0}: {1}", exception.InnerException.GetType(), exception.InnerException.Message));
-                        sb.AppendLine(SR.StackTrace + ":");
-                        sb.AppendLine(exception.InnerException.StackTrace);
+                        PerformanceMonitor.CurrentInstance.IncrementSendLag(1);
+                    }
+                    else if (message is MouseWheelMessage)
+                    {
+                        PerformanceMonitor.CurrentInstance.IncrementMouseWheelMsgCount(1);
                     }
 
-                    ErrorHandler.HandleCriticalError(sb.ToString());
+                    ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
+                    _queue.Enqueue(message);
+                    return true;
                 }
             }
-            
-            else
+            catch (Exception ex)
             {
-                var sb = new StringBuilder();
-                sb.AppendLine(String.Format("{0}", exception.Message));
-                sb.AppendLine(SR.StackTrace + ":");
-                sb.AppendLine(exception.StackTrace);
-
-                if (exception.InnerException != null)
-                {
-                    sb.AppendLine(String.Format("{0}: {1}", exception.InnerException.GetType(), exception.InnerException.Message));
-                    sb.AppendLine(SR.StackTrace + ":");
-                    sb.AppendLine(exception.InnerException.StackTrace);
-                }
-
-
-                ErrorHandler.HandleCriticalError(sb.ToString());
+                HandleException(ex);
             }
+
+            return false;
         }
 
-        private void SetupChannel()
+        /// <summary>
+        /// Handle an exception, the connection to the server will be closed and a message will be displayed on the GUI.
+        /// </summary>
+        /// <param name="exception"></param>
+        public void HandleException(Exception exception)
         {
-            Binding binding = GetChannelBinding();
-            EndpointAddress remoteAddress = GetServerAddress();
-            _proxy = new ApplicationServiceClient(binding, remoteAddress);
+            string formattedMessage = exception.Message;
+            _sender.StopApplication();
 
-            _proxy.InnerChannel.Faulted += OnChannelFaulted;
-            _proxy.InnerChannel.Opening += OnChannelOpening;
-            _proxy.InnerChannel.Opened += ConnectionOpened;
-
-            _proxy.ProcessMessagesCompleted += MessageSent;
-            //_proxy.GetPendingEventCompleted += new EventHandler<GetPendingEventCompletedEventArgs>(GetPendingEventCompleted);
-            _proxy.StartApplicationCompleted += StartApplicationCompleted;
-            _proxy.StopApplicationCompleted += StopApplicationCompleted;
-            _proxy.InnerChannel.OperationTimeout = TimeSpan.FromMinutes(10);
-        }
-
-        //TODO (CR May 2010): this should be part of a UI element.
-        ChildWindow _stateDialog;
-        private void OnChannelOpening(object sender, EventArgs e)
-        {
             UIThread.Execute(() =>
-            {    
-                _stateDialog = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.OpeningConnection);
+            {
+                if (OnCriticalError != null)
+                    OnCriticalError(formattedMessage, EventArgs.Empty);
             });
         }
 
-        private void ConnectionOpened(object sender, EventArgs e)
+        /// <summary>
+        /// Handle a critical error, the connection to the server will be closed and a message will be displayed on the GUI.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public void HandleCriticalError(string message, params object[] args)
         {
-            _connectionOpened = true;
-            
+            string formattedMessage = string.Format(message, args);
+            _sender.StopApplication();
+
             UIThread.Execute(() =>
             {
-                if (_stateDialog != null)
-                {
-                    _stateDialog.Close();
-                    _stateDialog = null;
-                }
-            });          
-            
-        }
-
-        private void ReleaseChannel()
-        {
-            if (_proxy != null)
-            {
-                _proxy.InnerChannel.Opened -= ConnectionOpened;
-                _proxy.InnerChannel.Opening -= OnChannelOpening;
-                _proxy.ProcessMessagesCompleted -= MessageSent;
-                _proxy.StartApplicationCompleted -= StartApplicationCompleted;
-                _proxy.StopApplicationCompleted -= StopApplicationCompleted;
-                _proxy.InnerChannel.Faulted -= OnChannelFaulted;
-                _proxy.CloseAsync();
-                _proxy = null;
-                _connectionOpened = false;
-            }
-        }
-  
-		private EndpointAddress GetServerAddress()
-        {
-          
-            switch(ApplicationStartupParameters.Current.Mode)
-            {
-                case ApplicationServiceMode.BasicHttp:
-                                var uri = "../Services/ApplicationService.svc/basicHttp";
-                                var address = new EndpointAddress(new Uri(uri, UriKind.RelativeOrAbsolute)); 
-                                return address;
-            }
-
-            // This should never occur
-            throw new Exception();
-        }
-
-        private Binding GetChannelBinding()
-        {
-
-            switch (ApplicationStartupParameters.Current.Mode)
-            {
-                case ApplicationServiceMode.BasicHttp:
-                    var binaryMessageEncoding = new BinaryMessageEncodingBindingElement();
-
-                    if (HtmlPage.Document.DocumentUri.Scheme.Equals(Uri.UriSchemeHttp))
-                    {
-                        var http = new HttpTransportBindingElement
-                                       {
-                                           MaxReceivedMessageSize = int.MaxValue,
-                                           MaxBufferSize = int.MaxValue,
-                                           TransferMode = TransferMode.Buffered
-                                       };
-                        _binding = new CustomBinding(binaryMessageEncoding, http);
-                        return _binding;
-                    }
-                    var https = new HttpsTransportBindingElement
-                                    {
-                                        MaxReceivedMessageSize = int.MaxValue,
-                                        MaxBufferSize = int.MaxValue,
-                                        TransferMode = TransferMode.Buffered
-                                    };
-                    _binding = new CustomBinding(binaryMessageEncoding, https);
-                    return _binding;
-            }
-
-            return null;
-        }
-
-        private void OnChannelFaulted(object sender, EventArgs e)
-        {
-            //TODO (CR May 2010) How to deal with string resources?
-            ErrorHandler.HandleCriticalError(_connectionOpened? ErrorMessages.ConnectionLost: String.Format(ErrorMessages.UnableToConnectTo, _proxy.InnerChannel.RemoteAddress.Uri));
-            UIThread.Execute(() =>
-            {
-                if (_stateDialog != null)
-                {
-                    _stateDialog.Close();
-                    _stateDialog = null;
-                }
+                if (OnCriticalError != null)
+                    OnCriticalError(formattedMessage, EventArgs.Empty);
             });
         }
 
-	    private void StartApplicationCompleted(object sender, StartApplicationCompletedEventArgs e)
-	    {
-            if (e.Error != null )
+        public void Dispose()
+        {
+            // TODO: This method is called on Application Exit. 
+            // But SL does not support calling web service on this event
+
+            if (_sender != null)
             {
-                OnError(e.Error);
-                return;
+                _sender.ApplicationStarted -= StartApplicationCompleted;
+                _sender.ChannelFaulted -= ChannelFaulted;
+                _sender.MessageReceived -= OnServerEventReceived;
+
+                _sender.Dispose();
+                _sender = null;
             }
 
-            ApplicationContext.Current.ID = e.Result.AppIdentifier;
+            if (_queue != null)
+            {
+                _queue.Dispose();
+                _queue = null;
+            }
 
-            ThrottleSettings.Default.PropertyChanged += new PropertyChangedEventHandler(ThrottleSettingsPropertyChanged);
+            if (_outboundThread != null)
+            {
+                if (_outboundThread.IsAlive)
+                {
+                    _outboundThread.Abort();
+                    _outboundThread.Join();
+                }
+                _outboundThread = null;
+            }
+            CompositionTarget.Rendering -= CompositionTargetRendering;
+        }
 
-            //TODO: put the key in some assembly that can be shared with the server-side code
-            _proxy.SetPropertyAsync(new SetPropertyRequest{ ApplicationId = ApplicationContext.Current.ID , 
-                        Key = "DynamicImageQualityEnabled",
-                        Value= ThrottleSettings.Default.EnableDynamicImageQuality.ToString() });
+        #endregion
 
-            StartPolling();
-
-            _outboundThread = new Thread(ignore=> ProcessOutboundQueue());
-
-            _outboundThread.Start();
-	    }
+        #region Private Methods
 
         private void StartPolling()
         {
-            _poller = new ServerMessagePoller(_proxy);
-            _poller.MessageReceived += (sender, ev) => { OnServerEventReceived(ev.EventSet); };
+            _poller = new ServerMessagePoller(_sender);
             _poller.Start();
         }
 
-        private void ThrottleSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName.Equals("EnableDynamicImageQuality"))
-            {
-                _proxy.SetPropertyAsync(new SetPropertyRequest
-                {
-                    ApplicationId = ApplicationContext.Current.ID,
-                    Key = "DynamicImageQualityEnabled",
-                    Value = ThrottleSettings.Default.EnableDynamicImageQuality.ToString()
-                });
-            }
-        }
-
-        private void StopApplicationCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            ServerCallCompletedCallback callback = e.UserState as ServerCallCompletedCallback;
-            if (callback!=null)
-            {
-                callback(e);
-            }
-            else
-            {
-                //TODO (CR May 2010) This shouldn't be in the else, error could happen when a callback is available.
-                if (e.Error != null && _connectionOpened)
-                {
-                    ErrorHandler.HandleCriticalError(e.Error.Message);
-                }
-            }
-        }
-
-        private void MessageSent(object sender, ProcessMessagesCompletedEventArgs e)
+	    private void ChannelFaulted(object sender, ServerChannelFaultEventArgs e)
 	    {
-            // TODO: REVIEW THIS
-            // Per MSDN:
-            // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-            // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
-            ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount; 
-            MessageSet msgs = e.UserState as MessageSet;
-
-            PerformanceMonitor.CurrentInstance.DecrementMouseWheelMsgCount(msgs.Messages.Count((i) => i is MouseWheelMessage));
-
-            if (e.Error != null)
+            string formattedMessage = e.ErrorMessage ?? e.Error.Message;
+            UIThread.Execute(() =>
             {
-                OnError(e.Error);
-                return;
-            }
-
-            if (e.Result!=null)
-            {
-                if (e.Result.EventSet!=null && e.Result.EventSet.Events!=null)
-                {
-                    bool isMoveMoveMsg =  msgs.Messages.Any(i => i is MouseMoveMessage);
-                    if (isMoveMoveMsg)
-                    {
-                    
-                        long dt = Environment.TickCount - msgs.Tick;
-                        var p = PerformanceMonitor.CurrentInstance;
-
-                        bool tileUpdateEventReturned = e.Result.EventSet != null && e.Result.EventSet.Events.Any((i) => i is TileUpdatedEvent);
-
-                        p.LogMouseMoveRTTWithResponse(msgs.Number, dt);
-                    }                 
-
-                    if (e.Result.EventSet != null)
-                    {
-                        OnServerEventReceived(e.Result.EventSet);
-                    }
-                }                
-            }
+                if (OnCriticalError != null)
+                    OnCriticalError(formattedMessage, EventArgs.Empty);
+            });
 	    }
-        
+
+	    private void StartApplicationCompleted(object sender, StartApplicationCompletedEventArgs e)
+        {
+            StartPolling();
+
+            _outboundThread = new Thread(ignore => ProcessOutboundQueue());
+            _outboundThread.Start();
+        }
+   
         private void OnApplicationNotFoundEventReceived(ApplicationNotFoundEvent applicationNotFoundEvent)
         {
             //TODO:  Think about if this is the right solution
             // NOTE: _startRequest contains the sessionid which is probably expired by this time.
-            if (ApplicationContext.Current.ID.Equals(applicationNotFoundEvent.ApplicationId))
+            if (_sender.ApplicationId.Equals(applicationNotFoundEvent.ApplicationId))
             {
-                ErrorHandler.HandleCriticalError(ErrorMessages.ApplicationIDNotFound, applicationNotFoundEvent.ApplicationId);
+                HandleCriticalError(ErrorMessages.ApplicationIDNotFound, applicationNotFoundEvent.ApplicationId);
             }
         }
 
@@ -405,24 +352,77 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             try
             {
-                if (ServerApplicationStopped != null)
-                {
-                    ServerApplicationStopped(this, new ServerApplicationStopEventArgs { ServerEvent = applicationStoppedEvent });
-                }
-                else
-                {
-                    ErrorHandler.HandleCriticalError(applicationStoppedEvent.Message);
-                }
+                UIThread.Execute(() =>
+                                     {
+
+                                         if (ServerApplicationStopped != null)
+                                         {
+                                             ServerApplicationStopped(this,
+                                                                      new ServerApplicationStopEventArgs
+                                                                          {ServerEvent = applicationStoppedEvent});
+                                         }
+                                         else
+                                         {
+                                             HandleCriticalError(applicationStoppedEvent.Message);
+                                         }
+                                     });
             }
             finally
             {
-                Disconnect(SR.ApplicationHasStopped);
+                _sender.Disconnect(SR.ApplicationHasStopped);
             }
         }
 
-        public void ProcessOutboundQueue()
+        private void OnServerEventReceived(object sender, ServerEventReceivedEventArgs eventSet)
         {
-            while(true)
+            Platform.Log(LogLevel.Debug, "==> {0}: IN MSG # {1}", Environment.TickCount, eventSet.EventSet.Number);
+
+            if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenMouseMoveIsProcessed)
+                PerformanceMonitor.CurrentInstance.DecrementSendLag(eventSet.EventSet.Events.Count(i => i is MouseMoveProcessedEvent));
+
+            int tileUpdateEvCount = eventSet.EventSet.Events.Count(i => i is TileUpdatedEvent);
+            if (tileUpdateEvCount > 0)
+            {
+                //if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenTileUpdateReturn)
+                //    PerformanceMonitor.CurrentInstance.DecrementSendLag(eventSet.Events.Count((i) => i is TileUpdatedEvent));
+
+                PerformanceMonitor.CurrentInstance.RenderingLag += tileUpdateEvCount;
+                if (tileUpdateEvCount > 1)
+                    Platform.Log(LogLevel.Debug, "########## {0} tile update events received ###########", tileUpdateEvCount);
+            }
+
+
+            lock (_incomingEventSync)
+            {
+                _incomingEventSets[eventSet.EventSet.Number] = eventSet.EventSet;
+                Monitor.Pulse(_incomingEventSync);
+            }
+        }
+
+        ChildWindow _stateDialog;
+        private void OnChannelOpening(object sender, EventArgs e)
+        {
+            UIThread.Execute(() =>
+            {
+                _stateDialog = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.OpeningConnection);
+            });
+        }
+
+        private void OnChannelOpened(object sender, EventArgs e)
+        {
+            UIThread.Execute(() =>
+            {
+                if (_stateDialog != null)
+                {
+                    _stateDialog.Close();
+                    _stateDialog = null;
+                }
+            });
+        }
+
+        private void ProcessOutboundQueue()
+        {
+            while(!Faulted)
             {
                 lock (_outboundQueueSync)
                 {
@@ -445,7 +445,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     msgset.Timestamp = DateTime.Now;
 
                     Platform.Log(LogLevel.Debug, "<== Background {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
-                    _proxy.ProcessMessagesAsync(msgset, msgset);
+                    _sender.SendMessages(msgset);
                     Platform.Log(LogLevel.Debug, "<Complete Background {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
 
                     ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
@@ -458,19 +458,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (Faulted)
                 return;
 
-            //TODO (CR May 2010): we just checked Faulted and returned, so this probably will never happen.
-            if (_proxy.State == CommunicationState.Faulted
-                || _proxy.InnerChannel.State == CommunicationState.Faulted)
-            {
-                ErrorHandler.HandleCriticalError(ErrorMessages.UnexpectedError);
-                return;
-            }
-
-
             var msgset = new MessageSet
                              {
                                  Messages = new System.Collections.ObjectModel.ObservableCollection<Message>(),
-                                 ApplicationId = _context.ID,
+                                 ApplicationId = _sender.ApplicationId,
                                  Number = _nextMessageId++
                              };
 
@@ -500,7 +491,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 else
                 {
                     Platform.Log(LogLevel.Debug, "<== {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
-                    _proxy.ProcessMessagesAsync(msgset, msgset);
+                    _sender.SendMessages(msgset);
                     Platform.Log(LogLevel.Debug, "<Complete {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
                   
                     // TODO: REVIEW THIS
@@ -509,85 +500,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
                     ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
                 }
-
             }
             catch (Exception e)
             {
                 // happens on timeout of connection
-                ErrorHandler.HandleException(e);
+                HandleException(e);
 
                 // In some case, this is not necessary because the connection is already faulted.
                 // But let's do it anyway.
-                Disconnect(e.Message);
+                _sender.Disconnect(e.Message);
             }
         }
-
-	    /// <summary>
-		/// Register an event handler for a specific type of event from the server
-		/// </summary>
-		/// <param name="eventType"></param>
-		/// <param name="handler"></param>
-        public void RegisterEventHandler(Type eventType, EventHandler<ServerEventArgs> handler)
-		{
-            lock (_sync)
-			{
-                if (_typeHandlers.ContainsKey(eventType))
-                {
-                    var existingHandlers = _typeHandlers[eventType];
-                    handler += existingHandlers;
-                    // strange but must replace what's in the list or we will lose it.. 
-                    _typeHandlers[eventType] = handler;
-                }
-                else
-				    _typeHandlers.Add(eventType, handler);
-
-                Platform.Log(LogLevel.Debug, "Register event handler for type {0}", eventType);
-
-			}
-		}
-
-		//TODO: this doesn't seem to work even though we kind of need it to
-		public void UnregisterEventHandler(Type eventType, EventHandler<ServerEventArgs> handler)
-		{
-			lock (_sync)
-			{
-			    if (!_typeHandlers.ContainsKey(eventType)) return;
-
-			    EventHandler<ServerEventArgs> h = _typeHandlers[eventType];
-			    h -= handler;
-			    _typeHandlers[eventType] = h;
-                Platform.Log(LogLevel.Debug, "Release event handler for type {0}", eventType);
-			}
-		}
-
-		/// <summary>
-		/// Register an event handler from a specific sender/resource from the server
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="handler"></param>
-        public void RegisterEventHandler(Guid sender, EventHandler<ServerEventArgs> handler)
-		{
-			lock (_sync)
-			{
-				_sourceHandlers.Add(sender, handler);
-			    Platform.Log(LogLevel.Debug, "Register event handler for {0}", sender);
-			}
-		}
-
-
-        /// <summary>
-        /// Release an event handler from a specific sender/resource from the server
-        /// </summary>
-        /// <param name="sender"></param>
-		public void UnregisterEventHandler(Guid sender)
-        {
-            lock (_sync)
-            {
-                _sourceHandlers.Remove(sender);
-                Platform.Log(LogLevel.Debug, "Release event handler for {0}", sender);
-            }
-        }
-
 
 		private void ProcessEventSet(EventSet eventSet)
         {
@@ -611,10 +534,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             foreach (Event @event in eventSet.Events)
 			{
                 var ev = @event;
-                
-                EventHandler<ServerEventArgs> handler;
 
-                try
+			    try
 				{
                     if (ev is ApplicationNotFoundEvent)
                     {
@@ -624,186 +545,65 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     {
                         OnApplicationStoppedEventReceived(ev as ApplicationStoppedEvent);
                     }
-                    else if (_sourceHandlers.TryGetValue(ev.SenderId, out handler))
-                    {
-                        handler.Invoke(ev.SenderId, new ServerEventArgs { ServerEvent = ev });
-                    }
-                    else if (_typeHandlers.TryGetValue(ev.GetType(), out handler))
-                    {
-                        handler.Invoke(ev.SenderId, new ServerEventArgs { ServerEvent = ev });
-                    }
                     else
                     {
-                        string msg;
-                        if (ev is PropertyChangedEvent)
+                        EventHandler<ServerEventArgs> handler;
+                        if (_sourceHandlers.TryGetValue(ev.SenderId, out handler))
                         {
-                            var propChangedEvent = ev as PropertyChangedEvent;
-                            var sb = new StringBuilder();
-                            sb.AppendLine(String.Format("EventID:{0}", propChangedEvent.Identifier));
-                            sb.AppendLine(String.Format("Source: {0} [ID={1}]", propChangedEvent.Sender, propChangedEvent.SenderId));
-                            sb.AppendLine(String.Format("Property: {0}", propChangedEvent.PropertyName));
-                            sb.AppendLine(String.Format("Value: {0}", propChangedEvent.Value));
-
-                            if (propChangedEvent.DebugInfo != null)
-                            {
-                                sb.AppendLine("--------------------------------------");
-                                foreach (string m in propChangedEvent.DebugInfo)
-                                {
-                                    sb.AppendLine(m);
-                                }
-                            }
-                            msg = sb.ToString();
+                            handler.Invoke(ev.SenderId, new ServerEventArgs { ServerEvent = ev });
+                        }
+                        else if (_typeHandlers.TryGetValue(ev.GetType(), out handler))
+                        {
+                            handler.Invoke(ev.SenderId, new ServerEventArgs { ServerEvent = ev });
                         }
                         else
                         {
-                            StringBuilder sb = new StringBuilder();
-                            sb.AppendLine(String.Format("EventID:{0}", ev.Identifier));
-                            sb.AppendLine(String.Format("Source: {0} [ID={1}]", ev.Sender, ev.SenderId));
-                            msg = sb.ToString();                                
-                        }
+                            string msg;
+                            if (ev is PropertyChangedEvent)
+                            {
+                                var propChangedEvent = ev as PropertyChangedEvent;
+                                var sb = new StringBuilder();
+                                sb.AppendLine(String.Format("EventID:{0}", propChangedEvent.Identifier));
+                                sb.AppendLine(String.Format("Source: {0} [ID={1}]", propChangedEvent.Sender, propChangedEvent.SenderId));
+                                sb.AppendLine(String.Format("Property: {0}", propChangedEvent.PropertyName));
+                                sb.AppendLine(String.Format("Value: {0}", propChangedEvent.Value));
 
-                        PopupHelper.PopupMessage(DialogTitles.HandlerNotFoundError, msg);
+                                if (propChangedEvent.DebugInfo != null)
+                                {
+                                    sb.AppendLine("--------------------------------------");
+                                    foreach (string m in propChangedEvent.DebugInfo)
+                                    {
+                                        sb.AppendLine(m);
+                                    }
+                                }
+                                msg = sb.ToString();
+                            }
+                            else
+                            {
+                                var sb = new StringBuilder();
+                                sb.AppendLine(String.Format("EventID:{0}", ev.Identifier));
+                                sb.AppendLine(String.Format("Source: {0} [ID={1}]", ev.Sender, ev.SenderId));
+                                msg = sb.ToString();                                
+                            }
+
+                            PopupHelper.PopupMessage(DialogTitles.HandlerNotFoundError, msg);
+                        }
                     }
 				}
 				catch (Exception ex)
 				{
-					if (_proxy.State == CommunicationState.Faulted)
-                        ErrorHandler.HandleException(ex);
+					if (_sender.Faulted)
+                        HandleException(ex);
                 }
 			}
 		}
 
-        // TODO: should return bool instead
-	    public void DispatchMessage(Message message)
-        {
-            try
-            {
-                if (!Faulted)
-                {
-                    
-
-                    if (message is MouseMoveMessage)
-                    {
-                        PerformanceMonitor.CurrentInstance.IncrementSendLag(1);
-                    }
-                    else if (message is MouseWheelMessage)
-                    {
-                        PerformanceMonitor.CurrentInstance.IncrementMouseWheelMsgCount(1);
-                    }
-
-                    ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
-                    _queue.Enqueue(message);
-                } 
-                
-            }
-            catch (Exception ex)
-            {
-                ErrorHandler.HandleException(ex);
-            }
-	    }
-
-		public void StartApplication(StartApplicationRequest request)
-		{
-            if (_proxy != null)
-            {
-                _startRequest = request;
-
-                request.MetaInformation = new MetaInformation() { Language = Thread.CurrentThread.CurrentUICulture.Name };
-                _proxy.StartApplicationAsync(_startRequest);
-            }
-		}
-
-        internal void PublishPerformance(PerformanceData data)
-        {
-            _proxy.ReportPerformanceAsync(data);
-        }
-
-		public void StopApplication(Guid identifier)
-		{
-			_proxy.StopApplicationAsync(new StopApplicationRequest { ApplicationId = identifier });
-		}
-
-        public void Disconnect(string reason)
-        {
-            if (_poller != null)
-            {
-                lock (_sync)
-                {
-                    if (_poller != null)
-                    {
-                        _poller.Dispose();
-                        _poller = null;
-                    }
-                }
-            }
-
-            if (_proxy != null)
-            {
-                //TODO (CR May 2010): we don't sync the proxy anywhere else.
-                lock (_sync)
-                {                   
-
-                    if (_proxy != null)
-                    {
-                        ReleaseChannel();
-                        _proxy = null;
-                    }
-                }                
-            }
-        }
-
-        public void Dispose()
-        {
-            // TODO: This method is called on Application Exit. 
-            // But SL does not support calling web service on this event
-            if (_proxy != null)
-            {
-                Disconnect(SR.Disposing);
-            }
-
-            if (_queue != null)
-            {
-                _queue.Dispose();
-                _queue = null;
-            }
-
-            CompositionTarget.Rendering -= CompositionTarget_Rendering;
-        }
-
-        private void OnServerEventReceived(EventSet eventSet)
-        {
-            Platform.Log(LogLevel.Debug, "==> {0}: IN MSG # {1}", Environment.TickCount, eventSet.Number);
-            
-            if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenMouseMoveIsProcessed)
-                PerformanceMonitor.CurrentInstance.DecrementSendLag(eventSet.Events.Count((i) => i is MouseMoveProcessedEvent));
-
-            int tileUpdateEvCount = eventSet.Events.Count((i) => i is TileUpdatedEvent);
-            if (tileUpdateEvCount > 0)
-            {
-                //if (ThrottleSettings.Default.LagDetectionStrategy == LagDetectionStrategy.WhenTileUpdateReturn)
-                //    PerformanceMonitor.CurrentInstance.DecrementSendLag(eventSet.Events.Count((i) => i is TileUpdatedEvent));
-
-                PerformanceMonitor.CurrentInstance.RenderingLag += tileUpdateEvCount;
-                if (tileUpdateEvCount>1)
-                    Platform.Log(LogLevel.Debug, "########## {0} tile update events received ###########",tileUpdateEvCount);
-            }
-
-
-            lock (_incomingEventSync)
-            {
-                _incomingEventSets[eventSet.Number] = eventSet;
-                Monitor.Pulse(_incomingEventSync);
-            }
-        }
-
-        private void CompositionTarget_Rendering(Object sender, EventArgs e)
+        private void CompositionTargetRendering(Object sender, EventArgs e)
         {
             ProcessIncomingQueue(null);
         }
-
-
         
-        internal void ProcessIncomingQueue(object ignore)
+        private void ProcessIncomingQueue(object ignore)
         {
             lock (_incomingEventSync)
             {
@@ -817,7 +617,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 }
                     
                 bool hasTileUpdateEvent = current.Events.Any(i => i is TileUpdatedEvent);
-                TileUpdatedEvent tileUpdateEv = hasTileUpdateEvent ? current.Events.First((i) => i is TileUpdatedEvent) as TileUpdatedEvent : null;
+                TileUpdatedEvent tileUpdateEv = hasTileUpdateEvent ? current.Events.First(i => i is TileUpdatedEvent) as TileUpdatedEvent : null;
                     
                 if (hasTileUpdateEvent)
                 {
@@ -850,7 +650,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     _timePrevTileUpdateEvent[tileUpdateEv.SenderId] = _renderLoopCount;
                 }
             }
-		}
+        }
+
+        #endregion
     }
 
 	class MessageQueue : IDisposable

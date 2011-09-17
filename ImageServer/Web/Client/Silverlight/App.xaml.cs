@@ -22,6 +22,7 @@ using ClearCanvas.Web.Client.Silverlight;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Globalization;
 using System.ComponentModel.Composition.Hosting;
+using ClearCanvas.Web.Client.Silverlight.Utilities;
 using Imageviewer = ClearCanvas.ImageViewer.Web.Client.Silverlight.Views.ImageViewer;
 
 namespace ClearCanvas.ImageServer.Web.Client.Silverlight
@@ -101,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 
         private void StartWebViewer()
         {
-            Panel rootPanel = RootVisual as Panel;
+            var rootPanel = RootVisual as Panel;
             
             //TODO (CR May 2010): need the lock?
             lock (_startLock)
@@ -114,9 +115,11 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 
             string query = HtmlPage.Document.DocumentUri.Query;
 
+            Imageviewer viewer;
+
             if (!string.IsNullOrEmpty(query))
             {
-                StartViewerApplicationRequest request = new StartViewerApplicationRequest
+                var request = new StartViewerApplicationRequest
                 {
                     AccessionNumber = new ObservableCollection<string>(),
                     StudyInstanceUid = new ObservableCollection<string>(),
@@ -160,13 +163,40 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
                 request.SessionId = ApplicationContext.Current.Parameters.SessionToken;
                 request.IsSessionShared = ApplicationContext.Current.Parameters.IsSessionShared;
 
-                rootPanel.Children.Add(new Imageviewer(request));
+                viewer = new Imageviewer(request);
             }
             else
             {
-                rootPanel.Children.Add(new Imageviewer(null));
+                viewer = new Imageviewer(null);
             }
 
+            viewer.EventMediator.OnCriticalError += OnCriticalError;
+            viewer.EventMediator.ServerApplicationStopped += OnServerApplicationStopped;
+
+            if (rootPanel != null) 
+                rootPanel.Children.Add(viewer);
+        }
+
+        private void OnCriticalError(object sender, EventArgs e)
+        {
+            var message = sender as string;
+            if (message != null)
+            {
+                PopupHelper.PopupMessage(DialogTitles.Error, message);
+            }
+        }
+
+        private void OnServerApplicationStopped(object sender, ServerApplicationStopEventArgs e)
+        {
+            UIThread.Execute(() =>
+            {
+                ApplicationStoppedEvent @event = e.ServerEvent;
+
+                String title = @event.IsTimedOut ? DialogTitles.Timeout : DialogTitles.Error;
+                String message = @event.Message;
+
+                PopupHelper.PopupMessage(title, message);
+            });
         }
 
 		private void Application_Exit(object sender, EventArgs e)

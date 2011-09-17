@@ -20,16 +20,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     // Either remove this class or pull the stuff out of ImageViewer.
     public class ApplicationContext : IDisposable
     {
-        internal ServerEventMediator ServerEventBroker { get; private set; }
-
         // TODO: Review this
         // [ThreadStatic]   Commented out.. why did it have to be thread static?
         private static ApplicationContext _current;
         // TODO: Review this
         // [ThreadStatic]   Commented out.. why did it have to be thread static?
-        private static object _syncLock = new object();
-
-        public Guid ID { get; set; }
+        private static readonly object _syncLock = new object();
 
         public string ViewerVersion { get; set; }
 
@@ -67,20 +63,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private ApplicationContext()
         {
-            Parameters = ApplicationStartupParameters.Current;
-            
-            ServerEventBroker = new ServerEventMediator(this);
-            
-            ServerEventBroker.Initialize(Parameters);
+            Parameters = ApplicationStartupParameters.Current;            
         }
 
         public void Dispose()
-        {
-            if (ServerEventBroker != null)
-            {
-                ServerEventBroker.Dispose();
-                ServerEventBroker = null;
-            }
+        {            
         }
     }
 }

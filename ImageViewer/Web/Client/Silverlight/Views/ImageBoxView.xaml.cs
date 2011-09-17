@@ -23,11 +23,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         private List<TileView> _tileViews;
 		private System.Windows.Size _parentSize;
         private ImageBoxScrollbarView _scrollbarView;
+        private readonly ServerEventMediator _eventMediator;
 
-        public ImageBoxView(ImageBox serverEntity)
+        public ImageBoxView(ImageBox serverEntity, ServerEventMediator eventMediator)
         {
 			ServerEntity = serverEntity;
-			ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(serverEntity.Identifier, OnImageBoxEvent);
+            _eventMediator = eventMediator;
+			_eventMediator.RegisterEventHandler(serverEntity.Identifier, OnImageBoxEvent);
             InitializeComponent();
 			UpdateTileViews();
         }
@@ -46,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 			// No Need for dispatcher here, this is called from a routine that is already in a dispatcher
             foreach (Tile tile in ServerEntity.Tiles)
             {
-				var tileView = new TileView(tile);
+				var tileView = new TileView(tile, _eventMediator);
 				TileContainer.Children.Add(tileView);
                 _tileViews.Add(tileView);
             }
@@ -109,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void CreateScrollbar()
         {
-            _scrollbarView = new ImageBoxScrollbarView(ServerEntity);
+            _scrollbarView = new ImageBoxScrollbarView(ServerEntity,_eventMediator);
             ImageBoxRightColumn.Children.Add(_scrollbarView);
         }
 
@@ -159,12 +161,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     UpdateSize();
                 }
             }
-
 		}
 
 		public void Destroy()
         {
-            ApplicationContext.Current.ServerEventBroker.UnregisterEventHandler(ServerEntity.Identifier);
+            _eventMediator.UnregisterEventHandler(ServerEntity.Identifier);
 			DestroyTileViews();
         }
 	}

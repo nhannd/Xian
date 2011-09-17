@@ -26,12 +26,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
       	public const string ImageCountPropertyName = "ImageCount";
         public const string TilesPropertyName = "Tiles";
         public const string TopLeftPresentationImageIndexPropertyName = "TopLeftPresentationImageIndex";
-        
+
+        private readonly ServerEventMediator _eventMediator;
         private ImageBox ServerEntity { get; set; }
         private DelayedEventPublisher<ScrollBarUpdateEventArgs> _scrollbarEventPublisher;
 
-        public ImageBoxScrollbarView(ImageBox imageBox)
+        public ImageBoxScrollbarView(ImageBox imageBox, ServerEventMediator eventMediator)
         {
+            _eventMediator = eventMediator;
             IsTabStop = true; // allow focus
             ServerEntity = imageBox;
 
@@ -53,13 +55,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             ServerEntity.PropertyChanged += OnPropertyChanged;
 
-            _scrollbarEventPublisher = new DelayedEventPublisher<ScrollBarUpdateEventArgs>((s, ev) => ApplicationContext.Current.ServerEventBroker.DispatchMessage(new UpdatePropertyMessage
-                                                                                                                                                                       {
-                                                                                                                                                                           Identifier = Guid.NewGuid(),
-                                                                                                                                                                           PropertyName = TopLeftPresentationImageIndexPropertyName,
-                                                                                                                                                                           TargetId = ServerEntity.Identifier,
-                                                                                                                                                                           Value = ev.ScrollbarPosition
-                                                                                                                                                                       }), 100);
+            _scrollbarEventPublisher =
+                new DelayedEventPublisher<ScrollBarUpdateEventArgs>(
+                    (s, ev) => _eventMediator.DispatchMessage(new UpdatePropertyMessage
+                                                                  {
+                                                                      Identifier = Guid.NewGuid(),
+                                                                      PropertyName =
+                                                                          TopLeftPresentationImageIndexPropertyName,
+                                                                      TargetId = ServerEntity.Identifier,
+                                                                      Value = ev.ScrollbarPosition
+                                                                  }), 100);
         }
 
         void EventBrokerTileHasCaptureChanged(object sender, EventArgs e)

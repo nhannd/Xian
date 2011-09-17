@@ -27,6 +27,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
     public partial class TileView : UserControl, IMouseElement
     {
         #region Private Members
+
+        private readonly ServerEventMediator _eventMediator;
         private readonly TimeSpan MOUSE_MOVE_STOP_MSG_DELAY = TimeSpan.FromMilliseconds(50); // send mouse move msg after user has stopped for 50 ms
 		private readonly TimeSpan MOUSE_MOVE_INBETWEEN_MSG_DELAY = TimeSpan.FromMilliseconds(500); // send mouse move msgs every 500ms while user are moving the mouse
         private readonly double DOUBLE_CLICK_MAX_MOUSE_DISPLACEMENT = 3; // interpret as double click if two clicks separate within this distance
@@ -122,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         #region Constructor
 
-        public TileView(Tile serverEntity)
+        public TileView(Tile serverEntity, ServerEventMediator mediator)
         {
 			IsTabStop = true;  // allow focus
 
@@ -130,8 +132,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             if (ServerEntity.Selected)
                 MouseHelper.SetActiveElement(this);
+            _eventMediator = mediator;
 
-			ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(ServerEntity.Identifier, OnTileEvent);
+            _eventMediator.RegisterEventHandler(ServerEntity.Identifier, OnTileEvent);
+
 			InitializeComponent();
 
             //TODO (CR May 2010): would mediator design pattern simplify this by giving the mousehelper more control?
@@ -211,10 +215,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         public void Destroy()
         {
 			_destroyed = true;
-            if (ApplicationContext.Current.ServerEventBroker != null)
-            {
-                ApplicationContext.Current.ServerEventBroker.UnregisterEventHandler(ServerEntity.Identifier);
-            }
+            _eventMediator.UnregisterEventHandler(ServerEntity.Identifier);
 
             EventBroker.TileHasCaptureChanged -= EventBroker_TileHasCaptureChanged;
 
@@ -299,16 +300,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
                 bool isDoubleClick = InterpretAsRightDoubleClick(e);
 
-                ApplicationContext.Current.ServerEventBroker.DispatchMessage(new MouseMessage
-                {
-                    Button = MouseButton.Right,
-                    Identifier = Guid.NewGuid(),
-                    MouseButtonState = MouseButtonState.Down,
-                    ClickCount = isDoubleClick ? 2 : 1,
-                    // Must send the local mouse position
-                    MousePosition = new Position { X = (int)curPos.X, Y = (int)curPos.Y },
-                    TargetId = ServerEntity.Identifier
-                });
+                _eventMediator.DispatchMessage(new MouseMessage
+                                                   {
+                                                       Button = MouseButton.Right,
+                                                       Identifier = Guid.NewGuid(),
+                                                       MouseButtonState = MouseButtonState.Down,
+                                                       ClickCount = isDoubleClick ? 2 : 1,
+                                                       // Must send the local mouse position
+                                                       MousePosition =
+                                                           new Position {X = (int) curPos.X, Y = (int) curPos.Y},
+                                                       TargetId = ServerEntity.Identifier
+                                                   });
 
                 _mouseInside = true;
                 OnCursorChanged(ServerEntity.Cursor);
@@ -453,7 +455,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     Delta = e.Delta
                 };
 
-                ApplicationContext.Current.ServerEventBroker.DispatchMessage(msg);
+                _eventMediator.DispatchMessage(msg);
             }
         }
 
@@ -534,7 +536,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     MousePosition = new Position { X = (int)pos.X, Y = (int)pos.Y }
 
                 };
-                ApplicationContext.Current.ServerEventBroker.DispatchMessage(msg);
+                _eventMediator.DispatchMessage(msg);
                 
                 _mouseInside = true;
                 OnCursorChanged(ServerEntity.Cursor);
@@ -688,18 +690,18 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             double left = (double)TileCanvas.GetValue(Canvas.LeftProperty);
             double top = (double)TileCanvas.GetValue(Canvas.TopProperty);
 
-            ApplicationContext.Current.ServerEventBroker.DispatchMessage(new UpdatePropertyMessage
-            {
-                TargetId = ServerEntity.Identifier,
-                PropertyName = "ClientRectangle",
-                Value = new AppServiceReference.Rectangle
-                {
-                    Left = (int)left,
-                    Top = (int)top,
-                    Width = (int)(left + TileCanvas.ActualWidth),
-                    Height = (int)(top + TileCanvas.ActualHeight)
-                }
-            });
+            _eventMediator.DispatchMessage(new UpdatePropertyMessage
+                                               {
+                                                   TargetId = ServerEntity.Identifier,
+                                                   PropertyName = "ClientRectangle",
+                                                   Value = new Rectangle
+                                                               {
+                                                                   Left = (int) left,
+                                                                   Top = (int) top,
+                                                                   Width = (int) (left + TileCanvas.ActualWidth),
+                                                                   Height = (int) (top + TileCanvas.ActualHeight)
+                                                               }
+                                               });
         }
 
         private void UpdateClientCursor()
@@ -795,7 +797,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             if (!this.IsSelected) //if we're not the selected one anymore, don't show it.
                 return;
 
-            _menu = MenuBuilder.BuildContextMenu(@event.ActionModelRoot, ApplicationContext.Current.ServerEventBroker);
+            _menu = MenuBuilder.BuildContextMenu(@event.ActionModelRoot, _eventMediator);
             _menu.Open(TransformToVisual(null).Transform(_rightClickPosition));
         }
 
@@ -846,7 +848,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                         {
                             PerformanceMonitor p = PerformanceMonitor.CurrentInstance;
                             double fps = p.AverageClientFps;
-                            PerformancePublisher.Publish(new PerformanceData { 
+                            _eventMediator.PublishPerformance(new PerformanceData { 
                                 ClientIp = ApplicationContext.Current.Parameters.LocalIPAddress,
                                 Name = "CLIENT_STACKING_SPEED", Value = fps });
                             BrowserWindow.SetStatus(String.Format("Stacking Speed: {0:0} fps", fps));                        
@@ -909,7 +911,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 MouseButtonState = MouseButtonState.Up
             };
 
-            ApplicationContext.Current.ServerEventBroker.DispatchMessage(msg);
+            _eventMediator.DispatchMessage(msg);
         }
 
         private new void MouseLeftButtonUp(System.Windows.Point pos)
@@ -926,7 +928,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     MousePosition = new Position { X = (int)pos.X, Y = (int)pos.Y }
 
                 };
-                ApplicationContext.Current.ServerEventBroker.DispatchMessage(msg);
+                _eventMediator.DispatchMessage(msg);
                 OnCursorChanged(ServerEntity.Cursor);
             }
         }
@@ -937,7 +939,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             {
                 _rightClickPosition = localMousePos;
 
-                ApplicationContext.Current.ServerEventBroker.DispatchMessage(new MouseMessage
+                _eventMediator.DispatchMessage(new MouseMessage
                 {
                     Button = MouseButton.Right,
                     Identifier = Guid.NewGuid(),
