@@ -22,10 +22,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
     {
         private List<ImageBoxView> _imageBoxViews;
         private readonly DelayedEventPublisher<EventArgs> _resizePublisher;
+        private readonly ServerEventMediator _eventMediator;
 
-        public StudyView()
+        public StudyView(ServerEventMediator eventMediator)
         {
             InitializeComponent();
+            _eventMediator = eventMediator;
             _imageBoxViews = new List<ImageBoxView>();
 
 			SizeChanged += OnSizeChanged;
@@ -78,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             foreach (ImageBox box in imageBoxes)
             {
-                var boxView = new ImageBoxView(box);
+                var boxView = new ImageBoxView(box,_eventMediator);
                 StudyViewCanvas.Children.Add(boxView);
                 _imageBoxViews.Add(boxView);
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -8,6 +8,7 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
+
 
 using System;
 using System.Net;
@@ -19,15 +20,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
+using ClearCanvas.Web.Client.Silverlight.ViewModel;
 
-namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
+namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.ViewModel
 {
-    public static class PerformancePublisher
+    public class ImageViewerViewModel : ViewModelBase
     {
-        public static void Publish(PerformanceData data)
-        {
-            ApplicationContext.Current.ServerEventBroker.PublishPerformance(data);
-        }
+
     }
 }

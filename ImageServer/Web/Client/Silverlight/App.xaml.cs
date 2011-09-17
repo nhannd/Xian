@@ -17,11 +17,13 @@ using System.Windows.Browser;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using System.Windows.Controls;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 using ClearCanvas.Web.Client.Silverlight;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Globalization;
 using System.ComponentModel.Composition.Hosting;
-using Imageviewer = ClearCanvas.ImageViewer.Web.Client.Silverlight.ImageViewer;
+using ClearCanvas.Web.Client.Silverlight.Utilities;
+using Imageviewer = ClearCanvas.ImageViewer.Web.Client.Silverlight.Views.ImageViewer;
 
 namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 {
@@ -36,12 +38,18 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 
 			Exit += Application_Exit;
 			UnhandledException += Application_UnhandledException;
-           
+		    EventBroker.TileHasCaptureChanged += ErrorHandler_OnCriticalError;
+
             InitializeComponent();
             
             MenuManager.SuppressBrowserContextMenu = true;
             MenuManager.AutoCloseMenus = false;
 		}
+
+        void ErrorHandler_OnCriticalError(object sender, EventArgs e)
+        {
+            PopupHelper.PopupMessage(DialogTitles.Error, sender as String);
+        } 
 
         private void OnAppStartup(object sender, StartupEventArgs e)
         {
@@ -68,17 +76,14 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
                         // cannot download resources for specific language, continue with default language
                         Start();
                     }
-
                 };
 
                 catalog.DownloadAsync();
-
             }
             else
             {
                 Start();
-            }
-            
+            }            
 		}
 
         private void Start()
@@ -97,8 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 
         private void StartWebViewer()
         {
-            StartupArguments args = new StartupArguments(System.Windows.Application.Current.Host.InitParams);
-            Panel rootPanel = RootVisual as Panel;
+            var rootPanel = RootVisual as Panel;
             
             //TODO (CR May 2010): need the lock?
             lock (_startLock)
@@ -111,16 +115,11 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 
             string query = HtmlPage.Document.DocumentUri.Query;
 
+            Imageviewer viewer;
+
             if (!string.IsNullOrEmpty(query))
             {
-                ServerConfiguration.Current = new ServerConfiguration
-                {
-                    InactivityTimeout = args.InactivityTimeout,
-                    LANMode = args.LANMode,
-                    Port = args.Port
-                };
-
-                StartViewerApplicationRequest request = new StartViewerApplicationRequest
+                var request = new StartViewerApplicationRequest
                 {
                     AccessionNumber = new ObservableCollection<string>(),
                     StudyInstanceUid = new ObservableCollection<string>(),
@@ -164,13 +163,40 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
                 request.SessionId = ApplicationContext.Current.Parameters.SessionToken;
                 request.IsSessionShared = ApplicationContext.Current.Parameters.IsSessionShared;
 
-                rootPanel.Children.Add(new ClearCanvas.ImageViewer.Web.Client.Silverlight.ImageViewer(request));
+                viewer = new Imageviewer(request);
             }
             else
             {
-                rootPanel.Children.Add(new ClearCanvas.ImageViewer.Web.Client.Silverlight.ImageViewer(null));
+                viewer = new Imageviewer(null);
             }
 
+            viewer.EventMediator.OnCriticalError += OnCriticalError;
+            viewer.EventMediator.ServerApplicationStopped += OnServerApplicationStopped;
+
+            if (rootPanel != null) 
+                rootPanel.Children.Add(viewer);
+        }
+
+        private void OnCriticalError(object sender, EventArgs e)
+        {
+            var message = sender as string;
+            if (message != null)
+            {
+                PopupHelper.PopupMessage(DialogTitles.Error, message);
+            }
+        }
+
+        private void OnServerApplicationStopped(object sender, ServerApplicationStopEventArgs e)
+        {
+            UIThread.Execute(() =>
+            {
+                ApplicationStoppedEvent @event = e.ServerEvent;
+
+                String title = @event.IsTimedOut ? DialogTitles.Timeout : DialogTitles.Error;
+                String message = @event.Message;
+
+                PopupHelper.PopupMessage(title, message);
+            });
         }
 
 		private void Application_Exit(object sender, EventArgs e)
@@ -201,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 				// For production applications this error handling should be replaced with something that will 
 				// report the error to the website and stop the application.
 				e.Handled = true;
-				Deployment.Current.Dispatcher.BeginInvoke(delegate { ReportErrorToDOM(e); });
+				Deployment.Current.Dispatcher.BeginInvoke(() => ReportErrorToDOM(e));
 			}
 		}
 		private void ReportErrorToDOM(ApplicationUnhandledExceptionEventArgs e)
