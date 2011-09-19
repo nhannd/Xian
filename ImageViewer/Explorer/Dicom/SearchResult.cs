@@ -11,7 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					columns.Add(column);
 				}
 			}
-			catch (NotSupportedException) {}
+			catch (NotSupportedException) { }
 			return columns;
 		}
 
@@ -306,15 +306,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			columns.Add(column);
 
+			var iconColumn = new TableColumn<StudyItem, IconSet>(
+				SR.ColumnHeadingAttachments,
+				GetAttachmentsIcon,
+				0.25f)
+								{
+									ResourceResolver = new ResourceResolver(typeof(SearchResult).Assembly),
+									Comparison = (x, y) => HasAttachments(x).CompareTo(HasAttachments(y))
+								};
+
+			columns.Add(iconColumn);
+
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingReferringPhysician,
 				delegate(StudyItem item)
-					{
-						if (item.ReferringPhysiciansName != null)
-							return item.ReferringPhysiciansName.FormattedName;
-						else
-							return "";
-					},
+				{
+					if (item.ReferringPhysiciansName != null)
+						return item.ReferringPhysiciansName.FormattedName;
+					else
+						return "";
+				},
 				0.6f);
 
 			columns.Add(column);
@@ -326,37 +337,37 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			var column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingNumberOfInstances,
 				delegate(StudyItem item)
-					{
-						if (item.NumberOfStudyRelatedInstances.HasValue)
-							return item.NumberOfStudyRelatedInstances.ToString();
-						else
-							return "";
-					},
+				{
+					if (item.NumberOfStudyRelatedInstances.HasValue)
+						return item.NumberOfStudyRelatedInstances.ToString();
+					else
+						return "";
+				},
 				null,
 				0.3f,
 					delegate(StudyItem study1, StudyItem study2)
-				                      	         	{
-				                      	         		int? instances1 = study1.NumberOfStudyRelatedInstances;
-														int? instances2 = study2.NumberOfStudyRelatedInstances;
+					{
+						int? instances1 = study1.NumberOfStudyRelatedInstances;
+						int? instances2 = study2.NumberOfStudyRelatedInstances;
 
-														if (instances1 == null)
-				                      	         		{
-															if (instances2 == null)
-																return 0;
-															else
-																return 1;
-				                      	         		}
-														else if (instances2 == null)
-				                      	         		{
-				                      	         			return -1;
-				                      	         		}
+						if (instances1 == null)
+						{
+							if (instances2 == null)
+								return 0;
+							else
+								return 1;
+						}
+						else if (instances2 == null)
+						{
+							return -1;
+						}
 
-				                      	         		return -instances1.Value.CompareTo(instances2.Value);
-													});
+						return -instances1.Value.CompareTo(instances2.Value);
+					});
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 
-			return new TableColumnBase<StudyItem>[] {column};
+			return new TableColumnBase<StudyItem>[] { column };
 		}
 
 		protected static IEnumerable<TableColumnBase<StudyItem>> CreateServerColumns()
@@ -446,6 +457,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				return dicomDate;
 
 			return date.ToString(Format.DateFormat);
+		}
+
+		private static IconSet GetAttachmentsIcon(StudyItem item)
+		{
+			return HasAttachments(item) ? new IconSet("PaperclipSmall.png") : null;
+		}
+
+		private static bool HasAttachments(StudyItem item)
+		{
+			return item.ModalitiesInStudy.Any(m => m.Equals("DOC", StringComparison.InvariantCultureIgnoreCase));
 		}
 	}
 }
