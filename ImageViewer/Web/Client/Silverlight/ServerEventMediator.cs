@@ -24,12 +24,6 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-
-    public class ServerApplicationStopEventArgs : EventArgs
-    {
-        public ApplicationStoppedEvent ServerEvent { get; set; }
-    }
-
     //TODO (CR May 2010): Generally, this class does more than it should and the name is not really valid anymore - it's not just a dispatcher, but more
     //of an "application manager", as it pretty much manages all aspects of a remote instance of an application.
     //Also, it is intermixing handling of the communication with display of messages.  Ideally, all messages would be displayed by a UI element based on
@@ -53,6 +47,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         /// Event called on a UI Thread when a channel completed opening
         /// </summary>
         public event EventHandler ChannelOpened;
+        /// <summary>
+        /// Occurs when a tile "HasCapture" property is changed.
+        /// </summary>
+        public event EventHandler TileHasCaptureChanged;
         #endregion
 
         #region Members
@@ -214,6 +212,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public void StopApplication()
         {
             _sender.StopApplication();
+        }
+
+        public void OnTileHasCaptureChanged(Tile tileEntity)
+        {
+            if (TileHasCaptureChanged != null)
+                TileHasCaptureChanged(tileEntity, EventArgs.Empty);
         }
 
         /// <summary>

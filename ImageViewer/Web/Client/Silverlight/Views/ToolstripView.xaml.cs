@@ -21,15 +21,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
     {
         private readonly Dictionary<Guid, IToolstripButton> _buttonLookup = new Dictionary<Guid, IToolstripButton>();
         private ActionDispatcher _dispatcher;
-        private ServerEventMediator _eventDispatcher;
+        private ServerEventMediator _eventMediator;
         WebIconSize _desiredIconSize = WebIconSize.Medium;
 
         public ServerEventMediator EventDispatcher
         {
             set
             {
-                _eventDispatcher = value;
-                _dispatcher = new ActionDispatcher(_eventDispatcher);
+                _eventMediator = value;
+                _dispatcher = new ActionDispatcher(_eventMediator);
+                _eventMediator.TileHasCaptureChanged += EventBrokerTileHasCapture;
             }
         }
 
@@ -37,8 +38,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
             InitializeComponent();
             System.Windows.Application.Current.Host.Content.Resized += OnApplicationResized;
-
-            EventBroker.TileHasCaptureChanged += EventBrokerTileHasCapture;
         }
 
         public void OnLoseFocus(object sender, EventArgs e)
@@ -164,7 +163,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         public void Dispose()
         {
-            EventBroker.TileHasCaptureChanged -= EventBrokerTileHasCapture;    
+            _eventMediator.TileHasCaptureChanged -= EventBrokerTileHasCapture;    
         }
     }
 }

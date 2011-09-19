@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             LayoutRoot.IsHitTestVisible = !imageBox.Tiles.Any(t => t.HasCapture);
 
-            EventBroker.TileHasCaptureChanged += EventBrokerTileHasCaptureChanged;
+            _eventMediator.TileHasCaptureChanged += EventBrokerTileHasCaptureChanged;
 
             ImageScrollBar.SetBinding(RangeBase.ValueProperty,
                     new Binding(TopLeftPresentationImageIndexPropertyName) { 
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 _scrollbarEventPublisher = null;
             }
 
-            EventBroker.TileHasCaptureChanged -= EventBrokerTileHasCaptureChanged;
+            _eventMediator.TileHasCaptureChanged -= EventBrokerTileHasCaptureChanged;
         }
     }
 
