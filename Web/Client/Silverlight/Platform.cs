@@ -51,6 +51,12 @@ namespace ClearCanvas.Web.Client.Silverlight
 	/// </summary>
 	public static class Platform
 	{
+        static Platform()
+        {        
+            IsErrorEnabled = true;
+            IsFatalEnabled = true;
+        }
+
         /// <summary>
         /// Delegate definition for receiving log lines
         /// </summary>

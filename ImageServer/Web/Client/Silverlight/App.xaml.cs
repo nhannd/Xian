@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Browser;
+using System.Windows.Input;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Globalization;
 using System.ComponentModel.Composition.Hosting;
 using ClearCanvas.Web.Client.Silverlight.Utilities;
+using ClearCanvas.Web.Client.Silverlight.Views;
 using Imageviewer = ClearCanvas.ImageViewer.Web.Client.Silverlight.Views.ImageViewer;
 
 namespace ClearCanvas.ImageServer.Web.Client.Silverlight
@@ -31,25 +33,20 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 	{
 		private readonly object _startLock = new object();
 		private ApplicationContext _context;
+	    private LogPanel _logPanel;
 
 		public App()
 		{
             Startup += OnAppStartup;
 
-			Exit += Application_Exit;
-			UnhandledException += Application_UnhandledException;
-		    EventBroker.TileHasCaptureChanged += ErrorHandler_OnCriticalError;
+			Exit += ApplicationExit;
+			UnhandledException += ApplicationUnhandledException;
 
             InitializeComponent();
             
             MenuManager.SuppressBrowserContextMenu = true;
             MenuManager.AutoCloseMenus = false;
 		}
-
-        void ErrorHandler_OnCriticalError(object sender, EventArgs e)
-        {
-            PopupHelper.PopupMessage(DialogTitles.Error, sender as String);
-        } 
 
         private void OnAppStartup(object sender, StartupEventArgs e)
         {
@@ -173,8 +170,41 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
             viewer.EventMediator.OnCriticalError += OnCriticalError;
             viewer.EventMediator.ServerApplicationStopped += OnServerApplicationStopped;
 
-            if (rootPanel != null) 
-                rootPanel.Children.Add(viewer);
+            if (rootPanel != null)
+            {
+                // Add a Log Panel at the bottom of the screen.  This can be opened by CTRL-ALT-L.
+                _logPanel = new LogPanel
+                {
+                    Visibility = Visibility.Collapsed,
+                    Height = 200
+                };
+                var theGrid = new Grid();
+                theGrid.RowDefinitions.Add(new RowDefinition());
+                theGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0, GridUnitType.Auto) });
+                _logPanel.SetValue(Grid.RowProperty, 1);
+                viewer.SetValue(Grid.RowProperty, 0);
+                theGrid.Children.Add(viewer);
+                theGrid.Children.Add(_logPanel);
+                rootPanel.Children.Add(theGrid);
+                rootPanel.KeyUp += OnKeyUp;
+                rootPanel.UpdateLayout();
+            }
+        }
+
+        void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.L:
+                    {
+                        if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt))
+                        {
+                            _logPanel.Visibility = _logPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                            _logPanel.UpdateLayout();
+                        }
+                        break;
+                    }
+            }
         }
 
         private void OnCriticalError(object sender, EventArgs e)
@@ -182,6 +212,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
             var message = sender as string;
             if (message != null)
             {
+                Platform.Log(LogLevel.Error, "Critical error: {0}", message);
                 PopupHelper.PopupMessage(DialogTitles.Error, message);
             }
         }
@@ -192,14 +223,14 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
             {
                 ApplicationStoppedEvent @event = e.ServerEvent;
 
-                String title = @event.IsTimedOut ? DialogTitles.Timeout : DialogTitles.Error;
-                String message = @event.Message;
+                var title = @event.IsTimedOut ? DialogTitles.Timeout : DialogTitles.Error;
+                var message = @event.Message;
 
                 PopupHelper.PopupMessage(title, message);
             });
         }
 
-		private void Application_Exit(object sender, EventArgs e)
+		private void ApplicationExit(object sender, EventArgs e)
 		{
 			if (RootVisual is IDisposable)
 			{
@@ -214,7 +245,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 			}
 		}
 
-		private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
+		private void ApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
 		{
 			// If the app is running outside of the debugger then report the exception using
 			// the browser's exception mechanism. On IE this will display it a yellow alert 
@@ -230,6 +261,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 				Deployment.Current.Dispatcher.BeginInvoke(() => ReportErrorToDOM(e));
 			}
 		}
+
 		private void ReportErrorToDOM(ApplicationUnhandledExceptionEventArgs e)
 		{
 			try
