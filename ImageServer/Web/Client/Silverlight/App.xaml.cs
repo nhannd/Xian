@@ -34,6 +34,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 		private readonly object _startLock = new object();
 		private ApplicationContext _context;
 	    private LogPanel _logPanel;
+        ChildWindow _stateDialog;
 
 		public App()
 		{
@@ -169,6 +170,8 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
 
             viewer.EventMediator.OnCriticalError += OnCriticalError;
             viewer.EventMediator.ServerApplicationStopped += OnServerApplicationStopped;
+            viewer.EventMediator.ChannelOpened += OnChannelOpened;
+            viewer.EventMediator.ChannelOpening += OnChannelOpening;
 
             if (rootPanel != null)
             {
@@ -206,8 +209,22 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
                     }
             }
         }
+        
+        private void OnChannelOpening(object sender, EventArgs e)
+        {
+            _stateDialog = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.OpeningConnection);
+        }
 
-        private void OnCriticalError(object sender, EventArgs e)
+	    private void OnChannelOpened(object sender, EventArgs e)
+        {
+            if (_stateDialog != null)
+            {
+                _stateDialog.Close();
+                _stateDialog = null;
+            }
+        }
+
+	    private void OnCriticalError(object sender, EventArgs e)
         {
             var message = sender as string;
             if (message != null)
