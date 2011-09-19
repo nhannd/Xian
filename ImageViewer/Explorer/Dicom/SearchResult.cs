@@ -312,7 +312,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				0.25f)
 								{
 									ResourceResolver = new ResourceResolver(typeof(SearchResult).Assembly),
-									Comparison = (x, y) => HasAttachments(x).CompareTo(HasAttachments(y))
+									Comparison = (x, y) => x.HasAttachments().CompareTo(y.HasAttachments())
 								};
 
 			columns.Add(iconColumn);
@@ -461,12 +461,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private static IconSet GetAttachmentsIcon(StudyItem item)
 		{
-			return HasAttachments(item) ? new IconSet("PaperclipSmall.png") : null;
+			return item.HasAttachments() ? new IconSet("PaperclipSmall.png") : null;
 		}
 
-		private static bool HasAttachments(StudyItem item)
-		{
-			return item.ModalitiesInStudy.Any(m => m.Equals("DOC", StringComparison.InvariantCultureIgnoreCase));
-		}
 	}
 }

@@ -102,12 +102,16 @@
       <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
     </Reference>
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -200,6 +204,7 @@
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
+    <Compile Include="StudyManagement\StudyExtensions.cs" />
     <Compile Include="StudyManagement\Tests\NormalizedPixelSpacingTests.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />
