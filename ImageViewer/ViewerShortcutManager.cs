@@ -187,11 +187,11 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>An <see cref="IClickAction"/> or null.</returns>
 		public IClickAction GetKeyboardAction(KeyboardButtonShortcut shortcut)
 		{
-			const string globalMenusActionSite = "global-menus";
-			const string globalToolbarActionSite = "global-toolbars";
-
-			if (shortcut == null)
+			if (shortcut == null || shortcut.IsEmpty)
 				return null;
+
+            const string globalMenusActionSite = "global-menus";
+            const string globalToolbarActionSite = "global-toolbars";
 
 			var actions = (IActionSet) new ActionSet();
 			foreach (var tool in _setRegisteredTools.Keys)
