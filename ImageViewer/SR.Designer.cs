@@ -936,6 +936,16 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}
+        ///{1}.
+        /// </summary>
+        public static string MessageFormatStudyNotLoadable {
+            get {
+                return ResourceManager.GetString("MessageFormatStudyNotLoadable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} studies were only partially loaded..
         /// </summary>
         public static string MessageFormatXStudiesIncomplete {

@@ -561,4 +561,8 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="MessageInfoStudyOffline" xml:space="preserve">
     <value>The study is offline and must be brought back online by a PACS administrator.</value>
   </data>
+  <data name="MessageFormatStudyNotLoadable" xml:space="preserve">
+    <value>{0}
+{1}</value>
+  </data>
 </root>

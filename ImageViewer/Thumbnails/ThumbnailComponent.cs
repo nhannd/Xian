@@ -26,23 +26,23 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 	}
 
 	[AssociateView(typeof(ThumbnailComponentViewExtensionPoint))]
-	public partial class ThumbnailComponent : ApplicationComponent
+	public class ThumbnailComponent : ApplicationComponent
 	{
-		private static readonly Dictionary<IImageViewer, ImageSetTreeInfo> 
-			_viewerTreeInfo = new Dictionary<IImageViewer, ImageSetTreeInfo>();
+		private static readonly Dictionary<IImageViewer, ImageSetTree> 
+			_viewerTrees = new Dictionary<IImageViewer, ImageSetTree>();
 
 		private readonly IDesktopWindow _desktopWindow;
 		private IImageViewer _activeViewer;
 
-		private readonly ImageSetTreeInfo _dummyTreeInfo;
-		private ImageSetTreeInfo _currentTreeInfo;
+		private readonly ImageSetTree _dummyTree;
+		private ImageSetTree _currentTree;
         private ThumbnailGallery _thumbnailGallery;
 	
 		public ThumbnailComponent(IDesktopWindow desktopWindow)
 		{
 			_desktopWindow = desktopWindow;
-			_dummyTreeInfo = new ImageSetTreeInfo(new ObservableList<IImageSet>(), null);
-			_currentTreeInfo = _dummyTreeInfo;
+			_dummyTree = new ImageSetTree(new ObservableList<IImageSet>(), null);
+			_currentTree = _dummyTree;
 		    _thumbnailGallery = new ThumbnailGallery {NameAndDescriptionFormat = NameAndDescriptionFormat.VerboseNameNoDescription};
 		}
 
@@ -50,13 +50,13 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		public ITree Tree
 		{
-			get { return _currentTreeInfo.Tree; }
+			get { return _currentTree.TreeRoot; }
 		}
 
 		public ISelection TreeSelection
 		{
-			get { return _currentTreeInfo.Selection; }
-			set { _currentTreeInfo.Selection = value; }
+			get { return _currentTree.Selection; }
+			set { _currentTree.Selection = value; }
 		}
 
 		public BindingList<IGalleryItem> Thumbnails
@@ -66,45 +66,45 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		#endregion
 
-		private void UpdateTreeInfo()
+		private void UpdateTree()
 		{
 			if (_activeViewer == null)
 			{
-				SetCurrentTreeInfo(_dummyTreeInfo);
+				SetCurrentTree(_dummyTree);
 			}
 			else
 			{
-				if (!_viewerTreeInfo.ContainsKey(_activeViewer))
+				if (!_viewerTrees.ContainsKey(_activeViewer))
 				{
 					var imageSets = _activeViewer.LogicalWorkspace.ImageSets;
 					string primaryStudyInstanceUid = GetPrimaryStudyInstanceUid(_activeViewer.StudyTree);
-					var info = new ImageSetTreeInfo(imageSets, primaryStudyInstanceUid);
-					_viewerTreeInfo.Add(_activeViewer, info);
+					var tree = new ImageSetTree(imageSets, primaryStudyInstanceUid);
+					_viewerTrees.Add(_activeViewer, tree);
 				}
 
-				SetCurrentTreeInfo(_viewerTreeInfo[_activeViewer]);
+				SetCurrentTree(_viewerTrees[_activeViewer]);
 			}
 		}
 
-		private void SetCurrentTreeInfo(ImageSetTreeInfo currentTreeInfo)
+		private void SetCurrentTree(ImageSetTree currentTree)
 		{
-			if (_currentTreeInfo == currentTreeInfo)
+			if (_currentTree == currentTree)
 				return;
 
-			if (_currentTreeInfo != null)
+			if (_currentTree != null)
 			{
-				_currentTreeInfo.TreeChanged -= OnTreeChangedInternal;
-				_currentTreeInfo.TreeUpdated -= OnTreeUpdatedInternal;
-				_currentTreeInfo.SelectionChanged -= OnTreeSelectionChangedInternal;
+				_currentTree.TreeChanged -= OnTreeChangedInternal;
+				_currentTree.TreeUpdated -= OnTreeUpdatedInternal;
+				_currentTree.SelectionChanged -= OnTreeSelectionChangedInternal;
 			}
 
-			_currentTreeInfo = currentTreeInfo;
+			_currentTree = currentTree;
 
-			if (_currentTreeInfo != null)
+			if (_currentTree != null)
 			{
-				_currentTreeInfo.TreeChanged += OnTreeChangedInternal;
-				_currentTreeInfo.TreeUpdated += OnTreeUpdatedInternal;
-				_currentTreeInfo.SelectionChanged += OnTreeSelectionChangedInternal;
+				_currentTree.TreeChanged += OnTreeChangedInternal;
+				_currentTree.TreeUpdated += OnTreeUpdatedInternal;
+				_currentTree.SelectionChanged += OnTreeSelectionChangedInternal;
 
 				OnTreeChangedInternal(null, null);
 			}
@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			_desktopWindow.Workspaces.ItemClosed += OnWorkspaceClosed;
 			
 			SetImageViewer(_desktopWindow.ActiveWorkspace);
-			UpdateTreeInfo();
+			UpdateTree();
 			
 			base.Start();
 		    _thumbnailGallery.IsVisible = true;
@@ -171,13 +171,13 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		public override void Stop()
 		{
-			SetCurrentTreeInfo(null);
-			_dummyTreeInfo.Dispose();
+			SetCurrentTree(null);
+			_dummyTree.Dispose();
 
-			foreach (ImageSetTreeInfo info in _viewerTreeInfo.Values)
+			foreach (ImageSetTree info in _viewerTrees.Values)
 				info.Dispose();
 
-			_viewerTreeInfo.Clear();
+			_viewerTrees.Clear();
 
 			_desktopWindow.Workspaces.ItemActivationChanged -= OnActiveWorkspaceChanged;
 			_desktopWindow.Workspaces.ItemClosed -= OnWorkspaceClosed;
@@ -191,24 +191,24 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		private void OnActiveWorkspaceChanged(object sender, ItemEventArgs<Workspace> e)
 		{
 			SetImageViewer(e.Item);
-			UpdateTreeInfo();
+			UpdateTree();
 		}
 
 		private void OnWorkspaceClosed(object sender, ClosedItemEventArgs<Workspace> e)
 		{
 			var viewer = CastToImageViewer(e.Item);
-			if (viewer != null && _viewerTreeInfo.ContainsKey(viewer))
+			if (viewer != null && _viewerTrees.ContainsKey(viewer))
 			{
-				var info = _viewerTreeInfo[viewer];
-				_viewerTreeInfo.Remove(viewer);
-				info.Dispose();
+				var tree = _viewerTrees[viewer];
+				_viewerTrees.Remove(viewer);
+				tree.Dispose();
 			}
 
 		    if (_desktopWindow.Workspaces.Count != 0)
                 return;
 
 		    SetImageViewer(null);
-		    UpdateTreeInfo();
+		    UpdateTree();
 		}
 
 		private static IImageViewer CastToImageViewer(Workspace workspace)
