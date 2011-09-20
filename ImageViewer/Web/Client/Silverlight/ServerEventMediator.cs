@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Threading;
-using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.Web.Client.Silverlight;
 using ClearCanvas.Web.Client.Silverlight.Utilities;
@@ -25,27 +24,33 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-    public class ChannelErrorEventArgs : EventArgs
-    {
-        public string ErrorName { get; set; }
-        public string Details { get; set; }
-    }
-
-    public class ServerApplicationStopEventArgs : EventArgs
-    {
-        public ApplicationStoppedEvent ServerEvent { get; set; }
-    }
-
     //TODO (CR May 2010): Generally, this class does more than it should and the name is not really valid anymore - it's not just a dispatcher, but more
     //of an "application manager", as it pretty much manages all aspects of a remote instance of an application.
     //Also, it is intermixing handling of the communication with display of messages.  Ideally, all messages would be displayed by a UI element based on
     //feedback from this class.
 	public class ServerEventMediator : IDisposable
 	{
-
         #region Events
+        /// <summary>
+        /// Event called on a UI Thread when the application stops
+        /// </summary>
         public event EventHandler<ServerApplicationStopEventArgs> ServerApplicationStopped;
-        public event EventHandler OnCriticalError;
+        /// <summary>
+        /// Event called on a UI Thread when a Critical Error occurs
+        /// </summary>
+        public event EventHandler CriticalError;
+        /// <summary>
+        /// Event called on a UI Thread when a channel is being opened
+        /// </summary>
+        public event EventHandler ChannelOpening;
+        /// <summary>
+        /// Event called on a UI Thread when a channel completed opening
+        /// </summary>
+        public event EventHandler ChannelOpened;
+        /// <summary>
+        /// Occurs when a tile "HasCapture" property is changed.
+        /// </summary>
+        public event EventHandler TileHasCaptureChanged;
         #endregion
 
         #region Members
@@ -77,12 +82,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         #region Public Properties
 
         public bool Faulted { 
-            get {
-                if (_sender != null && !_sender.Faulted)
-                    return false;
-
-                return true;
-            } 
+            get
+            {
+                return _sender == null || _sender.Faulted;
+            }
         }
 
         #endregion
@@ -211,6 +214,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             _sender.StopApplication();
         }
 
+        public void OnTileHasCaptureChanged(Tile tileEntity)
+        {
+            if (TileHasCaptureChanged != null)
+                TileHasCaptureChanged(tileEntity, EventArgs.Empty);
+        }
+
         /// <summary>
         /// Send a message to the server
         /// </summary>
@@ -255,8 +264,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             UIThread.Execute(() =>
             {
-                if (OnCriticalError != null)
-                    OnCriticalError(formattedMessage, EventArgs.Empty);
+                if (CriticalError != null)
+                    CriticalError(formattedMessage, EventArgs.Empty);
             });
         }
 
@@ -272,8 +281,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             UIThread.Execute(() =>
             {
-                if (OnCriticalError != null)
-                    OnCriticalError(formattedMessage, EventArgs.Empty);
+                if (CriticalError != null)
+                    CriticalError(formattedMessage, EventArgs.Empty);
             });
         }
 
@@ -320,16 +329,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             _poller.Start();
         }
 
-	    private void ChannelFaulted(object sender, ServerChannelFaultEventArgs e)
-	    {
-            string formattedMessage = e.ErrorMessage ?? e.Error.Message;
-            UIThread.Execute(() =>
-            {
-                if (OnCriticalError != null)
-                    OnCriticalError(formattedMessage, EventArgs.Empty);
-            });
-	    }
-
 	    private void StartApplicationCompleted(object sender, StartApplicationCompletedEventArgs e)
         {
             StartPolling();
@@ -373,6 +372,32 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
         }
 
+        private void ChannelFaulted(object sender, ServerChannelFaultEventArgs e)
+        {
+            string formattedMessage = e.ErrorMessage ?? e.Error.Message;
+            UIThread.Execute(() =>
+            {
+                if (CriticalError != null)
+                    CriticalError(formattedMessage, EventArgs.Empty);
+            });
+        }
+
+        private void OnChannelOpening(object sender, EventArgs e)
+        {
+            UIThread.Execute(() =>
+            {
+                if (ChannelOpening != null) ChannelOpening(this, e);
+            });
+        }
+
+        private void OnChannelOpened(object sender, EventArgs e)
+        {
+            UIThread.Execute(() =>
+            {
+                if (ChannelOpened != null) ChannelOpened(this, e);
+            });
+        }
+
         private void OnServerEventReceived(object sender, ServerEventReceivedEventArgs eventSet)
         {
             Platform.Log(LogLevel.Debug, "==> {0}: IN MSG # {1}", Environment.TickCount, eventSet.EventSet.Number);
@@ -397,27 +422,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 _incomingEventSets[eventSet.EventSet.Number] = eventSet.EventSet;
                 Monitor.Pulse(_incomingEventSync);
             }
-        }
-
-        ChildWindow _stateDialog;
-        private void OnChannelOpening(object sender, EventArgs e)
-        {
-            UIThread.Execute(() =>
-            {
-                _stateDialog = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.OpeningConnection);
-            });
-        }
-
-        private void OnChannelOpened(object sender, EventArgs e)
-        {
-            UIThread.Execute(() =>
-            {
-                if (_stateDialog != null)
-                {
-                    _stateDialog.Close();
-                    _stateDialog = null;
-                }
-            });
         }
 
         private void ProcessOutboundQueue()
@@ -586,6 +590,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                                 msg = sb.ToString();                                
                             }
 
+                            //TODO:  This is the last PopupHelper reference here, should be removed
                             PopupHelper.PopupMessage(DialogTitles.HandlerNotFoundError, msg);
                         }
                     }
@@ -600,10 +605,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private void CompositionTargetRendering(Object sender, EventArgs e)
         {
-            ProcessIncomingQueue(null);
+            ProcessIncomingQueue();
         }
         
-        private void ProcessIncomingQueue(object ignore)
+        private void ProcessIncomingQueue()
         {
             lock (_incomingEventSync)
             {
@@ -735,9 +740,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 			_stop = true;
 			lock (_syncLock) { Monitor.Pulse(_syncLock); }
 
-            //TODO (CR May 2010) Add 30 second timeout on _thread.Join()
 			if (_thread.IsAlive)
-				_thread.Join();
+				_thread.Join(30 * 1000);
         }
     }
 

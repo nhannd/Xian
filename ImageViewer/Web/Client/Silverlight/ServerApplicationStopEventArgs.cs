@@ -9,14 +9,14 @@
 
 #endregion
 
-using System.Drawing;
+using System;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 
-namespace ClearCanvas.ImageViewer.Thumbnails
+namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-    public static class ThumbnailSizes
+    public class ServerApplicationStopEventArgs : EventArgs
     {
-        public static Size Small = new Size(50, 50);
-        public static Size Medium = new Size(100, 100);
-        public static Size Large = new Size(150, 150);
+        public ApplicationStoppedEvent ServerEvent { get; set; }
     }
+
 }

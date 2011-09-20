@@ -280,6 +280,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
+	    /// TODO (CR Sep 2011): Move to ImageViewer.Comparers.
 		private class CompositeComparer<T> : IComparer<T>
 		{
 			private readonly IList<IComparer<T>> _comparers;

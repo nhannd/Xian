@@ -39,7 +39,7 @@
                     </Grid>
                     <Image x:Name="ClientCursorImage" IsHitTestVisible="False">
                     </Image>
-                <Popup Name="TileToolTip" Opened="TileToolTip_Opened" SizeChanged="TileToolTip_SizeChanged">
+                <Popup Name="TileToolTip" Opened="TileToolTipOpened" SizeChanged="TileToolTipSizeChanged">
                     <Border CornerRadius="1" Padding="1" x:Name="TooltipContent" 
                                     BorderBrush="#FFBAD2EC"
                                     BorderThickness="1.5" IsHitTestVisible="False">

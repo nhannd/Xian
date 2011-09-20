@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             EventMediator = new ServerEventMediator();
             EventMediator.Initialize(ApplicationContext.Current.Parameters);
 
-            EventMediator.OnCriticalError += ErrorHandler_OnCriticalError;
+            EventMediator.CriticalError += ErrorHandler_OnCriticalError;
 
 			EventMediator.RegisterEventHandler(typeof(ApplicationStartedEvent), ApplicationStarted);
             EventMediator.RegisterEventHandler(typeof(SessionUpdatedEvent), OnSessionUpdated);
