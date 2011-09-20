@@ -766,7 +766,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         internal void ProcessKeyUp(KeyEventArgs ev)
         {
-            OnKeyDown(ev);
+            OnKeyUp(ev);
         }
 
         internal void ProcessKeyDown(KeyEventArgs args)

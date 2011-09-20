@@ -117,6 +117,7 @@ namespace ClearCanvas.Common.Audit
             if (p == null || p.Identity==null)
                 return null;
 
+	    //TODO (CR September 2011) - this is not a robust solution.
             // Check if it's being called in a service.
             if (p.Identity is WindowsIdentity)
                 return null;

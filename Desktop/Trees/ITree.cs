@@ -25,9 +25,19 @@ namespace ClearCanvas.Desktop.Trees
         /// Obtains a reference to the collection of items in this tree.
         /// </summary>
         /// <remarks>
+		/// <para>
 		/// Note that this collection contains only the immediate items.  Each 
 		/// item may provide a sub-tree, which can be obtained via the
 		/// <see cref="ITreeItemBinding.GetSubTree"/> method.
+		/// </para>
+		/// <para>
+		/// In general, it is advisable that the implementation of the root <see cref="ITree"/> should encapsulate
+		/// a single ancestor root tree item, whose <see cref="IItemCollection"/> is returned in <see cref="Items"/>.
+		/// Because only the root's children are returned in this interface, the tree view will still show them
+		/// as "top-level" nodes, but they will still be related to each other through a common ancestor item.
+		/// This is important, because a number of <see cref="ITree"/> features, such as check states, reordering,
+		/// and view updates triggered from the model side depend on the existence of a parent node.
+		/// </para>
 		/// </remarks>
         IItemCollection Items { get; }
     }
