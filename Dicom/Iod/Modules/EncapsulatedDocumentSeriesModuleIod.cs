@@ -259,7 +259,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		DicomSequenceItem IIodMacro.DicomSequenceItem
 		{
-			get { return null; }
+			get { return DicomAttributeProvider as DicomSequenceItem; }
 			set { DicomAttributeProvider = value; }
 		}
 
