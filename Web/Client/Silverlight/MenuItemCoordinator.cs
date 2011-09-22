@@ -27,13 +27,13 @@ namespace ClearCanvas.Web.Client.Silverlight
 
     internal class MenuItemCoordinator : IMenuItemCoordinator
     {
-        private DelayedEventPublisher _delayedEventPublisher;
+        private DelayedEventPublisher<EventArgs> _delayedEventPublisher;
         private IMenuItem _highlightedItem;
 
         internal MenuItemCoordinator(MenuBase menu)
         {
             Menu = menu;
-            _delayedEventPublisher = new DelayedEventPublisher(menu.Dispatcher, SetExpandedItem);
+            _delayedEventPublisher = new DelayedEventPublisher<EventArgs>(SetExpandedItem, TimeSpan.FromMilliseconds(350));
         }
 
         private MenuBase Menu { get; set; }

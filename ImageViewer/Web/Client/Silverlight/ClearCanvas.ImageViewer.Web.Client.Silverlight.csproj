@@ -98,6 +98,7 @@
     <Compile Include="Controls\ThrottlePanel.xaml.cs">
       <DependentUpon>ThrottlePanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ServerApplicationStopEventArgs.cs" />
     <Compile Include="ServerMessageSender.cs" />
     <Compile Include="ViewModel\ImageViewerViewModel.cs" />
     <Compile Include="Views\HelpDialogContent.xaml.cs">
@@ -125,8 +126,6 @@
     <Compile Include="Controls\StudyBrowser.xaml.cs">
       <DependentUpon>StudyBrowser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DelayedEventPublisher.cs" />
-    <Compile Include="EventBroker.cs" />
     <Compile Include="Helpers\BrowserExtensions.cs" />
     <Compile Include="Helpers\Cookies.cs" />
     <Compile Include="Helpers\IMouseElement.cs" />

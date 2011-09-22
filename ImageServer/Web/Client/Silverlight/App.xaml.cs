@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
                 viewer = new Imageviewer(null);
             }
 
-            viewer.EventMediator.OnCriticalError += OnCriticalError;
+            viewer.EventMediator.CriticalError += CriticalError;
             viewer.EventMediator.ServerApplicationStopped += OnServerApplicationStopped;
             viewer.EventMediator.ChannelOpened += OnChannelOpened;
             viewer.EventMediator.ChannelOpening += OnChannelOpening;
@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
             }
         }
 
-	    private void OnCriticalError(object sender, EventArgs e)
+	    private void CriticalError(object sender, EventArgs e)
         {
             var message = sender as string;
             if (message != null)
