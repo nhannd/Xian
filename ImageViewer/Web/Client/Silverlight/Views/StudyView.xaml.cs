@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
+using ClearCanvas.Web.Client.Silverlight;
 
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
