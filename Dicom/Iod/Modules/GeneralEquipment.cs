@@ -18,142 +18,272 @@ namespace ClearCanvas.Dicom.Iod.Modules
 	/// <summary>
 	/// GeneralEquipment Module
 	/// </summary>
-	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.7.5.1 (Table C.7-8)</remarks>
+	/// <remarks>As defined in the DICOM Standard 2009, Part 3, Section C.7.5.1 (Table C.7-8)</remarks>
 	public class GeneralEquipmentModuleIod : IodBase
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GeneralEquipmentModuleIod"/> class.
 		/// </summary>	
-		public GeneralEquipmentModuleIod() : base() {}
+		public GeneralEquipmentModuleIod() {}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GeneralEquipmentModuleIod"/> class.
 		/// </summary>
-		public GeneralEquipmentModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
+		public GeneralEquipmentModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
 
 		/// <summary>
-		/// Gets or sets the value of Manufacturer in the underlying collection.
+		/// Gets or sets the value of Manufacturer in the underlying collection. Type 2.
 		/// </summary>
 		public string Manufacturer
 		{
-			get { return base.DicomAttributeProvider[DicomTags.Manufacturer].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.Manufacturer].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.Manufacturer].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.Manufacturer].SetNullValue();
+					return;
+				}
+				DicomAttributeProvider[DicomTags.Manufacturer].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of InstitutionName in the underlying collection.
+		/// Gets or sets the values of InstitutionName, InstitutionAddress and InstitutionalDepartmentName in the underlying collection. Type 3.
+		/// </summary>
+		public Institution Institution
+		{
+			get { return new Institution(InstitutionName, InstitutionAddress, InstitutionalDepartmentName); }
+			set
+			{
+				InstitutionName = value.Name;
+				InstitutionAddress = value.Address;
+				InstitutionalDepartmentName = value.DepartmentName;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the value of InstitutionName in the underlying collection. Type 3.
 		/// </summary>
 		public string InstitutionName
 		{
-			get { return base.DicomAttributeProvider[DicomTags.InstitutionName].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.InstitutionName].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.InstitutionName].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.InstitutionName] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.InstitutionName].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of InstitutionAddress in the underlying collection.
+		/// Gets or sets the value of InstitutionAddress in the underlying collection. Type 3.
 		/// </summary>
 		public string InstitutionAddress
 		{
-			get { return base.DicomAttributeProvider[DicomTags.InstitutionAddress].ToString(); }
-			set { base.DicomAttributeProvider[DicomTags.InstitutionAddress].SetStringValue(value); }
+			get { return DicomAttributeProvider[DicomTags.InstitutionAddress].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.InstitutionAddress] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.InstitutionAddress].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of StationName in the underlying collection.
+		/// Gets or sets the value of StationName in the underlying collection. Type 3.
 		/// </summary>
 		public string StationName
 		{
-			get { return base.DicomAttributeProvider[DicomTags.StationName].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.StationName].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.StationName].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.StationName] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.StationName].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of InstitutionalDepartmentName in the underlying collection.
+		/// Gets or sets the value of InstitutionalDepartmentName in the underlying collection. Type 3.
 		/// </summary>
 		public string InstitutionalDepartmentName
 		{
-			get { return base.DicomAttributeProvider[DicomTags.InstitutionalDepartmentName].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.InstitutionalDepartmentName].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.InstitutionalDepartmentName].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.InstitutionalDepartmentName] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.InstitutionalDepartmentName].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of ManufacturersModelName in the underlying collection.
+		/// Gets or sets the value of ManufacturersModelName in the underlying collection. Type 3.
 		/// </summary>
 		public string ManufacturersModelName
 		{
-			get { return base.DicomAttributeProvider[DicomTags.ManufacturersModelName].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.ManufacturersModelName].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.ManufacturersModelName].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.ManufacturersModelName] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.ManufacturersModelName].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of DeviceSerialNumber in the underlying collection.
+		/// Gets or sets the value of DeviceSerialNumber in the underlying collection. Type 3.
 		/// </summary>
 		public string DeviceSerialNumber
 		{
-			get { return base.DicomAttributeProvider[DicomTags.DeviceSerialNumber].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.DeviceSerialNumber].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.DeviceSerialNumber].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.DeviceSerialNumber] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.DeviceSerialNumber].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of SoftwareVersions in the underlying collection.
+		/// Gets or sets the value of SoftwareVersions in the underlying collection. Type 3.
 		/// </summary>
 		public string SoftwareVersions
 		{
-			get { return base.DicomAttributeProvider[DicomTags.SoftwareVersions].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.SoftwareVersions].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.SoftwareVersions].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.SoftwareVersions] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.SoftwareVersions].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of GantryId in the underlying collection.
+		/// Gets or sets the value of GantryId in the underlying collection. Type 3.
 		/// </summary>
 		public string GantryId
 		{
-			get { return base.DicomAttributeProvider[DicomTags.GantryId].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.GantryId].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.GantryId].ToString(); }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					DicomAttributeProvider[DicomTags.GantryId] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.GantryId].SetStringValue(value);
+			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of SpatialResolution in the underlying collection.
+		/// Gets or sets the value of SpatialResolution in the underlying collection. Type 3.
 		/// </summary>
-		public string SpatialResolution
-		{
-			get { return base.DicomAttributeProvider[DicomTags.SpatialResolution].GetString(0, string.Empty); }
-			set { base.DicomAttributeProvider[DicomTags.SpatialResolution].SetString(0, value); }
-		}
-
-		/// <summary>
-		/// Gets or sets the value of DateOfLastCalibration and TimeOfLastCalibration in the underlying collection.
-		/// </summary>
-		public DateTime? DateTimeOfLastCalibrationDateTime
+		public double? SpatialResolution
 		{
 			get
 			{
-				string date = base.DicomAttributeProvider[DicomTags.DateOfLastCalibration].GetString(0, string.Empty);
-				string time = base.DicomAttributeProvider[DicomTags.TimeOfLastCalibration].GetString(0, string.Empty);
+				double result;
+				if (DicomAttributeProvider[DicomTags.SpatialResolution].TryGetFloat64(0, out result))
+					return result;
+				return null;
+			}
+			set
+			{
+				if (!value.HasValue)
+				{
+					DicomAttributeProvider[DicomTags.SpatialResolution] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.SpatialResolution].SetFloat64(0, value.Value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the value of DateOfLastCalibration and TimeOfLastCalibration in the underlying collection. Type 3.
+		/// </summary>
+		public DateTime? DateTimeOfLastCalibration
+		{
+			get
+			{
+				var date = DicomAttributeProvider[DicomTags.DateOfLastCalibration].GetString(0, string.Empty);
+				var time = DicomAttributeProvider[DicomTags.TimeOfLastCalibration].GetString(0, string.Empty);
 				return DateTimeParser.ParseDateAndTime(string.Empty, date, time);
 			}
 			set
 			{
-				DicomAttribute date = base.DicomAttributeProvider[DicomTags.DateOfLastCalibration];
-				DicomAttribute time = base.DicomAttributeProvider[DicomTags.TimeOfLastCalibration];
+				if (!value.HasValue)
+				{
+					DicomAttributeProvider[DicomTags.DateOfLastCalibration] = null;
+					DicomAttributeProvider[DicomTags.TimeOfLastCalibration] = null;
+					return;
+				}
+				var date = DicomAttributeProvider[DicomTags.DateOfLastCalibration];
+				var time = DicomAttributeProvider[DicomTags.TimeOfLastCalibration];
 				DateTimeParser.SetDateTimeAttributeValues(value, date, time);
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of PixelPaddingValue in the underlying collection.
+		/// Gets or sets the value of PixelPaddingValue in the underlying collection. Type 3.
 		/// </summary>
-		public int PixelPaddingValue
+		public int? PixelPaddingValue
 		{
-			get { return base.DicomAttributeProvider[DicomTags.PixelPaddingValue].GetInt32(0, 0); }
-			set { base.DicomAttributeProvider[DicomTags.PixelPaddingValue].SetInt32(0, value); }
+			get
+			{
+				int result;
+				if (DicomAttributeProvider[DicomTags.PixelPaddingValue].TryGetInt32(0, out result))
+					return result;
+				return null;
+			}
+			set
+			{
+				if (!value.HasValue)
+				{
+					DicomAttributeProvider[DicomTags.PixelPaddingValue] = null;
+					return;
+				}
+				DicomAttributeProvider[DicomTags.PixelPaddingValue].SetInt32(0, value.Value);
+			}
+		}
+
+		/// <summary>
+		/// Initializes the attributes of the module to their default values.
+		/// </summary>
+		public void InitializeAttributes()
+		{
+			Manufacturer = string.Empty;
 		}
 
 		/// <summary>
 		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
 		/// </summary>
-		public static IEnumerable<uint> DefinedTags {
-			get {
+		public static IEnumerable<uint> DefinedTags
+		{
+			get
+			{
 				yield return DicomTags.DateOfLastCalibration;
 				yield return DicomTags.TimeOfLastCalibration;
 				yield return DicomTags.DeviceSerialNumber;

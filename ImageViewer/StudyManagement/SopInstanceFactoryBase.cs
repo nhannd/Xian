@@ -11,8 +11,9 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
-using ClearCanvas.ImageViewer.PresentationStates.Dicom;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the institution where the equipment that produced the composite instances is located.
 		/// </summary>
-		internal Institution Institution { get; set; }
+		public Institution Institution { get; set; }
 
 		/// <summary>
 		/// Gets the manufacturer of the equipment that produced the composite instances.
@@ -66,6 +67,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected void FillGeneralEquipmentModule(IDicomAttributeProvider target)
 		{
 			var targetGeneralEquipment = new GeneralEquipmentModuleIod(target);
+			targetGeneralEquipment.InitializeAttributes();
 			targetGeneralEquipment.Manufacturer = Manufacturer ?? string.Empty; // Manufacturer here is Type 2
 			targetGeneralEquipment.InstitutionName = Institution.Name;
 			targetGeneralEquipment.InstitutionAddress = Institution.Address;
