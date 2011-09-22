@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             if (_proxy != null)
             {
                 //_startRequest = request;
+                Platform.Log(LogLevel.Info, "Sending Start Application request to server");
 
                 request.MetaInformation = new MetaInformation
                                               {
@@ -71,24 +72,38 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                                               };
                 _proxy.StartApplicationAsync(request);
             }
+            else
+            {
+                Platform.Log(LogLevel.Error,"Request for Start Application when no proxy client was created");
+            }
         }
 
         public void StopApplication()
         {
-            if (!Faulted)
+            if (_connectionOpened)
             {
-                try
+                _connectionOpened = false;
+
+                if (!Faulted)
                 {
-                    _proxy.StopApplicationAsync(new StopApplicationRequest {ApplicationId = ApplicationId});
+                    try
+                    {
+                        Platform.Log(LogLevel.Info, "Sending Stop Application request to server for application: {0}",
+                                     ApplicationId);
+                        _proxy.StopApplicationAsync(new StopApplicationRequest {ApplicationId = ApplicationId});
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(LogLevel.Error, e, "Unexpected exception stopping connection.");
+                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception stopping connection.");
+                    Platform.Log(LogLevel.Info,
+                                 "Received Stop Application request on faulted channel for application: {0}",
+                                 ApplicationId);
+                    Disconnect("StopApplication Request");
                 }
-            }
-            else
-            {
-                Disconnect("StopApplication Request");
             }
         }
 
@@ -106,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void CheckForPendingEvents(int maxWaitTime)
         {
-            if (!Faulted)
+            if (!Faulted && _connectionOpened)
                 _proxy.GetPendingEventAsync(new GetPendingEventRequest { ApplicationId = ApplicationId, MaxWaitTime = maxWaitTime });
         }
 
@@ -192,6 +207,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 {
                     OnError(e.Error);
                 }
+                else
+                {
+                    Platform.Log(LogLevel.Info, "Received Stop Application Completed message for application: {0}", ApplicationId);
+                }
                 Disconnect("Application Shut Down");
             }
             catch (Exception ex)
@@ -235,14 +254,22 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                     if (e.Result.EventSet != null)
                     {
-                        if (MessageReceived != null)
+                        if (!_connectionOpened)
+                        {
+                            Platform.Log(LogLevel.Error, "Received messages after connection has been closed!");
+                        }
+                        else if (MessageReceived != null)
                         {
                             var args = new ServerEventReceivedEventArgs
                                            {
                                                EventSet = e.Result.EventSet
                                            };
                             MessageReceived(this, args);
-                        }                        
+                        }
+                        else
+                        {
+                            Platform.Log(LogLevel.Error, "Received messages without message event registered!");
+                        }
                     }
                 }
             }
@@ -263,7 +290,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 {
                     if (e.Result.EventSet != null)
                     {
-                        if (MessageReceived != null)
+                        if (!_connectionOpened)
+                        {
+                            Platform.Log(LogLevel.Error, "Received messages after connection has been closed!");
+                        }
+                        else if (MessageReceived != null)
                         {
                             MessageReceived(this, new ServerEventReceivedEventArgs {EventSet = e.Result.EventSet});
                         }
@@ -294,7 +325,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private void OnError(Exception exception)
         {
-            if (!_connectionOpened) return;
+            if (!_connectionOpened)
+            {
+                Platform.Log(LogLevel.Error, exception, "Received exception after the connection has closed.");
+                return;
+            }
             
           
             var errorArgs = new ServerChannelFaultEventArgs
@@ -350,6 +385,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                 errorArgs.ErrorMessage = sb.ToString();
             }
+
+            Platform.Log(LogLevel.Error,"Received error on channel: {0}", errorArgs.ErrorMessage);
 
             if (ChannelFaulted != null) ChannelFaulted(this, errorArgs);
 

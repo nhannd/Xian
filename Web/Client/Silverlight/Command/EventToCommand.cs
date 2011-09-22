@@ -1,4 +1,4 @@
-﻿#region non-CC License
+﻿#region License (non-CC)
 // ****************************************************************************
 // <copyright file="EventToCommand.cs" company="GalaSoft Laurent Bugnion">
 // Copyright © GalaSoft Laurent Bugnion 2009-2011

@@ -1,4 +1,4 @@
-﻿#region non-CC License
+﻿#region License (non-CC)
 // ****************************************************************************
 // <copyright file="BindingListener.cs" company="Microsoft">
 // (c) Copyright Microsoft Corporation  

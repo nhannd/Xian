@@ -172,6 +172,7 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
             viewer.EventMediator.ServerApplicationStopped += OnServerApplicationStopped;
             viewer.EventMediator.ChannelOpened += OnChannelOpened;
             viewer.EventMediator.ChannelOpening += OnChannelOpening;
+            viewer.EventMediator.WarningEvent += OnWarning;
 
             if (rootPanel != null)
             {
@@ -194,7 +195,16 @@ namespace ClearCanvas.ImageServer.Web.Client.Silverlight
             }
         }
 
-        void OnKeyUp(object sender, KeyEventArgs e)
+	    private void OnWarning(object sender, EventArgs e)
+	    {
+            var message = sender as string;
+            if (message != null)
+            {
+                PopupHelper.PopupMessage(DialogTitles.Error, message);
+            }
+	    }
+
+	    void OnKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
