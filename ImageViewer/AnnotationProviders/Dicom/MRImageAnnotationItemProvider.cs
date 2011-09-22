@@ -157,6 +157,86 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						DicomDataFormatHelper.RawStringFormat
 					)
 				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.MRImage.InversionTime",
+						resolver,
+						delegate(Frame frame)
+						{
+							double value;
+							var tagExists = frame.ParentImageSop[DicomTags.InversionTime].TryGetFloat64(0, out value);
+							return tagExists ? string.Format(SR.FormatMilliseconds, value.ToString("F2")) : string.Empty;
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.MRImage.TriggerTime",
+						resolver,
+						delegate(Frame frame)
+						{
+							double value;
+							var tagExists = frame.ParentImageSop[DicomTags.TriggerTime].TryGetFloat64(0, out value);
+							return tagExists ? string.Format(SR.FormatMilliseconds, value.ToString("F2")) : string.Empty;
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.MRImage.NumberOfAverages",
+						resolver,
+						delegate(Frame frame)
+						{
+							double value;
+							var tagExists = frame.ParentImageSop[DicomTags.NumberOfAverages].TryGetFloat64(0, out value);
+							return tagExists ? string.Format("{0}", value) : string.Empty;
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.MRImage.PixelBandwidth",
+						resolver,
+						delegate(Frame frame)
+						{
+							double value;
+							var tagExists = frame.ParentImageSop[DicomTags.PixelBandwidth].TryGetFloat64(0, out value);
+							return tagExists ? string.Format(SR.FormatHertzPerPixel, value.ToString("F2")) : string.Empty;
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.MRImage.FlipAngle",
+						resolver,
+						delegate(Frame frame)
+						{
+							double value;
+							var tagExists = frame.ParentImageSop[DicomTags.FlipAngle].TryGetFloat64(0, out value);
+							return tagExists ? string.Format(SR.FormatDegrees, value.ToString("F2")) : string.Empty;
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

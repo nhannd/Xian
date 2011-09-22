@@ -9,7 +9,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Sequences;
 
@@ -32,48 +31,49 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public PresentationStateMaskModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
 
 		/// <summary>
-		/// Gets or sets the value of MaskSubtractionSequence in the underlying collection. Type 1.
+		/// Gets or sets the value of MaskSubtractionSequence in the underlying collection. Type 1C.
 		/// </summary>
-		public MaskSubtractionSequenceIod[] MaskSubtractionSequence
+		public MaskSubtractionSequenceIod MaskSubtractionSequence
 		{
 			get
 			{
 				var dicomAttribute = DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.IsEmpty)
 					return null;
-
-				var result = new MaskSubtractionSequenceIod[dicomAttribute.Count];
-				var items = (DicomSequenceItem[]) dicomAttribute.Values;
-				for (int n = 0; n < items.Length; n++)
-					result[n] = new MaskSubtractionSequenceIod(items[n]);
-
-				return result;
+				return new MaskSubtractionSequenceIod(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
-				if (value == null || value.Length == 0)
-					throw new ArgumentNullException("value", "MaskSubtractionSequence is Type 1 Required.");
+				if (value == null)
+				{
+					DicomAttributeProvider[DicomTags.MaskSubtractionSequence] = null;
+					return;
+				}
 
-				var result = new DicomSequenceItem[value.Length];
-				for (int n = 0; n < value.Length; n++)
-					result[n] = value[n].DicomSequenceItem;
-
-				DicomAttributeProvider[DicomTags.MaskSubtractionSequence].Values = result;
+				var dicomAttribute = DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
+				dicomAttribute.Values = new[] {value.DicomSequenceItem};
 			}
 		}
 
 		/// <summary>
-		/// Creates a single instance of a MaskSubtractionSequence item. Does not modify the MaskSubtractionSequence in the underlying collection.
+		/// Creates the MaskSubtractionSequence in the underlying collection. Type 1C.
 		/// </summary>
 		public MaskSubtractionSequenceIod CreateMaskSubtractionSequence()
 		{
-			var iodBase = new MaskSubtractionSequenceIod(new DicomSequenceItem());
-			iodBase.InitializeAttributes();
-			return iodBase;
+			var dicomAttribute = DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
+			if (dicomAttribute.IsNull || dicomAttribute.IsEmpty)
+			{
+				var dicomSequenceItem = new DicomSequenceItem();
+				dicomAttribute.Values = new[] {dicomSequenceItem};
+				var sequenceType = new MaskSubtractionSequenceIod(dicomSequenceItem);
+				sequenceType.InitializeAttributes();
+				return sequenceType;
+			}
+			return new MaskSubtractionSequenceIod(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 		}
 
 		/// <summary>
-		/// Gets or sets the value of RecommendedViewingMode in the underlying collection. Type 2.
+		/// Gets or sets the value of RecommendedViewingMode in the underlying collection. Type 1C.
 		/// </summary>
 		public RecommendedViewingMode RecommendedViewingMode
 		{
@@ -82,7 +82,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (value == RecommendedViewingMode.None)
 				{
-					DicomAttributeProvider[DicomTags.RecommendedViewingMode].SetNullValue();
+					DicomAttributeProvider[DicomTags.RecommendedViewingMode] = null;
 					return;
 				}
 				SetAttributeFromEnum(DicomAttributeProvider[DicomTags.RecommendedViewingMode], value);
@@ -91,7 +91,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 		public void InitializeAttributes()
 		{
-			MaskSubtractionSequence = new[] {CreateMaskSubtractionSequence()};
+			MaskSubtractionSequence = null;
 			RecommendedViewingMode = RecommendedViewingMode.None;
 		}
 

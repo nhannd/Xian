@@ -18,16 +18,18 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.Web.Client.Silverlight;
 using ClearCanvas.Web.Client.Silverlight.Utilities;
 using Message = ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Windows.Media;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-    //TODO (CR May 2010): Generally, this class does more than it should and the name is not really valid anymore - it's not just a dispatcher, but more
-    //of an "application manager", as it pretty much manages all aspects of a remote instance of an application.
-    //Also, it is intermixing handling of the communication with display of messages.  Ideally, all messages would be displayed by a UI element based on
-    //feedback from this class.
+    /// <summary>
+    /// Mediator of Events and Messages sent between the client and server
+    /// </summary>
+    /// <remarks>
+    /// This class is the mediator between the <see cref="ServerMessageSender"/> and <see cref="ServerMessagePoller"/> classes and the core application.
+    /// 
+    /// </remarks>
 	public class ServerEventMediator : IDisposable
 	{
         #region Events
@@ -39,6 +41,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         /// Event called on a UI Thread when a Critical Error occurs
         /// </summary>
         public event EventHandler CriticalError;
+        /// <summary>
+        /// Event called on a UI Thread when a Critical Error occurs
+        /// </summary>
+        public event EventHandler WarningEvent;
         /// <summary>
         /// Event called on a UI Thread when a channel is being opened
         /// </summary>
@@ -140,7 +146,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     _typeHandlers.Add(eventType, handler);
 
                 Platform.Log(LogLevel.Debug, "Register event handler for type {0}", eventType);
-
             }
         }
 
@@ -590,8 +595,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                                 msg = sb.ToString();                                
                             }
 
-                            //TODO:  This is the last PopupHelper reference here, should be removed
-                            PopupHelper.PopupMessage(DialogTitles.HandlerNotFoundError, msg);
+                            UIThread.Execute(() =>
+                                                 {
+                                                     if (WarningEvent != null)
+                                                         WarningEvent(msg, EventArgs.Empty);
+                                                 });
                         }
                     }
 				}
