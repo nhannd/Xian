@@ -11,13 +11,22 @@
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+	/// <summary>
+	/// Helper class to get the current SOP instance publishing configuration.
+	/// </summary>
 	public static class PublishingConfiguration
 	{
+		/// <summary>
+		/// Gets a value indicating whether or not created SOP instances are to be published to the Source AE as specified in the study's headers.
+		/// </summary>
 		public static bool PublishLocalToSourceAE
 		{
 			get { return PublishingSettings.Default.PublishLocalToSourceAE; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether or not created SOP instances are to be published to the Default Servers.
+		/// </summary>
 		public static bool PublishToDefaultServers
 		{
 			get { return PublishingSettings.Default.PublishToDefaultServers; }

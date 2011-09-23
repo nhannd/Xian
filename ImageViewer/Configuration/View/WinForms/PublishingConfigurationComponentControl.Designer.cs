@@ -86,12 +86,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._publishToDefaultServers.Name = "_publishToDefaultServers";
 			this._publishToDefaultServers.UseVisualStyleBackColor = true;
 			// 
-			// KeyImageConfigurationComponentControl
+			// PublishingConfigurationComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._publishingGroup);
-			this.Name = "KeyImageConfigurationComponentControl";
+			this.Name = "PublishingConfigurationComponentControl";
 			this._publishingGroup.ResumeLayout(false);
 			this._publishingGroup.PerformLayout();
 			this.ResumeLayout(false);
