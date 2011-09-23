@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
 			if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Publishing))
-				yield return new ConfigurationPage("PublishingConfiguration", new PublishingConfigurationComponent());
+				yield return new ConfigurationPage("DicomConfiguration/PublishingConfiguration", new PublishingConfigurationComponent());
 		}
 
 		#endregion

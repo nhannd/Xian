@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DICOM.
+        /// </summary>
+        internal static string DicomConfiguration {
+            get {
+                return ResourceManager.GetString("DicomConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The server properties conflict with an existing entry ({0}).
         ///Each server must have a unique Name and cannot have the same AE Title, Host and Port as another server..
         /// </summary>
