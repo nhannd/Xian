@@ -151,11 +151,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			public override int Compare(Sop x, Sop y)
 			{
-				// this sorts FOR PROCESSING series to the end.
-				// FOR PRESENTATION and unspecified series are considered equal for the purposes of sorting by intent.
-				const string forProcessing = "FOR PROCESSING";
-				int presentationIntentX = GetPresentationIntent(x) == forProcessing ? 1 : 0;
-				int presentationIntentY = GetPresentationIntent(y) == forProcessing ? 1 : 0;
+				// this sorts FOR PRESENTATION series to the beginning.
+				// FOR PROCESSING and unspecified series are considered equal for the purposes of sorting by intent.
+				const string forPresentation = "FOR PRESENTATION";
+				int presentationIntentX = GetPresentationIntent(x) == forPresentation ? 0 : 1;
+				int presentationIntentY = GetPresentationIntent(y) == forPresentation ? 0 : 1;
 				int result = presentationIntentX - presentationIntentY;
 				if (Reverse)
 					return -result;

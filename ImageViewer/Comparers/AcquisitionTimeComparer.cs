@@ -38,8 +38,15 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		private static IEnumerable<IComparable> GetCompareValues(Frame frame)
 		{
-			yield return frame.StudyInstanceUid;
-			yield return frame.SeriesInstanceUid;
+			//Group be common study level attributes
+            yield return frame.StudyInstanceUid;
+
+            //Group by common series level attributes
+            //This sorts "FOR PRESENTATION" images to the beginning (except in reverse, of course).
+            yield return frame.ParentImageSop.PresentationIntentType == "FOR PRESENTATION" ? 0 : 1;
+            yield return frame.ParentImageSop.SeriesNumber;
+            yield return frame.ParentImageSop.SeriesDescription;
+            yield return frame.SeriesInstanceUid;
 
 			DateTime? datePart = null;
 			TimeSpan? timePart = null;

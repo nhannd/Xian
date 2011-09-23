@@ -253,20 +253,17 @@ namespace ClearCanvas.ImageViewer
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
 			if (CreateSingleImageDisplaySets)
-			{
 				return DoCreateSingleImageDisplaySets(series);
-			}
-			else
+
+            var displaySets = new List<IDisplaySet>();
+			var displaySet = CreateSeriesDisplaySet(series);
+			if (displaySet != null)
 			{
-				List<IDisplaySet> displaySets = new List<IDisplaySet>();
-				IDisplaySet displaySet = CreateSeriesDisplaySet(series);
-				if (displaySet != null)
-				{
-					displaySet.PresentationImages.Sort();
-					displaySets.Add(displaySet);
-				}
-				return displaySets;
+			    displaySet.PresentationImages.Sort();
+                displaySets.Add(displaySet);
 			}
+
+		    return displaySets;
 		}
 
 		private IDisplaySet CreateSeriesDisplaySet(Series series)
@@ -655,6 +652,7 @@ namespace ClearCanvas.ImageViewer
 						foreach (IPresentationImage singleFrameImage in singleFrameImages)
 							singleImagesDisplaySet.PresentationImages.Add(singleFrameImage);
 
+                        singleImagesDisplaySet.PresentationImages.Sort();
 						displaySets.Add(singleImagesDisplaySet);
 					}
 				}
@@ -779,7 +777,10 @@ namespace ClearCanvas.ImageViewer
             {
                 var displaySet = CreateDisplaySet(study, seriesByModality);
                 if (displaySet != null)
+                {
+                    displaySet.PresentationImages.Sort();
                     displaySets.Add(displaySet);
+                }
             }
 
             return displaySets;
