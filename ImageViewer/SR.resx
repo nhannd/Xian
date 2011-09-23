@@ -565,4 +565,10 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
     <value>{0}
 {1}</value>
   </data>
+  <data name="FormatDescriptionModalityDisplaySet" xml:space="preserve">
+    <value>[{0}] All Images</value>
+  </data>
+  <data name="FormatNameModalityDisplaySet" xml:space="preserve">
+    <value>[{0}] All Images</value>
+  </data>
 </root>

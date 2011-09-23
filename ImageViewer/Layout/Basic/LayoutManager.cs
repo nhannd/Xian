@@ -15,16 +15,14 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Comparers;
-using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
-using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	[ExtensionOf(typeof(LayoutManagerExtensionPoint))]
-	public class LayoutManager : ImageViewer.LayoutManager
+	public partial class LayoutManager : ImageViewer.LayoutManager
 	{
 		#region LayoutHookContext
 
@@ -51,109 +49,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		#endregion
 
-		private class DisplaySetFactory : ImageViewer.DisplaySetFactory
-		{
-			private readonly StoredDisplaySetCreationSetting _creationSetting;
-
-			private readonly MREchoDisplaySetFactory _echoFactory;
-			private readonly MixedMultiFrameDisplaySetFactory _mixedMultiFrameFactory;
-			private readonly BasicDisplaySetFactory _basicFactory;
-
-			private readonly IList<IDisplaySetFactory> _externalFactories;
-
-			public DisplaySetFactory(StoredDisplaySetCreationSetting creationSetting)
-			{
-				_creationSetting = creationSetting;
-
-				PresentationState defaultPresentationState = new DicomPresentationState
-																{ ShowGrayscaleInverted = creationSetting.ShowGrayscaleInverted };
-
-				var imageFactory = (PresentationImageFactory)PresentationImageFactory;
-				imageFactory.DefaultPresentationState = defaultPresentationState;
-
-				_basicFactory = new BasicDisplaySetFactory(imageFactory) 
-										{ CreateSingleImageDisplaySets = _creationSetting.CreateSingleImageDisplaySets };
-
-				if (creationSetting.SplitMultiEchoSeries)
-					_echoFactory = new MREchoDisplaySetFactory(imageFactory);
-
-				if (_creationSetting.SplitMixedMultiframes)
-					_mixedMultiFrameFactory = new MixedMultiFrameDisplaySetFactory(imageFactory);
-
-				var externalFactories = new List<IDisplaySetFactory>();
-				foreach (IDisplaySetFactoryProvider provider in new DisplaySetFactoryProviderExtensionPoint().CreateExtensions())
-					externalFactories.AddRange(provider.CreateDisplaySetFactories(imageFactory));
-				_externalFactories = externalFactories.AsReadOnly();
-			}
-
-			private bool SplitMultiEchoSeries { get { return _creationSetting.SplitMultiEchoSeries; } }
-			private bool ShowOriginalMREchoSeries { get { return _creationSetting.ShowOriginalMultiEchoSeries; } }
-
-			private bool SplitMixedMultiframeSeries { get { return _creationSetting.SplitMixedMultiframes; } }
-			private bool ShowOriginalMixedMultiframeSeries { get { return _creationSetting.ShowOriginalMixedMultiframeSeries; } }
-
-			public override void  SetStudyTree(StudyTree studyTree)
-			{
-				base.SetStudyTree(studyTree);
-
-				_basicFactory.SetStudyTree(studyTree);
-				
-				if (_echoFactory != null)
-					_echoFactory.SetStudyTree(studyTree);
-
-				if (_mixedMultiFrameFactory != null)
-					_mixedMultiFrameFactory.SetStudyTree(studyTree);
-
-				foreach (var factory in _externalFactories)
-					factory.SetStudyTree(studyTree);
-			}
-
-			public override List<IDisplaySet> CreateDisplaySets(Series series)
-			{
-				var displaySets = new List<IDisplaySet>();
-
-				bool showOriginal = true;
-
-				if (SplitMultiEchoSeries)
-				{
-					List<IDisplaySet> echoDisplaySets = _echoFactory.CreateDisplaySets(series);
-					if (echoDisplaySets.Count > 0 && !ShowOriginalMREchoSeries)
-						showOriginal = false;
-
-					displaySets.AddRange(echoDisplaySets);
-				}
-
-				if (SplitMixedMultiframeSeries)
-				{
-					List<IDisplaySet> multiFrameDisplaySets = _mixedMultiFrameFactory.CreateDisplaySets(series);
-					if (multiFrameDisplaySets.Count > 0 && showOriginal && !ShowOriginalMixedMultiframeSeries)
-						showOriginal = false;
-
-					displaySets.AddRange(multiFrameDisplaySets);
-				}
-
-				if (showOriginal)
-				{
-					foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
-						displaySets.Add(displaySet);
-				}
-
-				foreach (var factory in _externalFactories)
-					displaySets.AddRange(factory.CreateDisplaySets(series));
-
-				return displaySets;
-			}
-		}
-
-		private readonly IPatientReconciliationStrategy _reconciliationStrategy = new DefaultPatientReconciliationStrategy();
-		private readonly Dictionary<string, IDisplaySetFactory> _modalityDisplaySetFactories = new Dictionary<string, IDisplaySetFactory>();
-		private const string _defaultModality = "";
+	    private readonly IPatientReconciliationStrategy _reconciliationStrategy = new DefaultPatientReconciliationStrategy();
+	    private ImageSetFiller _imageSetFiller;
 
 		public LayoutManager()
 		{
-			foreach (StoredDisplaySetCreationSetting setting in DisplaySetCreationSettings.Default.GetStoredSettings())
-				_modalityDisplaySetFactories[setting.Modality] = new DisplaySetFactory(setting);
-
 			AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
 		}
 
@@ -167,21 +67,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			_reconciliationStrategy.SetStudyTree(studyTree);
 
-			foreach (IDisplaySetFactory displaySetFactory in _modalityDisplaySetFactories.Values)
-				displaySetFactory.SetStudyTree(studyTree);
-
-			_modalityDisplaySetFactories[_defaultModality] = new BasicDisplaySetFactory {ShouldCreatePlaceholderImageDisplaySets = true};
-		}
-
-		private IDisplaySetFactory GetDisplaySetFactory(string modality)
-		{
-			modality = modality ?? _defaultModality;
-
-			IDisplaySetFactory factory;
-			if (_modalityDisplaySetFactories.TryGetValue(modality, out factory))
-				return factory;
-
-			return _modalityDisplaySetFactories[_defaultModality];
+            _imageSetFiller = new ImageSetFiller(studyTree);
 		}
 
 		#region Logical Workspace building 
@@ -200,11 +86,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             return base.ReconcilePatient(studyData);
 		}
 
-		protected override void UpdateImageSet(IImageSet imageSet, Series series)
+		protected override void FillImageSet(IImageSet imageSet, Study study)
 		{
-			List<IDisplaySet> displaySets = GetDisplaySetFactory(series.Modality).CreateDisplaySets(series);
-			foreach (IDisplaySet displaySet in displaySets)
-				imageSet.DisplaySets.Add(displaySet);
+            _imageSetFiller.AddMultiSeriesDisplaySets(imageSet, study);
+
+            base.FillImageSet(imageSet, study);
+		}
+
+	    protected override void UpdateImageSet(IImageSet imageSet, Series series)
+		{
+            _imageSetFiller.AddSeriesDisplaySets(imageSet, series);
 		}
 
 		#endregion

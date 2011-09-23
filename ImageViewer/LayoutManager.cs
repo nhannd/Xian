@@ -316,8 +316,18 @@ namespace ClearCanvas.ImageViewer
 		{
 			return new ImageSet(CreateImageSetDescriptor(studyData));
 		}
-		
-		/// <summary>
+
+        /// <summary>
+        /// Updates the contents of the given <see cref="IImageSet"/> by populating it with <see cref="IDisplaySet"/>s created
+        /// from the given <see cref="Study"/>.
+        /// </summary>
+        protected virtual void FillImageSet(IImageSet imageSet, Study study)
+        {
+            foreach (Series series in study.Series)
+                UpdateImageSet(imageSet, series);
+        }
+
+	    /// <summary>
 		/// Updates the contents of the given <see cref="IImageSet"/> by populating it with <see cref="IDisplaySet"/>s created
 		/// from the given <see cref="Series"/>.
 		/// </summary>
@@ -416,10 +426,9 @@ namespace ClearCanvas.ImageViewer
 			SortSeries(study.Series);
 
 			foreach (Series series in study.Series)
-			{
 				SortSops(series.Sops);
-				UpdateImageSet(imageSet, series);
-			}
+
+            FillImageSet(imageSet, study);
 
             if (existing == null)
             {
