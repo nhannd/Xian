@@ -24,10 +24,10 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        /// Specifies whether to publish newly created key images to the default servers.
+        /// Specifies that created SOP instances are to be published to Default Servers
         /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether to publish newly created key images to the default servers.")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies that created SOP instances are to be published to Default Servers")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool PublishToDefaultServers {
@@ -40,11 +40,11 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        /// Specifies whether or not to publish newly created key images to the Source AE as specified in the source image&apos;s DICOM Header.
+        /// Specifies that created SOP instances are to be published to the Source AE as specified in the study&apos;s headers
         /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether or not to publish newly created key images to the Source AE as " +
-            "specified in the source image\'s DICOM Header.")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies that created SOP instances are to be published to the Source AE as spec" +
+            "ified in the study\'s headers")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool PublishLocalToSourceAE {
