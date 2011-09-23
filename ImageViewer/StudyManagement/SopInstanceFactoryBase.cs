@@ -13,7 +13,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
-using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -98,7 +97,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </list>
 		/// <para>
 		/// Additionally, certain attributes of the General Equipment Module (C.7.5.1) are automatically filled in with values
-		/// to identify the creating software application and institution.
+		/// to identify the creating software application and institution, and the Specific Character Set (0008,0005) is copied
+		/// from the source SOP instance to ensure that copied attributes remain consistent.
 		/// </para>
 		/// </remarks>
 		/// <param name="source">An existing SOP instance whose attributes are used as a template to creating the new composite SOP instance.</param>
@@ -106,9 +106,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected DicomFile CreatePrototypeSopInstance(IDicomAttributeProvider source)
 		{
 			var prototypeFile = new DicomFile();
-			var specificCharacterSet = GetSpecificCharacterSet(source) ?? string.Empty;
-
 			var targetDataSet = prototypeFile.DataSet;
+
+			// specific character set must be copied first before any other attributes are set!
+			var specificCharacterSet = GetSpecificCharacterSet(source) ?? string.Empty;
 			targetDataSet.SpecificCharacterSet = specificCharacterSet;
 			targetDataSet[DicomTags.SpecificCharacterSet].SetStringValue(specificCharacterSet);
 

@@ -344,6 +344,7 @@
     <Compile Include="Iod\Sequences\BillingSuppliesAndDevicesSequenceIod.cs" />
     <Compile Include="Iod\Sequences\BreedRegistryCodeSequence.cs" />
     <Compile Include="Iod\Sequences\BreedRegistrationSequence.cs" />
+    <Compile Include="Iod\Sequences\CodingSchemeIdentificationSequenceIod.cs" />
     <Compile Include="Iod\Sequences\ContentTemplateSequence.cs" />
     <Compile Include="Iod\Sequences\GraphicAnnotationSequenceItem.cs" />
     <Compile Include="Iod\Sequences\MaskSubtractionSequenceIod.cs" />
