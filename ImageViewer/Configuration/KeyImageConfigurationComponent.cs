@@ -13,7 +13,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
+namespace ClearCanvas.ImageViewer.Configuration
 {
 	[ExtensionPoint]
 	public sealed class KeyImageConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>

@@ -12,13 +12,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.Tools.Reporting.KeyImages;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms view onto <see cref="KeyImageConfigurationComponent"/>.

@@ -51,9 +51,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting
 	
 	public static class AuthorityTokens
 	{
-		[AuthorityToken(Description = "Grant access to key image administration, such as publishing configuration.")]
-		public const string KeyImageAdministration = "Viewer/Administration/Key Images";
-		
 		[AuthorityToken(Description = "Grant access to key image functionality.")]
 		public const string KeyImages = "Viewer/Reporting/Key Images";
 	}

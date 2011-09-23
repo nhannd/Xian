@@ -13,7 +13,7 @@ using System.Configuration;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
+namespace ClearCanvas.ImageViewer.Configuration
 {
 	[SettingsGroupDescription("Settings related to key images.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]

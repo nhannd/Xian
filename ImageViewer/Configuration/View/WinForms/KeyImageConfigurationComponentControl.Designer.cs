@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
     partial class KeyImageConfigurationComponentControl
     {

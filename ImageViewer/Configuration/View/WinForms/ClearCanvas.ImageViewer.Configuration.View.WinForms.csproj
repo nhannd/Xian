@@ -84,6 +84,13 @@
       <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentView.cs" />
+    <Compile Include="KeyImageConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KeyImageConfigurationComponentControl.Designer.cs">
+      <DependentUpon>KeyImageConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyImageConfigurationComponentView.cs" />
     <Compile Include="MonitorConfigurationApplicationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -148,6 +155,9 @@
     <EmbeddedResource Include="DicomServerGroupEditComponentControl.resx">
       <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KeyImageConfigurationComponentControl.resx">
+      <DependentUpon>KeyImageConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MonitorConfigurationApplicationComponentControl.resx">
       <DependentUpon>MonitorConfigurationApplicationComponentControl.cs</DependentUpon>

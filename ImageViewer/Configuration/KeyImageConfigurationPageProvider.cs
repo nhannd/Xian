@@ -10,20 +10,20 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
+namespace ClearCanvas.ImageViewer.Configuration
 {
-	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
+	[ExtensionOf(typeof (ConfigurationPageProviderExtensionPoint))]
 	public class ConfigurationPageProvider : IConfigurationPageProvider
 	{
 		#region IConfigurationPageProvider Members
 
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			if (PermissionsHelper.IsInRole(AuthorityTokens.KeyImageAdministration))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Publishing))
 				yield return new ConfigurationPage("KeyImageConfigurationPath", new KeyImageConfigurationComponent());
 		}
 

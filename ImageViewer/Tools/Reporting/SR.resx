@@ -123,9 +123,6 @@
   <data name="ExceptionViewKeyImagePermissionDenied" xml:space="preserve">
     <value>Permission to view key images (Study View) is denied.</value>
   </data>
-  <data name="KeyImageConfigurationPath" xml:space="preserve">
-    <value>Key Images</value>
-  </data>
   <data name="LabelKeyImageCurrentDisplaySet" xml:space="preserve">
     <value>Key Images (current)</value>
   </data>

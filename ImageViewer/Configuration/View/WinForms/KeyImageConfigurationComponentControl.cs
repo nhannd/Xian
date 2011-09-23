@@ -16,11 +16,9 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.Tools.Reporting.KeyImages;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="KeyImageConfigurationComponent"/>.
