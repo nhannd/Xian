@@ -17,14 +17,14 @@ using ClearCanvas.ImageViewer.Common;
 namespace ClearCanvas.ImageViewer.Configuration
 {
 	[ExtensionOf(typeof (ConfigurationPageProviderExtensionPoint))]
-	public class ConfigurationPageProvider : IConfigurationPageProvider
+	public class PublishingConfigurationPageProvider : IConfigurationPageProvider
 	{
 		#region IConfigurationPageProvider Members
 
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
 			if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Publishing))
-				yield return new ConfigurationPage("KeyImageConfigurationPath", new KeyImageConfigurationComponent());
+				yield return new ConfigurationPage("PublishingConfiguration", new PublishingConfigurationComponent());
 		}
 
 		#endregion

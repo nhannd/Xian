@@ -16,14 +16,14 @@ using ClearCanvas.Desktop.Configuration;
 namespace ClearCanvas.ImageViewer.Configuration
 {
 	[ExtensionPoint]
-	public sealed class KeyImageConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class PublishingConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	[AssociateView(typeof (KeyImageConfigurationComponentViewExtensionPoint))]
-	public class KeyImageConfigurationComponent : ConfigurationApplicationComponent
+	[AssociateView(typeof (PublishingConfigurationComponentViewExtensionPoint))]
+	public class PublishingConfigurationComponent : ConfigurationApplicationComponent
 	{
-		internal KeyImageConfigurationComponent()
+		internal PublishingConfigurationComponent()
 		{
 		}
 
@@ -60,17 +60,17 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public override void Start()
 		{
-			PublishToDefaultServers = KeyImageSettings.Default.PublishToDefaultServers;
-			PublishLocalToSourceAE = KeyImageSettings.Default.PublishLocalToSourceAE;
+			PublishToDefaultServers = PublishingSettings.Default.PublishToDefaultServers;
+			PublishLocalToSourceAE = PublishingSettings.Default.PublishLocalToSourceAE;
 
 			base.Start();
 		}
 
 		public override void Save()
 		{
-			KeyImageSettings.Default.PublishToDefaultServers = PublishToDefaultServers;
-			KeyImageSettings.Default.PublishLocalToSourceAE = PublishLocalToSourceAE;
-			KeyImageSettings.Default.Save();
+			PublishingSettings.Default.PublishToDefaultServers = PublishToDefaultServers;
+			PublishingSettings.Default.PublishLocalToSourceAE = PublishLocalToSourceAE;
+			PublishingSettings.Default.Save();
 		}
 	}
 }

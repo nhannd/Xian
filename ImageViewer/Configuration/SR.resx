@@ -131,9 +131,6 @@ Each server must have a unique Name and cannot have the same AE Title, Host and 
     <value>The Server Group '{0}' conflicts with '{1}'.
 Please choose another Server Group Name.</value>
   </data>
-  <data name="KeyImageConfigurationPath" xml:space="preserve">
-    <value>Key Images</value>
-  </data>
   <data name="LabelContextMenu" xml:space="preserve">
     <value>Context Menu</value>
   </data>
@@ -223,6 +220,9 @@ Please choose another Server Group Name.</value>
   </data>
   <data name="PathContextMenuConfiguration" xml:space="preserve">
     <value>Context Menu (Image)</value>
+  </data>
+  <data name="PublishingConfiguration" xml:space="preserve">
+    <value>Publishing</value>
   </data>
   <data name="TitleAddNewServer" xml:space="preserve">
     <value>Add New Server</value>

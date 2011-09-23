@@ -99,15 +99,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Key Images.
-        /// </summary>
-        internal static string KeyImageConfigurationPath {
-            get {
-                return ResourceManager.GetString("KeyImageConfigurationPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Context Menu.
         /// </summary>
         internal static string LabelContextMenu {
@@ -374,6 +365,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string PathContextMenuConfiguration {
             get {
                 return ResourceManager.GetString("PathContextMenuConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publishing.
+        /// </summary>
+        internal static string PublishingConfiguration {
+            get {
+                return ResourceManager.GetString("PublishingConfiguration", resourceCulture);
             }
         }
         

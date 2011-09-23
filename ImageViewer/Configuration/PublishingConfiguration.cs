@@ -11,16 +11,16 @@
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
-	public static class KeyImageConfiguration
+	public static class PublishingConfiguration
 	{
 		public static bool PublishLocalToSourceAE
 		{
-			get { return KeyImageSettings.Default.PublishLocalToSourceAE; }
+			get { return PublishingSettings.Default.PublishLocalToSourceAE; }
 		}
 
 		public static bool PublishToDefaultServers
 		{
-			get { return KeyImageSettings.Default.PublishToDefaultServers; }
+			get { return PublishingSettings.Default.PublishToDefaultServers; }
 		}
 	}
 }

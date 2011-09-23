@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
-    partial class KeyImageConfigurationComponentControl
+    partial class PublishingConfigurationComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KeyImageConfigurationComponentControl));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PublishingConfigurationComponentControl));
 			this._publishingGroup = new System.Windows.Forms.GroupBox();
 			this._publishLocalToSourceAE = new System.Windows.Forms.CheckBox();
 			this._publishToDefaultServers = new System.Windows.Forms.CheckBox();

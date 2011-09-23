@@ -72,14 +72,14 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="KeyImageConfiguration.cs" />
-    <Compile Include="KeyImageConfigurationComponent.cs" />
-    <Compile Include="KeyImageConfigurationPageProvider.cs" />
-    <Compile Include="KeyImageSettings.cs" />
-    <Compile Include="KeyImageSettings.Designer.cs">
+    <Compile Include="PublishingConfiguration.cs" />
+    <Compile Include="PublishingConfigurationComponent.cs" />
+    <Compile Include="PublishingConfigurationPageProvider.cs" />
+    <Compile Include="PublishingSettings.cs" />
+    <Compile Include="PublishingSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>KeyImageSettings.settings</DependentUpon>
+      <DependentUpon>PublishingSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="LocalFileOrDefaultValueSettingsProvider.cs" />
     <Compile Include="MonitorConfigurationApplicationComponent.cs" />
@@ -186,9 +186,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DefaultServerSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="KeyImageSettings.settings">
+    <None Include="PublishingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>KeyImageSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>PublishingSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

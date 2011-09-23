@@ -9,35 +9,29 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="KeyImageConfigurationComponent"/>.
-    /// </summary>
-    public partial class KeyImageConfigurationComponentControl : ApplicationComponentUserControl
-    {
-        private KeyImageConfigurationComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="PublishingConfigurationComponent"/>.
+	/// </summary>
+	public partial class PublishingConfigurationComponentControl : ApplicationComponentUserControl
+	{
+		private readonly PublishingConfigurationComponent _component;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public KeyImageConfigurationComponentControl(KeyImageConfigurationComponent component)
-            :base(component)
-        {
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PublishingConfigurationComponentControl(PublishingConfigurationComponent component)
+			: base(component)
+		{
 			_component = component;
-            InitializeComponent();
+			InitializeComponent();
 
 			_publishToDefaultServers.DataBindings.Add("Checked", _component, "PublishToDefaultServers", false, DataSourceUpdateMode.OnPropertyChanged);
 			_publishLocalToSourceAE.DataBindings.Add("Checked", _component, "PublishLocalToSourceAE", false, DataSourceUpdateMode.OnPropertyChanged);
-        }
-    }
+		}
+	}
 }
