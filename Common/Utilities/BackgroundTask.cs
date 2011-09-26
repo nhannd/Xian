@@ -295,6 +295,7 @@ namespace ClearCanvas.Common.Utilities
         private event EventHandler<BackgroundTaskProgressEventArgs> _progressUpdated;
         private event EventHandler<BackgroundTaskTerminatedEventArgs> _terminated;
         private BackgroundTaskProgressEventArgs _lastBackgroundTaskProgress;
+    	private bool _disposed;
 
         /// <summary>
         /// Creates and executes a new <see cref="BackgroundTask"/> based on the specified arguments.
@@ -457,6 +458,7 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
         public void Dispose()
         {
+			_disposed = true;
             _backgroundWorker.Dispose();
         }
 
@@ -487,13 +489,21 @@ namespace ClearCanvas.Common.Utilities
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+			// do not propagate any events after task has been disposed
+			if(_disposed)
+				return;
+
             _lastBackgroundTaskProgress = new BackgroundTaskProgressEventArgs(_userState, (BackgroundTaskProgress) e.UserState);
             EventsHelper.Fire(_progressUpdated, this, _lastBackgroundTaskProgress);
         }
         
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            // if there was an unhandled exception in the worker thread, then e.Error will be non-null
+			// do not propagate any events after task has been disposed
+			if (_disposed)
+				return;
+
+			// if there was an unhandled exception in the worker thread, then e.Error will be non-null
             // if there was a handled exception in the worker thread, and the worker passed it back, _error will be non-null
             // therefore, coalesce the results, giving precedence to the unhandled exception
             _error = e.Error ?? _error;
