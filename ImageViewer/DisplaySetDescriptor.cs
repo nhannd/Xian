@@ -16,17 +16,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
-    public enum DicomDisplaySetComposition
-    {
-        Undefined = 0,
-        PartialImage = 100,
-        PartialSeries = 200,
-        CompleteSeries = 300,
-        PartialStudy = 400,
-        CompleteStudy = 500,
-        ManyStudies = 600
-    }
-
 	/// <summary>
 	/// Definition of an <see cref="IDisplaySetDescriptor"/> whose contents are based on
 	/// a DICOM Series.
@@ -51,12 +40,13 @@ namespace ClearCanvas.ImageViewer
         /// </remarks>
 		ISeriesIdentifier SourceSeries { get; }
 
+        //TODO (CR July 2011): Not sure about this ...
+
         /// <summary>
-        /// Gets a simple value that best describes the composition of the display set. For example,
-        /// the display set represents a complete series, or perhaps it is a composition
-        /// of images from multiple series, or maybe even different studies.
+        /// Gets whether or not the display set is comprised of simple DICOM images, taken from a single
+        /// series, or whether it is a composite of images from multiple series.
         /// </summary>
-        DicomDisplaySetComposition Composition { get; }
+        bool IsComposite { get; }
 
 		//TODO: put this stuff back when we actually support dynamically updating the viewer.
 		//bool Update(Sop sop);
@@ -112,7 +102,6 @@ namespace ClearCanvas.ImageViewer
 		protected DicomDisplaySetDescriptor(ISeriesIdentifier sourceSeries)
 			: this(sourceSeries, null)
 		{
-            Composition = DicomDisplaySetComposition.Undefined;
 		}
 
 		/// <summary>
@@ -120,8 +109,6 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected DicomDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImageFactory presentationImageFactory)
 		{
-            Composition = DicomDisplaySetComposition.Undefined;
-            
 			_sourceSeries = sourceSeries;
 			_presentationImageFactory = presentationImageFactory;
 		}
@@ -151,12 +138,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _sourceSeries; }
 		}
 
-        /// <summary>
-        /// Gets a simple value that best describes the composition of the display set. For example,
-        /// the display set represents a complete series, or perhaps it is a composition
-        /// of images from multiple series, or maybe even different studies.
-        /// </summary>
-        public DicomDisplaySetComposition Composition { get; protected set; }
+        public bool IsComposite { get; protected set; }
 
 		#endregion
 

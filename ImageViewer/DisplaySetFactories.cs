@@ -33,8 +33,6 @@ namespace ClearCanvas.ImageViewer
 		{
             Platform.CheckForNullReference(sourceSeries, "sourceSeries");
 			Platform.CheckForNullReference(presentationImageFactory, "presentationImageFactory");
-
-            Composition = DicomDisplaySetComposition.CompleteSeries;
 		}
 
 		protected SeriesDisplaySetDescriptor(SeriesDisplaySetDescriptor source, ICloningContext context)
@@ -72,11 +70,6 @@ namespace ClearCanvas.ImageViewer
 		{
             Platform.CheckForNullReference(sourceSeries, "sourceSeries");
             Platform.CheckForNullReference(frame, "frame");
-
-            if (sourceSeries.SeriesInstanceUid != frame.SeriesInstanceUid) //Key Image ...
-                Composition = DicomDisplaySetComposition.PartialStudy;
-            else
-                Composition = DicomDisplaySetComposition.PartialImage;
 
             _seriesInstanceUid = frame.SeriesInstanceUid;
 			_sopInstanceUid = frame.SopInstanceUid;
@@ -136,11 +129,6 @@ namespace ClearCanvas.ImageViewer
 		{
             Platform.CheckForNullReference(sourceSeries, "sourceSeries");
             Platform.CheckForNullReference(imageSop, "imageSop");
-            
-            if (sourceSeries.SeriesInstanceUid != imageSop.SeriesInstanceUid) //Key Image ...
-                Composition = DicomDisplaySetComposition.PartialStudy;
-            else
-                Composition = DicomDisplaySetComposition.PartialSeries;
             
             _sopInstanceUid = imageSop.SopInstanceUid;
 			_seriesInstanceUid = imageSop.SeriesInstanceUid;
@@ -300,7 +288,7 @@ namespace ClearCanvas.ImageViewer
 				if (sop.IsImage)
 				{
 					ImageSop imageSop = (ImageSop)sop;
-					DisplaySetDescriptor descriptor;
+					DicomDisplaySetDescriptor descriptor;
 
 					if (imageSop.NumberOfFrames == 1)
 						descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), imageSop, position++);
@@ -372,7 +360,6 @@ namespace ClearCanvas.ImageViewer
 			
             EchoNumber = echoNumber;
 			_suffix = String.Format(SR.SuffixFormatMREchoDisplaySet, echoNumber);
-            Composition = DicomDisplaySetComposition.PartialSeries;
 		}
 
 		protected MREchoDisplaySetDescriptor(MREchoDisplaySetDescriptor source, ICloningContext context)
@@ -505,7 +492,6 @@ namespace ClearCanvas.ImageViewer
             
             _sopInstanceUid = sopInstanceUid;
 			_suffix = String.Format(SR.SuffixFormatMultiframeDisplaySet, instanceNumber);
-            Composition = DicomDisplaySetComposition.PartialSeries;
 		}
 
 		protected MultiframeDisplaySetDescriptor(MultiframeDisplaySetDescriptor source, ICloningContext context)
@@ -547,7 +533,6 @@ namespace ClearCanvas.ImageViewer
 		    Platform.CheckForNullReference(sourceSeries, "sourceSeries");
 
             _suffix = SR.SuffixSingleImagesDisplaySet;
-            Composition = DicomDisplaySetComposition.PartialSeries;
 		}
 
 		protected SingleImagesDisplaySetDescriptor(SingleImagesDisplaySetDescriptor source, ICloningContext context)
@@ -694,17 +679,14 @@ namespace ClearCanvas.ImageViewer
             
             SourceStudy = sourceStudy;
             Modality = modality;
-
-            if (SourceStudy.ModalitiesInStudy != null && SourceStudy.ModalitiesInStudy.Length == 1)
-                Composition = DicomDisplaySetComposition.CompleteStudy;
-            else
-                Composition = DicomDisplaySetComposition.PartialStudy;
         }
 
         protected ModalityDisplaySetDescriptor(ModalityDisplaySetDescriptor source, ICloningContext context)
             :base(source, context)
 		{
-			context.CloneFields(source, this);
+            //context.CloneFields(source, this);
+            Modality = source.Modality;
+            SourceStudy = source.SourceStudy;
 		}
 
         public IStudyIdentifier SourceStudy { get; private set; }
@@ -739,7 +721,14 @@ namespace ClearCanvas.ImageViewer
 
         private IDisplaySet CreateDisplaySet(Study study, IEnumerable<Series> modalitySeries)
         {
-            var modality = modalitySeries.First().Modality;
+            var first = modalitySeries.FirstOrDefault();
+            if (first == null)
+                return null; 
+
+            var modality = first.Modality;
+            if (String.IsNullOrEmpty(modality))
+                return null;
+
             var displaySet = new DisplaySet(new ModalityDisplaySetDescriptor(study.GetIdentifier(), modality, PresentationImageFactory));
             int seriesCount = 0;
             foreach (var series in modalitySeries)
@@ -913,7 +902,6 @@ namespace ClearCanvas.ImageViewer
 
         #endregion
     }
-    
-    #endregion
 
+    #endregion
 }
