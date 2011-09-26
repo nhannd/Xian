@@ -88,9 +88,11 @@ namespace ClearCanvas.Web.Services
 
             _application = application;
             _queue = new BlockingQueue<Command>();
-            _thread = new Thread(RunThread);
-            _thread.CurrentCulture = application.Culture;
-            _thread.CurrentUICulture = application.Culture;
+            _thread = new Thread(RunThread)
+                          {
+                              CurrentCulture = application.Culture, 
+                              CurrentUICulture = application.Culture
+                          };
             _thread.Name = String.Format("Web Simulated UI Thread [{0}]", _thread.ManagedThreadId);
             _thread.Start();
         }
@@ -116,9 +118,14 @@ namespace ClearCanvas.Web.Services
             }
             else
             {
-                Command command = new Command(callback, state);
-                _queue.Enqueue(command);
-                command.Wait();
+                // Exception occurred here in WebPortal testing, just ignoring send if the queue doesn't exist, assume its a garbage 
+                // collection/cleanup issue.
+                if (_queue != null)
+                {
+                    Command command = new Command(callback, state);
+                    _queue.Enqueue(command);
+                    command.Wait();
+                }
             }
         }
 

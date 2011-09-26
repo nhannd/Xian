@@ -72,6 +72,15 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="PublishingConfiguration.cs" />
+    <Compile Include="PublishingConfigurationComponent.cs" />
+    <Compile Include="PublishingConfigurationPageProvider.cs" />
+    <Compile Include="PublishingSettings.cs" />
+    <Compile Include="PublishingSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PublishingSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="LocalFileOrDefaultValueSettingsProvider.cs" />
     <Compile Include="MonitorConfigurationApplicationComponent.cs" />
     <Compile Include="MonitorConfigurationPageProvider.cs" />
@@ -176,6 +185,10 @@
     <None Include="DefaultServerSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DefaultServerSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PublishingSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PublishingSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

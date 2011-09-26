@@ -204,6 +204,7 @@
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
+    <Compile Include="StudyManagement\SopInstanceFactoryBase.cs" />
     <Compile Include="StudyManagement\StudyExtensions.cs" />
     <Compile Include="StudyManagement\Tests\NormalizedPixelSpacingTests.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
@@ -243,7 +244,6 @@
     <Compile Include="Imaging\IColorMapInstaller.cs" />
     <Compile Include="Imaging\IdentityVoiLinearLut.cs" />
     <Compile Include="Imaging\Tests\IdentityVoiLinearLutTest.cs" />
-    <Compile Include="PresentationStates\Dicom\Institution.cs" />
     <Compile Include="Imaging\IVoiLutInstaller.cs" />
     <Compile Include="Rendering\Tests\ImageRendererVoiLutTests.cs" />
     <Compile Include="Tests\DisplaySetFactoryTests.cs" />

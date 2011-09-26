@@ -224,6 +224,7 @@ namespace ClearCanvas.ImageViewer
 
 		string Name { get; }
 		string Description { get; }
+		bool IsExpanded { get; set; }
 	}
 
 	#endregion
@@ -291,6 +292,8 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		public bool IsExpanded { get; set; }
+
 		#endregion
 		#endregion
 
@@ -311,7 +314,6 @@ namespace ClearCanvas.ImageViewer
 		private readonly ImageSetTreeGroupItem _parent;
 		private readonly FilteredGroup<IImageSet> _group;
 		private readonly Tree<IImageSetTreeItem> _tree;
-		private bool _isExpanded;
 
 		private readonly IComparer<IImageSet> _imageSetComparer;
 
@@ -338,16 +340,12 @@ namespace ClearCanvas.ImageViewer
 			_group.ChildGroups.ItemChanged += OnChildGroupChanged;
 
 			Initialize();
-			_isExpanded = false;
+			IsExpanded = false;
 		}
 
 		#region Public Properties/Events
 
-		public bool IsExpanded
-		{
-			get { return _isExpanded; }
-			set { _isExpanded = value; }
-		}
+		public bool IsExpanded { get; set; }
 
 		public Tree<IImageSetTreeItem> Tree
 		{
@@ -580,16 +578,12 @@ namespace ClearCanvas.ImageViewer
 
 		public override bool GetExpanded(object item)
 		{
-			if (item is ImageSetTreeGroupItem)
-				return ((ImageSetTreeGroupItem)item).IsExpanded;
-
-			return false;
+			return ((IImageSetTreeItem)item).IsExpanded;
 		}
 
 		public override void SetExpanded(object item, bool expanded)
 		{
-			if (item is ImageSetTreeGroupItem)
-				((ImageSetTreeGroupItem)item).IsExpanded = expanded;
+			((IImageSetTreeItem)item).IsExpanded = expanded;
 		}
 
 		public override bool CanHaveSubTree(object item)

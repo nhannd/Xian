@@ -9,6 +9,7 @@
 
 #endregion
 
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Web.Enterprise.Authentication
@@ -87,6 +88,29 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                 _user.Credentials.SessionToken = newToken;
                 _valid = true;
             }   
+        }
+
+        public void Query()
+        {
+            _valid = false;
+
+            using (var service = new LoginService())
+            {
+                SessionInfo sessionInfo = service.Query(Credentials.SessionToken.Id);
+
+                if (sessionInfo == null)
+                {
+                    throw new SessionValidationException();
+                }
+
+                if (sessionInfo.Credentials.SessionToken.ExpiryTime < Platform.Time)
+                {
+                    throw new SessionValidationException();
+                }
+
+                _user.Credentials = sessionInfo.Credentials;                
+                _valid = true;
+            }
         }
     }
 }

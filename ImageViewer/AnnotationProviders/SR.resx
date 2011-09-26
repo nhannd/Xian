@@ -349,7 +349,7 @@
     <value>Laterality (Series)</value>
   </data>
   <data name="Dicom_GeneralSeries_Laterality_Label" xml:space="preserve">
-    <value>Laterality</value>
+    <value>Lat</value>
   </data>
   <data name="Dicom_GeneralSeries_Modality_DisplayName" xml:space="preserve">
     <value>Modality</value>
@@ -906,5 +906,70 @@
   </data>
   <data name="SeparatorSingleLine" xml:space="preserve">
     <value>\</value>
+  </data>
+  <data name="FormatHertzPerPixel" xml:space="preserve">
+    <value>{0} Hz/px</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatMillimetersPerSecond" xml:space="preserve">
+    <value>{0} mm/s</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="Dicom_CTImage_TablePosition_DisplayName" xml:space="preserve">
+    <value>Table Position</value>
+  </data>
+  <data name="Dicom_CTImage_TablePosition_Label" xml:space="preserve">
+    <value>Pos</value>
+  </data>
+  <data name="Dicom_CTImage_TableSpeed_DisplayName" xml:space="preserve">
+    <value>Table Speed</value>
+  </data>
+  <data name="Dicom_CTImage_TableSpeed_Label" xml:space="preserve">
+    <value>Spd</value>
+  </data>
+  <data name="Dicom_DXImage_ContrastBolusAgent_DisplayName" xml:space="preserve">
+    <value>Contrast/Bolus Agent</value>
+  </data>
+  <data name="Dicom_DXImage_ContrastBolusAgent_Label" xml:space="preserve">
+    <value>Contrast/Bolus</value>
+  </data>
+  <data name="Dicom_MRImage_FlipAngle_DisplayName" xml:space="preserve">
+    <value>Flip Angle</value>
+  </data>
+  <data name="Dicom_MRImage_FlipAngle_Label" xml:space="preserve">
+    <value>Flip</value>
+  </data>
+  <data name="Dicom_MRImage_InversionTime_DisplayName" xml:space="preserve">
+    <value>Inverstion Time</value>
+  </data>
+  <data name="Dicom_MRImage_InversionTime_Label" xml:space="preserve">
+    <value>TI</value>
+  </data>
+  <data name="Dicom_MRImage_NumberOfAverages_DisplayName" xml:space="preserve">
+    <value>Number of Averages</value>
+  </data>
+  <data name="Dicom_MRImage_NumberOfAverages_Label" xml:space="preserve">
+    <value>#Avgs</value>
+  </data>
+  <data name="Dicom_MRImage_PixelBandwidth_DisplayName" xml:space="preserve">
+    <value>Pixel Bandwidth</value>
+  </data>
+  <data name="Dicom_MRImage_PixelBandwidth_Label" xml:space="preserve">
+    <value>BW</value>
+  </data>
+  <data name="Dicom_MRImage_TriggerTime_DisplayName" xml:space="preserve">
+    <value>Trigger Time</value>
+  </data>
+  <data name="Dicom_MRImage_TriggerTime_Label" xml:space="preserve">
+    <value>Trig</value>
+  </data>
+  <data name="FormatTablePositionSpeed" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="Dicom_CTImage_Composite_TablePositionSpeed_DisplayName" xml:space="preserve">
+    <value>Table Position/Speed</value>
+  </data>
+  <data name="Dicom_CTImage_Composite_TablePositionSpeed_Label" xml:space="preserve">
+    <value>Table</value>
   </data>
 </root>

@@ -17,6 +17,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Threading;
 using System.Security.Policy;
@@ -193,8 +194,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					{
 						KeyImagePublisher publisher = new KeyImagePublisher(info)
 						                              	{
-						                              		PublishLocalToSourceAE = KeyImageSettings.Default.PublishLocalToSourceAE,
-						                              		PublishToDefaultServers = KeyImageSettings.Default.PublishToDefaultServers
+						                              		PublishLocalToSourceAE = PublishingConfiguration.PublishLocalToSourceAE,
+						                              		PublishToDefaultServers = PublishingConfiguration.PublishToDefaultServers
 						                              	};
 						publisher.Publish();
 					}

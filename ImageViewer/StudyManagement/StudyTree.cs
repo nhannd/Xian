@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A tree representation of the DICOM patient, study, series, SOP hierarchy.
 	/// </summary>
-	public sealed class StudyTree
+	public sealed class StudyTree : IDisposable
 	{
 		// We add these master dictionaries so we can have rapid
 		// look up of study, series and sop objects without having to traverse

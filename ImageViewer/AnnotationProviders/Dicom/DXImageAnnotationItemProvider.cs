@@ -150,6 +150,18 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 					DicomDataFormatHelper.RawStringFormat
 					)
 				);
+
+			_annotationItems.Add
+				(
+				new CodeSequenceAnnotationItem
+					(
+					// this isn't even a DX module, but other X-Ray related modules
+					"Dicom.DXImage.ContrastBolusAgent",
+					resolver,
+					DicomTags.ContrastBolusAgentSequence,
+					DicomTags.ContrastBolusAgent
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

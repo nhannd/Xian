@@ -13,13 +13,13 @@ using System.Configuration;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
+namespace ClearCanvas.ImageViewer.Configuration
 {
-	[SettingsGroupDescription("Settings related to key images.")]
-	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class KeyImageSettings
+	[SettingsGroupDescription("Settings related to publishing DICOM data.")]
+	[SettingsProvider(typeof (StandardSettingsProvider))]
+	internal sealed partial class PublishingSettings
 	{
-		private KeyImageSettings()
+		private PublishingSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}

@@ -29,9 +29,9 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
-    partial class KeyImageConfigurationComponentControl
+    partial class PublishingConfigurationComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KeyImageConfigurationComponentControl));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PublishingConfigurationComponentControl));
 			this._publishingGroup = new System.Windows.Forms.GroupBox();
 			this._publishLocalToSourceAE = new System.Windows.Forms.CheckBox();
 			this._publishToDefaultServers = new System.Windows.Forms.CheckBox();
@@ -86,12 +86,12 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this._publishToDefaultServers.Name = "_publishToDefaultServers";
 			this._publishToDefaultServers.UseVisualStyleBackColor = true;
 			// 
-			// KeyImageConfigurationComponentControl
+			// PublishingConfigurationComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._publishingGroup);
-			this.Name = "KeyImageConfigurationComponentControl";
+			this.Name = "PublishingConfigurationComponentControl";
 			this._publishingGroup.ResumeLayout(false);
 			this._publishingGroup.PerformLayout();
 			this.ResumeLayout(false);

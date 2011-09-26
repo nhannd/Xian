@@ -92,6 +92,8 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\BindingListener.cs" />
+    <Compile Include="Command\EventToCommand.cs" />
     <Compile Include="Command\RelayCommandGeneric.cs" />
     <Compile Include="JunkPage.xaml.cs">
       <DependentUpon>JunkPage.xaml</DependentUpon>

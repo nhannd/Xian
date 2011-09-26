@@ -300,6 +300,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             if (!_shuttingDown)
             {
                 _shuttingDown = true;
+                EventMediator.StopApplication();
 
                 Visibility = Visibility.Collapsed;
 
