@@ -203,54 +203,6 @@
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="&gt;&gt;_showOriginalSeries.Name" xml:space="preserve">
-    <value>_showOriginalSeries</value>
-  </data>
-  <data name="&gt;&gt;_showOriginalSeries.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_showOriginalSeries.Parent" xml:space="preserve">
-    <value>_creationGroup</value>
-  </data>
-  <data name="&gt;&gt;_showOriginalSeries.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_createAllImagesDisplaySet.Name" xml:space="preserve">
-    <value>_createAllImagesDisplaySet</value>
-  </data>
-  <data name="&gt;&gt;_createAllImagesDisplaySet.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_createAllImagesDisplaySet.Parent" xml:space="preserve">
-    <value>_creationGroup</value>
-  </data>
-  <data name="&gt;&gt;_createAllImagesDisplaySet.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="_creationGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 46</value>
-  </data>
-  <data name="_creationGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>195, 113</value>
-  </data>
-  <data name="_creationGroup.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="_creationGroup.Text" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="&gt;&gt;_creationGroup.Name" xml:space="preserve">
-    <value>_creationGroup</value>
-  </data>
-  <data name="&gt;&gt;_creationGroup.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_creationGroup.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_creationGroup.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="_showOriginalSeries.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -318,6 +270,30 @@
   <data name="&gt;&gt;_createAllImagesDisplaySet.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="_creationGroup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 46</value>
+  </data>
+  <data name="_creationGroup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 113</value>
+  </data>
+  <data name="_creationGroup.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="_creationGroup.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="&gt;&gt;_creationGroup.Name" xml:space="preserve">
+    <value>_creationGroup</value>
+  </data>
+  <data name="&gt;&gt;_creationGroup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_creationGroup.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_creationGroup.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="_invertImages.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -352,7 +328,7 @@
     <value>15, 165</value>
   </data>
   <data name="_presentationGroupBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 45</value>
+    <value>406, 45</value>
   </data>
   <data name="_presentationGroupBox.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -505,10 +481,10 @@
     <value>0</value>
   </data>
   <data name="_splittingGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 46</value>
+    <value>221, 46</value>
   </data>
   <data name="_splittingGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>195, 113</value>
+    <value>200, 113</value>
   </data>
   <data name="_splittingGroup.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -535,7 +511,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>425, 226</value>
+    <value>435, 226</value>
   </data>
   <data name="&gt;&gt;_tooltip.Name" xml:space="preserve">
     <value>_tooltip</value>

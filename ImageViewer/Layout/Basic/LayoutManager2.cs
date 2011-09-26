@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                     foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
                         displaySets.Add(displaySet);
 
-                    if (displaySets.Count > 0)
+                    if (displaySets.Count > 0 && !ShowOriginalSeries)
                         showOriginal = false;
                 }
 
