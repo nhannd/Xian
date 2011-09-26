@@ -17,7 +17,7 @@ using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
 	internal class DefineAuthorityGroups : IDefineAuthorityGroups
 	{
 		#region IDefineAuthorityGroups Members
