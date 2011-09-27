@@ -43,10 +43,11 @@ namespace ClearCanvas.ImageViewer.Comparers
 
             //Group by common series level attributes
             //This sorts "FOR PRESENTATION" images to the beginning (except in reverse, of course).
-            if (sop.IsImage)
+            if (!sop.IsImage)
                 yield return 1;
             else
                 yield return ((ImageSop)sop).PresentationIntentType == "FOR PRESENTATION" ? 0 : 1;
+
             yield return sop.SeriesNumber;
             yield return sop.SeriesDescription;
             yield return sop.SeriesInstanceUid;

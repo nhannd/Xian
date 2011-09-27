@@ -275,17 +275,15 @@ namespace ClearCanvas.ImageViewer
 		private List<IDisplaySet> DoCreateSingleImageDisplaySets(Series series)
 		{
 			List<IDisplaySet> displaySets = new List<IDisplaySet>();
-            if (series.Sops.Count < 2)
-                return displaySets;
-
 			int position = 0;
+
 			foreach (Sop sop in series.Sops)
 			{
 				List<IPresentationImage> images = PresentationImageFactory.CreateImages(sop);
 				if (images.Count == 0)
 					continue;
 
-				if (sop.IsImage)
+                if (sop.IsImage)
 				{
 					ImageSop imageSop = (ImageSop)sop;
 					DicomDisplaySetDescriptor descriptor;
@@ -333,7 +331,14 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			return displaySets;
+            if (displaySets.Count == 1)
+            {
+                //Degenerate case; single image series, which we're not supposed to create.
+                displaySets[0].Dispose();
+                displaySets.Clear();
+            }
+
+		    return displaySets;
 		}
 
 		internal static IEnumerable<IDisplaySet> CreateSeriesDisplaySets(Series series, StudyTree studyTree)
@@ -733,17 +738,18 @@ namespace ClearCanvas.ImageViewer
             int seriesCount = 0;
             foreach (var series in modalitySeries)
             {
+                bool added = false;
                 foreach (var imageSop in series.Sops) //We don't want key images, references etc.
                 {
-                    bool added = false;
                     foreach (var image in PresentationImageFactory.CreateImages(imageSop))
                     {
                         displaySet.PresentationImages.Add(image);
                         added = true;
                     }
-
-                    if (added)++seriesCount;
                 }
+
+                if (added)
+                    ++seriesCount;
             }
 
             // Degenerate case is one series, in which case we don't create this display set.
