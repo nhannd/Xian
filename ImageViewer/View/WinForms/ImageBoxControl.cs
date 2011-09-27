@@ -31,7 +31,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private CompositeUndoableCommand _historyCommand;
 		private MemorableUndoableCommand _imageBoxCommand;
         private readonly Dictionary<IImageBoxExtension, IImageBoxExtensionView> _extensionViews = new Dictionary<IImageBoxExtension, IImageBoxExtensionView>();
-            
+
+
+        private IList<IImageBoxExtension> _extensions;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -58,7 +61,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_imageBox.SelectionChanged += OnImageBoxSelectionChanged;
 			_imageBox.LayoutCompleted += OnLayoutCompleted;
 
-            foreach (var extension in ImageBox.Extensions)
+            foreach (var extension in Extensions)
             {
                 AttachExtension(extension);
             }
@@ -232,13 +235,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void PerformDispose()
 		{
-            if (_imageBox.Extensions!=null)
-            {
-                foreach(IImageBoxExtension extension in _imageBox.Extensions)
-                {
-                    DetachExtension(extension);
-                }
-            }
+
+            DisposeExtensions();
 
 			if (_imageBox != null)
 			{
@@ -520,6 +518,55 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         #region ImageBox Extension support
 
+
+        ///<summary>
+        /// Gets a list of plugins for the image box that implementing <see cref="IImageBoxExtension"/>
+        ///</summary>
+        public IEnumerable<IImageBoxExtension> Extensions
+        {
+            get
+            {
+
+                LoadExtensions();
+                return _extensions;
+            }
+        }
+
+
+        private void LoadExtensions()
+        {
+            if (_extensions == null)
+            {
+                _extensions = new List<IImageBoxExtension>();
+                foreach (IImageBoxExtension extension in new ImageBoxExtensionPoint().CreateExtensions())
+                {
+                    extension.ImageBox = this.ImageBox;
+                    _extensions.Add(extension);
+                }
+            }
+
+        }
+
+        private void DisposeExtensions()
+        {
+            if (_extensions != null)
+            {
+                foreach (var ext in _extensions)
+                {
+                    try
+                    {
+                        DisposeExtension(ext);
+                    }
+                    catch (Exception ex)
+                    {
+                        Platform.Log(LogLevel.Warn, "Error occurred while disposing {0} ImageBox extension", ext.Name);
+                    }
+                }
+
+                _extensions.Clear();
+            }
+
+        }
         
         void AttachExtension(IImageBoxExtension extension)
         {
@@ -571,7 +618,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             return null;
         }
         
-        void DetachExtension(IImageBoxExtension extension)
+        void DisposeExtension(IImageBoxExtension extension)
         {
             extension.PropertyChanged -= OnExtensionPropertyChanged;
 
@@ -583,6 +630,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 _extensionViews.Remove(extension);
                 view.Dispose();
             }
+
+            extension.Dispose();
         }
 
         void OnExtensionPropertyChanged(object sender, PropertyChangedEventArgs e)
