@@ -365,6 +365,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			this.CaptureMouseWheelHandler = null;
 
 			IClickAction action = _shortcutManager.GetKeyboardAction(keyboardMessage.Shortcut);
+            Trace.WriteLine(String.Format("Finding shortcut for: {0}", keyboardMessage.Shortcut));
 			if (action != null)
 			{
 				action.Click();
