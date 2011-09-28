@@ -27,6 +27,19 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+
+        public bool HasStructureReport
+        {
+            get
+            {
+                if (this.Series==null)
+                    return false;
+
+                return CollectionUtils.Contains(this.Series.Values, 
+                    (series)=> !String.IsNullOrEmpty(series.Modality) && series.Modality.Equals("SR"));
+            }
+        }
+
         /// <summary>
         /// Gets the <see cref="Series"/> related to this study.
         /// </summary>

@@ -776,4 +776,7 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="AddEditUserGroups_PasswordConfirmTitle" xml:space="preserve">
     <value>Please Confirm Update</value>
   </data>
+  <data name="WarningEditStudyWithAttachment" xml:space="preserve">
+    <value>Warning: this study contains attachment(s) which must be examined AFTER the edit to ensure all information is consistent.</value>
+  </data>
 </root>

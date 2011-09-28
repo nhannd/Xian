@@ -316,7 +316,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 Comment.Text = SR.CustomReasonComment;
             }
             SaveReasonAsName.Text = string.Empty;
-
+            
+            StructureReportExistWarning.Visible = this.Study.HasStructureReport;
+            
             DataBind();
         }
 
