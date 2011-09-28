@@ -461,4 +461,10 @@
   <data name="UserEmailAddress" xml:space="preserve">
     <value>Email Address</value>
   </data>
+  <data name="DicomTagDetails" xml:space="preserve">
+    <value>DICOM Tag Details</value>
+  </data>
+  <data name="DicomTagName" xml:space="preserve">
+    <value>DICOM Tag Name</value>
+  </data>
 </root>
