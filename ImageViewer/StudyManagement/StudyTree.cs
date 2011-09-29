@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -46,6 +47,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public PatientCollection Patients
 		{
 			get { return _patients; }
+		}
+
+		/// <summary>
+		/// Enumerates all studies for all patients.
+		/// </summary>
+		public IEnumerable<Study> Studies
+		{
+			get { return _patients.SelectMany(p => p.Studies); }
 		}
 
 		/// <summary>
