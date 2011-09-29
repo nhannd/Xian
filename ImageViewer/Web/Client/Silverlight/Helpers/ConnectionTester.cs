@@ -101,14 +101,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 
         public static void StartAsync(Action<SpeedTestResult> actionWhenCompleted)
         {
-            ChildWindow msgBox = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.CheckingConnectionSpeed);
+           // ChildWindow msgBox = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.CheckingConnectionSpeed);
 
             ConnectionTester test = new ConnectionTester();
             test.SpeedTestCompleted += (s, ev) =>
             {
                 UIThread.Execute(() =>
                 {
-                    msgBox.Close();
+                  //  msgBox.Close();
                     var result = ev.Result;
                     actionWhenCompleted(result);
                 });
