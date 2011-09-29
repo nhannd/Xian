@@ -47,6 +47,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_maximumVertices = maximumVertices;
 		}
 
+        public bool StopOnDoubleClick { get; set; }
+
 		/// <summary>
 		/// Gets the graphic that the builder is operating on.
 		/// </summary>
@@ -90,7 +92,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.Graphic.ResetCoordinateSystem();
 			}
 			// We're done creating
-			else if (_numberOfPointsAnchored == _maximumVertices)
+			else if (_numberOfPointsAnchored == _maximumVertices || mouseInformation.ClickCount == 2 && StopOnDoubleClick)
 			{
                 // When user moves very quickly and events are filtered for performance purpose (eg web viewer case), 
                 // the final point may not be the same as the last tracked point. Must update the final point based on the latest mouse position.
