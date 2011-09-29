@@ -15,6 +15,9 @@ namespace ClearCanvas.Web.Client.Silverlight
 {
     public static class PopupManager
     {
+        public static event EventHandler PopupOpened;
+        public static event EventHandler PopupClosed;
+
         private static IPopup _activePopup;
 
         internal static IPopup ActivePopup
@@ -32,6 +35,16 @@ namespace ClearCanvas.Web.Client.Silverlight
             }
         }
 
+        public static void FirePopupOpened()
+        {
+            if (PopupOpened != null) PopupOpened(null,EventArgs.Empty);
+        }
+
+        public static void FirePopupClosed()
+        {
+            if (PopupClosed != null) PopupClosed(null, EventArgs.Empty);
+        }
+
         public static void CloseActivePopup()
         {
             if (_activePopup != null)
@@ -47,13 +60,17 @@ namespace ClearCanvas.Web.Client.Silverlight
         private static void OnPopupOpened(object sender, EventArgs e)
         {
             ActivePopup = (IPopup)sender;
+            if (PopupOpened != null) PopupOpened(sender, e);
         }
 
         private static void OnPopupClosed(object sender, EventArgs e)
         {
             var popup = (IPopup)sender;
             if (ReferenceEquals(_activePopup, popup))
+            {
                 ActivePopup = null;
+                if (PopupClosed != null) PopupClosed(sender, e);
+            }
         }
    }
 }
