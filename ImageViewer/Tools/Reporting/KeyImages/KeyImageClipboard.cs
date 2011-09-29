@@ -192,11 +192,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				{
 					try
 					{
-						KeyImagePublisher publisher = new KeyImagePublisher(info)
-						                              	{
-						                              		PublishLocalToSourceAE = PublishingConfiguration.PublishLocalToSourceAE,
-						                              		PublishToDefaultServers = PublishingConfiguration.PublishToDefaultServers
-						                              	};
+						KeyImagePublisher publisher = new KeyImagePublisher(info);
 						publisher.Publish();
 					}
 					catch (Exception e)

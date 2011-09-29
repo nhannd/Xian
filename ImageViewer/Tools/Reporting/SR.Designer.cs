@@ -151,29 +151,11 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Publishing of Key Images to the local data store has failed.  Please see the logs for more details..
+        ///   Looks up a localized string similar to Publishing of Key Images has failed.  Please see the logs for more details..
         /// </summary>
-        internal static string MessageLocalPublishingFailed {
+        internal static string MessageKeyImagePublishingFailed {
             get {
-                return ResourceManager.GetString("MessageLocalPublishingFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Publishing of Key Images to the local data store and at least one remote server has failed.  Please see the logs for more details..
-        /// </summary>
-        internal static string MessagePublishingFailed {
-            get {
-                return ResourceManager.GetString("MessagePublishingFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Publishing of Key Images to at least one remote server has failed.  Please see the logs for more details..
-        /// </summary>
-        internal static string MessageRemotePublishingFailed {
-            get {
-                return ResourceManager.GetString("MessageRemotePublishingFailed", resourceCulture);
+                return ResourceManager.GetString("MessageKeyImagePublishingFailed", resourceCulture);
             }
         }
         
