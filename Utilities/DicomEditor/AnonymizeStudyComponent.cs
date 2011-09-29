@@ -81,6 +81,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 		private readonly DicomAnonymizer.ValidationStrategy _validator;
 
 		private bool _preserveSeriesData;
+		private bool _keepReportsAndAttachments = false;
 
 		internal AnonymizeStudyComponent(StudyItem studyItem)
 		{
@@ -199,6 +200,22 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 		}
 
+		public bool KeepReportsAndAttachments
+		{
+			get { return _keepReportsAndAttachments; }
+			set
+			{
+				if (_keepReportsAndAttachments == value)
+					return;
+
+				if (value && Host != null && Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmKeepReportsAndAttachments, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
+					value = false;
+
+				_keepReportsAndAttachments = value;
+				NotifyPropertyChanged("KeepReportsAndAttachments");
+			}
+		}
+
 		public override void Start()
 		{
 			_anonymized.PatientsNameRaw = SR.DefaultAnonymousPatientName;
@@ -206,6 +223,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 			_anonymized.StudyDate = Platform.Time;
 			_anonymized.AccessionNumber = "00000001";
 			_preserveSeriesData = true;
+
+			// this should always be false by default
+			_keepReportsAndAttachments = false;
 
 			if (_anonymized.PatientsBirthDate != null)
 			{
