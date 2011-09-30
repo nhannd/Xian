@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		/// </summary>
 		protected new IPointsGraphic Roi
 		{
-			get { return ((IPointsGraphic) base.Roi); }
+            get { return ((IPointsGraphic)AnnotationGraphic.Subject); }
 		}
 
 		public override void OnCalloutLocationChangedExternally()

@@ -48,10 +48,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	}
 
 	/// <summary>
-	/// Abstract base class for implementations of <see cref="IControlGraphic"/>.
+	/// Base class for implementations of <see cref="IControlGraphic"/>.
 	/// </summary>
+	/// <remarks>
+	/// A <see cref="ControlGraphic"/> can be used on it's own where one is required,
+	/// but you essentially want one that does nothing.
+	/// </remarks>
 	[Cloneable]
-	public abstract class ControlGraphic : DecoratorCompositeGraphic, IControlGraphic
+	public class ControlGraphic : DecoratorCompositeGraphic, IControlGraphic
 	{
 		private Color _color = Color.Yellow;
 		private bool _show = true;
@@ -69,7 +73,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Constructs a new control graphic to control the given subject graphic.
 		/// </summary>
 		/// <param name="subject">The graphic to control.</param>
-		protected ControlGraphic(IGraphic subject) : base(subject)
+		public ControlGraphic(IGraphic subject) : base(subject)
 		{
 		}
 
