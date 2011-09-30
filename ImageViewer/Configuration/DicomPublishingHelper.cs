@@ -88,7 +88,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 				// if configured to publish to default servers, add those to list of destinations
 				if (PublishingSettings.Default.PublishToDefaultServers)
-					servers.AddRange(DefaultServers.GetAll());
+				{
+					foreach (var defaultServer in DefaultServers.GetAll())
+					{
+						if (defaultServer != null && !ContainsServer(servers, defaultServer))
+							servers.Add(defaultServer);
+					}
+				}
 
 				// if configured to publish to the original server, resolve the origin and add to list of destinations
 				if (PublishingSettings.Default.PublishLocalToSourceAE)
