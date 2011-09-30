@@ -60,8 +60,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public override void Start()
 		{
-			PublishToDefaultServers = PublishingSettings.Default.PublishToDefaultServers;
-			PublishLocalToSourceAE = PublishingSettings.Default.PublishLocalToSourceAE;
+			_publishToDefaultServers = PublishingSettings.Default.PublishToDefaultServers;
+			_publishLocalToSourceAE = PublishingSettings.Default.PublishLocalToSourceAE;
 
 			base.Start();
 		}

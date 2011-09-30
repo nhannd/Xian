@@ -86,10 +86,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 			{
 				var servers = new List<Server>();
 
-				// resolve the source server and add to list of destinations
-				var sourceServer = ResolveRemoteServer(SourceServerAE);
-				if (sourceServer != null && !ContainsServer(servers, sourceServer))
-					servers.Add(sourceServer);
+				// if configured to publish to default servers, add those to list of destinations
+				if (PublishingSettings.Default.PublishToDefaultServers)
+					servers.AddRange(DefaultServers.GetAll());
 
 				// if configured to publish to the original server, resolve the origin and add to list of destinations
 				if (PublishingSettings.Default.PublishLocalToSourceAE)
@@ -99,9 +98,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 						servers.Add(originServer);
 				}
 
-				// if configured to publish to default servers, add those to list of destinations
-				if (PublishingSettings.Default.PublishToDefaultServers)
-					servers.AddRange(DefaultServers.GetAll());
+				// resolve the source server and add to list of destinations
+				var sourceServer = ResolveRemoteServer(SourceServerAE);
+				if (sourceServer != null && !ContainsServer(servers, sourceServer))
+					servers.Add(sourceServer);
 
 				// enumerate the list of destination servers
 				foreach (var server in servers)
