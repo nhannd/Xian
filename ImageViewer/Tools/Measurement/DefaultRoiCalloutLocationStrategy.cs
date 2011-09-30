@@ -51,11 +51,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 
 			Callout.CoordinateSystem = CoordinateSystem.Destination;
-            AnnotationGraphic.Subject.CoordinateSystem = CoordinateSystem.Destination;
+            AnnotationSubject.CoordinateSystem = CoordinateSystem.Destination;
 			try
 			{
-                var roiBoundingBox = AnnotationGraphic.Subject.BoundingBox;
-                var clientRectangle = AnnotationGraphic.Subject.ParentPresentationImage.ClientRectangle;
+                var roiBoundingBox = AnnotationSubject.BoundingBox;
+                var clientRectangle = AnnotationSubject.ParentPresentationImage.ClientRectangle;
 
 				var textSize = Callout.TextBoundingBox.Size;
 				if (textSize.IsEmpty)
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			finally
 			{
 				Callout.ResetCoordinateSystem();
-                AnnotationGraphic.Subject.ResetCoordinateSystem();
+                AnnotationSubject.ResetCoordinateSystem();
 			}
 			return true;
 		}
