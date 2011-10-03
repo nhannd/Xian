@@ -46,11 +46,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		{
 			get
 			{
-				if (base.DicomAttributeProvider[DicomTags.ReferencedStudySequence].Count == 0)
+				var dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedStudySequence];
+				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
-				return new SopInstanceReferenceMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.ReferencedStudySequence].Values)[0]);
+				return new SopInstanceReferenceMacro(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
@@ -115,11 +116,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		{
 			get
 			{
-				if (base.DicomAttributeProvider[DicomTags.RequestedProcedureCodeSequence].Count == 0)
+				var dicomAttribute = base.DicomAttributeProvider[DicomTags.RequestedProcedureCodeSequence];
+				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
-				return new CodeSequenceMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.RequestedProcedureCodeSequence].Values)[0]);
+				return new CodeSequenceMacro(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
