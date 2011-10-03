@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
             : base(pointsGraphic)
         {
             Platform.CheckPositive(minimumVertices, "minimumVertices");
-            Platform.CheckTrue(maximumVertices > minimumVertices, "max vertices > min vertices");
+            Platform.CheckTrue(maximumVertices >= minimumVertices, "max vertices >= min vertices");
             Platform.CheckTrue(minimumVertices > 1, "min vertices > 1");
             
             _maximumVertices = maximumVertices;
