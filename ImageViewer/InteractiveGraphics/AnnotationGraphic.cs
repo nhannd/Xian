@@ -196,6 +196,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			if (_notifyOnSubjectChanged)
 			{
+			    /// TODO (CR Sep 2011): If the subject is an arbitrary object, why are we doing this?
 				if(e.PropertyName != "Color" && e.PropertyName != "LineStyle")
 					this.OnSubjectChanged();
 			}
