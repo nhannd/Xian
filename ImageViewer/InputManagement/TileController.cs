@@ -82,16 +82,22 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	{
 		private delegate bool CallHandlerMethodDelegate(IMouseButtonHandler handler);
 
-	    private class FakeContextMenuProvider : IContextMenuProvider, IMouseButtonHandler
-	    {
-	        private readonly ActionModelNode _actionModel;
+        #region Action Model Provider
 
-	        public FakeContextMenuProvider(ActionModelNode actionModel)
+        /// <summary>
+        /// A proxy class for providing an action model directly to the tile control in order to show
+        /// a context menu without the user having to click.
+        /// </summary>
+        private class ActionModelProvider : IContextMenuProvider, IMouseButtonHandler
+        {
+            private readonly ActionModelNode _actionModel;
+
+            public ActionModelProvider(ActionModelNode actionModel)
             {
                 _actionModel = actionModel;
             }
 
-	        #region IContextMenuProvider Members
+            #region IContextMenuProvider Members
 
             public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
             {
@@ -127,7 +133,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
             }
 
             #endregion
-        }
+        } 
+        #endregion
 
 		#region MouseWheelManager class 
 
@@ -763,7 +770,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
             {
                 CompositeGraphic sceneGraph = ((PresentationImage) _tile.PresentationImage).SceneGraph;
                 //Get all the mouse button handlers that provide a context menu.
-                foreach (var handlerGraphic in GetVisibleGraphics(sceneGraph).OfType<IMouseButtonHandler>().OfType<IContextMenuProvider>())
+                foreach (var handlerGraphic in GetHandlerGraphics(sceneGraph).OfType<IContextMenuProvider>())
                 {
                     var actionSet = handlerGraphic.GetContextMenuModel(this);
                     if (actionSet != null && actionSet.ChildNodes.Count > 0)
@@ -775,7 +782,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
             }
             else
             {
-                ContextMenuProvider = new FakeContextMenuProvider(actionModel);
+                ContextMenuProvider = new ActionModelProvider(actionModel);
             }
 
             //Request the context menu.
