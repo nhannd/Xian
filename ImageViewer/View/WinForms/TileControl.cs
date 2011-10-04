@@ -263,18 +263,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
-
-        public ContextMenuStrip GetContextMenu(Point screenLocation)
-        {
-            ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
-            if (BuildContextMenu(contextMenuStrip))
-            {
-                return contextMenuStrip;
-            }
-
-            return null;
-        }
-
 		#region Overrides
 
 		private void OnTileSelectionChanged(object sender, ItemEventArgs<ITile> e)
@@ -650,21 +638,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
-	    private bool BuildContextMenu(ContextMenuStrip contextMenuStrip)
-	    {
-	        ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController);
-	        if (menuModel != null && menuModel.ChildNodes.Count > 0)
-	        {
-	            ToolStripBuilder.Clear(contextMenuStrip.Items);
-	            ToolStripBuilder.BuildMenu(contextMenuStrip.Items, menuModel.ChildNodes);
-	            FilterUnavailableItems(contextMenuStrip.Items);
-
-	            return contextMenuStrip.Items.Count > 0;
-
-	        }
-	        return false;
-	    }
-
 	    private void OnContextMenuStripOpening(object sender, CancelEventArgs e)
 		{
 			if (_tileController == null || _tileController.ContextMenuProvider == null)
@@ -675,8 +648,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			if (_tileController.ContextMenuEnabled)
 			{
-                //TODO: Use BuildContextMenu instead?
-
 				ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController);
 				if (menuModel != null && menuModel.ChildNodes.Count > 0)
 				{

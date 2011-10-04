@@ -289,8 +289,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
 		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
+            if (!HitTest(mouseInformation.Location))
+                return new ActionSet();
+
 			if (_toolSet == null)
 				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this));
+
 			return base.GetExportedActions(site, mouseInformation).Union(_toolSet.Actions);
 		}
 
