@@ -659,6 +659,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel StructureReportExistWarning;
+        protected global::System.Web.UI.WebControls.Panel AttachmentExistWarning;
     }
 }

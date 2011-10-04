@@ -41,7 +41,7 @@
         </script>
         
         
-        <asp:Panel runat="server" ID="StructureReportExistWarning" CssClass="EditStudyDialogStructureReportWarning">
+        <asp:Panel runat="server" ID="AttachmentExistWarning" CssClass="EditStudyDialogStructureReportWarning">
                 <asp:Label ID="Label8"  runat="server" Text="<%$ Resources: SR, WarningEditStudyWithAttachment %>" />
         </asp:Panel>
 

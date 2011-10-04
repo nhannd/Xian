@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Public Properties
 
-        public bool HasStructureReport
+        public bool HasAttachment
         {
             get
             {
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageServer.Model
                     return false;
 
                 return CollectionUtils.Contains(this.Series.Values, 
-                    (series)=> !String.IsNullOrEmpty(series.Modality) && series.Modality.Equals("SR"));
+                    (series)=> !String.IsNullOrEmpty(series.Modality) && (series.Modality.Equals("SR") || series.Modality.Equals("DOC")));
             }
         }
 
