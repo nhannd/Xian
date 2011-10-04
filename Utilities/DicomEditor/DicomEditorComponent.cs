@@ -218,13 +218,21 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             if (applyToAll == false)
             {
+            	if (!WarnReportAndAttachmentAnonymization(new[] {_loadedFiles[_position]}))
+            		return;
+
 				_anonymizer.Anonymize(_loadedFiles[_position]);
+				_dirtyFlags[_position] = true;
             }
             else
             {
+            	if (!WarnReportAndAttachmentAnonymization(_loadedFiles))
+            		return;
+
                 for (int i = 0; i < _loadedFiles.Count; i++)
                 {
 					_anonymizer.Anonymize(_loadedFiles[i]);
+					_dirtyFlags[i] = true;
                 }
             }
         }
@@ -555,6 +563,17 @@ namespace ClearCanvas.Utilities.DicomEditor
 					EventsHelper.Fire(_isLocalFileChanged, this, new EventArgs());
 				}
 			}
+    	}
+
+    	/// <summary>
+    	/// Warns the user about anonymization if one or more of the <paramref name="files"/> are reports and/or attachments.
+    	/// </summary>
+    	/// <returns>True if anonymization should continue; False if user cancels anonymization.</returns>
+    	private bool WarnReportAndAttachmentAnonymization(IEnumerable<DicomFile> files)
+    	{
+    		if (CollectionUtils.Contains(files, f => AnonymizeStudyTool.IsReportOrAttachmentSopClass(f.SopClass != null ? f.SopClass.Uid : string.Empty)))
+    			return Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmAnonymizeOneOrMoreReportsAndAttachments, MessageBoxActions.YesNo) == DialogBoxAction.Yes;
+    		return true;
     	}
 
         #region Private Members

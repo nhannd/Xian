@@ -13,7 +13,6 @@
 <%@ Import Namespace="Resources"%>
 <%@ Import Namespace="System.Globalization"%>
 
-
 <ccAsp:ModalDialog ID="EditStudyModalDialog" runat="server" Width="775px" Title='<%$ Resources:Titles, EditStudyDialog %>'>
 <ContentTemplate>
 
@@ -40,10 +39,17 @@
                 
             }
         </script>
+        
+        
+        <asp:Panel runat="server" ID="AttachmentExistWarning" CssClass="EditStudyDialogStructureReportWarning">
+                <asp:Label ID="Label8"  runat="server" Text="<%$ Resources: SR, WarningEditStudyWithAttachment %>" />
+        </asp:Panel>
 
-<asp:ValidationSummary ID="EditStudyDetailsValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
+        <asp:ValidationSummary ID="EditStudyDetailsValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
 EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGroup" CssClass="EditStudyDialogErrorMessage" />
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
+        
+        
             <aspAjax:TabContainer ID="EditStudyDetailsTabContainer" runat="server" ActiveTabIndex="0" CssClass="EditStudyDialogTabControl" ForeColor="red">
                 <aspAjax:TabPanel ID="PatientTabPanel" runat="server" HeaderText="PatientTabPanel" CssClass="EdityStudyDialogTabControl">
                     <ContentTemplate>

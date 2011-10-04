@@ -70,6 +70,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 	public static class AuthorityTokens
 	{
+		[AuthorityToken(Description = "Allow publishing of locally created data to remote servers.")]
+		public const string RemotePublishing = "Viewer/RemotePublishing";
+
 		public static class Configuration
 		{
 			[AuthorityToken(Description = "Allow configuration of default servers.")]

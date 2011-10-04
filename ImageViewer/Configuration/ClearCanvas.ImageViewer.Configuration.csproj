@@ -72,7 +72,7 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="PublishingConfiguration.cs" />
+    <Compile Include="DicomPublishingHelper.cs" />
     <Compile Include="PublishingConfigurationComponent.cs" />
     <Compile Include="PublishingConfigurationPageProvider.cs" />
     <Compile Include="PublishingSettings.cs" />

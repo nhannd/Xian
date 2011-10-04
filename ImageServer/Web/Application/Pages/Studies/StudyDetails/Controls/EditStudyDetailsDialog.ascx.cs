@@ -317,6 +317,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
             SaveReasonAsName.Text = string.Empty;
 
+            AttachmentExistWarning.Visible = this.Study.HasAttachment;
+            
             DataBind();
         }
 
