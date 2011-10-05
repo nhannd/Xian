@@ -63,8 +63,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             if (_proxy != null)
             {
+                var rq = request as StartViewerApplicationRequest;
                 //_startRequest = request;
-                Platform.Log(LogLevel.Info, "Sending Start Application request to server");
+                if (rq!=null && rq.StudyInstanceUid.Count > 0 )
+                    Platform.Log(LogLevel.Info, "Sending Start Application request to server for Study: {0}",rq.StudyInstanceUid[0]);
+                else
+                    Platform.Log(LogLevel.Info, "Sending Start Application request to server");
 
                 request.MetaInformation = new MetaInformation
                                               {
@@ -173,6 +177,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 return;
             }
             ApplicationId = e.Result.AppIdentifier;
+
+            Platform.Log(LogLevel.Info, "Application start completed: {0}", ApplicationId);
 
             ThrottleSettings.Default.PropertyChanged += ThrottleSettingsPropertyChanged;
 
