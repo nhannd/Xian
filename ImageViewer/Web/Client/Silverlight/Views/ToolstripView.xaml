@@ -13,7 +13,7 @@
     mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     d:DesignHeight="36" d:DesignWidth="447"
-    xmlns:my="clr-namespace:ClearCanvas.Web.Client.Silverlight;assembly=ClearCanvas.Web.Client.Silverlight">
+    xmlns:my="clr-namespace:ClearCanvas.Web.Client.Silverlight;assembly=ClearCanvas.Web.Client.Silverlight" LayoutUpdated="OnLayoutUpdated" >
 
     <my:MenuManager.AttachedContextMenu>
         <my:ContextMenu x:Name="DummyMenu"/>
