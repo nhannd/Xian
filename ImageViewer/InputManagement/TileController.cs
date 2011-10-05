@@ -785,6 +785,12 @@ namespace ClearCanvas.ImageViewer.InputManagement
                 ContextMenuProvider = new ActionModelProvider(actionModel);
             }
 
+            /// TODO (CR Oct 2011): Check there isn't a better way to do this.
+            
+            //We may not get a mouse button up message because of the context menu appearing.
+            _activeButton = 0;
+            _clickCount = 0;
+
             //Request the context menu.
             _contextMenuEnabled = true;
             EventsHelper.Fire(_contextMenuRequested, this, new ItemEventArgs<Point>(location));
