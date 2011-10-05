@@ -10,13 +10,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Net;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using System.Net;
 
 namespace ClearCanvas.Enterprise.Common.Setup
 {
@@ -30,7 +27,7 @@ namespace ClearCanvas.Enterprise.Common.Setup
 
         public void RunApplication(string[] args)
         {
-            SetupCommandLine cmdLine = new SetupCommandLine();
+            var cmdLine = new SetupCommandLine();
             try
             {
                 cmdLine.Parse(args);
@@ -40,13 +37,14 @@ namespace ClearCanvas.Enterprise.Common.Setup
 					// first import the tokens, since the default groups will likely depend on these tokens
                     if (cmdLine.ImportAuthorityTokens)
                     {
-                        ImportAuthorityTokens(cmdLine.SysAdminGroup);
+						var addToGroups = string.IsNullOrEmpty(cmdLine.SysAdminGroup) ? new string[] { } : new[] { cmdLine.SysAdminGroup };
+						SetupHelper.ImportAuthorityTokens(addToGroups);
                     }
 
 					// import authority groups
 					if(cmdLine.ImportDefaultAuthorityGroups)
 					{
-						ImportAuthorityGroups();
+						SetupHelper.ImportAuthorityGroups();
 					}
 
 					// import settings groups
@@ -58,8 +56,8 @@ namespace ClearCanvas.Enterprise.Common.Setup
 					if (cmdLine.MigrateSharedSettings)
 					{
 						MigrateSharedSettings(cmdLine.PreviousExeConfigFilename);
+					}
 				}
-            }
             }
 			catch (CommandLineException e)
 			{
@@ -67,69 +65,36 @@ namespace ClearCanvas.Enterprise.Common.Setup
 			}
         }
 
+        #endregion
+
 		private static void MigrateSharedSettings(string previousExeConfigFilename)
 		{
-			foreach (SettingsGroupDescriptor group in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
+			foreach (var group in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
 				SettingsMigrator.MigrateSharedSettings(group, previousExeConfigFilename);
 		}
-
-        #endregion
 
 		/// <summary>
 		/// Import settings groups defined in local plugins.
 		/// </summary>
         private static void ImportSettingsGroups()
         {
-            List<SettingsGroupDescriptor> groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
+            var groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
 
-			if (groups!=null)
+			foreach(var g in groups)
 			{
-            	foreach(var g in groups)
-            	{
-                	Platform.Log(LogLevel.Info, "Import settings group {0}, Version={1}, Type={2}", g.Name, g.Version.ToString(), g.AssemblyQualifiedTypeName);
-            	}
+				Platform.Log(LogLevel.Info, "Import settings group {0}, Version={1}, Type={2}", g.Name, g.Version.ToString(), g.AssemblyQualifiedTypeName);
+			}
             	
-            	Platform.GetService(
-                delegate(Configuration.IConfigurationService service)
-                {
-                    foreach (SettingsGroupDescriptor group in groups)
-                    {
-                        List<SettingsPropertyDescriptor> props = SettingsPropertyDescriptor.ListSettingsProperties(group);
-                        service.ImportSettingsGroup(
-                            new Configuration.ImportSettingsGroupRequest(group, props));
-                    }
-                });
-        	}
-
-            
+			Platform.GetService(
+				delegate(Configuration.IConfigurationService service)
+					{
+						foreach (var group in groups)
+						{
+							var props = SettingsPropertyDescriptor.ListSettingsProperties(group);
+							service.ImportSettingsGroup(new Configuration.ImportSettingsGroupRequest(group, props));
+						}
+					});
         }
 
-		/// <summary>
-		/// Import authority tokens defined in local plugins.
-		/// </summary>
-		private static void ImportAuthorityTokens(string sysAdminGroup)
-		{
-			string[] addToGroups = string.IsNullOrEmpty(sysAdminGroup) ? new string[] { } : new[] { sysAdminGroup };
-
-			AuthorityTokenDefinition[] tokens = AuthorityGroupSetup.GetAuthorityTokens();
-
-			List<AuthorityTokenSummary> summaries = CollectionUtils.Map(tokens,(AuthorityTokenDefinition t) =>
-			                                                            new AuthorityTokenSummary(t.Token, t.Description));
-
-			Platform.GetService((IAuthorityGroupAdminService service) => service.ImportAuthorityTokens(
-			                                                 new ImportAuthorityTokensRequest(summaries, new List<string>(addToGroups))));
-		}
-
-		/// <summary>
-		/// Import authority groups defined in local plugins.
-		/// </summary>
-		private static void ImportAuthorityGroups()
-		{
-			AuthorityGroupDefinition[] groups = AuthorityGroupSetup.GetDefaultAuthorityGroups();
-
-			Platform.GetService((IAuthorityGroupAdminService service) 
-                => service.ImportAuthorityGroups(new ImportAuthorityGroupsRequest(
-                        CollectionUtils.Map(groups, (AuthorityGroupDefinition g) => new AuthorityGroupDetail(null, g.Name, g.Description, g.DataGroup, CollectionUtils.Map(g.Tokens, (string t) => new AuthorityTokenSummary(t, null)))))));
-		}
     }
 }

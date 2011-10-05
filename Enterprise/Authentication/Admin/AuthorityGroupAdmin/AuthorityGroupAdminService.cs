@@ -171,7 +171,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 			{
 				var importer = new AuthorityTokenImporter();
 				importer.Import(
-					CollectionUtils.Map(request.Tokens, (AuthorityTokenSummary s) => new AuthorityTokenDefinition(s.Name, s.Description)),
+					CollectionUtils.Map(request.Tokens, (AuthorityTokenSummary s) => new AuthorityTokenDefinition(s.Name, s.DefiningAssembly, s.Description, s.FormerIdentities.ToArray())),
 						request.AddToGroups,
 						(IUpdateContext)PersistenceContext);
 

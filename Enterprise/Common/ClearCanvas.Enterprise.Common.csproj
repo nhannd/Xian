@@ -67,6 +67,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.IdentityModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -188,6 +191,7 @@
     <Compile Include="ServiceConfiguration\Server\CertificateSearchDirective.cs" />
     <Compile Include="Setup\SetupApplication.cs" />
     <Compile Include="Setup\SetupCommandLine.cs" />
+    <Compile Include="Setup\SetupHelper.cs" />
     <Compile Include="StaticChannelProvider.cs" />
     <Compile Include="Tests\AopInterceptorChainTests.cs" />
     <Compile Include="Tests\EntityRefJsmlSerializerHookTests.cs" />

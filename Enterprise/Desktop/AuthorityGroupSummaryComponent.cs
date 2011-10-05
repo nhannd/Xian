@@ -20,6 +20,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
+using ClearCanvas.Enterprise.Common.Setup;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
@@ -109,26 +110,8 @@ namespace ClearCanvas.Enterprise.Desktop
 								 MessageBoxActions.OkCancel);
 				if (action == DialogBoxAction.Ok)
 				{
-					AuthorityTokenDefinition[] tokens = AuthorityGroupSetup.GetAuthorityTokens();
-					AuthorityGroupDefinition[] groups = AuthorityGroupSetup.GetDefaultAuthorityGroups();
-
-					Platform.GetService(
-						delegate(IAuthorityGroupAdminService service)
-						{
-							// first import the tokens, since the default groups will likely depend on these tokens
-							service.ImportAuthorityTokens(
-								new ImportAuthorityTokensRequest(
-									CollectionUtils.Map(tokens,
-									                    (AuthorityTokenDefinition t) => new AuthorityTokenSummary(t.Token, t.Description))));
-
-							// then import the default groups
-							service.ImportAuthorityGroups(
-								new ImportAuthorityGroupsRequest(
-									CollectionUtils.Map(groups,
-									                    (AuthorityGroupDefinition g) => 
-                                                                new AuthorityGroupDetail(null, g.Name, g.Description, g.DataGroup, CollectionUtils.Map(g.Tokens, (string t) => new AuthorityTokenSummary(t,null))))));
-						});
-
+					SetupHelper.ImportAuthorityTokens(new string[0]);
+					SetupHelper.ImportAuthorityGroups();
 				}
 
 			}

@@ -9,14 +9,11 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Authentication.Brokers;
-using System.IO;
 using ClearCanvas.Common;
-using System.Reflection;
 using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 
@@ -49,6 +46,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 		/// Imports the specified set of authority tokens.
 		/// </summary>
 		/// <param name="tokenDefs"></param>
+		/// <param name="addToGroups"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
 		public IList<AuthorityToken> Import(IEnumerable<AuthorityTokenDefinition> tokenDefs,
@@ -56,48 +54,52 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 		{
 			// first load all the existing tokens into memory
 			// there should not be that many tokens ( < 500), so this should not be a problem
-			IAuthorityTokenBroker broker = context.GetBroker<IAuthorityTokenBroker>();
-			IList<AuthorityToken> existingTokens = broker.FindAll();
+			var broker = context.GetBroker<IAuthorityTokenBroker>();
+			var existingTokens = broker.FindAll();
 
             // if there are groups to add to, load the groups
-            IList<AuthorityGroup> groups = addToGroups != null && addToGroups.Count > 0
-                ? LoadGroups(addToGroups, context) : new List<AuthorityGroup>();
+            var groups = addToGroups != null && addToGroups.Count > 0 ? LoadGroups(addToGroups, context) : new List<AuthorityGroup>();
 
-			foreach (AuthorityTokenDefinition tokenDef in tokenDefs)
+			// order the input such that the renames are processed first
+			// otherwise there may be a corner case where a newly imported token is immediately renamed
+			tokenDefs = tokenDefs.OrderBy(t => t.FormerIdentities.Length > 0);
+
+			foreach (var tokenDef in tokenDefs)
 			{
-				AuthorityToken token = ProcessToken(tokenDef, existingTokens, context);
-				existingTokens.Add(token);
+				var token = ProcessToken(tokenDef, existingTokens, context);
 
                 // add to groups
-                CollectionUtils.ForEach(groups, delegate(AuthorityGroup g) { g.AuthorityTokens.Add(token); });
+                CollectionUtils.ForEach(groups, g => g.AuthorityTokens.Add(token));
 			}
 
 			return existingTokens;
 		}
 
-		private static AuthorityToken ProcessToken(AuthorityTokenDefinition tokenDef, IList<AuthorityToken> existingTokens, IUpdateContext context)
+		private static AuthorityToken ProcessToken(AuthorityTokenDefinition tokenDef, ICollection<AuthorityToken> existingTokens, IUpdateContext context)
         {
-            AuthorityToken token = CollectionUtils.SelectFirst(existingTokens,
-                delegate(AuthorityToken t) { return t.Name == tokenDef.Token; });
+			// look for an existing instance of the token, or a token that should be renamed to this token
+            var token = existingTokens.FirstOrDefault(t => t.Name == tokenDef.Token || tokenDef.FormerIdentities.Contains(t.Name));
+			if(token != null)
+			{
+				// update the name (in the case it is a rename)
+				token.Name = tokenDef.Token;
 
-            // if token does not already exist, create it
-            if (token == null)
-            {
-                token = new AuthorityToken();
-                token.Name = tokenDef.Token;
-
-                context.Lock(token, DirtyState.New);
-            }
-
-            // update the description
-			token.Description = tokenDef.Description;
-
-            return token;
+				// update the description
+				token.Description = tokenDef.Description;
+			}
+			else
+			{
+				// the token does not already exist, so create it
+				token = new AuthorityToken(tokenDef.Token, tokenDef.Description);
+				context.Lock(token, DirtyState.New);
+				existingTokens.Add(token);
+			}
+			return token;
         }
 
-        private IList<AuthorityGroup> LoadGroups(IEnumerable<string> groupNames, IPersistenceContext context)
+        private static IList<AuthorityGroup> LoadGroups(IEnumerable<string> groupNames, IPersistenceContext context)
         {
-            AuthorityGroupSearchCriteria where = new AuthorityGroupSearchCriteria();
+            var where = new AuthorityGroupSearchCriteria();
             where.Name.In(groupNames);
 
             return context.GetBroker<IAuthorityGroupBroker>().Find(where);
@@ -107,7 +109,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 
         public void RunApplication(string[] args)
         {
-            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+            using (var scope = new PersistenceScope(PersistenceContextType.Update))
             {
                 ((IUpdateContext)PersistenceScope.CurrentContext).ChangeSetRecorder.OperationName = this.GetType().FullName;
                 ImportFromPlugins((IUpdateContext)PersistenceScope.CurrentContext);
