@@ -31,12 +31,12 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 			FormerIdentities = new List<string>();
 		}
 
-		public AuthorityTokenSummary(string name, string definingAssembly, string description, IEnumerable<string> formerly)
+		public AuthorityTokenSummary(string name, string definingAssembly, string description, IEnumerable<string> formerIdentities)
 		{
 			Name = name;
 			DefiningAssembly = definingAssembly;
 			Description = description;
-			FormerIdentities = new List<string>(formerly);
+			FormerIdentities = new List<string>(formerIdentities);
 		}
 
 		[DataMember]

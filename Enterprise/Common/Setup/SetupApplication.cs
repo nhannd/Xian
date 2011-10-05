@@ -20,52 +20,52 @@ namespace ClearCanvas.Enterprise.Common.Setup
 	/// <summary>
 	/// Connects to the enterprise server and imports settings groups, authority tokens, and authority groups.
 	/// </summary>
-    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class SetupApplication : IApplicationRoot
-    {
-        #region IApplicationRoot Members
+	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+	public class SetupApplication : IApplicationRoot
+	{
+		#region IApplicationRoot Members
 
-        public void RunApplication(string[] args)
-        {
-            var cmdLine = new SetupCommandLine();
-            try
-            {
-                cmdLine.Parse(args);
+		public void RunApplication(string[] args)
+		{
+			var cmdLine = new SetupCommandLine();
+			try
+			{
+				cmdLine.Parse(args);
 
-				using(new AuthenticationScope(cmdLine.UserName, "setup", Dns.GetHostName(), cmdLine.Password))
+				using (new AuthenticationScope(cmdLine.UserName, "setup", Dns.GetHostName(), cmdLine.Password))
 				{
 					// first import the tokens, since the default groups will likely depend on these tokens
-                    if (cmdLine.ImportAuthorityTokens)
-                    {
+					if (cmdLine.ImportAuthorityTokens)
+					{
 						var addToGroups = string.IsNullOrEmpty(cmdLine.SysAdminGroup) ? new string[] { } : new[] { cmdLine.SysAdminGroup };
 						SetupHelper.ImportAuthorityTokens(addToGroups);
-                    }
+					}
 
 					// import authority groups
-					if(cmdLine.ImportDefaultAuthorityGroups)
+					if (cmdLine.ImportDefaultAuthorityGroups)
 					{
 						SetupHelper.ImportAuthorityGroups();
 					}
 
 					// import settings groups
-                    if (cmdLine.ImportSettingsGroups)
-                    {
-                        ImportSettingsGroups();
-                    }
+					if (cmdLine.ImportSettingsGroups)
+					{
+						ImportSettingsGroups();
+					}
 
 					if (cmdLine.MigrateSharedSettings)
 					{
 						MigrateSharedSettings(cmdLine.PreviousExeConfigFilename);
 					}
 				}
-            }
+			}
 			catch (CommandLineException e)
 			{
 				Console.WriteLine(e.Message);
 			}
-        }
+		}
 
-        #endregion
+		#endregion
 
 		private static void MigrateSharedSettings(string previousExeConfigFilename)
 		{
@@ -76,25 +76,25 @@ namespace ClearCanvas.Enterprise.Common.Setup
 		/// <summary>
 		/// Import settings groups defined in local plugins.
 		/// </summary>
-        private static void ImportSettingsGroups()
-        {
-            var groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
+		private static void ImportSettingsGroups()
+		{
+			var groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
 
-			foreach(var g in groups)
+			foreach (var g in groups)
 			{
 				Platform.Log(LogLevel.Info, "Import settings group {0}, Version={1}, Type={2}", g.Name, g.Version.ToString(), g.AssemblyQualifiedTypeName);
 			}
-            	
+
 			Platform.GetService(
 				delegate(Configuration.IConfigurationService service)
+				{
+					foreach (var group in groups)
 					{
-						foreach (var group in groups)
-						{
-							var props = SettingsPropertyDescriptor.ListSettingsProperties(group);
-							service.ImportSettingsGroup(new Configuration.ImportSettingsGroupRequest(group, props));
-						}
-					});
-        }
+						var props = SettingsPropertyDescriptor.ListSettingsProperties(group);
+						service.ImportSettingsGroup(new Configuration.ImportSettingsGroupRequest(group, props));
+					}
+				});
+		}
 
-    }
+	}
 }
