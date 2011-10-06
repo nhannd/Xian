@@ -2061,24 +2061,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         /// <summary>
         ///   Looks up a localized string similar to {0}/{1}.
         /// </summary>
-        public static string FormatPatientsAgeSex {
-            get {
-                return ResourceManager.GetString("FormatPatientsAgeSex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}/{1}/{2}.
-        /// </summary>
-        public static string FormatPatientsAgeSexBirthDate {
-            get {
-                return ResourceManager.GetString("FormatPatientsAgeSexBirthDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}/{1}.
-        /// </summary>
         public static string FormatSeriesNumberAndCount {
             get {
                 return ResourceManager.GetString("FormatSeriesNumberAndCount", resourceCulture);
@@ -2289,6 +2271,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         public static string Presentation_Zoom_Label {
             get {
                 return ResourceManager.GetString("Presentation_Zoom_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /.
+        /// </summary>
+        public static string SeparatorAgeSexBirthDate {
+            get {
+                return ResourceManager.GetString("SeparatorAgeSexBirthDate", resourceCulture);
             }
         }
         
