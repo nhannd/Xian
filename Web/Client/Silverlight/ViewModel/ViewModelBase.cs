@@ -7,7 +7,7 @@
 // For information about the licensing and copyright of this software please
 // contact ClearCanvas, Inc. at info@clearcanvas.ca
 
-// Note, some of this code was taken from the MVVM Lite Toolkit, which is licensed here:   http://www.galasoft.ch/license_MIT.txt
+// Note, most of this code was taken from the MVVM Lite Toolkit, which is licensed here:   http://www.galasoft.ch/license_MIT.txt
 #endregion
 
 using System;
@@ -90,7 +90,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             var myType = GetType();
             if (myType.GetProperty(propertyName) == null)
             {
-                throw new ArgumentException("Property not found", propertyName);
+                throw new ArgumentException(@"Property not found", propertyName);
             }
         }
 
