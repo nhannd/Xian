@@ -546,7 +546,7 @@ Use image with caution.</value>
     <value>Unknown</value>
   </data>
   <data name="MessageInfoNoStudyLoader" xml:space="preserve">
-    <value>The study is on a non-streaming server and must be retrieved to view it.</value>
+    <value>The study is on a non-streaming server and must be retrieved and reopened.</value>
   </data>
   <data name="MessageInfoStudyCouldNotBeLoaded" xml:space="preserve">
     <value>The study could not be loaded.  Please contact your PACS administrator.</value>

@@ -1018,7 +1018,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study is on a non-streaming server and must be retrieved to view it..
+        ///   Looks up a localized string similar to The study is on a non-streaming server and must be retrieved and reopened..
         /// </summary>
         public static string MessageInfoNoStudyLoader {
             get {
