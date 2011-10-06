@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			var hasErrors = false;
 
 			// check that user has permissions to publish to remote servers
-			if (PermissionsHelper.IsInRole(AuthorityTokens.RemotePublishing))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.Publishing))
 			{
 				var servers = new List<Server>();
 
@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			}
 			else
 			{
-				Platform.Log(LogLevel.Debug, "Skipping remote publishing step; user does not have RemotePublishing permissions.");
+				Platform.Log(LogLevel.Debug, "Skipping remote publishing step; user does not have Publishing permissions.");
 			}
 
 			// generate a list of files to be published

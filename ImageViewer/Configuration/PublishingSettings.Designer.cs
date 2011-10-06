@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies that created SOP instances are to be published to the Source AE as spec" +
             "ified in the study\'s headers")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool PublishLocalToSourceAE {
             get {
                 return ((bool)(this["PublishLocalToSourceAE"]));
