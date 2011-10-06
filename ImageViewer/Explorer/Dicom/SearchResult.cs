@@ -461,7 +461,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private static IconSet GetAttachmentsIcon(StudyItem item)
 		{
-			return item.HasAttachments() ? new IconSet("PaperclipSmall.png") : null;
+			return item.HasAttachments() ? new IconSet("AttachmentsExtraSmall.png") : null;
 		}
 
 	}
