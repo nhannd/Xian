@@ -127,7 +127,7 @@
     <value>Clear Selected</value>
   </data>
   <data name="ServerConfiguration" xml:space="preserve">
-    <value>Server</value>
+    <value>Local Server</value>
   </data>
   <data name="DiskspaceManagerConfiguration" xml:space="preserve">
     <value>Diskspace Manager</value>
