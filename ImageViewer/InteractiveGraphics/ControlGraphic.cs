@@ -114,6 +114,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return null; }
 		}
 
+	    /// TODO (CR Oct 2011): This doesn't work when chaining graphics together.
 		/// <summary>
 		/// Gets or sets the color of the control graphic.
 		/// </summary>

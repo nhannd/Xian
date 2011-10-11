@@ -396,6 +396,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(callout);
 			statefulGraphic.State = statefulGraphic.CreateInactiveState();
 
+		    /// TODO (CR Oct 2011): This is the wrong order - the "selected" graphic (stateful) gets
+		    /// deleted by the "delete graphics" tool, and then the top-level context menu
+		    /// graphic gets left dangling.
 			ContextMenuControlGraphic contextGraphic = new ContextMenuControlGraphic(typeof (TextCalloutTool).FullName, "basicgraphic-menu", null, statefulGraphic);
 			contextGraphic.Actions = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(contextGraphic)).Actions;
 
