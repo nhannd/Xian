@@ -142,30 +142,6 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             }
         }
 
-        /// <summary>
-        /// When called in a property setter, raises the PropertyChanged event for 
-        /// the current property.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">If this method is called outside
-        /// of a property setter.</exception>
-        protected virtual void RaisePropertyChanged()
-        {
-            var frames = new StackTrace();
-
-            for (var i = 0; i < frames.FrameCount; i++)
-            {
-                var frame = frames.GetFrame(i).GetMethod() as MethodInfo;
-                if (frame != null)
-                    if (frame.IsSpecialName && frame.Name.StartsWith("set_", StringComparison.OrdinalIgnoreCase))
-                    {
-                        RaisePropertyChanged(frame.Name.Substring(4));
-                        return;
-                    }
-            }
-
-            throw new InvalidOperationException("This method can only by invoked within a property setter.");
-        }
-
         #endregion
     }
 }
