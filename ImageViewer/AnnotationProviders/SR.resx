@@ -685,9 +685,6 @@
   <data name="Dicom_PatientStudy_Composite_PatientsAgeSex_Label" xml:space="preserve">
     <value>Age/Sex</value>
   </data>
-  <data name="FormatPatientsAgeSex" xml:space="preserve">
-    <value>{0}/{1}</value>
-  </data>
   <data name="AnnotationItemProviders_Dicom_DXImage_DisplayName" xml:space="preserve">
     <value>Dicom (DX Image)</value>
   </data>
@@ -756,9 +753,6 @@
   </data>
   <data name="Dicom_PatientStudy_Composite_PatientsAgeSexBirthDate_Label" xml:space="preserve">
     <value>Age/Sex/DOB</value>
-  </data>
-  <data name="FormatPatientsAgeSexBirthDate" xml:space="preserve">
-    <value>{0}/{1}/{2}</value>
   </data>
   <data name="ValueNil" xml:space="preserve">
     <value>-</value>
@@ -971,5 +965,8 @@
   </data>
   <data name="Dicom_CTImage_Composite_TablePositionSpeed_Label" xml:space="preserve">
     <value>Table</value>
+  </data>
+  <data name="SeparatorAgeSexBirthDate" xml:space="preserve">
+    <value>/</value>
   </data>
 </root>

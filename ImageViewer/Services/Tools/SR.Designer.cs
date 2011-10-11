@@ -817,7 +817,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Server.
+        ///   Looks up a localized string similar to Local Server.
         /// </summary>
         internal static string ServerConfiguration {
             get {

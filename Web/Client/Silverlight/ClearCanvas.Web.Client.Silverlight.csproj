@@ -92,6 +92,7 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckComboBox.cs" />
     <Compile Include="Command\BindingListener.cs" />
     <Compile Include="Command\EventToCommand.cs" />
     <Compile Include="Command\RelayCommandGeneric.cs" />

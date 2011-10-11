@@ -52,6 +52,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             }
         }
 
+        public void OnLayoutUpdated(object sender, EventArgs e)
+        {
+            // Had problems here when the initial rendering is off screen, and then it is rendered on screen.  This fixes the heights.
+            if (Height == 0.0 || Width == 0.0)
+                OnApplicationResized(sender, e);
+        }
+
         private void OnApplicationResized(object sender, EventArgs e)
         {
             if (Height != LayoutRoot.DesiredSize.Height && LayoutRoot.DesiredSize.Height > 0)
@@ -114,8 +121,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             AddHelpButton();
 
             UpdateLayout();
-            Height = LayoutRoot.ActualHeight;
-            UpdateLayout();
+            if (LayoutRoot.ActualHeight != 0)
+            {
+                Height = LayoutRoot.ActualHeight;
+                UpdateLayout();
+            }
         }
 
         private void AddHelpButton()
@@ -163,7 +173,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         public void Dispose()
         {
-            _eventMediator.TileHasCaptureChanged -= EventBrokerTileHasCapture;    
+            _eventMediator.TileHasCaptureChanged -= EventBrokerTileHasCapture;
+            System.Windows.Application.Current.Host.Content.Resized -= OnApplicationResized;
         }
     }
 }

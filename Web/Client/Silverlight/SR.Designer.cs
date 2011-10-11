@@ -61,6 +61,15 @@ namespace ClearCanvas.Web.Client.Silverlight {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        internal static string Clear {
+            get {
+                return ResourceManager.GetString("Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value must be non-negative..
         /// </summary>
         internal static string ExceptionArgumentNegative {

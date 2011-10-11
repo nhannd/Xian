@@ -301,7 +301,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingModality,
-				delegate(StudyItem item) { return DicomStringHelper.GetDicomStringArray(item.ModalitiesInStudy); },
+				delegate(StudyItem item) { return DicomStringHelper.GetDicomStringArray(SortModalities(item.ModalitiesInStudy)); },
 				0.25f);
 
 			columns.Add(column);
@@ -461,8 +461,42 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private static IconSet GetAttachmentsIcon(StudyItem item)
 		{
-			return item.HasAttachments() ? new IconSet("PaperclipSmall.png") : null;
+			return item.HasAttachments() ? new IconSet("AttachmentsExtraSmall.png") : null;
 		}
 
+		private static string[] SortModalities(IEnumerable<string> modalities)
+		{
+			var list = new List<string>(modalities);
+			list.Remove(@"DOC"); // the DOC modality is a special case and handled via the attachments icon
+			list.Sort((x, y) =>
+			              {
+			                  var result = GetModalityPriority(x).CompareTo(GetModalityPriority(y));
+			                  if (result == 0)
+			                      result = string.Compare(x, y, StringComparison.InvariantCultureIgnoreCase);
+			                  return result;
+			              });
+			return list.ToArray();
+		}
+
+		private static int GetModalityPriority(string modality)
+		{
+			const int imageModality = 0; // sort all known image modalities to top
+			const int unknownModality = 1; // unknown modalities may be images or may simply be other documents - sort after known images, but before known ancillary documents
+			const int srModality = 2;
+			const int koModality = 3;
+			const int prModality = 4;
+
+			switch (modality)
+			{
+				case @"SR":
+					return srModality;
+				case @"KO":
+					return koModality;
+				case @"PR":
+					return prModality;
+				default:
+					return StandardModalities.Modalities.Contains(modality) ? imageModality : unknownModality;
+			}
+		}
 	}
 }
