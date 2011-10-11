@@ -236,6 +236,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </remarks>
 		CursorToken ICursorTokenProvider.GetCursorToken(Point point)
 		{
+		    /// TODO (CR Oct 2011): This pattern could be reused outside the context
+		    /// of a "Control" graphic. Perhaps we could move it out to a "GraphicsController"
+		    /// class that enumerates through a list of graphics looking for a handler.
 			CursorToken cursor = null;
 
 			if (_capturedHandler != null)
