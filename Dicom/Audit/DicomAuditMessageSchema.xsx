@@ -18,7 +18,7 @@
             </ParticipantObjectDescription_XmlElement>
         </ParticipantObjectIdentification_XmlElement>
     </AuditMessage_XmlElement>
-    <EventIdentificationType_XmlComplexType left="634" top="14220" width="5292" height="3149" selected="0" zOrder="9" index="1" expanded="1">
+    <EventIdentificationContents_XmlComplexType left="634" top="14220" width="5292" height="3149" selected="0" zOrder="9" index="1" expanded="1">
         <EventID_XmlElement left="6560" top="9727" width="5292" height="3149" selected="0" zOrder="11" index="0" expanded="0" />
         <EventTypeCode_XmlElement left="6560" top="13516" width="5292" height="3149" selected="0" zOrder="14" index="1" expanded="0" />
         <EventActionCode_XmlAttribute left="6560" top="17305" width="5292" height="767" selected="0" zOrder="17" index="2" expanded="1">
@@ -27,7 +27,7 @@
         <EventOutcomeIndicator_XmlAttribute left="6560" top="21094" width="5292" height="767" selected="0" zOrder="25" index="4" expanded="1">
             <_x0028_EventOutcomeIndicator_x0029__XmlSimpleType left="12486" top="19904" width="5292" height="3149" selected="0" zOrder="27" index="0" expanded="1" />
         </EventOutcomeIndicator_XmlAttribute>
-    </EventIdentificationType_XmlComplexType>
+    </EventIdentificationContents_XmlComplexType>
     <AuditSourceIdentificationType_XmlComplexType left="634" top="23693" width="5292" height="3149" selected="0" zOrder="29" index="2" expanded="1">
         <AuditSourceTypeCode_XmlElement left="6560" top="23693" width="5292" height="3149" selected="0" zOrder="30" index="0" expanded="1">
             <code_XmlAttribute left="12486" top="24883" width="5292" height="767" selected="0" zOrder="32" index="0" expanded="1">

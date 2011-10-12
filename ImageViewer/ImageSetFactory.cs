@@ -23,17 +23,17 @@ namespace ClearCanvas.ImageViewer
 		IImageSet CreateImageSet(Study study);
 	}
 
-	internal abstract class ImageSetFactory : IImageSetFactory
+	internal class ImageSetFactory : IImageSetFactory
 	{
 		private StudyTree _studyTree;
 		private readonly IDisplaySetFactory _displaySetFactory;
 
-		public ImageSetFactory()
+	    public ImageSetFactory()
 			: this(new BasicDisplaySetFactory())
 		{
 		}
 
-		public ImageSetFactory(IDisplaySetFactory displaySetFactory)
+        public ImageSetFactory(IDisplaySetFactory displaySetFactory)
 		{
 			_displaySetFactory = displaySetFactory;
 		}
@@ -74,12 +74,7 @@ namespace ClearCanvas.ImageViewer
 
 		protected virtual List<IDisplaySet> CreateDisplaySets(Study study)
 		{
-			List<IDisplaySet> displaySets = new List<IDisplaySet>();
-
-			foreach (Series series in study.Series)
-				displaySets.AddRange(_displaySetFactory.CreateDisplaySets(series));
-
-			return displaySets;
+		    return _displaySetFactory.CreateDisplaySets(study);
 		}
 
         protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(Study study)

@@ -10,18 +10,7 @@
 #endregion
 
 using System;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
-using System.ServiceModel.Channels;
-using System.Windows.Browser;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 using System.Threading;
 
@@ -37,12 +26,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         static private ApplicationStartupParameters _current = new ApplicationStartupParameters(Application.Current.Host.InitParams);
 
         public string TimeoutUrl { get; set; }
-        public string Username { get; private set; }
-        public string SessionToken { get; private set; }
+        public string Username { get; set; }
+        public string SessionToken { get; set; }
 		public bool IsSessionShared { get; private set; }
         public bool LogPerformance { get; private set; }
         public string LocalIPAddress { get; private set; }
-        public ServerConfiguration ServerSettings { get; set; }
         public ApplicationServiceMode Mode { get; set; }
         public string Language { get; private set; }
 
@@ -52,19 +40,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 TimeoutUrl = initParams[Constants.SilverlightInitParameters.TimeoutUrl];
 
             if (initParams.ContainsKey(Constants.SilverlightInitParameters.Username))
-                Username = initParams[Constants.SilverlightInitParameters.Username];
+                Username = initParams[Constants.SilverlightInitParameters.Username];       
 
             if (initParams.ContainsKey(Constants.SilverlightInitParameters.Session))
                 SessionToken = initParams[Constants.SilverlightInitParameters.Session];
 
 			if (initParams.ContainsKey(Constants.SilverlightInitParameters.IsSessionShared))
 				IsSessionShared = initParams[Constants.SilverlightInitParameters.IsSessionShared] == "true";
-            if (initParams.ContainsKey(Constants.SilverlightInitParameters.LocalIPAddress))
-                LocalIPAddress = initParams[Constants.SilverlightInitParameters.LocalIPAddress];
-            else
-            {
-                LocalIPAddress = SR.Unknown;
-            }
+
+            LocalIPAddress = initParams.ContainsKey(Constants.SilverlightInitParameters.LocalIPAddress) 
+                ? initParams[Constants.SilverlightInitParameters.LocalIPAddress] 
+                : SR.Unknown;
 
             bool logPerformance;
             if (initParams.ContainsKey(Constants.SilverlightInitParameters.LogPerformance) && 
@@ -77,35 +63,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 LogPerformance = false;
             }
 
-            TimeSpan inactivityTimeout = TimeSpan.FromMinutes(15);
-            if (initParams.ContainsKey(Constants.SilverlightInitParameters.InactivityTimeout))
-                inactivityTimeout = TimeSpan.Parse(initParams[Constants.SilverlightInitParameters.InactivityTimeout]);
-
-            int serverPort = 4520;
-            if (initParams.ContainsKey(Constants.SilverlightInitParameters.Port))
-                serverPort = int.Parse(initParams[Constants.SilverlightInitParameters.Port]);
-
             Mode = ApplicationServiceMode.BasicHttp; 
             if (initParams.ContainsKey(Constants.SilverlightInitParameters.Mode))
             {
                 ApplicationServiceMode mode;
-                if (Enum.TryParse<ApplicationServiceMode>(initParams[Constants.SilverlightInitParameters.Mode], out mode))
+                if (Enum.TryParse(initParams[Constants.SilverlightInitParameters.Mode], out mode))
                     Mode = mode;
             }
 
-            if (initParams.ContainsKey(Constants.SilverlightInitParameters.Language))
-                Language = initParams[Constants.SilverlightInitParameters.Language];
-            else
-            {
-                Language = Thread.CurrentThread.CurrentUICulture.Name;
-            }
-
-            ServerSettings = new ServerConfiguration
-            {
-                InactivityTimeout = inactivityTimeout,
-                LANMode = true, // for SL4, always true
-                Port = serverPort
-            };
+            Language = initParams.ContainsKey(Constants.SilverlightInitParameters.Language) 
+                ? initParams[Constants.SilverlightInitParameters.Language] 
+                : Thread.CurrentThread.CurrentUICulture.Name;
         }
 
         static public ApplicationStartupParameters Current
@@ -115,6 +83,5 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 return _current;
             }
         }
-
     }
 }

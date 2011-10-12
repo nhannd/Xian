@@ -19,9 +19,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		void InitializeAttributes();
 
 		/// <summary>
-		/// Gets the dicom attribute collection as a dicom sequence item.
+		/// Gets or sets the underlying DICOM sequence item.
 		/// </summary>
-		/// <value>The dicom sequence item.</value>
+		/// <remarks>
+		/// This property may return NULL for macros implemented at the module level rather than on a sequence item.
+		/// </remarks>
+		/// <value>The DICOM sequence item.</value>
 		DicomSequenceItem DicomSequenceItem { get; set; }
 	}
 }

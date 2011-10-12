@@ -88,11 +88,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DICOM Server.
+        ///   Looks up a localized string similar to DICOM.
         /// </summary>
-        internal static string DicomServerConfiguration {
+        internal static string DicomConfiguration {
             get {
-                return ResourceManager.GetString("DicomServerConfiguration", resourceCulture);
+                return ResourceManager.GetString("DicomConfiguration", resourceCulture);
             }
         }
         
@@ -522,7 +522,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to retrieve the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again..
+        ///   Looks up a localized string similar to Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again..
         /// </summary>
         internal static string MessageFailedToRetrieveDicomServerConfiguration {
             get {
@@ -586,7 +586,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to update the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again..
+        ///   Looks up a localized string similar to Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again..
         /// </summary>
         internal static string MessageFailedToUpdateDicomServerConfiguration {
             get {
@@ -813,6 +813,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string ReindexApplicationName {
             get {
                 return ResourceManager.GetString("ReindexApplicationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local Server.
+        /// </summary>
+        internal static string ServerConfiguration {
+            get {
+                return ResourceManager.GetString("ServerConfiguration", resourceCulture);
             }
         }
         

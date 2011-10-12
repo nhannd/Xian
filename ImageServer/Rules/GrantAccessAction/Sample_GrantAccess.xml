@@ -1,0 +1,13 @@
+﻿<!-- Rule for matching on Referring Physician's Name -->
+<condition expressionLanguage="dicom">
+	<or>
+    <!-- Matches on LastName^FirstName^MiddleName -->
+    <regex  test="$ReferringPhysiciansName"	 pattern="LastName.FirstName.MiddleName" ignoreCase="true"/>
+    <!-- Matches on LastName^FirstName -->
+    <regex  test="$ReferringPhysiciansName"	 pattern="LastName.FirstName" ignoreCase="true"/>
+    <!-- Matches on LastName, FirstName -->
+    <regex  test="$ReferringPhysiciansName"  pattern="LastName,.FirstName" ignoreCase="true"/>
+    <!-- Matches on 'FirstName LastName' appearing in the name -->
+    <regex  test="$ReferringPhysiciansName"  pattern="FirstName\sLastName" ignoreCase="true"/>
+	</or>
+</condition>

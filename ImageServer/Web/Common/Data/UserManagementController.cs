@@ -10,16 +10,14 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -66,7 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                     foreach (UserGroup userGroup in user.UserGroups)
                     {
-                        groups.Add(new AuthorityGroupSummary(new EntityRef(userGroup.UserGroupRef), userGroup.Name));
+                        groups.Add(new AuthorityGroupSummary(new EntityRef(userGroup.UserGroupRef), userGroup.Name,userGroup.Name, false));
                     }
 
                     newUser.AuthorityGroups = groups;
@@ -95,6 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                                                 {
                                                     UserName = user.UserName,
                                                     DisplayName = user.DisplayName,
+                                                    EmailAddress = user.EmailAddress,
                                                     Enabled = user.Enabled
                                                 };
 
@@ -102,7 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                     foreach(UserGroup userGroup in user.UserGroups)
                     {
-                        groups.Add(new AuthorityGroupSummary(new EntityRef(userGroup.UserGroupRef), userGroup.Name));
+                        groups.Add(new AuthorityGroupSummary(new EntityRef(userGroup.UserGroupRef), userGroup.Name, userGroup.Name,false));
                     }
 
                     updateUser.AuthorityGroups = groups;
@@ -219,7 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     tokens.Add(new AuthorityTokenSummary(token.Name, token.Description));
                 }
 
-                service.AddAuthorityGroup(userGroup.Name, tokens);
+                service.AddAuthorityGroup(userGroup.Name, userGroup.Description, userGroup.DataGroup, tokens);
                 success = true;
             }
 
@@ -237,7 +236,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 AuthorityGroupDetail detail = new AuthorityGroupDetail
                                                   {
                                                       AuthorityGroupRef = new EntityRef(userGroup.Ref),
-                                                      Name = userGroup.Name
+                                                      Name = userGroup.Name,
+                                                      Description = userGroup.Description,
+                                                      DataGroup = userGroup.DataGroup
                                                   };
 
                 foreach(TokenSummary token in userGroup.Tokens)
@@ -245,7 +246,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     detail.AuthorityTokens.Add(new AuthorityTokenSummary(token.Name, token.Description));
                 }
 
-                service.UpdateAuthorityGroup(detail);
+                service.UpdateAuthorityGroup(detail, userGroup.Password);
                 success = true;
             }
 

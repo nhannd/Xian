@@ -15,6 +15,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Server.ShredHost
 {
@@ -29,29 +30,29 @@ namespace ClearCanvas.Server.ShredHost
 			NamedPipes
 		}
 
-        static public ServiceEndpointDescription StartBasicHttpHost<TServiceType, TServiceInterfaceType>(string name, string description, int port)
+		static public ServiceEndpointDescription StartBasicHttpHost<TServiceType, TServiceInterfaceType>(string name, string description, int port, string serviceAddressBase)
         {
-            return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.BasicHttp, port, 0);
+			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.BasicHttp, port, 0, serviceAddressBase);
         }
 
-		static public ServiceEndpointDescription StartHttpHost<TServiceType, TServiceInterfaceType>(string name, string description, int port)
-		{ 
-			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.WSHttp, port, 0);
+		static public ServiceEndpointDescription StartHttpHost<TServiceType, TServiceInterfaceType>(string name, string description, int port, string serviceAddressBase)
+		{
+			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.WSHttp, port, 0, serviceAddressBase);
 		}
 
-		static public ServiceEndpointDescription StartHttpDualHost<TServiceType, TServiceInterfaceType>(string name, string description, int port)
+		static public ServiceEndpointDescription StartHttpDualHost<TServiceType, TServiceInterfaceType>(string name, string description, int port, string serviceAddressBase)
 		{
-			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.WSDualHttp, port, 0);
+			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.WSDualHttp, port, 0, serviceAddressBase);
 		}
 
-		static public ServiceEndpointDescription StartNetTcpHost<TServiceType, TServiceInterfaceType>(string name, string description, int port, int metaDataHttpPort)
+		static public ServiceEndpointDescription StartNetTcpHost<TServiceType, TServiceInterfaceType>(string name, string description, int port, int metaDataHttpPort, string serviceAddressBase)
 		{
-			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.NetTcp, metaDataHttpPort, port);
+			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.NetTcp, metaDataHttpPort, port, serviceAddressBase);
 		}
 
-		static public ServiceEndpointDescription StartNetPipeHost<TServiceType, TServiceInterfaceType>(string name, string description, int metaDataHttpPort)
+		static public ServiceEndpointDescription StartNetPipeHost<TServiceType, TServiceInterfaceType>(string name, string description, int metaDataHttpPort, string serviceAddressBase)
 		{
-			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.NamedPipes, metaDataHttpPort, 0);
+			return StartHost<TServiceType, TServiceInterfaceType>(name, description, HostBindingType.NamedPipes, metaDataHttpPort, 0, serviceAddressBase);
 		}
 
 		static private ServiceEndpointDescription StartHost<TServiceType, TServiceInterfaceType>
@@ -60,20 +61,28 @@ namespace ClearCanvas.Server.ShredHost
 				string description, 
 				HostBindingType bindingType,
 				int httpPort,
-				int tcpPort)
+				int tcpPort,
+				string serviceAddressBase)
         {
 
 			ServiceEndpointDescription sed = new ServiceEndpointDescription(name, description);
 
 			sed.Binding = GetBinding<TServiceInterfaceType>(bindingType);
-			sed.ServiceHost = new ServiceHost(typeof(TServiceType), GetServiceHostBaseAddresses(name, bindingType, tcpPort, httpPort));
+			sed.ServiceHost = new ServiceHost(typeof(TServiceType));
+			var endpointAddress = GetEndpointAddress(name, bindingType, tcpPort, httpPort, serviceAddressBase);
 
 			ServiceMetadataBehavior metadataBehavior = sed.ServiceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
 			if (null == metadataBehavior)
 			{
-				metadataBehavior = new ServiceMetadataBehavior();
-				metadataBehavior.HttpGetEnabled = true;
-				sed.ServiceHost.Description.Behaviors.Add(metadataBehavior);
+				if (bindingType == HostBindingType.BasicHttp ||
+					bindingType == HostBindingType.WSHttp ||
+					bindingType == HostBindingType.WSDualHttp)
+				{
+					metadataBehavior = new ServiceMetadataBehavior();
+					metadataBehavior.HttpGetEnabled = true;
+					metadataBehavior.HttpGetUrl = endpointAddress;
+					sed.ServiceHost.Description.Behaviors.Add(metadataBehavior);
+				}
 			}
 
 			ServiceDebugBehavior debugBehavior = sed.ServiceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
@@ -84,7 +93,7 @@ namespace ClearCanvas.Server.ShredHost
 				sed.ServiceHost.Description.Behaviors.Add(debugBehavior);
 			}
 
-			sed.ServiceHost.AddServiceEndpoint(typeof(TServiceInterfaceType), sed.Binding, name);
+			sed.ServiceHost.AddServiceEndpoint(typeof(TServiceInterfaceType), sed.Binding, endpointAddress);
 			sed.ServiceHost.Open();
 
 			return sed;
@@ -178,24 +187,17 @@ namespace ClearCanvas.Server.ShredHost
             sed.ServiceHost.Close();
         }
 
-		private static Uri[] GetServiceHostBaseAddresses(string endpointName, HostBindingType bindingType, int tcpPort, int httpPort)
+		private static Uri GetEndpointAddress(string endpointName, HostBindingType bindingType, int tcpPort, int httpPort, string serviceAddressBase)
 		{
-			List<Uri> endpoints = new List<Uri>();
+			var serviceBase = string.IsNullOrEmpty(serviceAddressBase) ? endpointName : serviceAddressBase;
+			var serviceAdress = string.Format("{0}/{1}", serviceBase, endpointName);
 
 			if (bindingType == HostBindingType.NetTcp)
-			{
-				endpoints.Add(new UriBuilder(String.Format("net.tcp://localhost:{0}/{1}", tcpPort, endpointName)).Uri);
-			}
-			else if (bindingType == HostBindingType.NamedPipes)
-			{
-				//the servicehost will automatically append the endpointname.
-				endpoints.Add(new UriBuilder(String.Format("net.pipe://localhost/{0}", endpointName)).Uri);
-			}
+				return new UriBuilder(String.Format("net.tcp://localhost:{0}/{1}", tcpPort, serviceAdress)).Uri;
+			if (bindingType == HostBindingType.NamedPipes)
+				return new UriBuilder(String.Format("net.pipe://localhost/{0}", serviceAdress)).Uri;
 
-			endpoints.Add(new UriBuilder(String.Format("http://localhost:{0}/{1}", httpPort, endpointName)).Uri);
-
-			return endpoints.ToArray();
+			return new UriBuilder(String.Format("http://localhost:{0}/{1}", httpPort, serviceAdress)).Uri;
 		}
-
 	}
 }

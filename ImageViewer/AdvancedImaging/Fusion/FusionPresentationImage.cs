@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
@@ -131,6 +132,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return (GrayscaleImageGraphic) base.ImageGraphic; }
 		}
 
+		public ImageGraphic OverlayImageGraphic
+		{
+			get { return _fusionOverlayComposite.OverlayImageGraphic; }
+		}
+
 		public IVoiLutManager BaseVoiLutManager
 		{
 			get { return ImageGraphic.VoiLutManager; }
@@ -217,7 +223,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return ImageGraphic.ModalityLut; }
 		}
 
-		#endregion
+	    #endregion
 
 		#region Private Helpers
 

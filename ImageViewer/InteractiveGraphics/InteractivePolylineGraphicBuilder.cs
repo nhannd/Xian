@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Text;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -27,7 +28,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public class InteractivePolylineGraphicBuilder : InteractiveGraphicBuilder
 	{
 		private readonly int _maximumVertices;
-		private int _numberOfPointsAnchored = 0;
+        private readonly int _minimumVertices;
+        private int _numberOfPointsAnchored;
 
 		/// <summary>
 		/// Constructs an interactive builder for the specified graphic.
@@ -42,10 +44,31 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="maximumVertices">The maximum number of vertices to accept.</param>
 		/// <param name="pointsGraphic">The graphic to be interactively built.</param>
 		public InteractivePolylineGraphicBuilder(int maximumVertices, IPointsGraphic pointsGraphic)
-			: base(pointsGraphic)
+			: this(maximumVertices, 2, pointsGraphic)
 		{
-			_maximumVertices = maximumVertices;
 		}
+
+        /// <summary>
+        /// Constructs an interactive builder for the specified graphic.
+        /// </summary>
+        /// <param name="maximumVertices">The maximum number of vertices to accept.</param>
+        /// <param name="minimumVertices">The minimum number of vertices to accept.</param>
+        /// <param name="pointsGraphic">The graphic to be interactively built.</param>
+        public InteractivePolylineGraphicBuilder(int maximumVertices, int minimumVertices, IPointsGraphic pointsGraphic)
+            : base(pointsGraphic)
+        {
+            Platform.CheckPositive(minimumVertices, "minimumVertices");
+            Platform.CheckTrue(maximumVertices >= minimumVertices, "max vertices >= min vertices");
+            Platform.CheckTrue(minimumVertices > 1, "min vertices > 1");
+            
+            _maximumVertices = maximumVertices;
+            _minimumVertices = minimumVertices;
+        }
+
+        /// <summary>
+        /// Indicates whether or not to stop drawing the polyline when the user double-clicks.
+        /// </summary>
+        public bool StopOnDoubleClick { get; set; }
 
 		/// <summary>
 		/// Gets the graphic that the builder is operating on.
@@ -60,6 +83,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public override void Reset()
 		{
+		    /// TODO (CR Sep 2011): Shouldn't this also clear the points?
 			_numberOfPointsAnchored = 0;
 			base.Reset();
 		}
@@ -69,7 +93,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		protected override void Rollback()
 		{
-			_numberOfPointsAnchored = Math.Max(_numberOfPointsAnchored - 1, 0);
+            /// TODO (CR Sep 2011): Shouldn't this also remove the last point?
+            _numberOfPointsAnchored = Math.Max(_numberOfPointsAnchored - 1, 0);
 		}
 
 		/// <summary>
@@ -79,6 +104,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns>True if the builder did something as a result of the call, and hence would like to receive capture; False otherwise.</returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
+            if (mouseInformation.ClickCount == 2 && StopOnDoubleClick && _numberOfPointsAnchored >= _minimumVertices)
+            {
+                NotifyGraphicComplete();
+                return true;
+            }
+
 			_numberOfPointsAnchored++;
 
 			// We just started creating
@@ -86,8 +117,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
 				this.Graphic.Points.Add(mouseInformation.Location);
-				this.Graphic.Points.Add(mouseInformation.Location);
-				this.Graphic.ResetCoordinateSystem();
+                this.Graphic.Points.Add(mouseInformation.Location);
+                this.Graphic.ResetCoordinateSystem();
 			}
 			// We're done creating
 			else if (_numberOfPointsAnchored == _maximumVertices)
@@ -101,7 +132,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.NotifyGraphicComplete();
 			}
 			// We're in the middle of creating
-			else if (_numberOfPointsAnchored >= 2 && _maximumVertices > 2)
+			else
 			{
 				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
 

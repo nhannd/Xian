@@ -68,7 +68,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
                 if (user == null)
                 {
                 	UserInfo userInfo =
-                		new UserInfo(userName, string.Format("{0} {1}", staffFamilyName, staffGivenName), null, null);
+                		new UserInfo(userName, string.Format("{0} {1}", staffFamilyName, staffGivenName), null, null, null);
 					user = User.CreateNewUser(userInfo, _settings.DefaultTemporaryPassword);
                     _context.Lock(user, DirtyState.New);
 

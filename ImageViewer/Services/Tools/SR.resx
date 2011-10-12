@@ -126,14 +126,14 @@
   <data name="ClearSelected" xml:space="preserve">
     <value>Clear Selected</value>
   </data>
-  <data name="DicomServerConfiguration" xml:space="preserve">
-    <value>DICOM Server</value>
+  <data name="ServerConfiguration" xml:space="preserve">
+    <value>Local Server</value>
   </data>
   <data name="DiskspaceManagerConfiguration" xml:space="preserve">
     <value>Diskspace Manager</value>
   </data>
   <data name="MessageFailedToRetrieveDicomServerConfiguration" xml:space="preserve">
-    <value>Failed to retrieve the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again.</value>
+    <value>Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
   </data>
   <data name="ExceptionIdentifiersMustMatch" xml:space="preserve">
     <value>The identifiers must match.</value>
@@ -487,9 +487,12 @@ Please ensure the ClearCanvas Service is running or contact your system administ
     <value>Failed to open the selected study.</value>
   </data>
   <data name="MessageFailedToUpdateDicomServerConfiguration" xml:space="preserve">
-    <value>Failed to update the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again.</value>
+    <value>Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
   </data>
-	<data name="FormatProgressUpdate">
-		<value xml:space="preserve">... {0:F1}%</value>
-	</data>
+  <data name="FormatProgressUpdate" xml:space="preserve">
+    <value>... {0:F1}%</value>
+  </data>
+  <data name="DicomConfiguration" xml:space="preserve">
+    <value>DICOM</value>
+  </data>
 </root>

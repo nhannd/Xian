@@ -171,6 +171,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
         /// <summary>
+        /// Converts a point in the image expressed in pixels to a point expressed in mm.
+        /// </summary>
+        public PointF? ConvertFromImage(PointF positionPixels)
+        {
+            if (PixelSpacing.IsNull)
+                return null;
+
+            return new PointF(positionPixels.X * (float)PixelSpacing.Column, positionPixels.Y * (float)PixelSpacing.Row);
+        }
+
+        /// <summary>
         /// Gets the normal vector describing the plane of the image in patient coordinates.
         /// </summary>
         /// <returns>The normal vector, or null if the <see cref="Frame"/>'s position information is invalid.</returns>

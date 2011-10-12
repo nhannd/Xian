@@ -601,6 +601,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [{0}] All Images.
+        /// </summary>
+        public static string FormatDescriptionModalityDisplaySet {
+            get {
+                return ResourceManager.GetString("FormatDescriptionModalityDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Slope: {0:F2} Int.: {1:F2}.
         /// </summary>
         public static string FormatDescriptionModalityLutLinear {
@@ -714,6 +723,15 @@ namespace ClearCanvas.ImageViewer {
         public static string FormatMouseWheelShortcutDescription {
             get {
                 return ResourceManager.GetString("FormatMouseWheelShortcutDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [{0}] All Images.
+        /// </summary>
+        public static string FormatNameModalityDisplaySet {
+            get {
+                return ResourceManager.GetString("FormatNameModalityDisplaySet", resourceCulture);
             }
         }
         
@@ -936,6 +954,16 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}
+        ///{1}.
+        /// </summary>
+        public static string MessageFormatStudyNotLoadable {
+            get {
+                return ResourceManager.GetString("MessageFormatStudyNotLoadable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} studies were only partially loaded..
         /// </summary>
         public static string MessageFormatXStudiesIncomplete {
@@ -990,7 +1018,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study is on a non-streaming server and must be retrieved to view it..
+        ///   Looks up a localized string similar to The study is on a non-streaming server and must be retrieved and reopened..
         /// </summary>
         public static string MessageInfoNoStudyLoader {
             get {

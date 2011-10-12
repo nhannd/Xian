@@ -66,17 +66,17 @@ namespace ClearCanvas.Dicom.Audit
 		/// system may have been compromised.</param>
 		/// <param name="eventTypeCode">The type of Security Alert event</param>
 		public SecurityAlertAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome,
+			EventIdentificationContentsEventOutcomeIndicator outcome,
 			SecurityAlertEventTypeCodeEnum eventTypeCode)
 			: base("SecurityAlert")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.SecurityAlert;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.SecurityAlert;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.E;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
-			AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { GetEventTypeCode(eventTypeCode) };
+			AuditMessage.EventIdentification.EventTypeCode = new EventTypeCode[] { GetEventTypeCode(eventTypeCode) };
 
 			InternalAddAuditSource(auditSource);
 		}
@@ -114,39 +114,47 @@ namespace ClearCanvas.Dicom.Audit
 			InternalAddActiveParticipant(participant);
 		}
 
+        /// <summary>
+        /// Add details of a SecurityAlert Participant.
+        /// </summary>
+        /// <param name="o"></param>
+        public void AddSecurityAlertParticipant(AuditSecurityAlertParticipantObject o)
+        {
+            _participantObjectList.Add(o.ParticipantObjectId, o);
+        }
 
 		/// <summary>
 		/// Method for transforming event code enum into a CodedValueType.
 		/// </summary>
 		/// <param name="eventTypeCode"></param>
 		/// <returns></returns>
-		private static CodedValueType GetEventTypeCode(SecurityAlertEventTypeCodeEnum eventTypeCode)
+        private static EventTypeCode GetEventTypeCode(SecurityAlertEventTypeCodeEnum eventTypeCode)
 		{
-			CodedValueType type = null;
+            EventTypeCode type = null;
 			if (eventTypeCode == SecurityAlertEventTypeCodeEnum.NodeAuthentication)
-				type = CodedValueType.NodeAuthentication;
+				type = EventTypeCode.NodeAuthentication;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.EmergencyOverride)
-				type = CodedValueType.EmergencyOverride;
+				type = EventTypeCode.EmergencyOverride;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.NetworkConfiguration)
-				type = CodedValueType.NetworkConfiguration;
+				type = EventTypeCode.NetworkConfiguration;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.SecurityConfiguration)
-				type = CodedValueType.SecurityConfiguration;
+				type = EventTypeCode.SecurityConfiguration;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.HardwareConfiguration)
-				type = CodedValueType.HardwareConfiguration;
+				type = EventTypeCode.HardwareConfiguration;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.SoftwareConfiguration)
-				type = CodedValueType.SoftwareConfiguration;
+				type = EventTypeCode.SoftwareConfiguration;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.UseOfRestrictedFunction)
-				type = CodedValueType.UseOfRestrictedFunction;
+				type = EventTypeCode.UseOfRestrictedFunction;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.AuditRecordingStopped)
-				type = CodedValueType.AuditRecordingStopped;
+				type = EventTypeCode.AuditRecordingStopped;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.AuditRecordingStarted)
-				type = CodedValueType.AuditRecordingStarted;
+				type = EventTypeCode.AuditRecordingStarted;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.ObjectSecurityAttributesChanged)
-				type = CodedValueType.ObjectSecurityAttributesChanged;
+				type = EventTypeCode.ObjectSecurityAttributesChanged;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.SecurityRolesChanged)
-				type = CodedValueType.SecurityRolesChanged;
+				type = EventTypeCode.SecurityRolesChanged;
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.UserSecurityAttributesChanged)
-				type = CodedValueType.UserSecurityAttributesChanged;
+				type = EventTypeCode.UserSecurityAttributesChanged;
 			return type;
 		}
 	}

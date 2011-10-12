@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				// Audit Log
 				BeginTransferringDicomInstancesAuditHelper audit =
 					new BeginTransferringDicomInstancesAuditHelper(ServerPlatform.AuditSource,
-					                                               EventIdentificationTypeEventOutcomeIndicator.Success,
+					                                               EventIdentificationContentsEventOutcomeIndicator.Success,
 					                                               parms, patient);
 
 				foreach (StorageInstance instance in instances)
@@ -75,8 +75,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				// Audit Log
 				DicomInstancesTransferredAuditHelper helper =
 					new DicomInstancesTransferredAuditHelper(ServerPlatform.AuditSource,
-					                                         EventIdentificationTypeEventOutcomeIndicator.Success,
-					                                         EventIdentificationTypeEventActionCode.E,
+					                                         EventIdentificationContentsEventOutcomeIndicator.Success,
+					                                         EventIdentificationContentsEventActionCode.E,
 					                                         assocParams);
 
 				foreach (StorageInstance instance in instances)

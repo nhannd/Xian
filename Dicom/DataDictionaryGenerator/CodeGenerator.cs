@@ -544,6 +544,78 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         /// <summary>
         /// Create the SopClass.cs file.
         /// </summary>
+        /// <param name="tagsFile"></param>
+        public void WriteTagsText(String tagsFile)
+        {
+            StreamWriter writer = new StreamWriter(tagsFile);
+
+
+
+            IEnumerator<Tag> iter = _tagList.Values.GetEnumerator();
+
+            while (iter.MoveNext())
+            {
+                Tag tag = iter.Current;
+                uint vmLow = 0;
+                uint vmHigh = 0;
+                char[] charSeparators = new char[] {'�', '-'};
+
+                String[] nodes = tag.vm.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
+                if (nodes.Length == 1)
+                {
+                    vmLow = uint.Parse(nodes[0]);
+                    vmHigh = vmLow;
+                }
+                else if (nodes.Length == 2)
+                {
+                    if (nodes[0].Contains("N") || nodes[0].Contains("n"))
+                    {
+                        vmLow = 1;
+                    }
+                    else
+                    {
+                        vmLow = uint.Parse(nodes[0]);
+                    }
+                    if (nodes[1].Contains("N") || nodes[1].Contains("n"))
+                    {
+                        vmHigh = UInt32.MaxValue;
+                    }
+                    else
+                    {
+                        vmHigh = uint.Parse(nodes[1]);
+                    }
+                }
+                string vr;
+                bool isMultiVrTag;
+                if (tag.vr.Contains("or"))
+                {
+                    if (tag.varName.Equals("PixelData"))
+                    {
+                        vr = "OW";
+                        isMultiVrTag = true;
+                    }
+                    else
+                    {
+                            // Just take the first VR listed
+                        vr = tag.vr.Substring(0, 2);
+                        isMultiVrTag = true;
+                    }
+                }
+                else
+                {
+                    vr = tag.vr;
+                    isMultiVrTag = false;
+                }
+                writer.WriteLine("{0};{1};{2};{3};{4};{5};{6};{7}",
+                    tag.nTag,tag.name,tag.varName,vr,vmLow,vmHigh, string.IsNullOrEmpty(tag.retired) ? false : true,isMultiVrTag);
+            }
+
+            writer.Close();
+        }
+
+        /// <summary>
+        /// Create the SopClass.cs file.
+        /// </summary>
         /// <param name="sopsFile"></param>
         public void WriteSopClasses(String sopsFile)
         {

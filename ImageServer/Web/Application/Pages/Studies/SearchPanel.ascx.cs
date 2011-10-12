@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
@@ -35,7 +34,7 @@ using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
-    public class SearchPanelDeleteButtonClickedEventArgs:EventArgs
+    public class SearchPanelButtonClickedEventArgs:EventArgs
     {
         private IEnumerable<StudySummary> _selectedStudies;
         public IEnumerable<StudySummary> SelectedStudies
@@ -50,14 +49,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         #region Private members
         private ServerPartition _serverPartition;
         private StudyController _controller = new StudyController();
-        private EventHandler<SearchPanelDeleteButtonClickedEventArgs> _deleteButtonClickedHandler;
+        private EventHandler<SearchPanelButtonClickedEventArgs> _deleteButtonClickedHandler;
+        private EventHandler<SearchPanelButtonClickedEventArgs> _assignAuthorityGroupsButtonClickedHandler;
     	#endregion Private members
 
         #region Events
-        public event EventHandler<SearchPanelDeleteButtonClickedEventArgs> DeleteButtonClicked
+        public event EventHandler<SearchPanelButtonClickedEventArgs> DeleteButtonClicked
         {
             add { _deleteButtonClickedHandler += value; }
             remove { _deleteButtonClickedHandler -= value; }
+        }
+
+        public event EventHandler<SearchPanelButtonClickedEventArgs> AssignAuthorityGroupsButtonClicked
+        {
+            add { _assignAuthorityGroupsButtonClickedHandler += value; }
+            remove { _assignAuthorityGroupsButtonClickedHandler -= value; }
         }
         #endregion
 
@@ -113,12 +119,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         }
 
         [ExtenderControlProperty]
+        [ClientPropertyName("AssignAuthorityGroupsButtonClientID")]
+        public string AssignAuthorityGroupsButtonClientID
+        {
+            get { return AssignAuthorityGroupsButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
         [ClientPropertyName("StudyListClientID")]
         public string StudyListClientID
         {
             get { return StudyListGridView.TheGrid.ClientID; }
         }
-
+        
         [ExtenderControlProperty]
         [ClientPropertyName("OpenStudyPageUrl")]
         public string OpenStudyPageUrl
@@ -269,7 +282,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             MoveStudyButton.Roles = AuthorityTokens.Study.Move;
             DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
             RestoreStudyButton.Roles = AuthorityTokens.Study.Restore;
-
+            AssignAuthorityGroupsButton.Roles = ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup;
         }
 
     	#endregion Private Methods
@@ -349,7 +362,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 					sb.Append(';');
 			}
 
-        	QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationTypeEventOutcomeIndicator.Success,
+        	QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationContentsEventOutcomeIndicator.Success,
 				new AuditPersonActiveParticipant(SessionManager.Current.Credentials.UserName,
 											 null,
 											 SessionManager.Current.Credentials.DisplayName),
@@ -382,9 +395,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected void DeleteStudyButton_Click(object sender, ImageClickEventArgs e)
         {
             StudyListGridView.RefreshCurrentPage();
-            SearchPanelDeleteButtonClickedEventArgs args = new SearchPanelDeleteButtonClickedEventArgs();
-            args.SelectedStudies = StudyListGridView.SelectedStudies;
+            SearchPanelButtonClickedEventArgs args = new SearchPanelButtonClickedEventArgs
+                                                         {
+                                                             SelectedStudies = StudyListGridView.SelectedStudies
+                                                         };
             EventsHelper.Fire(_deleteButtonClickedHandler, this, args);
+        }
+
+        protected void AssignAuthorityGroupsButton_Click(object sender, ImageClickEventArgs e)
+        {
+            StudyListGridView.RefreshCurrentPage();
+            SearchPanelButtonClickedEventArgs args = new SearchPanelButtonClickedEventArgs
+                                                         {
+                                                             SelectedStudies = StudyListGridView.SelectedStudies
+                                                         };
+            EventsHelper.Fire(_assignAuthorityGroupsButtonClickedHandler, this, args);
         }
 
         protected void OpenStudyButton_Click(object sender, ImageClickEventArgs e)

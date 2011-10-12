@@ -10,9 +10,7 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Ping;
-using System;
 
 namespace ClearCanvas.Enterprise.Core.Ping
 {
@@ -22,8 +20,6 @@ namespace ClearCanvas.Enterprise.Core.Ping
 	{
 		#region IPingService Members
 
-		[ReadOperation(ChangeSetAuditable = false, PersistenceScopeOption = PersistenceScopeOption.Required)]
-		[ResponseCaching("GetPingResponseCacheDirective")]
 		public PingResponse Ping(PingRequest request)
 		{
 			Platform.Log(LogLevel.Debug, "Received ping request.");
@@ -31,12 +27,5 @@ namespace ClearCanvas.Enterprise.Core.Ping
 		}
 
 		#endregion
-
-		private ResponseCachingDirective GetPingResponseCacheDirective()
-		{
-			var settings = new PingServiceSettings();
-			return new ResponseCachingDirective(settings.ResponseCachingEnabled,
-				TimeSpan.FromSeconds(settings.ResponseCachingTimeToLiveSeconds), ResponseCachingSite.Client);
-		}
 	}
 }

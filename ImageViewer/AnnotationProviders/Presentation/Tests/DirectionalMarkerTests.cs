@@ -68,10 +68,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 		public void Initialize()
 		{
 			_provider = new JunkProvider();
-            _leftAnnotation = new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Left);
-            _topAnnotation = new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Top);
-            _rightAnnotation = new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Right);
-            _bottomAnnotation = new DirectionalMarkerAnnotationItem(PatientOrientationHelper.ImageEdge.Bottom);
+            _leftAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left);
+            _topAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top);
+            _rightAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right);
+            _bottomAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom);
 		}
 
 		private void NewTransform()

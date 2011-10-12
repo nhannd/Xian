@@ -286,7 +286,10 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public static bool AreEqual(Vector3D left, Vector3D right, float tolerance)
 		{
-			return FloatComparer.AreEqual(left.X, right.X, tolerance) &&
+            if (left == null || right == null)
+                return ReferenceEquals(left, right);
+            
+            return FloatComparer.AreEqual(left.X, right.X, tolerance) &&
 					FloatComparer.AreEqual(left.Y, right.Y, tolerance) &&
 					FloatComparer.AreEqual(left.Z, right.Z, tolerance);
 		}
@@ -296,6 +299,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public static bool AreEqual(Vector3D left, Vector3D right)
 		{
+            if (left == null || right == null)
+                return ReferenceEquals(left, right);
+
 			return FloatComparer.AreEqual(left.X, right.X) &&
 					FloatComparer.AreEqual(left.Y, right.Y) &&
 					FloatComparer.AreEqual(left.Z, right.Z);

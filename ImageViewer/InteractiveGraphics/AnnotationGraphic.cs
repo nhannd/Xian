@@ -196,6 +196,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			if (_notifyOnSubjectChanged)
 			{
+			    /// TODO (CR Sep 2011): If the subject is an arbitrary object, why are we doing this?
 				if(e.PropertyName != "Color" && e.PropertyName != "LineStyle")
 					this.OnSubjectChanged();
 			}
@@ -288,8 +289,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
 		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
+            if (!HitTest(mouseInformation.Location))
+                return new ActionSet();
+
 			if (_toolSet == null)
 				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this));
+
 			return base.GetExportedActions(site, mouseInformation).Union(_toolSet.Actions);
 		}
 

@@ -17,18 +17,32 @@ namespace ClearCanvas.Common.Authorization
 	/// <seealso cref="AuthorityTokenAttribute"/>
 	public class AuthorityGroupDefinition
     {
-        private string _name;
-        private string[] _tokens;
-
-		/// <summary>
+        /// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="name">The name of the authority group.</param>
 		/// <param name="tokens">The associated authority group tokens.</param>
+		/// <param name="dataGroup">Tells if the group is an authority group for controlling access to data.</param>
+		/// <param name="description">The description of the authority group.</param>
+        public AuthorityGroupDefinition(string name, string description, bool dataGroup, string[] tokens)
+        {
+            Name = name;
+            Tokens = tokens;
+		    Description = description;
+            DataGroup = dataGroup;
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="name">The name of the authority group.</param>
+        /// <param name="tokens">The associated authority group tokens.</param>
         public AuthorityGroupDefinition(string name, string[] tokens)
         {
-            _name = name;
-            _tokens = tokens;
+            Name = name;
+            Tokens = tokens;
+            Description = name;
+            DataGroup = false;
         }
 
         /// <summary>
@@ -36,15 +50,33 @@ namespace ClearCanvas.Common.Authorization
         /// </summary>
         public string Name
         {
-            get { return _name; }
+            get; private set;
         }
+
+        /// <summary>
+        /// Gets the name of the authority group.
+        /// </summary>
+        public string Description
+        {
+            get; private set;
+        }
+
+
+        /// <summary>
+        /// Gets a bool signaling if the authority group is for Data access.
+        /// </summary>
+        public bool DataGroup
+        {
+            get; private set;
+        }
+
 
         /// <summary>
         /// Gets the set of tokens that are assigned to the group.
         /// </summary>
         public string[] Tokens
         {
-            get { return _tokens; }
+            get; private set;
         }
     }
 }

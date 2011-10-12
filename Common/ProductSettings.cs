@@ -384,7 +384,7 @@ namespace ClearCanvas.Common
 		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeRelease)
 		{
 			var version = Version;
-			var versionString = new StringBuilder(string.Format(@"{0}.{1}", version.Major, version.Minor));
+			var versionString = new StringBuilder(string.Format(@"v{0}.{1}", version.Major, version.Minor));
 
 			if (includeBuildAndRevision && version.Build >= 0)
 			{

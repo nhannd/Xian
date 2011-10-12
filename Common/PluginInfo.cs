@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common
 {
@@ -21,81 +22,88 @@ namespace ClearCanvas.Common
     /// </summary>
     public class PluginInfo : IBrowsable
     {
-        /// <summary>
-        /// Internal method used by the framework to discover the extensions declared in a plugin.
-        /// </summary>
-        /// <param name="asm">The plugin assembly to inspect.</param>
-        /// <returns>An array of <see cref="ExtensionInfo" /> objects describing the extensions.</returns>
-        internal static List<ExtensionInfo> DiscoverExtensions(Assembly asm)
+		/// <summary>
+		/// Internal method used by the framework to discover extension points and extensions declared in a plugin.
+		/// </summary>
+		/// <param name="asm"></param>
+		/// <param name="points"></param>
+		/// <param name="extensions"></param>
+		internal static void DiscoverExtensionPointsAndExtensions(Assembly asm, List<ExtensionPointInfo> points, List<ExtensionInfo> extensions)
+		{
+			foreach (var type in asm.GetTypes())
+			{
+				var epAttr = AttributeUtils.GetAttribute<ExtensionPointAttribute>(type, false);
+				if (epAttr != null)
+				{
+					if(IsValidExtensionPointClass(type))
+					{
+						points.Add(new ExtensionPointInfo(type, GetExtensionInterface(type), epAttr.Name, epAttr.Description));
+					}
+					else
+					{
+						Platform.Log(LogLevel.Error, SR.ExceptionExtensionPointMustSubclassExtensionPoint, type.FullName);
+					}
+				}
+
+				var attrs = AttributeUtils.GetAttributes<ExtensionOfAttribute>(type, false);
+				foreach (var a in attrs)
+				{
+					// is the extension a concrete class?
+					if (!IsConcreteClass(type))
+					{
+						Platform.Log(LogLevel.Error, SR.ExceptionExtensionMustBeConcreteClass, type.FullName);
+						continue;
+					}
+
+					var extensionPointClass = a.ExtensionPointClass;
+					var extensionInterface = GetExtensionInterface(extensionPointClass);
+
+					// does the extension implement the required interface?
+					if (!extensionInterface.IsAssignableFrom(type))
+					{
+						Platform.Log(LogLevel.Error, SR.ExceptionExtensionDoesNotImplementRequiredInterface,
+							type.FullName,
+							extensionInterface);
+
+						continue;
+					}
+					extensions.Add(
+						new ExtensionInfo(
+							type,
+							extensionPointClass,
+							a.Name,
+							a.Description,
+							ExtensionSettings.Default.IsEnabled(type, a.Enabled)
+						)
+					);
+				}
+			}
+		}
+
+    	private static Type GetExtensionInterface(Type extensionClass)
+    	{
+    		return extensionClass.BaseType.GetGenericArguments()[0];
+    	}
+
+    	private static bool IsValidExtensionPointClass(Type extensionPointClass)
         {
-            List<ExtensionInfo> extensionList = new List<ExtensionInfo>();
-            foreach (Type type in asm.GetTypes())
-            {
-                object[] attrs = type.GetCustomAttributes(typeof(ExtensionOfAttribute), false);
-                foreach (ExtensionOfAttribute a in attrs)
-                {
-                    extensionList.Add(
-                        new ExtensionInfo(
-                            type,
-                            a.ExtensionPointClass,
-                            a.Name,
-                            a.Description,
-                            ExtensionSettings.Default.IsEnabled(type, a.Enabled)
-                        )
-                    );
-                }
-            }
-            return extensionList;
+            var baseType = extensionPointClass.BaseType;
+    		return baseType.IsGenericType && baseType.GetGenericTypeDefinition().Equals(typeof (ExtensionPoint<>));
         }
-
-        /// <summary>
-        /// Internal method used by the framework to discover the extension points declared in a plugin.
-        /// </summary>
-        /// <param name="asm">The plugin assembly to inspect.</param>
-        /// <returns>An array of <see cref="ExtensionPointInfo" />objects describing the extension points.</returns>
-        internal static List<ExtensionPointInfo> DiscoverExtensionPoints(Assembly asm)
-        {
-            List<ExtensionPointInfo> extensionPointList = new List<ExtensionPointInfo>();
-            foreach (Type type in asm.GetTypes())
-            {
-                try
-                {
-                    object[] attrs = type.GetCustomAttributes(typeof(ExtensionPointAttribute), false);
-                    if (attrs.Length > 0)
-                    {
-                        ValidateExtensionPointClass(type);
-
-                        ExtensionPointAttribute a = (ExtensionPointAttribute)attrs[0];
-                        Type extensionInterface = type.BaseType.GetGenericArguments()[0];
-
-                        extensionPointList.Add(new ExtensionPointInfo(type, extensionInterface, a.Name, a.Description));
-                    }
-                }
-                catch (ExtensionPointException e)
-                {
-                    // log and continue discovering extension points
-                    Platform.Log(LogLevel.Error, e.Message);
-                }
-            }
-            return extensionPointList;
-        }
-
-        private static void ValidateExtensionPointClass(Type extensionPointClass)
-        {
-            Type baseType = extensionPointClass.BaseType;
-            if (!baseType.IsGenericType || !baseType.GetGenericTypeDefinition().Equals(typeof(ExtensionPoint<>)))
-                throw new ExtensionPointException(string.Format(
-                    SR.ExceptionExtensionPointMustSubclassExtensionPoint, extensionPointClass.FullName));
-        }
+		
+		private static bool IsConcreteClass(Type type)
+		{
+			return !type.IsAbstract && type.IsClass;
+		}
 
         
-        private string _name;
-        private string _description;
-		private string _icon;
-		private Assembly _assembly;
+        private readonly string _name;
+        private readonly string _description;
+		private readonly string _icon;
+		private readonly Assembly _assembly;
 
-        private List<ExtensionPointInfo> _extensionPoints;
-        private List<ExtensionInfo> _extensions;
+        private readonly List<ExtensionPointInfo> _extensionPoints = new List<ExtensionPointInfo>();
+        private readonly List<ExtensionInfo> _extensions = new List<ExtensionInfo>();
 
         /// <summary>
         /// Internal constructor.
@@ -107,8 +115,7 @@ namespace ClearCanvas.Common
             _assembly = assembly;
         	_icon = icon;
 
-            _extensionPoints = DiscoverExtensionPoints(assembly);
-            _extensions = DiscoverExtensions(assembly);
+        	DiscoverExtensionPointsAndExtensions(assembly, _extensionPoints, _extensions);
         }
 
         /// <summary>

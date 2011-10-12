@@ -12,26 +12,24 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
-using System.Windows;
-using System.Windows.Media.Animation;
 using System;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
-using System.Reflection;
-using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
-    public partial class ImageBoxView : UserControl
+    public partial class ImageBoxView
     {
         private List<TileView> _tileViews;
 		private System.Windows.Size _parentSize;
         private ImageBoxScrollbarView _scrollbarView;
+        private readonly ServerEventMediator _eventMediator;
 
-        public ImageBoxView(ImageBox serverEntity)
+        public ImageBoxView(ImageBox serverEntity, ServerEventMediator eventMediator)
         {
 			ServerEntity = serverEntity;
-			ApplicationContext.Current.ServerEventBroker.RegisterEventHandler(serverEntity.Identifier, OnImageBoxEvent);
+            _eventMediator = eventMediator;
+			_eventMediator.RegisterEventHandler(serverEntity.Identifier, OnImageBoxEvent);
             InitializeComponent();
 			UpdateTileViews();
         }
@@ -50,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 			// No Need for dispatcher here, this is called from a routine that is already in a dispatcher
             foreach (Tile tile in ServerEntity.Tiles)
             {
-				TileView tileView = new TileView(tile);
+				var tileView = new TileView(tile, _eventMediator);
 				TileContainer.Children.Add(tileView);
                 _tileViews.Add(tileView);
             }
@@ -113,19 +111,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void CreateScrollbar()
         {
-            _scrollbarView = new ImageBoxScrollbarView(ServerEntity);
+            _scrollbarView = new ImageBoxScrollbarView(ServerEntity,_eventMediator);
             ImageBoxRightColumn.Children.Add(_scrollbarView);
         }
 
-        private void UpdateScrollbar()
-        {
-            if (_scrollbarView == null)
-            {
-                CreateScrollbar();
-            }
-        }
-
-		private void UpdateBorder()
+        private void UpdateBorder()
 		{
 			ImageBoxBorder.BorderBrush = ServerEntity.Selected ? new SolidColorBrush(Colors.Orange) : new SolidColorBrush(Colors.Gray);
 		}
@@ -162,7 +152,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             if (@event.PropertyName == "ImageCount")
             {
-                int count = (int)@event.Value;
+                var count = (int)@event.Value;
                 if (ServerEntity.ImageCount!=count)
                 {
                     ServerEntity.ImageCount = count;
@@ -171,12 +161,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                     UpdateSize();
                 }
             }
-
 		}
 
 		public void Destroy()
         {
-            ApplicationContext.Current.ServerEventBroker.UnregisterEventHandler(ServerEntity.Identifier);
+            _eventMediator.UnregisterEventHandler(ServerEntity.Identifier);
 			DestroyTileViews();
         }
 	}

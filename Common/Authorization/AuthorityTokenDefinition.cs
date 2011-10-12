@@ -9,10 +9,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Common.Authorization
 {
 	/// <summary>
@@ -20,34 +16,39 @@ namespace ClearCanvas.Common.Authorization
 	/// </summary>
 	public class AuthorityTokenDefinition
 	{
-		private readonly string _token;
-		private readonly string _description;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="token"></param>
+		/// <param name="definingAssembly"></param>
 		/// <param name="description"></param>
-		public AuthorityTokenDefinition(string token, string description)
+		/// <param name="formerIdentities"></param>
+		public AuthorityTokenDefinition(string token, string definingAssembly, string description, string[] formerIdentities)
 		{
-			_token = token;
-			_description = description;
+			Token = token;
+			DefiningAssembly = definingAssembly;
+			Description = description;
+			FormerIdentities = formerIdentities;
 		}
 
 		/// <summary>
 		/// Gets the token string.
 		/// </summary>
-		public string Token
-		{
-			get { return _token; }
-		}
+		public string Token { get; private set; }
+
+		/// <summary>
+		/// Gets the name of the assembly that defines the token.
+		/// </summary>
+		public string DefiningAssembly { get; private set; }
 
 		/// <summary>
 		/// Gets the token description.
 		/// </summary>
-		public string Description
-		{
-			get { return _description; }
-		}
+		public string Description { get; private set; }
+
+		/// <summary>
+		/// Gets the set of former identities for this token, for migration purposes.
+		/// </summary>
+		public string[] FormerIdentities { get; private set; }
 	}
 }

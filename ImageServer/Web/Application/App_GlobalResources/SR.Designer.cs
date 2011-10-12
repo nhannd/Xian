@@ -70,6 +70,33 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to update Authority Group, the password entered is incorrect..
+        /// </summary>
+        internal static string AddEditUserGroupsDialog_InvalidPassword {
+            get {
+                return ResourceManager.GetString("AddEditUserGroupsDialog_InvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabling data access for an authority group removes the association between the authority group and imaging studies.  Users associated with the authority group will no longer be able to see their imaging studies.  Please re-enter your password to confirm this change..
+        /// </summary>
+        internal static string AddEditUserGroups_DataAccessChanged {
+            get {
+                return ResourceManager.GetString("AddEditUserGroups_DataAccessChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please Confirm Update.
+        /// </summary>
+        internal static string AddEditUserGroups_PasswordConfirmTitle {
+            get {
+                return ResourceManager.GetString("AddEditUserGroups_PasswordConfirmTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Check Server Partition configuration to ensure a copy of the study is maintained after deletion..
         /// </summary>
         internal static string AdminDeletedStudies_CheckPartitionConfiguration {
@@ -218,7 +245,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete user group &quot;{0}&quot;?.
+        ///   Looks up a localized string similar to Are you sure you want to delete authority group &quot;{0}&quot;?.
         /// </summary>
         internal static string AdminUserGroups_DeleteDialog_AreYouSure {
             get {
@@ -479,6 +506,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Data Access Rule.
+        /// </summary>
+        internal static string DialogAddDataRuleTitle {
+            get {
+                return ResourceManager.GetString("DialogAddDataRuleTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Device.
         /// </summary>
         internal static string DialogAddDeviceTitle {
@@ -524,7 +560,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add User Group.
+        ///   Looks up a localized string similar to Add Authority Group.
         /// </summary>
         internal static string DialogAddUserGroupTitle {
             get {
@@ -538,6 +574,15 @@ namespace Resources {
         internal static string DialogAddUserTitle {
             get {
                 return ResourceManager.GetString("DialogAddUserTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Data Access Rule.
+        /// </summary>
+        internal static string DialogEditDataRuleTitle {
+            get {
+                return ResourceManager.GetString("DialogEditDataRuleTitle", resourceCulture);
             }
         }
         
@@ -587,7 +632,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit User Group.
+        ///   Looks up a localized string similar to Edit Authority Group.
         /// </summary>
         internal static string DialogEditUserGroupTitle {
             get {
@@ -839,7 +884,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Groups Found.
+        ///   Looks up a localized string similar to Authority Groups Found.
         /// </summary>
         internal static string GridPagerUserGroupsMultipleItemsFound {
             get {
@@ -848,7 +893,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Group Found.
+        ///   Looks up a localized string similar to Authority Group Found.
         /// </summary>
         internal static string GridPagerUserGroupsSingleItemFound {
             get {
@@ -1208,7 +1253,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No User Groups were found using the provided criteria..
+        ///   Looks up a localized string similar to No Authority Groups were found using the provided criteria..
         /// </summary>
         internal static string NoUserGroupsFound {
             get {
@@ -1586,6 +1631,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Data Access Authority Groups assigned to this study..
+        /// </summary>
+        internal static string StudyDetails_NoAuthorityGroupsForThisStudy {
+            get {
+                return ResourceManager.GetString("StudyDetails_NoAuthorityGroupsForThisStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No File System Queue items for this study..
         /// </summary>
         internal static string StudyDetails_NoFileSystemForThisStudy {
@@ -1762,6 +1816,15 @@ namespace Resources {
         internal static string Unknown {
             get {
                 return ResourceManager.GetString("Unknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: this study contains attachment(s) which must be examined AFTER the edit to ensure all information is consistent..
+        /// </summary>
+        internal static string WarningEditStudyWithAttachment {
+            get {
+                return ResourceManager.GetString("WarningEditStudyWithAttachment", resourceCulture);
             }
         }
         

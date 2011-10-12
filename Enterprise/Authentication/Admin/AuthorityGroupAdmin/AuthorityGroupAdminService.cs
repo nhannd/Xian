@@ -10,7 +10,7 @@
 #endregion
 
 using System.Security.Permissions;
-
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
@@ -25,16 +25,42 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 	[ExtensionOf(typeof(CoreServiceExtensionPoint))]
 	[ServiceImplementsContract(typeof(IAuthorityGroupAdminService))]
 	public class AuthorityGroupAdminService : CoreServiceLayer, IAuthorityGroupAdminService
-	{
-		#region IAuthorityGroupAdminService Members
+    {
+        #region Private Members
+        
+        /// <summary>
+        /// Gets the user specified by the user name, or null if no such user exists.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="persistenceContext"
+        /// <returns></returns>
+        private User GetUser(string userName, IPersistenceContext persistenceContext)
+        {
+            var criteria = new UserSearchCriteria();
+            criteria.UserName.EqualTo(userName);
 
-		[ReadOperation]
+            // use query caching here to make this fast (assuming the user table is not often updated)
+            var users = persistenceContext.GetBroker<IUserBroker>().Find(
+                criteria, new SearchResultPage(0, 1), new EntityFindOptions { Cache = true });
+
+            // bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
+            // returns null if no match
+            return CollectionUtils.SelectFirst(users, u => u.UserName == userName);
+        }
+        
+        #endregion
+
+        #region IAuthorityGroupAdminService Members
+
+        [ReadOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
 		public ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request)
 		{
 			var criteria = new AuthorityGroupSearchCriteria();
 			criteria.Name.SortAsc(0);
+            if (request.DataGroup.HasValue)
+                criteria.DataGroup.EqualTo(request.DataGroup.Value);
 
 			var assembler = new AuthorityGroupAssembler();
 			var authorityGroups = CollectionUtils.Map(
@@ -88,6 +114,16 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 		{
 			var authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupDetail.AuthorityGroupRef);
 
+            if (authorityGroup.DataGroup && !request.AuthorityGroupDetail.DataGroup)
+            {
+                var user = GetUser(Thread.CurrentPrincipal.Identity.Name, PersistenceContext);
+                if (!user.Password.Verify(request.Password))
+                {
+                    // the error message is deliberately vague
+                    throw new UserAccessDeniedException(); 
+                }
+            }
+
 			// set properties from request
 			var assembler = new AuthorityGroupAssembler();
 			assembler.UpdateAuthorityGroup(authorityGroup, request.AuthorityGroupDetail, PersistenceContext);
@@ -135,7 +171,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 			{
 				var importer = new AuthorityTokenImporter();
 				importer.Import(
-					CollectionUtils.Map(request.Tokens, (AuthorityTokenSummary s) => new AuthorityTokenDefinition(s.Name, s.Description)),
+					CollectionUtils.Map(request.Tokens, (AuthorityTokenSummary s) => new AuthorityTokenDefinition(s.Name, s.DefiningAssembly, s.Description, s.FormerIdentities.ToArray())),
 						request.AddToGroups,
 						(IUpdateContext)PersistenceContext);
 
@@ -157,7 +193,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 				importer.Import(
 					CollectionUtils.Map(request.AuthorityGroups,
 										(AuthorityGroupDetail g) =>
-											new AuthorityGroupDefinition(g.Name,
+											new AuthorityGroupDefinition(g.Name, g.Description, g.DataGroup,
 												CollectionUtils.Map(g.AuthorityTokens, (AuthorityTokenSummary s) => s.Name).ToArray())),
 					(IUpdateContext)PersistenceContext);
 

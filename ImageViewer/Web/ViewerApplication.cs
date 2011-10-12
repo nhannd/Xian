@@ -355,7 +355,7 @@ namespace ClearCanvas.ImageViewer.Web
             ApplicationContext.Current.FireEvent(@event);
 		}
 
-	    private LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
+	    public static LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
 	    {
 
             // TODO: Need to think about this more. What's the best way to swap different loader?

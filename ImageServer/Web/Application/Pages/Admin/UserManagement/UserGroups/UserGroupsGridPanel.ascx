@@ -21,8 +21,21 @@
             <ccUI:GridView ID="UserGroupsGridView" runat="server" OnRowDataBound="UserGroupsGridView_RowDataBound">
                 <Columns>
                     <asp:BoundField DataField="Name" HeaderText="<%$Resources: ColumnHeaders, AdminUserGroups_GroupName %>" HeaderStyle-HorizontalAlign="Left" >
-                        <itemstyle width="300px" />
+                        <itemstyle width="200px" />
                     </asp:BoundField>
+                    <asp:BoundField DataField="Description" HeaderText="<%$Resources: ColumnHeaders, AdminUserGroups_GroupDescription %>" HeaderStyle-HorizontalAlign="Left" >
+                        <itemstyle width="275px" />
+                    </asp:BoundField>
+                     <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,AdminUserGroups_DataGroup %>">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("DataGroup") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                        <ItemTemplate>
+                            <asp:Image ID="DataGroupImage" runat="server" SkinID="Unchecked" />
+                        </ItemTemplate>
+                        <HeaderStyle HorizontalAlign="Center" />
+                        <ItemStyle HorizontalAlign="Center" />
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, AdminUserGroups_Tokens %>" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
                         <ItemTemplate>
                             <asp:TextBox ID="TokensTextBox" runat="server" TextMode="multiline" rows="3" columns="100" CssClass="TokenTextArea" ></asp:TextBox>

@@ -123,9 +123,6 @@
   <data name="ExceptionViewKeyImagePermissionDenied" xml:space="preserve">
     <value>Permission to view key images (Study View) is denied.</value>
   </data>
-  <data name="KeyImageConfigurationPath" xml:space="preserve">
-    <value>Key Images</value>
-  </data>
   <data name="LabelKeyImageCurrentDisplaySet" xml:space="preserve">
     <value>Key Images (current)</value>
   </data>
@@ -150,14 +147,8 @@
   <data name="MessageInvalidSeriesNumber" xml:space="preserve">
     <value>The Series Number must be a positive integer.</value>
   </data>
-  <data name="MessageLocalPublishingFailed" xml:space="preserve">
-    <value>Publishing of Key Images to the local data store has failed.  Please see the logs for more details.</value>
-  </data>
-  <data name="MessagePublishingFailed" xml:space="preserve">
-    <value>Publishing of Key Images to the local data store and at least one remote server has failed.  Please see the logs for more details.</value>
-  </data>
-  <data name="MessageRemotePublishingFailed" xml:space="preserve">
-    <value>Publishing of Key Images to at least one remote server has failed.  Please see the logs for more details.</value>
+  <data name="MessageKeyImagePublishingFailed" xml:space="preserve">
+    <value>Publishing of Key Images has failed.  Please see the logs for more details.</value>
   </data>
   <data name="TitleCreateKeyObjectSelection" xml:space="preserve">
     <value>Create Key Object Selection</value>

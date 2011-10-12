@@ -49,6 +49,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 
+			this.DataBindings.Add("Enabled", _component, "IsEnabled");
+
 			_titleBar.Visible = _component.ShowTitlebar;
 			_serverTools.Visible = _component.ShowTools;
 

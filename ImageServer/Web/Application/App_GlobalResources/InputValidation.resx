@@ -159,8 +159,14 @@
   <data name="EditStudyDialog_MissingReason" xml:space="preserve">
     <value>You must specify the reason for editing the studies for future auditing purposes.</value>
   </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>The email address is invalidly formatted.</value>
+  </data>
   <data name="InvalidAETitle" xml:space="preserve">
     <value>Invalid AE Title</value>
+  </data>
+  <data name="InvalidDataRule" xml:space="preserve">
+    <value>Invalid Data Access Rule Condition</value>
   </data>
   <data name="InvalidDate" xml:space="preserve">
     <value>Invalid date: {0}</value>
@@ -173,6 +179,9 @@
   </data>
   <data name="InvalidPort" xml:space="preserve">
     <value>Port must be between 1 and 65535</value>
+  </data>
+  <data name="InvalidRuleName" xml:space="preserve">
+    <value>Rule must have a name</value>
   </data>
   <data name="InvalidTime" xml:space="preserve">
     <value>Invalid time</value>

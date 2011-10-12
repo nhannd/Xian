@@ -13,69 +13,69 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
+using ClearCanvas.Enterprise.Common.Setup;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
-    [MenuAction("launch", "global-menus/MenuAdmin/MenuAuthorityGroups", "Launch")]
-    [ActionPermission("launch", AuthorityTokens.Admin.Security.AuthorityGroup)]
+	[MenuAction("launch", "global-menus/MenuAdmin/MenuAuthorityGroups", "Launch")]
+	[ActionPermission("launch", AuthorityTokens.Admin.Security.AuthorityGroup)]
 
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class AuthorityGroupSummaryTool : Tool<IDesktopToolContext>
-    {
-        private IWorkspace _workspace;
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class AuthorityGroupSummaryTool : Tool<IDesktopToolContext>
+	{
+		private IWorkspace _workspace;
 
-        public void Launch()
-        {
-            if (_workspace == null)
-            {
-                try
-                {
+		public void Launch()
+		{
+			if (_workspace == null)
+			{
+				try
+				{
 					if (Application.SessionStatus != SessionStatus.Online)
 					{
 						Context.DesktopWindow.ShowMessageBox(SR.MessageServerOffline, MessageBoxActions.Ok);
 						return;
 					}
 
-                	AuthorityGroupSummaryComponent component = new AuthorityGroupSummaryComponent();
+					var component = new AuthorityGroupSummaryComponent();
 
-                    _workspace = ApplicationComponent.LaunchAsWorkspace(
-                        Context.DesktopWindow,
-                        component,
-                        SR.TitleAuthorityGroup);
-                    _workspace.Closed += delegate { _workspace = null; };
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, Context.DesktopWindow);
-                }
-            }
-            else
-            {
-                _workspace.Activate();
-            }
-        }
-    }
+					_workspace = ApplicationComponent.LaunchAsWorkspace(
+						Context.DesktopWindow,
+						component,
+						SR.TitleAuthorityGroup);
+					_workspace.Closed += delegate { _workspace = null; };
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, Context.DesktopWindow);
+				}
+			}
+			else
+			{
+				_workspace.Activate();
+			}
+		}
+	}
 
-    /// <summary>
-    /// Extension point for views onto <see cref="AuthorityGroupSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class AuthorityGroupSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="AuthorityGroupSummaryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class AuthorityGroupSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// AuthorityGroupSummaryComponent class
-    /// </summary>
-    public class AuthorityGroupSummaryComponent : SummaryComponentBase<AuthorityGroupSummary, AuthorityGroupTable>
-    {
+	/// <summary>
+	/// AuthorityGroupSummaryComponent class
+	/// </summary>
+	public class AuthorityGroupSummaryComponent : SummaryComponentBase<AuthorityGroupSummary, AuthorityGroupTable>
+	{
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
 		/// such as adding permissions or adding custom actions.
@@ -105,30 +105,12 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			try
 			{
-				DialogBoxAction action = Host.ShowMessageBox("Import authority tokens and groups defined in locally installed plugins?",
+				var action = Host.ShowMessageBox("Import authority tokens and groups defined in locally installed plugins?",
 								 MessageBoxActions.OkCancel);
 				if (action == DialogBoxAction.Ok)
 				{
-					AuthorityTokenDefinition[] tokens = AuthorityGroupSetup.GetAuthorityTokens();
-					AuthorityGroupDefinition[] groups = AuthorityGroupSetup.GetDefaultAuthorityGroups();
-
-					Platform.GetService(
-						delegate(IAuthorityGroupAdminService service)
-						{
-							// first import the tokens, since the default groups will likely depend on these tokens
-							service.ImportAuthorityTokens(
-								new ImportAuthorityTokensRequest(
-									CollectionUtils.Map(tokens,
-									                    (AuthorityTokenDefinition t) => new AuthorityTokenSummary(t.Token, t.Description))));
-
-							// then import the default groups
-							service.ImportAuthorityGroups(
-								new ImportAuthorityGroupsRequest(
-									CollectionUtils.Map(groups,
-									                    (AuthorityGroupDefinition g) => 
-                                                                new AuthorityGroupDetail(null, g.Name, CollectionUtils.Map(g.Tokens, (string t) => new AuthorityTokenSummary(t,null))))));
-						});
-
+					SetupHelper.ImportAuthorityTokens(new string[0]);
+					SetupHelper.ImportAuthorityGroups();
 				}
 
 			}
@@ -142,11 +124,11 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			try
 			{
-				AuthorityGroupSummary item = CollectionUtils.FirstElement(SelectedItems);
-				if(item == null) return;
+				var item = CollectionUtils.FirstElement(SelectedItems);
+				if (item == null) return;
 
-				AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item, true);
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				var editor = new AuthorityGroupEditorComponent(item, true);
+				var exitCode = LaunchAsDialog(
 					Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
@@ -175,12 +157,12 @@ namespace ClearCanvas.Enterprise.Desktop
 		/// <returns></returns>
 		protected override IList<AuthorityGroupSummary> ListItems(int firstRow, int maxRows)
 		{
-			ListAuthorityGroupsRequest request = new ListAuthorityGroupsRequest
-			                                         {
-			                                             Page = { FirstRow = firstRow, MaxRows = maxRows }
-			                                         };
+			var request = new ListAuthorityGroupsRequest
+													 {
+														 Page = { FirstRow = firstRow, MaxRows = maxRows }
+													 };
 
-		    ListAuthorityGroupsResponse listResponse = null;
+			ListAuthorityGroupsResponse listResponse = null;
 			Platform.GetService(
 				delegate(IAuthorityGroupAdminService service)
 				{
@@ -198,8 +180,8 @@ namespace ClearCanvas.Enterprise.Desktop
 		protected override bool AddItems(out IList<AuthorityGroupSummary> addedItems)
 		{
 			addedItems = new List<AuthorityGroupSummary>();
-			AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent();
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
+			var editor = new AuthorityGroupEditorComponent();
+			var exitCode = LaunchAsDialog(
 				Host.DesktopWindow, editor, SR.TitleAddAuthorityGroup);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -218,10 +200,10 @@ namespace ClearCanvas.Enterprise.Desktop
 		protected override bool EditItems(IList<AuthorityGroupSummary> items, out IList<AuthorityGroupSummary> editedItems)
 		{
 			editedItems = new List<AuthorityGroupSummary>();
-			AuthorityGroupSummary item = CollectionUtils.FirstElement(items);
+			var item = CollectionUtils.FirstElement(items);
 
-			AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item, false);
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
+			var editor = new AuthorityGroupEditorComponent(item, false);
+			var exitCode = LaunchAsDialog(
 				Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup + " - " + item.Name);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -243,15 +225,15 @@ namespace ClearCanvas.Enterprise.Desktop
 			failureMessage = null;
 			deletedItems = new List<AuthorityGroupSummary>();
 
-			foreach (AuthorityGroupSummary item in items)
+			foreach (var item in items)
 			{
-			    try
+				try
 				{
-                    if (DoDeleteAuthorityGroup(item))
-					    deletedItems.Add(item);
-                    else 
-                        break;
-                }
+					if (DoDeleteAuthorityGroup(item))
+						deletedItems.Add(item);
+					else
+						break;
+				}
 				catch (Exception e)
 				{
 					failureMessage = e.Message;
@@ -261,61 +243,61 @@ namespace ClearCanvas.Enterprise.Desktop
 			return deletedItems.Count > 0;
 		}
 
-        /// <summary>
-        /// Deletes the specified user group and prompt user for confirmation if the group is not empty
-        /// </summary>
-        /// <param name="group"></param>
-        /// <returns></returns>
-        private bool DoDeleteAuthorityGroup(AuthorityGroupSummary group)
-        {
-            try
-            {
-                DeleteGroupHelper(group, true);
-                return true;
-            }
-            catch (AuthorityGroupIsNotEmptyException ex)
-            {
-                string message = ex.UserCount > 1
-                                         ? string.Format(SR.ExceptionAuthorityGroupIsNotEmpty_MultitpleUsers, ex.UserCount, ex.GroupName)
-                                         : string.Format(SR.ExceptionAuthorityGroupIsNotEmpty_OneUser, ex.GroupName);
+		/// <summary>
+		/// Deletes the specified user group and prompt user for confirmation if the group is not empty
+		/// </summary>
+		/// <param name="group"></param>
+		/// <returns></returns>
+		private bool DoDeleteAuthorityGroup(AuthorityGroupSummary group)
+		{
+			try
+			{
+				DeleteGroupHelper(group, true);
+				return true;
+			}
+			catch (AuthorityGroupIsNotEmptyException ex)
+			{
+				var message = ex.UserCount > 1
+										 ? string.Format(SR.ExceptionAuthorityGroupIsNotEmpty_MultitpleUsers, ex.UserCount, ex.GroupName)
+										 : string.Format(SR.ExceptionAuthorityGroupIsNotEmpty_OneUser, ex.GroupName);
 
-                DialogBoxAction action = Host.ShowMessageBox(message, MessageBoxActions.YesNo);
+				var action = Host.ShowMessageBox(message, MessageBoxActions.YesNo);
 
-                switch (action)
-                {
-                    case DialogBoxAction.No:
-                        return false;  // not deleted
+				switch (action)
+				{
+					case DialogBoxAction.No:
+						return false;  // not deleted
 
-                    case DialogBoxAction.Yes:
-                        
-                        DeleteGroupHelper(group, false); // note: exceptions will be handled by caller
-                        return true;
-                }
-            }
+					case DialogBoxAction.Yes:
 
-            return false;
-        }
+						DeleteGroupHelper(group, false); // note: exceptions will be handled by caller
+						return true;
+				}
+			}
 
-        private static void DeleteGroupHelper(AuthorityGroupSummary group, bool checkIfEmpty)
-        {
-            try
-            {
-                Platform.GetService<IAuthorityGroupAdminService>(
-                    service => service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(group.AuthorityGroupRef) { DeleteOnlyWhenEmpty = checkIfEmpty }));
-            }
-            catch (FaultException<RequestValidationException> ex)
-            {
-                throw ex.Detail;
-            }
-            catch (FaultException<ConcurrentModificationException> ex)
-            {
-                throw ex.Detail;
-            }
-            catch (FaultException<AuthorityGroupIsNotEmptyException> ex)
-            {
-                throw ex.Detail;
-            }
-        }
+			return false;
+		}
+
+		private static void DeleteGroupHelper(AuthorityGroupSummary group, bool checkIfEmpty)
+		{
+			try
+			{
+				Platform.GetService<IAuthorityGroupAdminService>(
+					service => service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(group.AuthorityGroupRef) { DeleteOnlyWhenEmpty = checkIfEmpty }));
+			}
+			catch (FaultException<RequestValidationException> ex)
+			{
+				throw ex.Detail;
+			}
+			catch (FaultException<ConcurrentModificationException> ex)
+			{
+				throw ex.Detail;
+			}
+			catch (FaultException<AuthorityGroupIsNotEmptyException> ex)
+			{
+				throw ex.Detail;
+			}
+		}
 
 		/// <summary>
 		/// Compares two items to see if they represent the same item.
@@ -325,7 +307,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		/// <returns></returns>
 		protected override bool IsSameItem(AuthorityGroupSummary x, AuthorityGroupSummary y)
 		{
-            return x.AuthorityGroupRef.Equals(y.AuthorityGroupRef, true);
+			return x.AuthorityGroupRef.Equals(y.AuthorityGroupRef, true);
 		}
 	}
 }
