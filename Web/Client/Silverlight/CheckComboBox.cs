@@ -20,7 +20,7 @@ namespace ClearCanvas.Web.Client.Silverlight
                     _isChecked = value;
                     if (CheckChanged != null)
                         CheckChanged(this, null);
-                    RaisePropertyChanged();
+                    RaisePropertyChanged(() => IsChecked);
                 }
             }
 
@@ -32,7 +32,7 @@ namespace ClearCanvas.Web.Client.Silverlight
                 {
                     if (_text == value) return;
                     _text = value;
-                    RaisePropertyChanged();
+                    RaisePropertyChanged(() => Text);
                 }
             }
 

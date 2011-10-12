@@ -51,7 +51,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             {
                 if (_logContents == value) return;
                 _logContents = value;
-                RaisePropertyChanged();
+                RaisePropertyChanged(() => LogContents);
             }
         }
 
@@ -62,7 +62,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             {
                 if (Platform.IsDebugEnabled == value) return;
                 Platform.IsDebugEnabled = value;
-                RaisePropertyChanged();
+                RaisePropertyChanged(() => DebugLevel);
             }
         }
 
@@ -73,7 +73,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             {
                 if (Platform.IsInfoEnabled == value) return;
                 Platform.IsInfoEnabled = value;
-                RaisePropertyChanged();
+                RaisePropertyChanged(() => InfoLevel);
             }
         }
 
@@ -84,7 +84,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             {
                 if (Platform.IsWarnEnabled == value) return;
                 Platform.IsWarnEnabled = value;
-                RaisePropertyChanged();
+                RaisePropertyChanged(() => WarnLevel);
             }
         }
 
@@ -95,7 +95,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             {
                 if (Platform.IsErrorEnabled == value) return;
                 Platform.IsErrorEnabled = value;
-                RaisePropertyChanged();
+                RaisePropertyChanged(() => ErrorLevel);
             }
         }
 
@@ -106,7 +106,7 @@ namespace ClearCanvas.Web.Client.Silverlight.ViewModel
             {
                 if (Platform.IsFatalEnabled == value) return;
                 Platform.IsFatalEnabled = value;
-                RaisePropertyChanged();
+                RaisePropertyChanged(() => FatalLevel);
             }
         }      
     }
