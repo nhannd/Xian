@@ -187,7 +187,10 @@ namespace ClearCanvas.ImageViewer
     public sealed class ImageBoxExtensionPoint : ExtensionPoint<IImageBoxExtension>
     { }
 
-    
+
+    /// TODO: Now IImageBoxExtension is basically an extension to the ImageBoxControl instead of the ImageBox.
+    /// Consider combining IImageBoxExtensionView and IImageBoxExtension.
+    /// 
     /// <summary>
     /// Defines interface to the view of an image box extension.
     /// </summary>
@@ -213,7 +216,10 @@ namespace ClearCanvas.ImageViewer
         ///</summary>
         bool Visible { get; }
     }
-   
+
+    /// TODO: Now IImageBoxExtension is basically an extension to the ImageBoxControl instead of the ImageBox.
+    /// Consider combining IImageBoxExtensionView and IImageBoxExtension.
+    /// 
     /// <summary>
     /// Defines the interface of an extension to the <see cref="IImageBox"/>
     /// </summary>

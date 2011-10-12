@@ -50,7 +50,6 @@ namespace ClearCanvas.ImageViewer
 		private static int _insetWidth = 5;
 		private static Color _selectedColor = Color.Orange;
 		private static Color _unselectedColor = Color.DarkGray;
-        private IList<IImageBoxExtension> _extensions;
 
         private event EventHandler _drawingEvent;
 		private event EventHandler<ItemEventArgs<IImageBox>> _selectionChangedEvent;
@@ -464,18 +463,6 @@ namespace ClearCanvas.ImageViewer
 			set { _enabled = value; }
 		}
 
-        ///<summary>
-        /// Gets a list of plugins for the image box that implementing <see cref="IImageBoxExtension"/>
-        ///</summary>
-        public IEnumerable<IImageBoxExtension> Extensions
-        {
-            get 
-            {
-
-                LoadExtensions();
-                return _extensions;
-            }
-        }
 
         #endregion
 
@@ -570,28 +557,10 @@ namespace ClearCanvas.ImageViewer
 			if (disposing)
 			{
 				DisposeTiles();
-			    DisposeExtensions();
 				_tiles = null;
 			}
 		}
 
-        private void DisposeExtensions()
-        {
-            if (_extensions!=null)
-            {
-                foreach(var ext in _extensions)
-                {
-                    try
-                    {
-                        ext.Dispose();
-                    }
-                    catch(Exception ex)
-                    {
-                        Platform.Log(LogLevel.Warn, ex, "Error occurred while disposing {0} ImageBox extension", ext.Name);
-                    }
-                }
-            }
-        }
 
         private void DisposeTiles()
 		{
@@ -778,19 +747,6 @@ namespace ClearCanvas.ImageViewer
 
 		#region Internal/private methods
 
-        private void LoadExtensions()
-        {
-            if (_extensions == null)
-            {
-                _extensions = new List<IImageBoxExtension>();
-                foreach (IImageBoxExtension extension in new ImageBoxExtensionPoint().CreateExtensions())
-                {
-                    extension.ImageBox = this;
-                    _extensions.Add(extension);
-                }
-            }
-
-        }
 
 		internal void Deselect()
 		{
