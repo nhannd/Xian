@@ -17,6 +17,9 @@
     <File name="Web\App_Themes\Default\images\Background.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\blank.gif" checksum="true" />
     <File name="Web\App_Themes\Default\images\LoginSplash.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessDisabled.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessEnabled.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessHover.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddDisabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddEnabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddHover.png" checksum="true" />
