@@ -392,6 +392,7 @@
     <File name="Web\Pages\Admin\Dashboard\WorkQueueSummary.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\Default.aspx" />
+    <File name="Web\Pages\Admin\UserManagement\UserGroups\PasswordConfirmDialog.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\UserGroupsGridPanel.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.js" />
@@ -504,6 +505,7 @@
     <File name="Web\Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\StudyStateAlertPanel.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\StudyStorageView.ascx" />
+    <File name="Web\Pages\Studies\StudyDetails\Controls\UpdateAuthorityGroupDialog.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\WorkQueueGridView.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Scripts\FileSystemQueueGridView.js" />
     <File name="Web\Pages\Studies\StudyDetails\Scripts\SeriesGridView.js" />
