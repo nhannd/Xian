@@ -242,21 +242,21 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		/// <param name="args"></param>
 		protected RemoteServiceProviderBase(RemoteServiceProviderArgs args)
-			: this(new StaticChannelProvider(args), args.UserCredentialsProvider)
+			: this(new StaticChannelProvider(args), args.UserCredentialsProvider, !string.IsNullOrEmpty(args.FailoverBaseUrl))
 		{
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider)
+		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider, bool supportFailover)
 		{
 			_channelProvider = channelProvider;
 			_userCredentialsProvider = userCredentialsProvider;
 			_proxyGenerator = new ProxyGenerator();
 
 			_responseCachingAdvice = new ResponseCachingClientSideAdvice();
-			_failoverAdvice = new FailoverClientAdvice(this);
+			_failoverAdvice = supportFailover ? new FailoverClientAdvice(this) : null;
 		}
 
 		#region IServiceProvider
@@ -312,9 +312,11 @@ namespace ClearCanvas.Enterprise.Common
 				interceptors.Add(_responseCachingAdvice);
 			}
 
-			// add fail-over advice at the end of the list, closest the target call
-			//TODO: can we avoid adding this advice if no failover is defined?
-			interceptors.Add(_failoverAdvice);
+			// if failover was defined, add fail-over advice at the end of the list, closest the target call
+			if(_failoverAdvice != null)
+			{
+				interceptors.Add(_failoverAdvice);
+			}
 		}
 
 		/// <summary>

@@ -31,15 +31,16 @@ namespace ClearCanvas.Enterprise.Common
 		private const string TimeOffsetCacheKey = "{92E55B13-96A5-4a03-A669-B22D5D29E95B}";
 
 		private TimeSpan _localToEnterpriseOffset;
-		private DateTime _lastResyncInLocalTime;
-		private DateTime _lastSyncTime;
+		private DateTime _lastSuccessfulResyncInLocalTime;
+		private DateTime _lastAttemptedResyncInLocalTime;
 		private readonly TimeSpan _resyncPeriod;
 		private readonly TimeSpan _maxTimeBetweenSync;
 		private readonly IOfflineCache<string, string> _offlineCache;
 
 		public EnterpriseTimeProvider()
 		{
-			_lastResyncInLocalTime = DateTime.MinValue;
+			_lastSuccessfulResyncInLocalTime = DateTime.MinValue;
+			_lastAttemptedResyncInLocalTime = DateTime.MinValue;
 			_resyncPeriod = new TimeSpan(0, 0, 60);
 			_maxTimeBetweenSync = new TimeSpan(0, 10, 0);
 
@@ -78,26 +79,29 @@ namespace ClearCanvas.Enterprise.Common
 
 		private bool ResyncRequired()
 		{
-			return (DateTime.Now - _lastResyncInLocalTime) > _resyncPeriod;
+			return (DateTime.Now - _lastAttemptedResyncInLocalTime) > _resyncPeriod;
 		}
 
 		private void ResyncLocalToEnterpriseTime()
 		{
+			_lastAttemptedResyncInLocalTime = DateTime.Now;
+
 			using (var client = _offlineCache.CreateClient())
 			{
 				try
 				{
-					var eTime = CurrentEnterpriseTime();
-					_lastSyncTime = DateTime.Now;
-					_localToEnterpriseOffset = _lastSyncTime - eTime;
+					var serverTime = GetCurrentEnterpriseTime();
+
+					_lastSuccessfulResyncInLocalTime = _lastAttemptedResyncInLocalTime;
+					_localToEnterpriseOffset = DateTime.Now - serverTime;
 
 					// update offline cache
 					client.Put(TimeOffsetCacheKey, _localToEnterpriseOffset.TotalMilliseconds.ToString());
 				}
 				catch (Exception)
 				{
-					if ((DateTime.Now - _lastSyncTime) > _maxTimeBetweenSync)
-						Platform.Log(LogLevel.Warn, "Unable to contact time server for synchronization");
+					if ((DateTime.Now - _lastSuccessfulResyncInLocalTime) > _maxTimeBetweenSync)
+						LogWarningNoSync();
 
 					// if the process has just started up, and we have not yet been able to connect to the server,
 					// attempt to read last known value from the offline cache
@@ -110,17 +114,24 @@ namespace ClearCanvas.Enterprise.Common
 			}
 		}
 
-		private DateTime CurrentEnterpriseTime()
+		private void LogWarningNoSync()
+		{
+			if (_lastSuccessfulResyncInLocalTime == DateTime.MinValue)
+			{
+				Platform.Log(LogLevel.Warn, "The time server has been unreachable since process start.");
+			}
+			else
+			{
+				Platform.Log(LogLevel.Warn, "The time server has been unreachable since {0}.", _lastSuccessfulResyncInLocalTime);
+			}
+		}
+
+		private static DateTime GetCurrentEnterpriseTime()
 		{
 			var time = default(DateTime);
 
-			Platform.GetService(
-				delegate(ITimeService service)
-				{
-					time = service.GetTime(new GetTimeRequest()).Time;
-				});
-
-			_lastResyncInLocalTime = DateTime.Now;
+			Platform.GetService<ITimeService>(
+				service => time = service.GetTime(new GetTimeRequest()).Time);
 
 			return time;
 		}
