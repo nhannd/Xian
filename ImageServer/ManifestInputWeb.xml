@@ -342,7 +342,7 @@
     <File name="Web\Pages\Admin\Audit\DeletedStudies\GeneralArchiveInfoPanel.ascx" />
     <File name="Web\Pages\Admin\Audit\DeletedStudies\HsmArchiveInfoPanel.ascx" />
     <File name="Web\Pages\Admin\Audit\DeletedStudies\SearchResultGridView.ascx" />
-    <File name="Web\Pages\Admin\Configure\DataRules\AddEditDataRulesDialog.ascx" />
+    <File name="Web\Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx" />
     <File name="Web\Pages\Admin\Configure\DataRules\DataRuleGridView.ascx" />
     <File name="Web\Pages\Admin\Configure\DataRules\DataRulePanel.ascx" />
     <File name="Web\Pages\Admin\Configure\DataRules\DataRulePanel.js" />
