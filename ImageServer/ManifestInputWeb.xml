@@ -31,6 +31,9 @@
     <File name="Web\App_Themes\Default\images\Buttons\CancelEnabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\CancelHover.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\ClearButtonBackground.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\CopyDisabled.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\CopyEnabled.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\CopyHover.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\DeleteAllDisabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\DeleteAllEnabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\DeleteAllHover.png" checksum="true" />
@@ -277,6 +280,7 @@
     <File name="Web\bin\ClearCanvas.Server.ShredHost.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Utilities.Manifest.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Web.Common.dll" checksum="true" />
+    <File name="Web\bin\ClearCanvas.Web.Enterprise.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Web.Services.dll" checksum="true" />
     <File name="Web\bin\Ionic.Zip.dll" checksum="true" />
     <File name="Web\bin\log4net.dll" checksum="true" />
