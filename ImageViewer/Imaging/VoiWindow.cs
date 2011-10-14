@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
@@ -160,10 +161,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets an enumeration of <see cref="VoiWindow"/>s defined in the specified data source..
+		/// Gets an enumeration of <see cref="VoiWindow"/>s defined in the specified data source.
 		/// </summary>
 		/// <param name="dataset">A DICOM data source.</param>
-		/// <returns>An enumeation of <see cref="VoiWindow"/>s.</returns>
+		/// <returns>An enumeration of <see cref="VoiWindow"/>s.</returns>
 		public static IEnumerable<VoiWindow> GetWindows(IDicomAttributeProvider dataset)
 		{
 			string windowCenterValues = dataset[DicomTags.WindowCenter].ToString();
@@ -202,6 +203,34 @@ namespace ClearCanvas.ImageViewer.Imaging
 						yield return new VoiWindow(windowWidths[i], windowCenters[i]);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Sets the VOI window attributes in the data source with the specified windows.
+		/// </summary>
+		/// <param name="windows">The list of <see cref="VoiWindow"/>s to be set.</param>
+		/// <param name="dataset">A DICOM data source.</param>
+		public static void SetWindows(IEnumerable<VoiWindow> windows, IDicomAttributeProvider dataset)
+		{
+			var windowCenters = DicomStringHelper.GetDicomStringArray(windows.Select(s => s.Center));
+			var windowWidths = DicomStringHelper.GetDicomStringArray(windows.Select(s => s.Width));
+			var windowExplanations = DicomStringHelper.GetDicomStringArray(windows.Select(s => s.Explanation));
+
+			dataset[DicomTags.WindowCenter].SetStringValue(windowCenters);
+			dataset[DicomTags.WindowWidth].SetStringValue(windowWidths);
+			dataset[DicomTags.WindowCenterWidthExplanation].SetStringValue(windowExplanations);
+		}
+
+		/// <summary>
+		/// Creates a <see cref="VoiWindow"/> from the specified value range.
+		/// </summary>
+		/// <param name="minimumValue">The minimum value in the range.</param>
+		/// <param name="maximumValue">The maximum value in the range.</param>
+		/// <param name="explanation">A description explanation for the window.</param>
+		/// <returns>A <see cref="VoiWindow"/> defining the specified value range.</returns>
+		public static VoiWindow FromWindowRange(double minimumValue, double maximumValue, string explanation)
+		{
+			return new VoiWindow(Math.Abs(maximumValue - minimumValue) + 1, (maximumValue + minimumValue + 1)/2, explanation);
 		}
 	}
 }
