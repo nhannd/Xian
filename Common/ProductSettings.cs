@@ -362,7 +362,7 @@ namespace ClearCanvas.Common
 		/// <param name="includeRelease">A value indicating whether or not to include the release type in the name.</param>
 		public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeEdition, bool includeRelease)
 		{
-			return Concatenate(Name, GetVersion(includeBuildAndRevision, includeVersionSuffix, false), GetNameSuffix(includeEdition, includeRelease));
+			return Concatenate(Name, string.Format("v{0}", GetVersion(includeBuildAndRevision, includeVersionSuffix, false)), GetNameSuffix(includeEdition, includeRelease));
 		}
 
 		/// <summary>
@@ -384,7 +384,7 @@ namespace ClearCanvas.Common
 		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix, bool includeRelease)
 		{
 			var version = Version;
-			var versionString = new StringBuilder(string.Format(@"v{0}.{1}", version.Major, version.Minor));
+			var versionString = new StringBuilder(string.Format(@"{0}.{1}", version.Major, version.Minor));
 
 			if (includeBuildAndRevision && version.Build >= 0)
 			{
