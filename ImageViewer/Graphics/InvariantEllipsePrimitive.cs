@@ -23,7 +23,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// An elliptical <see cref="InvariantPrimitive"/>.
 	/// </summary>
 	[Cloneable(true)]
-	[DicomSerializableGraphicAnnotation(typeof (EllipseGraphicAnnotationSerializer))]
+    /// TODO (CR Oct 2011): Should these actually be serializable given that presentation states won't show them invariant.
+    [DicomSerializableGraphicAnnotation(typeof(EllipseGraphicAnnotationSerializer))]
 	public class InvariantEllipsePrimitive : InvariantBoundablePrimitive
 	{
 		/// <summary>
