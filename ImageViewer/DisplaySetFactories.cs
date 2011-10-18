@@ -800,6 +800,7 @@ namespace ClearCanvas.ImageViewer
             {
                 // only create placeholders for any non-image, non-presentation state SOPs
                 if (sop.IsImage
+                    || sop.SopClassUid == SopClass.EncapsulatedPdfStorageUid // TODO CR (Oct 11): To be reworked before next Community release, since we do want this to show
                     || sop.SopClassUid == SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid
                     || sop.SopClassUid == SopClass.ColorSoftcopyPresentationStateStorageSopClassUid
                     || sop.SopClassUid == SopClass.PseudoColorSoftcopyPresentationStateStorageSopClassUid
