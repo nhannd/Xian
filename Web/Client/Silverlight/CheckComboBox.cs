@@ -117,10 +117,10 @@ namespace ClearCanvas.Web.Client.Silverlight
         {
             string[] list = ItemsSourceArray;
             var items = new List<CheckComboBoxItem>();
-            items.Add(new CheckComboBoxItem{IsChecked = false,Text = SR.Clear});
+            items.Add(new CheckComboBoxItem {IsChecked = false, Text = SR.Clear});
             foreach (string s in list)
             {
-                items.Add(new CheckComboBoxItem { IsChecked = false, Text = s });
+                items.Add(new CheckComboBoxItem {IsChecked = false, Text = s});
             }
 
             RefreshSelectedItemsText();
@@ -128,6 +128,8 @@ namespace ClearCanvas.Web.Client.Silverlight
                 item.CheckChanged += (s, e) => RefreshSelectedItemsText();
 
             ItemsSource = items;
+            SelectedTextArray = new string[0];
+            Text = string.Empty;
         }
 
 
