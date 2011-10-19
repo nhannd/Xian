@@ -112,7 +112,13 @@ namespace ClearCanvas.Enterprise.Authentication
             var user = GetUser(request.UserName);
 
             // ensure user found, account is active and the current password is correct
-            if (user == null || !user.IsActive(now) || string.IsNullOrEmpty(user.EmailAddress))
+            if (string.IsNullOrEmpty(user.EmailAddress))
+            {
+                throw new RequestValidationException(SR.EmailAddressNotConfigured);
+            }
+
+            // ensure user found, account is active and the current password is correct
+            if (user == null || !user.IsActive(now))
             {
                 // no such user, account not active, or invalid password
                 // the error message is deliberately vague

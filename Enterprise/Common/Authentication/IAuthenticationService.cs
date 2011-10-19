@@ -72,6 +72,7 @@ namespace ClearCanvas.Enterprise.Common.Authentication
         /// </summary>
         /// <exception cref="UserAccessDeniedException">Invalid user credentials or the user doesn't have an email address configured.</exception>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(UserAccessDeniedException))]
         ResetPasswordResponse ResetPassword(ResetPasswordRequest request);
 	}
