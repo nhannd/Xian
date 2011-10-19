@@ -96,6 +96,7 @@
     <Compile Include="Command\BindingListener.cs" />
     <Compile Include="Command\EventToCommand.cs" />
     <Compile Include="Command\RelayCommandGeneric.cs" />
+    <Compile Include="Command\TextBoxEnterButtonInvoke.cs" />
     <Compile Include="JunkPage.xaml.cs">
       <DependentUpon>JunkPage.xaml</DependentUpon>
     </Compile>
