@@ -82,19 +82,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 					_recalculate = false;
 				}
 
-				if (index < _windowRegionStart)
-				{
-					return this.MinOutputValue;
-				}
-				else if (index > _windowRegionEnd)
-				{
-					return this.MaxOutputValue;
-				}
-				else
-				{
-					double scale = ((index - (this.GetWindowCenter() - 0.5)) / (this.GetWindowWidth() - 1)) + 0.5;
-					return (int)((scale * (this.MaxOutputValue - this.MinOutputValue)) + this.MinOutputValue);
-				}
+				if (index <= _windowRegionStart)
+					return MinOutputValue;
+				if (index > _windowRegionEnd)
+					return MaxOutputValue;
+
+                double scale = ((index - (GetWindowCenter() - 0.5)) / (GetWindowWidthInternal() - 1)) + 0.5;
+				return (int)((scale * (MaxOutputValue - MinOutputValue)) + MinOutputValue);
 			}
 			protected set
 			{
@@ -177,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return String.Format("{0}_{1}_{2}_{3}",
 				this.MinInputValue,
 				this.MaxInputValue,
-				this.GetWindowWidth(),
+                this.GetWindowWidthInternal(),
 				this.GetWindowCenter());
 		}
 
@@ -197,11 +191,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void Calculate()
 		{
-			double halfWindow = (this.GetWindowWidth() - 1) / 2;
-			_windowRegionStart = this.GetWindowCenter() - 0.5 - halfWindow;
-			_windowRegionEnd = this.GetWindowCenter() - 0.5 + halfWindow;
+			double halfWindow = (GetWindowWidthInternal() - 1) / 2;
+			_windowRegionStart = GetWindowCenter() - 0.5 - halfWindow;
+			_windowRegionEnd = GetWindowCenter() - 0.5 + halfWindow;
 		}
 		
-		#endregion
+        private double GetWindowWidthInternal()
+        {
+            return Math.Max(1, GetWindowWidth());
+        }
+
+	    #endregion
 	}
 }
