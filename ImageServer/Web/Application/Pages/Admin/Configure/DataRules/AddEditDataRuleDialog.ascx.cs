@@ -201,18 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 for (var q=sampleList.options.length; q>=0; q--) sampleList.options[q]=null;
 				";
 
-            bool first = true;
-            foreach (ServerRuleTypeEnum type in ruleTypeList.Keys)
-            {
-                if (!first)
-                {
-                    javascript += "else ";
-                }
-                else
-                    first = false;
-
-                javascript += GetJavascriptForSampleRule(type, extensions);
-            }
+            javascript += GetJavascriptForSampleRule(ServerRuleTypeEnum.DataAccess, extensions);
 
             javascript +=
                 @"}

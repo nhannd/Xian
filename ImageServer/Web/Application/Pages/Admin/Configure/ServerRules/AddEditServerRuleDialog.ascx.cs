@@ -222,9 +222,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                 for (var q=applyTimeList.options.length; q>=0; q--) applyTimeList.options[q]=null;
 				";
 
-          
-                javascript += GetJavascriptForSampleRule(ServerRuleTypeEnum.DataAccess, extensions);
-          
+            bool first = true;
+            foreach (ServerRuleTypeEnum type in ruleTypeList.Keys)
+            {
+                if (!first)
+                {
+                    javascript += "else ";
+                }
+                else
+                    first = false;
+
+                javascript += GetJavascriptForSampleRule(type, extensions);
+            }
+
             javascript +=
                 @"}
 
