@@ -38,8 +38,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 		[ThreadStatic]
 		private static int _referenceCount = 0;
 
-		private IPresentationImage _sourceImage;
-		private SpatialTransform _sourceImageTransform;
 		private Frame _sourceFrame;
 
 		private Vector3D _normal;
@@ -88,9 +86,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 				return null;
 
 			Frame frame = GetFrame(sourceImage);
-			SpatialTransform transform = GetSpatialTransform(sourceImage);
+			return FromFrame(frame);
+		}
 
-			if (transform == null || frame == null)
+		public static DicomImagePlane FromFrame(Frame frame)
+		{
+			if (frame == null)
 				return null;
 
 			if (String.IsNullOrEmpty(frame.FrameOfReferenceUid) || String.IsNullOrEmpty(frame.ParentImageSop.StudyInstanceUid))
@@ -104,8 +105,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 
 			if (plane != null)
 			{
-				plane._sourceImage = sourceImage;
-				plane._sourceImageTransform = transform;
 				plane._sourceFrame = frame;
 			}
 
@@ -196,16 +195,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 		#endregion
 
 		#region Public Properties
-
-		public IPresentationImage SourceImage
-		{
-			get { return _sourceImage; }
-		}
-
-		public SpatialTransform SourceImageTransform
-		{
-			get { return _sourceImageTransform; }
-		}
 
 		public string StudyInstanceUid
 		{
