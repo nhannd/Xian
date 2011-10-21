@@ -73,6 +73,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		public string SourceSeriesInstanceUid
+		{
+			get { return Volume.SourceSeriesInstanceUid; }
+		}
+
 		public string FrameOfReferenceUid
 		{
 			get { return this.Volume.FrameOfReferenceUid; }

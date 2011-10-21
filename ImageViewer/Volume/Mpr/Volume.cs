@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private bool _disposed = false;
 
 		private readonly string _description;
+		private readonly string _sourceSeriesInstanceUid;
 		private readonly VolumeSopDataSourcePrototype _modelDicom;
 
 		#endregion
@@ -88,9 +89,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// Consider using one of the static helpers such as <see cref="Create(ClearCanvas.ImageViewer.IDisplaySet)"/> to construct and automatically fill a <see cref="Volume"/>.
 		/// </remarks>
 		public Volume(short[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
-		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue)
+		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue, string sourceSeriesInstanceUid)
 			: this(data, null, dimensions, spacing, originPatient, orientationPatient,
-			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel), paddingValue) {}
+			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel), paddingValue, sourceSeriesInstanceUid) {}
 
 		/// <summary>
 		/// Constructs a <see cref="Volume"/> using a volume data array of unsigned 16-bit words.
@@ -99,17 +100,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// Consider using one of the static helpers such as <see cref="Create(ClearCanvas.ImageViewer.IDisplaySet)"/> to construct and automatically fill a <see cref="Volume"/>.
 		/// </remarks>
 		public Volume(ushort[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
-		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue)
+		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue, string sourceSeriesInstanceUid)
 			: this(null, data, dimensions, spacing, originPatient, orientationPatient,
-			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel), paddingValue) {}
+			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel), paddingValue, sourceSeriesInstanceUid) {}
 
 		private Volume(short[] dataInt16, ushort[] dataUInt16, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
-		               Matrix orientationPatient, VolumeSopDataSourcePrototype sopDataSourcePrototype, int paddingValue)
+		               Matrix orientationPatient, VolumeSopDataSourcePrototype sopDataSourcePrototype, int paddingValue, string sourceSeriesInstanceUid)
 		{
 			Platform.CheckTrue(dataInt16 != null ^ dataUInt16 != null, "Exactly one of dataInt16 and dataUInt16 must be non-null.");
 			_volumeDataInt16 = dataInt16;
 			_volumeDataUInt16 = dataUInt16;
-
+			_sourceSeriesInstanceUid = sourceSeriesInstanceUid;
 			_arrayDimensions = dimensions;
 			_voxelSpacing = spacing;
 			_originPatient = originPatient;
@@ -134,6 +135,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public string Description
 		{
 			get { return _description; }
+		}
+
+		/// <summary>
+		/// Gets the Series Instance UID of that identifies the source images from which the volume was created.
+		/// </summary>
+		public string SourceSeriesInstanceUid
+		{
+			get { return _sourceSeriesInstanceUid; }
 		}
 
 		/// <summary>
@@ -462,6 +471,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#region Unit Test Accessors
 
 #if UNIT_TESTS
+
+		public Volume(short[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatient, IDicomAttributeProvider attributeProvider, int paddingValue)
+			: this(data, dimensions, spacing, originPatient, orientationPatient, attributeProvider, paddingValue, null) {}
+
+		public Volume(ushort[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatient, IDicomAttributeProvider attributeProvider, int paddingValue)
+			: this(data, dimensions, spacing, originPatient, orientationPatient, attributeProvider, paddingValue, null) {}
 
 		internal int this[int x, int y, int z]
 		{

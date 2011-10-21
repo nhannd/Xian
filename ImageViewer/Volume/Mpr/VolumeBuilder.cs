@@ -233,7 +233,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					ushort[] volumeArray = BuildVolumeArray((ushort) this.PixelPaddingValue);
 
 					Volume vol = new Volume(null, volumeArray, this.VolumeSize, this.VoxelSpacing, this.ImagePositionPatient, this.ImageOrientationPatient, sopDataSourcePrototype,
-					                        this.PixelPaddingValue);
+					                        this.PixelPaddingValue, _frames[0].Frame.SeriesInstanceUid);
 					return vol;
 				}
 				else
@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					short[] volumeArray = BuildVolumeArray((short) this.PixelPaddingValue);
 
 					Volume vol = new Volume(volumeArray, null, this.VolumeSize, this.VoxelSpacing, this.ImagePositionPatient, this.ImageOrientationPatient, sopDataSourcePrototype,
-					                        this.PixelPaddingValue);
+					                        this.PixelPaddingValue, _frames[0].Frame.SeriesInstanceUid);
 					return vol;
 				}
 			}

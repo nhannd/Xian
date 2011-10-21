@@ -64,6 +64,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return _overlayDataReference.FusionOverlayData; }
 		}
 
+		public string OverlaySourceSeriesInstanceUid
+		{
+			get { return OverlayData.SourceSeriesInstanceUid; }
+		}
+
 		public string OverlayFrameOfReferenceUid
 		{
 			get { return this.OverlayData.FrameOfReferenceUid; }
