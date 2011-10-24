@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// although it could also be a purely calculated Lut.
 	/// for more information.
 	/// </remarks>
-	internal sealed class ModalityLutLinear : GeneratedDataLut
+	internal sealed class ModalityLutLinear : GeneratedDataModalityLut
 	{
 		#region Private Fields
 

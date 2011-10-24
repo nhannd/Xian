@@ -23,6 +23,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Private Fields
 
 		private LutCollection _lutCollection;
+		private IModalityLut _modalityLut;
+		private IVoiLut _voiLut;
 		private bool _recalculate = true;
 		private ComposedLutCache.ICachedLut _cachedLut;
 		private int _minInputValue = int.MinValue;
@@ -35,10 +37,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public LutComposer()
 		{
-			LutCollection.ItemAdded += OnLutAdded;
-			LutCollection.ItemChanging += OnLutChanging;
-			LutCollection.ItemChanged += OnLutChanged;
-			LutCollection.ItemRemoved += OnLutRemoved;
 		}
 
 		/// <summary>
@@ -76,14 +74,59 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// A collection of <see cref="IComposableLut"/> objects.
 		/// </summary>
-		public LutCollection LutCollection
+		private LutCollection LutCollection
 		{
 			get 
-			{ 
+			{
 				if (_lutCollection == null)
+				{
 					_lutCollection = new LutCollection();
 
+					if (_modalityLut != null) _lutCollection.Add(_modalityLut);
+					if (_voiLut != null) _lutCollection.Add(_voiLut);
+				}
+
 				return _lutCollection; 
+			}
+		}
+
+		public IModalityLut ModalityLut
+		{
+			get { return _modalityLut; }
+			set
+			{
+				if (_modalityLut == value)
+					return;
+
+				if (_modalityLut != null)
+					_modalityLut.LutChanged -= OnLutValuesChanged;
+
+				_modalityLut = value;
+
+				if (_modalityLut != null)
+					_modalityLut.LutChanged += OnLutValuesChanged;
+
+				OnLutChanged();
+			}
+		}
+
+		public IVoiLut VoiLut
+		{
+			get { return _voiLut; }
+			set
+			{
+				if (_voiLut == value)
+					return;
+
+				if (_voiLut != null)
+					_voiLut.LutChanged -= OnLutValuesChanged;
+
+				_voiLut = value;
+
+				if (_voiLut != null)
+					_voiLut.LutChanged += OnLutValuesChanged;
+
+				OnLutChanged();
 			}
 		}
 
@@ -91,6 +134,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void OnLutChanged()
 		{
+			// clear the LUT pipeline so that it will be reassembled
+			if (_lutCollection != null)
+			{
+				_lutCollection.Clear();
+				_lutCollection = null;
+			}
+
 			SyncMinMaxValues();
 			_recalculate = true;
 		}
@@ -117,29 +167,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#region Event Handlers
-
-		private void OnLutChanging(object sender, ListEventArgs<IComposableLut> e)
-		{
-			e.Item.LutChanged -= OnLutValuesChanged;
-		}
-
-		private void OnLutChanged(object sender, ListEventArgs<IComposableLut> e)
-		{
-			e.Item.LutChanged += OnLutValuesChanged;
-			OnLutChanged();
-		}
-
-		private void OnLutRemoved(object sender, ListEventArgs<IComposableLut> e)
-		{
-			e.Item.LutChanged -= OnLutValuesChanged;
-			OnLutChanged();
-		}
-
-		private void OnLutAdded(object sender, ListEventArgs<IComposableLut> e)
-		{
-			e.Item.LutChanged += OnLutValuesChanged;
-			OnLutChanged();
-		}
 
 		private void OnLutValuesChanged(object sender, EventArgs e)
 		{
@@ -285,11 +312,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (disposing)
 			{
-				LutCollection.ItemAdded -= OnLutAdded;
-				LutCollection.ItemChanging -= OnLutChanging;
-				LutCollection.ItemChanged -= OnLutChanged;
-				LutCollection.ItemRemoved -= OnLutRemoved;
-
 				DisposeCachedLut();
 
 				if (_lutCollection != null)

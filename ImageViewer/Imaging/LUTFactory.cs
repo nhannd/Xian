@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Factory method for linear modality luts.
 		/// </summary>
-		public abstract IComposableLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept);
+		public abstract IModalityLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept);
 
 		#endregion
 
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				return _instance.GetColorMap(name);
 			}
 
-			public override IComposableLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+			public override IModalityLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
 			{
 				return _instance.GetModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
 			}
@@ -449,7 +449,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Modality Lut Classes
 
-		private class CachedModalityLutLinear : SimpleDataLut
+		private class CachedModalityLutLinear : SimpleDataModalityLut
 		{
 			public CachedModalityLutLinear(IDataLut source)
 				: base(source.MinInputValue, source.Data,
@@ -488,7 +488,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		[Cloneable(true)]
-		private class CachedModalityLutProxy : ComposableLut
+		private class CachedModalityLutProxy : ComposableModalityLut
 		{
 			[CloneCopyReference]
 			private readonly ModalityLutCacheItem _cacheItem;
@@ -700,7 +700,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			/// <summary>
 			/// Factory method for linear modality luts.
 			/// </summary>
-			public override IComposableLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+			public override IModalityLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
 			{
 				ModalityLutLinear modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
 				string key = modalityLut.GetKey();

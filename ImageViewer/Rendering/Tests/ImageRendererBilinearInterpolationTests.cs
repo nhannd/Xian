@@ -561,10 +561,10 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			//The image's LutComposer is private, so we just replicate it here and recalculate.
 			GrayscaleImageGraphic graphic = (GrayscaleImageGraphic) _image;
 			LutComposer composer = new LutComposer(graphic.BitsStored, graphic.IsSigned);
-			composer.LutCollection.Add(graphic.ModalityLut);
-			composer.LutCollection.Add(graphic.VoiLut);
-			composer.LutCollection.Add(new GrayscaleColorMap());
-			return Color.FromArgb(composer[interpolated]).R;
+			composer.ModalityLut = graphic.ModalityLut;
+			composer.VoiLut = graphic.VoiLut;
+			var colorMap = new GrayscaleColorMap();
+			return Color.FromArgb(colorMap[composer[interpolated]]).R;
 		}
 
 		private void CreateImageLayer(ImageTypes imageType)

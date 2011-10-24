@@ -23,10 +23,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// are provided that cover most, if not all, Linear Voi Lut use cases.  You should not need
 	/// to derive directly from this class.
 	/// </remarks>
-	/// <seealso cref="ComposableLut"/>
-	/// <seealso cref="IComposableLut"/>
+	/// <seealso cref="ComposableVoiLut"/>
+	/// <seealso cref="IVoiLut"/>
 	[Cloneable(true)]
-	public abstract class VoiLutLinearBase : ComposableLut
+	public abstract class VoiLutLinearBase : ComposableVoiLut
 	{
 		#region Private Fields
 

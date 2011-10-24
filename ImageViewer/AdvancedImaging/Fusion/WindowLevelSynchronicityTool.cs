@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						return;
 
 					// find any available display set containing the same series as the individual layers and capture its VOI LUT
-					IComposableLut baseVoiLut = null, overlayVoiLut = null;
+					IVoiLut baseVoiLut = null, overlayVoiLut = null;
 					var descriptor = (PETFusionDisplaySetDescriptor) e.NewDisplaySet.Descriptor;
 					foreach (IImageBox imageBox in ImageViewer.PhysicalWorkspace.ImageBoxes)
 					{
@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		/// <summary>
 		/// Attempts to replicate the specified <paramref name="sourceVoiLut"/>. If the LUT is not linear, computes a dummy LUT.
 		/// </summary>
-		private static IComposableLut ReplicateVoiLut(IComposableLut sourceVoiLut)
+		private static IVoiLut ReplicateVoiLut(IVoiLut sourceVoiLut)
 		{
 			if (sourceVoiLut is IVoiLutLinear)
 			{
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			return new IdentityVoiLinearLut();
 		}
 
-		private static IComposableLut GetInitialVoiLut(Frame frame)
+		private static IVoiLut GetInitialVoiLut(Frame frame)
 		{
 			if (frame != null)
 			{

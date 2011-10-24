@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 10;
 
-			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
+			IModalityLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -71,8 +71,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowCenter = windowLevel;
 
 			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
-			lutComposer.LutCollection.Add(modalityLUT);
-			lutComposer.LutCollection.Add(voiLUT);
+			lutComposer.ModalityLut = modalityLUT;
+			lutComposer.VoiLut = voiLUT;
 
 			Assert.AreEqual(10, voiLUT.MinInputValue);
 			Assert.AreEqual(137, voiLUT.MaxInputValue);
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.683760684;
 			double rescaleIntercept = 200;
 
-			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
+			IModalityLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -120,8 +120,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowCenter = windowLevel;
 
 			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
-			lutComposer.LutCollection.Add(modalityLUT);
-			lutComposer.LutCollection.Add(voiLUT);
+			lutComposer.ModalityLut = modalityLUT;
+			lutComposer.VoiLut = voiLUT;
 
 			Assert.AreEqual(200, voiLUT.MinInputValue);
 			Assert.AreEqual(3000, voiLUT.MaxInputValue);
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1;
 			double rescaleIntercept = -1024;
 
-			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
+			IModalityLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -167,8 +167,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowCenter = windowLevel;
 
 			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
-			lutComposer.LutCollection.Add(modalityLUT);
-			lutComposer.LutCollection.Add(voiLUT);
+			lutComposer.ModalityLut = modalityLUT;
+			lutComposer.VoiLut = voiLUT;
 
 			Assert.AreEqual(-1024, voiLUT.MinInputValue);
 			Assert.AreEqual(64511, voiLUT.MaxInputValue);
@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 10;
 
-			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
+			IModalityLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -218,8 +218,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowCenter = windowLevel;
 
 			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
-			lutComposer.LutCollection.Add(modalityLUT);
-			lutComposer.LutCollection.Add(voiLUT);
+			lutComposer.ModalityLut = modalityLUT;
+			lutComposer.VoiLut = voiLUT;
 
 			Assert.AreEqual(-54, voiLUT.MinInputValue);
 			Assert.AreEqual(73, voiLUT.MaxInputValue);
@@ -243,7 +243,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1.0;
 			double rescaleIntercept = 0;
 
-			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
+			IModalityLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -261,8 +261,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowCenter = windowLevel;
 
 			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
-			lutComposer.LutCollection.Add(modalityLUT);
-			lutComposer.LutCollection.Add(voiLUT);
+			lutComposer.ModalityLut = modalityLUT;
+			lutComposer.VoiLut = voiLUT;
 
 			Assert.AreEqual(-2048, voiLUT.MinInputValue);
 			Assert.AreEqual(2047, voiLUT.MaxInputValue);
@@ -289,7 +289,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1;
 			double rescaleIntercept = -1024;
 
-			IComposableLut modalityLUT = _lutFactory.GetModalityLutLinear(
+			IModalityLut modalityLUT = _lutFactory.GetModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -307,8 +307,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowCenter = windowLevel;
 
 			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
-			lutComposer.LutCollection.Add(modalityLUT);
-			lutComposer.LutCollection.Add(voiLUT);
+			lutComposer.ModalityLut = modalityLUT;
+			lutComposer.VoiLut = voiLUT;
 
 			Assert.AreEqual(-33792, voiLUT.MinInputValue);
 			Assert.AreEqual(31743, voiLUT.MaxInputValue);
@@ -337,7 +337,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowCenter = windowLevel;
 
 			LutComposer lutComposer = new LutComposer(0, 4095);
-			lutComposer.LutCollection.Add(voiLUT);
+			lutComposer.VoiLut = voiLUT;
 			int[] data = lutComposer.Data;
 		}
 

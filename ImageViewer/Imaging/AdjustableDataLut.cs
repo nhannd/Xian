@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// the full window, since the true values won't necessarily have any real meaning.
 	/// </remarks>
 	[Cloneable]
-	public class AdjustableDataLut : ComposableLut, IBasicVoiLutLinear, IDataLut
+	public class AdjustableDataLut : ComposableVoiLut, IBasicVoiLutLinear, IDataLut
 	{
 		private class Memento
 		{

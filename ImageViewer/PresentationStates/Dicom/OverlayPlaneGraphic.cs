@@ -416,7 +416,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		#region Voi Lut
 
 		[Cloneable(true)]
-		private class OverlayVoiLut : ComposableLut
+		private class OverlayVoiLut : ComposableVoiLut
 		{
 			private readonly int _presentationValue;
 			private int _minInputValue = 0;

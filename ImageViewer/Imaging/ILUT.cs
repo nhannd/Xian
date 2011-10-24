@@ -9,36 +9,68 @@
 
 #endregion
 
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/// <summary>
-	/// The basic definition of a Lut.
-	/// </summary>
-	public interface ILut
+	public interface IModalityLut : IComposableLut
 	{
-		/// <summary>
-		/// Gets the minimum input value.
-		/// </summary>
-		int MinInputValue { get; }
+		new IModalityLut Clone();
+	}
 
-		/// <summary>
-		/// Gets the maximum input value.
-		/// </summary>
-		int MaxInputValue { get; }
+	[Cloneable(true)]
+	public abstract class ComposableModalityLut : ComposableLut, IModalityLut
+	{
+		public new IModalityLut Clone()
+		{
+			return (IModalityLut) base.Clone();
+		}
+	}
 
-		/// <summary>
-		/// Gets the minimum output value.
-		/// </summary>
-		int MinOutputValue { get; }
+	[Cloneable(true)]
+	public abstract class GeneratedDataModalityLut : GeneratedDataLut, IModalityLut
+	{
+		public new IModalityLut Clone()
+		{
+			return (IModalityLut) base.Clone();
+		}
+	}
 
-		/// <summary>
-		/// Gets the maximum output value.
-		/// </summary>
-		int MaxOutputValue { get; }
+	[Cloneable(true)]
+	public abstract class SimpleDataModalityLut : SimpleDataLut, IModalityLut
+	{
+		protected SimpleDataModalityLut(int firstMappedPixelValue, int[] data, int minOutputValue, int maxOutputValue, string key, string description)
+			: base(firstMappedPixelValue, data, minOutputValue, maxOutputValue, key, description) {}
 
-		/// <summary>
-		/// Gets the output value of the lut at a given input index.
-		/// </summary>
-		int this[int index] { get; }
+		protected SimpleDataModalityLut(SimpleDataLut source, ICloningContext context)
+			: base(source, context) {}
+
+		public new IModalityLut Clone()
+		{
+			return (IModalityLut) base.Clone();
+		}
+	}
+
+	public interface IVoiLut : IComposableLut
+	{
+		new IVoiLut Clone();
+	}
+
+	[Cloneable(true)]
+	public abstract class ComposableVoiLut : ComposableLut, IVoiLut
+	{
+		public new IVoiLut Clone()
+		{
+			return (IVoiLut) base.Clone();
+		}
+	}
+
+	[Cloneable(true)]
+	public abstract class DataVoiLut : DataLut, IVoiLut
+	{
+		public new IVoiLut Clone()
+		{
+			return (IVoiLut) base.Clone();
+		}
 	}
 }

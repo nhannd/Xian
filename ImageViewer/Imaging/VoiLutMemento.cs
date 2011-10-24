@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private readonly ComposableLutMemento _composableLutMemento;
 		private readonly bool _invert;
 
-		public VoiLutMemento(IComposableLut originatingLut, bool invert)
+		public VoiLutMemento(IVoiLut originatingLut, bool invert)
 		{
 			_composableLutMemento = new ComposableLutMemento(originatingLut);
 			_invert = invert;

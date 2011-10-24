@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// A 1-to-1 pass-through composable LUT (i.e. the identity transform).
 	/// </summary>
 	[Cloneable(true)]
-	public sealed class IdentityVoiLinearLut : ComposableLut, IVoiLutLinear
+	public sealed class IdentityVoiLinearLut : ComposableVoiLut, IVoiLutLinear
 	{
 		private int _minInputValue;
 		private int _maxInputValue;

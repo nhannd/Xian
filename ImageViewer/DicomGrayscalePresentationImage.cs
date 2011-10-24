@@ -121,10 +121,10 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		private static IComposableLut GetInitialVoiLut(IGraphic graphic)
+		private static IVoiLut GetInitialVoiLut(IGraphic graphic)
 		{
 			GrayscaleImageGraphic grayImageGraphic = (GrayscaleImageGraphic) graphic;
-			IComposableLut lut = InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage);
+			IVoiLut lut = InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage);
 			if (lut == null)
 				lut = new MinMaxPixelCalculatedLinearLut(grayImageGraphic.PixelData, grayImageGraphic.ModalityLut);
 			return lut;

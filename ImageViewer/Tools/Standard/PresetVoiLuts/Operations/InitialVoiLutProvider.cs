@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 		#region IInitialVoiLutProvider Members
 
-		public IComposableLut GetLut(IPresentationImage presentationImage)
+		public IVoiLut GetLut(IPresentationImage presentationImage)
 		{
             var applicator = AutoVoiLutApplicator.Create(presentationImage);
             return applicator == null ? null : applicator.GetInitialLut();

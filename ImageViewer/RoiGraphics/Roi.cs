@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private readonly PixelData _pixelData;
 		private readonly PixelAspectRatio _pixelAspectRatio;
 		private readonly PixelSpacing _normalizedPixelSpacing;
-		private readonly IComposableLut _modalityLut;
+		private readonly IModalityLut _modalityLut;
 
 		private RectangleF _boundingBox;
 
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <summary>
 		/// Gets the modality LUT of the image, if one exists.
 		/// </summary>
-		public IComposableLut ModalityLut
+		public IModalityLut ModalityLut
 		{
 			get { return _modalityLut; }
 		}

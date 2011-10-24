@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		#region IVoiLutManager Members
 
 		[Obsolete("Use the VoiLut property instead.")]
-		IComposableLut IVoiLutManager.GetLut()
+		IVoiLut IVoiLutManager.GetLut()
 		{
 			if (_realVoiLutManager != null)
 				return _realVoiLutManager.GetLut();
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		}
 
 		[Obsolete("Use the InstallVoiLut method instead.")]
-		void IVoiLutManager.InstallLut(IComposableLut voiLut)
+		void IVoiLutManager.InstallLut(IVoiLut voiLut)
 		{
 			if (_realVoiLutManager != null)
 				_realVoiLutManager.InstallLut(voiLut);
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#region IVoiLutInstaller Members
 
-		IComposableLut IVoiLutInstaller.VoiLut
+		IVoiLut IVoiLutInstaller.VoiLut
 		{
 			get
 			{
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
-		void IVoiLutInstaller.InstallVoiLut(IComposableLut voiLut)
+		void IVoiLutInstaller.InstallVoiLut(IVoiLut voiLut)
 		{
 			if (_realVoiLutManager != null)
 				_realVoiLutManager.InstallVoiLut(voiLut);
@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			public bool Invert { get; set; }
             public bool DefaultInvert { get; private set; }
-            public IComposableLut VoiLut { get; set; }
+            public IVoiLut VoiLut { get; set; }
 
 			public XVoiLutInstaller()
 			{
@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				this.VoiLut = source.VoiLut.Clone();
 			}
 
-			public void InstallVoiLut(IComposableLut voiLut)
+			public void InstallVoiLut(IVoiLut voiLut)
 			{
 				this.VoiLut = voiLut;
 			}

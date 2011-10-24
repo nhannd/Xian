@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private readonly GrayscalePixelData _pixelData;
 		
 		//allow this to be cloned, since it will just clone the LutFactory's proxy object, anyway.
-		private readonly IComposableLut _modalityLut;
+		private readonly IModalityLut _modalityLut;
 
 		private double _windowWidth;
 		private double _windowCenter;
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
 		/// <param name="modalityLut">The modality lut to use for calculating <see cref="WindowWidth"/> and <see cref="WindowCenter"/>, if applicable.</param>
-		protected AlgorithmCalculatedVoiLutLinear(GrayscalePixelData pixelData, IComposableLut modalityLut)
+		protected AlgorithmCalculatedVoiLutLinear(GrayscalePixelData pixelData, IModalityLut modalityLut)
 		{
 			Platform.CheckForNullReference(pixelData, "pixelData");
 

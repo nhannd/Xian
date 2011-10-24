@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private static double CalculateMean
 			(
 			RectangleF roiBoundingBox,
-			GrayscalePixelData pixelData, 
-			IComposableLut modalityLut,
+			GrayscalePixelData pixelData,
+			IModalityLut modalityLut,
 			IsPointInRoiDelegate isPointInRoi
 			)
 		{
@@ -117,8 +117,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			(
 			double mean,
 			RectangleF roiBoundingBox,
-			GrayscalePixelData pixelData, 
-			IComposableLut modalityLut,
+			GrayscalePixelData pixelData,
+			IModalityLut modalityLut,
 			IsPointInRoiDelegate isPointInRoi
 			)
 		{

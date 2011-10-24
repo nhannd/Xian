@@ -168,10 +168,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			context.CloneFields(source, this);
 
-			if (source.LutComposer.LutCollection.Count > 0) //modality lut is constant; no need to clone.
+			if (source.LutComposer.ModalityLut != null) //modality lut is constant; no need to clone.
 				this.InitializeNecessaryLuts(Luts.Modality);
 
-			if (source.LutComposer.LutCollection.Count > 1) //clone the voi lut.
+			if (source.LutComposer.VoiLut != null) //clone the voi lut.
 				(this as IVoiLutInstaller).InstallVoiLut(source.VoiLut.Clone());
 
 			//color map has already been cloned.
@@ -303,24 +303,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Retrieves this image's modality lut.
 		/// </summary>
-		public IComposableLut ModalityLut
+		public IModalityLut ModalityLut
 		{
 			get
 			{
 				InitializeNecessaryLuts(Luts.Modality);
-				return this.LutComposer.LutCollection[0]; 
+				return this.LutComposer.ModalityLut; 
 			}
 		}
 
 		/// <summary>
 		/// Retrieves this image's Voi Lut.
 		/// </summary>
-		public IComposableLut VoiLut
+		public IVoiLut VoiLut
 		{
 			get
 			{
 				InitializeNecessaryLuts(Luts.Voi);
-				return this.LutComposer.LutCollection[1]; 
+				return this.LutComposer.VoiLut; 
 			}
 		}
 
@@ -457,17 +457,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void InitializeNecessaryLuts(Luts luts)
 		{
-			if (luts >= Luts.Modality && LutComposer.LutCollection.Count == 0)
+			if (luts >= Luts.Modality && LutComposer.ModalityLut == null)
 			{
-				IComposableLut modalityLut =
+				IModalityLut modalityLut =
 					this.LutFactory.GetModalityLutLinear(this.BitsStored, this.IsSigned, _rescaleSlope, _rescaleIntercept);
 			
-				this.LutComposer.LutCollection.Add(modalityLut);
+				this.LutComposer.ModalityLut = modalityLut;
 			}
 
-			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == 1)
+			if (luts >= Luts.Voi && LutComposer.VoiLut == null)
 			{
-				IComposableLut lut = null;
+				IVoiLut lut = null;
 
 				if (_voiLutFactory != null)
 					lut = _voiLutFactory.CreateVoiLut(this);
@@ -491,20 +491,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		void IVoiLutInstaller.InstallVoiLut(IComposableLut voiLut)
+		void IVoiLutInstaller.InstallVoiLut(IVoiLut voiLut)
 		{
 			Platform.CheckForNullReference(voiLut, "voiLut");
 
 			InitializeNecessaryLuts(Luts.Modality);
 
-			if (this.LutComposer.LutCollection.Count == 1)
-			{
-				this.LutComposer.LutCollection.Add(voiLut);
-			}
-			else
-			{
-				this.LutComposer.LutCollection[1] = voiLut;
-			}
+			this.LutComposer.VoiLut = voiLut;
 		}
 
 		void IColorMapInstaller.InstallColorMap(string name)
