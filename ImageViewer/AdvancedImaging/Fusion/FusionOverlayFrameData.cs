@@ -74,6 +74,42 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return this.OverlayData.FrameOfReferenceUid; }
 		}
 
+		public int OverlayRows
+		{
+			get
+			{
+				Load();
+				return _overlayFrameParams.Rows;
+			}
+		}
+
+		public int OverlayColumns
+		{
+			get
+			{
+				Load();
+				return _overlayFrameParams.Columns;
+			}
+		}
+
+		public double OverlayRescaleSlope
+		{
+			get
+			{
+				Load();
+				return _overlayFrameParams.RescaleSlope;
+			}
+		}
+
+		public double OverlayRescaleIntercept
+		{
+			get
+			{
+				Load();
+				return _overlayFrameParams.RescaleIntercept;
+			}
+		}
+
 		protected byte[] OverlayPixelData
 		{
 			get
