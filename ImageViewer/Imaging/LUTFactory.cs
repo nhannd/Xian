@@ -38,12 +38,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Factory method for grayscale color maps.
 		/// </summary>
-		public abstract IDataLut GetGrayscaleColorMap();
+		public abstract IColorMap GetGrayscaleColorMap();
 
 		/// <summary>
 		/// Factory method that returns a new color map given the name of a <see cref="IColorMapFactory"/>.
 		/// </summary>
-		public abstract IDataLut GetColorMap(string name);
+		public abstract IColorMap GetColorMap(string name);
 
 		/// <summary>
 		/// Factory method for linear modality luts.
@@ -99,12 +99,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 				get { return _instance.AvailableColorMaps; }
 			}
 
-			public override IDataLut GetGrayscaleColorMap()
+			public override IColorMap GetGrayscaleColorMap()
 			{
 				return _instance.GetGrayscaleColorMap();
 			}
 
-			public override IDataLut GetColorMap(string name)
+			public override IColorMap GetColorMap(string name)
 			{
 				return _instance.GetColorMap(name);
 			}
@@ -126,25 +126,27 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private abstract class CacheItem : ILargeObjectContainer
+		private abstract class CacheItem<TLut> : ILargeObjectContainer
+			where TLut : class
 		{
 			private readonly LargeObjectContainerData _largeObjectData;
 
 			private readonly object _syncLock = new object();
-			private volatile IDataLut _realLut;
+			private volatile TLut _realLut;
 
 			protected CacheItem()
 			{
 				_largeObjectData = new LargeObjectContainerData(Guid.NewGuid()) { RegenerationCost = RegenerationCost.Low };
 			}
 
-			protected abstract IDataLut CreateLut();
+			protected abstract TLut CreateLut();
+			protected abstract int GetSizeInBytes(TLut lut);
 
-			public IDataLut RealLut
+			public TLut RealLut
 			{
 				get
 				{
-					IDataLut realLut = _realLut;
+					TLut realLut = _realLut;
 					if (realLut != null)
 						return realLut;
 
@@ -159,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 						//just use the creation time as the "last access time", otherwise it can get expensive when called in a tight loop.
 						_largeObjectData.UpdateLastAccessTime();
-						_largeObjectData.BytesHeldCount = _realLut.Data.Length * sizeof(int);
+						_largeObjectData.BytesHeldCount = GetSizeInBytes(_realLut);
 						_largeObjectData.LargeObjectCount = 1;
 						MemoryManager.Add(this);
 						Diagnostics.OnLargeObjectAllocated(_largeObjectData.BytesHeldCount);
@@ -284,7 +286,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private class ColorMapCacheItem : CacheItem
+		private class ColorMapCacheItem : CacheItem<IColorMap>
 		{
 			private readonly ColorMapKey _key;
 
@@ -293,13 +295,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_key = key;
 			}
 
-			protected override IDataLut CreateLut()
+			protected override IColorMap CreateLut()
 			{
-				IDataLut source = _colorMapFactories[_key.FactoryName].Create();
+				IColorMap source = _colorMapFactories[_key.FactoryName].Create();
 				source.MinInputValue = _key.MinInputValue;
 				source.MaxInputValue = _key.MaxInputValue;
 
-				return new CachedColorMap(source);
+				return new SimpleColorMap(source.MinInputValue, source.Data, source.GetKey(), source.GetDescription());
+			}
+
+			protected override int GetSizeInBytes(IColorMap lut)
+			{
+				return lut.Data.Length*sizeof (int);
 			}
 
 			public override string ToString()
@@ -308,28 +315,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private class CachedColorMap : SimpleDataLut
-		{
-			internal CachedColorMap(IDataLut source)
-				: base(source.MinInputValue, source.Data, 0, 0, source.GetKey(), source.GetDescription())
-			{
-			}
-
-			public override int MinOutputValue
-			{
-				get { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
-				protected set { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
-			}
-
-			public override int MaxOutputValue
-			{
-				get { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
-				protected set { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
-			}
-		}
-
 		[Cloneable(true)]
-		private class CachedColorMapProxy : ComposableLut, IDataLut
+		private class CachedColorMapProxy : ComposableLut, IColorMap
 		{
 			private readonly string _factoryName;
 			private int _minInputValue;
@@ -348,7 +335,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_factoryName = factoryName;
 			}
 
-			private IDataLut RealColorMap
+			private IColorMap RealColorMap
 			{
 				get
 				{
@@ -439,6 +426,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				get { return RealColorMap.Data; }
 			}
 
+			public new IColorMap Clone()
+			{
+				return base.Clone() as IColorMap;
+			}
+
 			#endregion
 
 			#region IMemorable Members
@@ -467,7 +459,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private class ModalityLutCacheItem : CacheItem
+		private class ModalityLutCacheItem : CacheItem<IDataLut>
 		{
 			private readonly ModalityLutLinear _sourceLut;
 
@@ -482,6 +474,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				CachedModalityLutLinear lut = new CachedModalityLutLinear(_sourceLut);
 				_sourceLut.Clear();
 				return lut;
+			}
+
+			protected override int GetSizeInBytes(IDataLut lut)
+			{
+				return lut.Data.Length*sizeof (int);
 			}
 
 			public override string ToString()
@@ -666,7 +663,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			/// <summary>
 			/// Factory method for grayscale color maps.
 			/// </summary>
-			public override IDataLut GetGrayscaleColorMap()
+			public override IColorMap GetGrayscaleColorMap()
 			{
 				return GetColorMap(GrayscaleColorMapFactory.FactoryName);
 			}
@@ -674,7 +671,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			/// <summary>
 			/// Factory method that returns a new color map given the name of a <see cref="IColorMapFactory"/>.
 			/// </summary>
-			public override IDataLut GetColorMap(string name)
+			public override IColorMap GetColorMap(string name)
 			{
 				if (!_colorMapFactories.ContainsKey(name))
 					throw new ArgumentException(String.Format("No Color Map factory extension exists with the name {0}.", name));

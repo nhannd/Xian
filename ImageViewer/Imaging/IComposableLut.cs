@@ -17,9 +17,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Defines a Lut that can be added to a <see cref="LutCollection"/>.
 	/// </summary>
-	/// <seealso cref="ILut"/>
 	/// <seealso cref="IMemorable"/>
-	public interface IComposableLut : ILut, IMemorable
+	public interface IComposableLut : IMemorable
 	{
 		/// <summary>
 		/// Gets or sets the minimum input value.
@@ -27,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		new int MinInputValue { get; set; }
+		int MinInputValue { get; set; }
 
 		/// <summary>
 		/// Gets the maximum input value.
@@ -35,7 +34,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		new int MaxInputValue { get; set; }
+		int MaxInputValue { get; set; }
+
+		/// <summary>
+		/// Gets the minimum output value.
+		/// </summary>
+		int MinOutputValue { get; }
+
+		/// <summary>
+		/// Gets the maximum output value.
+		/// </summary>
+		int MaxOutputValue { get; }
+
+		/// <summary>
+		/// Gets the output value of the lut at a given input index.
+		/// </summary>
+		int this[int index] { get; }
 
 		/// <summary>
 		/// Fired when the LUT has changed in some way.

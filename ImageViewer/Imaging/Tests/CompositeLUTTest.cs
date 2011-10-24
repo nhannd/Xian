@@ -263,7 +263,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
 			lutComposer.LutCollection.Add(modalityLUT);
 			lutComposer.LutCollection.Add(voiLUT);
-			lutComposer.LutCollection.Add(_lutFactory.GetGrayscaleColorMap());
 
 			Assert.AreEqual(-2048, voiLUT.MinInputValue);
 			Assert.AreEqual(2047, voiLUT.MaxInputValue);
@@ -274,9 +273,10 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-512, voiLUT[2047]);
 
 			//This test is a little different from the others, it tests the output using a grayscale color map.
-			Assert.AreEqual(31, 0x000000ff & lutComposer.Data[0]);
-			Assert.AreEqual(63, 0x000000ff & lutComposer.Data[2048]);
-			Assert.AreEqual(95, 0x000000ff & lutComposer.Data[4095]);
+			var colorMap = _lutFactory.GetGrayscaleColorMap();
+			Assert.AreEqual(31, 0x000000ff & colorMap[lutComposer.Data[0]]);
+			Assert.AreEqual(63, 0x000000ff & colorMap[lutComposer.Data[2048]]);
+			Assert.AreEqual(95, 0x000000ff & colorMap[lutComposer.Data[4095]]);
 		}
 
 		[Test]

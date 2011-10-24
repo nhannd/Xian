@@ -180,7 +180,10 @@
     <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
     <Compile Include="ImageSetTree.cs" />
+    <Compile Include="Imaging\ColorMapMemento.cs" />
+    <Compile Include="Imaging\IColorMap.cs" />
     <Compile Include="Imaging\NamedVoiLutLinear.cs" />
+    <Compile Include="Imaging\SimpleColorMap.cs" />
     <Compile Include="Layout\HpDataContractAttribute.cs" />
     <Compile Include="Layout\HpExtensionPoints.cs" />
     <Compile Include="Layout\HpApplicabilityResult.cs" />

@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private IGraphicVoiLutFactory _voiLutFactory;
 
 		private IColorMapManager _colorMapManager;
-		private IDataLut _colorMap;
+		private IColorMap _colorMap;
 
 		#endregion
 
@@ -339,7 +339,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Retrieves this image's color map.
 		/// </summary>
-		public IDataLut ColorMap
+		public IColorMap ColorMap
 		{
 			get
 			{
@@ -517,7 +517,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			(this as IColorMapInstaller).InstallColorMap(descriptor.Name);
 		}
 
-		void IColorMapInstaller.InstallColorMap(IDataLut colorMap)
+		void IColorMapInstaller.InstallColorMap(IColorMap colorMap)
 		{
 			if (_colorMap == colorMap)
 				return;

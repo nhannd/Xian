@@ -375,7 +375,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the currently installed colour map.
 		/// </summary>
-		public IDataLut ColorMap
+		public IColorMap ColorMap
 		{
 			get { return this.ColorMapManager.ColorMap; }
 		}
@@ -399,7 +399,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Installs a colour map.
 		/// </summary>
-		public void InstallColorMap(IDataLut colorMap)
+		public void InstallColorMap(IColorMap colorMap)
 		{
 			this.ColorMapManager.InstallColorMap(colorMap);
 		}
@@ -597,10 +597,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private class ColorMapInstallerProxy : IColorMapInstaller
 		{
-			private IDataLut _colorMap;
+			private IColorMap _colorMap;
 			private string _colorMapName = string.Empty;
 
-			public IDataLut ColorMap
+			public IColorMap ColorMap
 			{
 				get
 				{
@@ -629,7 +629,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				this.InstallColorMap(descriptor.Name);
 			}
 
-			public void InstallColorMap(IDataLut colorMap)
+			public void InstallColorMap(IColorMap colorMap)
 			{
 				if (_colorMap != colorMap)
 				{
