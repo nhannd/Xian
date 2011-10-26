@@ -43,8 +43,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_hiddenItems = new List<StudyItem>();
 			_studyTable = new Table<StudyItem>();
-
-			InitializeTable();
 		}
 
 		#region Properties
@@ -119,7 +117,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 		#endregion
+
 		#region Methods
+
+		public void Initialize()
+		{
+			InitializeTable();
+		}
 
 		public void Refresh(StudyItemList studies, bool filterDuplicates)
 		{
@@ -185,14 +189,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		protected virtual void InitializeTable()
 		{
-			InitializeExtensionColumns();
-			InitializeMainColumns();
-			InitializeNumberOfInstancesColumn();
-			InitializeServerColumns();
+			_studyTable.Columns.AddRange(CreateExtensionColumns());
+			_studyTable.Columns.AddRange(CreateDefaultColumns());
+			_studyTable.Columns.AddRange(CreateInstanceCountColumns());
+			_studyTable.Columns.AddRange(CreateServerColumns());
+
+			// Default: Sort by last name
+			var column = FindColumn(SR.ColumnHeadingLastName);
+			_studyTable.Sort(new TableSortParams(column, true));
 		}
 
-		protected void InitializeExtensionColumns()
+		protected IEnumerable<TableColumnBase<StudyItem>> CreateExtensionColumns()
 		{
+			var columns = new List<TableColumnBase<StudyItem>>();
 			try
 			{
 				// Create and add any extension columns
@@ -207,16 +216,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						newColumn.WidthFactor);
 
 					newColumn.ColumnValueChanged += OnColumnValueChanged;
-					_studyTable.Columns.Add(column);
+					columns.Add(column);
 				}
 			}
-			catch (NotSupportedException)
-			{
-			}
+			catch (NotSupportedException) {}
+			return columns;
 		}
 
-		private void InitializeMainColumns()
+		protected static IEnumerable<TableColumnBase<StudyItem>> CreateDefaultColumns()
 		{
+			var columns = new List<TableColumnBase<StudyItem>>();
 			TableColumn<StudyItem, string> column;
 
 			column = new TableColumn<StudyItem, string>(
@@ -224,24 +233,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				delegate(StudyItem item) { return item.PatientId; },
 				0.5f);
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingLastName,
 				delegate(StudyItem item) { return item.PatientsName.LastName; },
 				0.5f);
 
-			_studyTable.Columns.Add(column);
-
-			// Default: Sort by lastname
-			_studyTable.Sort(new TableSortParams(column, true));
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingFirstName,
 				delegate(StudyItem item) { return item.PatientsName.FirstName; },
 				0.5f);
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingIdeographicName,
@@ -250,7 +256,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingPhoneticName,
@@ -259,46 +265,46 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowPhoneticName;
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingDateOfBirth,
-				delegate(StudyItem item) { return GetDateStringFromDicomDA(item.PatientsBirthDate); },
+				delegate(StudyItem item) { return FormatDicomDA(item.PatientsBirthDate); },
 				null,
 				0.4F,
 				delegate(StudyItem one, StudyItem two) { return one.PatientsBirthDate.CompareTo(two.PatientsBirthDate); });
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingAccessionNumber,
 				delegate(StudyItem item) { return item.AccessionNumber; },
 				0.45F);
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingStudyDate,
-				delegate(StudyItem item) { return GetDateStringFromDicomDA(item.StudyDate); },
+				delegate(StudyItem item) { return FormatDicomDA(item.StudyDate); },
 				null,
 				0.4F,
 				delegate(StudyItem one, StudyItem two) { return one.StudyDate.CompareTo(two.StudyDate); });
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingStudyDescription,
 				delegate(StudyItem item) { return item.StudyDescription; },
 				0.75F);
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingModality,
 				delegate(StudyItem item) { return DicomStringHelper.GetDicomStringArray(item.ModalitiesInStudy); },
 				0.25f);
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingReferringPhysician,
@@ -311,10 +317,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					},
 				0.6f);
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
+			return columns;
 		}
 
-		protected void InitializeNumberOfInstancesColumn()
+		protected static IEnumerable<TableColumnBase<StudyItem>> CreateInstanceCountColumns()
 		{
 			var column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingNumberOfInstances,
@@ -349,11 +356,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 
-			_studyTable.Columns.Add(column);
+			return new TableColumnBase<StudyItem>[] {column};
 		}
 
-		protected void InitializeServerColumns()
+		protected static IEnumerable<TableColumnBase<StudyItem>> CreateServerColumns()
 		{
+			var columns = new List<TableColumnBase<StudyItem>>();
 			var column = new TableColumn<StudyItem, string>(SR.ColumnHeadingServer,
 														delegate(StudyItem item)
 														{
@@ -361,7 +369,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 														},
 														0.3f);
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(SR.ColumnHeadingAvailability,
 														delegate(StudyItem item)
@@ -370,7 +378,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 														},
 														0.3f);
 
-			_studyTable.Columns.Add(column);
+			columns.Add(column);
+			return columns;
 		}
 
 		internal void UpdateColumnVisibility()
@@ -430,7 +439,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#endregion
 
-		protected static string GetDateStringFromDicomDA(string dicomDate)
+		protected static string FormatDicomDA(string dicomDate)
 		{
 			DateTime date;
 			if (!DateParser.Parse(dicomDate, out date))
