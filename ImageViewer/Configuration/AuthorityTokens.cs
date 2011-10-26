@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			[AuthorityToken(Description = "Allow configuration of default servers.")]
 			public const string DefaultServers = "Viewer/Configuration/Default Servers";
 
-		    [AuthorityToken(Description = "Allow configuration of data publishing options.", Formerly = new[] {"Viewer/Administration/Key Images"})]
+		    [AuthorityToken(Description = "Allow configuration of data publishing options.", Formerly = "Viewer/Administration/Key Images")]
 			public const string Publishing = "Viewer/Configuration/Publishing";
 		}
 	}

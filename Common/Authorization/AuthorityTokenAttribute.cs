@@ -20,11 +20,6 @@ namespace ClearCanvas.Common.Authorization
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
 	public class AuthorityTokenAttribute : Attribute
 	{
-		public AuthorityTokenAttribute()
-		{
-			this.Formerly = new string[0];
-		}
-
 		/// <summary>
 		/// The token description.
 		/// </summary>
@@ -32,7 +27,8 @@ namespace ClearCanvas.Common.Authorization
 
 		/// <summary>
 		/// The former identities of this token, used for purposes of migrating a token.
+		/// Separate multiple former identities by a semicolon.
 		/// </summary>
-		public string[] Formerly { get; set; }
+		public string Formerly { get; set; }
 	}
 }
