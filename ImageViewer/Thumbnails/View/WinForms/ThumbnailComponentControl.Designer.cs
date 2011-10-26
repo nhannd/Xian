@@ -88,6 +88,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			// _imageSetTree
 			// 
 			this._imageSetTree.AllowDrop = true;
+			this._imageSetTree.CheckBoxes = false;
 			this._imageSetTree.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._imageSetTree.IconColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
 			this._imageSetTree.IconSize = new System.Drawing.Size(16, 16);
