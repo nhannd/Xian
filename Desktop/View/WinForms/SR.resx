@@ -226,4 +226,7 @@
   <data name="ButtonYes" xml:space="preserve">
     <value>&amp;Yes</value>
   </data>
+  <data name="ErrorSaveFileToInstallPath" xml:space="preserve">
+    <value>You are attempting to save the file inside the ClearCanvas installation directory.  Please choose another location.</value>
+  </data>
 </root>
