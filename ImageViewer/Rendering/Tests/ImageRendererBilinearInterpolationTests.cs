@@ -564,6 +564,8 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			composer.ModalityLut = graphic.ModalityLut;
 			composer.VoiLut = graphic.VoiLut;
 			var colorMap = new GrayscaleColorMap();
+			colorMap.MaxInputValue = composer.MaxOutputValue;
+			colorMap.MinInputValue = composer.MinOutputValue;
 			return Color.FromArgb(colorMap[composer[interpolated]]).R;
 		}
 

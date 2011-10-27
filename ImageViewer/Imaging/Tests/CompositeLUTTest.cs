@@ -274,6 +274,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 			//This test is a little different from the others, it tests the output using a grayscale color map.
 			var colorMap = _lutFactory.GetGrayscaleColorMap();
+			colorMap.MaxInputValue = lutComposer.MaxOutputValue;
+			colorMap.MinInputValue = lutComposer.MinOutputValue;
 			Assert.AreEqual(31, 0x000000ff & colorMap[lutComposer.Data[0]]);
 			Assert.AreEqual(63, 0x000000ff & colorMap[lutComposer.Data[2048]]);
 			Assert.AreEqual(95, 0x000000ff & colorMap[lutComposer.Data[4095]]);
