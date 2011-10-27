@@ -148,11 +148,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			VoiLutMemento lutMemento = (VoiLutMemento) memento;
 
-			if (_voiLutInstaller.VoiLut != lutMemento.ComposableLutMemento.OriginatingLut)
-				this.InstallLut((IVoiLut) lutMemento.ComposableLutMemento.OriginatingLut);
+			if (_voiLutInstaller.VoiLut != lutMemento.OriginatingLut)
+				this.InstallLut(lutMemento.OriginatingLut);
 
-			if (lutMemento.ComposableLutMemento.InnerMemento != null)
-				_voiLutInstaller.VoiLut.SetMemento(lutMemento.ComposableLutMemento.InnerMemento);
+			if (lutMemento.InnerMemento != null)
+				_voiLutInstaller.VoiLut.SetMemento(lutMemento.InnerMemento);
 
 			_voiLutInstaller.Invert = lutMemento.Invert;
 		}

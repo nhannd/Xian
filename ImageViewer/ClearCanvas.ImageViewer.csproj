@@ -477,7 +477,6 @@
     <Compile Include="Imaging\CalculatedVoiLutLinear.cs" />
     <Compile Include="Imaging\IModalityLutProvider.cs" />
     <Compile Include="Imaging\IComposedLut.cs" />
-    <Compile Include="Imaging\ComposableLutMemento.cs" />
     <Compile Include="Imaging\ColorMapDescriptor.cs" />
     <Compile Include="Imaging\ColorMapFactoryBase.cs" />
     <Compile Include="Imaging\IColorMapFactory.cs" />
