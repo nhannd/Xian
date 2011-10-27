@@ -60,6 +60,7 @@ namespace ClearCanvas.Desktop
 			Directory = directory;
 			FileName = filename;
 			FileExtension = fileExtension;
+			PreventSaveToInstallPath = true;	// default to true, since this is good policy in the majority of use cases
 			_filters = new List<FileExtensionFilter>(filters);
 		}
 
@@ -117,5 +118,10 @@ namespace ClearCanvas.Desktop
 		{
 			get { return _filters; }
 		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether to prevent saving files to the install directory or any of its child directories.
+		/// </summary>
+		public bool PreventSaveToInstallPath { get; set; }
 	}
 }

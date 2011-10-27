@@ -48,8 +48,9 @@ namespace ClearCanvas.Common.Authorization
 						{
 							var token = (string)field.GetValue(null);
 							var description = resolver.LocalizeString(attr.Description);
+							var formerIdentities = (attr.Formerly ?? "").Split(';');
 
-							tokens.Add(new AuthorityTokenDefinition(token, plugin.Assembly.FullName, description, attr.Formerly));
+							tokens.Add(new AuthorityTokenDefinition(token, plugin.Assembly.FullName, description, formerIdentities));
 						}
 					}
 				}
