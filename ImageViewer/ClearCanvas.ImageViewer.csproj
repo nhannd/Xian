@@ -180,6 +180,7 @@
     <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
     <Compile Include="ImageSetTree.cs" />
+    <Compile Include="Imaging\ColorMapBase.cs" />
     <Compile Include="Imaging\ColorMapMemento.cs" />
     <Compile Include="Imaging\IColorMap.cs" />
     <Compile Include="Imaging\NamedVoiLutLinear.cs" />

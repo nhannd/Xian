@@ -316,7 +316,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		[Cloneable(true)]
-		private class CachedColorMapProxy : ComposableLut, IColorMap
+		private class CachedColorMapProxy : ColorMapBase
 		{
 			private readonly string _factoryName;
 			private int _minInputValue;
@@ -380,18 +380,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 			}
 
-			public override int MinOutputValue
-			{
-				get { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
-				protected set { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
-			}
-
-			public override int MaxOutputValue
-			{
-				get { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
-				protected set { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
-			}
-
 			public override int this[int index]
 			{
 				get
@@ -416,19 +404,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			#region IDataLut Members
 
-			public int FirstMappedPixelValue
+			public override int FirstMappedPixelValue
 			{
 				get { return RealColorMap.FirstMappedPixelValue; }
 			}
 
-			public int[] Data
+			public override int[] Data
 			{
 				get { return RealColorMap.Data; }
-			}
-
-			public new IColorMap Clone()
-			{
-				return base.Clone() as IColorMap;
 			}
 
 			#endregion

@@ -15,7 +15,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Defines the properties and methods to access a color map that defines the mapping of input pixel values to ARGB color values.
+	/// Defines the properties and methods to access a color map that defines the mapping of single-channel input pixel values to ARGB color values.
 	/// </summary>
 	public interface IColorMap : IMemorable
 	{
@@ -30,12 +30,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		int[] Data { get; }
 
 		/// <summary>
-		/// Gets the minimum input value.
+		/// Gets or sets the minimum input value.
 		/// </summary>
 		int MinInputValue { get; set; }
 
 		/// <summary>
-		/// Gets the maximum input value.
+		/// Gets or sets the maximum input value.
 		/// </summary>
 		int MaxInputValue { get; set; }
 

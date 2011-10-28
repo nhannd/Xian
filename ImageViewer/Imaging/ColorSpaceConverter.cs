@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			bool isSigned, 
 			byte[] srcPixelData, 
 			byte[] argbPixelData, 
-			IDataLut map)
+			IColorMap map)
 		{
 			int sizeInPixels = argbPixelData.Length/4;
 			int firstPixelMapped = map.MinInputValue;
