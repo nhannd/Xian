@@ -59,9 +59,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             {
                 var filter = new ListUsersRequest
                                  {
-                                     UserName = "%" + UserName.Replace("*", "%").Replace("?", "_"),
-                                     DisplayName = "%" + DisplayName.Replace("*", "%").Replace("?", "_"),
-                                     Page = {FirstRow = startRowIndex}
+                                     UserName = UserName.Replace("*", "%").Replace("?", "_"),
+                                     DisplayName = DisplayName.Replace("*", "%").Replace("?", "_"),
+                                     Page = {FirstRow = startRowIndex},
+                                     ExactMatchOnly = false
                                  };
 
                 users = CollectionUtils.Map(
