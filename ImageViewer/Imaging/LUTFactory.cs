@@ -515,10 +515,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 				protected set { }
 			}
 
-			public override int this[int index]
+			public override double this[int index]
 			{
 				get { return RealLut[index]; }
-				protected set { throw new InvalidOperationException("The modality lut data cannot be altered."); }
 			}
 
 			public override string GetKey()

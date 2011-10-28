@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the output value of the Lut at a given input <paramref name="index"/>.
 		/// </summary>
-		public sealed override int this[int index]
+		public sealed override int this[double index]
 		{
 			get
 			{
@@ -89,10 +89,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 
                 double scale = ((index - (GetWindowCenter() - 0.5)) / (GetWindowWidthInternal() - 1)) + 0.5;
 				return (int)((scale * (MaxOutputValue - MinOutputValue)) + MinOutputValue);
-			}
-			protected set
-			{
-				throw new InvalidOperationException(SR.ExceptionLinearLutDataCannotBeSet);
 			}
 		}
 

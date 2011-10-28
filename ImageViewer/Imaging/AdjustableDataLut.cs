@@ -230,18 +230,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		/// <summary>
-		/// Gets the output value of the lut at a given input index.
+		/// Gets the output value of the lut at a given input.
 		/// </summary>
-		public override int this[int index]
+		public override int this[double input]
 		{
-			get
-			{
-				return _linearLut[_dataLut[index]];
-			}
-			protected set
-			{
-				throw new InvalidOperationException("This lut type is read-only.");
-			}
+			get { return _linearLut[_dataLut[(int) Math.Round(input)]]; }
 		}
 
 		#region Public Methods
@@ -335,6 +328,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		#region IDataLut Members
+
+		int IDataLut.this[int index]
+		{
+			get { return this[index]; }
+		}
 
 		int IDataLut.FirstMappedPixelValue
 		{

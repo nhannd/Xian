@@ -108,10 +108,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, the value is always exactly <paramref name="index"/>.
 		/// </remarks>
-		public override int this[int index]
+		public override int this[double index]
 		{
-			get { return index; }
-			protected set { throw new NotSupportedException(); }
+			get { return (int) Math.Floor(index); }
 		}
 
 		/// <summary>

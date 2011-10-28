@@ -298,11 +298,22 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// If the <see cref="ModalityLut"/> is null, then this method enumerates the same values as <see cref="GetRawPixelValues"/>.
 		/// </remarks>
 		/// <returns>An enumeration of modality LUT transformed pixel values.</returns>
+		[Obsolete]
+		// TODO CR (Oct 11): replace entirely with one that returns doubles but without the real world units - breaking existing code is the least of our worries since anyone using this old version might get wrong values
 		public IEnumerable<int> GetPixelValues()
 		{
-			if (this.PixelData == null)
-				yield break;
+			int dummy;
+			foreach (var pixelValue in GetPixelValues(out dummy))
+				yield return (int) Math.Round(pixelValue);
+		}
 
+		public IEnumerable<double> GetPixelValues(out int realWorldUnits)
+		{
+			realWorldUnits = 0;
+			if (this.PixelData == null)
+				return new double[0];
+
+			List<double> values = new List<double>();
 			LutFunction lut = v => v;
 			if (this.ModalityLut != null)
 				lut = v => this.ModalityLut[v];
@@ -319,9 +330,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				{
 					PointF p = new PointF(x, y);
 					if (this.Contains(p))
-						yield return lut(this.PixelData.GetPixel(x, y));
+						values.Add(lut(this.PixelData.GetPixel(x, y)));
 				}
 			}
+			return values;
 		}
 
 		/// <summary>
@@ -385,6 +397,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return true;
 		}
 
-		private delegate int LutFunction(int v);
+		private delegate double LutFunction(int v);
 	}
 }

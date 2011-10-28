@@ -83,8 +83,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void Calculate()
 		{
-			int windowStart, windowEnd;
-			CalculateWindowRange(_pixelData, out windowStart, out windowEnd);
+			int minValue, maxValue;
+			CalculateWindowRange(_pixelData, out minValue, out maxValue);
+
+			double windowStart = minValue;
+			double windowEnd = maxValue;
 
 			if (_modalityLut != null)
 			{

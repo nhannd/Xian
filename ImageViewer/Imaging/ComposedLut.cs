@@ -53,12 +53,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 					for (int i = min; i < max; ++i)
 					{
-						int val = i;
+						double val = i;
 
 						for (int j = 0; j < lutCount; ++j)
 							val = lutArray[j][val];
 
-						*pLutData = val;
+						*pLutData = (int) Math.Floor(val);
 						++pLutData;
 					}
 				}

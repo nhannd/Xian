@@ -79,12 +79,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the maximum output value.
 		/// </summary>
-		public abstract int MaxOutputValue { get; protected set;}
+		public abstract int MaxOutputValue { get; protected set; }
 
 		/// <summary>
-		/// Gets the output value of the lut at a given input index.
+		/// Gets the output value of the lookup table for a given input value.
 		/// </summary>
-		public abstract int this[int index] { get; protected set; }
+		protected abstract double Lookup(double input);
+
+		double IComposableLut.this[double input]
+		{
+			get { return Lookup(input); }
+		}
 
 		/// <summary>
 		/// Fired when the LUT has changed in some way.

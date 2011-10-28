@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the output value of the lut at a given input index.
 		/// </summary>
-		int this[int index] { get; }
+		double this[double input] { get; }
 
 		/// <summary>
 		/// Fired when the LUT has changed in some way.

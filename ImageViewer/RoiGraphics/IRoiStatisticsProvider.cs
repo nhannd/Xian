@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			IsPointInRoiDelegate isPointInRoi
 			)
 		{
-			long sum = 0;
+			double sum = 0;
 			int pixelCount = 0;
 
 			pixelData.ForEachPixel(
@@ -99,18 +99,16 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 							// when doing the calculation. Note that the modality LUT
 							// can be something other than a rescale intercept, so we can't
 							// just run the mean through the LUT.
-							int value = pixelData.GetPixel(pixelIndex);
-							if (modalityLut != null)
-								value = modalityLut[value];
-							
-							sum += value;
+							int storedValue = pixelData.GetPixel(pixelIndex);
+							double realValue = modalityLut != null ? modalityLut[storedValue] : storedValue;
+							sum += realValue;
 						}
 					});
 
 			if (pixelCount == 0)
 				return 0;
 
-			return (double) sum/pixelCount;
+			return sum/pixelCount;
 		}
 
 		private static double CalculateStandardDeviation
@@ -133,11 +131,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				delegate(int i, int x, int y, int pixelIndex) {
 					if (isPointInRoi(x, y)) {
 						++pixelCount;
-						int value = pixelData.GetPixel(pixelIndex);
-						if (modalityLut != null)
-							value = modalityLut[value];
+						int storedValue = pixelData.GetPixel(pixelIndex);
+						double realValue = modalityLut != null ? modalityLut[storedValue] : storedValue;
 
-						double deviation = value - mean;
+						double deviation = realValue - mean;
 						sum += deviation*deviation;
 					}
 				});

@@ -9,18 +9,28 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	public interface IModalityLut : IComposableLut
 	{
+		double this[int input] { get; }
+
 		new IModalityLut Clone();
 	}
 
 	[Cloneable(true)]
 	public abstract class ComposableModalityLut : ComposableLut, IModalityLut
 	{
+		public abstract double this[int input] { get; }
+
+		protected override sealed double Lookup(double input)
+		{
+			return this[(int) Math.Round(input)];
+		}
+
 		public new IModalityLut Clone()
 		{
 			return (IModalityLut) base.Clone();
@@ -30,6 +40,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 	[Cloneable(true)]
 	public abstract class GeneratedDataModalityLut : GeneratedDataLut, IModalityLut
 	{
+		double IModalityLut.this[int input]
+		{
+			get { return this[input]; }
+		}
+
+		double IComposableLut.this[double input]
+		{
+			get { return this[(int) Math.Round(input)]; }
+		}
+
 		public new IModalityLut Clone()
 		{
 			return (IModalityLut) base.Clone();
@@ -58,6 +78,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 			context.CloneFields(source, this);
 		}
 
+		double IModalityLut.this[int input]
+		{
+			get { return this[input]; }
+		}
+
+		double IComposableLut.this[double input]
+		{
+			get { return this[(int) Math.Round(input)]; }
+		}
+
 		public new IModalityLut Clone()
 		{
 			return (IModalityLut) base.Clone();
@@ -71,12 +101,21 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 	public interface IVoiLut : IComposableLut
 	{
+		new int this[double input] { get; }
+
 		new IVoiLut Clone();
 	}
 
 	[Cloneable(true)]
 	public abstract class ComposableVoiLut : ComposableLut, IVoiLut
 	{
+		public abstract int this[double input] { get; }
+
+		protected override sealed double Lookup(double input)
+		{
+			return this[input];
+		}
+
 		public new IVoiLut Clone()
 		{
 			return (IVoiLut) base.Clone();
@@ -86,6 +125,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 	[Cloneable(true)]
 	public abstract class DataVoiLut : DataLut, IVoiLut
 	{
+		int IVoiLut.this[double input]
+		{
+			get { return this[(int) Math.Round(input)]; }
+		}
+
+		double IComposableLut.this[double input]
+		{
+			get { return this[(int) Math.Round(input)]; }
+		}
+
 		public new IVoiLut Clone()
 		{
 			return (IVoiLut) base.Clone();

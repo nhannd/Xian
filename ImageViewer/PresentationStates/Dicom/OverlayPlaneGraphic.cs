@@ -456,10 +456,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				protected set { }
 			}
 
-			public override int this[int index]
+			public override int this[double index]
 			{
-				get { return (int) ((index/(float) _maxInputValue)*_presentationValue); }
-				protected set { throw new InvalidOperationException("This lut is not editable."); }
+				get { return (int) ((index/_maxInputValue)*_presentationValue); }
 			}
 
 			public override string GetKey()
