@@ -369,6 +369,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		IDataLut IDataLut.Clone()
+		{
+			return (IDataLut) Clone();
+		}
+
 		#endregion
 	}
 }

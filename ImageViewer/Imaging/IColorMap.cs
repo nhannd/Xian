@@ -20,6 +20,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public interface IColorMap : IMemorable
 	{
 		/// <summary>
+		/// Gets the first mapped pixel value.
+		/// </summary>
+		int FirstMappedPixelValue { get; }
+
+		/// <summary>
+		/// Gets the color map data as a lookup table.
+		/// </summary>
+		int[] Data { get; }
+
+		/// <summary>
 		/// Gets the minimum input value.
 		/// </summary>
 		int MinInputValue { get; set; }
@@ -35,21 +45,21 @@ namespace ClearCanvas.ImageViewer.Imaging
 		int this[int index] { get; }
 
 		/// <summary>
-		/// Fired when the lookup table has changed in some way.
+		/// Fired when the color map has changed in some way.
 		/// </summary>
 		event EventHandler LutChanged;
 
 		/// <summary>
-		/// Gets a string key that identifies this particular LUT's characteristics.
+		/// Gets a string key that identifies this particular color map's characteristics.
 		/// </summary>
 		/// <remarks>
-		/// This method is not to be confused with <b>equality</b>, since some LUTs can be
+		/// This method is not to be confused with <b>equality</b>, since some color maps can be
 		/// dependent upon the actual image to which it belongs.
 		/// </remarks>
 		string GetKey();
 
 		/// <summary>
-		/// Gets an abbreviated description of the LUT.
+		/// Gets an abbreviated description of the color map.
 		/// </summary>
 		string GetDescription();
 
@@ -57,24 +67,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Creates a deep-copy of the <see cref="IColorMap"/>.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IColorMap"/> implementations may return NULL from this method when appropriate.	
+		/// Implementations may return NULL from this method when appropriate.	
 		/// </remarks>
 		IColorMap Clone();
-
-		//TODO: the color map shouldn't *have* to be a data lut - it could be calculated.
-
-		#region IDataLut Members
-
-		/// <summary>
-		/// Gets the first mapped pixel value.
-		/// </summary>
-		int FirstMappedPixelValue { get; }
-
-		/// <summary>
-		/// Gets the LUT data.
-		/// </summary>
-		int[] Data { get; }
-
-		#endregion
 	}
 }

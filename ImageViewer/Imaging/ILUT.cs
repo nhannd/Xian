@@ -34,6 +34,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			return (IModalityLut) base.Clone();
 		}
+
+		IComposableLut IComposableLut.Clone()
+		{
+			return Clone();
+		}
 	}
 
 	[Cloneable]
@@ -57,6 +62,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			return (IModalityLut) base.Clone();
 		}
+
+		IComposableLut IComposableLut.Clone()
+		{
+			return Clone();
+		}
 	}
 
 	public interface IVoiLut : IComposableLut
@@ -79,6 +89,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public new IVoiLut Clone()
 		{
 			return (IVoiLut) base.Clone();
+		}
+
+		IComposableLut IComposableLut.Clone()
+		{
+			return Clone();
 		}
 	}
 }
