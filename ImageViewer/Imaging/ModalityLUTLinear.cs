@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int max = MaxInputValue;
 			
 			for (int i = min; i <= max; i++)
-				base[i] = (int) (_rescaleSlope * i + _rescaleIntercept);
+				base[i] = (_rescaleSlope * i + _rescaleIntercept);
 		}
 
 		public override string GetKey()

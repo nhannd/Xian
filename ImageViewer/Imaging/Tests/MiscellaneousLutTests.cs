@@ -38,8 +38,8 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope,
 				rescaleIntercept);
 
-			SimpleDataLut simpleLut = 
-				new SimpleDataLut(modalityLUT.MinInputValue, modalityLUT.Data, modalityLUT.MinOutputValue, modalityLUT.MaxOutputValue, modalityLUT.GetKey(), modalityLUT.GetDescription()); 
+			SimpleDataModalityLut simpleLut = 
+				new SimpleDataModalityLut(modalityLUT.MinInputValue, modalityLUT.Data, modalityLUT.MinOutputValue, modalityLUT.MaxOutputValue, modalityLUT.GetKey(), modalityLUT.GetDescription()); 
 
 			Assert.AreEqual(modalityLUT.MinInputValue, simpleLut.MinInputValue);
 			Assert.AreEqual(modalityLUT.MaxInputValue, simpleLut.MaxInputValue);

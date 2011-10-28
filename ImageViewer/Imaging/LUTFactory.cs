@@ -434,7 +434,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private class CachedModalityLutLinear : SimpleDataModalityLut
 		{
-			public CachedModalityLutLinear(IDataLut source)
+			public CachedModalityLutLinear(IDataModalityLut source)
 				: base(source.MinInputValue, source.Data,
 						source.MinOutputValue, source.MaxOutputValue,
 						source.GetKey(), source.GetDescription())
@@ -442,7 +442,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private class ModalityLutCacheItem : CacheItem<IDataLut>
+		private class ModalityLutCacheItem : CacheItem<IDataModalityLut>
 		{
 			private readonly ModalityLutLinear _sourceLut;
 
@@ -452,14 +452,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_sourceLut.Clear();
 			}
 
-			protected override IDataLut CreateLut()
+			protected override IDataModalityLut CreateLut()
 			{
 				CachedModalityLutLinear lut = new CachedModalityLutLinear(_sourceLut);
 				_sourceLut.Clear();
 				return lut;
 			}
 
-			protected override int GetSizeInBytes(IDataLut lut)
+			protected override int GetSizeInBytes(IDataModalityLut lut)
 			{
 				return lut.Data.Length*sizeof (int);
 			}
@@ -486,7 +486,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 			}
 
-			private IDataLut RealLut
+			private IDataModalityLut RealLut
 			{
 				get { return _cacheItem.RealLut; }
 			}
