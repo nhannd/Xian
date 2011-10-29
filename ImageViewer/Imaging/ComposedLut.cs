@@ -34,8 +34,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			IComposableLut firstLut, lastLut;
 			GetFirstAndLastLut(luts, out firstLut, out lastLut, out lutCount);
 
-			_minInputValue = firstLut.MinInputValue;
-			_maxInputValue = firstLut.MaxInputValue;
+			_minInputValue = (int) firstLut.MinInputValue;
+			_maxInputValue = (int) firstLut.MaxInputValue;
 			_length = _maxInputValue - _minInputValue + 1;
 			_data = cache != null ? cache.Allocate(_length) : MemoryManager.Allocate<int>(_length);
 

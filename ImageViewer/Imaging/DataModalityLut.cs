@@ -104,6 +104,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		double IComposableLut.MinInputValue
+		{
+			get { return MinInputValue; }
+			set { MinInputValue = (int) Math.Round(value); }
+		}
+
+		double IComposableLut.MaxInputValue
+		{
+			get { return MaxInputValue; }
+			set { MaxInputValue = (int) Math.Round(value); }
+		}
+
+		double IComposableLut.MinOutputValue
+		{
+			get { return MinOutputValue; }
+		}
+
+		double IComposableLut.MaxOutputValue
+		{
+			get { return MaxOutputValue; }
+		}
+
 		double IComposableLut.this[double input]
 		{
 			get { return this[(int) Math.Round(input)]; }

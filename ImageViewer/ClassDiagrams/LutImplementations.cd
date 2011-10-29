@@ -156,7 +156,7 @@
   <Class Name="ClearCanvas.ImageViewer.Imaging.DataModalityLut" Collapsed="true">
     <Position X="13" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IEQAAAAQABAAAAAAKAAEBQRAAAAAABABAAaBAAAAAJA=</HashCode>
+      <HashCode>IMQAAAAQABAAAAAAKAAEDQRAAAAAABABAAaBAAAAAJA=</HashCode>
       <FileName>Imaging\DataModalityLut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -164,7 +164,7 @@
   <Class Name="ClearCanvas.ImageViewer.Imaging.GeneratedDataModalityLut" Collapsed="true">
     <Position X="14" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAJAAAAAAACAAABABAAAAAAFAAAACBAABAABA=</HashCode>
+      <HashCode>AAAAAAAAJAAAAAAACAAABABAAAAAAFAAAACBAABAAAA=</HashCode>
       <FileName>Imaging\GeneratedDataModalityLut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -172,7 +172,7 @@
   <Class Name="ClearCanvas.ImageViewer.Imaging.SimpleDataModalityLut" Collapsed="true">
     <Position X="11.75" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAQJAAAAAAEIACABARAAAAAABAAAAABAAAAABA=</HashCode>
+      <HashCode>AAAAAAAQJAAAAAAEIACABARAAAAAABAAAAABAAAAABA=</HashCode>
       <FileName>Imaging\SimpleDataModalityLut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />

@@ -432,16 +432,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			//for cloning.
 			private OverlayVoiLut() {}
 
-			public override int MinInputValue
+			public override double MinInputValue
 			{
 				get { return _minInputValue; }
-				set { _minInputValue = value; }
+				set { _minInputValue = (int) Math.Round(value); }
 			}
 
-			public override int MaxInputValue
+			public override double MaxInputValue
 			{
 				get { return _maxInputValue; }
-				set { _maxInputValue = value; }
+				set { _maxInputValue = (int) Math.Round(value); }
 			}
 
 			public override int MinOutputValue

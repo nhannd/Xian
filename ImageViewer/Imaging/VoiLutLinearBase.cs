@@ -98,15 +98,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public sealed override int MinInputValue
+		public sealed override double MinInputValue
 		{
 			get { return _minInputValue; }
 			set
 			{
-				if (_minInputValue == value)
+				var ivalue = (int) Math.Round(value);
+				if (_minInputValue == ivalue)
 					return;
 
-				_minInputValue = value;
+				_minInputValue = ivalue;
 				OnLutChanged();
 			}
 		}
@@ -117,15 +118,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public sealed override int MaxInputValue
+		public sealed override double MaxInputValue
 		{
 			get { return _maxInputValue; }
 			set
 			{
-				if (_maxInputValue == value)
+				var ivalue = (int) Math.Round(value);
+				if (_maxInputValue == ivalue)
 					return;
 
-				_maxInputValue = value;
+				_maxInputValue = ivalue;
 				OnLutChanged();
 			}
 		}

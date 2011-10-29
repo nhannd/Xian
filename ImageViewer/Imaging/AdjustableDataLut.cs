@@ -167,10 +167,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public override int MinInputValue
+		public override double MinInputValue
 		{
 			get { return _dataLut.MinInputValue; }
-			set { _dataLut.MinInputValue = value; }
+			set { _dataLut.MinInputValue = (int) Math.Round(value); }
 		}
 
 		/// <summary>
@@ -179,10 +179,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public override int MaxInputValue
+		public override double MaxInputValue
 		{
 			get { return _dataLut.MaxInputValue; }
-			set { _dataLut.MaxInputValue = value; }
+			set { _dataLut.MaxInputValue = (int) Math.Round(value); }
 		}
 
 		/// <summary>
@@ -332,6 +332,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 		int IDataLut.this[int index]
 		{
 			get { return this[index]; }
+		}
+
+		int IDataLut.MinInputValue
+		{
+			get { return (int) Math.Round(MinInputValue); }
+			set { MinInputValue = value; }
+		}
+
+		int IDataLut.MaxInputValue
+		{
+			get { return (int) Math.Round(MaxInputValue); }
+			set { MaxInputValue = value; }
 		}
 
 		int IDataLut.FirstMappedPixelValue

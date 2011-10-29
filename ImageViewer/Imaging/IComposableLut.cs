@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		int MinInputValue { get; set; }
+		double MinInputValue { get; set; }
 
 		/// <summary>
 		/// Gets the maximum input value.
@@ -34,17 +34,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		int MaxInputValue { get; set; }
+		double MaxInputValue { get; set; }
 
 		/// <summary>
 		/// Gets the minimum output value.
 		/// </summary>
-		int MinOutputValue { get; }
+		double MinOutputValue { get; }
 
 		/// <summary>
 		/// Gets the maximum output value.
 		/// </summary>
-		int MaxOutputValue { get; }
+		double MaxOutputValue { get; }
 
 		/// <summary>
 		/// Gets the output value of the lut at a given input index.

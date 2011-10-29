@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		protected ComposableLut()
+		internal ComposableLut()
 		{
 		}
 
@@ -61,30 +61,52 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public abstract int MinInputValue { get; set; }
+		internal abstract double MinInputValueCore { get; set; }
 
 		/// <summary>
-		/// Gets the maximum input value.
+		/// Gets or sets the maximum input value.
 		/// </summary>
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public abstract int MaxInputValue { get; set; }
+		internal abstract double MaxInputValueCore { get; set; }
 
 		/// <summary>
-		/// Gets the minimum output value.
+		/// Gets or sets the minimum output value.
 		/// </summary>
-		public abstract int MinOutputValue { get; protected set;}
+		internal abstract double MinOutputValueCore { get; set; }
 
 		/// <summary>
-		/// Gets the maximum output value.
+		/// Gets or sets the maximum output value.
 		/// </summary>
-		public abstract int MaxOutputValue { get; protected set; }
+		internal abstract double MaxOutputValueCore { get; set; }
+
+		double IComposableLut.MinInputValue
+		{
+			get { return MinInputValueCore; }
+			set { MinInputValueCore = value; }
+		}
+
+		double IComposableLut.MaxInputValue
+		{
+			get { return MaxInputValueCore; }
+			set { MaxInputValueCore = value; }
+		}
+
+		double IComposableLut.MinOutputValue
+		{
+			get { return MinOutputValueCore; }
+		}
+
+		double IComposableLut.MaxOutputValue
+		{
+			get { return MaxOutputValueCore; }
+		}
 
 		/// <summary>
 		/// Gets the output value of the lookup table for a given input value.
 		/// </summary>
-		protected abstract double Lookup(double input);
+		internal abstract double Lookup(double input);
 
 		double IComposableLut.this[double input]
 		{
