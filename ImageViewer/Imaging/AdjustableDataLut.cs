@@ -67,6 +67,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Private Fields
 
+		private double _minInputValue;
+		private double _maxInputValue;
+
 		private readonly DataLut _dataLut;
 		private readonly BasicVoiLutLinear _linearLut;
 
@@ -169,8 +172,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override double MinInputValue
 		{
-			get { return _dataLut.MinInputValue; }
-			set { _dataLut.MinInputValue = (int) Math.Round(value); }
+			get { return _minInputValue; }
+			set { _dataLut.MinInputValue = (int) Math.Round(_minInputValue = value); }
 		}
 
 		/// <summary>
@@ -181,8 +184,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override double MaxInputValue
 		{
-			get { return _dataLut.MaxInputValue; }
-			set { _dataLut.MaxInputValue = (int) Math.Round(value); }
+			get { return _maxInputValue; }
+			set { _dataLut.MaxInputValue = (int) Math.Round(_maxInputValue = value); }
 		}
 
 		/// <summary>

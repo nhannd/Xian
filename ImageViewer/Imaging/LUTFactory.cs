@@ -435,8 +435,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private class CachedModalityLutLinear : SimpleDataModalityLut
 		{
 			public CachedModalityLutLinear(IDataModalityLut source)
-				: base((int) source.MinInputValue, source.Data,
-						(int) source.MinOutputValue, (int) source.MaxOutputValue,
+				: base(source.MinInputValue, source.Data,
+						source.MinOutputValue, source.MaxOutputValue,
 						source.GetKey(), source.GetDescription())
 			{
 			}
@@ -493,13 +493,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public override int MinInputValue
 			{
-				get { return (int) RealLut.MinInputValue; }
+				get { return RealLut.MinInputValue; }
 				set { }
 			}
 
 			public override int MaxInputValue
 			{
-				get { return (int) RealLut.MaxInputValue; }
+				get { return RealLut.MaxInputValue; }
 				set { }
 			}
 

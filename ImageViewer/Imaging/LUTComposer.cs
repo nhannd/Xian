@@ -11,18 +11,41 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Allows <see cref="IComposableLut"/> objects to be composed together in a pipeline.
+	/// Combines various <see cref="IComposableLut"/> objects together in the standard imaging display pipeline.
 	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// The sub-functions of the standard imaging display pipeline are, in order:
+	/// <list type="table">
+	/// <listheader>
+	/// <name>Name</name>
+	/// <description>Description</description>
+	/// </listheader>
+	/// <item>
+	/// <name>Modality LUT</name>
+	/// <description>Transforms stored pixel values to manufacturer-independent values.</description>
+	/// </item>
+	/// <item>
+	/// <name>Normalization LUT</name>
+	/// <description>Performs any additional transformation prior to selecting the dynamic range, as may be necessary in some PET images.</description>
+	/// </item>
+	/// <item>
+	/// <name>Values-of-Interest (VOI) LUT</name>
+	/// <description>Selects dynamic range from manufacturer-independent values for display.</description>
+	/// </item>
+	/// </list>
+	/// </para>
+	/// </remarks>
 	public class LutComposer : IComposedLut, IDisposable
 	{
 		#region Private Fields
 
 		private LutCollection _lutCollection;
+		private IComposableLut _normalizationLut;
 		private IModalityLut _modalityLut;
 		private IVoiLut _voiLut;
 		private bool _recalculate = true;
@@ -69,10 +92,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		#region Public Properties
-
 		/// <summary>
-		/// A collection of <see cref="IComposableLut"/> objects.
+		/// Gets the assembled collection of <see cref="IComposableLut"/>s.
 		/// </summary>
 		private LutCollection LutCollection
 		{
@@ -83,6 +104,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					_lutCollection = new LutCollection();
 
 					if (_modalityLut != null) _lutCollection.Add(_modalityLut);
+					if (_normalizationLut != null) _lutCollection.Add(_normalizationLut);
 					if (_voiLut != null) _lutCollection.Add(_voiLut);
 				}
 
@@ -90,47 +112,59 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		#region Public Properties
+
+		/// <summary>
+		/// Gets or sets the modality LUT in the imaging display pipeline, which transforms stored pixel values to manufacturer-independent values.
+		/// </summary>
+		/// <seealso cref="LutComposer"/>
 		public IModalityLut ModalityLut
 		{
 			get { return _modalityLut; }
-			set
-			{
-				if (_modalityLut == value)
-					return;
-
-				if (_modalityLut != null)
-					_modalityLut.LutChanged -= OnLutValuesChanged;
-
-				_modalityLut = value;
-
-				if (_modalityLut != null)
-					_modalityLut.LutChanged += OnLutValuesChanged;
-
-				OnLutChanged();
-			}
+			set { SetLutField(ref _modalityLut, value); }
 		}
 
+		/// <summary>
+		/// Gets or sets the normalization LUT in the imaging display pipeline, which additional transformation of manufacturer-independent values prior to selecting a dynamic range for display.
+		/// </summary>
+		/// <seealso cref="LutComposer"/>
+		public IComposableLut NormalizationLut
+		{
+			get { return _normalizationLut; }
+			set { SetLutField(ref _normalizationLut, value); }
+		}
+
+		/// <summary>
+		/// Gets or sets the VOI (values of interest) LUT in the imaging display pipeline, which selects a dynamic range from the manufacturer-independent values for display.
+		/// </summary>
+		/// <seealso cref="LutComposer"/>
 		public IVoiLut VoiLut
 		{
 			get { return _voiLut; }
-			set
-			{
-				if (_voiLut == value)
-					return;
-
-				if (_voiLut != null)
-					_voiLut.LutChanged -= OnLutValuesChanged;
-
-				_voiLut = value;
-
-				if (_voiLut != null)
-					_voiLut.LutChanged += OnLutValuesChanged;
-
-				OnLutChanged();
-			}
+			set { SetLutField(ref _voiLut, value); }
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Sets the <see cref="IComposableLut"/> field and sets up the LutChanged event handler.
+		/// </summary>
+		private void SetLutField<T>(ref T field, T value)
+			where T : class, IComposableLut
+		{
+			if (Equals(field, value))
+				return;
+
+			if (field != null)
+				field.LutChanged -= OnLutValuesChanged;
+
+			field = value;
+
+			if (field != null)
+				field.LutChanged += OnLutValuesChanged;
+
+			OnLutChanged();
+		}
 
 		private void OnLutChanged()
 		{

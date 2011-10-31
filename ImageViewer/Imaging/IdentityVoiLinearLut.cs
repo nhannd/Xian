@@ -21,8 +21,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	[Cloneable(true)]
 	public sealed class IdentityVoiLinearLut : ComposableVoiLut, IVoiLutLinear
 	{
-		private int _minInputValue;
-		private int _maxInputValue;
+		private double _minInputValue;
+		private double _maxInputValue;
 
 		/// <summary>
 		/// Constructs a 1-to-1 pass-through composable LUT for 8-bit unsigned values.
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public override double MinInputValue
 		{
 			get { return _minInputValue; }
-			set { _minInputValue = (int) Math.Floor(value); }
+			set { _minInputValue = value; }
 		}
 
 		/// <summary>
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public override double MaxInputValue
 		{
 			get { return _maxInputValue; }
-			set { _maxInputValue = (int) Math.Floor(value); }
+			set { _maxInputValue = value; }
 		}
 
 		/// <summary>
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override int MinOutputValue
 		{
-			get { return _minInputValue; }
+			get { return (int) _minInputValue; }
 			protected set { throw new NotSupportedException(); }
 		}
 
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override int MaxOutputValue
 		{
-			get { return _maxInputValue; }
+			get { return (int) _maxInputValue; }
 			protected set { throw new NotSupportedException(); }
 		}
 
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override int this[double index]
 		{
-			get { return (int) Math.Floor(index); }
+			get { return (int) index; }
 		}
 
 		/// <summary>

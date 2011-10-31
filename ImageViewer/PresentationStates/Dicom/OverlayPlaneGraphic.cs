@@ -419,8 +419,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private class OverlayVoiLut : ComposableVoiLut
 		{
 			private readonly int _presentationValue;
-			private int _minInputValue = 0;
-			private int _maxInputValue = 0;
+			private double _minInputValue = 0;
+			private double _maxInputValue = 0;
 			private readonly int _maxOutputValue;
 
 			public OverlayVoiLut(int presentationValue, int maxOutputValue)
@@ -435,13 +435,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			public override double MinInputValue
 			{
 				get { return _minInputValue; }
-				set { _minInputValue = (int) Math.Round(value); }
+				set { _minInputValue = value; }
 			}
 
 			public override double MaxInputValue
 			{
 				get { return _maxInputValue; }
-				set { _maxInputValue = (int) Math.Round(value); }
+				set { _maxInputValue = value; }
 			}
 
 			public override int MinOutputValue

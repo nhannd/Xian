@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		internal abstract double MinInputValueCore { get; set; }
+		protected abstract double MinInputValueCore { get; set; }
 
 		/// <summary>
 		/// Gets or sets the maximum input value.
@@ -69,17 +69,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		internal abstract double MaxInputValueCore { get; set; }
+		protected abstract double MaxInputValueCore { get; set; }
 
 		/// <summary>
 		/// Gets or sets the minimum output value.
 		/// </summary>
-		internal abstract double MinOutputValueCore { get; set; }
+		protected abstract double MinOutputValueCore { get; set; }
 
 		/// <summary>
 		/// Gets or sets the maximum output value.
 		/// </summary>
-		internal abstract double MaxOutputValueCore { get; set; }
+		protected abstract double MaxOutputValueCore { get; set; }
 
 		double IComposableLut.MinInputValue
 		{
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the output value of the lookup table for a given input value.
 		/// </summary>
-		internal abstract double Lookup(double input);
+		protected abstract double Lookup(double input);
 
 		double IComposableLut.this[double input]
 		{

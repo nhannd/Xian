@@ -29,8 +29,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private int _minInputValue;
 		private int _maxInputValue;
-		private int _minOutputValue;
-		private int _maxOutputValue;
+		private double _minOutputValue;
+		private double _maxOutputValue;
 
 		public virtual int MinInputValue
 		{
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public virtual int MinOutputValue
+		public virtual double MinOutputValue
 		{
 			get { return _minOutputValue; }
 			protected set
@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public virtual int MaxOutputValue
+		public virtual double MaxOutputValue
 		{
 			get { return _maxOutputValue; }
 			protected set

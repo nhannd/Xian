@@ -16,6 +16,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public interface IModalityLut : IComposableLut
 	{
+		new int MinInputValue { get; set; }
+		new int MaxInputValue { get; set; }
+
 		double this[int input] { get; }
 
 		new IModalityLut Clone();
@@ -30,31 +33,31 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public abstract double MaxOutputValue { get; protected set; }
 		public abstract double this[int input] { get; }
 
-		internal override sealed double MinInputValueCore
+		protected override sealed double MinInputValueCore
 		{
 			get { return MinInputValue; }
 			set { MinInputValue = (int) value; }
 		}
 
-		internal override sealed double MaxInputValueCore
+		protected override sealed double MaxInputValueCore
 		{
 			get { return MaxInputValue; }
 			set { MaxInputValue = (int) value; }
 		}
 
-		internal override sealed double MinOutputValueCore
+		protected override sealed double MinOutputValueCore
 		{
 			get { return MinOutputValue; }
 			set { MinOutputValue = value; }
 		}
 
-		internal override sealed double MaxOutputValueCore
+		protected override sealed double MaxOutputValueCore
 		{
 			get { return MaxOutputValue; }
 			set { MaxOutputValue = value; }
 		}
 
-		internal override sealed double Lookup(double input)
+		protected override sealed double Lookup(double input)
 		{
 			return this[(int) Math.Round(input)];
 		}
@@ -67,6 +70,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 	public interface IVoiLut : IComposableLut
 	{
+		new int MinOutputValue { get; }
+		new int MaxOutputValue { get; }
+
 		new int this[double input] { get; }
 
 		new IVoiLut Clone();
@@ -81,31 +87,31 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public abstract int MaxOutputValue { get; protected set; }
 		public abstract int this[double input] { get; }
 
-		internal override sealed double MinInputValueCore
+		protected override sealed double MinInputValueCore
 		{
 			get { return MinInputValue; }
 			set { MinInputValue = value; }
 		}
 
-		internal override sealed double MaxInputValueCore
+		protected override sealed double MaxInputValueCore
 		{
 			get { return MaxInputValue; }
 			set { MaxInputValue = value; }
 		}
 
-		internal override sealed double MinOutputValueCore
+		protected override sealed double MinOutputValueCore
 		{
 			get { return MinOutputValue; }
 			set { MinOutputValue = (int) value; }
 		}
 
-		internal override sealed double MaxOutputValueCore
+		protected override sealed double MaxOutputValueCore
 		{
 			get { return MaxOutputValue; }
 			set { MaxOutputValue = (int) value; }
 		}
 
-		internal override sealed double Lookup(double input)
+		protected override sealed double Lookup(double input)
 		{
 			return this[input];
 		}
@@ -159,6 +165,69 @@ namespace ClearCanvas.ImageViewer.Imaging
 		IComposableLut IComposableLut.Clone()
 		{
 			return Clone();
+		}
+	}
+
+	[Cloneable]
+	internal sealed class PETLinearNormalizationLut : ComposableLut
+	{
+		[CloneIgnore]
+		private readonly double _inverseSlope;
+
+		[CloneIgnore]
+		private readonly double _inverseIntercept;
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="PETLinearNormalizationLut"/>.
+		/// </summary>
+		/// <param name="rescaleSlope">Original frame rescale slope to be inverted.</param>
+		/// <param name="rescaleIntercept">Original frame rescale intercept to be inverted.</param>
+		public PETLinearNormalizationLut(double rescaleSlope, double rescaleIntercept)
+		{
+			_inverseSlope = 1/rescaleSlope;
+			_inverseIntercept = -rescaleIntercept/rescaleSlope;
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
+		private PETLinearNormalizationLut(PETLinearNormalizationLut source, ICloningContext context)
+		{
+			_inverseSlope = source._inverseSlope;
+			_inverseIntercept = source._inverseIntercept;
+		}
+
+		protected override double MinInputValueCore { get; set; }
+
+		protected override double MaxInputValueCore { get; set; }
+
+		protected override double MinOutputValueCore
+		{
+			get { return Lookup(MinInputValueCore); }
+			set { throw new NotSupportedException(); }
+		}
+
+		protected override double MaxOutputValueCore
+		{
+			get { return Lookup(MaxInputValueCore); }
+			set { throw new NotSupportedException(); }
+		}
+
+		protected override double Lookup(double input)
+		{
+			return input*_inverseSlope + _inverseIntercept;
+		}
+
+		public override string GetKey()
+		{
+			return string.Format(@"PETNorm_{0}_{1}", _inverseSlope, _inverseIntercept);
+		}
+
+		public override string GetDescription()
+		{
+			return string.Format(@"PET Normalization Function m={0} b={1}", _inverseSlope, _inverseIntercept);
 		}
 	}
 }

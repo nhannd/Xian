@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private readonly string _description;
 		private readonly int _firstMappedPixelValue;
 
-		public SimpleDataModalityLut(int firstMappedPixelValue, double[] data, int minOutputValue, int maxOutputValue, string key, string description)
+		public SimpleDataModalityLut(int firstMappedPixelValue, double[] data, double minOutputValue, double maxOutputValue, string key, string description)
 		{
 			Platform.CheckForNullReference(data, "data");
 			Platform.CheckForEmptyString(key, "key");
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value is constant and cannot be changed.
 		/// </remarks>
-		public override int MinOutputValue
+		public override double MinOutputValue
 		{
 			get { return base.MinOutputValue; }
 			protected set { }
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value is constant and cannot be changed.
 		/// </remarks>
-		public override int MaxOutputValue
+		public override double MaxOutputValue
 		{
 			get { return base.MaxOutputValue; }
 			protected set { }

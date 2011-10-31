@@ -30,8 +30,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		#region Private Fields
 
-		private int _minInputValue;
-		private int _maxInputValue;
+		private double _minInputValue;
+		private double _maxInputValue;
 		private double _windowRegionStart;
 		private double _windowRegionEnd;
 		private bool _recalculate;
@@ -103,11 +103,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _minInputValue; }
 			set
 			{
-				var ivalue = (int) Math.Round(value);
-				if (_minInputValue == ivalue)
+				if (_minInputValue == value)
 					return;
 
-				_minInputValue = ivalue;
+				_minInputValue = value;
 				OnLutChanged();
 			}
 		}
@@ -123,11 +122,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _maxInputValue; }
 			set
 			{
-				var ivalue = (int) Math.Round(value);
-				if (_maxInputValue == ivalue)
+				if (_maxInputValue == value)
 					return;
 
-				_maxInputValue = ivalue;
+				_maxInputValue = value;
 				OnLutChanged();
 			}
 		}
@@ -138,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <exception cref="MemberAccessException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MinOutputValue
 		{
-			get { return _minInputValue; }
+			get { return (int) _minInputValue; }
 			protected set { throw new InvalidOperationException(SR.ExceptionMinimumOutputValueIsNotSettable); }
 		}
 
@@ -148,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <exception cref="MemberAccessException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MaxOutputValue
 		{
-			get { return _maxInputValue; }
+			get { return (int) _maxInputValue; }
 			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
 

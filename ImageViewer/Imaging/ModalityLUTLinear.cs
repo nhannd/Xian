@@ -111,13 +111,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set { }
 		}
 
-		public override int MinOutputValue
+		public override double MinOutputValue
 		{
 			get { return base.MinOutputValue; }
 			protected set { }
 		}
 
-		public override int MaxOutputValue
+		public override double MaxOutputValue
 		{
 			get { return base.MaxOutputValue; }
 			protected set { }
@@ -163,11 +163,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				base.MaxInputValue = (1 << this.BitsStored) - 1;
 			}
 
-			int minMax1 = (int)(this.RescaleSlope * this.MinInputValue + this.RescaleIntercept);
-			int minMax2 = (int)(this.RescaleSlope * this.MaxInputValue + this.RescaleIntercept);
+			var minMax1 = (this.RescaleSlope * this.MinInputValue + this.RescaleIntercept);
+			var minMax2 = (this.RescaleSlope * this.MaxInputValue + this.RescaleIntercept);
 
-			base.MinOutputValue = (int)Math.Min(minMax1, minMax2);
-			base.MaxOutputValue = (int)Math.Max(minMax1, minMax2);
+			base.MinOutputValue = Math.Min(minMax1, minMax2);
+			base.MaxOutputValue = Math.Max(minMax1, minMax2);
 		}
 
 		#endregion

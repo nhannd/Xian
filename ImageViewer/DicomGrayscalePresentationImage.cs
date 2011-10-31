@@ -77,6 +77,16 @@ namespace ClearCanvas.ImageViewer
 				CompositeImageGraphic.SpatialTransform = new MammographyImageSpatialTransform(CompositeImageGraphic, Frame.Rows, Frame.Columns, Frame.NormalizedPixelSpacing.Column, Frame.NormalizedPixelSpacing.Row, Frame.PixelAspectRatio.Column, Frame.PixelAspectRatio.Row, Frame.PatientOrientation, ImageSop.ImageLaterality);
 			}
 
+			if (ImageSop.Modality == "PT")
+			{
+				// some PET images have such a small slope that all stored pixel values map to one single value post-modality LUT
+				// we detect this condition here and apply the inverse of the modality LUT as a normalization function for VOI purposes
+				// http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/8930b159cb2a8e73?pli=1
+				var minSlope = 1.0/((1 << frameReference.Frame.BitsStored) - 1);
+				if (frameReference.Frame.RescaleSlope < minSlope)
+					ImageGraphic.NormalizationLut = new PETLinearNormalizationLut(frameReference.Frame.RescaleSlope, frameReference.Frame.RescaleIntercept);
+			}
+
 			Initialize();
 		}
 

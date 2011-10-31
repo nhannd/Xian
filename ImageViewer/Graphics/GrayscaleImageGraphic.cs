@@ -171,6 +171,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (source.LutComposer.ModalityLut != null) //modality lut is constant; no need to clone.
 				this.InitializeNecessaryLuts(Luts.Modality);
 
+			if (source.LutComposer.NormalizationLut != null)
+				LutComposer.NormalizationLut = source.NormalizationLut.Clone();
+
 			if (source.LutComposer.VoiLut != null) //clone the voi lut.
 				(this as IVoiLutInstaller).InstallVoiLut(source.VoiLut.Clone());
 
@@ -353,6 +356,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 
 		#region Private properties
+
+		/// <summary>
+		/// Gets or sets a LUT to normalize the output of the modality LUT immediately prior to the VOI LUT.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// In most cases, this should be left NULL. However, some PET images have a very small rescale slope (&lt;&lt; 1)
+		/// and thus need this to fix the input to the VOI LUT.
+		/// </para>
+		/// <para>
+		/// At any rate, DO NOT use the output of this LUT for any purpose other than as an input to the VOI LUT, as it is meaningless otherwise.</para>
+		/// </remarks>
+		public IComposableLut NormalizationLut
+		{
+			get { return LutComposer.NormalizationLut; }
+			set { LutComposer.NormalizationLut = value; }
+		}
 
 		private LutComposer LutComposer
 		{
