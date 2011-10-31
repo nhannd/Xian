@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="ClearCanvas.ImageViewer.Imaging.AlgorithmCalculatedVoiLutLinear" Collapsed="true">
-    <Position X="8.25" Y="6.25" Width="2.25" />
+    <Position X="10.5" Y="6.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAAAAAAAAAABAAASAAAAAAEAAAAAgAAQg=</HashCode>
       <FileName>Imaging\AlgorithmCalculatedVoiLutLinear.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.BasicVoiLutLinear" Collapsed="true">
-    <Position X="5.75" Y="4.75" Width="1.5" />
+    <Position X="8" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAABAAAAAAIAAAAQAAAQAAAAABEAgAAAAAAQA=</HashCode>
       <FileName>Imaging\BasicVoiLutLinear.cs</FileName>
@@ -16,7 +16,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.CalculatedVoiLutLinear" Collapsed="true">
-    <Position X="8.5" Y="4.75" Width="1.75" />
+    <Position X="10.75" Y="4.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAABAAAAAAAAAAAAAAAQAAAAAAAAgAAAAAAAA=</HashCode>
       <FileName>Imaging\CalculatedVoiLutLinear.cs</FileName>
@@ -32,12 +32,11 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.ComposableLut" Collapsed="true">
-    <Position X="6.25" Y="0.5" Width="1.5" />
+    <Position X="3.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IEQAAAAQAAAAAAAAIAAAIQRAAAAAAAABAASAAAAAABA=</HashCode>
+      <HashCode>AEAABAAQAAAAAAAACAAAIAAAAAAIAAAAAAwAAAAABBA=</HashCode>
       <FileName>Imaging\ComposableLut.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.GeneratedDataLut" Collapsed="true">
     <Position X="4.75" Y="10.75" Width="1.5" />
@@ -48,21 +47,21 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.MinMaxPixelCalculatedLinearLut" Collapsed="true">
-    <Position X="8" Y="7.5" Width="2.75" />
+    <Position X="10.25" Y="7.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
       <FileName>Imaging\MinMaxPixelCalculatedLinearLut.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.ModalityLutLinear" Collapsed="true">
-    <Position X="14" Y="7.25" Width="1.5" />
+    <Position X="14" Y="12.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BEEAAAAQAAAAAQAAIAAABEUAAAAAAEAAAAQAIAACABI=</HashCode>
       <FileName>Imaging\ModalityLutLinear.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.VoiLutLinearBase" Collapsed="true">
-    <Position X="7.5" Y="3.25" Width="1.5" />
+    <Position X="9.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAAAAAQABAABAACCAAAAAQgACAAAAAAAA6AAABAAJA=</HashCode>
       <FileName>Imaging\VoiLutLinearBase.cs</FileName>
@@ -100,15 +99,15 @@
   <Class Name="ClearCanvas.ImageViewer.Imaging.ComposableModalityLut" Collapsed="true">
     <Position X="1.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAACAAAIAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <HashCode>AEAABAAQAAAAAAAACAAAIAAAAAAIAAAAAAwAAAAABBA=</HashCode>
       <FileName>Imaging\ILut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.ComposableVoiLut" Collapsed="true">
-    <Position X="7.5" Y="1.75" Width="1.5" />
+    <Position X="9.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAACAAAIAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <HashCode>AEAABAAQAAAAAAAACAAAIAAAAAAIAAAAAAwAAAAABBA=</HashCode>
       <FileName>Imaging\ILut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -116,7 +115,7 @@
   <Class Name="ClearCanvas.ImageViewer.Imaging.DataVoiLut" Collapsed="true">
     <Position X="1" Y="10.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAAAAAAAABAAgAAAAAAAAAAAAAAABA=</HashCode>
+      <HashCode>AIACAAAACAAAAAAAAAAAAABAAgAgAAAAAAAAAAACABA=</HashCode>
       <FileName>Imaging\ILut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -130,15 +129,15 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.AdjustableDataLut" Collapsed="true">
-    <Position X="3.5" Y="3.25" Width="1.5" />
+    <Position X="5.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEIAgAAQABAChEIAKAAIAQQAAQAAQAABAASACACABRI=</HashCode>
+      <HashCode>AEIAgAAQABCChEIAKIAIAQQAAQAAQAABAAaACACABZI=</HashCode>
       <FileName>Imaging\AdjustableDataLut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.IdentityVoiLinearLut" Collapsed="true">
-    <Position X="11.5" Y="3.25" Width="1.5" />
+    <Position X="13.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAAgAAQAAAAAAAAKAAAAAQAAQAAAAAAAAYAAAAAAJA=</HashCode>
       <FileName>Imaging\IdentityVoiLinearLut.cs</FileName>
@@ -154,15 +153,15 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.DataModalityLut" Collapsed="true">
-    <Position X="13" Y="4.5" Width="1.5" />
+    <Position X="13" Y="9.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IMQAAAAQABAAAAAAKAAEDQRAAAAAABABAAaBAAAAAJA=</HashCode>
+      <HashCode>IMQCAAAQCBAAAAAAKAAEDQRAAAAgABABAAaBAAACAJA=</HashCode>
       <FileName>Imaging\DataModalityLut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.GeneratedDataModalityLut" Collapsed="true">
-    <Position X="14" Y="5.75" Width="1.5" />
+    <Position X="14" Y="10.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAJAAAAAAACAAABABAAAAAAFAAAACBAABAAAA=</HashCode>
       <FileName>Imaging\GeneratedDataModalityLut.cs</FileName>
@@ -170,10 +169,25 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.SimpleDataModalityLut" Collapsed="true">
-    <Position X="11.75" Y="5.75" Width="1.5" />
+    <Position X="11.75" Y="10.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAQJAAAAAAEIACABARAAAAAABAAAAABAAAAABA=</HashCode>
       <FileName>Imaging\SimpleDataModalityLut.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.Imaging.PETLinearNormalizationLut" Collapsed="true">
+    <Position X="3.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAQAAAAAAAAKAAAAAQAAAAAAAAAAAQACAAAABA=</HashCode>
+      <FileName>Imaging\ILut.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.Imaging.ComposableLutBase" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAQCBAAACAAAAAAAIAAAIQRAAAAoAAABAAiAAAACBBA=</HashCode>
+      <FileName>Imaging\ComposableLutBase.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>

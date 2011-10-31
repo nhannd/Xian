@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Creates a deep-copy of the <see cref="IColorMap"/>.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IColorMap"/> implementations may return NULL from this method when appropriate.	
+		/// <see cref="IColorMap"/> implementations may return NULL from this method when appropriate.
 		/// </remarks>
 		public IColorMap Clone()
 		{

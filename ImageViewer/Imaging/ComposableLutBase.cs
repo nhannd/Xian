@@ -19,12 +19,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </summary>
 	/// <seealso cref="IComposableLut"/>
 	[Cloneable(true)]
-	public abstract class ComposableLut : IComposableLut
+	public abstract class ComposableLutBase : IComposableLut
 	{
 		#region Private Fields
 
 		private event EventHandler _lutChanged;
-		
+
 		#endregion
 
 		#region Protected Constructor
@@ -32,9 +32,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		internal ComposableLut()
-		{
-		}
+		internal ComposableLutBase() {}
 
 		#endregion
 
@@ -61,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		protected abstract double MinInputValueCore { get; set; }
+		internal abstract double MinInputValueCore { get; set; }
 
 		/// <summary>
 		/// Gets or sets the maximum input value.
@@ -69,17 +67,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		protected abstract double MaxInputValueCore { get; set; }
+		internal abstract double MaxInputValueCore { get; set; }
 
 		/// <summary>
 		/// Gets or sets the minimum output value.
 		/// </summary>
-		protected abstract double MinOutputValueCore { get; set; }
+		internal abstract double MinOutputValueCore { get; set; }
 
 		/// <summary>
 		/// Gets or sets the maximum output value.
 		/// </summary>
-		protected abstract double MaxOutputValueCore { get; set; }
+		internal abstract double MaxOutputValueCore { get; set; }
 
 		double IComposableLut.MinInputValue
 		{
@@ -106,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the output value of the lookup table for a given input value.
 		/// </summary>
-		protected abstract double Lookup(double input);
+		internal abstract double Lookup(double input);
 
 		double IComposableLut.this[double input]
 		{

@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	}
 
 	[Cloneable(true)]
-	public abstract class ComposableModalityLut : ComposableLut, IModalityLut
+	public abstract class ComposableModalityLut : ComposableLutBase, IModalityLut
 	{
 		public abstract int MinInputValue { get; set; }
 		public abstract int MaxInputValue { get; set; }
@@ -33,31 +33,31 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public abstract double MaxOutputValue { get; protected set; }
 		public abstract double this[int input] { get; }
 
-		protected override sealed double MinInputValueCore
+		internal override sealed double MinInputValueCore
 		{
 			get { return MinInputValue; }
 			set { MinInputValue = (int) value; }
 		}
 
-		protected override sealed double MaxInputValueCore
+		internal override sealed double MaxInputValueCore
 		{
 			get { return MaxInputValue; }
 			set { MaxInputValue = (int) value; }
 		}
 
-		protected override sealed double MinOutputValueCore
+		internal override sealed double MinOutputValueCore
 		{
 			get { return MinOutputValue; }
 			set { MinOutputValue = value; }
 		}
 
-		protected override sealed double MaxOutputValueCore
+		internal override sealed double MaxOutputValueCore
 		{
 			get { return MaxOutputValue; }
 			set { MaxOutputValue = value; }
 		}
 
-		protected override sealed double Lookup(double input)
+		internal override sealed double Lookup(double input)
 		{
 			return this[(int) Math.Round(input)];
 		}
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	}
 
 	[Cloneable(true)]
-	public abstract class ComposableVoiLut : ComposableLut, IVoiLut
+	public abstract class ComposableVoiLut : ComposableLutBase, IVoiLut
 	{
 		public abstract double MinInputValue { get; set; }
 		public abstract double MaxInputValue { get; set; }
@@ -87,31 +87,31 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public abstract int MaxOutputValue { get; protected set; }
 		public abstract int this[double input] { get; }
 
-		protected override sealed double MinInputValueCore
+		internal override sealed double MinInputValueCore
 		{
 			get { return MinInputValue; }
 			set { MinInputValue = value; }
 		}
 
-		protected override sealed double MaxInputValueCore
+		internal override sealed double MaxInputValueCore
 		{
 			get { return MaxInputValue; }
 			set { MaxInputValue = value; }
 		}
 
-		protected override sealed double MinOutputValueCore
+		internal override sealed double MinOutputValueCore
 		{
 			get { return MinOutputValue; }
 			set { MinOutputValue = (int) value; }
 		}
 
-		protected override sealed double MaxOutputValueCore
+		internal override sealed double MaxOutputValueCore
 		{
 			get { return MaxOutputValue; }
 			set { MaxOutputValue = (int) value; }
 		}
 
-		protected override sealed double Lookup(double input)
+		internal override sealed double Lookup(double input)
 		{
 			return this[input];
 		}
@@ -199,25 +199,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_inverseIntercept = source._inverseIntercept;
 		}
 
-		protected override double MinInputValueCore { get; set; }
+		public override double MinInputValue { get; set; }
 
-		protected override double MaxInputValueCore { get; set; }
+		public override double MaxInputValue { get; set; }
 
-		protected override double MinOutputValueCore
+		public override double MinOutputValue
 		{
 			get { return Lookup(MinInputValueCore); }
-			set { throw new NotSupportedException(); }
+			protected set { throw new NotSupportedException(); }
 		}
 
-		protected override double MaxOutputValueCore
+		public override double MaxOutputValue
 		{
 			get { return Lookup(MaxInputValueCore); }
-			set { throw new NotSupportedException(); }
+			protected set { throw new NotSupportedException(); }
 		}
 
-		protected override double Lookup(double input)
+		public override double this[double input]
 		{
-			return input*_inverseSlope + _inverseIntercept;
+			get { return input*_inverseSlope + _inverseIntercept; }
 		}
 
 		public override string GetKey()

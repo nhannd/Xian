@@ -670,6 +670,7 @@
     <Compile Include="Imaging\IComposableLut.cs" />
     <Compile Include="ImageOperationApplicator.cs" />
     <Compile Include="Imaging\ComposableLut.cs" />
+    <Compile Include="Imaging\ComposableLutBase.cs" />
     <Compile Include="Imaging\ModalityLutLinear.cs" />
     <Compile Include="Imaging\Tests\CompositeLUTTest.cs" />
     <Compile Include="Imaging\Tests\ModalityLUTLinearTest.cs" />
