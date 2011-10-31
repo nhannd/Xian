@@ -15,24 +15,24 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Defines a Lut that can be added to a <see cref="LutCollection"/>.
+	/// Defines a lookup table that comprises part of the standard grayscale image display pipeline.
 	/// </summary>
-	/// <seealso cref="IMemorable"/>
+	/// <seealso cref="LutComposer"/>
 	public interface IComposableLut : IMemorable
 	{
 		/// <summary>
 		/// Gets or sets the minimum input value.
 		/// </summary>
 		/// <remarks>
-		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// This value is set internally by the framework and should not be modified by client code.
 		/// </remarks>
 		double MinInputValue { get; set; }
 
 		/// <summary>
-		/// Gets the maximum input value.
+		/// Gets or sets the maximum input value.
 		/// </summary>
 		/// <remarks>
-		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// This value is set internally by the framework and should not be modified by client code.
 		/// </remarks>
 		double MaxInputValue { get; set; }
 
@@ -47,27 +47,26 @@ namespace ClearCanvas.ImageViewer.Imaging
 		double MaxOutputValue { get; }
 
 		/// <summary>
-		/// Gets the output value of the lut at a given input index.
+		/// Gets the output value of the lookup table for a given input value.
 		/// </summary>
 		double this[double input] { get; }
 
 		/// <summary>
-		/// Fired when the LUT has changed in some way.
+		/// Fired when the lookup table has changed in some way.
 		/// </summary>
 		event EventHandler LutChanged;
-		
+
 		/// <summary>
-		/// Gets a string key that identifies this particular LUT's characteristics, so that 
-		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
+		/// Gets a string key that identifies this particular lookup table's characteristics.
 		/// </summary>
 		/// <remarks>
-		/// This method is not to be confused with <b>equality</b>, since some Luts can be
+		/// This method is not to be confused with <b>equality</b>, since some lookup tables can be
 		/// dependent upon the actual image to which it belongs.
 		/// </remarks>
 		string GetKey();
 
 		/// <summary>
-		/// Gets an abbreviated description of the Lut.
+		/// Gets an abbreviated description of the lookup table.
 		/// </summary>
 		string GetDescription();
 
@@ -75,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Creates a deep-copy of the <see cref="IComposableLut"/>.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IComposableLut"/>s may return null from this method when appropriate.	
+		/// Implementations may return null from this method when appropriate.
 		/// </remarks>
 		IComposableLut Clone();
 	}

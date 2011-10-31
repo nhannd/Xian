@@ -15,8 +15,9 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Combines various <see cref="IComposableLut"/> objects together in the standard imaging display pipeline.
+	/// Combines various <see cref="IComposableLut"/> objects together in the standard grayscale image display pipeline.
 	/// </summary>
+	/// <seealso cref="IComposableLut"/>
 	/// <remarks>
 	/// <para>
 	/// The sub-functions of the standard imaging display pipeline are, in order:
@@ -31,11 +32,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </item>
 	/// <item>
 	/// <name>Normalization LUT</name>
-	/// <description>Performs any additional transformation prior to selecting the dynamic range, as may be necessary in some PET images.</description>
+	/// <description>Performs any additional transformation prior to selecting the VOI range, as may be necessary in some PET images.</description>
 	/// </item>
 	/// <item>
 	/// <name>Values-of-Interest (VOI) LUT</name>
-	/// <description>Selects dynamic range from manufacturer-independent values for display.</description>
+	/// <description>Selects range from manufacturer-independent values for display.</description>
 	/// </item>
 	/// </list>
 	/// </para>
@@ -58,9 +59,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Initializes a new instance of <see cref="LutComposer"/>.
 		/// </summary>
-		public LutComposer()
-		{
-		}
+		public LutComposer() {}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LutComposer"/>.
@@ -97,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		private LutCollection LutCollection
 		{
-			get 
+			get
 			{
 				if (_lutCollection == null)
 				{
@@ -108,14 +107,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 					if (_voiLut != null) _lutCollection.Add(_voiLut);
 				}
 
-				return _lutCollection; 
+				return _lutCollection;
 			}
 		}
 
 		#region Public Properties
 
 		/// <summary>
-		/// Gets or sets the modality LUT in the imaging display pipeline, which transforms stored pixel values to manufacturer-independent values.
+		/// Gets or sets the modality LUT in the grayscale image display pipeline, which transforms stored pixel values to manufacturer-independent values.
 		/// </summary>
 		/// <seealso cref="LutComposer"/>
 		public IModalityLut ModalityLut
@@ -125,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets or sets the normalization LUT in the imaging display pipeline, which additional transformation of manufacturer-independent values prior to selecting a dynamic range for display.
+		/// Gets or sets the normalization LUT in the grayscale image display pipeline, which additional transformation of manufacturer-independent values prior to selecting a dynamic range for display.
 		/// </summary>
 		/// <seealso cref="LutComposer"/>
 		public IComposableLut NormalizationLut
@@ -135,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets or sets the VOI (values of interest) LUT in the imaging display pipeline, which selects a dynamic range from the manufacturer-independent values for display.
+		/// Gets or sets the VOI (values of interest) LUT in the grayscale image display pipeline, which selects a range from the manufacturer-independent values for display.
 		/// </summary>
 		/// <seealso cref="LutComposer"/>
 		public IVoiLut VoiLut
@@ -210,6 +209,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		#region Properties
+
 		/// <summary>
 		/// The output LUT of the pipeline.
 		/// </summary>
@@ -354,6 +354,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#endregion
+
 		#endregion
 	}
 }

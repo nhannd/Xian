@@ -15,9 +15,18 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Abstract class providing base implementation for a Lut that can be added to a <see cref="LutCollection"/>.
+	/// Abstract base implementation for a lookup table that comprises part of the standard grayscale image display pipeline.
 	/// </summary>
+	/// <remarks>
+	/// This class contains abstract internal members and cannot be directly subclassed. Instead, subclass either
+	/// <see cref="ComposableModalityLut"/>, <see cref="ComposableVoiLut"/> or <see cref="ComposableLut"/> depending
+	/// on the intended use of the lookup table in the grayscale image display pipeline.
+	/// </remarks>
+	/// <seealso cref="LutComposer"/>
 	/// <seealso cref="IComposableLut"/>
+	/// <seealso cref="ComposableLut"/>
+	/// <seealso cref="ComposableModalityLut"/>
+	/// <seealso cref="ComposableVoiLut"/>
 	[Cloneable(true)]
 	public abstract class ComposableLutBase : IComposableLut
 	{
@@ -30,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Protected Constructor
 
 		/// <summary>
-		/// Default constructor.
+		/// Initializes a new instance of <see cref="ComposableLutBase"/>.
 		/// </summary>
 		internal ComposableLutBase() {}
 
@@ -42,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Fires the <see cref="LutChanged"/> event.
 		/// </summary>
 		/// <remarks>
-		/// Inheritors should call this method when any property of the Lut has changed.
+		/// Inheritors should call this method when any property of the lookup table has changed.
 		/// </remarks>
 		protected virtual void OnLutChanged()
 		{
@@ -57,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets or sets the minimum input value.
 		/// </summary>
 		/// <remarks>
-		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// This value is set internally by the framework and should not be modified by client code.
 		/// </remarks>
 		internal abstract double MinInputValueCore { get; set; }
 
@@ -65,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets or sets the maximum input value.
 		/// </summary>
 		/// <remarks>
-		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// This value is set internally by the framework and should not be modified by client code.
 		/// </remarks>
 		internal abstract double MaxInputValueCore { get; set; }
 
@@ -112,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Fired when the LUT has changed in some way.
+		/// Fired when the lookup table has changed in some way.
 		/// </summary>
 		public event EventHandler LutChanged
 		{
@@ -121,17 +130,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets a string key that identifies this particular Lut's characteristics, so that 
-		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
+		/// Gets a string key that identifies this particular lookup table's characteristics.
 		/// </summary>
 		/// <remarks>
-		/// This method is not to be confused with <b>equality</b>, since some Luts can be
+		/// This method is not to be confused with <b>equality</b>, since some lookup tables can be
 		/// dependent upon the actual image to which it belongs.
 		/// </remarks>
 		public abstract string GetKey();
 
 		/// <summary>
-		/// Gets an abbreviated description of the Lut.
+		/// Gets an abbreviated description of the lookup table.
 		/// </summary>
 		public abstract string GetDescription();
 
@@ -140,27 +148,35 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region IMemorable Members
 
 		/// <summary>
-		/// Returns null.
+		/// Captures the state of the lookup table.
 		/// </summary>
 		/// <remarks>
-		/// Override this member only when necessary.  If this method is overridden, <see cref="SetMemento"/> must also be overridden.
-		///  </remarks>
-		/// <returns>null, unless overridden.</returns>
+		/// <para>
+		/// The implementation should return an object containing enough state information so that,
+		/// when <see cref="SetMemento"/> is called, the lookup table can be restored to the original state.
+		/// </para>
+		/// <para>
+		/// If the method is implemented, <see cref="SetMemento"/> must also be implemented.
+		/// </para>
+		/// </remarks>
 		public virtual object CreateMemento()
 		{
 			return null;
 		}
 
 		/// <summary>
-		/// Does nothing unless overridden.
+		/// Restores the state of the lookup table.
 		/// </summary>
+		/// <param name="memento">An object that was originally created by <see cref="CreateMemento"/>.</param>
 		/// <remarks>
-		/// If you override <see cref="CreateMemento"/> to capture the Lut's state, you must also override this method
-		/// to allow the state to be restored.
+		/// <para>
+		/// The implementation should return the lookup table to the original state captured by <see cref="CreateMemento"/>.
+		/// </para>
+		/// <para>
+		/// If you implement <see cref="CreateMemento"/> to capture the lookup table's state, you must also implement this method
+		/// to allow the state to be restored. Failure to do so will result in a <see cref="InvalidOperationException"/>.
+		/// </para>
 		/// </remarks>
-		/// <param name="memento">The memento object from which to restore the Lut's state.</param>
-		/// <exception cref="InvalidOperationException">Thrown if <paramref name="memento"/> is <B>not</B> null, 
-		/// which would indicate that <see cref="CreateMemento"/> has been overridden, but <see cref="SetMemento"/> has not.</exception>
 		public virtual void SetMemento(object memento)
 		{
 			if (memento != null)
@@ -173,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Creates a deep-copy of the <see cref="IComposableLut"/>.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IComposableLut"/>s may return null from this method when appropriate.	
+		/// Implementations may return null from this method when appropriate.
 		/// </remarks>
 		public IComposableLut Clone()
 		{

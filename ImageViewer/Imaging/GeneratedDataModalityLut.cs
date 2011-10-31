@@ -15,10 +15,10 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Abstract class providing the base implementation for Data Luts that are purely generated.
+	/// Base implementation of a lookup table in the standard grayscale image display pipeline used to transform stored pixel values to manufacturer-independent values whose data is purely generated.
 	/// </summary>
 	/// <remarks>
-	/// Often, Linear Luts are created by deriving from this class to improve performance so that
+	/// Often, linear functions are created by deriving from this class to improve performance so that
 	/// the calculation is only performed once.  For an example, see <see cref="ModalityLutLinear"/>.
 	/// </remarks>
 	/// <seealso cref="DataModalityLut"/>
@@ -26,10 +26,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public abstract class GeneratedDataModalityLut : DataModalityLut, IModalityLut
 	{
 		[CloneIgnore]
-		private double[] _data; //data will be re-generated.
+		private double[] _data; // data will be re-generated.
 
 		/// <summary>
-		/// Since the data lut is generated, simply returns <see cref="IComposableLut.MinInputValue"/>.
+		/// Since the data table is generated, simply returns <see cref="IModalityLut.MinInputValue"/>.
 		/// </summary>
 		public override sealed int FirstMappedPixelValue
 		{
@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Since the data lut is generated, simply returns <see cref="IComposableLut.MaxInputValue"/>.
+		/// Since the data table is generated, simply returns <see cref="IModalityLut.MaxInputValue"/>.
 		/// </summary>
 		public override sealed int LastMappedPixelValue
 		{
@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets the Lut's data, lazily created.
+		/// Gets the lookup table data, lazily created.
 		/// </summary>
 		public override sealed double[] Data
 		{
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Looks up and returns a value at a particular index in the Lut.
+		/// Looks up and returns a value at a particular index in the lookup table.
 		/// </summary>
 		public override sealed double this[int index]
 		{
@@ -81,15 +81,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Inheritors must implement this method and populate the Lut using an algorithm.
+		/// Called to populate the lookup table using an algorithm.
 		/// </summary>
+		/// <remarks>
+		/// Implementors should set the values of the lookup table with <see cref="this"/>.
+		/// </remarks>
 		protected abstract void Create();
 
 		/// <summary>
 		/// Fires the <see cref="DataModalityLut.LutChanged"/> event.
 		/// </summary>
 		/// <remarks>
-		/// Inheritors should call this method when any property of the Lut has changed.
+		/// Inheritors should call this method when any property of the lookup table has changed.
 		/// </remarks>
 		protected override void OnLutChanged()
 		{
@@ -97,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Clears the data in the Lut; the Lut can be recreated at will by calling <see cref="Create"/>.
+		/// Clears the data in the lookup table; the data can be recreated at will by calling <see cref="Create"/>.
 		/// </summary>
 		public void Clear()
 		{

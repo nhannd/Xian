@@ -100,7 +100,7 @@
     <Position X="1.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAABAAQAAAAAAAACAAAIAAAAAAIAAAAAAwAAAAABBA=</HashCode>
-      <FileName>Imaging\ILut.cs</FileName>
+      <FileName>Imaging\ComposableModalityLut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -108,7 +108,7 @@
     <Position X="9.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAABAAQAAAAAAAACAAAIAAAAAAIAAAAAAwAAAAABBA=</HashCode>
-      <FileName>Imaging\ILut.cs</FileName>
+      <FileName>Imaging\ComposableVoiLut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -116,7 +116,7 @@
     <Position X="1" Y="10.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIACAAAACAAAAAAAAAAAAABAAgAgAAAAAAAAAAACABA=</HashCode>
-      <FileName>Imaging\ILut.cs</FileName>
+      <FileName>Imaging\DataVoiLut.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -180,7 +180,7 @@
     <Position X="3.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAAAAAQAAAAAAAAKAAAAAQAAAAAAAAAAAQACAAAABA=</HashCode>
-      <FileName>Imaging\ILut.cs</FileName>
+      <FileName>Imaging\PETLinearNormalizationLut.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Imaging.ComposableLutBase" Collapsed="true">

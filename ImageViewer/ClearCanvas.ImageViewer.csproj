@@ -182,11 +182,17 @@
     <Compile Include="ImageSetTree.cs" />
     <Compile Include="Imaging\ColorMapBase.cs" />
     <Compile Include="Imaging\ColorMapMemento.cs" />
+    <Compile Include="Imaging\ComposableModalityLut.cs" />
+    <Compile Include="Imaging\ComposableVoiLut.cs" />
     <Compile Include="Imaging\DataModalityLut.cs" />
+    <Compile Include="Imaging\DataVoiLut.cs" />
     <Compile Include="Imaging\GeneratedDataModalityLut.cs" />
     <Compile Include="Imaging\IColorMap.cs" />
     <Compile Include="Imaging\IDataModalityLut.cs" />
+    <Compile Include="Imaging\IModalityLut.cs" />
+    <Compile Include="Imaging\IVoiLut.cs" />
     <Compile Include="Imaging\NamedVoiLutLinear.cs" />
+    <Compile Include="Imaging\PETLinearNormalizationLut.cs" />
     <Compile Include="Imaging\SimpleColorMap.cs" />
     <Compile Include="Imaging\SimpleDataModalityLut.cs" />
     <Compile Include="Layout\HpDataContractAttribute.cs" />
@@ -474,7 +480,6 @@
     <Compile Include="Imaging\GeneratedDataLut.cs" />
     <Compile Include="Imaging\IDataLut.cs" />
     <Compile Include="Imaging\IInitialVoiLutProvider.cs" />
-    <Compile Include="Imaging\ILut.cs" />
     <Compile Include="Imaging\GrayscalePixelData.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
     <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />

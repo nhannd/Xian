@@ -15,7 +15,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Base implementation of a <see cref="IDataModalityLut"/> lookup table mapping input stored pixel values to output modality-independent values.
+	/// Base implementation of a lookup table in the standard grayscale image display pipeline used to transform stored pixel values to manufacturer-independent values implemented as an array of values.
 	/// </summary>
 	/// <remarks>
 	/// Normally, you should not have to inherit directly from this class.
@@ -58,6 +58,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the minimum output value.
+		/// </summary>
 		public virtual double MinOutputValue
 		{
 			get { return _minOutputValue; }
@@ -71,6 +74,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the maximum output value.
+		/// </summary>
 		public virtual double MaxOutputValue
 		{
 			get { return _maxOutputValue; }
@@ -84,23 +90,26 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public virtual double this[int index]
+		/// <summary>
+		/// Gets or sets the output value of the lookup table for a given input value.
+		/// </summary>
+		public virtual double this[int input]
 		{
 			get
 			{
-				if (index <= FirstMappedPixelValue)
+				if (input <= FirstMappedPixelValue)
 					return Data[0];
-				else if (index >= LastMappedPixelValue)
+				else if (input >= LastMappedPixelValue)
 					return Data[Length - 1];
 				else
-					return Data[index - FirstMappedPixelValue];
+					return Data[input - FirstMappedPixelValue];
 			}
 			protected set
 			{
-				if (index < FirstMappedPixelValue || index > LastMappedPixelValue)
+				if (input < FirstMappedPixelValue || input > LastMappedPixelValue)
 					return;
 
-				Data[index - FirstMappedPixelValue] = value;
+				Data[input - FirstMappedPixelValue] = value;
 			}
 		}
 
@@ -141,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets the length of <see cref="Data"/>.
 		///</summary>
 		/// <remarks>
-		/// The reason for this member's existence is that <see cref="Data"/> may
+		/// The reason for this member's existence is that <see cref="Data"/> is lazily-initialized, and thus may
 		/// not yet exist; this value is based solely on <see cref="FirstMappedPixelValue"/>
 		/// and <see cref="LastMappedPixelValue"/>.
 		/// </remarks>

@@ -16,8 +16,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Basic implementation of a <see cref="IDataModalityLut"/> whose size and data
-	/// do not change.
+	/// An implementation of a <see cref="IDataModalityLut"/> whose size and data do not change.
 	/// </summary>
 	[Cloneable]
 	public class SimpleDataModalityLut : DataModalityLut, IModalityLut
@@ -29,6 +28,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private readonly string _description;
 		private readonly int _firstMappedPixelValue;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="SimpleDataModalityLut"/>.
+		/// </summary>
+		/// <param name="firstMappedPixelValue">The value of the first stored pixel value mapped by <paramref name="data"/>.</param>
+		/// <param name="data">The data table mapping stored pixel values to manfuacturer-independent values.</param>
+		/// <param name="minOutputValue">The minimum output value of the lookup table.</param>
+		/// <param name="maxOutputValue">The maximum output value of the lookup table.</param>
+		/// <param name="key">A key string suitable for identifying the characteristics of the lookup table.</param>
+		/// <param name="description">A description of the characteristics of the lookup table.</param>
 		public SimpleDataModalityLut(int firstMappedPixelValue, double[] data, double minOutputValue, double maxOutputValue, string key, string description)
 		{
 			Platform.CheckForNullReference(data, "data");
@@ -102,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets the lut data.
+		/// Gets the lookup table data.
 		/// </summary>
 		public override double[] Data
 		{
@@ -119,22 +127,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return this[(int) Math.Round(input)]; }
 		}
 
-		/// <summary>
-		/// Gets a string key that identifies this particular Lut's characteristics, so that 
-		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
-		/// </summary>
-		/// <remarks>
-		/// This method is not to be confused with <b>equality</b>, since some Luts can be
-		/// dependent upon the actual image to which it belongs.
-		/// </remarks>
 		public override string GetKey()
 		{
 			return _key;
 		}
 
-		/// <summary>
-		/// Gets an abbreviated description of the Lut.
-		/// </summary>
 		public override string GetDescription()
 		{
 			return _description;

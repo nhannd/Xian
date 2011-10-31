@@ -12,8 +12,10 @@
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Defines the properties and methods of a lookup table mapping input stored pixel values to output modality-independent values.
+	/// Defines a lookup table in the standard grayscale image display pipeline used to transform stored pixel values to manufacturer-independent values implemented as an array of values.
 	/// </summary>
+	/// <seealso cref="LutComposer"/>
+	/// <see cref="IModalityLut"/>
 	public interface IDataModalityLut : IModalityLut
 	{
 		/// <summary>
@@ -30,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Creates a deep-copy of the <see cref="IDataModalityLut"/>.
 		/// </summary>
 		/// <remarks>
-		/// Implementations may return NULL from this method when appropriate.	
+		/// Implementations may return NULL from this method when appropriate.
 		/// </remarks>
 		new IDataModalityLut Clone();
 	}

@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Creates a deep-copy of the <see cref="IDataLut"/>.
 		/// </summary>
 		/// <remarks>
-		/// Implementationss may return NULL from this method when appropriate.	
+		/// Implementations may return NULL from this method when appropriate.
 		/// </remarks>
 		IDataLut Clone();
 	}
