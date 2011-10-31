@@ -255,7 +255,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			Platform.CheckForNullReference(shortcutManager, "shortcutManager");
 
 			_tile = tile;
-            _tile.ContextMenuRequested += OnExplicitContextMenuRequest;
+            _tile.ContextMenuRequested += ProcessExplicitContextMenuRequest;
 
             _selectedOnThisClick = false;
 			_capturedOnThisClick = false;
@@ -266,7 +266,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		public void Dispose()
 		{
 			_delayedContextMenuRequestPublisher.Dispose();
-		    _tile.ContextMenuRequested -= OnExplicitContextMenuRequest;
+		    _tile.ContextMenuRequested -= ProcessExplicitContextMenuRequest;
 		}
 
 		#region Private Properties
@@ -407,6 +407,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				this.CaptureHandler.Cancel();
 
 			_startCount = 0;
+		    _activeButton = 0;
+		    _clickCount = 0;
 
 			this.CaptureHandler = null;
 			this.CursorToken = null;
@@ -738,7 +740,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private void ProcessDelayedContextMenuRequest(object sender, EventArgs e)
 		{
-			var eventArgs = e as ItemEventArgs<Point>;
+            var eventArgs = e as ItemEventArgs<Point>;
 			if (eventArgs == null)
 				return;
 
@@ -749,14 +751,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		        ReleaseCapture(true);
 
 		    _contextMenuEnabled = true;
-
 		    EventsHelper.Fire(_contextMenuRequested, this, eventArgs);
 		}
 
-        private void OnExplicitContextMenuRequest(object sender, TileContextMenuRequestEventArgs e)
+	    private void ProcessExplicitContextMenuRequest(object sender, TileContextMenuRequestEventArgs e)
         {
-            _delayedContextMenuRequestPublisher.Cancel();
-
             //Force a handler with capture to release.
             if (this.CaptureHandler != null)
                 ReleaseCapture(true);
@@ -768,7 +767,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
             var actionModel = e.ActionModel;
             if (actionModel == null)
             {
-                CompositeGraphic sceneGraph = ((PresentationImage) _tile.PresentationImage).SceneGraph;
+                CompositeGraphic sceneGraph = ((PresentationImage)_tile.PresentationImage).SceneGraph;
                 //Get all the mouse button handlers that provide a context menu.
                 foreach (var handlerGraphic in GetHandlerGraphics(sceneGraph).OfType<IContextMenuProvider>())
                 {
@@ -785,19 +784,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
                 ContextMenuProvider = new ActionModelProvider(actionModel);
             }
 
-            /// TODO (CR Oct 2011): Check there isn't a better way to do this.
-            
-            //We may not get a mouse button up message because of the context menu appearing.
-            _activeButton = 0;
-            _clickCount = 0;
-
             //Request the context menu.
             _contextMenuEnabled = true;
             EventsHelper.Fire(_contextMenuRequested, this, new ItemEventArgs<Point>(location));
 
             ContextMenuProvider = null;
         }
-
+        
 		#endregion
 		#endregion
 
