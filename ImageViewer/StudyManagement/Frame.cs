@@ -573,6 +573,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Gets the units of the rescale function output.
+		/// </summary>
+		/// <seealso cref="RescaleSlope"/>
+		/// <seealso cref="RescaleIntercept"/>
+		/// <seealso cref="RescaleType"/>
+		public RescaleUnits RescaleUnits
+		{
+			get { return RescaleUnits.GetRescaleUnits(_parentImageSop.DataSource); }
+		}
+
 		#endregion
 
 		#region VOI LUT Module

@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	{
 		private Tile _selectedTile;
 		private ImageGraphic _selectedImageGraphic;
-		private ImageSop _selectedImageSop;
+		private Frame _selectedFrame;
 		private ActionModelNode _actionModel;
 
 		/// <summary>
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_selectedTile = mouseInformation.Tile as Tile;
 			_selectedTile.InformationBox = new InformationBox();
 			_selectedImageGraphic = this.SelectedImageGraphicProvider.ImageGraphic;
-			_selectedImageSop = (this.SelectedPresentationImage as IImageSopProvider).ImageSop;
+			_selectedFrame = ((IImageSopProvider) SelectedPresentationImage).Frame;
 
 			Probe(mouseInformation.Location);
 
@@ -223,10 +223,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (grayscaleImage.ModalityLut != null)
 			{
 				var modalityLutValue = grayscaleImage.ModalityLut[pixelValue];
-
+				
 				var modalityLutValueDisplay = modalityLutValue.ToString(grayscaleImage.NormalizationLut != null ? @"G3" : @"F1");
-				if (_selectedImageSop != null && string.Compare(_selectedImageSop.Modality, "CT", true) == 0)
-					modalityLutValueDisplay = string.Format(SR.FormatValueUnits, modalityLutValueDisplay, SR.LabelHounsfieldUnitsAbbreviation);
+				if (_selectedFrame != null)
+				{
+					var units = _selectedFrame.RescaleUnits;
+					if (units != null && units != RescaleUnits.None)
+						modalityLutValueDisplay = string.Format(SR.FormatValueUnits, modalityLutValueDisplay, units.Label);
+				}
 
 				modalityLutString = String.Format(SR.FormatProbeInfo, SR.LabelModalityLut, modalityLutValueDisplay);
 			}
