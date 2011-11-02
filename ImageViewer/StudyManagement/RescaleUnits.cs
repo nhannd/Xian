@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			DicomAttribute attribute;
 			if (dicomAttributeProvider.TryGetAttribute(tag, out attribute))
-				return attribute.ToString();
+				return attribute.ToString().Trim('\\', ' ');
 			return null;
 		}
 
