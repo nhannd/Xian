@@ -689,6 +689,6 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
     <value>µmol/ml</value>
   </data>
   <data name="LabelUnitsUnspecified" xml:space="preserve">
-    <value>??</value>
+    <value />
   </data>
 </root>
