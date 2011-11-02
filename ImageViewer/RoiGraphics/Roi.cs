@@ -165,14 +165,31 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		{
 			get
 			{
-				//TODO (cr Feb 2010): convert to positive rectangle as a safety precaution.
-				if (_boundingBox.IsEmpty)
-					_boundingBox = ComputeBounds();
-				return _boundingBox;
+                if (_boundingBox.IsEmpty)
+                    _boundingBox = RectangleUtilities.ConvertToPositiveRectangle(ComputeBounds());
+
+			    return _boundingBox;
 			}
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Returns a bounding box that has been rounded to the nearest whole pixel(s).
+        /// </summary>
+        /// <remarks>
+        /// Uses <see cref="RectangleUtilities.RoundInflate"/> to ensure the bounding box
+        /// returned will encompass every pixel that is inside the ROI.
+        /// </remarks>
+        /// <param name="constrainToImage">Whether or not the returned rectangle should also be constrained to the image bounds.</param>
+	    public Rectangle GetBoundingBoxRounded(bool constrainToImage)
+	    {
+	        Rectangle bounds = RectangleUtilities.RoundInflate(BoundingBox);
+	        if (constrainToImage)
+	            bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
+	        
+            return bounds;
+	    }
+
+	    /// <summary>
 		/// Called by <see cref="BoundingBox"/> to compute the tightest bounding box of the region of interest.
 		/// </summary>
 		/// <remarks>
@@ -185,7 +202,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>A rectangle defining the bounding box.</returns>
 		protected abstract RectangleF ComputeBounds();
 
-		/// <summary>
+	    /// <summary>
 		/// Creates a copy of this <see cref="Roi"/> using the same region of interest shape but using a different image as the source pixel data.
 		/// </summary>
 		/// <param name="presentationImage">The image upon which to copy this region of interest.</param>
@@ -254,12 +271,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>An enumeration of points.</returns>
 		public IEnumerable<PointF> GetPixelCoordinates()
 		{
-			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
-			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
-			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
-			for (int x = bounds.Left; x < bounds.Right; x++)
+            Rectangle bounds = GetBoundingBoxRounded(true);
+            for (int x = bounds.Left; x <= bounds.Right; x++)
 			{
-				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				for (int y = bounds.Top; y <= bounds.Bottom; y++)
 				{
 					PointF p = new PointF(x, y);
 					if (this.Contains(p))
@@ -277,12 +292,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.PixelData == null)
 				yield break;
 
-			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
-			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
-			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
-			for (int x = bounds.Left; x < bounds.Right; x++)
+            Rectangle bounds = GetBoundingBoxRounded(true);
+            for (int x = bounds.Left; x <= bounds.Right; x++)
 			{
-				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				for (int y = bounds.Top; y <= bounds.Bottom; y++)
 				{
 					PointF p = new PointF(x, y);
 					if (this.Contains(p))
@@ -318,15 +331,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.ModalityLut != null)
 				lut = v => this.ModalityLut[v];
 
-			//TODO (CR Sept 2010): put these 2 lines into a method, since it's used numerous times.  Even if it were
-			//only used once, a method name tells someone what this does instead of having to figure it out.
-
-			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
-			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
-			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
-			for (int x = bounds.Left; x < bounds.Right; x++)
+		    Rectangle bounds = GetBoundingBoxRounded(true);
+			for (int x = bounds.Left; x <= bounds.Right; x++)
 			{
-				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				for (int y = bounds.Top; y <= bounds.Bottom; y++)
 				{
 					PointF p = new PointF(x, y);
 					if (this.Contains(p))
@@ -377,13 +385,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return area*factor;
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Checks whether or not the region of interest's bounding box intersects the image.
 		/// </summary>
 		/// <returns>True if the bounding box intersects the image; False otherwise.</returns>
 		private bool IsBoundingBoxInImage()
 		{
-			RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(this.BoundingBox);
+            RectangleF boundingBox = BoundingBox;
 
 			if (boundingBox.Width == 0 || boundingBox.Height == 0)
 				return false;
