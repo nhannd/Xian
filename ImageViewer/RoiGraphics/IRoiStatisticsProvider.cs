@@ -13,6 +13,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.RoiGraphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
@@ -85,11 +86,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			double sum = 0;
 			int pixelCount = 0;
 
+            var boundingBox = RectangleUtilities.RoundInflate(RectangleUtilities.ConvertToPositiveRectangle(roiBoundingBox));
 			pixelData.ForEachPixel(
-				(int)roiBoundingBox.Left,
-				(int)roiBoundingBox.Top,
-				(int)roiBoundingBox.Right,
-				(int)roiBoundingBox.Bottom,
+                boundingBox.Left,
+                boundingBox.Top,
+                boundingBox.Right,
+                boundingBox.Bottom,
 				delegate(int i, int x, int y, int pixelIndex)
 					{
 						if (isPointInRoi(x, y))
@@ -123,12 +125,14 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			double sum = 0;
 			int pixelCount = 0;
 
-			pixelData.ForEachPixel(
-				(int)roiBoundingBox.Left,
-				(int)roiBoundingBox.Top,
-				(int)roiBoundingBox.Right,
-				(int)roiBoundingBox.Bottom,
-				delegate(int i, int x, int y, int pixelIndex) {
+            var boundingBox = RectangleUtilities.RoundInflate(RectangleUtilities.ConvertToPositiveRectangle(roiBoundingBox));
+            pixelData.ForEachPixel(
+                boundingBox.Left,
+                boundingBox.Top,
+                boundingBox.Right,
+                boundingBox.Bottom,
+                delegate(int i, int x, int y, int pixelIndex)
+                {
 					if (isPointInRoi(x, y)) {
 						++pixelCount;
 						int storedValue = pixelData.GetPixel(pixelIndex);
