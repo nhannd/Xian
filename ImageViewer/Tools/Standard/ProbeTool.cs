@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				var modalityLutValue = grayscaleImage.ModalityLut[pixelValue];
 				
-				var modalityLutValueDisplay = modalityLutValue.ToString(grayscaleImage.NormalizationLut != null ? @"G3" : @"F1");
+				var modalityLutValueDisplay = modalityLutValue.ToString(_selectedFrame != null && _selectedFrame.IsSubnormalRescale ? @"G3" : @"F1");
 				if (_selectedFrame != null)
 				{
 					var units = _selectedFrame.RescaleUnits;
