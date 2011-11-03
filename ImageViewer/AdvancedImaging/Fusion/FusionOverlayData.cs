@@ -84,6 +84,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return this.Volume.FrameOfReferenceUid; }
 		}
 
+		public string Modality
+		{
+			get { return Volume.Modality; }
+		}
+
 		public IList<Frame> Frames
 		{
 			get { return CollectionUtils.Map<IFrameReference, Frame>(_frames, f => f.Frame).AsReadOnly(); }

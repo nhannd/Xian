@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
@@ -306,6 +307,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				// this image graphic needs to keep a transient reference on the slice, otherwise it could get disposed before we do!
 				_overlayFrameData = fusionOverlayFrameData.CreateTransientReference();
+
+				if (fusionOverlayFrameData.OverlayData.Modality == @"PT" && RescaleSlope < 1.0/(1 << BitsStored))
+				{
+					// some PET images have such a small slope that all stored pixel values map to one single value post-modality LUT
+					// we detect this condition here and apply the inverse of the modality LUT as a normalization function for VOI purposes
+					// http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/8930b159cb2a8e73?pli=1
+					NormalizationLut = new InvertedLinearLut(RescaleSlope, RescaleIntercept);
+				}
 			}
 
 			/// <summary>

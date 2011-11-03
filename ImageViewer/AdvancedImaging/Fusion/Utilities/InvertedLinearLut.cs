@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -11,11 +11,12 @@
 
 using System;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Imaging
+namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities
 {
 	[Cloneable]
-	internal sealed class NormalizationLutLinear : ComposableLut
+	internal sealed class InvertedLinearLut : ComposableLut
 	{
 		[CloneIgnore]
 		private readonly double _rescaleSlope;
@@ -28,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="rescaleSlope">Original frame rescale slope to be inverted.</param>
 		/// <param name="rescaleIntercept">Original frame rescale intercept to be inverted.</param>
-		public NormalizationLutLinear(double rescaleSlope, double rescaleIntercept)
+		public InvertedLinearLut(double rescaleSlope, double rescaleIntercept)
 		{
 			_rescaleSlope = rescaleSlope;
 			_rescaleIntercept = rescaleIntercept;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="source">The source object from which to clone.</param>
 		/// <param name="context">The cloning context object.</param>
-		private NormalizationLutLinear(NormalizationLutLinear source, ICloningContext context)
+		private InvertedLinearLut(InvertedLinearLut source, ICloningContext context)
 		{
 			_rescaleSlope = source._rescaleSlope;
 			_rescaleIntercept = source._rescaleIntercept;
