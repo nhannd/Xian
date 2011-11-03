@@ -15,24 +15,23 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	[Cloneable]
-	internal sealed class PETLinearNormalizationLut : ComposableLut
+	internal sealed class NormalizationLutLinear : ComposableLut
 	{
 		[CloneIgnore]
-		private readonly double _inverseSlope;
+		private readonly double _rescaleSlope;
 
 		[CloneIgnore]
-		private readonly double _inverseIntercept;
+		private readonly double _rescaleIntercept;
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="PETLinearNormalizationLut"/>.
+		/// Initializes a new instance of <see cref="NormalizationLutLinear"/>.
 		/// </summary>
 		/// <param name="rescaleSlope">Original frame rescale slope to be inverted.</param>
 		/// <param name="rescaleIntercept">Original frame rescale intercept to be inverted.</param>
-		public PETLinearNormalizationLut(double rescaleSlope, double rescaleIntercept)
+		public NormalizationLutLinear(double rescaleSlope, double rescaleIntercept)
 		{
-			// {y = mx + b} => {x = (1/m)b + (-b/m)}
-			_inverseSlope = 1/rescaleSlope;
-			_inverseIntercept = -rescaleIntercept/rescaleSlope;
+			_rescaleSlope = rescaleSlope;
+			_rescaleIntercept = rescaleIntercept;
 		}
 
 		/// <summary>
@@ -40,10 +39,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="source">The source object from which to clone.</param>
 		/// <param name="context">The cloning context object.</param>
-		private PETLinearNormalizationLut(PETLinearNormalizationLut source, ICloningContext context)
+		private NormalizationLutLinear(NormalizationLutLinear source, ICloningContext context)
 		{
-			_inverseSlope = source._inverseSlope;
-			_inverseIntercept = source._inverseIntercept;
+			_rescaleSlope = source._rescaleSlope;
+			_rescaleIntercept = source._rescaleIntercept;
 		}
 
 		public override double MinInputValue { get; set; }
@@ -64,17 +63,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public override double this[double input]
 		{
-			get { return input*_inverseSlope + _inverseIntercept; }
+			get { return (input - _rescaleIntercept)/_rescaleSlope; }
 		}
 
 		public override string GetKey()
 		{
-			return string.Format(@"PETNorm_{0}_{1}", _inverseSlope, _inverseIntercept);
+			return string.Format(@"NormInverse_{0}_{1}", _rescaleSlope, _rescaleIntercept);
 		}
 
 		public override string GetDescription()
 		{
-			return string.Format(@"PET Normalization Function m={0} b={1}", _inverseSlope, _inverseIntercept);
+			return string.Format(@"Normalization Function Inverse of m={0} b={1}", _rescaleSlope, _rescaleIntercept);
 		}
 	}
 }

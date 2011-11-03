@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return MaxOutputValue;
 
                 double scale = ((index - (GetWindowCenter() - 0.5)) / (GetWindowWidthInternal() - 1)) + 0.5;
-				return (int)((scale * (MaxOutputValue - MinOutputValue)) + MinOutputValue);
+				return Math.Min(MaxOutputValue, Math.Max(MinOutputValue, (int) Math.Round((scale*(MaxOutputValue - MinOutputValue)) + MinOutputValue)));
 			}
 		}
 
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <exception cref="MemberAccessException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MinOutputValue
 		{
-			get { return (int) _minInputValue; }
+			get { return (int) Math.Round(_minInputValue); }
 			protected set { throw new InvalidOperationException(SR.ExceptionMinimumOutputValueIsNotSettable); }
 		}
 
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <exception cref="MemberAccessException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MaxOutputValue
 		{
-			get { return (int) _maxInputValue; }
+			get { return (int) Math.Round(_maxInputValue); }
 			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
 

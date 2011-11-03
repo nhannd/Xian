@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer
 				// some PET images have such a small slope that all stored pixel values map to one single value post-modality LUT
 				// we detect this condition here and apply the inverse of the modality LUT as a normalization function for VOI purposes
 				// http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/8930b159cb2a8e73?pli=1
-				ImageGraphic.NormalizationLut = new PETLinearNormalizationLut(frameReference.Frame.RescaleSlope, frameReference.Frame.RescaleIntercept);
+				ImageGraphic.NormalizationLut = new NormalizationLutLinear(frameReference.Frame.RescaleSlope, frameReference.Frame.RescaleIntercept);
 			}
 
 			Initialize();
