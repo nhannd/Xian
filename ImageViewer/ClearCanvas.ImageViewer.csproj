@@ -159,6 +159,7 @@
     <Compile Include="Common\Cache.cs" />
     <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Common\Diagnostics.cs" />
+    <Compile Include="Common\ExtensionData.cs" />
     <Compile Include="Common\LargeObjectContainer.cs" />
     <Compile Include="Common\LargeObjectContainerCache.cs" />
     <Compile Include="Common\MemoryCollector.cs" />
