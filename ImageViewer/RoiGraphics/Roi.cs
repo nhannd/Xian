@@ -207,7 +207,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	    {
 	        Rectangle bounds = RectangleUtilities.RoundInflate(BoundingBox);
 	        if (constrainToImage)
-	            bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
+	        {
+                bounds.Intersect(new Rectangle(0, 0, this.ImageSize.Width - 1, this.ImageSize.Height - 1));
+	        }
 	        
             return bounds;
 	    }

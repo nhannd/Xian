@@ -137,6 +137,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _description; }
 		}
 
+		public string Modality
+		{
+			get
+			{
+				DicomAttribute attribute;
+				return _modelDicom.TryGetAttribute(DicomTags.Modality, out attribute) ? attribute.ToString() : string.Empty;
+			}
+		}
+
 		/// <summary>
 		/// Gets the Series Instance UID of that identifies the source images from which the volume was created.
 		/// </summary>

@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -33,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override sealed int FirstMappedPixelValue
 		{
-			get { return base.MinInputValue; }
+			get { return MinInputValue; }
 		}
 
 		/// <summary>
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override sealed int LastMappedPixelValue
 		{
-			get { return base.MaxInputValue; }
+			get { return MaxInputValue; }
 		}
 
 		/// <summary>
@@ -52,11 +53,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get
 			{
 				if (_data == null)
-				{
-					_data = new double[Length];
-					Create();
-				}
-
+					Fill(_data = MemoryManager.Allocate<double>(Length), FirstMappedPixelValue, LastMappedPixelValue);
 				return _data;
 			}
 		}
@@ -84,9 +81,21 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Called to populate the lookup table using an algorithm.
 		/// </summary>
 		/// <remarks>
-		/// Implementors should set the values of the lookup table with <see cref="this"/>.
+		/// <para>
+		/// The data table starts with the mapped output value for an input of <see cref="FirstMappedPixelValue"/> at index 0, and ends with the value for an input of <see cref="LastMappedPixelValue"/> for a total of (<see cref="LastMappedPixelValue"/> - <see cref="FirstMappedPixelValue"/> + 1) entries.
+		/// </para>
+		/// <para>
+		/// Implementations can fill the lookup table using an iterator such as the following:
+		/// <code><![CDATA[
+		/// for (int i = 0; i < data.Length; ++i)
+		///     data[i] = MapPixel(i + firstMappedPixelValue);
+		/// ]]></code>
+		/// </para>
 		/// </remarks>
-		protected abstract void Create();
+		/// <param name="data">The lookup table to be populated.</param>
+		/// <param name="firstMappedPixelValue">The value of the first pixel in the lookup table (and hence at index 0). This value is provided for convenience, and has the same value as <see cref="FirstMappedPixelValue"/>.</param>
+		/// <param name="lastMappedPixelValue">The value of the last pixel in the lookup table (and hence at index data.Length - 1). This value is provided for convenience, and has the same value as <see cref="LastMappedPixelValue"/>.</param>
+		protected abstract void Fill(double[] data, int firstMappedPixelValue, int lastMappedPixelValue);
 
 		/// <summary>
 		/// Fires the <see cref="DataModalityLut.LutChanged"/> event.
@@ -100,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Clears the data in the lookup table; the data can be recreated at will by calling <see cref="Create"/>.
+		/// Clears the data in the lookup table; the data will be recreated on the next attempt to access the lookup table data.
 		/// </summary>
 		public void Clear()
 		{

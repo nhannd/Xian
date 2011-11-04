@@ -225,9 +225,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				var modalityLutValueDisplay = modalityLutValue.ToString(_selectedFrame != null && _selectedFrame.IsSubnormalRescale ? @"G3" : @"F1");
 				if (_selectedFrame != null)
 				{
-					var units = _selectedFrame.RescaleUnits;
-					if (units != null && units != RescaleUnits.None)
-						modalityLutValueDisplay = string.Format(SR.FormatValueUnits, modalityLutValueDisplay, units.Label);
+					var units = (_selectedFrame.RescaleUnits ?? RescaleUnits.None).Label;
+					if (!string.IsNullOrEmpty(units))
+						modalityLutValueDisplay = string.Format(SR.FormatValueUnits, modalityLutValueDisplay, units);
 				}
 
 				modalityLutString = String.Format(SR.FormatProbeInfo, SR.LabelModalityLut, modalityLutValueDisplay);

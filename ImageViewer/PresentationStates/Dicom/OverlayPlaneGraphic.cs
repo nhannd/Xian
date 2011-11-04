@@ -458,7 +458,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			public override int this[double index]
 			{
-				get { return (int) ((index/_maxInputValue)*_presentationValue); }
+				get { return (int) Math.Round((index/_maxInputValue)*_presentationValue); }
 			}
 
 			public override string GetKey()

@@ -407,8 +407,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				this.CaptureHandler.Cancel();
 
 			_startCount = 0;
-		    _activeButton = 0;
-		    _clickCount = 0;
 
 			this.CaptureHandler = null;
 			this.CursorToken = null;
@@ -750,21 +748,36 @@ namespace ClearCanvas.ImageViewer.InputManagement
             if (CaptureHandler != null)
 		        ReleaseCapture(true);
 
+		    //When we show the context menu, reset the active button and start count,
+            //because the user is going to have to start over again with a new click.
+            _activeButton = 0;
+		    _startCount = 0;
+
 		    _contextMenuEnabled = true;
 		    EventsHelper.Fire(_contextMenuRequested, this, eventArgs);
 		}
 
 	    private void ProcessExplicitContextMenuRequest(object sender, TileContextMenuRequestEventArgs e)
+	    {
+            //Because it is likely to be called from within a mouse button handler's Start
+            //method, which can cause problems, we'll post it instead.
+            SynchronizationContext.Current.Post(ignore=>ProcessExplicitContextMenuRequest(e.Location, e.ActionModel), null);
+	    }
+        
+	    private void ProcessExplicitContextMenuRequest(Point? location, ActionModelNode actionModel)
         {
             //Force a handler with capture to release.
             if (this.CaptureHandler != null)
                 ReleaseCapture(true);
 
-            var location = _currentMousePoint;
-            if (e.Location.HasValue && TileClientRectangle.Contains(e.Location.Value))
-                location = e.Location.Value;
+            //When we show the context menu, reset the active button and start count,
+            //because the user is going to have to start over again with a new click.
+            _activeButton = 0;
+            _startCount = 0;
 
-            var actionModel = e.ActionModel;
+            if (!location.HasValue || !TileClientRectangle.Contains(location.Value))
+                location = _currentMousePoint;
+
             if (actionModel == null)
             {
                 CompositeGraphic sceneGraph = ((PresentationImage)_tile.PresentationImage).SceneGraph;
@@ -786,7 +799,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
             //Request the context menu.
             _contextMenuEnabled = true;
-            EventsHelper.Fire(_contextMenuRequested, this, new ItemEventArgs<Point>(location));
+            EventsHelper.Fire(_contextMenuRequested, this, new ItemEventArgs<Point>(location.Value));
 
             ContextMenuProvider = null;
         }
