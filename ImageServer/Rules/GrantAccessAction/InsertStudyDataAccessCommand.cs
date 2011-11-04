@@ -48,10 +48,10 @@ namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
         /// </summary>
         protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
-            DataAccessGroupSelectCriteria criteria = new DataAccessGroupSelectCriteria();
+            var criteria = new DataAccessGroupSelectCriteria();
             criteria.AuthorityGroupOID.EqualTo(new ServerEntityKey("AuthorityGroupOID",_authorityGroupOid));
 
-            IDataAccessGroupEntityBroker authorityGroup = updateContext.GetBroker<IDataAccessGroupEntityBroker>();
+            var authorityGroup = updateContext.GetBroker<IDataAccessGroupEntityBroker>();
 
             DataAccessGroup group = authorityGroup.FindOne(criteria);
 			if (group == null)
@@ -67,14 +67,23 @@ namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
                 return;
 			}
 
-            StudyDataAccessUpdateColumns insertColumns = new StudyDataAccessUpdateColumns
-                                                             {
-                                                                 DataAccessGroupKey = group.Key,
-                                                                 StudyStorageKey = _context.StudyLocationKey
-                                                             };
 
-            IStudyDataAccessEntityBroker insert = updateContext.GetBroker<IStudyDataAccessEntityBroker>();
-            insert.Insert(insertColumns);
+            var entityBroker = updateContext.GetBroker<IStudyDataAccessEntityBroker>();
+
+            var selectStudyDataAccess = new StudyDataAccessSelectCriteria();
+            selectStudyDataAccess.DataAccessGroupKey.EqualTo(group.Key);
+            selectStudyDataAccess.StudyStorageKey.EqualTo(_context.StudyLocationKey);
+
+            if (entityBroker.Count(selectStudyDataAccess) == 0)
+            {
+                var insertColumns = new StudyDataAccessUpdateColumns
+                                        {
+                                            DataAccessGroupKey = group.Key,
+                                            StudyStorageKey = _context.StudyLocationKey
+                                        };
+
+                entityBroker.Insert(insertColumns);
+            }
         }
     }
 }
