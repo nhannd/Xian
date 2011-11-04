@@ -42,10 +42,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private readonly int _imageRows;
 		private readonly int _imageColumns;
 		private readonly string _modality;
+		private readonly bool _subnormalModalityLut;
 		private readonly PixelData _pixelData;
 		private readonly PixelAspectRatio _pixelAspectRatio;
 		private readonly PixelSpacing _normalizedPixelSpacing;
+		private readonly RescaleUnits _modalityLutUnits;
 		private readonly IModalityLut _modalityLut;
+		private readonly IPresentationImage _presentationImage;
 
 		private RectangleF _boundingBox;
 
@@ -55,13 +58,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <param name="presentationImage">The image containing the source pixel data.</param>
 		protected Roi(IPresentationImage presentationImage)
 		{
-            PresentationImage = presentationImage;
 			IImageGraphicProvider provider = presentationImage as IImageGraphicProvider;
 			if (provider == null)
 				return;
 
 			_imageRows = provider.ImageGraphic.Rows;
 			_imageColumns = provider.ImageGraphic.Columns;
+			_presentationImage = presentationImage;
 
 			_pixelData = provider.ImageGraphic.PixelData;
 			if (presentationImage is IModalityLutProvider)
@@ -73,22 +76,26 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				_normalizedPixelSpacing = frame.NormalizedPixelSpacing;
 				_pixelAspectRatio = frame.PixelAspectRatio;
 				_modality = frame.ParentImageSop.Modality;
+				_modalityLutUnits = frame.RescaleUnits;
+				_subnormalModalityLut = frame.IsSubnormalRescale;
 			}
 			else
 			{
 				_normalizedPixelSpacing = new PixelSpacing(0, 0);
 				_pixelAspectRatio = new PixelAspectRatio(0, 0);
+				_modalityLutUnits = RescaleUnits.None;
+				_subnormalModalityLut = false;
 			}
 		}
 
-        ///<summary>
-        /// Gets the presentation image
+
+		///<summary>
+        /// Gets the presentation image from which the ROI was created.
         ///</summary>
         public IPresentationImage PresentationImage
-        {
-            get;
-            private set;
-        }
+		{
+			get { return _presentationImage; }
+		}
 
 		/// <summary>
 		/// Gets the number of rows in the entire image.
@@ -147,6 +154,22 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		}
 
 		/// <summary>
+		/// Gets the units of the modality LUT output of the image.
+		/// </summary>
+		public RescaleUnits ModalityLutUnits
+		{
+			get { return _modalityLutUnits; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether or not the modality LUT is subnormal (i.e. the modality LUT output all map to a single distinct value).
+		/// </summary>
+		public bool SubnormalModalityLut
+		{
+			get { return _subnormalModalityLut; }
+		}
+
+		/// <summary>
 		/// Gets the modality of the image.
 		/// </summary>
 		public string Modality
@@ -184,7 +207,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	    {
 	        Rectangle bounds = RectangleUtilities.RoundInflate(BoundingBox);
 	        if (constrainToImage)
-	            bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
+	        {
+                bounds.Intersect(new Rectangle(0, 0, this.ImageSize.Width - 1, this.ImageSize.Height - 1));
+	        }
 	        
             return bounds;
 	    }

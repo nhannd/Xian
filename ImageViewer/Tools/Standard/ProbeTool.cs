@@ -11,6 +11,7 @@
 
 using System;
 using System.Drawing;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -147,19 +148,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			ToolSettings settings = ToolSettings.Default;
 			bool showPixelValue = settings.ShowRawPixelValue;
-			bool showModalityValue = true;
 			bool showVoiValue = settings.ShowVOIPixelValue;
 
-			string probeString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, SR.LabelNotApplicable, SR.LabelNotApplicable));
+			string probeString;
+			string coordinateString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, SR.LabelNotApplicable, SR.LabelNotApplicable));
 			string pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelRawPixel, SR.LabelNotApplicable);
 			string modalityLutString = String.Format(SR.FormatProbeInfo, SR.LabelModalityLut, SR.LabelNotApplicable);
 			string voiLutString = String.Format(SR.FormatProbeInfo, SR.LabelVOILut, SR.LabelNotApplicable);
 
 			try
 			{
+				var displayString = new StringBuilder();
 				if (_selectedImageGraphic.HitTest(destinationPoint))
 				{
-					probeString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, sourcePointRounded.X, sourcePointRounded.Y));
+					coordinateString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, sourcePointRounded.X, sourcePointRounded.Y));
 
 					if (_selectedImageGraphic is GrayscaleImageGraphic)
 					{
@@ -170,31 +172,27 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 						GetPixelValue(image, sourcePointRounded, ref pixelValue, ref pixelValueString);
 						GetModalityLutValue(image, pixelValue, ref modalityLutString);
 						GetVoiLutValue(image, pixelValue, ref voiLutString);
+
+						// the modality LUT value is always shown
+						displayString.AppendLine(modalityLutString);
+
+						if (showPixelValue) displayString.AppendLine(pixelValueString);
+						if (showVoiValue) displayString.AppendLine(voiLutString);
 					}
 					else if (_selectedImageGraphic is ColorImageGraphic)
 					{
-						showModalityValue = false;
-						showVoiValue = false;
-
 						ColorImageGraphic image = _selectedImageGraphic as ColorImageGraphic;
 						Color color = image.PixelData.GetPixelAsColor(sourcePointRounded.X, sourcePointRounded.Y);
 						string rgbFormatted = String.Format(SR.FormatRGB, color.R, color.G, color.B);
-						pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelRawPixel, rgbFormatted);
-					}
-					else
-					{
-						showPixelValue = false;
-						showModalityValue = false;
-						showVoiValue = false;
+						pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelRGBPixel, rgbFormatted);
+						displayString.AppendLine(pixelValueString);
 					}
 				}
 
-				if (showPixelValue)
-					probeString += Environment.NewLine + pixelValueString;
-				if (showModalityValue)
-					probeString += Environment.NewLine + modalityLutString;
-				if (showVoiValue)
-					probeString += Environment.NewLine + voiLutString;
+				// show the coordinate last, cause it's probably the least interesting information
+				displayString.AppendLine(coordinateString);
+
+				probeString = displayString.ToString().Trim();
 			}
 			catch (Exception e)
 			{
@@ -224,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				var modalityLutValue = grayscaleImage.ModalityLut[pixelValue];
 				
-				var modalityLutValueDisplay = modalityLutValue.ToString(grayscaleImage.NormalizationLut != null ? @"G3" : @"F1");
+				var modalityLutValueDisplay = modalityLutValue.ToString(_selectedFrame != null && _selectedFrame.IsSubnormalRescale ? @"G3" : @"F1");
 				if (_selectedFrame != null)
 				{
 					var units = _selectedFrame.RescaleUnits;

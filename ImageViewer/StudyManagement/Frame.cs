@@ -584,6 +584,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return RescaleUnits.GetRescaleUnits(_parentImageSop.DataSource); }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether or not the rescale function is subnormal (i.e. output of the function is too small to be represented as distinct values).
+		/// </summary>
+		public bool IsSubnormalRescale
+		{
+			// function is subnormal if slope is such that 2**BS distinct values all map to a single distinct integer
+			get { return RescaleSlope < 1.0/(1 << BitsStored); }
+		}
+
 		#endregion
 
 		#region VOI LUT Module

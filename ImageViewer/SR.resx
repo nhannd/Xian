@@ -315,10 +315,7 @@
     <value>{0:F1} pixels</value>
   </data>
   <data name="FormatMean" xml:space="preserve">
-    <value>Mean: {0:F1}</value>
-  </data>
-  <data name="FormatMeanCT" xml:space="preserve">
-    <value>Mean: {0:F1} HU</value>
+    <value>Mean: {0}</value>
   </data>
   <data name="FormatMouseButtonShortcutDescription" xml:space="preserve">
     <value>{0} : {1}</value>
@@ -333,10 +330,7 @@
     <value>Wheel : {0}</value>
   </data>
   <data name="FormatStdDev" xml:space="preserve">
-    <value>Std Dev: {0:F1}</value>
-  </data>
-  <data name="FormatStdDevCT" xml:space="preserve">
-    <value>Std Dev: {0:F1} HU</value>
+    <value>Std Dev: {0}</value>
   </data>
   <data name="LabelError" xml:space="preserve">
     <value>Error:</value>
@@ -695,6 +689,6 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
     <value>µmol/ml</value>
   </data>
   <data name="LabelUnitsUnspecified" xml:space="preserve">
-    <value>??</value>
+    <value />
   </data>
 </root>

@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Indicates that the units of the values are unknown.
 		/// </summary>
-		public static readonly RescaleUnits Unspecified = new RescaleUnits(@"US", string.Empty, SR.LabelUnitsUnspecified, SR.LabelUnitsUnspecified);
+		public static readonly RescaleUnits Unspecified = new RescaleUnits(@"US", string.Empty, SR.LabelUnitsUnspecified, SR.DescriptionUnitsUnspecified);
 
 		/// <summary>
 		/// Gets the units of the output of the rescaling function (modality LUT) in the specified DICOM data set.
@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			DicomAttribute attribute;
 			if (dicomAttributeProvider.TryGetAttribute(tag, out attribute))
-				return attribute.ToString();
+				return attribute.ToString().Trim('\\', ' ');
 			return null;
 		}
 
@@ -88,12 +88,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Indicates that the values are in Hounsfield Units (HU).
 		/// </summary>
-		public static readonly RescaleUnits HounsfieldUnits = new RescaleUnits(@"HU", null, SR.LabelUnitsHU, SR.LabelUnitsHU);
+		public static readonly RescaleUnits HounsfieldUnits = new RescaleUnits(@"HU", null, SR.LabelUnitsHU, SR.DescriptionUnitsHU);
 
 		/// <summary>
 		/// Indicates that the values are in 1/1000ths of optical density (i.e. 2140 represents an optical density of 2.140).
 		/// </summary>
-		public static readonly RescaleUnits OpticalDensity = new RescaleUnits(@"OD", null, SR.LabelUnitsOD, SR.LabelUnitsOD);
+		public static readonly RescaleUnits OpticalDensity = new RescaleUnits(@"OD", null, SR.LabelUnitsOD, SR.DescriptionUnitsOD);
 
 		/// <summary>
 		/// Parses a <see cref="RescaleUnits"/> from the value of a Rescale Type (0028,1054) attribute.

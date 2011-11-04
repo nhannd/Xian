@@ -786,4 +786,7 @@ Please check the log for more details.</value>
   <data name="FormatLinearPresetDescription" xml:space="preserve">
     <value>{0}: {1}</value>
   </data>
+  <data name="LabelRGBPixel" xml:space="preserve">
+    <value>RGB</value>
+  </data>
 </root>

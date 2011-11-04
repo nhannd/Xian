@@ -756,6 +756,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to RGB.
+        /// </summary>
+        internal static string LabelRGBPixel {
+            get {
+                return ResourceManager.GetString("LabelRGBPixel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to VOI.
         /// </summary>
         internal static string LabelVOILut {

@@ -26,11 +26,17 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <summary>
 		/// Gets the standard deviation of the values over the <see cref="Roi"/>.
 		/// </summary>
+		/// <remarks>
+		/// All stored pixel values are passed through the modality LUT function if it exists before any computation takes place.
+		/// </remarks>
 		double StandardDeviation { get; }
 
 		/// <summary>
 		/// Gets the mean of the values over the <see cref="Roi"/>.
 		/// </summary>
+		/// <remarks>
+		/// All stored pixel values are passed through the modality LUT function if it exists before any computation takes place.
+		/// </remarks>
 		double Mean { get; }
 	}
 
