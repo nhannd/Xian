@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public Volume(short[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
 		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue, string sourceSeriesInstanceUid)
 			: this(data, null, dimensions, spacing, originPatient, orientationPatient,
-			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel), paddingValue, sourceSeriesInstanceUid) {}
+			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel, 16, 16, true), paddingValue, sourceSeriesInstanceUid) {}
 
 		/// <summary>
 		/// Constructs a <see cref="Volume"/> using a volume data array of unsigned 16-bit words.
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public Volume(ushort[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
 		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue, string sourceSeriesInstanceUid)
 			: this(null, data, dimensions, spacing, originPatient, orientationPatient,
-			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel), paddingValue, sourceSeriesInstanceUid) {}
+			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel, 16, 16, false), paddingValue, sourceSeriesInstanceUid) {}
 
 		private Volume(short[] dataInt16, ushort[] dataUInt16, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
 		               Matrix orientationPatient, VolumeSopDataSourcePrototype sopDataSourcePrototype, int paddingValue, string sourceSeriesInstanceUid)

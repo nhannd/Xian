@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				PrepareFrames(_frames); // this also sorts the frames into order by slice location
 
 				// Construct a model SOP data source based on the first frame's DICOM header
-				var sopDataSourcePrototype = VolumeSopDataSourcePrototype.Create(_frames[0].Sop.DataSource);
+				var sopDataSourcePrototype = VolumeSopDataSourcePrototype.Create(_frames[0].Sop.DataSource, 16, 16, false);
 
 				// compute normalized modality LUT
 				double normalizedSlope, normalizedIntercept;
