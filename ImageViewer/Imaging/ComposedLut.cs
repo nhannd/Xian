@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 						for (int j = 0; j < lutCount; ++j)
 							val = lutArray[j][val];
 
-						*pLutData = (int) Math.Floor(val);
+						*pLutData = (int) Math.Round(val);
 						++pLutData;
 					}
 				}
