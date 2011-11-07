@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>A rectangle defining the bounding box.</returns>
 		protected abstract RectangleF ComputeBounds();
 
-	    /// <summary>
+		/// <summary>
 		/// Creates a copy of this <see cref="Roi"/> using the same region of interest shape but using a different image as the source pixel data.
 		/// </summary>
 		/// <param name="presentationImage">The image upon which to copy this region of interest.</param>
@@ -410,7 +410,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return area*factor;
 		}
 
-	    /// <summary>
+		/// <summary>
 		/// Checks whether or not the region of interest's bounding box intersects the image.
 		/// </summary>
 		/// <returns>True if the bounding box intersects the image; False otherwise.</returns>

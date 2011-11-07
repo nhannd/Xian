@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				if (index > _windowRegionEnd)
 					return MaxOutputValue;
 
-                double scale = ((index - (GetWindowCenter() - 0.5)) / (GetWindowWidthInternal() - 1)) + 0.5;
+				double scale = ((index - (GetWindowCenter() - 0.5)) / (GetWindowWidthInternal() - 1)) + 0.5;
 				return Math.Min(MaxOutputValue, Math.Max(MinOutputValue, (int) Math.Round((scale*(MaxOutputValue - MinOutputValue)) + MinOutputValue)));
 			}
 		}
@@ -192,11 +192,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_windowRegionEnd = GetWindowCenter() - 0.5 + halfWindow;
 		}
 		
-        private double GetWindowWidthInternal()
-        {
-            return Math.Max(1, GetWindowWidth());
-        }
+		private double GetWindowWidthInternal()
+		{
+			return Math.Max(1, GetWindowWidth());
+		}
 
-	    #endregion
+		#endregion
 	}
 }
