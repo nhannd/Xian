@@ -38,7 +38,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         public ImageViewer(StartViewerApplicationRequest startRequest)
         {
             InitializeComponent();
-            ViewModel = new ImageViewerViewModel();
+            ViewModel = new ImageViewerViewModel
+                            {
+                                IsLoading = true
+                            };
+            
+            DataContext = ViewModel;
 
             if (ApplicationContext.Current != null)
             {
@@ -83,6 +88,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         void ErrorHandler_OnCriticalError(object sender, EventArgs e)
         {
+            ViewModel.IsLoading = false;
+
             Shutdown();
         }        
 
@@ -246,6 +253,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
             if (ev.PropertyName == "Application")
             {
+                ViewModel.IsLoading = false;
+
                 _serverApplication = (ViewerApplication)ev.Value;
 
                 ApplicationContext.Current.ViewerVersion = _serverApplication.VersionString;
