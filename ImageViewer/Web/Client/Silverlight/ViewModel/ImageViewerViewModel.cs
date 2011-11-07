@@ -26,6 +26,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.ViewModel
 {
     public class ImageViewerViewModel : ViewModelBase
     {
-
+        private bool _isLoading = false;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                if (_isLoading == value) return;
+                _isLoading = value;
+                RaisePropertyChanged(() => IsLoading);
+            }
+        }
     }
 }

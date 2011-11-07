@@ -193,7 +193,7 @@
     <Compile Include="Imaging\IModalityLut.cs" />
     <Compile Include="Imaging\IVoiLut.cs" />
     <Compile Include="Imaging\NamedVoiLutLinear.cs" />
-    <Compile Include="Imaging\PETLinearNormalizationLut.cs" />
+    <Compile Include="Imaging\NormalizationLutLinear.cs" />
     <Compile Include="Imaging\SimpleColorMap.cs" />
     <Compile Include="Imaging\SimpleDataModalityLut.cs" />
     <Compile Include="Layout\HpDataContractAttribute.cs" />

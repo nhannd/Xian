@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override int MinOutputValue
 		{
-			get { return (int) _minInputValue; }
+			get { return (int) Math.Round(_minInputValue); }
 			protected set { throw new NotSupportedException(); }
 		}
 
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override int MaxOutputValue
 		{
-			get { return (int) _maxInputValue; }
+			get { return (int) Math.Round(_maxInputValue); }
 			protected set { throw new NotSupportedException(); }
 		}
 
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override int this[double index]
 		{
-			get { return (int) index; }
+			get { return (int) Math.Round(index); }
 		}
 
 		/// <summary>

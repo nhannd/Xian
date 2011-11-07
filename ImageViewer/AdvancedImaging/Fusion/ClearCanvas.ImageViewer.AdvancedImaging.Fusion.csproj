@@ -60,6 +60,7 @@
     <Compile Include="Tests\TestDisplaySetGenerator.cs" />
     <Compile Include="Tests\TestDataFunction.cs" />
     <Compile Include="Tests\TestDisplaySetsTool.cs" />
+    <Compile Include="Utilities\InvertedLinearLut.cs" />
     <Compile Include="VoiLutManagerProxy.cs" />
     <Compile Include="LayerOpacityOperation.cs" />
     <Compile Include="AdjustOpacityTool.cs" />

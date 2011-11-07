@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.Imaging
@@ -125,13 +126,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Methods
 
-		protected override void Create()
+		protected override void Fill(double[] data, int firstMappedPixelValue, int lastMappedPixelValue)
 		{
-			int min = MinInputValue;
-			int max = MaxInputValue;
-			
-			for (int i = min; i <= max; i++)
-				base[i] = (_rescaleSlope * i + _rescaleIntercept);
+			unsafe
+			{
+				fixed (double* pData = data)
+				{
+					var length = data.Length;
+					for (int i = 0; i < length; ++i)
+						pData[i] = _rescaleSlope*(i + firstMappedPixelValue) + _rescaleIntercept;
+				}
+			}
 		}
 
 		public override string GetKey()

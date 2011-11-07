@@ -98,6 +98,7 @@
     <Compile Include="Controls\ThrottlePanel.xaml.cs">
       <DependentUpon>ThrottlePanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Resources\ImageViewerResources.cs" />
     <Compile Include="ServerApplicationStopEventArgs.cs" />
     <Compile Include="ServerMessageSender.cs" />
     <Compile Include="ViewModel\ImageViewerViewModel.cs" />
@@ -347,7 +348,7 @@
       <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Labels.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Labels.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SR.resx">
