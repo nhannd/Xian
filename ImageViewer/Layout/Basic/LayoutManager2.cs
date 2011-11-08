@@ -157,6 +157,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 var displaySets = new List<IDisplaySet>();
 
                 bool showOriginal = true;
+
+                /// TODO (CR Oct 2011): This disables the degenerate "single image" case ...
                 if (ModalityDisplaySetExists && !ShowOriginalSeries)
                     showOriginal = false;
 
@@ -186,8 +188,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                     foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
                         displaySets.Add(displaySet);
 
-                    if (displaySets.Count > 0 && !ShowOriginalSeries)
-                        showOriginal = false;
+                    //Degenerate case for "single images" is to create the series display set.
+                    showOriginal = displaySets.Count <= 0 || ShowOriginalSeries;
                 }
 
                 if (showOriginal)
