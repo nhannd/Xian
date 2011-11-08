@@ -31,25 +31,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 		internal override sealed double MinInputValueCore
 		{
 			get { return MinInputValue; }
-			set { MinInputValue = (int) value; }
+			set { MinInputValue = (int) Math.Round(value); }
 		}
 
 		internal override sealed double MaxInputValueCore
 		{
 			get { return MaxInputValue; }
-			set { MaxInputValue = (int) value; }
+			set { MaxInputValue = (int) Math.Round(value); }
 		}
 
 		internal override sealed double MinOutputValueCore
 		{
 			get { return MinOutputValue; }
-			set { MinOutputValue = value; }
 		}
 
 		internal override sealed double MaxOutputValueCore
 		{
 			get { return MaxOutputValue; }
-			set { MaxOutputValue = value; }
 		}
 
 		internal override sealed double Lookup(double input)

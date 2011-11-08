@@ -79,14 +79,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		internal abstract double MaxInputValueCore { get; set; }
 
 		/// <summary>
-		/// Gets or sets the minimum output value.
+		/// Gets the minimum output value.
 		/// </summary>
-		internal abstract double MinOutputValueCore { get; set; }
+		internal abstract double MinOutputValueCore { get; }
 
 		/// <summary>
-		/// Gets or sets the maximum output value.
+		/// Gets the maximum output value.
 		/// </summary>
-		internal abstract double MaxOutputValueCore { get; set; }
+		internal abstract double MaxOutputValueCore { get; }
 
 		double IComposableLut.MinInputValue
 		{

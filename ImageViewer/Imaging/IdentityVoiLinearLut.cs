@@ -10,50 +10,38 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A 1-to-1 pass-through composable LUT (i.e. the identity transform).
+	/// An implementation of a VOI LUT that represents the identity function for integer inputs between <see cref="MinInputValue"/> and <see cref="MaxInputValue"/>.
 	/// </summary>
 	[Cloneable(true)]
 	public sealed class IdentityVoiLinearLut : ComposableVoiLut, IVoiLutLinear
 	{
-		private double _minInputValue;
-		private double _maxInputValue;
-
 		/// <summary>
-		/// Constructs a 1-to-1 pass-through composable LUT for 8-bit unsigned values.
+		/// Initializes a new instance of <see cref="IdentityVoiLinearLut"/>.
 		/// </summary>
 		public IdentityVoiLinearLut()
 		{
-		    //TODO (CR June 2011): doesn't make sense to arbitrarily set the
-            //min/max input to 8-bit values when it's dependent on the source
-            //image bit depth and sign.
-			_minInputValue = 0;
-			_maxInputValue = 255;
+			MinInputValue = int.MinValue;
+			MaxInputValue = int.MaxValue;
 		}
 
-		/// <summary>
-		/// Constructs a 1-to-1 pass-through composable LUT for unsigned values.
-		/// </summary>
-		/// <param name="channelBitDepth">The bit-depth of the unsigned values.</param>
-		/// <exception cref="ArgumentOutOfRangeException">Thrown if the bit-depth is not between 1 and 31, inclusive.</exception>
-		public IdentityVoiLinearLut(int channelBitDepth)
+#if UNIT_TESTS
+
+		internal IdentityVoiLinearLut(int bitsStored, bool signed)
 		{
-            //TODO (CR June 2011): this is wrong because it doesn't account for the sign
-            //of the source image.  Not even sure why we're doing this because
-            //it'll get set externally by LutComposer anyway?
-
-            Platform.CheckArgumentRange(channelBitDepth, 1, 31, "channelBitDepth");
-			_minInputValue = 0;
-			_maxInputValue = (1 << channelBitDepth) - 1;
+			MinInputValue = DicomPixelData.GetMinPixelValue(bitsStored, signed);
+			MaxInputValue = DicomPixelData.GetMaxPixelValue(bitsStored, signed);
 		}
 
+#endif
+
 		/// <summary>
-		/// Gets an abbreviated description of the LUT.
+		/// Gets an abbreviated description of the lookup table.
 		/// </summary>
 		public override string GetDescription()
 		{
@@ -63,30 +51,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets or sets the minimum input value.
 		/// </summary>
-		public override double MinInputValue
-		{
-			get { return _minInputValue; }
-			set { _minInputValue = value; }
-		}
+		/// <remarks>
+		/// This value is set internally by the framework and should not be modified by client code.
+		/// </remarks>
+		public override double MinInputValue { get; set; }
 
 		/// <summary>
-		/// Gets the maximum input value.
+		/// Gets or sets the maximum input value.
 		/// </summary>
-		public override double MaxInputValue
-		{
-			get { return _maxInputValue; }
-			set { _maxInputValue = value; }
-		}
+		/// <remarks>
+		/// This value is set internally by the framework and should not be modified by client code.
+		/// </remarks>
+		public override double MaxInputValue { get; set; }
 
 		/// <summary>
 		/// Gets the minimum output value.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, this value is always exactly <see cref="MinInputValue"/>.
+		/// This will always return <see cref="MinInputValue"/> rounded to an integer.
 		/// </remarks>
 		public override int MinOutputValue
 		{
-			get { return (int) Math.Round(_minInputValue); }
+			get { return (int) Math.Round(MinInputValue); }
 			protected set { throw new NotSupportedException(); }
 		}
 
@@ -94,54 +80,61 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets the maximum output value.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, this value is always exactly <see cref="MaxInputValue"/>.
+		/// This will always return <see cref="MaxInputValue"/> rounded to an integer.
 		/// </remarks>
 		public override int MaxOutputValue
 		{
-			get { return (int) Math.Round(_maxInputValue); }
+			get { return (int) Math.Round(MaxInputValue); }
 			protected set { throw new NotSupportedException(); }
 		}
 
 		/// <summary>
-		/// Gets the output value of the lut at a given input index.
+		/// Gets the output value of the lookup table for a given input value.
 		/// </summary>
-		/// <remarks>
-		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, the value is always exactly <paramref name="index"/>.
-		/// </remarks>
-		public override int this[double index]
+		public override int this[double input]
 		{
-			get { return (int) Math.Round(index); }
+			get
+			{
+				if (input < MinInputValue)
+					return MinOutputValue;
+				if (input > MaxInputValue)
+					return MaxOutputValue;
+				return (int) Math.Round(input);
+			}
 		}
 
 		/// <summary>
 		/// Gets the window width.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, this value is always exactly <see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1.
+		/// This value is always exactly <see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1.
 		/// </remarks>
 		public double WindowWidth
 		{
-			get { return (double) _maxInputValue - _minInputValue + 1; }
+			get { return MaxInputValue - MinInputValue + 1; }
 		}
 
 		/// <summary>
 		/// Gets the window centre.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, this value is always exactly (<see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1)/2.
+		/// This value is always exactly (<see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1)/2.
 		/// </remarks>
 		public double WindowCenter
 		{
-			get { return this.WindowWidth/2; }
+			get { return WindowWidth/2; }
 		}
 
 		/// <summary>
-		/// Gets a string key that identifies this particular LUT's characteristics, so that 
-		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
+		/// Gets a string key that identifies this particular lookup table's characteristics.
 		/// </summary>
+		/// <remarks>
+		/// This method is not to be confused with <b>equality</b>, since some lookup tables can be
+		/// dependent upon the actual image to which it belongs.
+		/// </remarks>
 		public override string GetKey()
 		{
-			return string.Format("IDENTITY_{0}_to_{1}", _minInputValue, _maxInputValue);
+			return string.Format("IDENTITY_{0}_to_{1}", MinInputValue, MaxInputValue);
 		}
 	}
 }

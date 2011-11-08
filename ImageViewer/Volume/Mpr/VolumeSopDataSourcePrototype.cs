@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return _collection.TryGetAttribute(tag, out attribute);
 			}
 
-			public static VolumeSopDataSourcePrototype Create(IDicomAttributeProvider source)
+			public static VolumeSopDataSourcePrototype Create(IDicomAttributeProvider source, int bitsAllocated, int bitsStored, bool isSigned)
 			{
 				VolumeSopDataSourcePrototype prototype = new VolumeSopDataSourcePrototype();
 				DicomAttributeCollection volumeDataSet = prototype._collection;
@@ -96,10 +96,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				// generate Image Pixel Module
 				volumeDataSet[DicomTags.SamplesPerPixel] = source[DicomTags.SamplesPerPixel].Copy();
 				volumeDataSet[DicomTags.PhotometricInterpretation] = source[DicomTags.PhotometricInterpretation].Copy();
-				volumeDataSet[DicomTags.BitsAllocated].SetInt32(0, 16);
-				volumeDataSet[DicomTags.BitsStored].SetInt32(0, 16);
-				volumeDataSet[DicomTags.HighBit].SetInt32(0, 15);
-				volumeDataSet[DicomTags.PixelRepresentation].SetInt32(0, 0);
+				volumeDataSet[DicomTags.BitsAllocated].SetInt32(0, bitsAllocated);
+				volumeDataSet[DicomTags.BitsStored].SetInt32(0, bitsStored);
+				volumeDataSet[DicomTags.HighBit].SetInt32(0, bitsStored - 1);
+				volumeDataSet[DicomTags.PixelRepresentation].SetInt32(0, isSigned ? 1 : 0);
 
 				// generate SOP Common Module
 				volumeDataSet[DicomTags.SopClassUid].SetStringValue(SopClass.SecondaryCaptureImageStorageUid);

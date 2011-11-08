@@ -296,7 +296,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public int MinOutputValue
 		{
-			get { return (int) LastLut.MinOutputValue; }
+			get { return (int) Math.Round(LastLut.MinOutputValue); }
 		}
 
 		/// <summary>
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public int MaxOutputValue
 		{
-			get { return (int) LastLut.MaxOutputValue; }
+			get { return (int) Math.Round(LastLut.MaxOutputValue); }
 		}
 
 		/// <summary>

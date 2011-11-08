@@ -34,11 +34,26 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
         }
 
         [Test(Description="Ensure OverlayImageGraphic.PixelData is based on the PET slides")]
-        public void TestOverlayImageGraphic()
+        public void TestOverlayImageGraphicSignedCTSignedPT()
         {
             TestOverlayImageGraphic(true, true);
+        }
+
+        [Test(Description="Ensure OverlayImageGraphic.PixelData is based on the PET slides")]
+        public void TestOverlayImageGraphicSignedCTUnsignedPT()
+        {
             TestOverlayImageGraphic(true, false);
+        }
+
+        [Test(Description="Ensure OverlayImageGraphic.PixelData is based on the PET slides")]
+        public void TestOverlayImageGraphicUnsignedCTSignedPT()
+        {
             TestOverlayImageGraphic(false, true);
+        }
+
+        [Test(Description="Ensure OverlayImageGraphic.PixelData is based on the PET slides")]
+        public void TestOverlayImageGraphicUnsignedCTUnsignedPT()
+        {
             TestOverlayImageGraphic(false, false);
         }
 
@@ -89,6 +104,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
                     PETPixels.ForEachPixel((i, x, y, pixelIndex) =>
                     {
                         var p = PETPixels.GetPixel(pixelIndex);
+                        p = (int) Math.Round(overlay.ModalityLut[p]);
                         
                         // Note: this could also mean the function that generates the pixels is incorrect.
                         Assert.IsTrue(p == PETPixelValue || p == PETBackgroundPixelValue, string.Format("Overlay pixel values are incorrect: Pixel index={0}, value={1}", pixelIndex, p));

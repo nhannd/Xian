@@ -67,13 +67,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		internal override sealed double MinOutputValueCore
 		{
 			get { return MinOutputValue; }
-			set { MinOutputValue = value; }
 		}
 
 		internal override sealed double MaxOutputValueCore
 		{
 			get { return MaxOutputValue; }
-			set { MaxOutputValue = value; }
 		}
 
 		internal override sealed double Lookup(double input)

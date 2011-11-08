@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 		{
 			IVolumeSlicerParams[] slicerParams = new IVolumeSlicerParams[] {new VolumeSlicerParams(32, -62, 69)};
 			TestVolume(true, VolumeFunction.Stripes, slicerParams, "", ImageKernelFunction3X3, VolumeKernelFunction3X3X3);
+			TestVolume(false, VolumeFunction.Stripes, slicerParams, "", ImageKernelFunction3X3, VolumeKernelFunction3X3X3);
 		}
 
 		private static void TestVolume(bool signed, VolumeFunction f, IEnumerable<IVolumeSlicerParams> slicerParams, string testName)

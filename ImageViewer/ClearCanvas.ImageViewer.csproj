@@ -681,7 +681,8 @@
     <Compile Include="Imaging\ModalityLutLinear.cs" />
     <Compile Include="Imaging\Tests\CompositeLUTTest.cs" />
     <Compile Include="Imaging\Tests\ModalityLUTLinearTest.cs" />
-    <Compile Include="Imaging\Tests\VOILUTLinearTest.cs" />
+    <Compile Include="Imaging\Tests\NormalizationLutLinearTests.cs" />
+    <Compile Include="Imaging\Tests\VoiLutLinearTests.cs" />
     <Compile Include="Annotations\AnnotationBox.cs" />
     <Compile Include="Graphics\GraphicCollection.cs" />
     <Compile Include="Graphics\VectorGraphic.cs" />
