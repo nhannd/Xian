@@ -386,7 +386,7 @@ namespace ClearCanvas.ImageViewer.Web
 
         private ImageViewerComponent CreateViewerComponent(StartViewerApplicationRequest request)
         {
-            if (request.LoadStudyOptions & LoadStudyOptions.KeyImagesOnly == LoadStudyOptions.KeyImagesOnly)
+            if ((request.LoadStudyOptions & LoadStudyOptions.KeyImagesOnly) == LoadStudyOptions.KeyImagesOnly)
                 return new ImageViewerComponent(new KeyImageLayoutManager());
             else
                 return new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
