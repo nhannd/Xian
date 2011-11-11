@@ -21,7 +21,7 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	public class StoredDisplaySetCreationSetting : INotifyPropertyChanged
+	public class StoredDisplaySetCreationSetting : INotifyPropertyChanged, IModalityDisplaySetCreationOptions
 	{
 		private readonly string _modality;
 
@@ -294,7 +294,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						migrationValues.CurrentValue as string, 
 						migrationValues.PreviousValue as string);
 					break;
-				default: break;
+                case "AllImagesModalities":
+                    migrationValues.CurrentValue = CombineModalities(
+                        migrationValues.CurrentValue as string,
+                        migrationValues.PreviousValue as string);
+                    break;
+                default: break;
 			}
 		}
 

@@ -38,4 +38,39 @@ namespace ClearCanvas.ImageViewer.Layout
 		/// <returns></returns>
 		bool HandleLayout(IHpLayoutHookContext context);
 	}
+
+    /// <summary>
+    /// Allows a hanging protocols service to hook into
+    /// the layout procedure.
+    /// </summary>
+    public abstract class HpLayoutHook : IHpLayoutHook
+    {
+        private class Nil : IHpLayoutHook
+        {
+            #region IHpLayoutHook Members
+
+            public bool HandleLayout(IHpLayoutHookContext context)
+            {
+                return false;
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// A default hook that can be used if needed; it does nothing.
+        /// </summary>
+        public static IHpLayoutHook Default = new Nil();
+
+        #region IHpLayoutHook Members
+
+        /// <summary>
+        /// Handles the initial layout when a viewer is first opened.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public abstract bool HandleLayout(IHpLayoutHookContext context);
+
+        #endregion
+    }
 }

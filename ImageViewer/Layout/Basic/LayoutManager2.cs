@@ -15,10 +15,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             private readonly ModalityDisplaySetFactory _modalityDisplaySetFactory;
             private readonly IDisplaySetFactory _defaultDisplaySetFactory;
 
-            public ImageSetFiller(StudyTree studyTree)
+            private readonly IDisplaySetCreationOptions _displaySetCreationOptions;
+
+            public ImageSetFiller(StudyTree studyTree, IDisplaySetCreationOptions displaySetCreationOptions)
             {
-                foreach (StoredDisplaySetCreationSetting setting in DisplaySetCreationSettings.Default.GetStoredSettings())
-                    _modalityDisplaySetFactories[setting.Modality] = new DisplaySetFactory(setting);
+                _displaySetCreationOptions = displaySetCreationOptions;
+                foreach (IModalityDisplaySetCreationOptions option in displaySetCreationOptions)
+                    _modalityDisplaySetFactories[option.Modality] = new DisplaySetFactory(option);
 
                 _modalityDisplaySetFactory = new ModalityDisplaySetFactory();
                 _defaultDisplaySetFactory = new BasicDisplaySetFactory();
@@ -32,15 +35,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
             public void AddMultiSeriesDisplaySets(IImageSet imageSet, Study study)
             {
-                var studyModalities = (from setting in DisplaySetCreationSettings.Default.GetStoredSettings()
-                                       where setting.CreateAllImagesDisplaySet
-                                       join allowedModality in DisplaySetCreationSettings.Default.GetAllImagesModalities()
-                                           on setting.Modality equals allowedModality
+                var multiSeriesModalities = (from option in _displaySetCreationOptions
+                                       where option.CreateAllImagesDisplaySet
                                        join series in study.Series
-                                           on setting.Modality equals series.Modality
-                                       select setting.Modality).Distinct();
+                                           on option.Modality equals series.Modality
+                                       select option.Modality).Distinct();
 
-                foreach (var modality in studyModalities)
+                foreach (var modality in multiSeriesModalities)
                 {
                     //Add all the "all images" per modality display sets for the entire study at the top of the list.
                     var displaySet = _modalityDisplaySetFactory.CreateDisplaySet(study, modality);
@@ -58,9 +59,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 }
                 else
                 {
-                    bool modalityDisplaySetExists = null != imageSet.DisplaySets.FirstOrDefault(
-                                                                d => d.Descriptor is ModalityDisplaySetDescriptor
-                                                                    && ((ModalityDisplaySetDescriptor)d.Descriptor).Modality == series.Modality);
+                    var modalityDisplaySetExists =
+                        null != (from displaySet in imageSet.DisplaySets
+                                    where displaySet.Descriptor is ModalityDisplaySetDescriptor
+                                    && ((ModalityDisplaySetDescriptor) displaySet.Descriptor).Modality == series.Modality
+                                select displaySet).FirstOrDefault();
 
                     //Tell the factory whether we've created an "all images" display set containing
                     //all the images in the entire study for the given modality.
@@ -88,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
         internal class DisplaySetFactory : ImageViewer.DisplaySetFactory
         {
-            private readonly StoredDisplaySetCreationSetting _creationSetting;
+            private readonly IModalityDisplaySetCreationOptions _creationOptions;
 
             private readonly MREchoDisplaySetFactory _echoFactory;
             private readonly MixedMultiFrameDisplaySetFactory _mixedMultiFrameFactory;
@@ -97,21 +100,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
             private readonly IList<IDisplaySetFactory> _externalFactories;
 
-            public DisplaySetFactory(StoredDisplaySetCreationSetting creationSetting)
+            public DisplaySetFactory(IModalityDisplaySetCreationOptions creationOptions)
             {
-                _creationSetting = creationSetting;
+                _creationOptions = creationOptions;
 
-                PresentationState defaultPresentationState = new DicomPresentationState { ShowGrayscaleInverted = creationSetting.ShowGrayscaleInverted };
+                PresentationState defaultPresentationState = new DicomPresentationState { ShowGrayscaleInverted = creationOptions.ShowGrayscaleInverted };
 
                 var imageFactory = (PresentationImageFactory)PresentationImageFactory;
                 imageFactory.DefaultPresentationState = defaultPresentationState;
 
-                _basicFactory = new BasicDisplaySetFactory(imageFactory) { CreateSingleImageDisplaySets = _creationSetting.CreateSingleImageDisplaySets };
+                _basicFactory = new BasicDisplaySetFactory(imageFactory) { CreateSingleImageDisplaySets = _creationOptions.CreateSingleImageDisplaySets };
 
-                if (creationSetting.SplitMultiEchoSeries)
+                if (creationOptions.SplitMultiEchoSeries)
                     _echoFactory = new MREchoDisplaySetFactory(imageFactory);
 
-                if (_creationSetting.SplitMixedMultiframes)
+                if (_creationOptions.SplitMixedMultiframes)
                     _mixedMultiFrameFactory = new MixedMultiFrameDisplaySetFactory(imageFactory);
 
                 var externalFactories = new List<IDisplaySetFactory>();
@@ -125,14 +128,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
             public bool ModalityDisplaySetExists { get; set; }
 
-            private bool ShowOriginalSeries { get { return _creationSetting.ShowOriginalSeries; } }
-            private bool CreateSingleImageDisplaySets { get { return _creationSetting.CreateSingleImageDisplaySets; } }
+            private bool CreateAllImagesDisplaySet { get { return _creationOptions.CreateAllImagesDisplaySet; } }
+            
+            private bool ShowOriginalSeries { get { return _creationOptions.ShowOriginalSeries; } }
+            private bool CreateSingleImageDisplaySets { get { return _creationOptions.CreateSingleImageDisplaySets; } }
 
-            private bool SplitMultiEchoSeries { get { return _creationSetting.SplitMultiEchoSeries; } }
-            private bool ShowOriginalMREchoSeries { get { return _creationSetting.ShowOriginalMultiEchoSeries; } }
+            private bool SplitMultiEchoSeries { get { return _creationOptions.SplitMultiEchoSeries; } }
+            private bool ShowOriginalMREchoSeries { get { return _creationOptions.ShowOriginalMultiEchoSeries; } }
 
-            private bool SplitMixedMultiframeSeries { get { return _creationSetting.SplitMixedMultiframes; } }
-            private bool ShowOriginalMixedMultiframeSeries { get { return _creationSetting.ShowOriginalMixedMultiframeSeries; } }
+            private bool SplitMixedMultiframeSeries { get { return _creationOptions.SplitMixedMultiframes; } }
+            private bool ShowOriginalMixedMultiframeSeries { get { return _creationOptions.ShowOriginalMixedMultiframeSeries; } }
 
             public override void SetStudyTree(StudyTree studyTree)
             {
@@ -157,11 +162,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 var displaySets = new List<IDisplaySet>();
 
                 bool showOriginal = true;
-
-                /// TODO (CR Oct 2011): This disables the degenerate "single image" case ...
-                if (ModalityDisplaySetExists && !ShowOriginalSeries)
-                    showOriginal = false;
-
                 if (SplitMultiEchoSeries)
                 {
                     List<IDisplaySet> echoDisplaySets = _echoFactory.CreateDisplaySets(series);
@@ -188,19 +188,37 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                     foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
                         displaySets.Add(displaySet);
 
-                    //Degenerate case for "single images" is to create the series display set.
-                    showOriginal = displaySets.Count <= 0 || ShowOriginalSeries;
+                    //Show the original only if:
+                    // 1. the user wants to see it
+                    // 2. it's the degenerate single image series case
+                    // 3. a previous part of this method hasn't already disabled it
+                    showOriginal = showOriginal && (displaySets.Count == 0 || ShowOriginalSeries);
+                }
+                else if (ModalityDisplaySetExists)
+                {
+                    //Show the original only if:
+                    // 1. the user wants to see it
+                    // 2. a previous part of this method hasn't already disabled it
+                    showOriginal = showOriginal && ShowOriginalSeries;
+                }
+                else
+                {
+                    showOriginal = showOriginal && ShowOriginalSeries;
                 }
 
+                bool anyDisplaySetsCreated = displaySets.Count > 0 || ModalityDisplaySetExists;
                 if (showOriginal)
                 {
                     //The factory will create series display sets only.
                     _basicFactory.CreateSingleImageDisplaySets = false;
                     foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
                         displaySets.Add(displaySet);
+
+                    if (displaySets.Count > 0)
+                        anyDisplaySetsCreated = true;
                 }
 
-                if (displaySets.Count == 0)
+                if (!anyDisplaySetsCreated)
                     displaySets.AddRange(_placeholderDisplaySetFactory.CreateDisplaySets(series));
 
                 foreach (var factory in _externalFactories)
