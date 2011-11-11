@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="tkTmQim2eAIrlCHCGxLY4GhFBx4=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="3jb/9G+ptUFhDgyOx8eiF0hS35k=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="customBinding" name="CustomBinding_IApplicationService">
       <properties>
@@ -115,10 +115,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="CustomBinding_IApplicationService" contract="AppServiceReference.IApplicationService" bindingType="customBinding" address="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc/basicHttp" bindingConfiguration="CustomBinding_IApplicationService">
+    <endpoint name="CustomBinding_IApplicationService" contract="AppServiceReference.IApplicationService" bindingType="customBinding" address="http://localhost/WebPortal/Services/ApplicationService.svc/basicHttp" bindingConfiguration="CustomBinding_IApplicationService">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc/basicHttp</serializedValue>
+          <serializedValue>http://localhost/WebPortal/Services/ApplicationService.svc/basicHttp</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

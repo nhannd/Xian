@@ -18,23 +18,23 @@ namespace ClearCanvas.ImageViewer.Web.Common
 {
 
     [DataContract]
-    [Flags]
     public enum LoadStudyOptions
     {        
         /// <summary>
-        ///  Load the entire study, no priors
+        ///  Load the entire study. No effect if KeyImagesOnly is set.
         /// </summary>
         [EnumMember]
         EntireStudy,
 
         /// <summary>
-        /// Load key images only. No effect if EntireStudy is set
+        /// Load key images of the primary study only. No effect if EntireStudy is set.
         /// </summary>
         [EnumMember]
         KeyImagesOnly,
 
+
         /// <summary>
-        /// Include priors. When used in conjuciton with KeyImagesOnly, only prior key images are loaded
+        /// Include priors, or in case of KeyImagesOnly include just key images from the priors
         /// </summary>
         [EnumMember]
         IncludePriors

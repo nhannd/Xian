@@ -277,11 +277,28 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AppServiceReference\ApplicationService.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\AppServiceReference\ApplicationService22.wsdl" />
     <None Include="Service References\AppServiceReference\ApplicationService23.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService26.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService27.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService513.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService514.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService515.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService516.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService517.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService518.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\AppServiceReference\ApplicationService54.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -313,6 +330,7 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Service References\AppServiceReference\ApplicationService11.disco" />
+    <None Include="Service References\AppServiceReference\ApplicationService13.disco" />
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>

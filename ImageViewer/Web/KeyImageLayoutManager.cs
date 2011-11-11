@@ -16,21 +16,8 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Web
 {
-	public class KeyImageLayoutManager : ILayoutManager
+	internal class KeyImageLayoutManager : ImageViewer.Layout.Basic.LayoutManager
     {
-	    public void Dispose()
-	    {
-	        throw new NotImplementedException();
-	    }
-
-	    public void SetImageViewer(IImageViewer imageViewer)
-	    {
-	        throw new NotImplementedException();
-	    }
-
-	    public void Layout()
-	    {
-	        throw new NotImplementedException();
-	    }
+	    
     }
 }
