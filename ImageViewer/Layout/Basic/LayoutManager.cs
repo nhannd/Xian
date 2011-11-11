@@ -153,12 +153,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	    public LayoutManager()
 		{
 			AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
-
-            //const string ko = "KO";
-            //var realOptions = DisplaySetCreationOptions[ko];
-            //this.DisplaySetCreationOptions[ko] = new KeyImageDisplaySetCreationOptions(realOptions);
-
-	        //LayoutHook = new KeyImageLayoutHook();
 		}
 
 		public override void SetImageViewer(IImageViewer imageViewer)

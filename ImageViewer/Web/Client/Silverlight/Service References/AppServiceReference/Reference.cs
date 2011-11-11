@@ -237,13 +237,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
     public enum LoadStudyOptions : int {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        EntireStudy = 0,
+        KeyImagesOnly = 0,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        KeyImagesOnly = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        IncludePriors = 2,
+        ExcludePriors = 1,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]

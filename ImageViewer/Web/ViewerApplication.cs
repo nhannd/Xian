@@ -383,13 +383,45 @@ namespace ClearCanvas.ImageViewer.Web
 	        }
 	    }
 
+        
+
 
         private ImageViewerComponent CreateViewerComponent(StartViewerApplicationRequest request)
         {
-            if ((request.LoadStudyOptions & LoadStudyOptions.KeyImagesOnly) == LoadStudyOptions.KeyImagesOnly)
-                return new ImageViewerComponent(new KeyImageLayoutManager());
+            var keyImagesOnly = request.LoadStudyOptions!=null && (request.LoadStudyOptions & LoadStudyOptions.KeyImagesOnly) == LoadStudyOptions.KeyImagesOnly;
+            var excludePriors = request.LoadStudyOptions != null && (request.LoadStudyOptions & LoadStudyOptions.ExcludePriors) == LoadStudyOptions.ExcludePriors;
+
+            if (keyImagesOnly)
+            {
+                var layoutManager = new ImageViewer.Layout.Basic.LayoutManager() { LayoutHook = new KeyImageLayoutHook() };
+                //override the KO options
+                const string ko = "KO";
+                var realOptions = new KeyImageDisplaySetCreationOptions(layoutManager.DisplaySetCreationOptions[ko]);
+                layoutManager.DisplaySetCreationOptions[ko] = realOptions;
+
+
+                if (excludePriors)
+                {
+                    return new ImageViewerComponent(layoutManager, PriorStudyFinder.Null); 
+                }
+                else
+                {
+                    return new ImageViewerComponent(layoutManager);
+                }
+            }
             else
-                return new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+            {
+                if (excludePriors) 
+                {
+                    return new ImageViewerComponent(LayoutManagerCreationParameters.Extended, PriorStudyFinder.Null);
+                }
+                else
+                {
+                    return new ImageViewerComponent(LayoutManagerCreationParameters.Extended); 
+                } 
+            }
+
+
         }
 
 	    protected override void OnStop()
@@ -477,4 +509,6 @@ namespace ClearCanvas.ImageViewer.Web
             //throw new NotSupportedException();
         }
     }
+
+    
 }
