@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer.Web
             WebDesktopWindow window = new WebDesktopWindow(args, Application.Instance);
             window.Open();
 
-			_viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+            _viewer = CreateViewerComponent(startRequest);
 
 			try
 			{
@@ -355,6 +355,7 @@ namespace ClearCanvas.ImageViewer.Web
             ApplicationContext.Current.FireEvent(@event);
 		}
 
+
 	    public static LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
 	    {
 
@@ -381,6 +382,15 @@ namespace ClearCanvas.ImageViewer.Web
 	            throw new NotSupportedException("Only streaming study loader is supported at this time");
 	        }
 	    }
+
+
+        private ImageViewerComponent CreateViewerComponent(StartViewerApplicationRequest request)
+        {
+            if ((request.LoadStudyOptions & LoadStudyOptions.KeyImagesOnly) == LoadStudyOptions.KeyImagesOnly)
+                return new ImageViewerComponent(new KeyImageLayoutManager());
+            else
+                return new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+        }
 
 	    protected override void OnStop()
 		{

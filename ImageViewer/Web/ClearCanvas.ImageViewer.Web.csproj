@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="EntityHandlers\DefaultQFactorStrategy.cs" />
     <Compile Include="EntityHandlers\MessageBoxEntityHandler.cs" />
+    <Compile Include="KeyImageLayoutManager.cs" />
     <Compile Include="KnownTypeProviders.cs" />
     <Compile Include="DiagnosticsSettings.Designer.cs">
       <AutoGen>True</AutoGen>
