@@ -1504,6 +1504,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tools.
+        /// </summary>
+        internal static string TitleTools {
+            get {
+                return ResourceManager.GetString("TitleTools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Window/Level.
         /// </summary>
         internal static string TitleWindowLevel {
