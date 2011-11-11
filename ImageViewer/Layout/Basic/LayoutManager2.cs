@@ -180,33 +180,30 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                     displaySets.AddRange(multiFrameDisplaySets);
                 }
 
+                bool anyDisplaySetsCreated = displaySets.Count > 0 || ModalityDisplaySetExists;
                 if (CreateSingleImageDisplaySets)
                 {
                     //The factory will only create single image display sets and will not create a series 
-                    //display set for the degenerate case of one image in a series.
+                    //display set for the degenerate case of one image in a series. In the case where
+                    //the user wants to see "single image" display sets, we actually create a series
+                    //display set (below) for the degenerate case, because that's technically more correct.
                     _basicFactory.CreateSingleImageDisplaySets = true;
                     foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
                         displaySets.Add(displaySet);
 
-                    //Show the original only if:
-                    // 1. the user wants to see it
+                    //Show the original only if a previous part of this method hasn't already disabled it, and:
+                    // 1. the user wants to see it, or
                     // 2. it's the degenerate single image series case
-                    // 3. a previous part of this method hasn't already disabled it
                     showOriginal = showOriginal && (displaySets.Count == 0 || ShowOriginalSeries);
-                }
-                else if (ModalityDisplaySetExists)
-                {
-                    //Show the original only if:
-                    // 1. the user wants to see it
-                    // 2. a previous part of this method hasn't already disabled it
-                    showOriginal = showOriginal && ShowOriginalSeries;
                 }
                 else
                 {
-                    showOriginal = showOriginal && ShowOriginalSeries;
+                    //Show the original only if a previous part of this method hasn't already disabled it, and:
+                    // 1. the user wants to see it, or
+                    // 2. no other display sets have been created so far, which is typically just the "All Images" one.
+                    showOriginal = showOriginal && (ShowOriginalSeries || !anyDisplaySetsCreated);
                 }
 
-                bool anyDisplaySetsCreated = displaySets.Count > 0 || ModalityDisplaySetExists;
                 if (showOriginal)
                 {
                     //The factory will create series display sets only.
