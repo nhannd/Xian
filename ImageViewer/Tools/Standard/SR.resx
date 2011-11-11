@@ -789,4 +789,7 @@ Please check the log for more details.</value>
   <data name="LabelRGBPixel" xml:space="preserve">
     <value>RGB</value>
   </data>
+  <data name="TitleTools" xml:space="preserve">
+    <value>Tools</value>
+  </data>
 </root>

@@ -14,7 +14,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
-
+using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -30,10 +30,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     public class FlipHorizontalTool : ImageViewerTool
 	{
 		private readonly SpatialTransformImageOperation _operation;
+		private ToolModalityBehaviorHelper _toolBehavior;
 
 		public FlipHorizontalTool()
 		{
 			_operation = new SpatialTransformImageOperation(Apply);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_toolBehavior = new ToolModalityBehaviorHelper(ImageViewer);
 		}
 
 		public void Activate()
@@ -42,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			UndoableCommand historyCommand = applicator.ApplyToAllImages();
+			UndoableCommand historyCommand = _toolBehavior.Behavior.SelectedImageFlipTool ? applicator.ApplyToReferenceImage() : applicator.ApplyToAllImages();
 			if (historyCommand != null)
 			{
 				historyCommand.Name = SR.CommandFlipHorizontal;

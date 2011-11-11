@@ -119,5 +119,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
                 this["MatchScaleForNonParallelImages"] = value;
             }
         }
+        
+        /// <summary>
+        /// Configures modality-specific behavior for various tools
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Configures modality-specific behavior for various tools")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Configuration.ToolModalityBehaviorCollectionDefault.xml")]
+        public global::ClearCanvas.ImageViewer.Tools.Standard.Configuration.ToolModalityBehaviorCollection ToolModalityBehavior {
+            get {
+                return ((global::ClearCanvas.ImageViewer.Tools.Standard.Configuration.ToolModalityBehaviorCollection)(this["ToolModalityBehavior"]));
+            }
+            set {
+                this["ToolModalityBehavior"] = value;
+            }
+        }
     }
 }

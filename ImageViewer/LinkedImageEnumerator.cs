@@ -38,6 +38,11 @@ namespace ClearCanvas.ImageViewer
 			set { _excludeReferenceImage = value; }
 		}
 
+		public IPresentationImage ReferenceImage
+		{
+			get { return _referenceImage; }
+		}
+
 		private IEnumerable<IPresentationImage> GetAllLinkedImages()
 		{
 			IDisplaySet parentDisplaySet = _referenceImage.ParentDisplaySet;

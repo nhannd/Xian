@@ -20,5 +20,8 @@
     <Setting Name="MatchScaleForNonParallelImages" Description="Enables match scale tool for non-parallel images." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ToolModalityBehavior" Description="Configures modality-specific behavior for various tools" Type="ClearCanvas.ImageViewer.Tools.Standard.Configuration.ToolModalityBehaviorCollection" Scope="User">
+      <Value Profile="(Default)">Configuration.ToolModalityBehaviorCollectionDefault.xml</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
