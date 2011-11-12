@@ -22,6 +22,11 @@ namespace ClearCanvas.ImageViewer.Layout
         /// Called by the hook to lay out the default physicial workspace
         /// </summary>
         void PerformDefaultPhysicalWorkspaceLayout();
+
+        /// <summary>
+        /// Called by the hook to fill the existing physicial workspace with images
+        /// </summary>
+        void PerformDefaultFillPhysicalWorkspace();
         
 	}
 

@@ -16,22 +16,29 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Web.Common
 {
+    [DataContract]
+    public class LayoutConfiguration
+    {
+        [DataMember(IsRequired = true)]
+        public int Rows { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int Columns { get; set; }
+    }
 
     [DataContract]
-    public enum LoadStudyOptions
-    {        
-        /// <summary>
-        /// Load key images of the primary study only
-        /// </summary>
-        [EnumMember]
-        KeyImagesOnly,
-
-
+    public class LoadStudyOptions
+    {
+        [DataMember(IsRequired = false)]
+		public bool KeyImagesOnly {get; set;}
         /// <summary>
         /// Exclude priors
         /// </summary>
-        [EnumMember]
-        ExcludePriors
+        [DataMember(IsRequired = false)]
+        public bool ExcludePriors { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public LayoutConfiguration PreferredLayout { get; set; }
     }
 
 	[DataContract(Namespace = ViewerNamespace.Value)]
