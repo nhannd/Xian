@@ -415,7 +415,7 @@ namespace ClearCanvas.ImageViewer.Web
 
                 layoutManager = new ImageViewer.Layout.Basic.LayoutManager()
                 {
-                    LayoutHook = request.LoadStudyOptions.PreferredLayout != null
+                    LayoutHook = (request.LoadStudyOptions!=null && request.LoadStudyOptions.PreferredLayout != null)
                                 ? new CustomLayoutHook(request.LoadStudyOptions.PreferredLayout.Rows, request.LoadStudyOptions.PreferredLayout.Columns)
                                 : new CustomLayoutHook()
                 };
