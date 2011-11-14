@@ -39,11 +39,31 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			_cboModality.DataSource = bindingSource;
 			_cboModality.DisplayMember = "Modality";
 
-			_chkWindowLevel.DataBindings.Add("Checked", bindingSource, "SelectedOnlyWindowLevel", false, DataSourceUpdateMode.OnPropertyChanged);
-			_chkOrientation.DataBindings.Add("Checked", bindingSource, "SelectedOnlyOrientation", false, DataSourceUpdateMode.OnPropertyChanged);
-			_chkZoom.DataBindings.Add("Checked", bindingSource, "SelectedOnlyZoom", false, DataSourceUpdateMode.OnPropertyChanged);
-			_chkPan.DataBindings.Add("Checked", bindingSource, "SelectedOnlyPan", false, DataSourceUpdateMode.OnPropertyChanged);
-			_chkReset.DataBindings.Add("Checked", bindingSource, "SelectedOnlyReset", false, DataSourceUpdateMode.OnPropertyChanged);
+			_tooltipProvider.SetToolTip(_lblSelectedImage, SR.TooltipToolAppliesToSelectedImage);
+			_tooltipProvider.SetToolTip(_radWindowLevelImages, SR.TooltipToolAppliesToSelectedImage);
+			_tooltipProvider.SetToolTip(_radFlipRotateImages, SR.TooltipToolAppliesToSelectedImage);
+			_tooltipProvider.SetToolTip(_radZoomImages, SR.TooltipToolAppliesToSelectedImage);
+			_tooltipProvider.SetToolTip(_radPanImages, SR.TooltipToolAppliesToSelectedImage);
+			_tooltipProvider.SetToolTip(_radResetImages, SR.TooltipToolAppliesToSelectedImage);
+
+			_tooltipProvider.SetToolTip(_lblEntireDisplaySet, SR.TooltipToolAppliesToEntireDisplaySet);
+			_tooltipProvider.SetToolTip(_radWindowLevelDisplaySets, SR.TooltipToolAppliesToEntireDisplaySet);
+			_tooltipProvider.SetToolTip(_radFlipRotateDisplaySets, SR.TooltipToolAppliesToEntireDisplaySet);
+			_tooltipProvider.SetToolTip(_radZoomDisplaySets, SR.TooltipToolAppliesToEntireDisplaySet);
+			_tooltipProvider.SetToolTip(_radPanDisplaySets, SR.TooltipToolAppliesToEntireDisplaySet);
+			_tooltipProvider.SetToolTip(_radResetDisplaySets, SR.TooltipToolAppliesToEntireDisplaySet);
+
+			_radWindowLevelImages.DataBindings.Add("Checked", bindingSource, "SelectedOnlyWindowLevel", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radFlipRotateImages.DataBindings.Add("Checked", bindingSource, "SelectedOnlyOrientation", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radZoomImages.DataBindings.Add("Checked", bindingSource, "SelectedOnlyZoom", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radPanImages.DataBindings.Add("Checked", bindingSource, "SelectedOnlyPan", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radResetImages.DataBindings.Add("Checked", bindingSource, "SelectedOnlyReset", false, DataSourceUpdateMode.OnPropertyChanged);
+
+			_radWindowLevelDisplaySets.DataBindings.Add("Checked", bindingSource, "DisplaySetWindowLevel", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radFlipRotateDisplaySets.DataBindings.Add("Checked", bindingSource, "DisplaySetOrientation", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radZoomDisplaySets.DataBindings.Add("Checked", bindingSource, "DisplaySetZoom", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radPanDisplaySets.DataBindings.Add("Checked", bindingSource, "DisplaySetPan", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radResetDisplaySets.DataBindings.Add("Checked", bindingSource, "DisplaySetReset", false, DataSourceUpdateMode.OnPropertyChanged);
 
 			_chkInvertZoomDirection.DataBindings.Add("Checked", _component, "InvertZoomDirection", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
@@ -53,6 +73,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			_component.ModalityBehavior = new ToolModalityBehaviorCollection(_collection);
 		}
 
+		private void HandleRadioButtonClick(object sender, EventArgs e)
+		{
+			var radioButton = sender as RadioButton;
+			if (radioButton != null)
+				radioButton.Checked = true;
+		}
+
+		#region ToolModalityBehaviorSettings Class
+
+		// ReSharper disable UnusedMember.Local
+		// ReSharper disable MemberCanBePrivate.Local
+
+		/// <summary>
+		/// Adapts the model side settings to the dual toggle form needed for this UI implementation
+		/// </summary>
 		private class ToolModalityBehaviorSettings : INotifyPropertyChanged
 		{
 			public event PropertyChangedEventHandler PropertyChanged;
@@ -91,6 +126,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 					{
 						_selectedOnlyWindowLevel = value;
 						NotifyPropertyChanged(@"SelectedOnlyWindowLevel");
+						NotifyPropertyChanged(@"DisplaySetWindowLevel");
 
 						_item.SelectedImageWindowLevelTool = _item.SelectedImageWindowLevelPresetsTool = _item.SelectedImageInvertTool = value;
 					}
@@ -106,6 +142,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 					{
 						_selectedOnlyOrientation = value;
 						NotifyPropertyChanged(@"SelectedOnlyOrientation");
+						NotifyPropertyChanged(@"DisplaySetOrientation");
 
 						_item.SelectedImageFlipTool = _item.SelectedImageRotateTool = value;
 					}
@@ -121,6 +158,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 					{
 						_selectedOnlyZoom = value;
 						NotifyPropertyChanged(@"SelectedOnlyZoom");
+						NotifyPropertyChanged(@"DisplaySetZoom");
 
 						_item.SelectedImageZoomTool = value;
 					}
@@ -136,6 +174,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 					{
 						_selectedOnlyPan = value;
 						NotifyPropertyChanged(@"SelectedOnlyPan");
+						NotifyPropertyChanged(@"DisplaySetPan");
 
 						_item.SelectedImagePanTool = value;
 					}
@@ -151,10 +190,41 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 					{
 						_selectedOnlyReset = value;
 						NotifyPropertyChanged(@"SelectedOnlyReset");
+						NotifyPropertyChanged(@"DisplaySetReset");
 
 						_item.SelectedImageResetTool = value;
 					}
 				}
+			}
+
+			public bool DisplaySetWindowLevel
+			{
+				get { return !SelectedOnlyWindowLevel; }
+				set { SelectedOnlyWindowLevel = !value; }
+			}
+
+			public bool DisplaySetOrientation
+			{
+				get { return !SelectedOnlyOrientation; }
+				set { SelectedOnlyOrientation = !value; }
+			}
+
+			public bool DisplaySetZoom
+			{
+				get { return !SelectedOnlyZoom; }
+				set { SelectedOnlyZoom = !value; }
+			}
+
+			public bool DisplaySetPan
+			{
+				get { return !SelectedOnlyPan; }
+				set { SelectedOnlyPan = !value; }
+			}
+
+			public bool DisplaySetReset
+			{
+				get { return !SelectedOnlyReset; }
+				set { SelectedOnlyReset = !value; }
 			}
 
 			private void NotifyPropertyChanged(string propertyName)
@@ -162,5 +232,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 				EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+
+		// ReSharper restore MemberCanBePrivate.Local
+		// ReSharper restore UnusedMember.Local
+
+		#endregion
 	}
 }
