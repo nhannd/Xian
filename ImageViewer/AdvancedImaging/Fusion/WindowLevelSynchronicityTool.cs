@@ -164,17 +164,32 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		}
 
 		/// <summary>
-		/// Attempts to install a clone of the specified <paramref name="sourceVoiLut"/> to a fusion image. If the LUT is not linear, computes a dummy LUT.
+		/// Attempts to install an appropriate equivalent of the specified <paramref name="sourceVoiLut"/> to a fusion image. If the LUT is not linear, computes a dummy LUT.
 		/// </summary>
 		private static void InstallVoiLut(FusionPresentationImage fusionImage, IVoiLut sourceVoiLut, Frame sourceFrame, bool applyToOverlay)
 		{
 			IVoiLut newVoiLut;
-			if (sourceVoiLut is IVoiLutLinear)
+			if (sourceVoiLut is MinMaxPixelCalculatedLinearLut)
+			{
+				if (applyToOverlay)
+				{
+					// if the overlay source image is using a min/max calculated LUT, install a custom calculated LUT that delay-computes min/max from the fusion data
+					// we need to delay-compute this because the fusion image graphic is delay-generated, and thus not necessarily available until just before rendering!
+					var skipModalityLut = sourceFrame.ParentImageSop.Modality == @"PT" && sourceFrame.IsSubnormalRescale;
+					newVoiLut = new FusionOverlayMinMaxVoiLutLinear(fusionImage, !skipModalityLut);
+				}
+				else
+				{
+					// if the base source image is using a min/max calculated LUT, install a similarly min/max calculated LUT for the base of the fusion image
+					newVoiLut = new MinMaxPixelCalculatedLinearLut(fusionImage.ImageGraphic.PixelData);
+				}
+			}
+			else if (sourceVoiLut is IVoiLutLinear)
 			{
 				var voiLutLinear = (IVoiLutLinear) sourceVoiLut;
 				var normalizedVoiSlope = 1.0;
 				var normalizedVoiIntercept = 0.0;
-				if (sourceFrame.ParentImageSop.Modality == @"PT" && sourceFrame.IsSubnormalRescale)
+				if (applyToOverlay && sourceFrame.ParentImageSop.Modality == @"PT" && sourceFrame.IsSubnormalRescale)
 				{
 					// for subnormal PET rescale slope cases, the original VOI windows must be transformed through the same process as what MPR did to the pixel data
 					normalizedVoiSlope = sourceFrame.RescaleSlope/fusionImage.OverlayFrameData.OverlayRescaleSlope;
@@ -184,6 +199,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 			else
 			{
+				// if the source image is using some non-linear LUT, just install a default pass-through LUT
 				newVoiLut = new IdentityVoiLinearLut();
 			}
 
@@ -193,6 +209,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				fusionImage.BaseVoiLutManager.InstallVoiLut(newVoiLut);
 		}
 
+		/// <summary>
+		/// Gets the initial VOI LUT for the source frames (base or overlay). This is NOT the LUT used on the fusion image! See <see cref="InstallVoiLut"/>.
+		/// </summary>
 		private static IVoiLut GetInitialVoiLut(Frame frame)
 		{
 			if (frame != null)
@@ -202,8 +221,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					var voiLut = InitialVoiLutProvider.Instance.GetLut(image);
 					if (voiLut == null && image is IImageGraphicProvider)
 					{
-						//TODO (CR Sept 2010): will this always happen for the PT layer?  Could it be an
-						//average of the w/l of the source PT image frames?
 						var pixelData = ((IImageGraphicProvider) image).ImageGraphic.PixelData;
 						if (pixelData is GrayscalePixelData)
 							voiLut = new MinMaxPixelCalculatedLinearLut((GrayscalePixelData) pixelData);

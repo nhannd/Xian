@@ -89,6 +89,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return Volume.Modality; }
 		}
 
+		public int MinVolumeValue
+		{
+			get { return Volume.MinimumVolumeValue; }
+		}
+
+		public int MaxVolumeValue
+		{
+			get { return Volume.MaximumVolumeValue; }
+		}
+
 		/// <summary>
 		/// Gets a list of the source frames from which the overlay data was constructed.
 		/// </summary>

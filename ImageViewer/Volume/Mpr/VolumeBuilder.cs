@@ -240,15 +240,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				// compute normalized VOI windows
 				VoiWindow.SetWindows(ComputeNormalizedVoiWindows(_frames, normalizedSlope, normalizedIntercept), sopDataSourcePrototype);
 
-				var volumeArray = BuildVolumeArray((ushort) PixelPaddingValue, normalizedSlope, normalizedIntercept);
-				var volume = new Volume(null, volumeArray, VolumeSize, VoxelSpacing, ImagePositionPatient, ImageOrientationPatient, sopDataSourcePrototype, PixelPaddingValue, _frames[0].Frame.SeriesInstanceUid);
+				int minVolumeValue, maxVolumeValue;
+				var volumeArray = BuildVolumeArray((ushort) PixelPaddingValue, normalizedSlope, normalizedIntercept, out minVolumeValue, out maxVolumeValue);
+				var volume = new Volume(null, volumeArray, VolumeSize, VoxelSpacing, ImagePositionPatient, ImageOrientationPatient, sopDataSourcePrototype, PixelPaddingValue, _frames[0].Frame.SeriesInstanceUid, minVolumeValue, maxVolumeValue);
 				return volume;
 			}
 
 			// Builds the volume array. Takes care of Gantry Tilt correction (pads rows at top/bottom accordingly)
-			private ushort[] BuildVolumeArray(ushort pixelPadValue, double normalizedSlope, double normalizedIntercept)
+			private ushort[] BuildVolumeArray(ushort pixelPadValue, double normalizedSlope, double normalizedIntercept, out int minVolumeValue, out int maxVolumeValue)
 			{
 				var volumeData = MemoryManager.Allocate<ushort>(VolumeSize.Volume, TimeSpan.FromSeconds(10));
+				var min = int.MaxValue;
+				var max = int.MinValue;
 
 				float lastFramePos = (float) _frames[_frames.Count - 1].Frame.ImagePositionPatient.Z;
 
@@ -288,8 +291,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						var frameBytesPerPixel = sourceFrame.BitsAllocated/8;
 						var frameIsSigned = sourceFrame.PixelRepresentation != 0;
 						var frameModalityLut = lutFactory.GetModalityLutLinear(frameBitsStored, frameIsSigned, sourceFrame.RescaleSlope, sourceFrame.RescaleIntercept);
-						CopyFrameData(frameData, frameBytesPerPixel, frameIsSigned, frameModalityLut, volumeData, position, normalizedSlope, normalizedIntercept);
+						int frameMin, frameMax;
+						CopyFrameData(frameData, frameBytesPerPixel, frameIsSigned, frameModalityLut, volumeData, position, normalizedSlope, normalizedIntercept, out frameMin, out frameMax);
 						position += frameData.Length/sizeof (ushort);
+						min = Math.Min(min, frameMin);
+						max = Math.Max(max, frameMax);
 
 						// Finish out any padding left over from PadTop
 						if (paddingRows > 0) // Pad bottom
@@ -305,14 +311,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					}
 				}
 
+				minVolumeValue = min;
+				maxVolumeValue = max;
 				return volumeData;
 			}
 
-			private static void CopyFrameData(byte[] frameData, int frameBytesPerPixel, bool frameIsSigned, IModalityLut frameModalityLut, ushort[] volumeData, int volumeStart, double normalizedSlope, double normalizedIntercept)
+			private static void CopyFrameData(byte[] frameData, int frameBytesPerPixel, bool frameIsSigned, IModalityLut frameModalityLut, ushort[] volumeData, int volumeStart, double normalizedSlope, double normalizedIntercept, out int minFramePixel, out int maxFramePixel)
 			{
 				var pixelCount = frameData.Length/frameBytesPerPixel;
 				unsafe
 				{
+					var min = int.MaxValue;
+					var max = int.MinValue;
+
 					fixed (byte* pFrameData = frameData)
 					fixed (ushort* pVolumeData = volumeData)
 					{
@@ -323,7 +334,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 							{
 								var frameValue = frameModalityLut[frameIsSigned ? (int) pFrameData16[i] : (ushort) pFrameData16[i]];
 								var volumeValue = (frameValue - normalizedIntercept)/normalizedSlope;
-								pVolumeData[volumeStart + i] = (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(volumeValue)));
+								var volumePixel = (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(volumeValue)));
+								min = Math.Min(min, volumePixel);
+								max = Math.Max(max, volumePixel);
+								pVolumeData[volumeStart + i] = volumePixel;
 							}
 						}
 						else if (frameBytesPerPixel == 1)
@@ -332,10 +346,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 							{
 								var frameValue = frameModalityLut[frameIsSigned ? (int) (sbyte) pFrameData[i] : pFrameData[i]];
 								var volumeValue = (frameValue - normalizedIntercept)/normalizedSlope;
-								pVolumeData[volumeStart + i] = (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(volumeValue)));
+								var volumePixel = (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(volumeValue)));
+								min = Math.Min(min, volumePixel);
+								max = Math.Max(max, volumePixel);
+								pVolumeData[volumeStart + i] = volumePixel;
 							}
 						}
 					}
+
+					minFramePixel = min;
+					maxFramePixel = max;
 				}
 			}
 

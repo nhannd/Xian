@@ -76,6 +76,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private readonly string _description;
 		private readonly string _sourceSeriesInstanceUid;
+		private readonly int _minVolumeValue;
+		private readonly int _maxVolumeValue;
 		private readonly VolumeSopDataSourcePrototype _modelDicom;
 
 		#endregion
@@ -91,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public Volume(short[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
 		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue, string sourceSeriesInstanceUid)
 			: this(data, null, dimensions, spacing, originPatient, orientationPatient,
-			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel, 16, 16, true), paddingValue, sourceSeriesInstanceUid) {}
+			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel, 16, 16, true), paddingValue, sourceSeriesInstanceUid, 0, 0) {}
 
 		/// <summary>
 		/// Constructs a <see cref="Volume"/> using a volume data array of unsigned 16-bit words.
@@ -102,15 +104,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public Volume(ushort[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
 		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue, string sourceSeriesInstanceUid)
 			: this(null, data, dimensions, spacing, originPatient, orientationPatient,
-			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel, 16, 16, false), paddingValue, sourceSeriesInstanceUid) {}
+			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel, 16, 16, false), paddingValue, sourceSeriesInstanceUid, 0, 0) {}
 
-		private Volume(short[] dataInt16, ushort[] dataUInt16, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
-		               Matrix orientationPatient, VolumeSopDataSourcePrototype sopDataSourcePrototype, int paddingValue, string sourceSeriesInstanceUid)
+		private Volume(short[] dataInt16, ushort[] dataUInt16, Size3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatient, VolumeSopDataSourcePrototype sopDataSourcePrototype, int paddingValue, string sourceSeriesInstanceUid, int minVolumeValue, int maxVolumeValue)
 		{
 			Platform.CheckTrue(dataInt16 != null ^ dataUInt16 != null, "Exactly one of dataInt16 and dataUInt16 must be non-null.");
 			_volumeDataInt16 = dataInt16;
 			_volumeDataUInt16 = dataUInt16;
 			_sourceSeriesInstanceUid = sourceSeriesInstanceUid;
+			_minVolumeValue = minVolumeValue;
+			_maxVolumeValue = maxVolumeValue;
 			_arrayDimensions = dimensions;
 			_voxelSpacing = spacing;
 			_originPatient = originPatient;
@@ -210,6 +213,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public bool Signed
 		{
 			get { return _volumeDataInt16 != null; }
+		}
+
+		/// <summary>
+		/// Gets the minimum value in the volume data.
+		/// </summary>
+		public int MinimumVolumeValue
+		{
+			get { return _minVolumeValue; }
+		}
+
+		/// <summary>
+		/// Gets the maximum value in the volume data.
+		/// </summary>
+		public int MaximumVolumeValue
+		{
+			get { return _maxVolumeValue; }
 		}
 
 		/// <summary>
