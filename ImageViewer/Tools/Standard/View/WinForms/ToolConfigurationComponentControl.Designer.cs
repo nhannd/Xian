@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ToolConfigurationComponentControl));
 			this._grpToolModalityBehavior = new System.Windows.Forms.GroupBox();
 			this._cboModality = new System.Windows.Forms.ComboBox();
@@ -46,6 +47,7 @@
 			this._lblZoom = new System.Windows.Forms.Label();
 			this._chkInvertZoomDirection = new System.Windows.Forms.CheckBox();
 			this._grpGeneral = new System.Windows.Forms.GroupBox();
+			this._tooltipProvider = new System.Windows.Forms.ToolTip(this.components);
 			this._grpToolModalityBehavior.SuspendLayout();
 			this._lyoTable.SuspendLayout();
 			this._grpGeneral.SuspendLayout();
@@ -102,30 +104,35 @@
 			// 
 			resources.ApplyResources(this._chkWindowLevel, "_chkWindowLevel");
 			this._chkWindowLevel.Name = "_chkWindowLevel";
+			this._tooltipProvider.SetToolTip(this._chkWindowLevel, resources.GetString("_chkWindowLevel.ToolTip"));
 			this._chkWindowLevel.UseVisualStyleBackColor = true;
 			// 
 			// _chkOrientation
 			// 
 			resources.ApplyResources(this._chkOrientation, "_chkOrientation");
 			this._chkOrientation.Name = "_chkOrientation";
+			this._tooltipProvider.SetToolTip(this._chkOrientation, resources.GetString("_chkOrientation.ToolTip"));
 			this._chkOrientation.UseVisualStyleBackColor = true;
 			// 
 			// _chkZoom
 			// 
 			resources.ApplyResources(this._chkZoom, "_chkZoom");
 			this._chkZoom.Name = "_chkZoom";
+			this._tooltipProvider.SetToolTip(this._chkZoom, resources.GetString("_chkZoom.ToolTip"));
 			this._chkZoom.UseVisualStyleBackColor = true;
 			// 
 			// _chkPan
 			// 
 			resources.ApplyResources(this._chkPan, "_chkPan");
 			this._chkPan.Name = "_chkPan";
+			this._tooltipProvider.SetToolTip(this._chkPan, resources.GetString("_chkPan.ToolTip"));
 			this._chkPan.UseVisualStyleBackColor = true;
 			// 
 			// _chkReset
 			// 
 			resources.ApplyResources(this._chkReset, "_chkReset");
 			this._chkReset.Name = "_chkReset";
+			this._tooltipProvider.SetToolTip(this._chkReset, resources.GetString("_chkReset.ToolTip"));
 			this._chkReset.UseVisualStyleBackColor = true;
 			// 
 			// _lblSelectedImage
@@ -152,6 +159,7 @@
 			// 
 			resources.ApplyResources(this._chkInvertZoomDirection, "_chkInvertZoomDirection");
 			this._chkInvertZoomDirection.Name = "_chkInvertZoomDirection";
+			this._tooltipProvider.SetToolTip(this._chkInvertZoomDirection, resources.GetString("_chkInvertZoomDirection.ToolTip"));
 			this._chkInvertZoomDirection.UseVisualStyleBackColor = true;
 			// 
 			// _grpGeneral
@@ -197,5 +205,6 @@
 		private System.Windows.Forms.CheckBox _chkInvertZoomDirection;
 		private System.Windows.Forms.GroupBox _grpGeneral;
 		private System.Windows.Forms.Label _lblModality;
+		private System.Windows.Forms.ToolTip _tooltipProvider;
 	}
 }

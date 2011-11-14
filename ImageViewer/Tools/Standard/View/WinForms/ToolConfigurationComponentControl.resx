@@ -184,13 +184,13 @@
     <value>3, 20</value>
   </data>
   <data name="_lblWindowLevel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 20</value>
+    <value>79, 20</value>
   </data>
   <data name="_lblWindowLevel.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="_lblWindowLevel.Text" xml:space="preserve">
-    <value>Window/Level and Invert</value>
+    <value>Window/Level</value>
   </data>
   <data name="_lblWindowLevel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -217,13 +217,13 @@
     <value>3, 100</value>
   </data>
   <data name="_lblReset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 20</value>
+    <value>79, 20</value>
   </data>
   <data name="_lblReset.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
   </data>
   <data name="_lblReset.Text" xml:space="preserve">
-    <value>Reset Tool</value>
+    <value>Reset</value>
   </data>
   <data name="_lblReset.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -250,13 +250,19 @@
     <value>Fill</value>
   </data>
   <data name="_chkWindowLevel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 23</value>
+    <value>88, 23</value>
   </data>
   <data name="_chkWindowLevel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 14</value>
+    <value>108, 14</value>
   </data>
   <data name="_chkWindowLevel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
+  </data>
+  <metadata name="_tooltipProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="_chkWindowLevel.ToolTip" xml:space="preserve">
+    <value>When checked, tool will apply to only the selected image. When not checked, tool will apply to all linked images.</value>
   </data>
   <data name="&gt;&gt;_chkWindowLevel.Name" xml:space="preserve">
     <value>_chkWindowLevel</value>
@@ -280,13 +286,16 @@
     <value>Fill</value>
   </data>
   <data name="_chkOrientation.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 43</value>
+    <value>88, 43</value>
   </data>
   <data name="_chkOrientation.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 14</value>
+    <value>108, 14</value>
   </data>
   <data name="_chkOrientation.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
+  </data>
+  <data name="_chkOrientation.ToolTip" xml:space="preserve">
+    <value>When checked, tool will apply to only the selected image. When not checked, tool will apply to all linked images.</value>
   </data>
   <data name="&gt;&gt;_chkOrientation.Name" xml:space="preserve">
     <value>_chkOrientation</value>
@@ -310,13 +319,16 @@
     <value>Fill</value>
   </data>
   <data name="_chkZoom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 63</value>
+    <value>88, 63</value>
   </data>
   <data name="_chkZoom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 14</value>
+    <value>108, 14</value>
   </data>
   <data name="_chkZoom.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
+  </data>
+  <data name="_chkZoom.ToolTip" xml:space="preserve">
+    <value>When checked, tool will apply to only the selected image. When not checked, tool will apply to all linked images.</value>
   </data>
   <data name="&gt;&gt;_chkZoom.Name" xml:space="preserve">
     <value>_chkZoom</value>
@@ -340,13 +352,16 @@
     <value>Fill</value>
   </data>
   <data name="_chkPan.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 83</value>
+    <value>88, 83</value>
   </data>
   <data name="_chkPan.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 14</value>
+    <value>108, 14</value>
   </data>
   <data name="_chkPan.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
+  </data>
+  <data name="_chkPan.ToolTip" xml:space="preserve">
+    <value>When checked, tool will apply to only the selected image. When not checked, tool will apply to all linked images.</value>
   </data>
   <data name="&gt;&gt;_chkPan.Name" xml:space="preserve">
     <value>_chkPan</value>
@@ -370,13 +385,16 @@
     <value>Fill</value>
   </data>
   <data name="_chkReset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 103</value>
+    <value>88, 103</value>
   </data>
   <data name="_chkReset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 14</value>
+    <value>108, 14</value>
   </data>
   <data name="_chkReset.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
+  </data>
+  <data name="_chkReset.ToolTip" xml:space="preserve">
+    <value>When checked, tool will apply to only the selected image. When not checked, tool will apply to all linked images.</value>
   </data>
   <data name="&gt;&gt;_chkReset.Name" xml:space="preserve">
     <value>_chkReset</value>
@@ -397,10 +415,10 @@
     <value>Fill</value>
   </data>
   <data name="_lblSelectedImage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 0</value>
+    <value>88, 0</value>
   </data>
   <data name="_lblSelectedImage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 20</value>
+    <value>108, 20</value>
   </data>
   <data name="_lblSelectedImage.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -433,13 +451,13 @@
     <value>3, 40</value>
   </data>
   <data name="_lblOrientation.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 20</value>
+    <value>79, 20</value>
   </data>
   <data name="_lblOrientation.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
   <data name="_lblOrientation.Text" xml:space="preserve">
-    <value>Flips and Rotations</value>
+    <value>Flips/Rotations</value>
   </data>
   <data name="_lblOrientation.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -466,13 +484,13 @@
     <value>3, 80</value>
   </data>
   <data name="_lblPan.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 20</value>
+    <value>79, 20</value>
   </data>
   <data name="_lblPan.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
   <data name="_lblPan.Text" xml:space="preserve">
-    <value>Pan Tool</value>
+    <value>Pan</value>
   </data>
   <data name="_lblPan.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -499,13 +517,13 @@
     <value>3, 60</value>
   </data>
   <data name="_lblZoom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 20</value>
+    <value>79, 20</value>
   </data>
   <data name="_lblZoom.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
   <data name="_lblZoom.Text" xml:space="preserve">
-    <value>Zoom Tool</value>
+    <value>Zoom</value>
   </data>
   <data name="_lblZoom.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -529,7 +547,7 @@
     <value>6</value>
   </data>
   <data name="_lyoTable.Size" type="System.Drawing.Size, System.Drawing">
-    <value>265, 120</value>
+    <value>199, 120</value>
   </data>
   <data name="_lyoTable.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -547,7 +565,7 @@
     <value>2</value>
   </data>
   <data name="_lyoTable.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_lblWindowLevel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_lblReset" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_chkWindowLevel" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_chkOrientation" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_chkZoom" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_chkPan" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_chkReset" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_lblSelectedImage" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_lblOrientation" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_lblPan" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_lblZoom" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,150,AutoSize,0" /&gt;&lt;Rows Styles="Absolute,20,Absolute,20,Absolute,20,Absolute,20,Absolute,20,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_lblWindowLevel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_lblReset" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_chkWindowLevel" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_chkOrientation" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_chkZoom" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_chkPan" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_chkReset" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_lblSelectedImage" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_lblOrientation" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_lblPan" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_lblZoom" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,85,AutoSize,0" /&gt;&lt;Rows Styles="Absolute,20,Absolute,20,Absolute,20,Absolute,20,Absolute,20,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="_grpToolModalityBehavior.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 8</value>
@@ -556,13 +574,13 @@
     <value>8, 8, 8, 8</value>
   </data>
   <data name="_grpToolModalityBehavior.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 198</value>
+    <value>223, 198</value>
   </data>
   <data name="_grpToolModalityBehavior.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="_grpToolModalityBehavior.Text" xml:space="preserve">
-    <value>Modality-Specific Behavior</value>
+    <value>Behavior</value>
   </data>
   <data name="&gt;&gt;_grpToolModalityBehavior.Name" xml:space="preserve">
     <value>_grpToolModalityBehavior</value>
@@ -583,13 +601,16 @@
     <value>11, 24</value>
   </data>
   <data name="_chkInvertZoomDirection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 17</value>
+    <value>140, 17</value>
   </data>
   <data name="_chkInvertZoomDirection.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="_chkInvertZoomDirection.Text" xml:space="preserve">
-    <value>Invert zoom tool operation</value>
+    <value>Inverted zoom operation</value>
+  </data>
+  <data name="_chkInvertZoomDirection.ToolTip" xml:space="preserve">
+    <value>In inverted operation, up will zoom in and down will zoom out.</value>
   </data>
   <data name="&gt;&gt;_chkInvertZoomDirection.Name" xml:space="preserve">
     <value>_chkInvertZoomDirection</value>
@@ -610,7 +631,7 @@
     <value>8, 8, 8, 8</value>
   </data>
   <data name="_grpGeneral.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 55</value>
+    <value>223, 55</value>
   </data>
   <data name="_grpGeneral.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -641,6 +662,12 @@
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
     <value>452, 291</value>
+  </data>
+  <data name="&gt;&gt;_tooltipProvider.Name" xml:space="preserve">
+    <value>_tooltipProvider</value>
+  </data>
+  <data name="&gt;&gt;_tooltipProvider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ToolConfigurationComponentControl</value>
