@@ -44,6 +44,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Creates a color map.
 		/// </summary>
-		IDataLut Create();
+		IColorMap Create();
 	}
 }

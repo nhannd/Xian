@@ -12,9 +12,28 @@
 using System.Runtime.Serialization;
 using ClearCanvas.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
+using System;
 
 namespace ClearCanvas.ImageViewer.Web.Common
 {
+
+    [DataContract]
+    public enum LoadStudyOptions
+    {        
+        /// <summary>
+        /// Load key images of the primary study only
+        /// </summary>
+        [EnumMember]
+        KeyImagesOnly,
+
+
+        /// <summary>
+        /// Exclude priors
+        /// </summary>
+        [EnumMember]
+        ExcludePriors
+    }
+
 	[DataContract(Namespace = ViewerNamespace.Value)]
 	public class StartViewerApplicationRequest : StartApplicationRequest
 	{
@@ -29,6 +48,9 @@ namespace ClearCanvas.ImageViewer.Web.Common
 
 		[DataMember(IsRequired = false)]
 		public string[] PatientId { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public LoadStudyOptions LoadStudyOptions { get; set; }
 
         [DataMember(IsRequired = false)]
         public string ApplicationName { get; set; }

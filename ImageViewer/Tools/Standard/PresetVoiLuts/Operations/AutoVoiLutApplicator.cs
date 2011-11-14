@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
     internal interface IAutoVoiLutApplicator
     {
         //Technically, shouldn't be here, but this stuff needs some serious refactoring ...
-        IComposableLut GetInitialLut();
+        IVoiLut GetInitialLut();
 
         bool ApplyInitialLut();
         bool ApplyNextLut();
@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
         #region IAutoVoiLutApplicator Members
 
-        public abstract IComposableLut GetInitialLut();
+        public abstract IVoiLut GetInitialLut();
 
         public abstract bool ApplyInitialLut();
         public abstract bool ApplyNextLut();
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
                 get { return ((IVoiLutProvider) Image).VoiLutManager; }
             }
 
-            private IComposableLut CurrentLut
+            private IVoiLut CurrentLut
             {
                 get { return VoiLutManager.VoiLut; }
             }
@@ -114,11 +114,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
                     return new MinMaxPixelCalculatedLinearLut(PixelData);
             }
 
-            public override IComposableLut GetInitialLut()
+            public override IVoiLut GetInitialLut()
             {
                 foreach (State state in _stateProgression)
                 {
-                    IComposableLut lut = state.GetLut(this);
+                    IVoiLut lut = state.GetLut(this);
                     if (lut != null)
                         return lut;
                 }
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
             public override bool ApplyNextLut()
             {
-                IComposableLut currentLut = CurrentLut;
+                IVoiLut currentLut = CurrentLut;
                 State currentState = State.GetState(currentLut);
 
                 if (currentLut is IAutoVoiLut)
@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
                         int nextState = _stateProgression.IndexOf(currentState) + 1;
                         for (int n = nextState; n < nextState + _stateProgression.Count; n++)
                         {
-                            IComposableLut lut = _stateProgression[(n%_stateProgression.Count)].GetLut(this);
+                            IVoiLut lut = _stateProgression[(n%_stateProgression.Count)].GetLut(this);
                             if (lut != null)
                             {
                                 VoiLutManager.InstallVoiLut(lut);
@@ -259,12 +259,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
                     _lutGetter = lutGetter;
                 }
 
-                public IComposableLut GetLut(Grayscale applicator)
+                public IVoiLut GetLut(Grayscale applicator)
                 {
                     return _lutGetter(applicator);
                 }
 
-                public static State GetState(IComposableLut currentLut)
+                public static State GetState(IVoiLut currentLut)
                 {
                     if (currentLut is AdjustableDataLut)
                     {
@@ -327,7 +327,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
                 #region Nested type: LutGetter
 
-                private delegate IComposableLut LutGetter(Grayscale applicator);
+                private delegate IVoiLut LutGetter(Grayscale applicator);
 
                 #endregion
             }
@@ -350,7 +350,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
                 get { return ((IVoiLutProvider) Image).VoiLutManager; }
             }
 
-            public override IComposableLut GetInitialLut()
+            public override IVoiLut GetInitialLut()
             {
                 return new IdentityVoiLinearLut();
             }

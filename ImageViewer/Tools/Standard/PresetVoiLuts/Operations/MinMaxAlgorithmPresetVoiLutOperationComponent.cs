@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				throw new InvalidOperationException("The input presentation image is not supported.");
 
 			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
-			IComposableLut currentLut = manager.VoiLut;
+			IVoiLut currentLut = manager.VoiLut;
 
 			if (currentLut is MinMaxPixelCalculatedLinearLut)
 				return;

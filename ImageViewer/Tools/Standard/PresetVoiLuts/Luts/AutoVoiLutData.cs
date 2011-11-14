@@ -20,7 +20,7 @@ using DataLut=ClearCanvas.ImageViewer.Imaging.DataLut;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
-    public interface IAutoVoiLut : IComposableLut
+    public interface IAutoVoiLut : IVoiLut
 	{
         bool IsHeader { get; }
         bool IsData { get; }
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 	}
 
 	[Cloneable(true)]
-    internal abstract class AutoVoiDataLut : DataLut, IAutoVoiLut
+    internal abstract class AutoVoiDataLut : DataVoiLut, IAutoVoiLut
 	{
 		#region Memento
 

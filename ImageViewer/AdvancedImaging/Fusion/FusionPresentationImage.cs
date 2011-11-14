@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#region IModalityLutProvider Members
 
-		public IComposableLut ModalityLut
+		public IModalityLut ModalityLut
 		{
 			get { return ImageGraphic.ModalityLut; }
 		}

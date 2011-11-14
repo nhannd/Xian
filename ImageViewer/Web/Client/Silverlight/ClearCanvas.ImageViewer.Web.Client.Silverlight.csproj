@@ -98,6 +98,7 @@
     <Compile Include="Controls\ThrottlePanel.xaml.cs">
       <DependentUpon>ThrottlePanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Resources\ImageViewerResources.cs" />
     <Compile Include="ServerApplicationStopEventArgs.cs" />
     <Compile Include="ServerMessageSender.cs" />
     <Compile Include="ViewModel\ImageViewerViewModel.cs" />
@@ -276,21 +277,41 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AppServiceReference\ApplicationService.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService22.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService23.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService26.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService27.wsdl" />
+    <None Include="Service References\AppServiceReference\ApplicationService513.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService1.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService1.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService514.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService2.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService515.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService3.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService516.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService4.xsd">
+    <None Include="Service References\AppServiceReference\ApplicationService517.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService518.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService54.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService56.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService57.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService58.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService59.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse.datasource">
@@ -308,7 +329,8 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Service References\AppServiceReference\ApplicationService.disco" />
+    <None Include="Service References\AppServiceReference\ApplicationService11.disco" />
+    <None Include="Service References\AppServiceReference\ApplicationService13.disco" />
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>
@@ -347,7 +369,7 @@
       <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Labels.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Labels.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SR.resx">

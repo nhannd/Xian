@@ -52,4 +52,17 @@ namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
             ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
         }
     }
+
+    [ExtensionOf(typeof(SampleRuleExtensionPoint))]
+    public class GrantAccessInstitutionSamples : SampleRuleBase
+    {
+        public GrantAccessInstitutionSamples()
+            : base("GrantAccessInstitutionSamples",
+                   "Grant Access by Institution Name",
+                   ServerRuleTypeEnum.DataAccess,
+                   "Sample_GrantAccessInstitution.xml")
+        {
+            ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+        }
+    }
 }

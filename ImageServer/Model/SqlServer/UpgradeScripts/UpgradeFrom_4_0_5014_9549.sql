@@ -13,13 +13,17 @@ GO
 BEGIN TRANSACTION
 GO
 
+
 PRINT N'Adding new ServiceLockTypeEnum, SyncDataAccess'
 GO
-INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+INSERT INTO [dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),300,'SyncDataAccess','Synchronize Data Access','This service periodically synchronizes the deletion status of Authority Groups on the Administrative Services with Data Access granted to studies on the ImageServer.')
 GO
+UPDATE [dbo].[ServiceLockTypeEnum] SET [LongDescription] = 'This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem that have not been archived.  Studies that have been archived will have Study Archived and Data Access rules applied.'
+	WHERE [Lookup] = 'FilesystemStudyProcess'
+
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO

@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Determines and returns the initial Voi Lut that should be applied to the input <see cref="IPresentationImage"/>.
 		/// </summary>
 		/// <param name="presentationImage">The <see cref="IPresentationImage"/> whose intial Lut is to be determined.</param>
-		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
-		IComposableLut GetLut(IPresentationImage presentationImage);
+		/// <returns>The Voi Lut as an <see cref="IVoiLut"/>.</returns>
+		IVoiLut GetLut(IPresentationImage presentationImage);
 	}
 }

@@ -131,7 +131,7 @@ namespace ClearCanvas.Enterprise.Core.Upgrade
 						}
 						catch (Exception e)
 						{
-							Console.WriteLine("Unexpected Exception when executing upgrade script :");
+							Console.WriteLine("Unexpected Exception when executing upgrade script : {0}", e.Message);
 							Console.WriteLine("Call stack : {0}", e.StackTrace);
 							return false;
 						}

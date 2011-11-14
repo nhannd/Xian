@@ -16,6 +16,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -49,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			private void Apply()
 			{
 				ImageOperationApplicator applicator = new ImageOperationApplicator(_ownerTool.SelectedPresentationImage, this);
-				UndoableCommand historyCommand = applicator.ApplyToAllImages();
+				UndoableCommand historyCommand = _ownerTool._toolBehavior.Behavior.SelectedImageColorMapTool ? applicator.ApplyToReferenceImage() : applicator.ApplyToAllImages();
 				if (historyCommand != null)
 				{
 					historyCommand.Name = SR.CommandColorMap;
@@ -72,10 +73,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		private readonly ActionResourceResolver _resolver;
+		private ToolModalityBehaviorHelper _toolBehavior;
 
 		public ColorMapTool()
 		{
 			_resolver = new ActionResourceResolver(this);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_toolBehavior = new ToolModalityBehaviorHelper(ImageViewer);
 		}
 
 		public override IActionSet Actions

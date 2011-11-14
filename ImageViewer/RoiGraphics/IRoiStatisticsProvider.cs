@@ -13,6 +13,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.RoiGraphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
@@ -25,11 +26,17 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <summary>
 		/// Gets the standard deviation of the values over the <see cref="Roi"/>.
 		/// </summary>
+		/// <remarks>
+		/// All stored pixel values are passed through the modality LUT function if it exists before any computation takes place.
+		/// </remarks>
 		double StandardDeviation { get; }
 
 		/// <summary>
 		/// Gets the mean of the values over the <see cref="Roi"/>.
 		/// </summary>
+		/// <remarks>
+		/// All stored pixel values are passed through the modality LUT function if it exists before any computation takes place.
+		/// </remarks>
 		double Mean { get; }
 	}
 
@@ -77,19 +84,20 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private static double CalculateMean
 			(
 			RectangleF roiBoundingBox,
-			GrayscalePixelData pixelData, 
-			IComposableLut modalityLut,
+			GrayscalePixelData pixelData,
+			IModalityLut modalityLut,
 			IsPointInRoiDelegate isPointInRoi
 			)
 		{
-			long sum = 0;
+			double sum = 0;
 			int pixelCount = 0;
 
+            var boundingBox = RectangleUtilities.RoundInflate(RectangleUtilities.ConvertToPositiveRectangle(roiBoundingBox));
 			pixelData.ForEachPixel(
-				(int)roiBoundingBox.Left,
-				(int)roiBoundingBox.Top,
-				(int)roiBoundingBox.Right,
-				(int)roiBoundingBox.Bottom,
+                boundingBox.Left,
+                boundingBox.Top,
+                boundingBox.Right,
+                boundingBox.Bottom,
 				delegate(int i, int x, int y, int pixelIndex)
 					{
 						if (isPointInRoi(x, y))
@@ -99,45 +107,44 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 							// when doing the calculation. Note that the modality LUT
 							// can be something other than a rescale intercept, so we can't
 							// just run the mean through the LUT.
-							int value = pixelData.GetPixel(pixelIndex);
-							if (modalityLut != null)
-								value = modalityLut[value];
-							
-							sum += value;
+							int storedValue = pixelData.GetPixel(pixelIndex);
+							double realValue = modalityLut != null ? modalityLut[storedValue] : storedValue;
+							sum += realValue;
 						}
 					});
 
 			if (pixelCount == 0)
 				return 0;
 
-			return (double) sum/pixelCount;
+			return sum/pixelCount;
 		}
 
 		private static double CalculateStandardDeviation
 			(
 			double mean,
 			RectangleF roiBoundingBox,
-			GrayscalePixelData pixelData, 
-			IComposableLut modalityLut,
+			GrayscalePixelData pixelData,
+			IModalityLut modalityLut,
 			IsPointInRoiDelegate isPointInRoi
 			)
 		{
 			double sum = 0;
 			int pixelCount = 0;
 
-			pixelData.ForEachPixel(
-				(int)roiBoundingBox.Left,
-				(int)roiBoundingBox.Top,
-				(int)roiBoundingBox.Right,
-				(int)roiBoundingBox.Bottom,
-				delegate(int i, int x, int y, int pixelIndex) {
+            var boundingBox = RectangleUtilities.RoundInflate(RectangleUtilities.ConvertToPositiveRectangle(roiBoundingBox));
+            pixelData.ForEachPixel(
+                boundingBox.Left,
+                boundingBox.Top,
+                boundingBox.Right,
+                boundingBox.Bottom,
+                delegate(int i, int x, int y, int pixelIndex)
+                {
 					if (isPointInRoi(x, y)) {
 						++pixelCount;
-						int value = pixelData.GetPixel(pixelIndex);
-						if (modalityLut != null)
-							value = modalityLut[value];
+						int storedValue = pixelData.GetPixel(pixelIndex);
+						double realValue = modalityLut != null ? modalityLut[storedValue] : storedValue;
 
-						double deviation = value - mean;
+						double deviation = realValue - mean;
 						sum += deviation*deviation;
 					}
 				});

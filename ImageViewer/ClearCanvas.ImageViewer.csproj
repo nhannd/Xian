@@ -159,6 +159,7 @@
     <Compile Include="Common\Cache.cs" />
     <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Common\Diagnostics.cs" />
+    <Compile Include="Common\ExtensionData.cs" />
     <Compile Include="Common\LargeObjectContainer.cs" />
     <Compile Include="Common\LargeObjectContainerCache.cs" />
     <Compile Include="Common\MemoryCollector.cs" />
@@ -180,7 +181,21 @@
     <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
     <Compile Include="ImageSetTree.cs" />
+    <Compile Include="Imaging\ColorMapBase.cs" />
+    <Compile Include="Imaging\ColorMapMemento.cs" />
+    <Compile Include="Imaging\ComposableModalityLut.cs" />
+    <Compile Include="Imaging\ComposableVoiLut.cs" />
+    <Compile Include="Imaging\DataModalityLut.cs" />
+    <Compile Include="Imaging\DataVoiLut.cs" />
+    <Compile Include="Imaging\GeneratedDataModalityLut.cs" />
+    <Compile Include="Imaging\IColorMap.cs" />
+    <Compile Include="Imaging\IDataModalityLut.cs" />
+    <Compile Include="Imaging\IModalityLut.cs" />
+    <Compile Include="Imaging\IVoiLut.cs" />
     <Compile Include="Imaging\NamedVoiLutLinear.cs" />
+    <Compile Include="Imaging\NormalizationLutLinear.cs" />
+    <Compile Include="Imaging\SimpleColorMap.cs" />
+    <Compile Include="Imaging\SimpleDataModalityLut.cs" />
     <Compile Include="Layout\HpDataContractAttribute.cs" />
     <Compile Include="Layout\HpExtensionPoints.cs" />
     <Compile Include="Layout\HpApplicabilityResult.cs" />
@@ -204,6 +219,7 @@
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
+    <Compile Include="StudyManagement\RescaleUnits.cs" />
     <Compile Include="StudyManagement\SopInstanceFactory.cs" />
     <Compile Include="StudyManagement\StudyExtensions.cs" />
     <Compile Include="StudyManagement\Tests\NormalizedPixelSpacingTests.cs" />
@@ -466,7 +482,6 @@
     <Compile Include="Imaging\GeneratedDataLut.cs" />
     <Compile Include="Imaging\IDataLut.cs" />
     <Compile Include="Imaging\IInitialVoiLutProvider.cs" />
-    <Compile Include="Imaging\ILut.cs" />
     <Compile Include="Imaging\GrayscalePixelData.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
     <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />
@@ -474,7 +489,6 @@
     <Compile Include="Imaging\CalculatedVoiLutLinear.cs" />
     <Compile Include="Imaging\IModalityLutProvider.cs" />
     <Compile Include="Imaging\IComposedLut.cs" />
-    <Compile Include="Imaging\ComposableLutMemento.cs" />
     <Compile Include="Imaging\ColorMapDescriptor.cs" />
     <Compile Include="Imaging\ColorMapFactoryBase.cs" />
     <Compile Include="Imaging\IColorMapFactory.cs" />
@@ -663,10 +677,12 @@
     <Compile Include="Imaging\IComposableLut.cs" />
     <Compile Include="ImageOperationApplicator.cs" />
     <Compile Include="Imaging\ComposableLut.cs" />
+    <Compile Include="Imaging\ComposableLutBase.cs" />
     <Compile Include="Imaging\ModalityLutLinear.cs" />
     <Compile Include="Imaging\Tests\CompositeLUTTest.cs" />
     <Compile Include="Imaging\Tests\ModalityLUTLinearTest.cs" />
-    <Compile Include="Imaging\Tests\VOILUTLinearTest.cs" />
+    <Compile Include="Imaging\Tests\NormalizationLutLinearTests.cs" />
+    <Compile Include="Imaging\Tests\VoiLutLinearTests.cs" />
     <Compile Include="Annotations\AnnotationBox.cs" />
     <Compile Include="Graphics\GraphicCollection.cs" />
     <Compile Include="Graphics\VectorGraphic.cs" />

@@ -315,10 +315,7 @@
     <value>{0:F1} pixels</value>
   </data>
   <data name="FormatMean" xml:space="preserve">
-    <value>Mean: {0:F1}</value>
-  </data>
-  <data name="FormatMeanCT" xml:space="preserve">
-    <value>Mean: {0:F1} HU</value>
+    <value>Mean: {0}</value>
   </data>
   <data name="FormatMouseButtonShortcutDescription" xml:space="preserve">
     <value>{0} : {1}</value>
@@ -333,10 +330,7 @@
     <value>Wheel : {0}</value>
   </data>
   <data name="FormatStdDev" xml:space="preserve">
-    <value>Std Dev: {0:F1}</value>
-  </data>
-  <data name="FormatStdDevCT" xml:space="preserve">
-    <value>Std Dev: {0:F1} HU</value>
+    <value>Std Dev: {0}</value>
   </data>
   <data name="LabelError" xml:space="preserve">
     <value>Error:</value>
@@ -570,5 +564,131 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   </data>
   <data name="FormatNameModalityDisplaySet" xml:space="preserve">
     <value>[{0}] All Images</value>
+  </data>
+  <data name="DescriptionUnits1cm" xml:space="preserve">
+    <value>1/centimetre</value>
+  </data>
+  <data name="DescriptionUnitsBqml" xml:space="preserve">
+    <value>becquerels/millilitre</value>
+  </data>
+  <data name="DescriptionUnitsCm2" xml:space="preserve">
+    <value>square centimetre</value>
+  </data>
+  <data name="DescriptionUnitsCm2ml" xml:space="preserve">
+    <value>square centimetre/millilitre</value>
+  </data>
+  <data name="DescriptionUnitsCnts" xml:space="preserve">
+    <value>counts</value>
+  </data>
+  <data name="DescriptionUnitsCps" xml:space="preserve">
+    <value>counts/second</value>
+  </data>
+  <data name="DescriptionUnitsGml" xml:space="preserve">
+    <value>grams/millilitre</value>
+  </data>
+  <data name="DescriptionUnitsHU" xml:space="preserve">
+    <value>Hounsfield units</value>
+  </data>
+  <data name="DescriptionUnitsMgminml" xml:space="preserve">
+    <value>milligrams/minute/millilitre</value>
+  </data>
+  <data name="DescriptionUnitsMlg" xml:space="preserve">
+    <value>millilitre/grams</value>
+  </data>
+  <data name="DescriptionUnitsMlming" xml:space="preserve">
+    <value>millilitre/minute/grams</value>
+  </data>
+  <data name="DescriptionUnitsMlminml" xml:space="preserve">
+    <value>millilitre/minute/millilitre</value>
+  </data>
+  <data name="DescriptionUnitsMlml" xml:space="preserve">
+    <value>millilitre/millilitre</value>
+  </data>
+  <data name="DescriptionUnitsOD" xml:space="preserve">
+    <value>1/1000 optical density</value>
+  </data>
+  <data name="DescriptionUnitsPcnt" xml:space="preserve">
+    <value>percent</value>
+  </data>
+  <data name="DescriptionUnitsPropcnts" xml:space="preserve">
+    <value>proportional to counts</value>
+  </data>
+  <data name="DescriptionUnitsPropcps" xml:space="preserve">
+    <value>proportional to counts/second</value>
+  </data>
+  <data name="DescriptionUnitsStddev" xml:space="preserve">
+    <value>standard deviations</value>
+  </data>
+  <data name="DescriptionUnitsUmolminml" xml:space="preserve">
+    <value>micromoles/minute/millilitre</value>
+  </data>
+  <data name="DescriptionUnitsUmolml" xml:space="preserve">
+    <value>micromoles/millilitre</value>
+  </data>
+  <data name="DescriptionUnitsUnspecified" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+  <data name="LabelUnits1cm" xml:space="preserve">
+    <value>1/cm</value>
+  </data>
+  <data name="LabelUnitsBqml" xml:space="preserve">
+    <value>Bq/ml</value>
+  </data>
+  <data name="LabelUnitsCm2" xml:space="preserve">
+    <value>cm²</value>
+  </data>
+  <data name="LabelUnitsCm2ml" xml:space="preserve">
+    <value>cm²/ml</value>
+  </data>
+  <data name="LabelUnitsCnts" xml:space="preserve">
+    <value>counts</value>
+  </data>
+  <data name="LabelUnitsCps" xml:space="preserve">
+    <value>counts/s</value>
+  </data>
+  <data name="LabelUnitsGml" xml:space="preserve">
+    <value>g/ml</value>
+  </data>
+  <data name="LabelUnitsHU" xml:space="preserve">
+    <value>HU</value>
+  </data>
+  <data name="LabelUnitsMgminml" xml:space="preserve">
+    <value>mg/min/ml</value>
+  </data>
+  <data name="LabelUnitsMlg" xml:space="preserve">
+    <value>ml/g</value>
+  </data>
+  <data name="LabelUnitsMlming" xml:space="preserve">
+    <value>ml/min/g</value>
+  </data>
+  <data name="LabelUnitsMlminml" xml:space="preserve">
+    <value>ml/min/ml</value>
+  </data>
+  <data name="LabelUnitsMlml" xml:space="preserve">
+    <value>ml/ml</value>
+  </data>
+  <data name="LabelUnitsOD" xml:space="preserve">
+    <value>1/1000 OD</value>
+  </data>
+  <data name="LabelUnitsPcnt" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="LabelUnitsPropcnts" xml:space="preserve">
+    <value>prop. to counts</value>
+  </data>
+  <data name="LabelUnitsPropcps" xml:space="preserve">
+    <value>prop. to counts/s</value>
+  </data>
+  <data name="LabelUnitsStddev" xml:space="preserve">
+    <value>σ</value>
+  </data>
+  <data name="LabelUnitsUmolminml" xml:space="preserve">
+    <value>µmol/min/ml</value>
+  </data>
+  <data name="LabelUnitsUmolml" xml:space="preserve">
+    <value>µmol/ml</value>
+  </data>
+  <data name="LabelUnitsUnspecified" xml:space="preserve">
+    <value />
   </data>
 </root>

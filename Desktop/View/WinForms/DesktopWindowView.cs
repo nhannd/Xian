@@ -593,6 +593,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			var dialog = new SaveFileDialog();
 			PrepareFileDialog(dialog, args);
 			dialog.OverwritePrompt = true;
+    		dialog.FileOk += (sender, e) =>
+    		                 	{
+									if(!ValidateFileSavePath(dialog.FileName, args))
+									{
+										e.Cancel = true;
+									}
+    		                 	};
 
 			var dr = dialog.ShowDialog(_form);
 			if(dr == DialogResult.OK)
@@ -836,5 +843,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			dialog.Filter = StringUtilities.Combine(args.Filters, "|",
 				delegate(FileExtensionFilter f) { return f.Description + "|" + f.Filter; });
 		}
+
+		private bool ValidateFileSavePath(string filePath, FileDialogCreationArgs args)
+		{
+			if (args.PreventSaveToInstallPath && filePath.StartsWith(Platform.InstallDirectory))
+			{
+				ShowMessageBox(SR.ErrorSaveFileToInstallPath, null, MessageBoxActions.Ok);
+				return false;
+			}
+			return true;
+		}
+
 	}
 }

@@ -84,6 +84,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return this.Volume.FrameOfReferenceUid; }
 		}
 
+		public string Modality
+		{
+			get { return Volume.Modality; }
+		}
+
+		/// <summary>
+		/// Gets a list of the source frames from which the overlay data was constructed.
+		/// </summary>
 		public IList<Frame> Frames
 		{
 			get { return CollectionUtils.Map<IFrameReference, Frame>(_frames, f => f.Frame).AsReadOnly(); }

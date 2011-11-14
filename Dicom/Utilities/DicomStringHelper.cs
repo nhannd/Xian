@@ -37,6 +37,7 @@ namespace ClearCanvas.Dicom.Utilities
 		/// </remarks>
 		static public string GetDicomStringArray<T>(IEnumerable<T> values)
 		{
+			// TODO CR (Nov 11): this will throw an exception if T were double or float and a value has enough decimal places to break the VR
 			return StringUtilities.Combine(values, "\\");
 		}
 

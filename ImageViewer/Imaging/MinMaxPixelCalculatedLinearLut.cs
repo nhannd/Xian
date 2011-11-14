@@ -28,12 +28,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Constructor.
 		/// </summary>
 		/// <remarks>
-		/// The input <see cref="IComposableLut"/> object can be null.
+		/// The input <see cref="IVoiLut"/> object can be null.
 		/// </remarks>
 		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
 		/// <param name="modalityLut">The modality lut to use for calculating <see cref="AlgorithmCalculatedVoiLutLinear.WindowWidth"/> 
 		/// and <see cref="AlgorithmCalculatedVoiLutLinear.WindowCenter"/>, if applicable.</param>
-		public MinMaxPixelCalculatedLinearLut(GrayscalePixelData pixelData, IComposableLut modalityLut)
+		public MinMaxPixelCalculatedLinearLut(GrayscalePixelData pixelData, IModalityLut modalityLut)
 			: base(pixelData, modalityLut)
 		{
 		}

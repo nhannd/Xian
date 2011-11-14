@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using System.Drawing;
 
@@ -147,5 +148,7 @@ namespace ClearCanvas.ImageViewer
 		/// paper/DICOM printing, thumbnail generation, creation of new DICOM images, etc.
 		/// </remarks>
 		void DrawToBitmap(Bitmap bmp);
+
+        ExtensionData ExtensionData { get; }
 	}
 }

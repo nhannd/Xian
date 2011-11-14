@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer.Web
             WebDesktopWindow window = new WebDesktopWindow(args, Application.Instance);
             window.Open();
 
-			_viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+            _viewer = CreateViewerComponent(startRequest);
 
 			try
 			{
@@ -355,6 +355,7 @@ namespace ClearCanvas.ImageViewer.Web
             ApplicationContext.Current.FireEvent(@event);
 		}
 
+
 	    public static LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
 	    {
 
@@ -381,6 +382,47 @@ namespace ClearCanvas.ImageViewer.Web
 	            throw new NotSupportedException("Only streaming study loader is supported at this time");
 	        }
 	    }
+
+        
+
+
+        private ImageViewerComponent CreateViewerComponent(StartViewerApplicationRequest request)
+        {
+            var keyImagesOnly = request.LoadStudyOptions!=null && (request.LoadStudyOptions & LoadStudyOptions.KeyImagesOnly) == LoadStudyOptions.KeyImagesOnly;
+            var excludePriors = request.LoadStudyOptions != null && (request.LoadStudyOptions & LoadStudyOptions.ExcludePriors) == LoadStudyOptions.ExcludePriors;
+
+            if (keyImagesOnly)
+            {
+                var layoutManager = new ImageViewer.Layout.Basic.LayoutManager() { LayoutHook = new KeyImageLayoutHook() };
+                //override the KO options
+                const string ko = "KO";
+                var realOptions = new KeyImageDisplaySetCreationOptions(layoutManager.DisplaySetCreationOptions[ko]);
+                layoutManager.DisplaySetCreationOptions[ko] = realOptions;
+
+
+                if (excludePriors)
+                {
+                    return new ImageViewerComponent(layoutManager, PriorStudyFinder.Null); 
+                }
+                else
+                {
+                    return new ImageViewerComponent(layoutManager);
+                }
+            }
+            else
+            {
+                if (excludePriors) 
+                {
+                    return new ImageViewerComponent(LayoutManagerCreationParameters.Extended, PriorStudyFinder.Null);
+                }
+                else
+                {
+                    return new ImageViewerComponent(LayoutManagerCreationParameters.Extended); 
+                } 
+            }
+
+
+        }
 
 	    protected override void OnStop()
 		{
@@ -467,4 +509,6 @@ namespace ClearCanvas.ImageViewer.Web
             //throw new NotSupportedException();
         }
     }
+
+    
 }

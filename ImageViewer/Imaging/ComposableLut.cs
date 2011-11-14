@@ -9,150 +9,74 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Abstract class providing base implementation for a Lut that can be added to a <see cref="LutCollection"/>.
+	/// Abstract base implementation for a lookup table in the standard grayscale image display pipeline that performs any additional transformation prior to selecting the VOI range.
 	/// </summary>
+	/// <seealso cref="LutComposer"/>
 	/// <seealso cref="IComposableLut"/>
 	[Cloneable(true)]
-	public abstract class ComposableLut : IComposableLut
+	public abstract class ComposableLut : ComposableLutBase
 	{
-		#region Private Fields
-
-		private event EventHandler _lutChanged;
-		
-		#endregion
-
-		#region Protected Constructor
-
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		protected ComposableLut()
-		{
-		}
-
-		#endregion
-
-		#region Protected Methods
-
-		/// <summary>
-		/// Fires the <see cref="LutChanged"/> event.
-		/// </summary>
-		/// <remarks>
-		/// Inheritors should call this method when any property of the Lut has changed.
-		/// </remarks>
-		protected virtual void OnLutChanged()
-		{
-			EventsHelper.Fire(_lutChanged, this, EventArgs.Empty);
-		}
-
-		#endregion
-
-		#region IComposableLut Members
-
 		/// <summary>
 		/// Gets or sets the minimum input value.
 		/// </summary>
 		/// <remarks>
-		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// This value is set internally by the framework and should not be modified by client code.
 		/// </remarks>
-		public abstract int MinInputValue { get; set; }
+		public abstract double MinInputValue { get; set; }
 
 		/// <summary>
-		/// Gets the maximum input value.
+		/// Gets or sets the maximum input value.
 		/// </summary>
 		/// <remarks>
-		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// This value is set internally by the framework and should not be modified by client code.
 		/// </remarks>
-		public abstract int MaxInputValue { get; set; }
+		public abstract double MaxInputValue { get; set; }
 
 		/// <summary>
-		/// Gets the minimum output value.
+		/// Gets or sets the minimum output value.
 		/// </summary>
-		public abstract int MinOutputValue { get; protected set;}
+		public abstract double MinOutputValue { get; protected set; }
 
 		/// <summary>
-		/// Gets the maximum output value.
+		/// Gets or sets the maximum output value.
 		/// </summary>
-		public abstract int MaxOutputValue { get; protected set;}
+		public abstract double MaxOutputValue { get; protected set; }
 
 		/// <summary>
-		/// Gets the output value of the lut at a given input index.
+		/// Gets the output value of the lookup table for a given input value.
 		/// </summary>
-		public abstract int this[int index] { get; protected set; }
+		public abstract double this[double input] { get; }
 
-		/// <summary>
-		/// Fired when the LUT has changed in some way.
-		/// </summary>
-		public event EventHandler LutChanged
+		internal override sealed double MinInputValueCore
 		{
-			add { _lutChanged += value; }
-			remove { _lutChanged -= value; }
+			get { return MinInputValue; }
+			set { MinInputValue = value; }
 		}
 
-		/// <summary>
-		/// Gets a string key that identifies this particular Lut's characteristics, so that 
-		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
-		/// </summary>
-		/// <remarks>
-		/// This method is not to be confused with <b>equality</b>, since some Luts can be
-		/// dependent upon the actual image to which it belongs.
-		/// </remarks>
-		public abstract string GetKey();
-
-		/// <summary>
-		/// Gets an abbreviated description of the Lut.
-		/// </summary>
-		public abstract string GetDescription();
-
-		#endregion
-
-		#region IMemorable Members
-
-		/// <summary>
-		/// Returns null.
-		/// </summary>
-		/// <remarks>
-		/// Override this member only when necessary.  If this method is overridden, <see cref="SetMemento"/> must also be overridden.
-		///  </remarks>
-		/// <returns>null, unless overridden.</returns>
-		public virtual object CreateMemento()
+		internal override sealed double MaxInputValueCore
 		{
-			return null;
+			get { return MaxInputValue; }
+			set { MaxInputValue = value; }
 		}
 
-		/// <summary>
-		/// Does nothing unless overridden.
-		/// </summary>
-		/// <remarks>
-		/// If you override <see cref="CreateMemento"/> to capture the Lut's state, you must also override this method
-		/// to allow the state to be restored.
-		/// </remarks>
-		/// <param name="memento">The memento object from which to restore the Lut's state.</param>
-		/// <exception cref="InvalidOperationException">Thrown if <paramref name="memento"/> is <B>not</B> null, 
-		/// which would indicate that <see cref="CreateMemento"/> has been overridden, but <see cref="SetMemento"/> has not.</exception>
-		public virtual void SetMemento(object memento)
+		internal override sealed double MinOutputValueCore
 		{
-			if (memento != null)
-				throw new InvalidOperationException(SR.ExceptionMustOverrideSetMemento);
+			get { return MinOutputValue; }
 		}
 
-		#endregion
-
-		/// <summary>
-		/// Creates a deep-copy of the <see cref="IComposableLut"/>.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="IComposableLut"/>s may return null from this method when appropriate.	
-		/// </remarks>
-		public IComposableLut Clone()
+		internal override sealed double MaxOutputValueCore
 		{
-			return CloneBuilder.Clone(this) as IComposableLut;
+			get { return MaxOutputValue; }
+		}
+
+		internal override sealed double Lookup(double input)
+		{
+			return this[input];
 		}
 	}
 }

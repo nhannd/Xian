@@ -34,8 +34,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			IComposableLut firstLut, lastLut;
 			GetFirstAndLastLut(luts, out firstLut, out lastLut, out lutCount);
 
-			_minInputValue = firstLut.MinInputValue;
-			_maxInputValue = firstLut.MaxInputValue;
+			_minInputValue = (int) Math.Round(firstLut.MinInputValue);
+			_maxInputValue = (int) Math.Round(firstLut.MaxInputValue);
 			_length = _maxInputValue - _minInputValue + 1;
 			_data = cache != null ? cache.Allocate(_length) : MemoryManager.Allocate<int>(_length);
 
@@ -53,12 +53,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 					for (int i = min; i < max; ++i)
 					{
-						int val = i;
+						double val = i;
 
 						for (int j = 0; j < lutCount; ++j)
 							val = lutArray[j][val];
 
-						*pLutData = val;
+						*pLutData = (int) Math.Round(val);
 						++pLutData;
 					}
 				}

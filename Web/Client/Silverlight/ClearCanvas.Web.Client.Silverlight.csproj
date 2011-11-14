@@ -130,10 +130,12 @@
     <Compile Include="Utilities\UIThread.cs" />
     <Compile Include="ViewModel\LogPanelViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="Views\BusyIndicator.cs" />
     <Compile Include="Views\LocalViewModelLocator.cs" />
     <Compile Include="Views\LogPanel.xaml.cs">
       <DependentUpon>LogPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\VisualStates.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="JunkPage.xaml">
@@ -145,6 +147,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BusyIndicator.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

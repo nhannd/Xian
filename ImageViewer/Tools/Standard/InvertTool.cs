@@ -14,6 +14,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -29,10 +30,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public class InvertTool : ImageViewerTool
 	{
 		private readonly VoiLutImageOperation _operation;
+		private ToolModalityBehaviorHelper _toolBehavior;
 
 		public InvertTool()
 		{
 			_operation = new VoiLutImageOperation(Invert);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_toolBehavior = new ToolModalityBehaviorHelper(ImageViewer);
 		}
 
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
@@ -46,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			ImageOperationApplicator applicator = new ImageOperationApplicator(SelectedPresentationImage, _operation);
-			UndoableCommand historyCommand = applicator.ApplyToAllImages();
+			UndoableCommand historyCommand = _toolBehavior.Behavior.SelectedImageInvertTool ? applicator.ApplyToReferenceImage() : applicator.ApplyToAllImages();
 			if (historyCommand != null)
 			{
 				historyCommand.Name = SR.CommandInvert;

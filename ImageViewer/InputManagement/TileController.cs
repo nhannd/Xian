@@ -255,7 +255,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			Platform.CheckForNullReference(shortcutManager, "shortcutManager");
 
 			_tile = tile;
-            _tile.ContextMenuRequested += OnExplicitContextMenuRequest;
+            _tile.ContextMenuRequested += ProcessExplicitContextMenuRequest;
 
             _selectedOnThisClick = false;
 			_capturedOnThisClick = false;
@@ -266,7 +266,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		public void Dispose()
 		{
 			_delayedContextMenuRequestPublisher.Dispose();
-		    _tile.ContextMenuRequested -= OnExplicitContextMenuRequest;
+		    _tile.ContextMenuRequested -= ProcessExplicitContextMenuRequest;
 		}
 
 		#region Private Properties
@@ -738,7 +738,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private void ProcessDelayedContextMenuRequest(object sender, EventArgs e)
 		{
-			var eventArgs = e as ItemEventArgs<Point>;
+            var eventArgs = e as ItemEventArgs<Point>;
 			if (eventArgs == null)
 				return;
 
@@ -748,27 +748,39 @@ namespace ClearCanvas.ImageViewer.InputManagement
             if (CaptureHandler != null)
 		        ReleaseCapture(true);
 
-		    _contextMenuEnabled = true;
+		    //When we show the context menu, reset the active button and start count,
+            //because the user is going to have to start over again with a new click.
+            _activeButton = 0;
+		    _startCount = 0;
 
+		    _contextMenuEnabled = true;
 		    EventsHelper.Fire(_contextMenuRequested, this, eventArgs);
 		}
 
-        private void OnExplicitContextMenuRequest(object sender, TileContextMenuRequestEventArgs e)
+	    private void ProcessExplicitContextMenuRequest(object sender, TileContextMenuRequestEventArgs e)
+	    {
+            //Because it is likely to be called from within a mouse button handler's Start
+            //method, which can cause problems, we'll post it instead.
+            SynchronizationContext.Current.Post(ignore=>ProcessExplicitContextMenuRequest(e.Location, e.ActionModel), null);
+	    }
+        
+	    private void ProcessExplicitContextMenuRequest(Point? location, ActionModelNode actionModel)
         {
-            _delayedContextMenuRequestPublisher.Cancel();
-
             //Force a handler with capture to release.
             if (this.CaptureHandler != null)
                 ReleaseCapture(true);
 
-            var location = _currentMousePoint;
-            if (e.Location.HasValue && TileClientRectangle.Contains(e.Location.Value))
-                location = e.Location.Value;
+            //When we show the context menu, reset the active button and start count,
+            //because the user is going to have to start over again with a new click.
+            _activeButton = 0;
+            _startCount = 0;
 
-            var actionModel = e.ActionModel;
+            if (!location.HasValue || !TileClientRectangle.Contains(location.Value))
+                location = _currentMousePoint;
+
             if (actionModel == null)
             {
-                CompositeGraphic sceneGraph = ((PresentationImage) _tile.PresentationImage).SceneGraph;
+                CompositeGraphic sceneGraph = ((PresentationImage)_tile.PresentationImage).SceneGraph;
                 //Get all the mouse button handlers that provide a context menu.
                 foreach (var handlerGraphic in GetHandlerGraphics(sceneGraph).OfType<IContextMenuProvider>())
                 {
@@ -785,19 +797,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
                 ContextMenuProvider = new ActionModelProvider(actionModel);
             }
 
-            /// TODO (CR Oct 2011): Check there isn't a better way to do this.
-            
-            //We may not get a mouse button up message because of the context menu appearing.
-            _activeButton = 0;
-            _clickCount = 0;
-
             //Request the context menu.
             _contextMenuEnabled = true;
-            EventsHelper.Fire(_contextMenuRequested, this, new ItemEventArgs<Point>(location));
+            EventsHelper.Fire(_contextMenuRequested, this, new ItemEventArgs<Point>(location.Value));
 
             ContextMenuProvider = null;
         }
-
+        
 		#endregion
 		#endregion
 
