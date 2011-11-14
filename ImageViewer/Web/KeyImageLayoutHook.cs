@@ -1,14 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
 using System.Linq;
-using System.Text;
 using ClearCanvas.ImageViewer.Layout.Basic;
 using ClearCanvas.ImageViewer.Layout;
 
 namespace ClearCanvas.ImageViewer.Web
 {
-
-
     internal class KeyImageDisplaySetCreationOptions : IModalityDisplaySetCreationOptions
     {
         private readonly IModalityDisplaySetCreationOptions _real;
@@ -104,4 +110,59 @@ namespace ClearCanvas.ImageViewer.Web
         }
     }
 
+    internal class CustomLayoutHook : HpLayoutHook
+    {
+        private int _rows;
+        private int _cols;
+
+        public CustomLayoutHook()
+        {
+        }
+
+        public CustomLayoutHook(int rows, int cols)
+        {
+            _rows = rows;
+            _cols = cols;
+        }
+
+        #region IHpLayoutHook Members
+
+        public override bool HandleLayout(IHpLayoutHookContext context)
+        {
+            if (_rows > 0 && _cols > 0)
+            {
+                var primaryImageSet = context.ImageViewer.LogicalWorkspace.ImageSets[0];
+                context.ImageViewer.PhysicalWorkspace.SetImageBoxGrid(_rows, _cols);
+                foreach (var imageBox in context.ImageViewer.PhysicalWorkspace.ImageBoxes)
+                    imageBox.SetTileGrid(1, 1);
+
+                context.PerformDefaultFillPhysicalWorkspace();
+
+                return true;
+            }
+            else
+                return false;
+            
+        }
+
+        #endregion
+
+        private bool IsKeyImageDisplaySet(IDisplaySet displaySet)
+        {
+            if (displaySet == null || displaySet.PresentationImages.Count == 0)
+                return false;
+
+            var descriptor = displaySet.Descriptor as IDicomDisplaySetDescriptor;
+            if (descriptor == null)
+                return false;
+
+            const string koModality = "KO";
+
+            if (descriptor.SourceSeries != null && descriptor.SourceSeries.Modality == koModality)
+                return true;
+
+            var allImagesDescriptor = descriptor as ModalityDisplaySetDescriptor;
+            return allImagesDescriptor != null && allImagesDescriptor.Modality == koModality;
+        }
+    }
 }

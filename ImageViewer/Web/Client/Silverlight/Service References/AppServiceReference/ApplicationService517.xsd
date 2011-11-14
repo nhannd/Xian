@@ -396,7 +396,7 @@
           <xs:element xmlns:q16="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="AccessionNumber" nillable="true" type="q16:ArrayOfstring" />
           <xs:element name="AeTitle" nillable="true" type="xs:string" />
           <xs:element minOccurs="0" name="ApplicationName" nillable="true" type="xs:string" />
-          <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common" minOccurs="0" name="LoadStudyOptions" type="q17:LoadStudyOptions" />
+          <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common" minOccurs="0" name="LoadStudyOptions" nillable="true" type="q17:LoadStudyOptions" />
           <xs:element xmlns:q18="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PatientId" nillable="true" type="q18:ArrayOfstring" />
           <xs:element xmlns:q19="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="StudyInstanceUid" nillable="true" type="q19:ArrayOfstring" />
         </xs:sequence>

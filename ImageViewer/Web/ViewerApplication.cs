@@ -388,8 +388,8 @@ namespace ClearCanvas.ImageViewer.Web
 
         private ImageViewerComponent CreateViewerComponent(StartViewerApplicationRequest request)
         {
-            var keyImagesOnly = request.LoadStudyOptions!=null && (request.LoadStudyOptions & LoadStudyOptions.KeyImagesOnly) == LoadStudyOptions.KeyImagesOnly;
-            var excludePriors = request.LoadStudyOptions != null && (request.LoadStudyOptions & LoadStudyOptions.ExcludePriors) == LoadStudyOptions.ExcludePriors;
+            var keyImagesOnly = request.LoadStudyOptions != null && request.LoadStudyOptions.KeyImagesOnly;
+            var excludePriors = request.LoadStudyOptions != null && request.LoadStudyOptions.ExcludePriors;
 
             if (keyImagesOnly)
             {
@@ -411,13 +411,22 @@ namespace ClearCanvas.ImageViewer.Web
             }
             else
             {
+                ImageViewer.Layout.Basic.LayoutManager layoutManager;
+
+                layoutManager = new ImageViewer.Layout.Basic.LayoutManager()
+                {
+                    LayoutHook = (request.LoadStudyOptions!=null && request.LoadStudyOptions.PreferredLayout != null)
+                                ? new CustomLayoutHook(request.LoadStudyOptions.PreferredLayout.Rows, request.LoadStudyOptions.PreferredLayout.Columns)
+                                : new CustomLayoutHook()
+                };
+                
                 if (excludePriors) 
                 {
-                    return new ImageViewerComponent(LayoutManagerCreationParameters.Extended, PriorStudyFinder.Null);
+                    return new ImageViewerComponent(layoutManager, PriorStudyFinder.Null);
                 }
                 else
                 {
-                    return new ImageViewerComponent(LayoutManagerCreationParameters.Extended); 
+                    return new ImageViewerComponent(layoutManager); 
                 } 
             }
 
