@@ -188,13 +188,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                     //the user wants to see "single image" display sets, we actually create a series
                     //display set (below) for the degenerate case, because that's technically more correct.
                     _basicFactory.CreateSingleImageDisplaySets = true;
+                    var singleImageDisplaySets = new List<IDisplaySet>();
                     foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
-                        displaySets.Add(displaySet);
+                        singleImageDisplaySets.Add(displaySet);
+
+                    displaySets.AddRange(singleImageDisplaySets);
 
                     //Show the original only if a previous part of this method hasn't already disabled it, and:
                     // 1. the user wants to see it, or
                     // 2. it's the degenerate single image series case
-                    showOriginal = showOriginal && (displaySets.Count == 0 || ShowOriginalSeries);
+                    showOriginal = showOriginal && (singleImageDisplaySets.Count == 0 || ShowOriginalSeries);
+
+                    if (singleImageDisplaySets.Count > 0)
+                        anyDisplaySetsCreated = true;
                 }
                 else
                 {

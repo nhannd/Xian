@@ -274,7 +274,7 @@
     <value>15, 46</value>
   </data>
   <data name="_creationGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 113</value>
+    <value>205, 113</value>
   </data>
   <data name="_creationGroup.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -328,7 +328,7 @@
     <value>15, 165</value>
   </data>
   <data name="_presentationGroupBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>406, 45</value>
+    <value>416, 45</value>
   </data>
   <data name="_presentationGroupBox.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -481,10 +481,10 @@
     <value>0</value>
   </data>
   <data name="_splittingGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>221, 46</value>
+    <value>226, 46</value>
   </data>
   <data name="_splittingGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 113</value>
+    <value>205, 113</value>
   </data>
   <data name="_splittingGroup.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -511,7 +511,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>435, 226</value>
+    <value>446, 226</value>
   </data>
   <data name="&gt;&gt;_tooltip.Name" xml:space="preserve">
     <value>_tooltip</value>
