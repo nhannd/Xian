@@ -172,6 +172,7 @@ namespace ClearCanvas.Enterprise.Desktop
             }
         }
 
+        [ValidateNotNull]
 		public string DisplayName
 		{
 			get { return _userDetail.DisplayName; }
