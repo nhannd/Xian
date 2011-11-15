@@ -180,10 +180,9 @@ namespace ClearCanvas.ImageViewer.Tests
 			}
 
 			StudyTree studyTree = CreateStudyTree(ConvertToSops(dataSources));
-			BasicDisplaySetFactory factory = new BasicDisplaySetFactory();
-			factory.CreateSingleImageDisplaySets = true;
+			BasicDisplaySetFactory factory = new BasicDisplaySetFactory { CreateSingleImageDisplaySets = instancesPerSeries > 1 };
 
-			List<IDisplaySet> allDisplaySets = new List<IDisplaySet>();
+		    List<IDisplaySet> allDisplaySets = new List<IDisplaySet>();
 
 			int numberOfMultiframesFound = 0;
 			int numberOfSingleframesFound = 0;
@@ -361,9 +360,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			foreach (Sop sop in keyImageSops)
 				studyTree.AddSop(sop);
 
-			if (doSplitting)
-				factory.CreateSingleImageDisplaySets = true;
-
 			try
 			{
 				foreach (Series series in study.Series)
@@ -371,7 +367,22 @@ namespace ClearCanvas.ImageViewer.Tests
 					if (series.Modality != "KO")
 						continue;
 
-					List<IDisplaySet> keyImageDisplaySets = factory.CreateDisplaySets(series);
+				    List<IDisplaySet> keyImageDisplaySets;
+                    if (doSplitting)
+                    {
+                        factory.CreateSingleImageDisplaySets = true;
+                        keyImageDisplaySets = factory.CreateDisplaySets(series);
+                        if (keyImageDisplaySets.Count == 0)
+                        {
+                            factory.CreateSingleImageDisplaySets = false;
+                            keyImageDisplaySets = factory.CreateDisplaySets(series);
+                        }
+                    }
+                    else
+                    {
+                        keyImageDisplaySets = factory.CreateDisplaySets(series);
+                    }
+
 					allDisplaySets.AddRange(keyImageDisplaySets);
 
 					int numberOfKeyImages = numberOfMultiframeKeyImages + numberOfSingleFrameKeyImages;
