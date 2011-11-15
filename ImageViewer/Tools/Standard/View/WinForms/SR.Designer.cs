@@ -77,5 +77,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms {
                 return ResourceManager.GetString("TitleDetails", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When checked, tool will apply to the entire display set.
+        /// </summary>
+        internal static string TooltipToolAppliesToEntireDisplaySet {
+            get {
+                return ResourceManager.GetString("TooltipToolAppliesToEntireDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When checked, tool will apply separately to each image.
+        /// </summary>
+        internal static string TooltipToolAppliesToSelectedImage {
+            get {
+                return ResourceManager.GetString("TooltipToolAppliesToSelectedImage", resourceCulture);
+            }
+        }
     }
 }

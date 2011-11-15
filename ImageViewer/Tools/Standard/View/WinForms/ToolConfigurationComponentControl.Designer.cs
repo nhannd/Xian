@@ -28,28 +28,126 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ToolConfigurationComponentControl));
+			this._radWindowLevelImages = new System.Windows.Forms.RadioButton();
+			this._radWindowLevelDisplaySets = new System.Windows.Forms.RadioButton();
+			this._radFlipRotateImages = new System.Windows.Forms.RadioButton();
+			this._radFlipRotateDisplaySets = new System.Windows.Forms.RadioButton();
+			this._radZoomImages = new System.Windows.Forms.RadioButton();
+			this._radZoomDisplaySets = new System.Windows.Forms.RadioButton();
+			this._radResetImages = new System.Windows.Forms.RadioButton();
+			this._radResetDisplaySets = new System.Windows.Forms.RadioButton();
+			this._radPanImages = new System.Windows.Forms.RadioButton();
+			this._radPanDisplaySets = new System.Windows.Forms.RadioButton();
 			this._grpToolModalityBehavior = new System.Windows.Forms.GroupBox();
 			this._cboModality = new System.Windows.Forms.ComboBox();
 			this._lblModality = new System.Windows.Forms.Label();
 			this._lyoTable = new System.Windows.Forms.TableLayoutPanel();
+			this._lblEntireDisplaySet = new System.Windows.Forms.Label();
 			this._lblWindowLevel = new System.Windows.Forms.Label();
 			this._lblReset = new System.Windows.Forms.Label();
-			this._chkWindowLevel = new System.Windows.Forms.CheckBox();
-			this._chkOrientation = new System.Windows.Forms.CheckBox();
-			this._chkZoom = new System.Windows.Forms.CheckBox();
-			this._chkPan = new System.Windows.Forms.CheckBox();
-			this._chkReset = new System.Windows.Forms.CheckBox();
 			this._lblSelectedImage = new System.Windows.Forms.Label();
 			this._lblOrientation = new System.Windows.Forms.Label();
 			this._lblPan = new System.Windows.Forms.Label();
 			this._lblZoom = new System.Windows.Forms.Label();
 			this._chkInvertZoomDirection = new System.Windows.Forms.CheckBox();
 			this._grpGeneral = new System.Windows.Forms.GroupBox();
+			this._tooltipProvider = new System.Windows.Forms.ToolTip(this.components);
 			this._grpToolModalityBehavior.SuspendLayout();
 			this._lyoTable.SuspendLayout();
 			this._grpGeneral.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// _radWindowLevelImages
+			// 
+			this._radWindowLevelImages.AutoCheck = false;
+			resources.ApplyResources(this._radWindowLevelImages, "_radWindowLevelImages");
+			this._radWindowLevelImages.Name = "_radWindowLevelImages";
+			this._radWindowLevelImages.TabStop = true;
+			this._radWindowLevelImages.UseVisualStyleBackColor = true;
+			this._radWindowLevelImages.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radWindowLevelDisplaySets
+			// 
+			this._radWindowLevelDisplaySets.AutoCheck = false;
+			resources.ApplyResources(this._radWindowLevelDisplaySets, "_radWindowLevelDisplaySets");
+			this._radWindowLevelDisplaySets.Name = "_radWindowLevelDisplaySets";
+			this._radWindowLevelDisplaySets.TabStop = true;
+			this._radWindowLevelDisplaySets.UseVisualStyleBackColor = true;
+			this._radWindowLevelDisplaySets.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radFlipRotateImages
+			// 
+			this._radFlipRotateImages.AutoCheck = false;
+			resources.ApplyResources(this._radFlipRotateImages, "_radFlipRotateImages");
+			this._radFlipRotateImages.Name = "_radFlipRotateImages";
+			this._radFlipRotateImages.TabStop = true;
+			this._radFlipRotateImages.UseVisualStyleBackColor = true;
+			this._radFlipRotateImages.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radFlipRotateDisplaySets
+			// 
+			this._radFlipRotateDisplaySets.AutoCheck = false;
+			resources.ApplyResources(this._radFlipRotateDisplaySets, "_radFlipRotateDisplaySets");
+			this._radFlipRotateDisplaySets.Name = "_radFlipRotateDisplaySets";
+			this._radFlipRotateDisplaySets.TabStop = true;
+			this._radFlipRotateDisplaySets.UseVisualStyleBackColor = true;
+			this._radFlipRotateDisplaySets.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radZoomImages
+			// 
+			this._radZoomImages.AutoCheck = false;
+			resources.ApplyResources(this._radZoomImages, "_radZoomImages");
+			this._radZoomImages.Name = "_radZoomImages";
+			this._radZoomImages.TabStop = true;
+			this._radZoomImages.UseVisualStyleBackColor = true;
+			this._radZoomImages.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radZoomDisplaySets
+			// 
+			this._radZoomDisplaySets.AutoCheck = false;
+			resources.ApplyResources(this._radZoomDisplaySets, "_radZoomDisplaySets");
+			this._radZoomDisplaySets.Name = "_radZoomDisplaySets";
+			this._radZoomDisplaySets.TabStop = true;
+			this._radZoomDisplaySets.UseVisualStyleBackColor = true;
+			this._radZoomDisplaySets.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radResetImages
+			// 
+			this._radResetImages.AutoCheck = false;
+			resources.ApplyResources(this._radResetImages, "_radResetImages");
+			this._radResetImages.Name = "_radResetImages";
+			this._radResetImages.TabStop = true;
+			this._radResetImages.UseVisualStyleBackColor = true;
+			this._radResetImages.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radResetDisplaySets
+			// 
+			this._radResetDisplaySets.AutoCheck = false;
+			resources.ApplyResources(this._radResetDisplaySets, "_radResetDisplaySets");
+			this._radResetDisplaySets.Name = "_radResetDisplaySets";
+			this._radResetDisplaySets.TabStop = true;
+			this._radResetDisplaySets.UseVisualStyleBackColor = true;
+			this._radResetDisplaySets.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radPanImages
+			// 
+			this._radPanImages.AutoCheck = false;
+			resources.ApplyResources(this._radPanImages, "_radPanImages");
+			this._radPanImages.Name = "_radPanImages";
+			this._radPanImages.TabStop = true;
+			this._radPanImages.UseVisualStyleBackColor = true;
+			this._radPanImages.Click += new System.EventHandler(this.HandleRadioButtonClick);
+			// 
+			// _radPanDisplaySets
+			// 
+			this._radPanDisplaySets.AutoCheck = false;
+			resources.ApplyResources(this._radPanDisplaySets, "_radPanDisplaySets");
+			this._radPanDisplaySets.Name = "_radPanDisplaySets";
+			this._radPanDisplaySets.TabStop = true;
+			this._radPanDisplaySets.UseVisualStyleBackColor = true;
+			this._radPanDisplaySets.Click += new System.EventHandler(this.HandleRadioButtonClick);
 			// 
 			// _grpToolModalityBehavior
 			// 
@@ -75,18 +173,29 @@
 			// _lyoTable
 			// 
 			resources.ApplyResources(this._lyoTable, "_lyoTable");
+			this._lyoTable.Controls.Add(this._radResetDisplaySets, 2, 5);
+			this._lyoTable.Controls.Add(this._radResetImages, 1, 5);
+			this._lyoTable.Controls.Add(this._radPanDisplaySets, 2, 4);
+			this._lyoTable.Controls.Add(this._radPanImages, 1, 4);
+			this._lyoTable.Controls.Add(this._radZoomDisplaySets, 2, 3);
+			this._lyoTable.Controls.Add(this._radZoomImages, 1, 3);
+			this._lyoTable.Controls.Add(this._radFlipRotateDisplaySets, 2, 2);
+			this._lyoTable.Controls.Add(this._radFlipRotateImages, 1, 2);
+			this._lyoTable.Controls.Add(this._radWindowLevelDisplaySets, 2, 1);
+			this._lyoTable.Controls.Add(this._radWindowLevelImages, 1, 1);
+			this._lyoTable.Controls.Add(this._lblEntireDisplaySet, 2, 0);
 			this._lyoTable.Controls.Add(this._lblWindowLevel, 0, 1);
 			this._lyoTable.Controls.Add(this._lblReset, 0, 5);
-			this._lyoTable.Controls.Add(this._chkWindowLevel, 1, 1);
-			this._lyoTable.Controls.Add(this._chkOrientation, 1, 2);
-			this._lyoTable.Controls.Add(this._chkZoom, 1, 3);
-			this._lyoTable.Controls.Add(this._chkPan, 1, 4);
-			this._lyoTable.Controls.Add(this._chkReset, 1, 5);
 			this._lyoTable.Controls.Add(this._lblSelectedImage, 1, 0);
 			this._lyoTable.Controls.Add(this._lblOrientation, 0, 2);
 			this._lyoTable.Controls.Add(this._lblPan, 0, 4);
 			this._lyoTable.Controls.Add(this._lblZoom, 0, 3);
 			this._lyoTable.Name = "_lyoTable";
+			// 
+			// _lblEntireDisplaySet
+			// 
+			resources.ApplyResources(this._lblEntireDisplaySet, "_lblEntireDisplaySet");
+			this._lblEntireDisplaySet.Name = "_lblEntireDisplaySet";
 			// 
 			// _lblWindowLevel
 			// 
@@ -97,36 +206,6 @@
 			// 
 			resources.ApplyResources(this._lblReset, "_lblReset");
 			this._lblReset.Name = "_lblReset";
-			// 
-			// _chkWindowLevel
-			// 
-			resources.ApplyResources(this._chkWindowLevel, "_chkWindowLevel");
-			this._chkWindowLevel.Name = "_chkWindowLevel";
-			this._chkWindowLevel.UseVisualStyleBackColor = true;
-			// 
-			// _chkOrientation
-			// 
-			resources.ApplyResources(this._chkOrientation, "_chkOrientation");
-			this._chkOrientation.Name = "_chkOrientation";
-			this._chkOrientation.UseVisualStyleBackColor = true;
-			// 
-			// _chkZoom
-			// 
-			resources.ApplyResources(this._chkZoom, "_chkZoom");
-			this._chkZoom.Name = "_chkZoom";
-			this._chkZoom.UseVisualStyleBackColor = true;
-			// 
-			// _chkPan
-			// 
-			resources.ApplyResources(this._chkPan, "_chkPan");
-			this._chkPan.Name = "_chkPan";
-			this._chkPan.UseVisualStyleBackColor = true;
-			// 
-			// _chkReset
-			// 
-			resources.ApplyResources(this._chkReset, "_chkReset");
-			this._chkReset.Name = "_chkReset";
-			this._chkReset.UseVisualStyleBackColor = true;
 			// 
 			// _lblSelectedImage
 			// 
@@ -152,6 +231,7 @@
 			// 
 			resources.ApplyResources(this._chkInvertZoomDirection, "_chkInvertZoomDirection");
 			this._chkInvertZoomDirection.Name = "_chkInvertZoomDirection";
+			this._tooltipProvider.SetToolTip(this._chkInvertZoomDirection, resources.GetString("_chkInvertZoomDirection.ToolTip"));
 			this._chkInvertZoomDirection.UseVisualStyleBackColor = true;
 			// 
 			// _grpGeneral
@@ -184,11 +264,6 @@
 		private System.Windows.Forms.TableLayoutPanel _lyoTable;
 		private System.Windows.Forms.Label _lblWindowLevel;
 		private System.Windows.Forms.Label _lblReset;
-		private System.Windows.Forms.CheckBox _chkWindowLevel;
-		private System.Windows.Forms.CheckBox _chkOrientation;
-		private System.Windows.Forms.CheckBox _chkZoom;
-		private System.Windows.Forms.CheckBox _chkPan;
-		private System.Windows.Forms.CheckBox _chkReset;
 		private System.Windows.Forms.Label _lblSelectedImage;
 		private System.Windows.Forms.Label _lblOrientation;
 		private System.Windows.Forms.Label _lblPan;
@@ -197,5 +272,17 @@
 		private System.Windows.Forms.CheckBox _chkInvertZoomDirection;
 		private System.Windows.Forms.GroupBox _grpGeneral;
 		private System.Windows.Forms.Label _lblModality;
+		private System.Windows.Forms.ToolTip _tooltipProvider;
+		private System.Windows.Forms.Label _lblEntireDisplaySet;
+		private System.Windows.Forms.RadioButton _radResetDisplaySets;
+		private System.Windows.Forms.RadioButton _radPanDisplaySets;
+		private System.Windows.Forms.RadioButton _radZoomDisplaySets;
+		private System.Windows.Forms.RadioButton _radFlipRotateDisplaySets;
+		private System.Windows.Forms.RadioButton _radWindowLevelDisplaySets;
+		private System.Windows.Forms.RadioButton _radResetImages;
+		private System.Windows.Forms.RadioButton _radPanImages;
+		private System.Windows.Forms.RadioButton _radZoomImages;
+		private System.Windows.Forms.RadioButton _radFlipRotateImages;
+		private System.Windows.Forms.RadioButton _radWindowLevelImages;
 	}
 }

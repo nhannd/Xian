@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Oto;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.DataStore;
@@ -23,6 +25,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Oto
 {
 	[ExtensionOf(typeof(OtoServiceExtensionPoint))]
+	[OtoServiceBehaviour(UseSynchronizationContext = true)]
 	public class DicomDataStoreService : OtoServiceBase
 	{
 		[DataContract]
@@ -79,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Oto
 		[Description("Query the local datastore for studies matching the specified properties.")]
 		public QueryOutput QueryStudies(QueryInput input)
 		{
-			DicomAttributeCollection criteria = new DicomAttributeCollection();
+			var criteria = new DicomAttributeCollection();
 			criteria[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
 			criteria[DicomTags.PatientId].SetStringValue(input.PatientId);
 			criteria[DicomTags.AccessionNumber].SetStringValue(input.AccessionNumber);
@@ -91,14 +94,14 @@ namespace ClearCanvas.ImageViewer.Oto
 			criteria[DicomTags.SpecificCharacterSet].SetStringValue("");
 			criteria[DicomTags.StudyInstanceUid].SetStringValue(input.StudyInstanceUID);
 
-			IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader();
-			IEnumerable<DicomAttributeCollection> results = reader.Query(criteria);
+			var reader = DataAccessLayer.GetIDataStoreReader();
+			var results = reader.Query(criteria);
 
 			return new QueryOutput(
-				CollectionUtils.Map<DicomAttributeCollection, StudyProperties>(results,
+				CollectionUtils.Map(results,
 					delegate(DicomAttributeCollection result)
 					{
-						StudyProperties item = new StudyProperties();
+						var item = new StudyProperties();
 						item.PatientId = result[DicomTags.PatientId].ToString();
 						item.PatientsName = result[DicomTags.PatientsName].ToString();
 						item.StudyDate = result[DicomTags.StudyDate].GetDateTime(0);
@@ -110,6 +113,36 @@ namespace ClearCanvas.ImageViewer.Oto
 					}));
 		}
 
+		[DataContract]
+		public class OpenStudiesInput
+		{
+			[DataMember]
+			public string[] StudyInstanceUids { get; set; }
+		}
 
+		public class OpenStudiesOutput
+		{
+
+		}
+
+
+		[Description("Opens the specified studies in a new workspace.")]
+		public OpenStudiesOutput OpenStudies(OpenStudiesInput input)
+		{
+			Platform.CheckForNullReference(input, "input");
+			Platform.CheckMemberIsSet(input.StudyInstanceUids, "StudyInstanceUids");
+
+			if(input.StudyInstanceUids.Length == 0)
+				return new OpenStudiesOutput();
+
+			var helper = new OpenStudyHelper();
+			foreach (var studyInstanceUid in input.StudyInstanceUids)
+				helper.AddStudy(studyInstanceUid, null, "DICOM_LOCAL");
+
+			helper.Title = "imageviewer";
+			helper.OpenStudies();
+
+			return new OpenStudiesOutput();
+		}
 	}
 }

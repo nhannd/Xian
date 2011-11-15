@@ -95,9 +95,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				windowEnd = _modalityLut[windowEnd];
 			}
 
-			_windowWidth = (windowEnd - windowStart) + 1;
-			_windowWidth = Math.Max(_windowWidth, 1);
-			_windowCenter = windowStart + _windowWidth / 2;
+			// round the window to one decimal place so it's not ridiculous
+			// value is calculated anyway and thus has no significance outside of display
+			var windowWidth = Math.Max(windowEnd - windowStart + 1, 1);
+			_windowWidth = Math.Round(windowWidth, 1);
+			_windowCenter = Math.Round(windowStart + windowWidth/2, 1);
 		}
 		
 		#endregion
