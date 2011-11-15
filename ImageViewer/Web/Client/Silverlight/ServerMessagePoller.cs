@@ -20,6 +20,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     {
         public EventSet EventSet { get; set; }
     }
+
     internal class ServerChannelFaultEventArgs : EventArgs
     {
         public Exception Error { get; set; }
@@ -31,11 +32,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     {
         const int MinPollDelaySinceLastActivity = 100; // 100 ms since last activity
 
-        private readonly ServerMessageSender _service;
+        private ServerMessageSender _service;
         private Thread _pollingThread;
         private bool _stop;
         private readonly object _syncLock = new object();
         private int _pendingPollingCount;
+        private bool _disposed = false;
 
         public ServerMessagePoller(ServerMessageSender service)
         {
@@ -46,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public void Start()
         {
             _pollingThread = new Thread(ThreadStart);
+            _pollingThread.Name = String.Format("Polling Thread[{0}]", _pollingThread.ManagedThreadId);
             _pollingThread.Start();
         }
 
@@ -124,14 +127,32 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void Dispose()
         {
-            _stop = true;
-            _service.PollCompleted -= OnGetPendingEventCompleted;
+            Dispose(true);
 
-            if (_pollingThread != null)
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
             {
-                lock (_syncLock)
-                    Monitor.PulseAll(_syncLock);
-                _pollingThread = null;
+                _stop = true;
+                if (_service != null)
+                {
+                    _service.PollCompleted -= OnGetPendingEventCompleted;
+                    _service = null;
+                }
+
+                if (_pollingThread != null)
+                {
+                    lock (_syncLock)
+                        Monitor.PulseAll(_syncLock);
+
+                    _pollingThread.Join(500);
+                    _pollingThread = null;
+                }
+
+                _disposed = true;
             }
         }
 

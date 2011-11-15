@@ -164,7 +164,6 @@
     </Compile>
     <Compile Include="Helpers\MenuBuilder.cs" />
     <Compile Include="ThrottleSettings.cs" />
-    <Compile Include="Diagnostic\TileImageHistory.cs" />
     <Compile Include="ViewerSessionUpdatedEventArgs.cs" />
     <Compile Include="Views\ImageBoxScrollbarView.xaml.cs">
       <DependentUpon>ImageBoxScrollbarView.xaml</DependentUpon>

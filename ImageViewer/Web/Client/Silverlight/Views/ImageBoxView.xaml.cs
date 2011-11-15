@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         private List<TileView> _tileViews;
 		private System.Windows.Size _parentSize;
         private ImageBoxScrollbarView _scrollbarView;
-        private readonly ServerEventMediator _eventMediator;
+        private ServerEventMediator _eventMediator;
 
         public ImageBoxView(ImageBox serverEntity, ServerEventMediator eventMediator)
         {
@@ -78,9 +78,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 {
                     tileView.SetParentSize(new System.Windows.Size(TileContainer.ActualWidth, TileContainer.ActualHeight));
                 }
-            }
-			
-			
+            }			
 		}
 		
 		private void DestroyTileViews()
@@ -90,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 			if (_tileViews != null)
 			{
 				foreach (TileView tileView in _tileViews)
-					tileView.Destroy();
+					tileView.Dispose();
 
 				_tileViews = null;
 			}
@@ -165,8 +163,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
 		public void Destroy()
         {
-            _eventMediator.UnregisterEventHandler(ServerEntity.Identifier);
-			DestroyTileViews();
+            if (_eventMediator != null)
+            {
+                _eventMediator.UnregisterEventHandler(ServerEntity.Identifier);
+                _eventMediator = null;
+            }
+
+		    DestroyTileViews();
+
+		    ServerEntity = null;
         }
 	}
 }

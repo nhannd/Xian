@@ -25,12 +25,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
         private AppServiceReference.WebIconSize _iconSize;
-        private ActionDispatcher _dispatcher;
 
-        public HelpButton(ActionDispatcher dispatcher)
+        public HelpButton()
         {
             InitializeComponent();
-            _dispatcher = dispatcher;
         }
 
         #region IToolstripButton Members
@@ -49,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
         private void ButtonComponent_Click(object sender, RoutedEventArgs e)
         {
-            PopupHelper.PopupContent(DialogTitles.About, new HelpDialogContent(_dispatcher));
+            PopupHelper.PopupContent(DialogTitles.About, new HelpDialogContent());
         }
 
         private void ButtonComponent_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

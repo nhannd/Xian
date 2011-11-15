@@ -26,8 +26,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 	    private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
         private readonly WebClickAction _actionItem;
-        private readonly ActionDispatcher _actionDispatcher;
+        private ActionDispatcher _actionDispatcher;
         private WebIconSize _iconSize;
+	    private bool _disposed = false;
 
         private WebIconSize IconSize
         {
@@ -70,10 +71,19 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
         public void Dispose()
         {
-            if (_actionDispatcher != null)
+            if (!_disposed)
             {
-                _actionDispatcher.Remove(_actionItem.Identifier);
-            }            
+                if (_actionDispatcher != null)
+                {
+                    _actionDispatcher.Remove(_actionItem.Identifier);
+                    _actionDispatcher = null;
+                }
+
+                ButtonComponent.MouseEnter -= ButtonComponentMouseEnter;
+                ButtonComponent.MouseLeave -= ButtonComponentMouseLeave;
+                ButtonComponent.Click -= OnClick;
+                _disposed = true;
+            }
         }
 
         void ButtonComponentMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

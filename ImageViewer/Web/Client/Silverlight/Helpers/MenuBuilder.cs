@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
     internal class MenuAdapter : PopupProxy, IDisposable
     {
         private readonly ContextMenu _menu;
+        private bool _disposed = false;
 
         public MenuAdapter(ContextMenu menu, WebActionNode model, ActionDispatcher actionDispatcher)
             : base(menu)
@@ -83,18 +84,32 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 
         public void Dispose()
         {
-            foreach (MenuItem item in _menu.Items)
-                ReleaseMenuItem(item);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        private void ReleaseMenuItem(MenuItem item)
+        protected virtual void Dispose(bool disposing)
         {
-            MenuItemBinding binding = item.Tag as MenuItemBinding;
+            if (!_disposed)
+            {
+                foreach (MenuItem item in _menu.Items)
+                    ReleaseMenuItem(item, disposing);
+                _disposed = true;
+            }
+        }
+
+        private void ReleaseMenuItem(MenuItem item, bool disposing)
+        {
+            var binding = item.Tag as MenuItemBinding;
             if (binding != null)
-                binding.ReleaseDispatcher();
+            {
+                if (disposing)
+                    binding.Dispose();
+                item.Tag = null;
+            }
 
             foreach (MenuItem child in item.Items)
-                ReleaseMenuItem(child);
+                ReleaseMenuItem(child, disposing);    
         }
 
         private static MenuItem BuildMenuItem(WebActionNode node, ActionDispatcher dispatcher)

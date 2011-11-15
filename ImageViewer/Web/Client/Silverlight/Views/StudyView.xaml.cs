@@ -19,10 +19,10 @@ using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
-	public partial class StudyView : UserControl
+	public partial class StudyView : UserControl, IDisposable
     {
         private List<ImageBoxView> _imageBoxViews;
-        private readonly DelayedEventPublisher<EventArgs> _resizePublisher;
+        private DelayedEventPublisher<EventArgs> _resizePublisher;
         private readonly ServerEventMediator _eventMediator;
 
         public StudyView(ServerEventMediator eventMediator)
@@ -33,6 +33,18 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
 			SizeChanged += OnSizeChanged;
             _resizePublisher = new DelayedEventPublisher<EventArgs>(ResizeEvent, 350);
+        }
+
+        public void Dispose()
+        {
+            if (_resizePublisher != null)
+            {
+                _resizePublisher.Dispose();
+                _resizePublisher = null;
+            }
+            SizeChanged -= OnSizeChanged;
+
+            DestroyImageBoxViews();
         }
 
         #region Private Methods

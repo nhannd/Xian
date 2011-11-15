@@ -20,7 +20,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private ApplicationServiceClient _proxy;
         private bool _connectionOpened;
         private Binding _binding;
-        private readonly object _sync = new object();       
+        private readonly object _sync = new object();
+        private bool _disposed = false;
+
         #endregion
 
         #region Public Events
@@ -131,7 +133,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void Dispose()
         {
-            Disconnect(SR.Disposing);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                Disconnect(SR.Disposing);
+                _disposed = true;
+            }
         }
 
         public void Disconnect(string reason)
@@ -336,7 +348,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 Platform.Log(LogLevel.Error, exception, "Received exception after the connection has closed.");
                 return;
             }
-            
           
             var errorArgs = new ServerChannelFaultEventArgs
                                 {
@@ -401,8 +412,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private void SetupChannel()
         {
-            Binding binding = GetChannelBinding();
-            EndpointAddress remoteAddress = GetServerAddress();
+            var binding = GetChannelBinding();
+            var remoteAddress = GetServerAddress();
             _proxy = new ApplicationServiceClient(binding, remoteAddress);
 
             _proxy.InnerChannel.Faulted += OnChannelFaulted;
@@ -435,7 +446,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private Binding GetChannelBinding()
         {
-
             switch (ApplicationStartupParameters.Current.Mode)
             {
                 case ApplicationServiceMode.BasicHttp:

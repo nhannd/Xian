@@ -10,14 +10,13 @@
 #endregion
 
 using System.Windows.Controls;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
     public partial class HelpDialogContent : UserControl
     {
-        public HelpDialogContent(ActionDispatcher dispatcher)
+        public HelpDialogContent()
         {
             InitializeComponent();
 

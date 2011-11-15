@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
     /// <summary>
     /// Popup component for the Layout tool.
     /// </summary>
-    public partial class LayoutPopup : UserControl, IPopup
+    public partial class LayoutPopup : UserControl, IPopup, IDisposable
     {
         private class Box 
         {
@@ -125,7 +125,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         private readonly List<Box> _tileList = new List<Box>();
         private readonly WebLayoutChangerAction _imageBoxAction;
         private readonly WebLayoutChangerAction _tilesAction;
-        private readonly ActionDispatcher _actionDispatcher;
+        private ActionDispatcher _actionDispatcher;
+        private bool _disposed = false;
 
         private event EventHandler _opened;
         private event EventHandler _closed;
@@ -156,18 +157,40 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             CreateGridElements();
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                _actionDispatcher = null;                
+
+                foreach (Box theBox in _imageBoxList)
+                {
+                    theBox.OnClick -= OnClick;
+                }
+                _imageBoxList.Clear();
+
+                _disposed = true;
+            }
+        }
+
         public void CreateGridElements()
         {
             for (int cols = 0; cols < _imageBoxAction.MaxColumns; cols++)
             {
-                ColumnDefinition coldef = new ColumnDefinition {Width = GridLength.Auto};
+                var coldef = new ColumnDefinition {Width = GridLength.Auto};
                 ImageBoxGrid.ColumnDefinitions.Add(coldef);
             }
 
             for (int rows = 0; rows < _imageBoxAction.MaxRows; rows++)
             {
                 //do this for each row
-                RowDefinition rowDef = new RowDefinition {Height = GridLength.Auto};
+                var rowDef = new RowDefinition {Height = GridLength.Auto};
                 ImageBoxGrid.RowDefinitions.Add(rowDef);
             }
 
@@ -175,21 +198,21 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             for (int cols = 0; cols < _imageBoxAction.MaxColumns; cols++)
                 for (int rows = 0; rows < _imageBoxAction.MaxRows; rows++)
                 {
-                    Box theBox = new Box(rows, cols, ImageBoxGrid, _imageBoxList, ImageBoxLayoutText,_imageBoxAction);
+                    var theBox = new Box(rows, cols, ImageBoxGrid, _imageBoxList, ImageBoxLayoutText,_imageBoxAction);
                     theBox.OnClick += OnClick;
                     _imageBoxList.Add(theBox);
                 }
 
             for (int cols = 0; cols < _tilesAction.MaxColumns; cols++)
             {
-                ColumnDefinition coldef = new ColumnDefinition {Width = GridLength.Auto};
+                var coldef = new ColumnDefinition {Width = GridLength.Auto};
                 TileGrid.ColumnDefinitions.Add(coldef);
             }
 
             for (int rows = 0; rows < _tilesAction.MaxRows; rows++)
             {
                 //do this for each row
-                RowDefinition rowDef = new RowDefinition {Height = GridLength.Auto};
+                var rowDef = new RowDefinition {Height = GridLength.Auto};
                 TileGrid.RowDefinitions.Add(rowDef);
             }
 
