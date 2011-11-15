@@ -187,9 +187,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
                 if (disposing)
                 {
-                    foreach (IDisposable d in LayoutRoot.Children)
+                    foreach (var c in LayoutRoot.Children)
                     {
-                        d.Dispose();
+                        var d = c as IDisposable;
+                        if (d!= null)
+                            d.Dispose();
                     }
                 } 
                 

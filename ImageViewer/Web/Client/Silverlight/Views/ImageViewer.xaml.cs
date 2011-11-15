@@ -316,8 +316,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
                 if (_studyView != null)
                 {
+                    StudyViewContainer.Children.Clear();
+         
                     MouseHelper.SetBackgroundElement(null);
-                    _studyView.Destroy();
+                    _studyView.Dispose();
                     _studyView = null;
                 }
             }                      
@@ -337,6 +339,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
                 // Must do this beofre we work with the EventMediator
                 ToolstripViewComponent.Dispose();
+
+                if (_studyView != null)
+                {
+                    StudyViewContainer.Children.Clear();
+                    if (disposing)
+                    {
+                        _studyView.Dispose();
+                    }
+                    _studyView = null;
+                }
 
                 if (EventMediator != null)
                 {

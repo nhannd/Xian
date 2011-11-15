@@ -141,6 +141,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             if (!_disposed)
             {
+                ThrottleSettings.Default.PropertyChanged -= ThrottleSettingsPropertyChanged;
+
                 Disconnect(SR.Disposing);
                 _disposed = true;
             }
@@ -150,6 +152,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             if (_proxy != null)
             {
+                
                 lock (_sync)
                 {
                     if (_proxy != null)

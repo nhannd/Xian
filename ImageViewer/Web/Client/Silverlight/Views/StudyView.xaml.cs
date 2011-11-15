@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         private List<ImageBoxView> _imageBoxViews;
         private DelayedEventPublisher<EventArgs> _resizePublisher;
         private readonly ServerEventMediator _eventMediator;
+	    private bool _disposed = false;
 
         public StudyView(ServerEventMediator eventMediator)
         {
@@ -37,14 +38,25 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         public void Dispose()
         {
-            if (_resizePublisher != null)
-            {
-                _resizePublisher.Dispose();
-                _resizePublisher = null;
-            }
-            SizeChanged -= OnSizeChanged;
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            DestroyImageBoxViews();
+        public void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (_resizePublisher != null)
+                {
+                    if (disposing)
+                        _resizePublisher.Dispose();
+                    _resizePublisher = null;
+                }
+                SizeChanged -= OnSizeChanged;
+
+                DestroyImageBoxViews();
+                _disposed = true;
+            }
         }
 
         #region Private Methods
@@ -102,11 +114,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             SetImageBoxesParentSize();
         }
         
-        public void Destroy()
-        {
-			DestroyImageBoxViews();
-        }
-
         #endregion
     }
 }
