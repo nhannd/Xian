@@ -24,14 +24,13 @@ namespace ClearCanvas.ImageViewer
 {
 	internal sealed class ViewerShortcutManager : IViewerShortcutManager
 	{
-		private readonly Dictionary<ITool, ITool> _setRegisteredTools;
+		private readonly Dictionary<ITool, ITool> _tools;
+		private readonly ImageViewerComponent _viewer;
 
-		private readonly ImageViewerComponent _ownerViewer;
-
-		public ViewerShortcutManager(ImageViewerComponent ownerViewer)
+		public ViewerShortcutManager(ImageViewerComponent viewer)
 		{
-			_setRegisteredTools = new Dictionary<ITool, ITool>();
-			_ownerViewer = ownerViewer;
+			_tools = new Dictionary<ITool, ITool>();
+			_viewer = viewer;
 		}
 
 		private void RegisterMouseTool(MouseImageViewerTool mouseTool)
@@ -45,27 +44,44 @@ namespace ClearCanvas.ImageViewer
 
         private IEnumerable<MouseImageViewerTool> GetMouseTools()
         {
-            return _setRegisteredTools.Keys.OfType<MouseImageViewerTool>();
+            return _tools.Keys.OfType<MouseImageViewerTool>();
         }
 
         private MouseImageViewerTool GetDefaultMouseTool(XMouseButtons mouseButton)
         {
             return GetMouseTools().FirstOrDefault(t => t.InitiallyActive && t.MouseButton == mouseButton);
         }
-
-	    private MouseImageViewerTool GetActiveMouseTool(XMouseButtons mouseButton)
+        
+        private MouseImageViewerTool GetActiveMouseTool(XMouseButtons mouseButton)
 		{
             return GetMouseTools().FirstOrDefault(t => t.Active && t.MouseButton == mouseButton);
 		}
 
-		private void DeactivateMouseTools(MouseImageViewerTool activating)
+        private IMouseButtonHandler GetActiveMouseTool(MouseButtonShortcut shortcut)
+        {
+            if (shortcut == null)
+                return null;
+
+            return (from mouseTool in GetMouseTools()
+                    where mouseTool.Active && shortcut.Equals(mouseTool.MouseButton)
+                    select mouseTool).FirstOrDefault();
+        }
+
+        private IEnumerable<IMouseButtonHandler> GetDefaultMouseTools(MouseButtonShortcut shortcut)
+        {
+            return (from mouseTool in GetMouseTools()
+                    where shortcut.Equals(mouseTool.DefaultMouseButtonShortcut)
+                    select mouseTool).Cast<IMouseButtonHandler>();
+        }
+        
+        private void DeactivateMouseTools(MouseImageViewerTool activating)
 		{
 		    var others = from tool in GetMouseTools()
 		                     where tool != activating && tool.MouseButton == activating.MouseButton
 		                     select tool;
 
-            foreach (var tool in others)
-                tool.Active = false;
+            foreach (var otherTool in others)
+                otherTool.Active = false;
 		}
 
 		private void ActivateMouseTool(MouseImageViewerTool mouseTool)
@@ -118,28 +134,11 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(tool, "tool");
 
+            _tools[tool] = tool;
+
 			if (tool is MouseImageViewerTool)
 				RegisterMouseTool((MouseImageViewerTool)tool);
-
-			_setRegisteredTools[tool] = tool;
 		}
-
-		private IMouseButtonHandler GetActiveMouseTool(MouseButtonShortcut shortcut)
-		{
-			if (shortcut == null)
-				return null;
-
-		    return (from mouseTool in GetMouseTools()
-		                where mouseTool.Active && shortcut.Equals(mouseTool.MouseButton)
-		            select mouseTool).FirstOrDefault();
-		}
-
-        private IEnumerable<IMouseButtonHandler> GetOtherMouseTools(MouseButtonShortcut shortcut)
-        {
-            return (from mouseTool in GetMouseTools()
-                        where shortcut.Equals(mouseTool.DefaultMouseButtonShortcut)
-                    select mouseTool).Cast<IMouseButtonHandler>();
-        }
 
 	    #region IViewerShortcutManager Members
 
@@ -148,12 +147,12 @@ namespace ClearCanvas.ImageViewer
             if (shortcut == null)
                 yield break;
 		    
-			var activeHandler = GetActiveMouseTool(shortcut);
-            if (activeHandler != null)
-                yield return activeHandler;
+			var activeMouseTool = GetActiveMouseTool(shortcut);
+            if (activeMouseTool != null)
+                yield return activeMouseTool;
 
-            foreach (var otherHandler in GetOtherMouseTools(shortcut))
-                yield return otherHandler;
+            foreach (var defaultMouseTool in GetDefaultMouseTools(shortcut))
+                yield return defaultMouseTool;
 		}
 
 		/// <summary>
@@ -185,23 +184,23 @@ namespace ClearCanvas.ImageViewer
             const string globalToolbarActionSite = "global-toolbars";
 
 			var actions = (IActionSet) new ActionSet();
-			foreach (var tool in _setRegisteredTools.Keys)
+			foreach (var tool in _tools.Keys)
 				actions = actions.Union(tool.Actions);
 
 			// precedence is given to actions on the viewer keyboard site
-			var action = FindClickAction(shortcut, _ownerViewer.ActionsNamespace, ImageViewerComponent.KeyboardSite, actions);
+			var action = FindClickAction(shortcut, _viewer.ActionsNamespace, ImageViewerComponent.KeyboardSite, actions);
 
 			// if not defined, give consideration to the viewer context menu
 			if (action == null)
-				action = FindClickAction(shortcut, _ownerViewer.ActionsNamespace, ImageViewerComponent.ContextMenuSite, actions);
+				action = FindClickAction(shortcut, _viewer.ActionsNamespace, ImageViewerComponent.ContextMenuSite, actions);
 
 			// if still not found, search the global toolbars
 			if (action == null)
-				action = FindClickAction(shortcut, _ownerViewer.GlobalActionsNamespace, globalToolbarActionSite, actions);
+				action = FindClickAction(shortcut, _viewer.GlobalActionsNamespace, globalToolbarActionSite, actions);
 
 			// then the global menus
 			if (action == null)
-				action = FindClickAction(shortcut, _ownerViewer.GlobalActionsNamespace, globalMenusActionSite, actions);
+				action = FindClickAction(shortcut, _viewer.GlobalActionsNamespace, globalMenusActionSite, actions);
 
 			// and finally any other site in our toolset that hasn't already been covered
 			// it's done in this way so that we don't unnecessarily execute the collection mapping and unique finding,
@@ -215,7 +214,7 @@ namespace ClearCanvas.ImageViewer
 					    && site != ImageViewerComponent.KeyboardSite
 					    && site != ImageViewerComponent.ContextMenuSite)
 					{
-						action = FindClickAction(shortcut, _ownerViewer.ActionsNamespace, site, actions);
+						action = FindClickAction(shortcut, _viewer.ActionsNamespace, site, actions);
 						if (action != null)
 							break;
 					}

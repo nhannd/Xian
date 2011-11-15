@@ -224,7 +224,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 		}
 
-        public bool InitiallyActive { get; protected internal set; }
+        /// <summary>
+        /// Gets whether or not this tool should be automatically selected/activated when the viewer opens initially.
+        /// </summary>
+        public bool InitiallyActive { get; internal set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this tool is currently active or not.  
