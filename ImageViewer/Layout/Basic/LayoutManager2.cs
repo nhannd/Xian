@@ -174,13 +174,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 if (SplitMixedMultiframeSeries)
                 {
                     List<IDisplaySet> multiFrameDisplaySets = _mixedMultiFrameFactory.CreateDisplaySets(series);
-                    if (multiFrameDisplaySets.Count > 0 && showOriginal && !ShowOriginalMixedMultiframeSeries)
+                    if (multiFrameDisplaySets.Count > 0 && !ShowOriginalMixedMultiframeSeries)
                         showOriginal = false;
 
                     displaySets.AddRange(multiFrameDisplaySets);
                 }
 
-                bool anyDisplaySetsCreated = displaySets.Count > 0 || ModalityDisplaySetExists;
+                bool modalityDegenerateCase = CreateAllImagesDisplaySet && !ModalityDisplaySetExists;
+                bool singleImageDegenerateCase = false;
+
                 if (CreateSingleImageDisplaySets)
                 {
                     //The factory will only create single image display sets and will not create a series 
@@ -194,33 +196,23 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
                     displaySets.AddRange(singleImageDisplaySets);
 
-                    //Show the original only if a previous part of this method hasn't already disabled it, and:
-                    // 1. the user wants to see it, or
-                    // 2. it's the degenerate single image series case
-                    showOriginal = showOriginal && (singleImageDisplaySets.Count == 0 || ShowOriginalSeries);
-
-                    if (singleImageDisplaySets.Count > 0)
-                        anyDisplaySetsCreated = true;
-                }
-                else
-                {
-                    //Show the original only if a previous part of this method hasn't already disabled it, and:
-                    // 1. the user wants to see it, or
-                    // 2. no other display sets have been created so far, which is typically just the "All Images" one.
-                    showOriginal = showOriginal && (ShowOriginalSeries || !anyDisplaySetsCreated);
+                    singleImageDegenerateCase = singleImageDisplaySets.Count == 0;
                 }
 
+                //Show the original if:
+                // 1. A previous part of this method hasn't already disabled it.
+                // 2. The user wants to see it, or
+                // 3. It's a degenerate case
+                showOriginal = showOriginal && (ShowOriginalSeries || modalityDegenerateCase || singleImageDegenerateCase);
                 if (showOriginal)
                 {
                     //The factory will create series display sets only.
                     _basicFactory.CreateSingleImageDisplaySets = false;
                     foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
                         displaySets.Add(displaySet);
-
-                    if (displaySets.Count > 0)
-                        anyDisplaySetsCreated = true;
                 }
 
+                bool anyDisplaySetsCreated = displaySets.Count > 0 || ModalityDisplaySetExists;
                 if (!anyDisplaySetsCreated)
                     displaySets.AddRange(_placeholderDisplaySetFactory.CreateDisplaySets(series));
 
