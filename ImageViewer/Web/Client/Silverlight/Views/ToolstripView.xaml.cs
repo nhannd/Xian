@@ -17,12 +17,13 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
-    public partial class ToolstripView : UserControl, IDisposable
+    public partial class ToolstripView : IDisposable
     {
         private readonly Dictionary<Guid, IToolstripButton> _buttonLookup = new Dictionary<Guid, IToolstripButton>();
         private ActionDispatcher _dispatcher;
         private ServerEventMediator _eventMediator;
         WebIconSize _desiredIconSize = WebIconSize.Medium;
+        private bool _disposed = false;
 
         public ServerEventMediator EventDispatcher
         {
@@ -130,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void AddHelpButton()
         {
-            var theButton = new HelpButton(_dispatcher);
+            var theButton = new HelpButton();
             theButton.SetIconSize(_desiredIconSize);
             LayoutRoot.Children.Add(theButton);
             theButton.RegisterOnMouseEnter(OnMouseEnter);
@@ -173,8 +174,42 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         public void Dispose()
         {
-            _eventMediator.TileHasCaptureChanged -= EventBrokerTileHasCapture;
-            System.Windows.Application.Current.Host.Content.Resized -= OnApplicationResized;
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                System.Windows.Application.Current.Host.Content.Resized -= OnApplicationResized;
+
+                if (disposing)
+                {
+                    foreach (IDisposable d in LayoutRoot.Children)
+                    {
+                        d.Dispose();
+                    }
+                } 
+                
+                if (_dispatcher != null)
+                {
+                    _dispatcher.Dispose();
+                    _dispatcher = null;
+                }
+
+                if (_eventMediator != null)
+                {
+                    _eventMediator.TileHasCaptureChanged -= EventBrokerTileHasCapture;
+                    _eventMediator = null;
+                }
+             
+
+                LayoutRoot.Children.Clear();
+
+                _disposed = true;
+            }
         }
     }
 }

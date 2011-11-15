@@ -83,6 +83,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private ServerMessagePoller _poller;
         private ServerMessageSender _sender;
 
+        private bool _disposed = false;
+
         #endregion
 
         #region Public Properties
@@ -196,10 +198,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         /// <param name="request">The start request.</param>
         public void StartApplication(StartApplicationRequest request)
         {
-            if (_sender != null)
-            {
-                _sender.StartApplication(request);
-            }
+            if (!Faulted)
+                _sender.StartApplication(request);        
         }
 
         /// <summary>
@@ -208,7 +208,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         /// <param name="data"></param>
         internal void PublishPerformance(PerformanceData data)
         {
-            _sender.PublishPerformance(data);
+            if (!Faulted)
+                _sender.PublishPerformance(data);
         }
 
         /// <summary>
@@ -216,7 +217,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         /// </summary>
         public void StopApplication()
         {
-            _sender.StopApplication();
+            if (!Faulted)
+                _sender.StopApplication();
         }
 
         public void OnTileHasCaptureChanged(Tile tileEntity)
@@ -265,7 +267,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public void HandleException(Exception exception)
         {
             string formattedMessage = exception.Message;
-            _sender.StopApplication();
+            if (!Faulted)
+                _sender.StopApplication();
 
             UIThread.Execute(() =>
             {
@@ -282,7 +285,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public void HandleCriticalError(string message, params object[] args)
         {
             string formattedMessage = string.Format(message, args);
-            _sender.StopApplication();
+
+            if (!Faulted)
+                _sender.StopApplication();
 
             UIThread.Execute(() =>
             {
@@ -293,19 +298,73 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void Dispose()
         {
-            // TODO: This method is called on Application Exit. 
-            // But SL does not support calling web service on this event
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            if (_sender != null)
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
             {
-                _sender.ApplicationStarted -= StartApplicationCompleted;
-                _sender.ChannelFaulted -= ChannelFaulted;
-                _sender.MessageReceived -= OnServerEventReceived;
 
-                _sender.Dispose();
-                _sender = null;
+                if (_queue != null)
+                {
+                    _queue.Stop();
+
+                    if (disposing)
+                        _queue.Dispose();
+                    _queue = null;
+                } 
+                
+                if (_poller != null)
+                {
+                    _poller.Dispose();
+                    _poller = null;
+                } 
+                
+                if (_sender != null)
+                {
+                    _sender.ApplicationStarted -= StartApplicationCompleted;
+                    _sender.ChannelFaulted -= ChannelFaulted;
+                    _sender.MessageReceived -= OnServerEventReceived;
+                    
+                    if (disposing)
+                        _sender.Dispose();
+
+                    _sender = null;
+                }
+
+                // outbound thread should shut down after sender is shut down
+                if (_outboundThread != null)
+                {
+                    lock (_outboundQueueSync)
+                        Monitor.Pulse(_outboundQueueSync);
+                    if (_outboundThread.IsAlive)
+                    {
+                        _outboundThread.Join(500);
+                    }
+                    _outboundThread = null;
+                }
+
+
+                CompositionTarget.Rendering -= CompositionTargetRendering;
+
+                _disposed = true;
             }
+        }
 
+        #endregion
+
+        #region Private Methods
+
+        private void StartPolling()
+        {
+            _poller = new ServerMessagePoller(_sender);
+            _poller.Start();
+        }
+
+        private void StopThreads()
+        {
             if (_queue != null)
             {
                 _queue.Dispose();
@@ -321,17 +380,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 }
                 _outboundThread = null;
             }
-            CompositionTarget.Rendering -= CompositionTargetRendering;
-        }
 
-        #endregion
-
-        #region Private Methods
-
-        private void StartPolling()
-        {
-            _poller = new ServerMessagePoller(_sender);
-            _poller.Start();
+            if (_poller != null)
+            {
+                _poller.Dispose();
+                _poller = null;
+            }
         }
 
 	    private void StartApplicationCompleted(object sender, StartApplicationCompletedEventArgs e)
@@ -339,6 +393,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             StartPolling();
 
             _outboundThread = new Thread(ignore => ProcessOutboundQueue());
+            _outboundThread.Name = String.Format("Outbound Thread[{0}]", _outboundThread.ManagedThreadId);
             _outboundThread.Start();
         }
    
@@ -373,7 +428,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             }
             finally
             {
-                _sender.Disconnect(SR.ApplicationHasStopped);
+                if (!Faulted)
+                    _sender.Disconnect(SR.ApplicationHasStopped);
+                StopThreads();
             }
         }
 
@@ -454,7 +511,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     msgset.Timestamp = DateTime.Now;
 
                     Platform.Log(LogLevel.Debug, "<== Background {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
-                    _sender.SendMessages(msgset);
+                    if (!Faulted)
+                        _sender.SendMessages(msgset);
                     Platform.Log(LogLevel.Debug, "<Complete Background {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
 
                     ApplicationActivityMonitor.Instance.LastActivityTick = Environment.TickCount;
@@ -500,7 +558,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 else
                 {
                     Platform.Log(LogLevel.Debug, "<== {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
-                    _sender.SendMessages(msgset);
+                    if (!Faulted)
+                        _sender.SendMessages(msgset);
                     Platform.Log(LogLevel.Debug, "<Complete {0}: MSG # {1}: Count: {2}", msgset.Tick, msgset.Number, msgset.Messages.Count);
                   
                     // TODO: REVIEW THIS
@@ -517,7 +576,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                 // In some case, this is not necessary because the connection is already faulted.
                 // But let's do it anyway.
-                _sender.Disconnect(e.Message);
+                if (!Faulted) 
+                    _sender.Disconnect(e.Message);
             }
         }
 
@@ -605,7 +665,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 				}
 				catch (Exception ex)
 				{
-					if (_sender.Faulted)
+					if (!Faulted)
                         HandleException(ex);
                 }
 			}
@@ -672,10 +732,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     {
         public delegate void SendDelegate(List<Message> msgs);
 
-		private readonly Thread _thread;
+		private Thread _thread;
 		private volatile bool _stop;
 		private readonly object _syncLock = new object();
         private readonly Queue<Message> _queue = new Queue<Message>();
+	    private bool _disposed = false;
 
         public MessageQueue(SendDelegate del)
         {
@@ -742,14 +803,37 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void Dispose()
         {
-			if (_stop)
-				return;
+            Dispose(true);
 
-			_stop = true;
-			lock (_syncLock) { Monitor.Pulse(_syncLock); }
+            GC.SuppressFinalize(this);
+        }
 
-			if (_thread.IsAlive)
-				_thread.Join(30 * 1000);
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                Stop();
+
+                _thread = null;
+
+                _disposed = true;
+            }
+        }
+
+        public void Stop()
+        {
+            if (_stop)
+                return;
+
+            _stop = true;
+
+            lock (_syncLock)
+            {
+                Monitor.Pulse(_syncLock);
+            }
+
+            if (_thread.IsAlive)
+                _thread.Join(500);
         }
     }
 

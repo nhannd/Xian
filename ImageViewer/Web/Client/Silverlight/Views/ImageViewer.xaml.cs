@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 		private StudyView _studyView;
 
         private bool _shuttingDown;
+	    private bool _disposed = false;
 
 	    public ServerEventMediator EventMediator { get; set; }
 
@@ -324,21 +325,36 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
 	    public void Dispose()
 	    {
-            if (EventMediator != null)
-			{
-				if (_serverApplication != null)
-				{
-                    EventMediator.UnregisterEventHandler(typeof(ApplicationStartedEvent), ApplicationStarted);
-                    EventMediator.UnregisterEventHandler(_serverApplication.Viewer.Identifier);
-                    EventMediator.ServerApplicationStopped -= OnServerApplicationStopped;
-                    _serverApplication = null;
-				}
-
-                EventMediator.Dispose();
-			    EventMediator = null;
-			}
-
-            Shutdown();
+	        Dispose(true);
+	        GC.SuppressFinalize(this);
 	    }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if(!_disposed)
+            {
+                Shutdown();
+
+                // Must do this beofre we work with the EventMediator
+                ToolstripViewComponent.Dispose();
+
+                if (EventMediator != null)
+                {
+                    if (_serverApplication != null)
+                    {
+                        EventMediator.UnregisterEventHandler(typeof(ApplicationStartedEvent), ApplicationStarted);
+                        EventMediator.UnregisterEventHandler(_serverApplication.Viewer.Identifier);
+                        EventMediator.ServerApplicationStopped -= OnServerApplicationStopped;
+                        _serverApplication = null;
+                    }
+
+                    EventMediator.Dispose();
+                    EventMediator = null;
+                }
+
+
+                _disposed = true;
+            }
+        }
     }
 }

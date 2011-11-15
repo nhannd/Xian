@@ -30,9 +30,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         private MouseEvent _mouseLeaveEvent;
         private readonly WebDropDownButtonAction _actionItem;
         private IPopup _dropMenu;
-        private readonly ActionDispatcher _actionDispatcher;
+        private ActionDispatcher _actionDispatcher;
         private WebIconSize _iconSize;
-
+        private bool _disposed = false;
 
         private WebIconSize IconSize {
             get { return _iconSize; }
@@ -81,12 +81,34 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
         public void Dispose()
         {
-            if (_actionDispatcher != null)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
             {
-                _actionDispatcher.Remove(_actionItem.Identifier);
+                if (_actionDispatcher != null)
+                {
+                    _actionDispatcher.Remove(_actionItem.Identifier);
+                    _actionDispatcher = null;
+                }
+
+                StackPanelVerticalComponent.MouseEnter -= ButtonComponent_MouseEnter;
+                StackPanelVerticalComponent.MouseLeave -= ButtonComponent_MouseLeave;
+                ButtonComponent.Click -= OnClick;
+                DropButtonComponent.Click -= OnDropClick;
+            
+                if (_dropMenu != null)
+                {
+                    if (disposing)
+                        _dropMenu.Dispose();
+                    _dropMenu = null;
+                }
+
+                _disposed = true;
             }
-            StackPanelVerticalComponent.MouseEnter -= ButtonComponent_MouseEnter;
-            StackPanelVerticalComponent.MouseLeave -= ButtonComponent_MouseLeave;
         }
 
         void ButtonComponent_MouseLeave(object sender, MouseEventArgs e)

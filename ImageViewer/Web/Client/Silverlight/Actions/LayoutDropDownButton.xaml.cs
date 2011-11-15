@@ -23,15 +23,16 @@ using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
-    public partial class LayoutDropDown : UserControl, IToolstripDropdownButton, IActionUpdate, IDisposable
+    public partial class LayoutDropDown : IToolstripDropdownButton, IActionUpdate, IDisposable
     {
         private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
         private readonly WebDropDownAction _actionItem;
-        private readonly IPopup _popup;
+        private IPopup _popup;
         private WebIconSize _iconSize;
-        private readonly ActionDispatcher _actionDispatcher;
-       
+        private ActionDispatcher _actionDispatcher;
+        private bool _disposed = false;
+
         private WebIconSize IconSize
         {
             set
@@ -73,13 +74,30 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
         public void Dispose()
         {
-            if (_actionDispatcher != null)
-            {
-                _actionDispatcher.Remove(_actionItem.Identifier);
-            }
-            LayoutDropDownButton.MouseEnter -= ButtonComponent_MouseEnter;
-            LayoutDropDownButton.MouseLeave -= ButtonComponent_MouseLeave;
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (_actionDispatcher != null)
+                {
+                    _actionDispatcher.Remove(_actionItem.Identifier);
+                    _actionDispatcher = null;
+                }
+                LayoutDropDownButton.MouseEnter -= ButtonComponent_MouseEnter;
+                LayoutDropDownButton.MouseLeave -= ButtonComponent_MouseLeave;
+                ButtonComponent.Click -= OnDropClick;
+
+                _popup.Dispose();
+                _popup = null;
+
+                _disposed = true;
+            }
+        }
+
 
         void ButtonComponent_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -142,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             if (_actionItem == null)
                 return;
 
-            BitmapImage bi = new BitmapImage();
+            var bi = new BitmapImage();
 
             if (_actionItem.IconSet != null)
             {
