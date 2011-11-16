@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private event EventHandler<SearchRequestedEventArgs> _searchRequested;
 		private event EventHandler _searchCancelled;
 
-		private bool _isSearchEnabled;
+		private bool _isSearchEnabled = true;
 
 		/// <summary>
 		/// Constructor
