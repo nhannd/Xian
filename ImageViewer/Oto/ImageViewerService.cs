@@ -10,24 +10,30 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Oto;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Oto
 {
 	[ExtensionOf(typeof(OtoServiceExtensionPoint))]
 	[OtoServiceBehaviour(UseSynchronizationContext = true)]
-	public class DicomDataStoreService : OtoServiceBase
+	public class ImageViewerService : OtoServiceBase
 	{
+		private static readonly Dictionary<int, IImageViewer> _viewers = new Dictionary<int, IImageViewer>();
+		private static int _viewerId;
+
+
+		#region StudyProperties
+
 		[DataContract]
 		public class StudyProperties
 		{
@@ -59,6 +65,8 @@ namespace ClearCanvas.ImageViewer.Oto
 			[Description("DICOM Study Instance UID")]
 			public string StudyInstanceUID;
 		}
+
+		#endregion
 
 
 		[DataContract]
@@ -114,35 +122,119 @@ namespace ClearCanvas.ImageViewer.Oto
 		}
 
 		[DataContract]
-		public class OpenStudiesInput
+		public class OpenViewerInput
 		{
+			[Description("List of study instance UIDs for studies to be opened.")]
 			[DataMember]
 			public string[] StudyInstanceUids { get; set; }
 		}
 
-		public class OpenStudiesOutput
+		[DataContract]
+		public class OpenViewerOutput
 		{
 
+			[Description("An identifier that can be used to perform subsequent operations on the viewer.")]
+			[DataMember]
+			public object ViewerId { get; set; }
 		}
 
 
-		[Description("Opens the specified studies in a new workspace.")]
-		public OpenStudiesOutput OpenStudies(OpenStudiesInput input)
+		[Description("Opens the specified studies in a new viewer workspace.")]
+		public OpenViewerOutput OpenViewer(OpenViewerInput input)
 		{
 			Platform.CheckForNullReference(input, "input");
 			Platform.CheckMemberIsSet(input.StudyInstanceUids, "StudyInstanceUids");
 
-			if(input.StudyInstanceUids.Length == 0)
-				return new OpenStudiesOutput();
+			if (input.StudyInstanceUids.Length == 0)
+				return new OpenViewerOutput();
 
 			var helper = new OpenStudyHelper();
 			foreach (var studyInstanceUid in input.StudyInstanceUids)
 				helper.AddStudy(studyInstanceUid, null, "DICOM_LOCAL");
 
-			helper.Title = "imageviewer";
-			helper.OpenStudies();
+			var id = Interlocked.Increment(ref _viewerId);
+			helper.Title = "imageviewer " + id;
 
-			return new OpenStudiesOutput();
+			var viewer = helper.OpenStudies();
+
+			var workspace = Application.ActiveDesktopWindow.Workspaces
+				.First(w => ImageViewerComponent.GetAsImageViewer(w) == viewer);
+
+			lock(_viewers)
+			{
+				_viewers.Add(id, viewer);
+			}
+
+			workspace.Closed += (sender, e) =>
+									{
+										lock (_viewers)
+										{
+											_viewers.Remove(id);
+										}
+									};
+
+			return new OpenViewerOutput {ViewerId = id};
+		}
+
+
+		[DataContract]
+		public class CloseViewerInput
+		{
+			[Description("Viewer to close.")]
+			[DataMember]
+			public object ViewerId { get; set; }
+		}
+
+		[DataContract]
+		public class CloseViewerOutput
+		{
+		}
+
+
+		[Description("Closes the specified viewer.")]
+		public CloseViewerOutput CloseViewer(CloseViewerInput input)
+		{
+			Platform.CheckForNullReference(input, "input");
+			Platform.CheckMemberIsSet(input.ViewerId, "ViewerId");
+
+			var viewer = _viewers[(int)input.ViewerId];
+			var workspace = Application.ActiveDesktopWindow.Workspaces
+				.First(w => ImageViewerComponent.GetAsImageViewer(w) == viewer);
+
+			workspace.Close(UserInteraction.NotAllowed);
+
+			return new CloseViewerOutput();
+		}
+
+		[DataContract]
+		public class QueryPhysicalWorkspaceInput
+		{
+			[Description("Viewer whose physical workspace is to be queried.")]
+			[DataMember]
+			public object ViewerId { get; set; }
+		}
+		[DataContract]
+		public class QueryPhysicalWorkspaceOutput
+		{
+			[Description("Number of rows.")]
+			[DataMember]
+			public int Rows { get; set; }
+
+			[Description("Number of columns.")]
+			[DataMember]
+			public int Columns { get; set; }
+		}
+
+		[Description("Queries the specified viewer for information about its physical workspace.")]
+		public QueryPhysicalWorkspaceOutput QueryPhysicalWorkspace(QueryPhysicalWorkspaceInput input)
+		{
+			Platform.CheckForNullReference(input, "input");
+			Platform.CheckMemberIsSet(input.ViewerId, "ViewerId");
+
+			var viewer = _viewers[(int)input.ViewerId];
+			var pw = viewer.PhysicalWorkspace;
+
+			return new QueryPhysicalWorkspaceOutput {Rows = pw.Rows, Columns = pw.Columns};
 		}
 	}
 }
