@@ -56,7 +56,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			private Vector3D _voxelSpacing;
 			private Size3D _volumeSize;
 			private double? _gantryTilt;
-			private int? _pixelPaddingValue;
 			private int? _paddingRows;
 
 			#endregion
@@ -145,45 +144,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 			}
 
-			/// <summary>
-			/// Gets or computes a pixel value suitable for volume padding purposes.
-			/// </summary>
-			/// <remarks>
-			/// This property will try to use the value of either <see cref="DicomTags.PixelPaddingValue"/>,
-			/// <see cref="DicomTags.SmallestPixelValueInSeries"/> or <see cref="DicomTags.SmallestImagePixelValue"/>
-			/// (in order of preference). If none of these attributes exist in the dataset, then a suitable value is
-			/// computed based on <see cref="DicomTags.BitsStored"/>, <see cref="DicomTags.PixelRepresentation"/>,
-			/// and <see cref="DicomTags.PhotometricInterpretation"/>.
-			/// </remarks>
-			private int PixelPaddingValue
-			{
-				get
-				{
-					if (!_pixelPaddingValue.HasValue)
-					{
-						bool isSigned = _frames[0].Frame.PixelRepresentation != 0;
-						bool isMonochrome1 = _frames[0].Frame.PhotometricInterpretation.Equals(PhotometricInterpretation.Monochrome1);
-						int bitsStored = _frames[0].Frame.BitsStored;
-						int pixelPaddingValue = ComputeMinPixelValue(bitsStored, isSigned, isMonochrome1);
-
-						DicomAttribute attribute;
-						if (_frames[0].Sop.DataSource.TryGetAttribute(DicomTags.PixelPaddingValue, out attribute))
-							pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
-						else if (_frames[0].Sop.DataSource.TryGetAttribute(DicomTags.SmallestPixelValueInSeries, out attribute))
-							pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
-						else if (_frames[0].Sop.DataSource.TryGetAttribute(DicomTags.SmallestImagePixelValue, out attribute))
-							pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
-
-						// these next few lines may look positively stupid, but they are here for a good reason (See Ticket #7026)
-						if (isSigned)
-							_pixelPaddingValue = (short) pixelPaddingValue;
-						else
-							_pixelPaddingValue = (ushort) pixelPaddingValue;
-					}
-					return _pixelPaddingValue.Value;
-				}
-			}
-
 			private int PaddingRows
 			{
 				get
@@ -240,9 +200,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				// compute normalized VOI windows
 				VoiWindow.SetWindows(ComputeNormalizedVoiWindows(_frames, normalizedSlope, normalizedIntercept), sopDataSourcePrototype);
 
+				// compute the volume padding value
+				var pixelPaddingValue = ComputePixelPaddingValue(_frames, normalizedSlope, normalizedIntercept);
+
 				int minVolumeValue, maxVolumeValue;
-				var volumeArray = BuildVolumeArray((ushort) PixelPaddingValue, normalizedSlope, normalizedIntercept, out minVolumeValue, out maxVolumeValue);
-				var volume = new Volume(null, volumeArray, VolumeSize, VoxelSpacing, ImagePositionPatient, ImageOrientationPatient, sopDataSourcePrototype, PixelPaddingValue, _frames[0].Frame.SeriesInstanceUid, minVolumeValue, maxVolumeValue);
+				var volumeArray = BuildVolumeArray(pixelPaddingValue, normalizedSlope, normalizedIntercept, out minVolumeValue, out maxVolumeValue);
+				var volume = new Volume(null, volumeArray, VolumeSize, VoxelSpacing, ImagePositionPatient, ImageOrientationPatient, sopDataSourcePrototype, pixelPaddingValue, _frames[0].Frame.SeriesInstanceUid, minVolumeValue, maxVolumeValue);
 				return volume;
 			}
 
@@ -398,16 +361,42 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return normalizedWindows;
 			}
 
-			private static int ComputeMinPixelValue(int bitsStored, bool isSigned, bool isMonochrome1)
+			/// <summary>
+			/// Computes a pixel value suitable for volume padding purposes.
+			/// </summary>
+			/// <remarks>
+			/// This function will try to use the value of either <see cref="DicomTags.PixelPaddingValue"/>,
+			/// <see cref="DicomTags.SmallestPixelValueInSeries"/> or <see cref="DicomTags.SmallestImagePixelValue"/>
+			/// (in order of preference). If none of these attributes exist in the dataset, then a suitable value is
+			/// computed based on <see cref="DicomTags.BitsStored"/>, <see cref="DicomTags.PixelRepresentation"/>,
+			/// and <see cref="DicomTags.PhotometricInterpretation"/>.
+			/// </remarks>
+			private static ushort ComputePixelPaddingValue(IList<IFrameReference> frames, double normalizedSlope, double normalizedIntercept)
 			{
-				// fix to valid range of bitsStored
-				if (bitsStored < 1)
-					bitsStored = 1;
-				else if (bitsStored > 16)
-					bitsStored = 16;
+				var isSigned = frames[0].Frame.PixelRepresentation != 0;
+				var isMonochrome1 = frames[0].Frame.PhotometricInterpretation.Equals(PhotometricInterpretation.Monochrome1);
+				var bitsStored = Math.Max(1, Math.Min(16, frames[0].Frame.BitsStored));
+				var pixelPaddingValue = isMonochrome1 ? DicomPixelData.GetMaxPixelValue(bitsStored, isSigned) : DicomPixelData.GetMinPixelValue(bitsStored, isSigned);
 
-				// always take the value that represents "dark"
-				return isMonochrome1 ? DicomPixelData.GetMaxPixelValue(bitsStored, isSigned) : DicomPixelData.GetMinPixelValue(bitsStored, isSigned);
+				DicomAttribute attribute;
+				if (frames[0].Sop.DataSource.TryGetAttribute(DicomTags.PixelPaddingValue, out attribute))
+					pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
+				else if (frames[0].Sop.DataSource.TryGetAttribute(DicomTags.SmallestPixelValueInSeries, out attribute))
+					pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
+				else if (frames[0].Sop.DataSource.TryGetAttribute(DicomTags.SmallestImagePixelValue, out attribute))
+					pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
+
+				// these next few lines may look positively stupid, but they are here for a good reason (See Ticket #7026)
+				if (isSigned)
+					pixelPaddingValue = (short) pixelPaddingValue;
+				else
+					pixelPaddingValue = (ushort) pixelPaddingValue;
+
+				// since the volume now stores values with original modality LUT and normalizing function applied, we must apply same to this value (#9417)
+				var rescaledPaddingValue = frames[0].Frame.RescaleSlope*pixelPaddingValue + frames[0].Frame.RescaleIntercept;
+				var normalizedPaddingValue = (rescaledPaddingValue - normalizedIntercept)/normalizedSlope;
+
+				return (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(normalizedPaddingValue)));
 			}
 
 			private double ComputeTiltAboutX()
