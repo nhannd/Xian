@@ -271,7 +271,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The search for prior studies has failed.  Try reopening the study or select a different default server..
+        ///   Looks up a localized string similar to The search for prior studies has failed.  Try reopening the study or select a different default server.
+        ///
+        ///PLEASE NOTE that you will NOT be notified of this problem again for as long as this problem persists..
         /// </summary>
         public static string MessageSearchForPriorsFailed {
             get {

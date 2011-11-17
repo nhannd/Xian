@@ -29,14 +29,14 @@ namespace ClearCanvas.ImageViewer
 	/// </remarks>
 	public class LoadPriorStudiesException : LoadMultipleStudiesException
 	{
-		internal LoadPriorStudiesException(ICollection<Exception> exceptions, int totalStudies, bool findResultsComplete)
+        public LoadPriorStudiesException(ICollection<Exception> exceptions, int totalStudies, bool findResultsComplete)
 			: base(FormatMessage(exceptions, totalStudies, findResultsComplete), exceptions, totalStudies)
 		{
 			FindFailed = false;
             FindResultsComplete = findResultsComplete;
         }
 
-		internal LoadPriorStudiesException()
+		public LoadPriorStudiesException()
 			: base("The query for prior studies has failed.", new List<Exception>(), 0)
 		{
 			FindFailed = true;

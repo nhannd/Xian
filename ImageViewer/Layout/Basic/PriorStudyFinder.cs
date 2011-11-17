@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -27,7 +26,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[ExtensionOf(typeof (ExceptionPolicyExtensionPoint))]
 	public class PriorStudyLoaderExceptionPolicy : IExceptionPolicy
 	{
-		#region IExceptionPolicy Members
+        private static readonly object _lock = new object();
+
+        private static bool _everShownPriorsMessage;
+        private static bool _successfulQuerySinceLastPriorsMessage;
+        private static bool _mostRecentQuerySuccessful = true;
+        
+        #region IExceptionPolicy Members
 
 		public void Handle(Exception e, IExceptionHandlingContext exceptionHandlingContext)
 		{
@@ -41,31 +46,69 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		#endregion
 
-	    private static bool _lastResultsComplete = true;
+#if UNIT_TESTS
 
-		private static void Handle(LoadPriorStudiesException exception, IExceptionHandlingContext context)
+        internal static void Reset()
+        {
+            lock (_lock)
+            {
+                _everShownPriorsMessage = false;
+                _successfulQuerySinceLastPriorsMessage = false;
+                _mostRecentQuerySuccessful = true;
+            }
+        }
+#endif
+
+        internal static void NotifySuccessfulQuery()
+        {
+            lock (_lock)
+            {
+                _mostRecentQuerySuccessful = true;
+                if (_everShownPriorsMessage)
+                    _successfulQuerySinceLastPriorsMessage = true;
+            }
+        }
+
+        internal static void NotifyFailedQuery()
+        {
+            lock (_lock)
+            {
+                _mostRecentQuerySuccessful = false;
+            }
+        }
+        
+        private static void Handle(LoadPriorStudiesException exception, IExceptionHandlingContext context)
 		{
 			if (exception.FindFailed)
 			{
-				context.ShowMessageBox(SR.MessageSearchForPriorsFailed);
-                return;
+                lock (_lock)
+                {
+                    if (!_mostRecentQuerySuccessful && (!_everShownPriorsMessage || _successfulQuerySinceLastPriorsMessage))
+                    {
+                        context.ShowMessageBox(SR.MessageSearchForPriorsFailed);
+                        _everShownPriorsMessage = true;
+                        _successfulQuerySinceLastPriorsMessage = false;
+                    }
+                }
+
+			    return;
 			}
 
             var summary = new StringBuilder();
             if (!exception.FindResultsComplete)
             {
-                //Only show the message if the last query was successful/complete.
-                if (_lastResultsComplete)
-                    summary.Append(SR.MessagePriorsIncomplete);
-
-                _lastResultsComplete = false;
+                lock (_lock)
+                {
+                    if (!_mostRecentQuerySuccessful && (!_everShownPriorsMessage || _successfulQuerySinceLastPriorsMessage))
+                    {
+                        summary.Append(SR.MessagePriorsIncomplete);
+                        _everShownPriorsMessage = true;
+                        _successfulQuerySinceLastPriorsMessage = false;
+                    }
+                }
             }
-            else
-            {
-                _lastResultsComplete = true;
-            }
 
-            if (ShouldShowLoadErrorMessage(exception))
+		    if (ShouldShowLoadErrorMessage(exception))
             {
                 if (summary.Length > 0)
                 {
@@ -93,12 +136,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			return false;
 		}
-	}
+    }
 
 	[ExtensionOf(typeof (PriorStudyFinderExtensionPoint))]
 	public class PriorStudyFinder : ImageViewer.PriorStudyFinder
 	{
-		private volatile bool _cancel;
+        private volatile bool _cancel;
 
 		public override PriorStudyFinderResult FindPriorStudies()
 		{
@@ -118,12 +161,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				patientIds[reconciled.PatientId] = reconciled.PatientId;
 			}
 
-		    bool resultsComplete = true;
-		    bool anySuccessful = false;
+		    int failedCount = 0;
+		    int successCount = 0;
 
 		    foreach (var query in DefaultServers.GetQueryInterfaces(true))
 		    {
-                if (_cancel) break;
+                if (_cancel)
+                    break;
 
 		        try
 		        {
@@ -154,19 +198,36 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                         }
                     }
 
-		            anySuccessful = true;
+		            ++successCount;
 		        }
 		        catch (Exception e)
 		        {
-		            resultsComplete = false;
+		            ++failedCount;
                     Platform.Log(LogLevel.Error, e, "Failed to query server: {0}", query);
 		        }
 		    }
 
-            if (!anySuccessful)
-                throw new Exception("The search for prior studies has failed.");
+            if (_cancel)
+            {
+                //Just pretend the query never happened.
+                return new PriorStudyFinderResult(new StudyItemList(), true);
+            }
 
-            return new PriorStudyFinderResult(new StudyItemList(results.Values), resultsComplete);
+            if (failedCount > 0)
+            {
+                PriorStudyLoaderExceptionPolicy.NotifyFailedQuery();
+
+                if (successCount == 0)
+                    throw new Exception("The search for prior studies has failed.");
+            }
+            else
+            {
+                //Even if success count is zero, we'll still consider it "successful".
+                PriorStudyLoaderExceptionPolicy.NotifySuccessfulQuery();
+            }
+
+
+            return new PriorStudyFinderResult(new StudyItemList(results.Values), failedCount == 0);
         }
 
 		public override void Cancel()
