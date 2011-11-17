@@ -389,6 +389,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas Documentation.
+        /// </summary>
+        internal static string CCDocumentation {
+            get {
+                return ResourceManager.GetString("CCDocumentation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ImageServer User&apos;s Guide.
+        /// </summary>
+        internal static string CCImageServerUsersGuide {
+            get {
+                return ResourceManager.GetString("CCImageServerUsersGuide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please Confirm.
         /// </summary>
         internal static string ConfirmDialogDefault {

@@ -779,4 +779,10 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="WarningEditStudyWithAttachment" xml:space="preserve">
     <value>Warning: this study contains attachment(s) which must be examined AFTER the edit to ensure all information is consistent.</value>
   </data>
+  <data name="CCDocumentation" xml:space="preserve">
+    <value>ClearCanvas Documentation</value>
+  </data>
+  <data name="CCImageServerUsersGuide" xml:space="preserve">
+    <value>ImageServer User's Guide</value>
+  </data>
 </root>

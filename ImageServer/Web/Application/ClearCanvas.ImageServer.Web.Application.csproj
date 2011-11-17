@@ -2058,7 +2058,6 @@
     </None>
     <Content Include="PersistantImage.ashx" />
     <None Include="Scripts\CodeMirror\LICENSE" />
-    <Content Include="Web.config" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>
@@ -2069,6 +2068,7 @@
     <Content Include="Services\ValidationServices.asmx" />
     <Content Include="Services\webservice.htc" />
     <Content Include="Pages\Studies\View\Default.aspx" />
+    <Content Include="Web.config" />
     <Content Include="Web.sitemap" />
   </ItemGroup>
   <ItemGroup>

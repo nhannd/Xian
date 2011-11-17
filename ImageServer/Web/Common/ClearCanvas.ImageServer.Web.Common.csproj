@@ -144,6 +144,11 @@
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Modules\HttpContextDataManagementModule.cs" />
     <Compile Include="Modules\ApplicationModule.cs" />
+    <Compile Include="PageSettings\AboutPage.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AboutPage.settings</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\WebAppUserCredentialProvider.cs" />
     <Compile Include="Security\WebViewerUserAuthentication.cs" />
@@ -267,6 +272,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
+    </None>
+    <None Include="PageSettings\AboutPage.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AboutPage.Designer.cs</LastGenOutput>
     </None>
     <None Include="UISettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
