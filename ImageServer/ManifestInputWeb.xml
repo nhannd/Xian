@@ -13,6 +13,7 @@
     <File name="Web\Web.sitemap" />
     <File name="Web\App_Themes\Default\Global.skin" />
 	<File name="Web\logs" ignore="true"/>
+	<File name="Web\Pages\Help\UsersGuide" ignore="true"/>
     <File name="Web\App_Themes\Default\images\AboutBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Background.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\blank.gif" checksum="true" />
