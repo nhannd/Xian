@@ -1165,23 +1165,22 @@ Canada
       <%}%>
 </p>
 
-<p style="font-weight: bold;">
-<a style="color: #205F87" href="http://www.clearcanvas.ca" target=_blank>www.clearcanvas.ca</a><br />
-<a style="color: #205F87" href="http://www.youtube.com/ClearCanvas" target=_blank>ClearCanvas YouTube Channel</a><br />
+<p style="margin-top:20px"><a hstyle="color: #205F87;" ref="http://www.clearcanvas.ca" target=_blank>www.clearcanvas.ca</a></p>
+<p style="margin-top:20px"><a style="color: #205F87;" href="http://www.youtube.com/ClearCanvas" target=_blank>ClearCanvas YouTube Channel</a></p>
 
 <% if (!string.IsNullOrEmpty(ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.UsersGuideUrl))
    {%>
-    <a style="color: #205F87" href="<%= ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.UsersGuideUrl %>" target="_blank"><%= Resources.SR.CCImageServerUsersGuide%></a><br />
+<p style="margin-top:20px"><a style="color: #205F87;" href="<%= ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.UsersGuideUrl %>" target="_blank">
+<%= Resources.SR.CCImageServerUsersGuide%></a></p>
 <% }%>
-
 <% if (!string.IsNullOrEmpty(ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.DocumentationUrl))
    {%>
-    <a style="color: #205F87" href="<%=ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.DocumentationUrl %>" target="_blank"><%= Resources.SR.CCDocumentation%></a><br />
+    <p style="margin-top:20px"><a style="color: #205F87;" href="<%=ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.DocumentationUrl %>" target="_blank"><%= Resources.SR.CCDocumentation%></a></p>
 <% }%>
 
 
 
-</p>
+
 
   </div>    
   </td></tr>
