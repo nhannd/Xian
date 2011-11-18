@@ -88,6 +88,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Note: this change does not take effect immediately..
+        /// </summary>
+        internal static string AddEditUserGroups_DataAccessChangedDelayWarning {
+            get {
+                return ResourceManager.GetString("AddEditUserGroups_DataAccessChangedDelayWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please Confirm Update.
         /// </summary>
         internal static string AddEditUserGroups_PasswordConfirmTitle {

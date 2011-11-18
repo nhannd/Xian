@@ -17,10 +17,12 @@
         <div class="DialogPanelContent">
             <table cellpadding="5">
                 <tr>
-                    <td class="DialogTextBoxLabelScroll" nowrap="nowrap" colspan="2">                    
-                        <asp:TextBox ID="Description" runat="server" Text="<%$Resources: SR, AddEditUserGroups_DataAccessChanged %>" Rows="8" Wrap="true" ReadOnly="true" TextMode="MultiLine" BorderStyle="None" BorderWidth="0" CssClass="DialogTextBoxLabelScroll" Width="100%" Height="100%" />
+                    <td class="DataAccessChangeDialogLabel" nowrap="nowrap" colspan="2">      
+                        <%= SR.AddEditUserGroups_DataAccessChanged %>
                     </td>
                 </tr>
+                
+               
                 <tr>
                     <td class="DialogTextBoxLabel" nowrap="nowrap">
                         <asp:Label ID="Label2" runat="server" Text="<%$Resources: Labels, Password %>" CssClass="DialogTextBoxLabel" />
@@ -30,7 +32,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td class="DataAccessChangeDialogWarningLabel" colspan="2">
+                        <%= SR.AddEditUserGroups_DataAccessChangedDelayWarning %>
                     </td>
                 </tr>
             </table>

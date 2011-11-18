@@ -785,4 +785,7 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="CCImageServerUsersGuide" xml:space="preserve">
     <value>ImageServer User's Guide</value>
   </data>
+  <data name="AddEditUserGroups_DataAccessChangedDelayWarning" xml:space="preserve">
+    <value>Note: this change does not take effect immediately.</value>
+  </data>
 </root>
