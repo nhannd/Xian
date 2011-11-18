@@ -59,52 +59,52 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PasswordConfirmComponentControl));
-            this._passwordField = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._confirmDescription = new System.Windows.Forms.TextBox();
-            this._okButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this.SuspendLayout();
-            // 
-            // _passwordField
-            // 
-            resources.ApplyResources(this._passwordField, "_passwordField");
-            this._passwordField.Name = "_passwordField";
-            this._passwordField.ToolTip = null;
-            this._passwordField.Value = null;
-            // 
-            // _confirmDescription
-            // 
-            resources.ApplyResources(this._confirmDescription, "_confirmDescription");
-            this._confirmDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this._confirmDescription.Name = "_confirmDescription";
-            this._confirmDescription.ReadOnly = true;
-            // 
-            // _okButton
-            // 
-            resources.ApplyResources(this._okButton, "_okButton");
-            this._okButton.Name = "_okButton";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this._okButton_Click);
-            // 
-            // _cancelButton
-            // 
-            resources.ApplyResources(this._cancelButton, "_cancelButton");
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // PasswordConfirmComponentControl
-            // 
-            resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._cancelButton);
-            this.Controls.Add(this._okButton);
-            this.Controls.Add(this._confirmDescription);
-            this.Controls.Add(this._passwordField);
-            this.Name = "PasswordConfirmComponentControl";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PasswordConfirmComponentControl));
+			this._passwordField = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._confirmDescription = new System.Windows.Forms.TextBox();
+			this._okButton = new System.Windows.Forms.Button();
+			this._cancelButton = new System.Windows.Forms.Button();
+			this.SuspendLayout();
+			// 
+			// _passwordField
+			// 
+			resources.ApplyResources(this._passwordField, "_passwordField");
+			this._passwordField.Name = "_passwordField";
+			this._passwordField.ToolTip = null;
+			this._passwordField.Value = null;
+			// 
+			// _confirmDescription
+			// 
+			resources.ApplyResources(this._confirmDescription, "_confirmDescription");
+			this._confirmDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._confirmDescription.Name = "_confirmDescription";
+			this._confirmDescription.ReadOnly = true;
+			// 
+			// _okButton
+			// 
+			resources.ApplyResources(this._okButton, "_okButton");
+			this._okButton.Name = "_okButton";
+			this._okButton.UseVisualStyleBackColor = true;
+			this._okButton.Click += new System.EventHandler(this._okButton_Click);
+			// 
+			// _cancelButton
+			// 
+			resources.ApplyResources(this._cancelButton, "_cancelButton");
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			// 
+			// PasswordConfirmComponentControl
+			// 
+			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._cancelButton);
+			this.Controls.Add(this._okButton);
+			this.Controls.Add(this._confirmDescription);
+			this.Controls.Add(this._passwordField);
+			this.Name = "PasswordConfirmComponentControl";
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
