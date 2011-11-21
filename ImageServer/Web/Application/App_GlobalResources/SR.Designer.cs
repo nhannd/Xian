@@ -88,7 +88,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Note: this change does not take effect immediately..
+        ///   Looks up a localized string similar to Note: This change may not take effect immediately..
         /// </summary>
         internal static string AddEditUserGroups_DataAccessChangedDelayWarning {
             get {
