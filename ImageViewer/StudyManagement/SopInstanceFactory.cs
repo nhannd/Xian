@@ -316,6 +316,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region Prototype Factory Implementation
 
+	    /// TODO (CR Nov 2011): Unclear from method name what is returned.
+	    /// Also, "CreateInstance" often implies singleton.
+
 		/// <summary>
 		/// Creates a <see cref="SopInstanceFactory"/> that creates only empty prototype SOP instances.
 		/// </summary>
@@ -324,6 +327,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return new PrototypeSopInstanceFactory();
 		}
+
+	    /// TODO (CR Nov 2011): Just make this an instantiable sealed class and move to outer scope.
+	    /// Generally prefer "new" over "Create" unless you actually need to abstract object creation,
+	    /// or there are parameters that are needed for creation, etc.
 
 		/// <summary>
 		/// An empty implementation of <see cref="SopInstanceFactory"/> that creates only empty prototype SOP instances.

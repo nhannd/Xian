@@ -14,6 +14,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+    /// TODO (CR Nov 2011): IColorMap does not inherit from IDataLut, so should there
+    /// just be a clean separation here, or should it inherit?
+    
 	/// <summary>
 	/// Basic implementation of an <see cref="IColorMap"/> whose size and data do not change.
 	/// </summary>

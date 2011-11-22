@@ -197,6 +197,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			}
 			catch (Exception)
 			{
+			    /// TODO (CR Nov 2011): This could be a valid error condition that the user should be notified of.
 				return false;
 			}
 		}
@@ -211,6 +212,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			}
 			catch (Exception)
 			{
+                /// TODO (CR Nov 2011): This could be a valid error condition that the user should be notified of.
 				return false;
 			}
 		}

@@ -351,6 +351,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.PixelData == null)
 				return new double[0];
 
+		    /// TODO (CR Nov 2011): Why a list rather than yield?
 			List<double> values = new List<double>();
 			LutFunction lut = v => v;
 			if (this.ModalityLut != null)

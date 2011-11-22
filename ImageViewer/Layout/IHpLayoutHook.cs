@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageViewer.Layout
     /// </summary>
     public abstract class HpLayoutHook : IHpLayoutHook
     {
+        /// TODO (CR Nov 2011): Rename to "Empty"
         private class Nil : IHpLayoutHook
         {
             #region IHpLayoutHook Members
