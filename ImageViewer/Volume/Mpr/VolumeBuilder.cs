@@ -295,10 +295,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 							var pFrameData16 = (short*) pFrameData;
 							for (var i = 0; i < pixelCount; ++i)
 							{
+							    /// TODO (CR Nov 2011): Although perhaps less pretty, it's a bit more efficient
+							    /// to break this out into 2 loops.
 								var frameValue = frameModalityLut[frameIsSigned ? (int) pFrameData16[i] : (ushort) pFrameData16[i]];
 								var volumeValue = (frameValue - normalizedIntercept)/normalizedSlope;
 								var volumePixel = (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(volumeValue)));
-								min = Math.Min(min, volumePixel);
+                                /// TODO (CR Nov 2011): Writes are volatile, so slightly more efficient to only do the assignment when necessary
+                                min = Math.Min(min, volumePixel);
 								max = Math.Max(max, volumePixel);
 								pVolumeData[volumeStart + i] = volumePixel;
 							}
@@ -307,10 +310,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						{
 							for (var i = 0; i < pixelCount; ++i)
 							{
-								var frameValue = frameModalityLut[frameIsSigned ? (int) (sbyte) pFrameData[i] : pFrameData[i]];
+                                /// TODO (CR Nov 2011): Although perhaps less pretty, it's a bit more efficient
+                                /// to break this out into 2 loops.
+                                var frameValue = frameModalityLut[frameIsSigned ? (int)(sbyte)pFrameData[i] : pFrameData[i]];
 								var volumeValue = (frameValue - normalizedIntercept)/normalizedSlope;
 								var volumePixel = (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(volumeValue)));
-								min = Math.Min(min, volumePixel);
+							    /// TODO (CR Nov 2011): Writes are volatile, so slightly more efficient to only do the assignment when necessary
+                                min = Math.Min(min, volumePixel);
 								max = Math.Max(max, volumePixel);
 								pVolumeData[volumeStart + i] = volumePixel;
 							}

@@ -202,7 +202,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		#region Comparers
 
-		private class DXSeriesPresentationIntentComparer : DicomSeriesComparer
+        /// TODO (CR Nov 2011): I think we can actually remove this now, as the other comparers also do it.
+        private class DXSeriesPresentationIntentComparer : DicomSeriesComparer
 		{
 			public override int Compare(Sop x, Sop y)
 			{

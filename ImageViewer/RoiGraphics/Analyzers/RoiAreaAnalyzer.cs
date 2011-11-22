@@ -85,6 +85,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			return text;
 		}
 
+	    /// TODO (CR Nov 2011): remove
         public void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback)
         {
             _updateCallback = callback;

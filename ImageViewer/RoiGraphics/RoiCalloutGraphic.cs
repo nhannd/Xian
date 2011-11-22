@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
             foreach (var analyzer in _roiAnalyzers)
             {
+                /// TODO (CR Nov 2011): Remove this again because I think we just want to overhaul the analyzers.
                 analyzer.SetRoiAnalyzerUpdateCallback(Refresh);
             }
 		}
@@ -217,7 +218,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
-
+	    /// TODO (CR Nov 2011): Remove because I think we should just refactor the analyzers.
         private void Refresh()
         {
             Update();
