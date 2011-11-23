@@ -160,7 +160,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			TestSeriesSplittingSingleImage_MixedMultiframeSeries(0, 1);
 		}
 
-		[Ignore("See ticket #5765")]
 		[Test]
 		public void TestSeriesSplittingSingleImage_SingleMultframeImageSeries()
 		{

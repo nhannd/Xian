@@ -16,6 +16,7 @@ using NUnit.Framework;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Tests;
 using System.Collections.Generic;
+using System;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 {
@@ -45,7 +46,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		{
 		}
 
-		[Test]
+        [TestFixtureSetUp]
+        public void Initialize()
+        {
+            GC.Collect();
+        }
+
+	    [Test]
 		public void TestDisposal()
 		{
 			IList<DicomAttributeCollection> collections = base.SetupMRSeries(1, 1, "test");
