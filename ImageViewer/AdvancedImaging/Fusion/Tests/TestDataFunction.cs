@@ -324,17 +324,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 		#endregion
 	}
-
-    public class UniformFunction : TestDataFunction
-    {
-        float _seed;
-
-        public UniformFunction(float seed) :
-            base("Uniform", (x, y, z) => _seed)
-        {
-            _seed = seed;
-        }
-    }
 }
 
 #endif
