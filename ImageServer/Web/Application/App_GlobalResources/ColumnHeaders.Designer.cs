@@ -70,6 +70,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted By.
+        /// </summary>
+        internal static string AdminDeletedStudies_DeletedBy {
+            get {
+                return ResourceManager.GetString("AdminDeletedStudies_DeletedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Data Access Authority Group.
         /// </summary>
         internal static string AdminUserGroups_DataGroup {

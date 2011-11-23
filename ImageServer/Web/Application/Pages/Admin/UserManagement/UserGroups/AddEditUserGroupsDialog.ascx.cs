@@ -187,7 +187,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             {                 
                 SaveData();
 
-                if (SaveDataGroup && !UserGroup.DataGroup)
+                // Only ask for the password if updating 
+                if (EditMode && SaveDataGroup && !UserGroup.DataGroup)
                 {
                     PasswordConfirmDialog.Show();
                 }

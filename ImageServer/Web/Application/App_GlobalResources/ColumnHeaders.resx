@@ -467,4 +467,7 @@
   <data name="DicomTagName" xml:space="preserve">
     <value>Dicom Tag</value>
   </data>
+  <data name="AdminDeletedStudies_DeletedBy" xml:space="preserve">
+    <value>Deleted By</value>
+  </data>
 </root>
