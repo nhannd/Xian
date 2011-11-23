@@ -11,6 +11,7 @@
 
 #if UNIT_TESTS
 
+using System;
 using System.Net;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
@@ -44,10 +45,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 		[Test]
@@ -65,10 +65,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 		[Test]
@@ -95,10 +94,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 		[Test]
@@ -121,10 +119,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 		[Test]
@@ -147,10 +144,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 
@@ -174,10 +170,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 
@@ -207,10 +202,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 		[Test]
@@ -232,10 +226,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 		[Test]
@@ -251,10 +244,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
     	[Test]
@@ -295,12 +287,11 @@ namespace ClearCanvas.Dicom.Audit.Test
 
         	string output = helper.Serialize(true);
 
-        	Assert.IsNotEmpty(output);
+			Assert.IsNotEmpty(output);
 
-        	string failure;
-        	bool result = helper.Verify(out failure);
-
-        	Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 
     		helper =
     			new QueryAuditHelper(
@@ -313,9 +304,8 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);              
+			if (!helper.Verify(out exception))
+				throw exception;           
         }
 
 		[Test]
@@ -332,10 +322,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 
 		[Test]
@@ -352,10 +341,9 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			Assert.IsNotEmpty(output);
 
-			string failure;
-			bool result = helper.Verify(out failure);
-
-			Assert.IsTrue(result, failure);
+			Exception exception;
+			if (!helper.Verify(out exception))
+				throw exception;
 		}
 	}
 }

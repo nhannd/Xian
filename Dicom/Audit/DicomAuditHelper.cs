@@ -136,20 +136,31 @@ namespace ClearCanvas.Dicom.Audit
 		}
 		#endregion
 
-
 		#region Public Methods
+
 		public bool Verify(out string failureMessage)
+		{
+			Exception ex;
+			if (!Verify(out ex))
+			{
+				failureMessage = ex.Message;
+				return false;
+			}
+			failureMessage = string.Empty;
+			return true;
+		}
+
+		public bool Verify(out Exception exception)
 		{
 			XmlSchema schema;
 
 			using (Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "DicomAuditMessageSchema.xsd"))
 			{
 				if (stream == null)
-					throw new DicomException("Unable to load script resource (is the script an embedded resource?): " + "DicomAuditMessageSchema.xsd");
-
+					throw new DicomException("Unable to load XSD resource (is the XSD an embedded resource?): " + "DicomAuditMessageSchema.xsd");
 				schema = XmlSchema.Read(stream, null);
 			}
-	
+
 			try
 			{
 				XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
@@ -164,11 +175,11 @@ namespace ClearCanvas.Dicom.Audit
 			}
 			catch (Exception e)
 			{
-				failureMessage = e.Message;
+				exception = e;
 				return false;
 			}
 
-			failureMessage = string.Empty;
+			exception = null;
 			return true;
 		}
 
