@@ -58,7 +58,7 @@
                                                 <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips, SearchByDescription %>" />
                                             </td>   
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label6" runat="server" Text="<%$Resources: SearchFieldLabels,DeletedBy %>" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label6" runat="server" Text="<%$Resources: SearchFieldLabels,DeletedBy%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="DeletedBy" runat="server"  CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips, SearchByPersonWhoDeletedStudies %>" />
                                             </td>                                            
