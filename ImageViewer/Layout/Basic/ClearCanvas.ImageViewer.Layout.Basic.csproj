@@ -182,6 +182,7 @@
     <Compile Include="DisplaySetNavigationTool.cs" />
     <Compile Include="ExplodeImageBoxTool.cs" />
     <Compile Include="ListObserver.cs" />
+    <Compile Include="Tests\ImageSetFillerTests.cs" />
     <Compile Include="Tests\LayoutManagerTests.cs" />
     <Compile Include="Tests\PriorStudyFinderTests.cs" />
     <Compile Include="XmlActionsApplicator.cs" />
