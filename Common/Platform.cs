@@ -129,6 +129,7 @@ namespace ClearCanvas.Common
         private static volatile string _commonDirectory = null;
         private static volatile string _logDirectory = null;
         private static volatile string _manifestDirectory = null;
+		private static volatile string _applicationDataDirectory = null;
 
 		private static volatile PluginManager _pluginManager;
 		private static volatile IApplicationRoot _applicationRoot;
@@ -345,6 +346,32 @@ namespace ClearCanvas.Common
                 return _manifestDirectory;
             }
         }
+
+		/// <summary>
+		/// Gets the fully qualified application data directory.
+		/// </summary>
+		/// <remarks>
+		/// This method is thread-safe.
+		/// </remarks>
+		public static string ApplicationDataDirectory
+		{
+			get
+			{
+				if(_applicationDataDirectory == null)
+				{
+					lock(_syncRoot)
+					{
+						if(_applicationDataDirectory == null)
+						{
+							var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+							path = Path.Combine(path, "ClearCanvas_Inc"); //TODO this seems to be derived from the AssemblyCompanyAttribute
+							_applicationDataDirectory = Path.Combine(path, ProductInformation.GetName(true, false));
+						}
+					}
+				}
+				return _applicationDataDirectory;
+			}
+		}
 
         /// <summary>
         /// Gets the current time from an extension of <see cref="TimeProviderExtensionPoint"/>, if one exists.

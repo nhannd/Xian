@@ -17,6 +17,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -40,25 +41,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		internal static readonly float DefaultMinimumZoom = 0.25F;
 		internal static readonly float DefaultMaximumZoom = 64F;
 
-		private readonly bool _invertedOperation;
 		private readonly ImageSpatialTransformImageOperation _operation; 
 		private MemorableUndoableCommand _memorableCommand;
 		private ImageOperationApplicator _applicator;
+		private ToolModalityBehaviorHelper _toolBehavior;
 
 		public ZoomTool()
 			: base(SR.TooltipZoom)
 		{
 			this.CursorToken = new CursorToken("Icons.ZoomToolSmall.png", this.GetType().Assembly);
 			_operation = new ImageSpatialTransformImageOperation(Apply);
+		}
 
-			try
-			{
-				_invertedOperation = ToolSettings.Default.InvertedZoomToolOperation;
-			}
-			catch(Exception)
-			{
-				_invertedOperation = false;
-			}
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_toolBehavior = new ToolModalityBehaviorHelper(ImageViewer);
 		}
 
 		public override event EventHandler TooltipChanged
@@ -116,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			_memorableCommand.EndState = GetSelectedImageTransform().CreateMemento();
-			UndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
+			UndoableCommand applicatorCommand = _toolBehavior.Behavior.SelectedImageZoomTool ? null : _applicator.ApplyToLinkedImages();
 			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
 
 			if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))
@@ -135,6 +134,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		
 		private void ZoomIn()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureBeginState();
 
 			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
@@ -145,6 +147,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void ZoomOut()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureBeginState();
 
 			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
@@ -219,6 +224,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
+			if (this.SelectedPresentationImage == null)
+				return false;
+
 			base.Start(mouseInformation);
 
 			CaptureBeginState();
@@ -231,7 +239,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			base.Track(mouseInformation);
 
 			float increment = -base.DeltaY*0.025f;
-			increment *= _invertedOperation ? -1f : 1f;
+			increment *= ToolSettings.Default.InvertedZoomToolOperation ? -1f : 1f;
 			IncrementScale(increment);
 
 			return true;
@@ -239,6 +247,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
+			if (this.SelectedPresentationImage == null)
+				return false;
+
 			base.Stop(mouseInformation);
 
 			CaptureEndState();
@@ -248,30 +259,45 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override void Cancel()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			this.CaptureEndState();
 		}
 
 		public override void StartWheel()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureBeginState();
 		}
 
 		public override void StopWheel()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			CaptureEndState();
 		}
 
 		protected override void WheelBack()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
-			increment *= _invertedOperation ? -1f : 1f;
+			increment *= ToolSettings.Default.InvertedZoomToolOperation ? -1f : 1f;
 			IncrementScale(increment);
 		}
 
 		protected override void WheelForward()
 		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
 			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
-			increment *= _invertedOperation ? -1f : 1f;
+			increment *= ToolSettings.Default.InvertedZoomToolOperation ? -1f : 1f;
 			IncrementScale(increment);
 		}
 

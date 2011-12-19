@@ -15,6 +15,7 @@ using System.Security.Permissions;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 {
@@ -40,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         	                                           	    return panel;
         	                                           	});
 
-            SetPageTitle(App_GlobalResources.Titles.ArchiveQueuePageTitle);
+            SetPageTitle(Titles.ArchiveQueuePageTitle);
         }
 
 		public void ResetArchiveQueueItem(IList<Model.ArchiveQueue> list)

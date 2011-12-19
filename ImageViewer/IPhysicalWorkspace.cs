@@ -155,5 +155,5 @@ namespace ClearCanvas.ImageViewer
 		/// image box collection will be the top-left <see cref="IImageBox"/>.
 		/// </remarks>
 		void SelectDefaultImageBox();
-	}
+    }
 }

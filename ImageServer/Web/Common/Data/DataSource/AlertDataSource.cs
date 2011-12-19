@@ -35,14 +35,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _theAlertItem.InsertTime; }
 		}
 
+		public bool LevelIsErrorOrCritical
+		{
+			get { return _theAlertItem.AlertLevelEnum == AlertLevelEnum.Critical || _theAlertItem.AlertLevelEnum == AlertLevelEnum.Error; }
+		}
+
 		public string Level
 		{
-			get { return _theAlertItem.AlertLevelEnum.Description; }
+			get { return ServerEnumDescription.GetLocalizedDescription(_theAlertItem.AlertLevelEnum); }
 		}
 
 		public string Category
 		{
-			get { return _theAlertItem.AlertCategoryEnum.Description; }
+			get { return ServerEnumDescription.GetLocalizedDescription(_theAlertItem.AlertCategoryEnum); }
 		}
 
 		public string Message

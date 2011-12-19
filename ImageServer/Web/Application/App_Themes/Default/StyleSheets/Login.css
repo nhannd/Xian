@@ -11,9 +11,8 @@
     margin-top: 175px;
 	margin-left: auto;
     margin-right: auto;
-    width: 686px;
+    width: 699px;
     height: 400px;
-    background: white url(../images/LoginSplash.png) no-repeat;  
 }
 
 #LoginCredentials
@@ -23,8 +22,15 @@
     font-weight: bold;
     font-family: Sans-Serif;
     font-size: 12px;
-    bottom: 25px;
-    right: 30px;
+    bottom: 12px;
+    right: 20px;
+}
+
+#LoginCredentials .ManifestWarningTextLabel
+{
+	font-size:smaller;
+	color:Red;
+	font-weight:bold
 }
 
 .LoginTextInput
@@ -84,7 +90,7 @@ a.LoginLink:hover
     color: #666666;
     position: absolute;
     top: 15px;
-    left: 540px;
+    right: 20px;
 }
 
 .LoginErrorMessagePanel
@@ -94,8 +100,8 @@ a.LoginLink:hover
     border: solid 1px #ff0000;
     position: relative; 
     top: 404px; 
-    left: 6px;   
-    width: 657px;
+    left: 0px;   
+    width: 685px;
     font-size: 14px;
     font-weight: bold;
     font-family: Sans-Serif;

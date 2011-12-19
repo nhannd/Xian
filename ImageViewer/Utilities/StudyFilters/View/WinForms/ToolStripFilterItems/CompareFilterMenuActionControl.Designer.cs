@@ -25,6 +25,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.Label spacer;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CompareFilterMenuActionControl));
 			System.Windows.Forms.Panel valigner;
 			this._txtValue = new System.Windows.Forms.TextBox();
 			this._modeToggle = new System.Windows.Forms.Button();
@@ -38,37 +39,25 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			// 
 			// spacer
 			// 
-			spacer.Dock = System.Windows.Forms.DockStyle.Left;
-			spacer.Location = new System.Drawing.Point(29, 3);
+			resources.ApplyResources(spacer, "spacer");
 			spacer.Name = "spacer";
-			spacer.Size = new System.Drawing.Size(3, 26);
-			spacer.TabIndex = 2;
 			// 
 			// valigner
 			// 
 			valigner.Controls.Add(this._txtValue);
-			valigner.Dock = System.Windows.Forms.DockStyle.Fill;
-			valigner.Location = new System.Drawing.Point(32, 3);
+			resources.ApplyResources(valigner, "valigner");
 			valigner.Name = "valigner";
-			valigner.Size = new System.Drawing.Size(172, 26);
-			valigner.TabIndex = 3;
 			// 
 			// _txtValue
 			// 
-			this._txtValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this._txtValue.Location = new System.Drawing.Point(0, 3);
+			resources.ApplyResources(this._txtValue, "_txtValue");
 			this._txtValue.Name = "_txtValue";
-			this._txtValue.Size = new System.Drawing.Size(172, 20);
-			this._txtValue.TabIndex = 2;
 			this._txtValue.TextChanged += new System.EventHandler(this._txtValue_TextChanged);
 			// 
 			// _modeToggle
 			// 
-			this._modeToggle.Dock = System.Windows.Forms.DockStyle.Left;
-			this._modeToggle.Location = new System.Drawing.Point(3, 3);
+			resources.ApplyResources(this._modeToggle, "_modeToggle");
 			this._modeToggle.Name = "_modeToggle";
-			this._modeToggle.Size = new System.Drawing.Size(26, 26);
-			this._modeToggle.TabIndex = 0;
 			this._modeToggle.UseVisualStyleBackColor = true;
 			this._modeToggle.Click += new System.EventHandler(this.modeToggle_Click);
 			// 
@@ -78,15 +67,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			// 
 			// CompareFilterMenuActionControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.Transparent;
 			this.Controls.Add(valigner);
 			this.Controls.Add(spacer);
 			this.Controls.Add(this._modeToggle);
 			this.Name = "CompareFilterMenuActionControl";
-			this.Padding = new System.Windows.Forms.Padding(3);
-			this.Size = new System.Drawing.Size(207, 32);
 			valigner.ResumeLayout(false);
 			valigner.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();

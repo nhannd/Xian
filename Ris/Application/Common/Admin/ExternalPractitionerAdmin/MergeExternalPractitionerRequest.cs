@@ -18,55 +18,38 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	[DataContract]
 	public class MergeExternalPractitionerRequest : DataContractBase
 	{
+		[DataMember]
+		public EntityRef RightPractitionerRef;
+
+		[DataMember]
+		public EntityRef LeftPractitionerRef;
+
+		[DataMember]
+		public PersonNameDetail Name;
+
+		[DataMember]
+		public string LicenseNumber;
+
+		[DataMember]
+		public string BillingNumber;
+
+		[DataMember]
+		public Dictionary<string, string> ExtendedProperties;
+
+		[DataMember]
+		public EntityRef DefaultContactPointRef;
+
+		[DataMember]
+		public List<EntityRef> DeactivatedContactPointRefs;
+
+		[DataMember]
+		public Dictionary<EntityRef, EntityRef> ContactPointReplacements;
+
 		/// <summary>
-		/// This data contract identifies exactly which contact point within an order is to be replaced
+		/// If true, no merge will actually be performed.  Instead, the server will return some estimated
+		/// measures of the cost of the merge operation if it were to be performed.
 		/// </summary>
-		[DataContract]
-		public class AffectedOrderRecipientSummary : DataContractBase, IVersionedEquatable<AffectedOrderRecipientSummary>
-		{
-			public AffectedOrderRecipientSummary(EntityRef orderRef, EntityRef contactPointRef)
-			{
-				this.OrderRef = orderRef;
-				this.ContactPointRef = contactPointRef;
-			}
-
-			[DataMember]
-			public EntityRef OrderRef { get; private set; }
-
-			[DataMember]
-			public EntityRef ContactPointRef { get; private set; }
-
-			public bool Equals(AffectedOrderRecipientSummary other)
-			{
-				return Equals(other, false);
-			}
-
-			public bool Equals(object other, bool ignoreVersion)
-			{
-				return Equals(other as AffectedOrderRecipientSummary, ignoreVersion);
-			}
-
-			public bool Equals(AffectedOrderRecipientSummary other, bool ignoreVersion)
-			{
-				if (other == null) return false;
-				return Equals(other.OrderRef, other.ContactPointRef, ignoreVersion);
-			}
-
-			public bool Equals(EntityRef orderRef, EntityRef contactPointRef, bool ignoreVersion)
-			{
-				if (!EntityRef.Equals(this.OrderRef, orderRef, ignoreVersion)) return false;
-				if (!EntityRef.Equals(this.ContactPointRef, contactPointRef, ignoreVersion)) return false;
-				return true;
-			}
-		}
-
 		[DataMember]
-		public EntityRef DuplicatePractitionerRef;
-
-		[DataMember]
-		public ExternalPractitionerDetail MergedPractitioner;
-
-		[DataMember]
-		public Dictionary<AffectedOrderRecipientSummary, EntityRef> ContactPointReplacements;
+		public bool EstimateCostOnly;
 	}
 }

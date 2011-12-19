@@ -29,7 +29,18 @@ namespace ClearCanvas.Web.Common
 
 		[DataMember(IsRequired = false)]
 		public bool IsSessionShared { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public MetaInformation MetaInformation { get; set; }
+
 	}
+
+    [DataContract(Namespace = Namespace.Value)]
+    public class MetaInformation
+    {
+        [DataMember(IsRequired = true)]
+        public string Language { get; set; }
+    }
 
     [DataContract(Namespace = Namespace.Value)]
     public class StartApplicationRequestResponse
@@ -56,12 +67,23 @@ namespace ClearCanvas.Web.Common
         public int MaxWaitTime { get; set; }
 	}
 
+    [DataContract(Namespace = Namespace.Value)]
+    public class GetPendingEventRequestResponse
+    {
+        [DataMember(IsRequired = true)]
+        public Guid ApplicationId { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public EventSet EventSet { get; set; }
+    }
+
     [ServiceContract(Namespace = Namespace.Value)]
 	[ServiceKnownType("GetKnownTypes", typeof(ServiceKnownTypeExtensionPoint))]
 	public interface IApplicationService
     {
 		[OperationContract(IsOneWay = false)]
         [FaultContract(typeof(SessionValidationFault))]
+        [FaultContract(typeof(OutOfResourceFault))]
         StartApplicationRequestResponse StartApplication(StartApplicationRequest request);
 
 		[OperationContract(IsOneWay = false)]
@@ -74,7 +96,7 @@ namespace ClearCanvas.Web.Common
         
         [OperationContract(IsOneWay = false)]
         [FaultContract(typeof(InvalidOperationFault))]
-        EventSet GetPendingEvent(GetPendingEventRequest request);
+        GetPendingEventRequestResponse GetPendingEvent(GetPendingEventRequest request);
 
         [OperationContract(IsOneWay = true)]
         void ReportPerformance(PerformanceData data);

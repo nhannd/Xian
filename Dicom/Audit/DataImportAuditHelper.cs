@@ -24,12 +24,12 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="importDescriptor">Any machine readable identifications on the media, such as media serial number, volume label, 
 		/// DICOMDIR SOP Instance UID.</param>
 		public DataImportAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome, string importDescriptor)
+            EventIdentificationContentsEventOutcomeIndicator outcome, string importDescriptor)
 			: base("DataImport")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.Import;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.C;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.Import;
+            AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.C;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
@@ -38,7 +38,7 @@ namespace ClearCanvas.Dicom.Audit
 
 			// Add the Destination
 			_participantList.Add(
-				new AuditMessageActiveParticipant(CodedValueType.SourceMedia, ProcessName, importDescriptor, null, null, null, false));
+				new ActiveParticipantContents(RoleIDCode.SourceMedia, ProcessName, importDescriptor, null, null, null, false));
 		}
 
 		/// <summary>
@@ -51,7 +51,7 @@ namespace ClearCanvas.Dicom.Audit
 		public void AddImporter(AuditActiveParticipant participant)
 		{
 			participant.UserIsRequestor = true;
-			participant.RoleIdCode = CodedValueType.Destination;
+			participant.RoleIdCode = RoleIDCode.Destination;
 			InternalAddActiveParticipant(participant);
 		}
 

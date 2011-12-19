@@ -23,7 +23,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A rectangular <see cref="InvariantPrimitive"/>.
 	/// </summary>
 	[Cloneable(true)]
-	[DicomSerializableGraphicAnnotation(typeof (RectangleGraphicAnnotationSerializer))]
+    /// TODO (CR Oct 2011): Should these actually be serializable given that presentation states won't show them invariant.
+    [DicomSerializableGraphicAnnotation(typeof(RectangleGraphicAnnotationSerializer))]
 	public class InvariantRectanglePrimitive : InvariantBoundablePrimitive
 	{
 		/// <summary>

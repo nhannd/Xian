@@ -22,8 +22,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Creates a Voi LUT suitable for the given <paramref name="imageGraphic"/>.
 		/// </summary>
-		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		IComposableLut CreateVoiLut(ImageGraphic imageGraphic);
+		/// <returns>The VOI LUT as an <see cref="IVoiLut"/>.</returns>
+		IVoiLut CreateVoiLut(ImageGraphic imageGraphic);
 	}
 
 	/// <summary>
@@ -39,14 +39,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Creates a Voi LUT suitable for the given <paramref name="imageGraphic"/>.
 		/// </summary>
-		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		public abstract IComposableLut CreateVoiLut(ImageGraphic imageGraphic);
+		/// <returns>The VOI LUT as an <see cref="IVoiLut"/>.</returns>
+		public abstract IVoiLut CreateVoiLut(ImageGraphic imageGraphic);
 
 		/// <summary>
 		/// Defines the method for creating a Voi LUT suitable for the given <paramref name="imageGraphic"/>.
 		/// </summary>
-		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		public delegate IComposableLut CreateVoiLutDelegate(ImageGraphic imageGraphic);
+		/// <returns>The VOI LUT as an <see cref="IVoiLut"/>.</returns>
+		public delegate IVoiLut CreateVoiLutDelegate(ImageGraphic imageGraphic);
 
 		/// <summary>
 		/// Creates a new factory that wraps the given delegate.
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="createVoiLutDelegate">A <see cref="CreateVoiLutDelegate"/> delegate to
 		/// get a VOI LUT appropriate for the given <see cref="ImageGraphic"/>.
 		/// This method should generally be static, as the factory may only be reference-copied when the parent graphic is cloned.</param>
-		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
+		/// <returns>The VOI LUT as an <see cref="IVoiLut"/>.</returns>
 		public static GraphicVoiLutFactory Create(CreateVoiLutDelegate createVoiLutDelegate)
 		{
 			return new DelegateGraphicVoiLutFactory(createVoiLutDelegate);
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_createVoiLutDelegate = createVoiLutDelegate;
 			}
 
-			public override IComposableLut CreateVoiLut(ImageGraphic imageGraphic)
+			public override IVoiLut CreateVoiLut(ImageGraphic imageGraphic)
 			{
 				return _createVoiLutDelegate(imageGraphic);
 			}

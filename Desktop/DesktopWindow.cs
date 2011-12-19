@@ -355,12 +355,21 @@ namespace ClearCanvas.Desktop
             return _application.CreateDesktopWindowView(this);
         }
 
+    	/// <summary>
+    	/// Called when the current application UI culture has changed.
+    	/// </summary>
+    	protected override void OnCurrentUICultureChanged()
+    	{
+    		base.OnCurrentUICultureChanged();
+
+    		UpdateView();
+    	}
+
         #endregion
 
-        #region Helpers
+		#region Title
 
-    	//TODO (CR February 2011) - High: maybe put these in ProductInformation so we can improve the consistency.
-    	internal static readonly string LabelModifiedInstallation = "Modified Installation";
+		internal static readonly string LabelModifiedInstallation = "Modified Installation";
 
     	private static string DefaultBaseTitle
     	{
@@ -368,11 +377,9 @@ namespace ClearCanvas.Desktop
     		{
     			//TODO (CR February 2011) - Low: Not for diagnostic use is a resource, but modified installation isn't?
     			var tags = new List<string>();
-				//TODO (CR February 2011) - High: We should have left this as a property on ProductInformation rather than checking for empty string.
-				if (ProductInformation.Release != string.Empty)
+    			//TODO (CR February 2011) - High: We should have left this as a property on ProductInformation rather than checking for empty string.
+    			if (ProductInformation.Release != string.Empty)
     				tags.Add(SR.LabelNotForDiagnosticUse);
-				else
-					tags.Add(SR.LabelNotForHumanDiagnosis);
     			if (!ManifestVerification.Valid)
     				// should be hardcoded because manifest verification is all that prevents localizing this tag away
     				tags.Add(LabelModifiedInstallation);
@@ -384,9 +391,44 @@ namespace ClearCanvas.Desktop
     			var tagString = string.Join(" | ", tags.ToArray());
     			return string.IsNullOrEmpty(name) ? tagString : string.Format("{0} - {1}", name, tagString);
     		}
+		}
+
+    	protected void UpdateTitle()
+    	{
+    		this.Title = MakeTitle(_baseTitle, _workspaces.ActiveWorkspace);
     	}
 
-        /// <summary>
+    	/// <summary>
+    	/// Subscribes to or unsubscribes from TitleChanged event for the specified <see cref="Workspace"/> depending on whether it is active or not
+    	/// </summary>
+    	/// <param name="workspace"></param>
+    	private void UpdateTitleChangedEventSubscription(Workspace workspace)
+    	{
+    		if (workspace.Active)
+    		{
+    			workspace.TitleChanged += UpdateTitle;
+    		}
+    		else
+    		{
+    			workspace.TitleChanged -= UpdateTitle;
+    		}
+    	}
+
+    	/// <summary>
+    	/// Updates the view's title
+    	/// </summary>
+    	private void UpdateTitle(object sender, EventArgs e)
+    	{
+    		UpdateTitle();
+    	}
+
+    	#endregion
+
+		#region Helpers
+
+		//TODO (CR February 2011) - High: maybe put these in ProductInformation so we can improve the consistency.
+
+    	/// <summary>
         /// Creates a workspace view for the specified workspace.
         /// </summary>
         internal IWorkspaceView CreateWorkspaceView(Workspace workspace)
@@ -442,7 +484,7 @@ namespace ClearCanvas.Desktop
             get { return _toolbarModel; }
         }
 
-        /// <summary>
+    	/// <summary>
         /// Updates the view's title, menu and toolbars.
         /// </summary>
         internal void UpdateView()
@@ -459,31 +501,7 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        /// <summary>
-        /// Subscribes to or unsubscribes from TitleChanged event for the specified <see cref="Workspace"/> depending on whether it is active or not
-        /// </summary>
-        /// <param name="workspace"></param>
-        private void UpdateTitleChangedEventSubscription(Workspace workspace)
-        {
-            if (workspace.Active)
-            {
-                workspace.TitleChanged += UpdateTitle;
-            }
-            else
-            {
-                workspace.TitleChanged -= UpdateTitle;
-            }
-        }
-
-        /// <summary>
-        /// Updates the view's title
-        /// </summary>
-        private void UpdateTitle(object sender, EventArgs e)
-        {
-            this.Title = MakeTitle(_baseTitle, _workspaces.ActiveWorkspace);
-        }
-
-        /// <summary>
+    	/// <summary>
         /// Builds the action model for the specified site.
         /// </summary>
         private ActionModelNode BuildActionModel(string site)

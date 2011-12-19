@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.Configuration;
-using System.Security;
 using System.ServiceModel;
 using System.Web.Security;
 using ClearCanvas.Common;
@@ -35,20 +33,17 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             if (ok)
             {
                 Guid tokenId = Guid.NewGuid();
-                SessionToken token = new SessionToken(tokenId.ToString(), Platform.Time + ServerPlatform.WebSessionTimeout);
+                var token = new SessionToken(tokenId.ToString(), Platform.Time + ServerPlatform.WebSessionTimeout);
                 string[] authority = Roles.GetRolesForUser(request.UserName);
                 string displayName = request.UserName;
-                InitiateSessionResponse rsp = new InitiateSessionResponse(token, authority, displayName);
+
+                var rsp = new InitiateSessionResponse(token, authority, new Guid[0], displayName,string.Empty);
 
                 SessionTokenManager.Instance.AddSession(token);
 
                 return rsp;
             }
-            else
-            {
-                throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
-            }
-            
+            throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
         }
 
         public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
@@ -56,13 +51,20 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             SessionToken session = SessionTokenManager.Instance.FindSession(request.SessionToken.Id);
             if (session!=null)
             {
-                string[] authorities = Roles.GetRolesForUser(request.SessionToken.Id);
-                return new ValidateSessionResponse(session, authorities);
+                if (session.ExpiryTime < Platform.Time)
+                {
+                    Platform.Log(LogLevel.Error, "Session ID {0} already expired", session.Id);
+                    throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
+                }
+
+                session = SessionTokenManager.Instance.UpdateSession(session);
+
+                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                    Platform.Log(LogLevel.Debug, "Session ID {0} is updated. Valid until {1}", session.Id, session.ExpiryTime);
+                return new ValidateSessionResponse(session, Roles.GetRolesForUser(session.Id));
             }
-            else
-            {
-                throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
-            }
+            Platform.Log(LogLevel.Error, "Session ID {0} does not exist", request.SessionToken.Id);
+            throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
         }
 
         public TerminateSessionResponse TerminateSession(TerminateSessionRequest request)
@@ -75,14 +77,18 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
         {
             if (Membership.Provider.ChangePassword(request.UserName, request.CurrentPassword, request.NewPassword))
                 return new ChangePasswordResponse();
-            else
-                throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
+            throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
         }
 
         public GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request)
         {
             string[] authorities = Roles.GetRolesForUser(request.UserName);
             return new GetAuthorizationsResponse(authorities);
+        }
+
+        public ResetPasswordResponse ResetPassword(ResetPasswordRequest request)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

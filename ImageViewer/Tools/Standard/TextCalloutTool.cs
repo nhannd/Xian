@@ -28,32 +28,32 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[CheckedStateObserver("activateTextCallout", "IsTextCalloutModeActive", "ModeOrActiveChanged")]
 	[Tooltip("activateTextCallout", "TooltipTextCallout")]
 	[MouseButtonIconSet("activateTextCallout", IconScheme.Colour, SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon)]
-	[GroupHint("activateTextCallout", "Tools.Image.Standard.TextCallout")]
+	[GroupHint("activateTextCallout", "Tools.Image.Annotations.Text.Callout")]
 	//
 	[ButtonAction("selectTextCallout", "textcallouttool-dropdown/ToolbarTextCallout", "SelectTextCallout", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("selectTextCallout", "IsTextCalloutModeSelected", "ModeChanged")]
 	[Tooltip("selectTextCallout", "TooltipTextCallout")]
 	[MouseButtonIconSet("selectTextCallout", IconScheme.Colour, SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon)]
-	[GroupHint("selectTextCallout", "Tools.Image.Standard.TextCallout")]
+	[GroupHint("selectTextCallout", "Tools.Image.Annotations.Text.Callout")]
 	//
 	[MenuAction("activateTextArea", "imageviewer-contextmenu/MenuTextArea", "SelectTextArea", InitiallyAvailable = false)]
 	[MenuAction("activateTextArea", "global-menus/MenuTools/MenuStandard/MenuTextArea", "SelectTextArea")]
 	[CheckedStateObserver("activateTextArea", "IsTextAreaModeActive", "ModeOrActiveChanged")]
 	[Tooltip("activateTextArea", "TooltipTextArea")]
 	[MouseButtonIconSet("activateTextArea", IconScheme.Colour, SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon)]
-	[GroupHint("activateTextArea", "Tools.Image.Standard.TextCallout")]
+	[GroupHint("activateTextArea", "Tools.Image.Annotations.Text.Area")]
 	//
 	[ButtonAction("selectTextArea", "textcallouttool-dropdown/ToolbarTextArea", "SelectTextArea", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("selectTextArea", "IsTextAreaModeSelected", "ModeChanged")]
 	[Tooltip("selectTextArea", "TooltipTextArea")]
 	[MouseButtonIconSet("selectTextArea", IconScheme.Colour, SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon)]
-	[GroupHint("selectTextArea", "Tools.Image.Standard.TextCallout")]
+    [GroupHint("selectTextArea", "Tools.Image.Annotations.Text.Area")]
 	//
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarAnnotation/ToolbarTextCallout", "Select", "DropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSetObserver("activate", "IconSet", "ModeChanged")]
-	[GroupHint("activate", "Tools.Image.Standard.TextCallout")]
+    [GroupHint("activate", "Tools.Image.Annotations.Text.Callout")]
 	//
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
@@ -396,6 +396,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(callout);
 			statefulGraphic.State = statefulGraphic.CreateInactiveState();
 
+		    /// TODO (CR Oct 2011): This is the wrong order - the "selected" graphic (stateful) gets
+		    /// deleted by the "delete graphics" tool, and then the top-level context menu
+		    /// graphic gets left dangling.
 			ContextMenuControlGraphic contextGraphic = new ContextMenuControlGraphic(typeof (TextCalloutTool).FullName, "basicgraphic-menu", null, statefulGraphic);
 			contextGraphic.Actions = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(contextGraphic)).Actions;
 

@@ -16,6 +16,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 using ClearCanvas.ImageServer.Model;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
 {
@@ -192,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
             {
                 img = new Image();
                 img.ImageUrl = ImageServerConstants.ImageURLs.RetrieveFeature;
-                img.AlternateText = "Retrieve";
+                img.AlternateText = Tooltips.DeviceFeatures_Retrieve;
             }
             else
             {
@@ -210,7 +211,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
             {
                 img = new Image();
                 img.ImageUrl = ImageServerConstants.ImageURLs.QueryFeature;
-                img.AlternateText = "Query";
+                img.AlternateText = Tooltips.DeviceFeatures_Query;
             }
             else
             {
@@ -226,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
             {
                 img.ImageUrl = ImageServerConstants.ImageURLs.StoreFeature;
-                img.AlternateText = "Store";
+                img.AlternateText = Tooltips.DeviceFeatures_Store;
             }
             else
             {
@@ -242,7 +243,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
                 img.ImageUrl = ImageServerConstants.ImageURLs.AutoRouteFeature;
-                img.AlternateText = "Auto Route";
+                img.AlternateText = Tooltips.DeviceFeatures_AutoRoute;
             }
             else
             {

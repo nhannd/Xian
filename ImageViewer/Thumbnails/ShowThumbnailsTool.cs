@@ -9,12 +9,12 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using System;
 using ClearCanvas.ImageViewer.Thumbnails.Configuration;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
@@ -23,7 +23,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowThumbnails", "Show")]
 	[Tooltip("show", "TooltipShowThumbnails")]
 	[IconSet("show", IconScheme.Colour, "Icons.ShowThumbnailsToolSmall.png", "Icons.ShowThumbnailsToolMedium.png", "Icons.ShowThumbnailsToolLarge.png")]
-	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ShowThumbnailsTool : ImageViewerTool

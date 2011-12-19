@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			: this(baseFrame.CreateTransientReference(), overlayData.CreateTransientReference()) {}
 
 		public FusionPresentationImage(IFrameReference baseFrame, IFusionOverlayFrameDataReference overlayFrameData)
-			: base(Create(baseFrame),
+			: base(CreateGrayscaleImageGraphic(baseFrame),
 			       baseFrame.Frame.NormalizedPixelSpacing.Column,
 			       baseFrame.Frame.NormalizedPixelSpacing.Row,
 			       baseFrame.Frame.PixelAspectRatio.Column,
@@ -131,6 +132,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return (GrayscaleImageGraphic) base.ImageGraphic; }
 		}
 
+		public ImageGraphic OverlayImageGraphic
+		{
+			get { return _fusionOverlayComposite.OverlayImageGraphic; }
+		}
+
 		public IVoiLutManager BaseVoiLutManager
 		{
 			get { return ImageGraphic.VoiLutManager; }
@@ -212,17 +218,16 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#region IModalityLutProvider Members
 
-		public IComposableLut ModalityLut
+		public IModalityLut ModalityLut
 		{
 			get { return ImageGraphic.ModalityLut; }
 		}
 
-		#endregion
+	    #endregion
 
 		#region Private Helpers
 
-		//TODO (CR Sept 2010): Name - Create implies it will create an instance of FusionPresentationImage.
-		private static GrayscaleImageGraphic Create(IImageSopProvider frameReference)
+		private static GrayscaleImageGraphic CreateGrayscaleImageGraphic(IImageSopProvider frameReference)
 		{
 			return new GrayscaleImageGraphic(
 				frameReference.Frame.Rows,

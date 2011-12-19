@@ -105,6 +105,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DefaultValue(100)]
+		[Localizable(true)]
         public int FilterTextBoxWidth
         {
             get { return _filterTextBox.Width; }
@@ -199,7 +200,17 @@ namespace ClearCanvas.Desktop.View.WinForms
         public int FirstDisplayedScrollingRowIndex
         {
             get { return _dataGridView.FirstDisplayedScrollingRowIndex; }
-            set { _dataGridView.FirstDisplayedScrollingRowIndex = value; }
+            set
+            {
+                try
+                {
+                    _dataGridView.FirstDisplayedScrollingRowIndex = value;
+                }
+                catch (InvalidOperationException)
+                {
+                    // #9466 if there isn't enough space to scroll first row into view, just ignore it - when user resizes us, the first visible row will change anyway
+                }
+            }
         }
 
         [DefaultValue(true)]
@@ -224,6 +235,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
 		[DefaultValue("Sort By")]
+		[Localizable(true)]
 		public string SortButtonTooltip
 		{
 			get { return _sortButtonTooltipBase; }
@@ -231,6 +243,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		[DefaultValue("Sort By")]
+		[Localizable(true)]
 		public string ColumnHeaderTooltip
 		{
 			get { return _columnHeaderTooltipBase; }
@@ -303,6 +316,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Localizable(true)]
         public string StatusText
         {
             get { return _statusLabel.Text; }

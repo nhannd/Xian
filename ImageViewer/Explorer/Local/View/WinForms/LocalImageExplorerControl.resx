@@ -418,7 +418,7 @@
     <value>&amp;Details</value>
   </data>
   <metadata name="_addressStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>116, 17</value>
+    <value>0, 25</value>
   </metadata>
   <data name="_addressStrip.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 25</value>
@@ -500,6 +500,10 @@
   </data>
   <data name="_folderView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <assembly alias="ClearCanvas.Controls.WinForms" name="ClearCanvas.Controls.WinForms, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <data name="_folderView.FileSizeFormat" type="ClearCanvas.Controls.WinForms.FileSizeFormat, ClearCanvas.Controls.WinForms">
+    <value>LegacyOctets</value>
   </data>
   <data name="_folderView.Location" type="System.Drawing.Point, System.Drawing">
     <value>322, 52</value>

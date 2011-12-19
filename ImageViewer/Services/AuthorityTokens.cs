@@ -49,8 +49,8 @@ namespace ClearCanvas.ImageViewer.Services
 		/// </summary>
 		public const string EmergencyPhysicians = "Emergency Physicians";
 	}
-	
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+
+    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
 	internal class DefineAuthorityGroups : IDefineAuthorityGroups
 	{
 		#region IDefineAuthorityGroups Members
@@ -63,6 +63,8 @@ namespace ClearCanvas.ImageViewer.Services
 			return new AuthorityGroupDefinition[]
             {
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
+                    DefaultAuthorityGroups.HealthcareAdministrators,
+                    false,
                     new string[] 
                     {
 						AuthorityTokens.Study.Delete,
@@ -72,6 +74,8 @@ namespace ClearCanvas.ImageViewer.Services
                     }),
 
 				new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
+                    DefaultAuthorityGroups.Technologists,
+                    false,
                     new string[] 
                     {
 						AuthorityTokens.Study.Delete,
@@ -81,6 +85,8 @@ namespace ClearCanvas.ImageViewer.Services
                     }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
+                    DefaultAuthorityGroups.Radiologists,
+                    false,
                     new string[] 
                     {
 						AuthorityTokens.Study.Delete,
@@ -90,6 +96,8 @@ namespace ClearCanvas.ImageViewer.Services
                    }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
+                    DefaultAuthorityGroups.RadiologyResidents,
+                    false,
                     new string[] 
                     {
 						AuthorityTokens.Study.Delete,
@@ -99,6 +107,8 @@ namespace ClearCanvas.ImageViewer.Services
                    }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
+                    DefaultAuthorityGroups.EmergencyPhysicians,
+                    false,
                     new string[] 
                     {
 						AuthorityTokens.Study.Delete,

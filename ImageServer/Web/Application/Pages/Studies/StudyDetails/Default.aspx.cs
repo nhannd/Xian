@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -24,6 +25,8 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using Resources;
+using StudyNotFoundException=ClearCanvas.ImageServer.Web.Common.Exceptions.StudyNotFoundException;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 {
@@ -74,7 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         void StudyDetailsPanel_ReprocessStudyClicked(object sender, StudyDetailsPanelReprocessStudyClickEventArgs e)
         {
-            ReprocessConfirmationDialog.Message = String.Format("Are you sure you want to reprocess this study?");
+            ReprocessConfirmationDialog.Message = Resources.SR.AreYouSureToReprocessThisStudy;
             ReprocessConfirmationDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ReprocessConfirmationDialog.Show();
         }
@@ -128,7 +131,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
                     }
                     else
                     {
-                        Response.Write("Unexpected Error: Multiple Partitions exist with AE title : " + _serverae);
+                        Response.Write(String.Format(ErrorMessages.MultiplePartitionsExistWithAETitle, _serverae));
                     }
                 }
             }
@@ -197,7 +200,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             }
             else
             {
-                SetPageTitle(String.Format("{0}:{1}", NameFormatter.Format(_study.PatientsName) , _study.PatientId));
+                SetPageTitle(String.Format("{0}:{1}", NameFormatter.Format(_study.PatientsName) , _study.PatientId), false);
             }
 
         }
@@ -315,9 +318,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         private void ReprocessStudy()
         {
-            StudyController controller = new StudyController();
-            controller.ReprocessStudy("Reprocess Study via GUI", _study.TheStudyStorage.GetKey());
-            Refresh();
+            try
+            {
+                StudyController controller = new StudyController();
+                controller.ReprocessStudy(SR.ReprocessStudyViaGUI, _study.TheStudyStorage.GetKey());
+            }
+            catch (InvalidStudyStateOperationException ex)
+            {
+                ShowErrorMessage(ex.Message);
+            }
+            finally
+            {
+                Refresh();
+            }
+        }
+
+        private void ShowErrorMessage(string error)
+        {
+            MessageDialog.Message = error;
+            MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+            MessageDialog.Show();
+            
         }
 
         void EditStudyDialog_StudyEdited()

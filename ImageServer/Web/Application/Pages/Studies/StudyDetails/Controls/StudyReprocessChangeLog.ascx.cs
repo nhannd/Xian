@@ -22,6 +22,7 @@ using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -41,6 +42,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 }
 
                 return _changeLog;
+            }
+        }
+
+        protected string ChangeDescription
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(ChangeLog.User))
+                {
+                    return String.Format(SR.StudyDetails_History_Reconcile_ReprocessedBecause, ChangeLog.Reason);
+                }
+                else
+                {
+                    return String.Format(SR.StudyDetails_History_Reconcile_ReprocessedByBecause, ChangeLog.User, ChangeLog.Reason);
+                }
             }
         }
 

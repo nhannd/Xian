@@ -134,6 +134,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LayoutControl));
 			this._tileColumnsLabel = new System.Windows.Forms.Label();
 			this._tileRowsLabel = new System.Windows.Forms.Label();
 			this._imageBoxColumnsLabel = new System.Windows.Forms.Label();
@@ -161,90 +162,62 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// 
 			// _tileColumnsLabel
 			// 
-			this._tileColumnsLabel.Location = new System.Drawing.Point(112, 28);
+			resources.ApplyResources(this._tileColumnsLabel, "_tileColumnsLabel");
 			this._tileColumnsLabel.Name = "_tileColumnsLabel";
-			this._tileColumnsLabel.Size = new System.Drawing.Size(70, 23);
-			this._tileColumnsLabel.TabIndex = 11;
-			this._tileColumnsLabel.Text = "Columns";
 			// 
 			// _tileRowsLabel
 			// 
-			this._tileRowsLabel.Location = new System.Drawing.Point(27, 28);
+			resources.ApplyResources(this._tileRowsLabel, "_tileRowsLabel");
 			this._tileRowsLabel.Name = "_tileRowsLabel";
-			this._tileRowsLabel.Size = new System.Drawing.Size(48, 23);
-			this._tileRowsLabel.TabIndex = 9;
-			this._tileRowsLabel.Text = "Rows";
 			// 
 			// _imageBoxColumnsLabel
 			// 
-			this._imageBoxColumnsLabel.Location = new System.Drawing.Point(112, 32);
+			resources.ApplyResources(this._imageBoxColumnsLabel, "_imageBoxColumnsLabel");
 			this._imageBoxColumnsLabel.Name = "_imageBoxColumnsLabel";
-			this._imageBoxColumnsLabel.Size = new System.Drawing.Size(67, 23);
-			this._imageBoxColumnsLabel.TabIndex = 4;
-			this._imageBoxColumnsLabel.Text = "Columns";
 			// 
 			// _imageBoxRowsLabel
 			// 
-			this._imageBoxRowsLabel.Location = new System.Drawing.Point(27, 31);
+			resources.ApplyResources(this._imageBoxRowsLabel, "_imageBoxRowsLabel");
 			this._imageBoxRowsLabel.Name = "_imageBoxRowsLabel";
-			this._imageBoxRowsLabel.Size = new System.Drawing.Size(48, 23);
-			this._imageBoxRowsLabel.TabIndex = 2;
-			this._imageBoxRowsLabel.Text = "Rows";
 			// 
 			// _applyTiles
 			// 
-			this._applyTiles.Location = new System.Drawing.Point(59, 97);
+			resources.ApplyResources(this._applyTiles, "_applyTiles");
 			this._applyTiles.Name = "_applyTiles";
-			this._applyTiles.Size = new System.Drawing.Size(75, 23);
-			this._applyTiles.TabIndex = 13;
-			this._applyTiles.Text = "Apply";
 			this._applyTiles.Click += new System.EventHandler(this._applyTiles_Click);
 			// 
 			// _applyImageBoxes
 			// 
-			this._applyImageBoxes.Location = new System.Drawing.Point(59, 98);
+			resources.ApplyResources(this._applyImageBoxes, "_applyImageBoxes");
 			this._applyImageBoxes.Name = "_applyImageBoxes";
-			this._applyImageBoxes.Size = new System.Drawing.Size(75, 23);
-			this._applyImageBoxes.TabIndex = 6;
-			this._applyImageBoxes.Text = "Apply";
 			this._applyImageBoxes.Click += new System.EventHandler(this._applyImageBoxes_Click);
 			// 
 			// imageBoxPanel
 			// 
 			this.imageBoxPanel.Controls.Add(this.groupBox1);
-			this.imageBoxPanel.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.imageBoxPanel, "imageBoxPanel");
 			this.imageBoxPanel.Name = "imageBoxPanel";
-			this.imageBoxPanel.Size = new System.Drawing.Size(225, 155);
-			this.imageBoxPanel.TabIndex = 0;
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.groupBox1, "groupBox1");
 			this.groupBox1.Controls.Add(this._imageBoxColumnsLabel);
 			this.groupBox1.Controls.Add(this._imageBoxColumns);
 			this.groupBox1.Controls.Add(this._imageBoxRows);
 			this.groupBox1.Controls.Add(this._imageBoxRowsLabel);
 			this.groupBox1.Controls.Add(this._applyImageBoxes);
-			this.groupBox1.Location = new System.Drawing.Point(15, 3);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(193, 152);
-			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Image Box";
 			// 
 			// _imageBoxColumns
 			// 
-			this._imageBoxColumns.Font = new System.Drawing.Font("Arial", 9.75F);
-			this._imageBoxColumns.Location = new System.Drawing.Point(115, 58);
+			resources.ApplyResources(this._imageBoxColumns, "_imageBoxColumns");
 			this._imageBoxColumns.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
 			this._imageBoxColumns.Name = "_imageBoxColumns";
-			this._imageBoxColumns.Size = new System.Drawing.Size(48, 22);
-			this._imageBoxColumns.TabIndex = 5;
 			this._imageBoxColumns.Value = new decimal(new int[] {
             1,
             0,
@@ -253,16 +226,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// 
 			// _imageBoxRows
 			// 
-			this._imageBoxRows.Font = new System.Drawing.Font("Arial", 9.75F);
-			this._imageBoxRows.Location = new System.Drawing.Point(30, 58);
+			resources.ApplyResources(this._imageBoxRows, "_imageBoxRows");
 			this._imageBoxRows.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
 			this._imageBoxRows.Name = "_imageBoxRows";
-			this._imageBoxRows.Size = new System.Drawing.Size(48, 22);
-			this._imageBoxRows.TabIndex = 3;
 			this._imageBoxRows.Value = new decimal(new int[] {
             1,
             0,
@@ -272,39 +242,29 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// tilePanel
 			// 
 			this.tilePanel.Controls.Add(this.groupBox2);
-			this.tilePanel.Location = new System.Drawing.Point(0, 155);
+			resources.ApplyResources(this.tilePanel, "tilePanel");
 			this.tilePanel.Name = "tilePanel";
-			this.tilePanel.Size = new System.Drawing.Size(225, 155);
-			this.tilePanel.TabIndex = 7;
 			// 
 			// groupBox2
 			// 
-			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.groupBox2, "groupBox2");
 			this.groupBox2.Controls.Add(this._applyTiles);
 			this.groupBox2.Controls.Add(this._tileRowsLabel);
 			this.groupBox2.Controls.Add(this._tileColumnsLabel);
 			this.groupBox2.Controls.Add(this._tileRows);
 			this.groupBox2.Controls.Add(this._tileColumns);
-			this.groupBox2.Location = new System.Drawing.Point(15, 3);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(193, 146);
-			this.groupBox2.TabIndex = 8;
 			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Tile";
 			// 
 			// _tileRows
 			// 
-			this._tileRows.Font = new System.Drawing.Font("Arial", 9.75F);
-			this._tileRows.Location = new System.Drawing.Point(30, 54);
+			resources.ApplyResources(this._tileRows, "_tileRows");
 			this._tileRows.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
 			this._tileRows.Name = "_tileRows";
-			this._tileRows.Size = new System.Drawing.Size(48, 22);
-			this._tileRows.TabIndex = 10;
 			this._tileRows.Value = new decimal(new int[] {
             1,
             0,
@@ -313,16 +273,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// 
 			// _tileColumns
 			// 
-			this._tileColumns.Font = new System.Drawing.Font("Arial", 9.75F);
-			this._tileColumns.Location = new System.Drawing.Point(115, 54);
+			resources.ApplyResources(this._tileColumns, "_tileColumns");
 			this._tileColumns.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
 			this._tileColumns.Name = "_tileColumns";
-			this._tileColumns.Size = new System.Drawing.Size(48, 22);
-			this._tileColumns.TabIndex = 12;
 			this._tileColumns.Value = new decimal(new int[] {
             1,
             0,
@@ -331,23 +288,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// 
 			// _buttonConfigure
 			// 
-			this._buttonConfigure.Location = new System.Drawing.Point(60, 316);
+			resources.ApplyResources(this._buttonConfigure, "_buttonConfigure");
 			this._buttonConfigure.Name = "_buttonConfigure";
-			this._buttonConfigure.Size = new System.Drawing.Size(104, 23);
-			this._buttonConfigure.TabIndex = 14;
-			this._buttonConfigure.Text = "Change Defaults";
 			this._buttonConfigure.UseVisualStyleBackColor = true;
 			this._buttonConfigure.Click += new System.EventHandler(this.OnButtonConfigureClick);
 			// 
 			// LayoutControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._buttonConfigure);
 			this.Controls.Add(this.tilePanel);
 			this.Controls.Add(this.imageBoxPanel);
 			this.Name = "LayoutControl";
-			this.Size = new System.Drawing.Size(225, 359);
 			this.imageBoxPanel.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).EndInit();

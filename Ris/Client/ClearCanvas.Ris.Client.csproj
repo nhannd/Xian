@@ -69,6 +69,9 @@
     <Compile Include="AttachmentSummaryTableBase.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
+    <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponent.cs" />
+    <Compile Include="ExternalPractitionerReplaceDisabledContactPointsTableItem.cs" />
+    <Compile Include="MergeOutcomeReportComponent.cs" />
     <Compile Include="PatientAllergiesComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="BiographyOrderReportsComponent.cs" />
@@ -92,11 +95,9 @@
     <Compile Include="ExternalPractitionerFolder.cs" />
     <Compile Include="ExternalPractitionerFolders.cs" />
     <Compile Include="ExternalPractitionerFolderSystem.cs" />
-    <Compile Include="ExternalPractitionerMergeAffectedOrdersComponent.cs" />
-    <Compile Include="ExternalPractitionerMergeAffectedOrderTableItem.cs" />
     <Compile Include="ExternalPractitionerMergeNavigatorComponent.cs" />
     <Compile Include="ExternalPractitionerMergePropertiesComponent.cs" />
-    <Compile Include="ExternalPractitionerMergeSelectedContactPointsComponent.cs" />
+    <Compile Include="ExternalPractitionerSelectDisabledContactPointsComponent.cs" />
     <Compile Include="ExternalPractitionerMergeSelectedDuplicateComponent.cs" />
     <Compile Include="ExternalPractitionerOverviewComponent.cs" />
     <Compile Include="ExternalPractitionerTable.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="StaffSelectorEditorComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="FolderExplorerUserConfiguration.cs" />
+    <Compile Include="TestViewerIntegration.cs" />
     <Compile Include="UserLookupHandler.cs" />
     <Compile Include="UserWorklistTool.cs" />
     <Compile Include="ViewImagesHelper.cs" />

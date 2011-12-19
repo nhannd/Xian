@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public bool Enabled
 		{
 			get { return _enabled; }
-			set
+			protected set
 			{
 				if (_enabled != value)
 				{

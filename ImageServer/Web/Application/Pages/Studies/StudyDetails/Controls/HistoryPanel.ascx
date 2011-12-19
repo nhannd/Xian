@@ -1,6 +1,19 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
 <%@ Import namespace="System.Xml"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Common.Utilities"%>
+
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="HistoryPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.HistoryPanel" %>
+<%@ Import Namespace="Resources"%>
 <%@ Register Src="StudyHistoryChangeDescPanel.ascx" TagName="StudyHistoryChangeDescPanel" TagPrefix="localAsp" %>
 
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
@@ -19,18 +32,18 @@
                        MouseHoverRowHighlightEnabled="false"
                        GridLines="Horizontal" BackColor="White" >
                        <Columns>
-                          <asp:TemplateField HeaderText="Timestamp">
+                          <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, HistoryTimestamp %>">
                             <ItemTemplate>
                                 <ccUI:DateTimeLabel ID="InsertTime" runat="server" Value='<%# Eval("InsertTime") %>' ></ccUI:DateTimeLabel>
                             </ItemTemplate>
                         </asp:TemplateField>
                         
-                        <asp:TemplateField HeaderText="Description">
+                        <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, HistoryDescription %>">
                             <ItemTemplate>
                                 <asp:Label ID="Description" runat="server" Text='<%# Eval("StudyHistoryTypeEnum") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Details">
+                        <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, HistoryDetails %>">
                             <ItemTemplate>
                                 <localAsp:StudyHistoryChangeDescPanel runat="server" id="StudyHistoryChangeDescPanel"></localAsp:StudyHistoryChangeDescPanel>
                             </ItemTemplate>
@@ -40,13 +53,13 @@
                         <EmptyDataTemplate>
                             <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" >
                                 <asp:TableHeaderRow CssClass="GlobalGridViewHeader">
-                                    <asp:TableHeaderCell>Timestamp</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Description</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Details</asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.HistoryTimestamp%></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.HistoryDescription%></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.HistoryDetails%></asp:TableHeaderCell>
                                 </asp:TableHeaderRow>
                                 <asp:TableRow>
                                     <asp:TableCell ColumnSpan="3" Height="50" HorizontalAlign="Center">
-                                        <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText">No history record exists for this study.</asp:panel>
+                                        <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText"><%= SR.StudyDetails_NoHistoryItemForThisStudy %></asp:panel>
                                     </asp:TableCell>
                                 </asp:TableRow>
                             </asp:Table>

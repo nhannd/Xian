@@ -29,7 +29,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	{
 		#region Private Fields
 
-		private static readonly DicomImagePlaneDataCache _imagePlaneDataCache = new DicomImagePlaneDataCache();
+		[ThreadStatic]
+		private static DicomImagePlaneDataCache _imagePlaneDataCache;
+		[ThreadStatic]
 		private static int _referenceCount = 0;
 
 		private IPresentationImage _sourceImage;
@@ -50,6 +52,16 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		{
 		}
 
+		private static DicomImagePlaneDataCache ImagePlaneDataCache
+		{
+			get
+			{
+				if (_imagePlaneDataCache == null)
+					_imagePlaneDataCache = new DicomImagePlaneDataCache();
+				return _imagePlaneDataCache;
+			}
+		}
+
 		public static void InitializeCache()
 		{
 			++_referenceCount;
@@ -61,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				--_referenceCount;
 
 			if (_referenceCount == 0)
-				_imagePlaneDataCache.Clear();
+				ImagePlaneDataCache.Clear();
 		}
 
 		#region Factory Method
@@ -103,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private static SpatialTransform GetSpatialTransform(IPresentationImage image)
 		{
 			if (image is ISpatialTransformProvider)
-				return ((ISpatialTransformProvider) image).SpatialTransform as SpatialTransform;
+				return ((ISpatialTransformProvider)image).SpatialTransform as SpatialTransform;
 
 			return null;
 		}
@@ -111,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private static Frame GetFrame(IPresentationImage image)
 		{
 			if (image is IImageSopProvider)
-				return ((IImageSopProvider) image).Frame;
+				return ((IImageSopProvider)image).Frame;
 
 			return null;
 		}
@@ -121,15 +133,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			string key = String.Format("{0}:{1}", frame.ParentImageSop.SopInstanceUid, frame.FrameNumber);
 
 			DicomImagePlane cachedData;
-			if (_imagePlaneDataCache.ContainsKey(key))
+			if (ImagePlaneDataCache.ContainsKey(key))
 			{
-				cachedData = _imagePlaneDataCache[key];
+				cachedData = ImagePlaneDataCache[key];
 			}
 			else
 			{
 				cachedData = CreateFromFrame(frame);
 				if (cachedData != null)
-					_imagePlaneDataCache[key] = cachedData;
+					ImagePlaneDataCache[key] = cachedData;
 			}
 
 			if (cachedData != null)
@@ -152,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			plane.PositionPatientTopRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width, 0));
 			plane.PositionPatientBottomLeft = frame.ImagePlaneHelper.ConvertToPatient(new PointF(0, height));
 			plane.PositionPatientBottomRight = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width, height));
-			plane.PositionPatientCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width/2F, height/2F));
+			plane.PositionPatientCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF(width / 2F, height / 2F));
 
 			plane.Normal = frame.ImagePlaneHelper.GetNormalVector();
 
@@ -188,12 +200,12 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public SpatialTransform SourceImageTransform
 		{
-			get { return _sourceImageTransform; }	
+			get { return _sourceImageTransform; }
 		}
 
 		public string StudyInstanceUid
 		{
-			get { return _sourceFrame.ParentImageSop.StudyInstanceUid; }	
+			get { return _sourceFrame.ParentImageSop.StudyInstanceUid; }
 		}
 
 		public string SeriesInstanceUid
@@ -203,19 +215,19 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public string SopInstanceUid
 		{
-			get { return _sourceFrame.ParentImageSop.SopInstanceUid; }	
+			get { return _sourceFrame.ParentImageSop.SopInstanceUid; }
 		}
 
 		public int InstanceNumber
 		{
-			get { return _sourceFrame.ParentImageSop.InstanceNumber; }	
+			get { return _sourceFrame.ParentImageSop.InstanceNumber; }
 		}
 
 		public int FrameNumber
 		{
-			get { return _sourceFrame.FrameNumber; }	
+			get { return _sourceFrame.FrameNumber; }
 		}
-		
+
 		public string FrameOfReferenceUid
 		{
 			get { return _sourceFrame.FrameOfReferenceUid; }
@@ -223,7 +235,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public float Thickness
 		{
-			get { return (float)_sourceFrame.SliceThickness; }	
+			get { return (float)_sourceFrame.SliceThickness; }
 		}
 
 		public float Spacing
@@ -341,7 +353,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			{
 				// Intersect the bounding line segments of the reference image with the plane of the target image.
 				Vector3D intersectionPoint = Vector3D.GetLinePlaneIntersection(other.Normal, other.PositionPatientCenterOfImage,
-																		lineSegmentsImagePlaneBounds[i, 0], 
+																		lineSegmentsImagePlaneBounds[i, 0],
 																		lineSegmentsImagePlaneBounds[i, 1], true);
 				if (intersectionPoint != null)
 					planeIntersectionPoints.Add(intersectionPoint);
@@ -351,11 +363,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				return false;
 
 			intersectionPointPatient1 = planeIntersectionPoints[0];
-			intersectionPointPatient2 = CollectionUtils.SelectFirst(planeIntersectionPoints, 
+			intersectionPointPatient2 = CollectionUtils.SelectFirst(planeIntersectionPoints,
 				delegate(Vector3D point)
-					{
-						return !planeIntersectionPoints[0].Equals(point);
-					});
+				{
+					return !planeIntersectionPoints[0].Equals(point);
+				});
 
 			return intersectionPointPatient1 != null && intersectionPointPatient2 != null;
 		}

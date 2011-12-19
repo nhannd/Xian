@@ -314,9 +314,18 @@ namespace ClearCanvas.ImageServer.Core.Edit
 					if (!String.IsNullOrEmpty(value) && !value.ToUpper().Equals("M") && !value.ToUpper().Equals("F"))
 						value = "O";
 				}
-
-				if (!entityMap.Populate(entity, entry.TagPath.Tag, value))
-					throw new ApplicationException(String.Format("Unable to update {0}. See log file for details.", entity.Name));
+                int maxLength = tag.VR.Equals(DicomVr.PNvr) ? 64 : (int)tag.VR.MaximumLength;
+                if (value != null && value.Length > maxLength)
+                {
+                    Platform.Log(LogLevel.Warn, "Truncating value to VR Length: {0}: {1}", tag.VR.Name, value);
+                    if (!entityMap.Populate(entity, entry.TagPath.Tag, value.Substring(0, maxLength)))
+                        throw new ApplicationException(String.Format("Unable to update {0}. See log file for details.", entity.Name));
+                }
+                else
+                {
+                    if (!entityMap.Populate(entity, entry.TagPath.Tag, value))
+                        throw new ApplicationException(String.Format("Unable to update {0}. See log file for details.", entity.Name));
+                }				
 			}
 		}        
 

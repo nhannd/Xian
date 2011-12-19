@@ -14,9 +14,10 @@ using System.Configuration;
 using System.Security.Permissions;
 using System.Web;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
-using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using System.Text;
+using System.Threading;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.View
 {
@@ -28,7 +29,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.View
         {
             base.OnInit(e);
 
-            SetPageTitle(App_GlobalResources.Titles.ViewImagesPageTitle);
+            SetPageTitle(Titles.ViewImagesPageTitle);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -54,7 +55,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.View
         {
             get
             {
-                return String.Format("{0}={1}", ImageServerConstants.WebViewerStartupParameters.TimeoutUrl, Page.ResolveUrl(ImageServerConstants.PageURLs.DefaultTimeoutPage));
+                StringBuilder parameters = new StringBuilder();
+                parameters.AppendFormat("{0}={1}",ImageServerConstants.WebViewerStartupParameters.TimeoutUrl, Page.ResolveUrl(ImageServerConstants.PageURLs.DefaultTimeoutPage));
+                parameters.AppendFormat(",{0}={1}",ImageServerConstants.WebViewerStartupParameters.Language, Thread.CurrentThread.CurrentUICulture.Name);
+
+                return parameters.ToString();
             }
         }
 

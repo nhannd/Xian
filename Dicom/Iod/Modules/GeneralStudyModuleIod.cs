@@ -240,6 +240,27 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		}
 
 		/// <summary>
+		/// Checks if this module appears to be non-empty.
+		/// </summary>
+		/// <returns>True if the module appears to be non-empty; False otherwise.</returns>
+		public bool HasValues()
+		{
+			return !string.IsNullOrEmpty(AccessionNumber)
+			       || !string.IsNullOrEmpty(NameOfPhysiciansReadingStudy)
+			       || !string.IsNullOrEmpty(PhysiciansOfRecord)
+			       || PhysiciansOfRecordIdentificationSequence != null
+			       || PhysiciansReadingStudyIdentificationSequence != null
+			       || ProcedureCodeSequence != null
+			       || ReferencedStudySequence != null
+			       || ReferringPhysicianIdentificationSequence != null
+			       || !string.IsNullOrEmpty(ReferringPhysiciansName)
+			       || StudyDateTime.HasValue
+			       || !string.IsNullOrEmpty(StudyDescription)
+			       || !string.IsNullOrEmpty(StudyId)
+			       || !string.IsNullOrEmpty(StudyInstanceUid);
+		}
+
+		/// <summary>
 		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
 		/// </summary>
 		public static IEnumerable<uint> DefinedTags {

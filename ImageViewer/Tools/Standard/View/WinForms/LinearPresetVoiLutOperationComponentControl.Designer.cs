@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LinearPresetVoiLutOperationComponentControl));
 			this._nameField = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._windowCenter = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this.label1 = new System.Windows.Forms.Label();
@@ -70,13 +71,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// 
 			// _nameField
 			// 
-			this._nameField.LabelText = "Name";
-			this._nameField.Location = new System.Drawing.Point(2, 2);
-			this._nameField.Margin = new System.Windows.Forms.Padding(2);
-			this._nameField.Mask = "";
+			resources.ApplyResources(this._nameField, "_nameField");
 			this._nameField.Name = "_nameField";
-			this._nameField.Size = new System.Drawing.Size(235, 41);
-			this._nameField.TabIndex = 0;
+			this._nameField.ToolTip = null;
 			this._nameField.Value = null;
 			// 
 			// _windowCenter
@@ -86,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
             0,
             0,
             0});
-			this._windowCenter.Location = new System.Drawing.Point(141, 74);
+			resources.ApplyResources(this._windowCenter, "_windowCenter");
 			this._windowCenter.Maximum = new decimal(new int[] {
             65536,
             0,
@@ -98,27 +95,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
             0,
             -2147483648});
 			this._windowCenter.Name = "_windowCenter";
-			this._windowCenter.Size = new System.Drawing.Size(96, 20);
-			this._windowCenter.TabIndex = 2;
-			this._windowCenter.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label1
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(58, 50);
+			resources.ApplyResources(this.label1, "label1");
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(77, 13);
-			this.label1.TabIndex = 3;
-			this.label1.Text = "Window Width";
 			// 
 			// label2
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(58, 76);
+			resources.ApplyResources(this.label2, "label2");
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(80, 13);
-			this.label2.TabIndex = 4;
-			this.label2.Text = "Window Center";
 			// 
 			// _windowWidth
 			// 
@@ -128,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
             0,
             0,
             0});
-			this._windowWidth.Location = new System.Drawing.Point(141, 48);
+			resources.ApplyResources(this._windowWidth, "_windowWidth");
 			this._windowWidth.Maximum = new decimal(new int[] {
             65536,
             0,
@@ -140,9 +126,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
             0,
             0});
 			this._windowWidth.Name = "_windowWidth";
-			this._windowWidth.Size = new System.Drawing.Size(96, 20);
-			this._windowWidth.TabIndex = 1;
-			this._windowWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this._windowWidth.Value = new decimal(new int[] {
             1,
             0,
@@ -151,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// 
 			// LinearPresetVoiLutOperationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
@@ -159,7 +142,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this.Controls.Add(this._windowWidth);
 			this.Controls.Add(this._nameField);
 			this.Name = "LinearPresetVoiLutOperationComponentControl";
-			this.Size = new System.Drawing.Size(240, 107);
 			((System.ComponentModel.ISupportInitialize)(this._windowCenter)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._windowWidth)).EndInit();
 			this.ResumeLayout(false);

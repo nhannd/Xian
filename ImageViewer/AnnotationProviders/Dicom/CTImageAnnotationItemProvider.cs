@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							double value;
 							bool tagExists = frame.ParentImageSop[DicomTags.Kvp].TryGetFloat64(0, out value);
 							if (tagExists)
-								return String.Format(SR.FormatkV, value);
+								return String.Format(SR.FormatKilovolts, value);
 
 							return "";
 						},
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							int value;
 							bool tagExists = frame.ParentImageSop[DicomTags.XRayTubeCurrent].TryGetInt32(0, out value);
 							if (tagExists)
-								return String.Format(SR.FormatmA, value);
+								return String.Format(SR.FormatMilliamps, value);
 
 							return "";
 						},
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							int value;
 							bool tagExists = frame.ParentImageSop[DicomTags.ExposureTime].TryGetInt32(0, out value);
 							if (tagExists)
-								return String.Format(SR.Formatms, value);
+								return String.Format(SR.FormatMilliseconds, value.ToString("F2"));
 
 							return "";
 						},
@@ -122,11 +122,72 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						DicomDataFormatHelper.RawStringFormat
 					)
 				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.CTImage.TableSpeed",
+						resolver,
+						GetTableSpeed,
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.CTImage.TablePosition",
+						resolver,
+						GetTablePosition,
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.CTImage.Composite.TablePositionSpeed",
+						resolver,
+						delegate(Frame frame)
+						{
+							var position = GetTablePosition(frame);
+							var speed = GetTableSpeed(frame);
+							if (string.IsNullOrEmpty(position))
+								return speed;
+							if (string.IsNullOrEmpty(speed))
+								return position;
+							return string.Format(SR.FormatTablePositionSpeed, position, speed);
+						},
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
 			return _annotationItems;
+		}
+
+		private static string GetTableSpeed(Frame frame)
+		{
+			float value;
+			var tagExists = frame.ParentImageSop[DicomTags.TableSpeed].TryGetFloat32(0, out value);
+			return tagExists ? string.Format(SR.FormatMillimetersPerSecond, value.ToString("F2")) : string.Empty;
+		}
+
+		private static string GetTablePosition(Frame frame)
+		{
+			var attribute = frame.ParentImageSop[DicomTags.CtPositionSequence];
+			var items = attribute.Values as DicomSequenceItem[];
+			if (!attribute.IsNull && !attribute.IsEmpty && items != null && items.Length > 0) {
+				double value;
+				var tagExists = items[0][DicomTags.TablePosition].TryGetFloat64(0, out value);
+				return tagExists ? string.Format(SR.FormatMillimeters, value.ToString("F2")) : string.Empty;
+			}
+			return string.Empty;
 		}
 	}
 }

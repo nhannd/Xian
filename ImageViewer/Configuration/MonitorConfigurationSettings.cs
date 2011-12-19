@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 	}
 
 	[SettingsGroupDescription("Settings related to monitor configuration and multiple windows.")]
-	[SettingsProvider(typeof(LocalFileSettingsProvider))]
+    [SettingsProvider(typeof(LocalFileOrDefaultValueSettingsProvider))]
 	internal sealed class MonitorConfigurationSettings : ApplicationSettingsBase
 	{
 		private MonitorConfigurationSettings()

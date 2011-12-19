@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ButtonCancelSearch" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ButtonSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="ErrorAvailableModalitiesNotSet" xml:space="preserve">
     <value>The list of available Modalities has not yet been set.</value>
   </data>
   <data name="ErrorCannotResetModalities" xml:space="preserve">
     <value>The control cannot have its modalities set multiple times.</value>
+  </data>
+  <data name="FormatListSeparator" xml:space="preserve">
+    <value>, </value>
   </data>
   <data name="ItemClear" xml:space="preserve">
     <value>Clear</value>

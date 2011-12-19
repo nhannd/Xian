@@ -126,7 +126,8 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		public void AddInstance(string patientId, string patientName, string studyInstanceUid, string filename)
 		{
 			List<string> s = InternalAddStudy(patientId, patientName, studyInstanceUid);
-			s.Add(filename);
+			if (!string.IsNullOrEmpty(filename))
+				s.Add(filename);
 		}
 
 		private List<string> InternalAddStudy(string patientId, string patientName, string studyInstanceUid)

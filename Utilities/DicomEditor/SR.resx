@@ -144,9 +144,6 @@
   <data name="MenuDicomEditor" xml:space="preserve">
     <value>DICOM Editor</value>
   </data>
-  <data name="MenuDumpFiles" xml:space="preserve">
-    <value>Dump Files</value>
-  </data>
   <data name="MenuNext" xml:space="preserve">
     <value>Next</value>
   </data>
@@ -300,5 +297,20 @@ NOTE: the edited file is from the local data store so it should be reindexed, ot
   </data>
   <data name="MessageConfirmSaveSingleRemoteFile" xml:space="preserve">
     <value>The changes will be saved to the loaded file and the original file will be overwritten. Are you sure you want to continue?</value>
+  </data>
+  <data name="DefaultAnonymousPatientName" xml:space="preserve">
+    <value>Patient^Anonymous</value>
+  </data>
+  <data name="MessageValueCannotBeEmpty" xml:space="preserve">
+    <value>The value cannot be empty.</value>
+  </data>
+  <data name="MessageValueConflictsWithOriginal" xml:space="preserve">
+    <value>The value conflicts with the original value.</value>
+  </data>
+  <data name="MessageConfirmKeepReportsAndAttachments" xml:space="preserve">
+    <value>Reports and other documents attached to a DICOM study often contain patient information that cannot be completely cleaned by this tool. Are you sure you want to keep these files?</value>
+  </data>
+  <data name="MessageConfirmAnonymizeOneOrMoreReportsAndAttachments" xml:space="preserve">
+    <value>One or more files being anonymized are reports and/or other documents. These often contain patient information that cannot be completely cleaned by this tool. Are you sure you want to continue anonymization?</value>
   </data>
 </root>

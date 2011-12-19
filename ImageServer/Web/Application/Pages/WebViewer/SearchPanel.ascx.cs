@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
         private void SetupChildControls()
         {
            
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.Studies.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(Resources.SR.GridPagerStudySingleItem, Resources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.Studies.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
             StudyListGridView.Pager = GridPagerTop;
         }
         
@@ -110,6 +110,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
 
         private static IList<StudySummary> LoadStudies(WebViewerInitParams initParams)
         {
+
+            ValidateParameters(initParams);
+
             var controller = new StudyController();
             var partitionAdapter = new ServerPartitionDataAdapter();
             StudySelectCriteria studyCriteria;
@@ -174,6 +177,56 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
 
             return totalStudies;
         }
+
+
+
+        private static void ValidateParameters(WebViewerInitParams parameters)
+        {
+            if (parameters == null)
+                throw new Exception("Parameters are missing");
+
+
+			// According to the techinical document, AE Title is optional
+			//
+            // if (string.IsNullOrEmpty(parameters.AeTitle.Trim()))
+            // {
+            //    throw new Exception("'aetitle' cannot be empty");
+            // }
+
+            if (parameters.AccessionNumbers!=null)
+            {
+                foreach(var value in parameters.AccessionNumbers)
+                {
+                    if (string.IsNullOrEmpty(value.Trim()))
+                    {
+                        throw new Exception("'accession' is specified but contain an empty value");
+                    }
+                }
+            }
+
+            if (parameters.PatientIds != null)
+            {
+                foreach (var value in parameters.PatientIds)
+                {
+                    if (string.IsNullOrEmpty(value.Trim()))
+                    {
+                        throw new Exception("'patientid' is specified but contain an empty value");
+                    }
+                }
+            }
+
+            if (parameters.StudyInstanceUids != null)
+            {
+                foreach (var value in parameters.StudyInstanceUids)
+                {
+                    if (string.IsNullOrEmpty(value.Trim()))
+                    {
+                        throw new Exception("'study' is specified but contain an empty value");
+                    }
+                }
+            }
+        }
+
 
         #endregion Private Methods
 

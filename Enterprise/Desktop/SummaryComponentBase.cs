@@ -46,7 +46,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		public abstract ITable SummaryTable { get; }
 
 		/// <summary>
-		/// Gets the summary table selection as an <cref="ISelection"/>.
+		/// Gets the summary table selection as an <see cref="ISelection"/>.
 		/// </summary>
 		public abstract ISelection SummarySelection { get; set; }
 
@@ -130,7 +130,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			/// </summary>
 			public ClickAction ToggleActivation
 			{
-				get { return this[ToggleActivationKey]; }
+				get { return (ClickAction)this[ToggleActivationKey]; }
 			}
 		}
 
@@ -294,7 +294,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		}
 
 		/// <summary>
-		/// Gets the summary table selection as an <cref="ISelection"/>.
+		/// Gets the summary table selection as an <see cref="ISelection"/>.
 		/// </summary>
 		public override ISelection SummarySelection
 		{
@@ -486,7 +486,14 @@ namespace ClearCanvas.Enterprise.Desktop
 		public override void Accept()
 		{
 			if (!_hostedMode)
+			{
+				if (this.HasValidationErrors)
+				{
+					ShowValidation(true);
+					return;
+				}
 				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
 		}
 
 		public override void Cancel()
@@ -698,15 +705,17 @@ namespace ClearCanvas.Enterprise.Desktop
 		private void ListItems(int firstRow, int maxRows, Action<IList<TSummary>> resultHandler)
 		{
 			IList<TSummary> results = null;
-			Async.Invoke(this,
-				delegate
-				{
-					results = ListItems(firstRow, maxRows);
-				},
-				delegate
-				{
-					resultHandler(results);
-				});
+			//TODO (CR April 2011): Not sure about this idea.  Inheritors may not realize
+			//the call to ListItems is being made on a worker thread, and may try to catch exceptions
+			//and show errors to the user on the worker thread ... that's actually how I found this issue.
+			Async.Invoke(this, 
+				() => results = ListItems(firstRow, maxRows), 
+				() => resultHandler(results), 
+				delegate(Exception e)
+					{
+						resultHandler.Invoke(new List<TSummary>());
+						ExceptionHandler.Report(e, Host.DesktopWindow);
+					});
 		}
 	}
 

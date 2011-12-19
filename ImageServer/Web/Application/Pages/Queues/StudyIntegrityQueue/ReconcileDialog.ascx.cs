@@ -16,12 +16,14 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
+using Resources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using SR=Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
@@ -47,6 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         private Model.StudyIntegrityQueue _item;
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
         protected internal bool CanReconcile { get; set; }
+        private List<uint> _tagsMustBeTruncated = new List<uint>();
 
         #endregion
 
@@ -80,7 +83,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         public ReconcileDetails ReconcileDetails { get; set; }
 
+
+        public bool DataWillBeTruncated { get { return _tagsMustBeTruncated.Count > 0; } }
+
         #endregion // public members
+
 
         #region Events
 
@@ -158,6 +165,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             HighlightDifferences();
             Page.Validate();
             TabContainer.ActiveTabIndex = 0;
+
+            CheckDataForPossibleTruncation();
             ReconcileItemModalDialog.Show();
         }
 
@@ -175,7 +184,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             ConflictingStudyLocation.Text = ReconcileDetails != null
                                                 ? ReconcileDetails.GetFolderPath()
-                                                : "Not Specified.";
+                                                : SR.NotSpecified;
 
             string reason;
             CanReconcile = _controller.CanReconcile(location, out reason);
@@ -184,6 +193,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             OKButton.Enabled = CanReconcile;
             OptionRow.Visible = CanReconcile;
             base.DataBind();
+        }
+
+        private void CheckDataForPossibleTruncation()
+        {
+            _tagsMustBeTruncated  = DataLengthValidation.CheckDataLength(ReconcileDetails.ConflictingStudyInfo);
+            FieldsMayTruncate.Value = _tagsMustBeTruncated.Count>0 ? "true" : "false";
         }
 
         private void HighlightDifferences()
@@ -209,15 +224,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 Compare(ReconcileDetails.ExistingStudy.AccessionNumber,
                         ReconcileDetails.ConflictingStudyInfo.AccessionNumber,
                         different => Highlight(ConflictingAccessionNumberLabel, different));
-            }
-        }
 
-        private void Highlight(WebControl control, bool highlight)
-        {
-            if (highlight)
-                HtmlUtility.AddCssClass(control, HighlightCssClass);
-            else
-                HtmlUtility.RemoveCssClass(control, HighlightCssClass);
+                UnknownSexWarning.Visible = !DicomValueValidator.IsValidDicomPatientSex(ReconcileDetails.ConflictingStudyInfo.Patient.Sex);
+            }
         }
 
         private static void Compare(string value1, string value2, ComparisonCallback del)
@@ -238,5 +247,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         }
 
         #endregion Public methods
+
+        private static void Highlight(WebControl control, bool highlight)
+        {
+            if (highlight)
+                HtmlUtility.AddCssClass(control, HighlightCssClass);
+            else
+                HtmlUtility.RemoveCssClass(control, HighlightCssClass);
+        }
     }
 }

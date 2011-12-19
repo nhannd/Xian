@@ -25,6 +25,7 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -207,10 +208,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             else
             {
                 //Hide/Disable the "Save As Reason" textbox/validation depending on whether the user is using a custom reason or not.
-                ReasonListBox.Attributes.Add("onchange", "if(document.getElementById('" + ReasonListBox.ClientID + "').options[document.getElementById('" + ReasonListBox.ClientID + "').selectedIndex].text != '" + App_GlobalResources.SR.CustomReason + "') { document.getElementById('" + ReasonSavePanel.ClientID + "').style.display = 'none'; document.getElementById('" + SaveReasonAsName.ClientID + "').style.display = 'none'; } else { document.getElementById('" + ReasonSavePanel.ClientID + "').style.display = 'inline'; document.getElementById('" + SaveReasonAsName.ClientID + "').style.display = 'inline'; }");
+                ReasonListBox.Attributes.Add("onchange", "if(document.getElementById('" + ReasonListBox.ClientID + "').options[document.getElementById('" + ReasonListBox.ClientID + "').selectedIndex].text != '" + SR.CustomReason + "') { document.getElementById('" + ReasonSavePanel.ClientID + "').style.display = 'none'; document.getElementById('" + SaveReasonAsName.ClientID + "').style.display = 'none'; } else { document.getElementById('" + ReasonSavePanel.ClientID + "').style.display = 'inline'; document.getElementById('" + SaveReasonAsName.ClientID + "').style.display = 'inline'; }");
                 ReasonListBox.SelectedIndexChanged += delegate
                 {
-                    if (ReasonListBox.SelectedItem.Text == App_GlobalResources.SR.CustomReason) SaveReasonAsNameValidator.Enabled = true;
+                    if (ReasonListBox.SelectedItem.Text == SR.CustomReason) SaveReasonAsNameValidator.Enabled = true;
                     else SaveReasonAsNameValidator.Enabled = false;
                 };
             }
@@ -228,7 +229,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 }
                 else
                 {
-                    Comment.Text = App_GlobalResources.SR.CustomReasonComment;
+                    Comment.Text = SR.CustomReasonComment;
                 }
             } else
             {
@@ -256,11 +257,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             if (SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
             {
-                ReasonListBox.Items.Add(new ListItem(App_GlobalResources.SR.CustomReason, App_GlobalResources.SR.CustomReasonComment));
+                ReasonListBox.Items.Add(new ListItem(SR.CustomReason, SR.CustomReasonComment));
             }
             else
             {
-                ReasonListBox.Items.Add(new ListItem(App_GlobalResources.SR.SelectOne, string.Empty));
+                ReasonListBox.Items.Add(new ListItem(SR.SelectOne, string.Empty));
             }
             foreach (CannedText text in list)
             {
@@ -295,7 +296,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                             DicomStudyDeletedAuditHelper helper =
                                 new DicomStudyDeletedAuditHelper(
                                     ServerPlatform.AuditSource,
-                                    EventIdentificationTypeEventOutcomeIndicator.Success);
+                                    EventIdentificationContentsEventOutcomeIndicator.Success);
                             helper.AddUserParticipant(new AuditPersonActiveParticipant(
                                                           SessionManager.Current.Credentials.
                                                               UserName,

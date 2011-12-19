@@ -15,115 +15,150 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Enterprise.Common.Configuration;
 using ClearCanvas.Common.Utilities;
+using System.ServiceModel;
+using ClearCanvas.Enterprise.Common.Ping;
 
 namespace ClearCanvas.Enterprise.Common
 {
-    /// <summary>
-    /// This class is an implementation of <see cref="ISettingsStore"/> that uses a <see cref="IConfigurationService"/>
-    /// as a back-end storage.
-    /// </summary>
-    [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
-    public class EnterpriseSettingsStore : ISettingsStore
-    {
-        public EnterpriseSettingsStore()
-        {
-        }
+	[ExtensionPoint]
+	public class EnterpriseSettingsStoreOfflineCacheExtensionPoint : ExtensionPoint<IOfflineCache<ConfigurationDocumentKey, string>>
+	{
+	}
 
-        #region ISettingsStore Members
+	/// <summary>
+	/// This class is an implementation of <see cref="ISettingsStore"/> that uses a <see cref="IConfigurationService"/>
+	/// as a back-end storage.
+	/// </summary>
+	[ExtensionOf(typeof(SettingsStoreExtensionPoint))]
+	public class EnterpriseSettingsStore : ISettingsStore
+	{
+		private readonly IOfflineCache<ConfigurationDocumentKey, string> _offlineCache;
 
-        public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
-        {
-			Type serviceContract = !String.IsNullOrEmpty(user) ?
+		public EnterpriseSettingsStore()
+		{
+			try
+			{
+				_offlineCache = (IOfflineCache<ConfigurationDocumentKey, string>)(new EnterpriseSettingsStoreOfflineCacheExtensionPoint()).CreateExtension();
+			}
+			catch (NotSupportedException)
+			{
+				Platform.Log(LogLevel.Debug, SR.ExceptionOfflineCacheNotFound);
+				_offlineCache = new NullOfflineCache<ConfigurationDocumentKey, string>();
+			}
+		}
+
+		#region ISettingsStore Members
+
+		public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
+		{
+			var serviceContract = !String.IsNullOrEmpty(user) ?
 				typeof(IConfigurationService) : typeof(IApplicationConfigurationReadService);
-
 			var service = (IApplicationConfigurationReadService)Platform.GetService(serviceContract);
-            using (service as IDisposable)
-            {
+
+			using (service as IDisposable)
+			{
+				var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
+				var document = GetConfigurationDocument(service, documentKey);
+
 				var values = new Dictionary<string, string>();
 				var parser = new SettingsParser();
+				parser.FromXml(document, values);
+				return values;
+			}
+		}
 
-				var userDocument = service.GetConfigurationDocument(
-                    new GetConfigurationDocumentRequest(
-                                    new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey))).Content;
-                    parser.FromXml(userDocument, values);
-                return values;
-            }
-        }
+		public void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues)
+		{
+			// note: if user == null, we are saving shared settings, if user is valued, we are saving user settings
+			// but both are never edited as a single operation
 
-        public void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues)
-        {
-            // note: if user == null, we are saving shared settings, if user is valued, we are saving user settings
-            // but both are never edited as a single operation
+			// the approach taken here is to create an XML document that represents a diff between
+			// the default settings (as specified by the settings group meta-data) and the modified settings,
+			// and store that document in the configuration store
 
-            // the approach taken here is to create an XML document that represents a diff between
-            // the default settings (as specified by the settings group meta-data) and the modified settings,
-            // and store that document in the configuration store
+			var service = Platform.GetService<IConfigurationService>();
+			using(service as IDisposable)
+			using (var offlineCacheClient = _offlineCache.CreateClient())
+			{
+				// first obtain the meta-data for the settings group properties
+				var properties = ListSettingsProperties(group, service);
 
-			Platform.GetService(delegate(IConfigurationService service)
-                {
-                    // first obtain the meta-data for the settings group properties
-                    IList<SettingsPropertyDescriptor> properties = ListSettingsProperties(group, service);
+				// next we obtain any previously stored configuration document for this settings group
+				var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
+				var document = GetConfigurationDocument(service, documentKey);
 
-                    var parser = new SettingsParser();
-                    var values = new Dictionary<string, string>();
+				// parse document
+				var parser = new SettingsParser();
+				var values = new Dictionary<string, string>();
+				parser.FromXml(document, values);
 
-					var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
+				// update the values that have changed
+				foreach (var kvp in dirtyValues)
+					values[kvp.Key] = kvp.Value;
 
-                    // next we obtain any previously stored configuration document for this settings group
-					string document = service.GetConfigurationDocument(new GetConfigurationDocumentRequest(documentKey)).Content;
-                    parser.FromXml(document, values);
+				// now remove any values that are identical to the default values
+				foreach (var property in properties)
+				{
+					string value;
+					if (values.TryGetValue(property.Name, out value) && Equals(value, property.DefaultValue))
+						values.Remove(property.Name);
+				}
 
-                    // update the values that have changed
-                    foreach (KeyValuePair<string, string> kvp in dirtyValues)
-                        values[kvp.Key] = kvp.Value;
-
-                    // now remove any values that are identical to the default values
-                    foreach (SettingsPropertyDescriptor property in properties)
-                    {
-                        string value;
-                        if(values.TryGetValue(property.Name, out value))
-                        {
-							if (Equals(value, property.DefaultValue))
-                                values.Remove(property.Name);
-                        }
-                    }
-
+				try
+				{
 					if (values.Count > 0)
 					{
-						// generate the document and save it
+						// generate the document, update local cache and server
 						document = parser.ToXml(values);
+						offlineCacheClient.Put(documentKey, document);
 						service.SetConfigurationDocument(new SetConfigurationDocumentRequest(documentKey, document));
 					}
 					else
 					{
 						// every value is the same as the default, so the document can be removed
+						// update local cache and server
+						offlineCacheClient.Remove(documentKey);
 						service.RemoveConfigurationDocument(new RemoveConfigurationDocumentRequest(documentKey));
 					}
-                });
-        }
 
-        public void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
-        {
-            Platform.CheckForNullReference(user, "user");
+				}
+				catch (EndpointNotFoundException e)
+				{
+					Platform.Log(LogLevel.Debug, e, "Unable to save settings to configuration service.");
+				}
+			}
+		}
 
-        	var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
-			Platform.GetService( (IConfigurationService service) => service.RemoveConfigurationDocument(new RemoveConfigurationDocumentRequest(documentKey)));
-        }
+		public void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
+		{
+			Platform.CheckForNullReference(user, "user");
 
-        public IList<SettingsGroupDescriptor> ListSettingsGroups()
-        {
-            List<SettingsGroupDescriptor> groups = null;
+			var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
+			
+			// remove from offline cache
+			using(var offlineCacheClient = _offlineCache.CreateClient())
+			{
+				offlineCacheClient.Remove(documentKey);
+			}
 
-            // obtain the list of settings groups
-            Platform.GetService((IApplicationConfigurationReadService service) => groups = ListSettingsGroups(service));
+			// remove from server
+			Platform.GetService((IConfigurationService service) => service.RemoveConfigurationDocument(new RemoveConfigurationDocumentRequest(documentKey)));
+		}
 
-            return groups;
-        }
+		public IList<SettingsGroupDescriptor> ListSettingsGroups()
+		{
+			List<SettingsGroupDescriptor> groups = null;
+
+			// obtain the list of settings groups
+			Platform.GetService((IApplicationConfigurationReadService service) => groups = ListSettingsGroups(service));
+
+			return groups;
+		}
 
 		public SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor group)
 		{
 			List<SettingsGroupDescriptor> groups = null;
-			ListSettingsGroupsRequest request = new ListSettingsGroupsRequest();
+			var request = new ListSettingsGroupsRequest();
 
 			//TODO/NOTE: I had changed the service interface so the server would return the previous group, but in order to
 			//not have to release enterprise for Summer, I just did this.
@@ -132,8 +167,8 @@ namespace ClearCanvas.Enterprise.Common
 			if (groups == null || groups.Count == 0)
 				return null;
 
-			var sameGroup = CollectionUtils.Select(groups, (other) => other.AssemblyQualifiedTypeName == group.AssemblyQualifiedTypeName);
-			var lessEqualGroups = CollectionUtils.Select(sameGroup, (other) => other.Version <= group.Version);
+			var sameGroup = CollectionUtils.Select(groups, other => other.AssemblyQualifiedTypeName == group.AssemblyQualifiedTypeName);
+			var lessEqualGroups = CollectionUtils.Select(sameGroup, other => other.Version <= group.Version);
 			if (lessEqualGroups.Count < 2)
 				return null;
 
@@ -143,34 +178,72 @@ namespace ClearCanvas.Enterprise.Common
 			return lessEqualGroups[lessEqualGroups.Count - 2];
 		}
 
-        public IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
-        {
-            // use the configuration service to obtain the properties
-            IList<SettingsPropertyDescriptor> properties = null;
+		public IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
+		{
+			// use the configuration service to obtain the properties
+			IList<SettingsPropertyDescriptor> properties = null;
 			Platform.GetService((IApplicationConfigurationReadService service) => properties = ListSettingsProperties(group, service));
-            return properties;
-        }
-		
-        public bool SupportsImport
-        {
-            get { return true; }
-        }
+			return properties;
+		}
 
-        public void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties)
-        {
-            Platform.GetService((IConfigurationService service) => 
+		public bool IsOnline
+		{
+			get { return RemoteCoreServiceProvider.IsOnline; }	
+		}
+
+		public bool SupportsImport
+		{
+			get { return true; }
+		}
+
+		public void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties)
+		{
+			Platform.GetService((IConfigurationService service) =>
 									service.ImportSettingsGroup(new ImportSettingsGroupRequest(group, properties)));
-        }
+		}
 
-        #endregion
+		#endregion
 
-        private static List<SettingsGroupDescriptor> ListSettingsGroups(IApplicationConfigurationReadService service)
-        {
-            return service.ListSettingsGroups(new ListSettingsGroupsRequest()).Groups;
-        }
-        private static IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group, IApplicationConfigurationReadService service)
-        {
-            return service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
-        }
-    }
+		private static List<SettingsGroupDescriptor> ListSettingsGroups(IApplicationConfigurationReadService service)
+		{
+			return service.ListSettingsGroups(new ListSettingsGroupsRequest()).Groups;
+		}
+		private static IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group, IApplicationConfigurationReadService service)
+		{
+			try
+			{
+				// try to get the information from the local plugins
+				return SettingsPropertyDescriptor.ListSettingsProperties(group);
+			}
+			catch (SettingsException)
+			{
+				// guess it's not a local group, so use the configuration service to obtain the properties
+				return service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
+			}
+		}
+
+		private string GetConfigurationDocument(IApplicationConfigurationReadService service, ConfigurationDocumentKey documentKey)
+		{
+			using(var offlineCacheClient = _offlineCache.CreateClient())
+			{
+				try
+				{
+					var document = service.GetConfigurationDocument(new GetConfigurationDocumentRequest(documentKey)).Content;
+
+					// keep offline cache up to date
+					offlineCacheClient.Put(documentKey, document);
+
+					return document;
+				}
+				catch (EndpointNotFoundException e)
+				{
+					Platform.Log(LogLevel.Debug, e, "Unable to retreive settings from configuration service.");
+
+					// get most recent version from offline cache
+					return offlineCacheClient.Get(documentKey);
+				}
+			}
+		}
+
+	}
 }

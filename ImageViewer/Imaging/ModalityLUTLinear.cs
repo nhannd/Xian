@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.Imaging
@@ -22,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// although it could also be a purely calculated Lut.
 	/// for more information.
 	/// </remarks>
-	internal sealed class ModalityLutLinear : GeneratedDataLut
+	internal sealed class ModalityLutLinear : GeneratedDataModalityLut
 	{
 		#region Private Fields
 
@@ -111,13 +112,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set { }
 		}
 
-		public override int MinOutputValue
+		public override double MinOutputValue
 		{
 			get { return base.MinOutputValue; }
 			protected set { }
 		}
 
-		public override int MaxOutputValue
+		public override double MaxOutputValue
 		{
 			get { return base.MaxOutputValue; }
 			protected set { }
@@ -125,13 +126,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Methods
 
-		protected override void Create()
+		protected override void Fill(double[] data, int firstMappedPixelValue, int lastMappedPixelValue)
 		{
-			int min = MinInputValue;
-			int max = MaxInputValue;
-			
-			for (int i = min; i <= max; i++)
-				base[i] = (int) (_rescaleSlope * i + _rescaleIntercept);
+			unsafe
+			{
+				fixed (double* pData = data)
+				{
+					var length = data.Length;
+					for (int i = 0; i < length; ++i)
+						pData[i] = _rescaleSlope*(i + firstMappedPixelValue) + _rescaleIntercept;
+				}
+			}
 		}
 
 		public override string GetKey()
@@ -163,11 +168,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				base.MaxInputValue = (1 << this.BitsStored) - 1;
 			}
 
-			int minMax1 = (int)(this.RescaleSlope * this.MinInputValue + this.RescaleIntercept);
-			int minMax2 = (int)(this.RescaleSlope * this.MaxInputValue + this.RescaleIntercept);
+			var minMax1 = (this.RescaleSlope * this.MinInputValue + this.RescaleIntercept);
+			var minMax2 = (this.RescaleSlope * this.MaxInputValue + this.RescaleIntercept);
 
-			base.MinOutputValue = (int)Math.Min(minMax1, minMax2);
-			base.MaxOutputValue = (int)Math.Max(minMax1, minMax2);
+			base.MinOutputValue = Math.Min(minMax1, minMax2);
+			base.MaxOutputValue = Math.Max(minMax1, minMax2);
 		}
 
 		#endregion

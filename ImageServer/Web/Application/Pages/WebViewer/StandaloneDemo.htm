@@ -23,7 +23,7 @@
 </head>
 <body>
 
-<form action="http://localhost/ImageServerTrunk/Pages/WebViewer/Launch.aspx" method="post" target="_blank">
+<form action="Launch.aspx" method="post" target="_blank">
 
 <div id="content">
 
@@ -40,10 +40,32 @@
 <td>List Studies:</td><td><input type="text" name="liststudies" size="20" value="true"/></td>
 </tr>
 <tr>
-<td>Init String:</td><td><input type="text" name="WebViewerInitParams" value="application=epr,aetitle=ImageServer,study=,patientid=,accession=" size="100" /></td>
+<td>Init String:</td><td><input type="text" name="WebViewerInitParams" 
+    value="application=epr,aetitle=,study=,patientid=,accession=" size="100" /></td>
 </tr>
 <tr>
-<td>&nbsp;</td></td><td style="padding-top: 10px;"><input type="submit" value="Submit" /></td>
+<td></td>
+<td>
+    <div style="margin-top:10px">
+    <span style="font-size:small;font-weight:bold;">Examples (see document for more info):</span>
+        <table style="font-size:small; margin:10px" cellpadding="5">
+            <tr valign="top">
+            <td>application=epr,aetitle=ImageServer,study=1.2.3.5.6.7</td>
+            <td>=> Open a study with Study Instance UID 1.2.3.5.6.7 </td>
+            </tr>
+            
+            <tr valign="top">
+                <td>application=epr,aetitle=ImageServer,patientid=3333*</td>
+                <td>=> Open all studies for patient whose Patient ID begins with 3333. If list studies is true and there are multiple matches, user will have to pick a study </td>
+            </tr>            
+            </ul>
+        </table>
+    </div>
+    </td>
+</tr>
+<tr>
+<td></td>
+<td style="padding-top: 10px; text-align:center"><input type="submit" value="Submit" /></td>
 </tr>
 
 </table>

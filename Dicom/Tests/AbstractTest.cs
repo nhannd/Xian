@@ -516,24 +516,8 @@ namespace ClearCanvas.Dicom.Tests
 			                                		NumberOfFrames = numberOfFrames
 			                                	};
 
-			if (photometricInterpretation.Equals("RGB")
-			 || photometricInterpretation.Equals("YBR_FULL"))
-			{
-				pd.SamplesPerPixel = 3;
-				pd.PlanarConfiguration = 1;
-				CreateColorPixelData(pd);
-			}
-			else if (photometricInterpretation.Equals("MONOCHROME1")
-				  || photometricInterpretation.Equals("MONOCHROME2"))
-			{
-				CreateMonochromePixelData(pd);
-			}
-			else
-			{
-				throw new DicomException("Unsupported Photometric Interpretation in CreateFile");
-			}
-
-			pd.UpdateAttributeCollection(dataSet);
+            CreatePixelData(pd);
+            pd.UpdateAttributeCollection(dataSet);
 
 			SetupMetaInfo(file);
 
@@ -555,6 +539,35 @@ namespace ClearCanvas.Dicom.Tests
             return file;
         }
 
+        protected static void CreatePixelData(DicomAttributeCollection dataSet)
+        {
+            dataSet[DicomTags.PixelData] = null;
+            var pd = new DicomUncompressedPixelData(dataSet);
+            CreatePixelData(pd);
+            pd.UpdateAttributeCollection(dataSet);
+        }
+
+        protected static void CreatePixelData(DicomUncompressedPixelData pd)
+        {
+            var photometricInterpretation = pd.PhotometricInterpretation;
+            if (photometricInterpretation.Equals("RGB")
+                || photometricInterpretation.Equals("YBR_FULL"))
+            {
+                pd.SamplesPerPixel = 3;
+                pd.PlanarConfiguration = 1;
+                CreateColorPixelData(pd);
+            }
+            else if (photometricInterpretation.Equals("MONOCHROME1")
+              || photometricInterpretation.Equals("MONOCHROME2"))
+            {
+                CreateMonochromePixelData(pd);
+            }
+            else
+            {
+                throw new DicomException("Unsupported Photometric Interpretation in CreateFile");
+            }
+        }
+
         protected static void CreateMonochromePixelData(DicomUncompressedPixelData pd)
     	{
     		int rows = pd.ImageHeight;
@@ -562,7 +575,11 @@ namespace ClearCanvas.Dicom.Tests
 
     		int minValue = pd.IsSigned ? -(1 << (pd.BitsStored - 1)) : 0;
     		int maxValue = (1 << pd.BitsStored) + minValue - 1;
-
+            const ushort noOpMask = 0xFFFF;
+            const byte noOpByteMask = 0xFF;
+            var shortMask = (ushort)(noOpMask >> (pd.BitsAllocated - pd.BitsStored));
+            var byteMask = (byte)(noOpByteMask >> (pd.BitsAllocated - pd.BitsStored));
+          
     		// Create a small block of pixels in the test pattern in an integer,
     		// then copy/tile into the full size frame data
 
@@ -634,6 +651,7 @@ namespace ClearCanvas.Dicom.Tests
     						for (int j = 0; j < cols; j++)
     						{
     							frameData[pixelOffset] = (byte)((sbyte)smallPixels[smallOffset + j % smallColumns]);
+    						    frameData[pixelOffset] = (byte)(frameData[pixelOffset] & byteMask);
     							pixelOffset++;
     						}
     					}
@@ -647,7 +665,8 @@ namespace ClearCanvas.Dicom.Tests
     						for (int j = 0; j < cols; j++)
     						{
     							frameData[pixelOffset] = (byte)smallPixels[smallOffset + j % smallColumns];
-    							pixelOffset++;
+                                frameData[pixelOffset] = (byte)(frameData[pixelOffset] & byteMask);
+                                pixelOffset++;
     						}
     					}
     				}
@@ -663,6 +682,8 @@ namespace ClearCanvas.Dicom.Tests
     						for (int j = 0; j < cols; j++)
     						{
     							short pixel = (short)smallPixels[smallOffset + j % smallColumns];
+    						    pixel = (short)(pixel & shortMask);
+
     							frameData[pixelOffset] = (byte)(pixel & 0x00FF);
     							pixelOffset++;
     							frameData[pixelOffset] = (byte)((pixel & 0xFF00) >> 8);
@@ -679,6 +700,7 @@ namespace ClearCanvas.Dicom.Tests
     						for (int j = 0; j < cols; j++)
     						{
     							ushort pixel = (ushort)smallPixels[smallOffset + j % smallColumns];
+    						    pixel &= shortMask;
     							frameData[pixelOffset] = (byte)(pixel & 0x00FF);
     							pixelOffset++;
     							frameData[pixelOffset] = (byte)((pixel & 0xFF00) >> 8);
@@ -697,8 +719,10 @@ namespace ClearCanvas.Dicom.Tests
 			int rows = pd.ImageHeight;
 			int cols = pd.ImageWidth;
 
-			int minValue = 0;
-			int maxValue = (1 << pd.BitsStored) + minValue - 1;
+            int minValue = pd.IsSigned ? -(1 << (pd.BitsStored - 1)) : 0;
+            int maxValue = (1 << pd.BitsStored) + minValue - 1;
+            const byte noOpByteMask = 0xFF;
+            var byteMask = (byte)(noOpByteMask >> (pd.BitsAllocated - pd.BitsStored));        
 
 			// Create a small block of pixels in the test pattern in an integer,
 			// then copy/tile into the full size frame data
@@ -778,6 +802,7 @@ namespace ClearCanvas.Dicom.Tests
 					for (int j = 0; j < cols*3; j++)
 					{
 						frameData[pixelOffset] = (byte) smallPixels[smallOffset + j%(smallColumns*3)];
+					    frameData[pixelOffset] &= byteMask;
 						pixelOffset++;
 					}
 				}

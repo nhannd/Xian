@@ -1,3 +1,13 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
 <%@ Import namespace="Microsoft.JScript"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Model" %>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SeriesGridView.ascx.cs" 
@@ -5,22 +15,22 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries.Serie
 
             <asp:GridView ID="SeriesListControl" runat="server" SkinID="GlobalGridView">
                 <Columns>
-                            <asp:BoundField DataField="SeriesNumber" HeaderText="Series #">
+                            <asp:BoundField DataField="SeriesNumber" HeaderText="<%$Resources: Labels, SeriesNumber %>">
                                 <HeaderStyle Wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="Modality" HeaderText="Modality">
+                            <asp:BoundField DataField="Modality" HeaderText="<%$Resources: Labels, Modality %>">
                                 <HeaderStyle Wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="SeriesDescription" HeaderText="Description">
+                            <asp:BoundField DataField="SeriesDescription" HeaderText="<%$Resources:Labels, Description %>">
                                 <HeaderStyle Wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="NumberOfSeriesRelatedInstances" HeaderText="Instances">
+                            <asp:BoundField DataField="NumberOfSeriesRelatedInstances" HeaderText="<%$Resources:Labels, Instances %>">
                                 <HeaderStyle Wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="SeriesInstanceUid" HeaderText="Series Instance UID">
+                            <asp:BoundField DataField="SeriesInstanceUid" HeaderText="<%$Resources:Labels, SeriesInstanceUID %>">
                                 <HeaderStyle Wrap="False" />  
                             </asp:BoundField>
-                            <asp:TemplateField  HeaderText="Performed On">
+                            <asp:TemplateField  HeaderText="<%$Resources:Labels, PerformedOn %>">
                                 <ItemTemplate>
 
                                 </ItemTemplate>
@@ -28,7 +38,7 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries.Serie
                             </asp:TemplateField>
                                     </Columns>
                 <EmptyDataTemplate>
-                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="No series items for this study." />
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="<%$Resources: SR, StudyDetails_NoSeriesForThisStudy%>" />
                 </EmptyDataTemplate>
                         <RowStyle CssClass="GlobalGridViewRow"/>
                         <HeaderStyle CssClass="GlobalGridViewHeader"/>

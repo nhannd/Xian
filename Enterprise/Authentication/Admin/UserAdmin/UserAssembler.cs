@@ -9,16 +9,12 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Authentication.Brokers;
 
 namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 {
@@ -26,23 +22,20 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
     {
         internal UserSummary GetUserSummary(User user)
         {
-            return new UserSummary(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
-                user.LastLoginTime, user.Enabled);
+            return new UserSummary(user.UserName, user.DisplayName, user.EmailAddress, user.CreationTime, user.ValidFrom, user.ValidUntil,
+                                   user.LastLoginTime, user.Password.ExpiryTime, user.Enabled);
         }
 
         internal UserDetail GetUserDetail(User user)
         {
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
 
-        	List<AuthorityGroupSummary> groups = CollectionUtils.Map<AuthorityGroup, AuthorityGroupSummary>(
+        	List<AuthorityGroupSummary> groups = CollectionUtils.Map(
         		user.AuthorityGroups,
-        		delegate(AuthorityGroup group)
-        		{
-        			return assembler.CreateAuthorityGroupSummary(group);
-        		});
+        		(AuthorityGroup group) => assembler.CreateAuthorityGroupSummary(group));
 				
-            return new UserDetail(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,
-                user.LastLoginTime, user.Enabled, groups);
+            return new UserDetail(user.UserName, user.DisplayName, user.EmailAddress, user.CreationTime, user.ValidFrom, user.ValidUntil,
+                user.LastLoginTime, user.Enabled, user.Password.ExpiryTime, groups);
         }
 
         internal void UpdateUser(User user, UserDetail detail, IPersistenceContext context)
@@ -53,14 +46,13 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
             user.ValidFrom = detail.ValidFrom;
             user.ValidUntil = detail.ValidUntil;
             user.Enabled = detail.Enabled;
+            user.Password.ExpiryTime = detail.PasswordExpiryTime;
+            user.EmailAddress = detail.EmailAddress;
 
             // process authority groups
-			List<AuthorityGroup> authGroups = CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroup>(
+			List<AuthorityGroup> authGroups = CollectionUtils.Map(
 				detail.AuthorityGroups,
-                delegate(AuthorityGroupSummary group)
-                {
-                	return context.Load<AuthorityGroup>(group.AuthorityGroupRef, EntityLoadFlags.Proxy);
-                });
+				(AuthorityGroupSummary group) => context.Load<AuthorityGroup>(group.AuthorityGroupRef, EntityLoadFlags.Proxy));
 
             user.AuthorityGroups.Clear();
 			user.AuthorityGroups.AddAll(authGroups);

@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KeyImageInformationEditorComponentControl));
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.pnlTitle = new System.Windows.Forms.Panel();
 			this.cboTitle = new System.Windows.Forms.ComboBox();
@@ -44,136 +45,87 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			// 
 			// flowLayoutPanel1
 			// 
-			this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
 			this.flowLayoutPanel1.Controls.Add(this.pnlTitle);
 			this.flowLayoutPanel1.Controls.Add(this.pnlDesc);
 			this.flowLayoutPanel1.Controls.Add(this.pnlSeriesDesc);
-			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(312, 216);
-			this.flowLayoutPanel1.TabIndex = 0;
 			// 
 			// pnlTitle
 			// 
 			this.pnlTitle.Controls.Add(this.cboTitle);
 			this.pnlTitle.Controls.Add(this.lblTitle);
-			this.pnlTitle.Location = new System.Drawing.Point(13, 13);
+			resources.ApplyResources(this.pnlTitle, "pnlTitle");
 			this.pnlTitle.Name = "pnlTitle";
-			this.pnlTitle.Size = new System.Drawing.Size(285, 44);
-			this.pnlTitle.TabIndex = 3;
 			// 
 			// cboTitle
 			// 
-			this.cboTitle.Dock = System.Windows.Forms.DockStyle.Top;
+			resources.ApplyResources(this.cboTitle, "cboTitle");
 			this.cboTitle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cboTitle.FormattingEnabled = true;
-			this.cboTitle.Location = new System.Drawing.Point(0, 18);
 			this.cboTitle.Name = "cboTitle";
-			this.cboTitle.Size = new System.Drawing.Size(285, 21);
-			this.cboTitle.TabIndex = 1;
 			// 
 			// lblTitle
 			// 
-			this.lblTitle.AutoSize = true;
-			this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblTitle.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.lblTitle, "lblTitle");
 			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
-			this.lblTitle.Size = new System.Drawing.Size(82, 18);
-			this.lblTitle.TabIndex = 0;
-			this.lblTitle.Text = "Document Title:";
 			// 
 			// pnlDesc
 			// 
 			this.pnlDesc.Controls.Add(this.txtDesc);
 			this.pnlDesc.Controls.Add(this.lblDesc);
-			this.pnlDesc.Location = new System.Drawing.Point(13, 63);
+			resources.ApplyResources(this.pnlDesc, "pnlDesc");
 			this.pnlDesc.Name = "pnlDesc";
-			this.pnlDesc.Size = new System.Drawing.Size(285, 88);
-			this.pnlDesc.TabIndex = 4;
 			// 
 			// txtDesc
 			// 
-			this.txtDesc.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.txtDesc.Location = new System.Drawing.Point(0, 18);
-			this.txtDesc.Multiline = true;
+			resources.ApplyResources(this.txtDesc, "txtDesc");
 			this.txtDesc.Name = "txtDesc";
-			this.txtDesc.Size = new System.Drawing.Size(285, 70);
-			this.txtDesc.TabIndex = 3;
 			// 
 			// lblDesc
 			// 
-			this.lblDesc.AutoSize = true;
-			this.lblDesc.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblDesc.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.lblDesc, "lblDesc");
 			this.lblDesc.Name = "lblDesc";
-			this.lblDesc.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
-			this.lblDesc.Size = new System.Drawing.Size(63, 18);
-			this.lblDesc.TabIndex = 2;
-			this.lblDesc.Text = "Description:";
 			// 
 			// pnlSeriesDesc
 			// 
 			this.pnlSeriesDesc.Controls.Add(this.txtSeriesDesc);
 			this.pnlSeriesDesc.Controls.Add(this.lblSeriesDesc);
-			this.pnlSeriesDesc.Location = new System.Drawing.Point(13, 157);
+			resources.ApplyResources(this.pnlSeriesDesc, "pnlSeriesDesc");
 			this.pnlSeriesDesc.Name = "pnlSeriesDesc";
-			this.pnlSeriesDesc.Size = new System.Drawing.Size(285, 44);
-			this.pnlSeriesDesc.TabIndex = 5;
 			// 
 			// txtSeriesDesc
 			// 
-			this.txtSeriesDesc.Dock = System.Windows.Forms.DockStyle.Top;
-			this.txtSeriesDesc.Location = new System.Drawing.Point(0, 18);
+			resources.ApplyResources(this.txtSeriesDesc, "txtSeriesDesc");
 			this.txtSeriesDesc.Name = "txtSeriesDesc";
-			this.txtSeriesDesc.Size = new System.Drawing.Size(285, 20);
-			this.txtSeriesDesc.TabIndex = 5;
 			// 
 			// lblSeriesDesc
 			// 
-			this.lblSeriesDesc.AutoSize = true;
-			this.lblSeriesDesc.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblSeriesDesc.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.lblSeriesDesc, "lblSeriesDesc");
 			this.lblSeriesDesc.Name = "lblSeriesDesc";
-			this.lblSeriesDesc.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
-			this.lblSeriesDesc.Size = new System.Drawing.Size(95, 18);
-			this.lblSeriesDesc.TabIndex = 4;
-			this.lblSeriesDesc.Text = "Series Description:";
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(224, 223);
+			resources.ApplyResources(this._cancelButton, "_cancelButton");
 			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 7;
-			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this.OnCancel);
 			// 
 			// _okButton
 			// 
-			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._okButton.Location = new System.Drawing.Point(143, 223);
+			resources.ApplyResources(this._okButton, "_okButton");
 			this._okButton.Name = "_okButton";
-			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 6;
-			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this.OnOk);
 			// 
 			// KeyImageInformationEditorComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this.flowLayoutPanel1);
 			this.Name = "KeyImageInformationEditorComponentControl";
-			this.Size = new System.Drawing.Size(312, 260);
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.pnlTitle.ResumeLayout(false);
 			this.pnlTitle.PerformLayout();

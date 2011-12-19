@@ -14,6 +14,7 @@ using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.UserGroupsPanel.js", "application/x-javascript")]
 
@@ -48,8 +49,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             base.OnInit(e);
 
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerUserGroupsSingleItemFound,
-                                             App_GlobalResources.SR.GridPagerUserGroupsMultipleItemsFound,
+            GridPagerTop.InitializeGridPager(SR.GridPagerUserGroupsSingleItemFound,
+                                             SR.GridPagerUserGroupsMultipleItemsFound,
                                              UserGroupsGridPanel.UserGroupGrid, 
                                              delegate
                                                  {

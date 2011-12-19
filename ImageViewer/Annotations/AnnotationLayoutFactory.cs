@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
@@ -177,6 +178,11 @@ namespace ClearCanvas.ImageViewer.Annotations
 		public static IAnnotationLayout CreateLayout(string storedLayoutId)
 		{
 			return new StoredAnnotationLayoutProxy(storedLayoutId);
+		}
+
+		public static IAnnotationLayout CreateLayoutByModality(string modality)
+		{
+			return DicomAnnotationLayoutFactory.CreateLayout(new List<KeyValuePair<string, string>> {new KeyValuePair<string, string>(@"Modality", modality)});
 		}
 
 		#region Unit Test Support

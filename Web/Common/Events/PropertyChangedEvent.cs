@@ -25,6 +25,9 @@ namespace ClearCanvas.Web.Common.Events
 		[DataMember(IsRequired = false)]
 		public object Value { get; set; }
 
+        [DataMember(IsRequired = false)]
+        public string[] DebugInfo { get; set; }
+
         public override string ToString()
         {
             return String.Format("{0}, <Property:{1}[{2}]>", base.ToString(), PropertyName, ToStringHelper(Value));

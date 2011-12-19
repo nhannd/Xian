@@ -42,8 +42,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the currently installed Voi Lut.
 		/// </summary>
-		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
-		public IComposableLut GetLut()
+		/// <returns>The Voi Lut as an <see cref="IVoiLut"/>.</returns>
+		public IVoiLut GetLut()
 		{
 			return _voiLutInstaller.VoiLut;
 		}
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Installs a new Voi Lut.
 		/// </summary>
 		/// <param name="lut">The Lut to be installed.</param>
-		public void InstallLut(IComposableLut lut)
+		public void InstallLut(IVoiLut lut)
 		{
 			InstallVoiLut(lut);
 		}
@@ -64,8 +64,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the currently installed Voi Lut.
 		/// </summary>
-		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
-		public IComposableLut VoiLut
+		/// <returns>The Voi Lut as an <see cref="IVoiLut"/>.</returns>
+		public IVoiLut VoiLut
 		{
 			get { return _voiLutInstaller.VoiLut; }	
 		}
@@ -74,9 +74,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Installs a new Voi Lut.
 		/// </summary>
 		/// <param name="lut">The Lut to be installed.</param>
-		public void InstallVoiLut(IComposableLut lut)
+		public void InstallVoiLut(IVoiLut lut)
 		{
-			IComposableLut existingLut = GetLut();
+			IVoiLut existingLut = GetLut();
 			if (existingLut is IGeneratedDataLut)
 			{
 				//Clear the data in the data lut so it's not hanging around using up memory.
@@ -94,6 +94,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _voiLutInstaller.Invert; }
 			set { _voiLutInstaller.Invert = value; }
 		}
+
+	    /// <summary>
+	    /// Gets the default value of <see cref="Invert"/>.  In DICOM, this would be true
+	    /// for all MONOCHROME1 images.
+	    /// </summary>
+	    public bool DefaultInvert
+        {
+            get { return _voiLutInstaller.DefaultInvert; }
+        }
 
 		/// <summary>
 		/// Toggles the state of the <see cref="IVoiLutInstaller.Invert"/> property.
@@ -139,11 +148,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			VoiLutMemento lutMemento = (VoiLutMemento) memento;
 
-			if (_voiLutInstaller.VoiLut != lutMemento.ComposableLutMemento.OriginatingLut)
-				this.InstallLut(lutMemento.ComposableLutMemento.OriginatingLut);
+			if (_voiLutInstaller.VoiLut != lutMemento.OriginatingLut)
+				this.InstallLut(lutMemento.OriginatingLut);
 
-			if (lutMemento.ComposableLutMemento.InnerMemento != null)
-				_voiLutInstaller.VoiLut.SetMemento(lutMemento.ComposableLutMemento.InnerMemento);
+			if (lutMemento.InnerMemento != null)
+				_voiLutInstaller.VoiLut.SetMemento(lutMemento.InnerMemento);
 
 			_voiLutInstaller.Invert = lutMemento.Invert;
 		}

@@ -21,18 +21,20 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	public class StoredDisplaySetCreationSetting : INotifyPropertyChanged
+	public class StoredDisplaySetCreationSetting : INotifyPropertyChanged, IModalityDisplaySetCreationOptions
 	{
 		private readonly string _modality;
-		
-		private bool _createSingleImageDisplaySets;
+
+        private bool _createSingleImageDisplaySets;
+        private bool _createAllImagesDisplaySet;
+        private bool _showOriginalSeries;
 		private bool _splitMultiEchoSeries;
 		private bool _showOriginalMultiEchoSeries;
 
 		private bool _splitMixedMultiframes;
 		private bool _showOriginalMixedMultiframeSeries;
 
-		private bool _showGrayscaleInverted = false;
+		private bool _showGrayscaleInverted;
 
 		private event PropertyChangedEventHandler _propertyChanged;
 
@@ -44,8 +46,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private void SetDefaults()
 		{
-			if (CreateSingleImageDisplaySetsEnabled)
-				CreateSingleImageDisplaySets = true;
+            CreateAllImagesDisplaySet = false;
+            
+            if (CreateSingleImageDisplaySetsEnabled)
+			{
+			    CreateSingleImageDisplaySets = true;
+			    ShowOriginalSeries = false;
+			}
+			else
+			{
+			    ShowOriginalSeries = true;
+			}
 
 			if (SplitMixedMultiframesEnabled)
 			{
@@ -74,14 +85,80 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				{
 					_createSingleImageDisplaySets = value;
 					NotifyPropertyChanged("CreateSingleImageDisplaySets");
+                    if (!value && !_createAllImagesDisplaySet)
+                    {
+                        //Check show original if both other options are now false.
+                        ShowOriginalSeries = true;
+                    }
+                    else if (!_createAllImagesDisplaySet)
+                    {
+                        //Uncheck show original if one option just became true.
+                        ShowOriginalSeries = false;
+                    }
+
+
+                    NotifyPropertyChanged("ShowOriginalSeriesEnabled");
 				}
 			}
 		}
 
-		public bool CreateSingleImageDisplaySetsEnabled
-		{
-			get { return DisplaySetCreationSettings.Default.GetSingleImageModalities().Contains(_modality); }	
-		}
+        public bool CreateSingleImageDisplaySetsEnabled
+        {
+            get { return DisplaySetCreationSettings.Default.GetSingleImageModalities().Contains(_modality); }
+        }
+
+        public bool CreateAllImagesDisplaySet
+        {
+            get { return _createAllImagesDisplaySet; }
+            set
+            {
+                if (_createAllImagesDisplaySet != value)
+                {
+                    _createAllImagesDisplaySet = value;
+                    NotifyPropertyChanged("CreateAllImagesDisplaySet");
+
+                    if (!value && !_createSingleImageDisplaySets)
+                    {
+                        //Check show original if both other options are now false.
+                        ShowOriginalSeries = true;
+                    }
+                    else if (!_createSingleImageDisplaySets)
+                    {
+                        //Uncheck show original if one option just became true.
+                        ShowOriginalSeries = false;
+                    }
+
+                    NotifyPropertyChanged("ShowOriginalSeriesEnabled");
+                }
+            }
+        }
+
+        public bool CreateAllImagesDisplaySetEnabled
+        {
+            get { return DisplaySetCreationSettings.Default.GetAllImagesModalities().Contains(_modality); }
+        }
+
+        public bool ShowOriginalSeries
+        {
+            get { return _showOriginalSeries; }
+            set
+            {
+                if (_showOriginalSeries != value)
+                {
+                    _showOriginalSeries = value;
+                    NotifyPropertyChanged("ShowOriginalSeries");
+                }
+            }
+        }
+
+        public bool ShowOriginalSeriesEnabled
+        {
+            get 
+            {
+                return (CreateAllImagesDisplaySetEnabled || CreateSingleImageDisplaySetsEnabled)
+                       && (CreateAllImagesDisplaySet || CreateSingleImageDisplaySets);
+            }
+        }
 
 		public bool SplitMultiEchoSeries
 		{
@@ -193,7 +270,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 	[SettingsGroupDescription("Stores user options for how display sets are created.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
-	internal sealed partial class DisplaySetCreationSettings : IMigrateSettings
+	public sealed partial class DisplaySetCreationSettings : IMigrateSettings
 	{
 		private DisplaySetCreationSettings()
 		{
@@ -217,7 +294,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						migrationValues.CurrentValue as string, 
 						migrationValues.PreviousValue as string);
 					break;
-				default: break;
+                case "AllImagesModalities":
+                    migrationValues.CurrentValue = CombineModalities(
+                        migrationValues.CurrentValue as string,
+                        migrationValues.PreviousValue as string);
+                    break;
+                default: break;
 			}
 		}
 
@@ -243,6 +325,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			return GetModalities(SingleImageModalities);
 		}
+
+        public List<string> GetAllImagesModalities()
+        {
+            return GetModalities(AllImagesModalities);
+        }
 
 		public List<string> GetMixedMultiframeModalities()
 		{
@@ -328,7 +415,23 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 										setting.CreateSingleImageDisplaySets = valueAttribute.Value == "True";
 								}
 								break;
-							case "SplitEchos":
+                            case "CreateAllImagesDisplaySet":
+                                if (setting.CreateAllImagesDisplaySetEnabled)
+                                {
+                                    valueAttribute = optionNode.Attributes["value"];
+                                    if (valueAttribute != null)
+                                        setting.CreateAllImagesDisplaySet = valueAttribute.Value == "True";
+                                }
+                                break;
+                            case "ShowOriginalSeries":
+                                if (setting.ShowOriginalSeriesEnabled)
+                                {
+                                    valueAttribute = optionNode.Attributes["value"];
+                                    if (valueAttribute != null)
+                                        setting.ShowOriginalSeries = valueAttribute.Value == "True";
+                                }
+                                break;
+                            case "SplitEchos":
 								if (setting.SplitMultiEchoSeriesEnabled)
 								{
 									valueAttribute = optionNode.Attributes["value"];
@@ -383,6 +486,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					createSingleImageDisplaySetsElement.SetAttribute("value", storedSetting.CreateSingleImageDisplaySets ? "True" : "False");
 					optionsElement.AppendChild(createSingleImageDisplaySetsElement);
 				}
+
+                if (storedSetting.CreateAllImagesDisplaySetEnabled)
+                {
+                    append = true;
+                    XmlElement createAllImagesDisplaySetElement = document.CreateElement("option");
+                    createAllImagesDisplaySetElement.SetAttribute("identifier", "CreateAllImagesDisplaySet");
+                    createAllImagesDisplaySetElement.SetAttribute("value", storedSetting.CreateAllImagesDisplaySet ? "True" : "False");
+                    optionsElement.AppendChild(createAllImagesDisplaySetElement);
+                }
+
+                if (storedSetting.ShowOriginalSeriesEnabled)
+                {
+                    append = true;
+                    XmlElement showOriginalSeriesElement = document.CreateElement("option");
+                    showOriginalSeriesElement.SetAttribute("identifier", "ShowOriginalSeries");
+                    showOriginalSeriesElement.SetAttribute("value", storedSetting.ShowOriginalSeries ? "True" : "False");
+                    optionsElement.AppendChild(showOriginalSeriesElement);
+                }
 
 				if (storedSetting.SplitMultiEchoSeriesEnabled)
 				{

@@ -49,6 +49,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		{
 			_roiAnalyzers.AddRange(analyzers);
 			_showAnalysis = RoiSettings.Default.ShowAnalysisByDefault;
+
+            foreach (var analyzer in _roiAnalyzers)
+            {
+                /// TODO (CR Nov 2011): Remove this again because I think we just want to overhaul the analyzers.
+                analyzer.SetRoiAnalyzerUpdateCallback(Refresh);
+            }
 		}
 
 		/// <summary>
@@ -61,6 +67,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		{
 			context.CloneFields(source, this);
 			_roiAnalyzers.AddRange(source._roiAnalyzers);
+            foreach(var analyzer in _roiAnalyzers)
+            {
+                analyzer.SetRoiAnalyzerUpdateCallback(Refresh);
+            }
 		}
 
 		/// <summary>
@@ -128,12 +138,43 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 
 			IActionSet actionSet = new ActionSet(actions);
+
+			if (this.ShowAnalysis)
+            {
+                var analyzerActionSets = GetAnalyzersExportedActions(site, mouseInformation);
+
+                if (analyzerActionSets != null)
+                {
+                    foreach(var set in analyzerActionSets)
+                    {
+                        actionSet = actionSet.Union(set);
+                    } 
+                }
+                   
+            }
+
 			IActionSet other = base.GetExportedActions(site, mouseInformation);
 			if (other != null)
 				actionSet = actionSet.Union(other);
 
 			return actionSet;
 		}
+
+        private IEnumerable<IActionSet> GetAnalyzersExportedActions(string site, IMouseInformation mouseInformation)
+        {
+            var actionSets = new List<IActionSet>();
+            foreach(var analyzer in _roiAnalyzers)
+            {
+                if (analyzer is IExportedActionsProvider)
+                {
+                    var actionProvider = analyzer as IExportedActionsProvider;
+                    var actions = actionProvider.GetExportedActions(site, mouseInformation);
+                    actionSets.Add(actions);
+                }   
+            }
+
+            return actionSets;
+        }
 
 		/// <summary>
 		/// Invokes an interactive edit box on the name of the graphic, allowing the user to assign a name to the <see cref="RoiGraphic"/>.
@@ -176,6 +217,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 					parent.Draw();
 			}
 		}
+
+	    /// TODO (CR Nov 2011): Remove because I think we should just refactor the analyzers.
+        private void Refresh()
+        {
+            Update();
+            Draw();
+        }
 
 		private void OnEditBoxCancelled(object sender, EventArgs e)
 		{

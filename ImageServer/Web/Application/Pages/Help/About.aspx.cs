@@ -12,6 +12,7 @@
 using System;
 using System.Xml;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
 {
@@ -19,7 +20,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            SetPageTitle(App_GlobalResources.Titles.AboutPageTitle);
+            SetPageTitle(Titles.AboutPageTitle);
         }
 
         protected bool EnterpriseMode
@@ -30,7 +31,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
                 // Here we assume it's stand-alone if the DefaultAuthenticationService plugin is enabled.
                 // This is not perfect but at least it works.                
                 XmlDocument doc = new XmlDocument();
-                doc.Load(Server.MapPath("~/Web.Config"));
+                doc.Load(Server.MapPath("~/critical.Config"));
                 XmlNode node = doc.SelectSingleNode("//extensions/extension[@class='ClearCanvas.ImageServer.Services.Common.Authentication.DefaultAuthenticationService, ClearCanvas.ImageServer.Services.Common']");
                 return node != null && bool.Parse(node.Attributes["enabled"].Value) == false;
             }

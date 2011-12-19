@@ -160,6 +160,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Table Position/Speed.
+        /// </summary>
+        public static string Dicom_CTImage_Composite_TablePositionSpeed_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_Composite_TablePositionSpeed_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Table.
+        /// </summary>
+        public static string Dicom_CTImage_Composite_TablePositionSpeed_Label {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_Composite_TablePositionSpeed_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Convolution Kernel.
         /// </summary>
         public static string Dicom_CTImage_ConvolutionKernel_DisplayName {
@@ -228,6 +246,42 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         public static string Dicom_CTImage_KVP_Label {
             get {
                 return ResourceManager.GetString("Dicom_CTImage_KVP_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Table Position.
+        /// </summary>
+        public static string Dicom_CTImage_TablePosition_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_TablePosition_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pos.
+        /// </summary>
+        public static string Dicom_CTImage_TablePosition_Label {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_TablePosition_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Table Speed.
+        /// </summary>
+        public static string Dicom_CTImage_TableSpeed_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_TableSpeed_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spd.
+        /// </summary>
+        public static string Dicom_CTImage_TableSpeed_Label {
+            get {
+                return ResourceManager.GetString("Dicom_CTImage_TableSpeed_Label", resourceCulture);
             }
         }
         
@@ -318,6 +372,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         public static string Dicom_DXImage_CompressionForce_Label {
             get {
                 return ResourceManager.GetString("Dicom_DXImage_CompressionForce_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contrast/Bolus Agent.
+        /// </summary>
+        public static string Dicom_DXImage_ContrastBolusAgent_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_DXImage_ContrastBolusAgent_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contrast/Bolus.
+        /// </summary>
+        public static string Dicom_DXImage_ContrastBolusAgent_Label {
+            get {
+                return ResourceManager.GetString("Dicom_DXImage_ContrastBolusAgent_Label", resourceCulture);
             }
         }
         
@@ -943,7 +1015,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Laterality.
+        ///   Looks up a localized string similar to Lat.
         /// </summary>
         public static string Dicom_GeneralSeries_Laterality_Label {
             get {
@@ -1330,6 +1402,42 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Flip Angle.
+        /// </summary>
+        public static string Dicom_MRImage_FlipAngle_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_FlipAngle_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flip.
+        /// </summary>
+        public static string Dicom_MRImage_FlipAngle_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_FlipAngle_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inverstion Time.
+        /// </summary>
+        public static string Dicom_MRImage_InversionTime_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_InversionTime_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TI.
+        /// </summary>
+        public static string Dicom_MRImage_InversionTime_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_InversionTime_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Magnetic Field Strength.
         /// </summary>
         public static string Dicom_MRImage_MagneticFieldStrength_DisplayName {
@@ -1344,6 +1452,42 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         public static string Dicom_MRImage_MagneticFieldStrength_Label {
             get {
                 return ResourceManager.GetString("Dicom_MRImage_MagneticFieldStrength_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number of Averages.
+        /// </summary>
+        public static string Dicom_MRImage_NumberOfAverages_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_NumberOfAverages_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #Avgs.
+        /// </summary>
+        public static string Dicom_MRImage_NumberOfAverages_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_NumberOfAverages_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pixel Bandwidth.
+        /// </summary>
+        public static string Dicom_MRImage_PixelBandwidth_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_PixelBandwidth_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BW.
+        /// </summary>
+        public static string Dicom_MRImage_PixelBandwidth_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_PixelBandwidth_Label", resourceCulture);
             }
         }
         
@@ -1380,6 +1524,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         public static string Dicom_MRImage_RepetitionTime_Label {
             get {
                 return ResourceManager.GetString("Dicom_MRImage_RepetitionTime_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger Time.
+        /// </summary>
+        public static string Dicom_MRImage_TriggerTime_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_TriggerTime_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trig.
+        /// </summary>
+        public static string Dicom_MRImage_TriggerTime_Label {
+            get {
+                return ResourceManager.GetString("Dicom_MRImage_TriggerTime_Label", resourceCulture);
             }
         }
         
@@ -1717,20 +1879,29 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} mAs.
-        /// </summary>
-        public static string Format_mAs {
-            get {
-                return ResourceManager.GetString("Format_mAs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} x {1}.
         /// </summary>
         public static string Format2Dimensions {
             get {
                 return ResourceManager.GetString("Format2Dimensions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ({1}).
+        /// </summary>
+        public static string FormatCalibrationDetails {
+            get {
+                return ResourceManager.GetString("FormatCalibrationDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} cm.
+        /// </summary>
+        public static string FormatCentimeters {
+            get {
+                return ResourceManager.GetString("FormatCentimeters", resourceCulture);
             }
         }
         
@@ -1743,15 +1914,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
             }
         }
         
-         /// <summary>
-        ///   Looks up a localized string similar to {0} ({1}).
-        /// </summary>
-        public static string FormatCalibrationDetails {
-            get {
-                return ResourceManager.GetString("FormatCalibrationDetails", resourceCulture);
-            }
-        }
-
         /// <summary>
         ///   Looks up a localized string similar to {0}°.
         /// </summary>
@@ -1762,11 +1924,56 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}/{1}.
+        /// </summary>
+        public static string FormatDisplaySetNumberAndCount {
+            get {
+                return ResourceManager.GetString("FormatDisplaySetNumberAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fr: {0}/{1}.
+        /// </summary>
+        public static string FormatFrameNumberAndCount {
+            get {
+                return ResourceManager.GetString("FormatFrameNumberAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Hz/px.
+        /// </summary>
+        public static string FormatHertzPerPixel {
+            get {
+                return ResourceManager.GetString("FormatHertzPerPixel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}/{1}.
+        /// </summary>
+        public static string FormatImageNumberAndCount {
+            get {
+                return ResourceManager.GetString("FormatImageNumberAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} kg.
+        /// </summary>
+        public static string FormatKilograms {
+            get {
+                return ResourceManager.GetString("FormatKilograms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} kV.
         /// </summary>
-        public static string FormatkV {
+        public static string FormatKilovolts {
             get {
-                return ResourceManager.GetString("FormatkV", resourceCulture);
+                return ResourceManager.GetString("FormatKilovolts", resourceCulture);
             }
         }
         
@@ -1780,29 +1987,65 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}({1}).
+        /// </summary>
+        public static string FormatLossyCompressionRatio {
+            get {
+                return ResourceManager.GetString("FormatLossyCompressionRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} m.
+        /// </summary>
+        public static string FormatMeters {
+            get {
+                return ResourceManager.GetString("FormatMeters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} mA.
         /// </summary>
-        public static string FormatmA {
+        public static string FormatMilliamps {
             get {
-                return ResourceManager.GetString("FormatmA", resourceCulture);
+                return ResourceManager.GetString("FormatMilliamps", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:F1} mm.
+        ///   Looks up a localized string similar to {0} mAs.
         /// </summary>
-        public static string Formatmm1 {
+        public static string FormatMilliampSeconds {
             get {
-                return ResourceManager.GetString("Formatmm1", resourceCulture);
+                return ResourceManager.GetString("FormatMilliampSeconds", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:F2} ms.
+        ///   Looks up a localized string similar to {0} mm.
         /// </summary>
-        public static string Formatms {
+        public static string FormatMillimeters {
             get {
-                return ResourceManager.GetString("Formatms", resourceCulture);
+                return ResourceManager.GetString("FormatMillimeters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} mm/s.
+        /// </summary>
+        public static string FormatMillimetersPerSecond {
+            get {
+                return ResourceManager.GetString("FormatMillimetersPerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ms.
+        /// </summary>
+        public static string FormatMilliseconds {
+            get {
+                return ResourceManager.GetString("FormatMilliseconds", resourceCulture);
             }
         }
         
@@ -1818,23 +2061,23 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         /// <summary>
         ///   Looks up a localized string similar to {0}/{1}.
         /// </summary>
-        public static string FormatPatientsAgeSex {
+        public static string FormatSeriesNumberAndCount {
             get {
-                return ResourceManager.GetString("FormatPatientsAgeSex", resourceCulture);
+                return ResourceManager.GetString("FormatSeriesNumberAndCount", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}/{1}/{2}.
+        ///   Looks up a localized string similar to {0} ({1}).
         /// </summary>
-        public static string FormatPatientsAgeSexBirthDate {
+        public static string FormatTablePositionSpeed {
             get {
-                return ResourceManager.GetString("FormatPatientsAgeSexBirthDate", resourceCulture);
+                return ResourceManager.GetString("FormatTablePositionSpeed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:F1}T.
+        ///   Looks up a localized string similar to {0} T.
         /// </summary>
         public static string FormatTeslas {
             get {
@@ -1843,20 +2086,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to kg.
+        ///   Looks up a localized string similar to {0}x.
         /// </summary>
-        public static string Label_kilograms {
+        public static string FormatZoomFactor {
             get {
-                return ResourceManager.GetString("Label_kilograms", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to m.
-        /// </summary>
-        public static string Label_metres {
-            get {
-                return ResourceManager.GetString("Label_metres", resourceCulture);
+                return ResourceManager.GetString("FormatZoomFactor", resourceCulture);
             }
         }
         
@@ -2032,20 +2266,38 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to x.
-        /// </summary>
-        public static string Presentation_Zoom_Indicator {
-            get {
-                return ResourceManager.GetString("Presentation_Zoom_Indicator", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Zoom.
         /// </summary>
         public static string Presentation_Zoom_Label {
             get {
                 return ResourceManager.GetString("Presentation_Zoom_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /.
+        /// </summary>
+        public static string SeparatorAgeSexBirthDate {
+            get {
+                return ResourceManager.GetString("SeparatorAgeSexBirthDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /.
+        /// </summary>
+        public static string SeparatorLossyCompressionRatio {
+            get {
+                return ResourceManager.GetString("SeparatorLossyCompressionRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to \.
+        /// </summary>
+        public static string SeparatorSingleLine {
+            get {
+                return ResourceManager.GetString("SeparatorSingleLine", resourceCulture);
             }
         }
         

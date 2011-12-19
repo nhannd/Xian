@@ -13,6 +13,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
@@ -207,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 					StudyFilterColumnHeaderCell header = _columnFilterMenuStrip.Tag as StudyFilterColumnHeaderCell;
 					if (header != null)
 					{
-						Console.WriteLine("{0} ColumnFilterMenuStrip_Closing because of {1}", DateTime.Now.TimeOfDay, e.CloseReason);
+						Platform.Log(LogLevel.Debug, "{0} ColumnFilterMenuStrip_Closing because of {1}", DateTime.Now.TimeOfDay, e.CloseReason);
 						header.ResetDropDown();
 					}
 					break;

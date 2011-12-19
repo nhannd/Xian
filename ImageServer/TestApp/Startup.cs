@@ -64,9 +64,10 @@ namespace ClearCanvas.ImageServer.TestApp
             UsageTrackingForm form = new UsageTrackingForm();
             form.Show();
         }
-        private void DatabaseGenerator_Click(object sender, EventArgs e)
+
+        private void ProductVerify_Click(object sender, EventArgs e)
         {
-           GenerateDatabase test = new GenerateDatabase();
+            ProductVerificationTest test = new ProductVerificationTest();
             test.Show();
         }
     }

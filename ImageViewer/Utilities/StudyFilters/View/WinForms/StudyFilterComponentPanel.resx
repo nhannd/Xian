@@ -117,7 +117,130 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_tableView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_tableView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 33</value>
+  </data>
+  <data name="_tableView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>790, 528</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_tableView.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;_tableView.Name" xml:space="preserve">
+    <value>_tableView</value>
+  </data>
+  <data name="&gt;&gt;_tableView.Type" xml:space="preserve">
+    <value>ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.StudyFilterTableView, ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms, Version=1.0.4118.28171, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;_tableView.Parent" xml:space="preserve">
+    <value>_workspaceDivisor.Panel1</value>
+  </data>
+  <data name="&gt;&gt;_tableView.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_workspaceDivisor.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_workspaceDivisor.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_workspaceDivisor.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+    <value>Horizontal</value>
+  </data>
   <metadata name="_toolbar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="_toolbar.AutoSize" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="_toolbar.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_toolbar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>790, 33</value>
+  </data>
+  <data name="_toolbar.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="_toolbar.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="&gt;&gt;_toolbar.Name" xml:space="preserve">
+    <value>_toolbar</value>
+  </data>
+  <data name="&gt;&gt;_toolbar.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_toolbar.Parent" xml:space="preserve">
+    <value>_workspaceDivisor.Panel1</value>
+  </data>
+  <data name="&gt;&gt;_toolbar.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Panel1.Name" xml:space="preserve">
+    <value>_workspaceDivisor.Panel1</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Panel1.Parent" xml:space="preserve">
+    <value>_workspaceDivisor</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Panel2.Name" xml:space="preserve">
+    <value>_workspaceDivisor.Panel2</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Panel2.Parent" xml:space="preserve">
+    <value>_workspaceDivisor</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_workspaceDivisor.Size" type="System.Drawing.Size, System.Drawing">
+    <value>790, 561</value>
+  </data>
+  <data name="_workspaceDivisor.SplitterDistance" type="System.Int32, mscorlib">
+    <value>107</value>
+  </data>
+  <data name="_workspaceDivisor.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Name" xml:space="preserve">
+    <value>_workspaceDivisor</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_workspaceDivisor.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>790, 561</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>StudyFilterComponentPanel</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

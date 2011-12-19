@@ -82,6 +82,9 @@ namespace ClearCanvas.Healthcare.Imex
 			public string PreferredResultCommunicationMode;
 
 			[DataMember]
+			public string InformationAuthority;
+
+			[DataMember]
 			public bool IsDefaultContactPoint;
 
 			[DataMember]
@@ -127,6 +130,7 @@ namespace ClearCanvas.Healthcare.Imex
 								Name = cp.Name,
 								IsDefaultContactPoint = cp.IsDefaultContactPoint,
 								PreferredResultCommunicationMode = cp.PreferredResultCommunicationMode.ToString(),
+								InformationAuthority = cp.InformationAuthority == null ? null : cp.InformationAuthority.Code,
 								Description = cp.Description,
 								Addresses = CollectionUtils.Map(cp.Addresses, (Address a) => new AddressData(a)),
 								TelephoneNumbers = CollectionUtils.Map(cp.TelephoneNumbers, (TelephoneNumber tn) => new TelephoneNumberData(tn)),
@@ -156,7 +160,8 @@ namespace ClearCanvas.Healthcare.Imex
 					data.LastVerifiedTime, 
 					data.LastEditedTime, 
 					new HashedSet<ExternalPractitionerContactPoint>(),
-					new Dictionary<string, string>());
+					new Dictionary<string, string>(),
+					null);
 				context.Lock(prac, DirtyState.New);
 			}
 			else
@@ -165,14 +170,14 @@ namespace ClearCanvas.Healthcare.Imex
 				prac.MarkEdited();
 			}
 
-			prac.Deactivated = data.Deactivated;
+			prac.MarkDeactivated(data.Deactivated);
 
 			if (data.ContactPoints != null)
 			{
 				foreach (var cpData in data.ContactPoints)
 				{
 					var cp = CollectionUtils.SelectFirst(prac.ContactPoints, p => p.Name == cpData.Name) ?? new ExternalPractitionerContactPoint(prac);
-					UpdateExternalPractitionerContactPoint(cpData, cp);
+					UpdateExternalPractitionerContactPoint(cpData, cp, context);
 				}
 			}
 
@@ -181,12 +186,13 @@ namespace ClearCanvas.Healthcare.Imex
 
 		#endregion
 
-		private static void UpdateExternalPractitionerContactPoint(ExternalPractitionerContactPointData data, ExternalPractitionerContactPoint cp)
+		private static void UpdateExternalPractitionerContactPoint(ExternalPractitionerContactPointData data, ExternalPractitionerContactPoint cp, IUpdateContext context)
 		{
 			cp.Name = data.Name;
 			cp.Description = data.Description;
 			cp.IsDefaultContactPoint = data.IsDefaultContactPoint;
 			cp.PreferredResultCommunicationMode = (ResultCommunicationMode) Enum.Parse(typeof(ResultCommunicationMode), data.PreferredResultCommunicationMode);
+			cp.InformationAuthority = string.IsNullOrEmpty(data.InformationAuthority) ? null : context.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(data.InformationAuthority);
 
 			if (data.TelephoneNumbers != null)
 			{

@@ -50,14 +50,14 @@ namespace ClearCanvas.Dicom.Audit
 	public class QueryAuditHelper : DicomAuditHelper
 	{
 		public QueryAuditHelper(DicomAuditSource auditSource,
-	EventIdentificationTypeEventOutcomeIndicator outcome,
+	EventIdentificationContentsEventOutcomeIndicator outcome,
 	AuditActiveParticipant sourceUser, string destinationAE, string destinationHost, string queryParameters)
 			: base("Query")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType
+			AuditMessage.EventIdentification = new EventIdentificationContents
 			{
-				EventID = CodedValueType.Query,
-				EventActionCode = EventIdentificationTypeEventActionCode.E,
+				EventID = EventID.Query,
+				EventActionCode = EventIdentificationContentsEventActionCode.E,
 				EventActionCodeSpecified = true,
 				EventDateTime = Platform.Time.ToUniversalTime(),
 				EventOutcomeIndicator = outcome
@@ -68,7 +68,7 @@ namespace ClearCanvas.Dicom.Audit
 			InternalAddActiveParticipant(sourceUser);
 
 			IPAddress x;
-			_participantList.Add(new AuditMessageActiveParticipant(CodedValueType.Destination, "AETITLE=" + destinationAE, null,
+			_participantList.Add(new ActiveParticipantContents(RoleIDCode.Destination, "AETITLE=" + destinationAE, null,
 			                                                       null,
 			                                                       destinationHost,
 			                                                       IPAddress.TryParse(destinationHost, out x)
@@ -83,14 +83,14 @@ namespace ClearCanvas.Dicom.Audit
 		}
 
 		public QueryAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome,
+            EventIdentificationContentsEventOutcomeIndicator outcome,
 			string sourceAE, string sourceHost, string destinationAE, string destinationHost, string sopClassUid, DicomAttributeCollection msg)
 			: base("Query")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType
+			AuditMessage.EventIdentification = new EventIdentificationContents
 			                                   	{
-			                                   		EventID = CodedValueType.Query,
-			                                   		EventActionCode = EventIdentificationTypeEventActionCode.E,
+			                                   		EventID = EventID.Query,
+			                                   		EventActionCode = EventIdentificationContentsEventActionCode.E,
 			                                   		EventActionCodeSpecified = true,
 			                                   		EventDateTime = Platform.Time.ToUniversalTime(),
 			                                   		EventOutcomeIndicator = outcome
@@ -107,14 +107,14 @@ namespace ClearCanvas.Dicom.Audit
 		}
 
 		public QueryAuditHelper(DicomAuditSource auditSource,
-							EventIdentificationTypeEventOutcomeIndicator outcome,
+                            EventIdentificationContentsEventOutcomeIndicator outcome,
 							AssociationParameters parms, string sopClassUid, DicomAttributeCollection msg)
 			: base("Query")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType
+			AuditMessage.EventIdentification = new EventIdentificationContents()
 			{
-				EventID = CodedValueType.Query,
-				EventActionCode = EventIdentificationTypeEventActionCode.E,
+                EventID = EventID.Query,
+				EventActionCode = EventIdentificationContentsEventActionCode.E,
 				EventActionCodeSpecified = true,
 				EventDateTime = Platform.Time.ToUniversalTime(),
 				EventOutcomeIndicator = outcome

@@ -64,13 +64,13 @@ namespace ClearCanvas.Utilities.DicomEditor
 					if (failure.PropertyName == _property && _validationReason == failure.Reason)
 					{
 						if (failure.Reason == ValidationFailureReason.EmptyValue)
-							return new ValidationResult(false, "The value cannot be empty.");
+							return new ValidationResult(false, SR.MessageValueCannotBeEmpty);
 						else
-							return new ValidationResult(false, "The value conflicts with the original value.");
+							return new ValidationResult(false, SR.MessageValueConflictsWithOriginal);
 					}
 				}
 
-				return new ValidationResult(true, "");
+				return new ValidationResult(true, string.Empty);
 			}
 
 			#endregion
@@ -81,6 +81,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 		private readonly DicomAnonymizer.ValidationStrategy _validator;
 
 		private bool _preserveSeriesData;
+		private bool _keepReportsAndAttachments = false;
 
 		internal AnonymizeStudyComponent(StudyItem studyItem)
 		{
@@ -199,13 +200,32 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 		}
 
+		public bool KeepReportsAndAttachments
+		{
+			get { return _keepReportsAndAttachments; }
+			set
+			{
+				if (_keepReportsAndAttachments == value)
+					return;
+
+				if (value && Host != null && Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmKeepReportsAndAttachments, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
+					value = false;
+
+				_keepReportsAndAttachments = value;
+				NotifyPropertyChanged("KeepReportsAndAttachments");
+			}
+		}
+
 		public override void Start()
 		{
-			_anonymized.PatientsNameRaw = "Patient^Anonymous";
+			_anonymized.PatientsNameRaw = SR.DefaultAnonymousPatientName;
 			_anonymized.PatientId = "12345678";
 			_anonymized.StudyDate = Platform.Time;
 			_anonymized.AccessionNumber = "00000001";
 			_preserveSeriesData = true;
+
+			// this should always be false by default
+			_keepReportsAndAttachments = false;
 
 			if (_anonymized.PatientsBirthDate != null)
 			{

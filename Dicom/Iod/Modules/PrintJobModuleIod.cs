@@ -54,7 +54,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <para>Defined Terms when the Execution Status is FAILURE: </para>
         /// <para>INVALID PAGE DES = The specified page layout cannot be printed or other page description errors have been detected.</para>
         /// <para>INSUFFIC MEMORY = There is not enough memory available to complete this job.</para>
-        /// See Section C.13.9.1 for additional Defined Terms when the Execution Status is PENDING or FAILURE.</para>
+		/// <para>See Section C.13.9.1 for additional Defined Terms when the Execution Status is PENDING or FAILURE.</para>
         /// </summary>
         /// <value>The execution status info.</value>
         public string ExecutionStatusInfo

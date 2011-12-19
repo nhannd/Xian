@@ -38,7 +38,13 @@ namespace ClearCanvas.Ris.Client
 		public IDictionary<string, string> OrderExtendedProperties
 		{
 			get { return _orderExtendedProperties; }
-			set { _orderExtendedProperties = value; }
+			set
+			{
+				_orderExtendedProperties = value;
+
+				// refresh the page
+				SetUrl(WebResourcesSettings.Default.OrderAdditionalInfoPageUrl);
+			}
 		}
 
 		public override void Start()

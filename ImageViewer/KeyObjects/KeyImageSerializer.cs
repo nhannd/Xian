@@ -25,6 +25,8 @@ using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
@@ -34,6 +36,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 	/// <remarks>
 	/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
 	/// </remarks>
+	// TODO CR (Oct 11): Refactor to use SopInstanceFactory
 	public class KeyImageSerializer
 	{
 		private readonly FramePresentationList _framePresentationStates;
@@ -220,9 +223,9 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 					DicomFile keyObjectDocument = new DicomFile();
 					keyObjectDocument.SourceApplicationEntityTitle = this.SourceAETitle;
-
+					
 					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(frame.ParentImageSop.DataSource, keyObjectDocument.DataSet);
-
+					
 					iod.GeneralEquipment.Manufacturer = this.Manufacturer ?? string.Empty; // this one is type 2 - all other GenEq attributes are type 3
 					iod.GeneralEquipment.ManufacturersModelName = string.IsNullOrEmpty(this.ManufacturersModelName) ? null : this.ManufacturersModelName;
 					iod.GeneralEquipment.DeviceSerialNumber = string.IsNullOrEmpty(this.DeviceSerialNumber) ? null : this.DeviceSerialNumber;
@@ -368,9 +371,20 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			return maxValue + 1;
 		}
 
-		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(IDicomAttributeProvider source, IDicomAttributeProvider target)
+		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(IDicomAttributeProvider source, DicomAttributeCollection target)
 		{
 			KeyObjectSelectionDocumentIod iod = new KeyObjectSelectionDocumentIod(target);
+			var attribute = source[DicomTags.SpecificCharacterSet];
+			if (attribute.IsEmpty || attribute.IsNull)
+			{
+				target.SpecificCharacterSet = String.Empty;
+				target[DicomTags.SpecificCharacterSet].SetNullValue();
+			}
+			else
+			{
+				target.SpecificCharacterSet = source[DicomTags.SpecificCharacterSet].ToString();
+				target[DicomTags.SpecificCharacterSet].SetStringValue(target.SpecificCharacterSet);
+			}
 
 			PatientModuleIod sourcePatient = new PatientModuleIod(source);
 			if (true) // patient module is always required

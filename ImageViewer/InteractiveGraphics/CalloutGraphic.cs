@@ -305,7 +305,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns>A control graphic chain controlling the anchor point.</returns>
 		protected virtual IControlGraphic InitializePointControlGraphic(IPointGraphic pointGraphic)
 		{
-			return new NullControlGraphic(pointGraphic);
+			return new ControlGraphic(pointGraphic);
 		}
 
 		[OnCloneComplete]
@@ -560,27 +560,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (_pointControlGraphic.HitTest(point))
 				return _pointControlGraphic.GetCursorToken(point);
 			return null;
-		}
-
-		#endregion
-
-		#region NullControlGraphic Class
-
-		[Cloneable]
-		private class NullControlGraphic : ControlGraphic
-		{
-			public NullControlGraphic(IGraphic graphic) : base(graphic) {}
-
-			/// <summary>
-			/// Cloning constructor.
-			/// </summary>
-			/// <param name="source">The source object from which to clone.</param>
-			/// <param name="context">The cloning context object.</param>
-			protected NullControlGraphic(NullControlGraphic source, ICloningContext context)
-				: base(source, context)
-			{
-				context.CloneFields(source, this);
-			}
 		}
 
 		#endregion

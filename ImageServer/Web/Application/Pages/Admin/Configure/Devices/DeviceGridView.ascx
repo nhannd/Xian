@@ -1,3 +1,14 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DeviceGridView"
     CodeBehind="DeviceGridView.ascx.cs" %>
@@ -9,20 +20,20 @@
             <ccUI:GridView ID="GridView1" runat="server" OnRowDataBound="GridView1_RowDataBound"
                 OnPageIndexChanging="GridView1_PageIndexChanging">
                 <Columns>
-                    <asp:BoundField DataField="AETitle" HeaderText="AE Title" HeaderStyle-HorizontalAlign="Left">
+                    <asp:BoundField DataField="AETitle" HeaderText="<%$Resources: ColumnHeaders,AETitle %>" HeaderStyle-HorizontalAlign="Left">
                     </asp:BoundField>
-                    <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left">
+                    <asp:BoundField DataField="Description" HeaderText="<%$Resources: ColumnHeaders,DeviceDescription %>" HeaderStyle-HorizontalAlign="Left">
                     </asp:BoundField>
-                    <asp:BoundField DataField="DeviceTypeEnum" HeaderText="Device Type" HeaderStyle-HorizontalAlign="Left">
+                    <asp:BoundField DataField="DeviceTypeEnum" HeaderText="<%$Resources: ColumnHeaders,DeviceType %>" HeaderStyle-HorizontalAlign="Left">
                     </asp:BoundField>
-                    <asp:TemplateField HeaderText="IPAddress" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,IPAddress %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="IpAddressLabel" runat="server" Text="Label"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="Port" HeaderText="Port" HeaderStyle-HorizontalAlign="Center"
+                    <asp:BoundField DataField="Port" HeaderText="<%$Resources: ColumnHeaders,Port %>" HeaderStyle-HorizontalAlign="Center"
                         ItemStyle-HorizontalAlign="Center"></asp:BoundField>
-                    <asp:TemplateField HeaderText="Enabled">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,Enabled %>">
                         <EditItemTemplate>
                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Enabled") %>'></asp:TextBox>
                         </EditItemTemplate>
@@ -32,7 +43,7 @@
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="DHCP">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,DHCP %>">
                         <EditItemTemplate>
                             <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("DHCP") %>'></asp:TextBox>
                         </EditItemTemplate>
@@ -42,26 +53,26 @@
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Partition" Visible="False">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,Partition %>" Visible="False">
                         <ItemTemplate>
                             <asp:Label ID="ServerParitionLabel" runat="server" Text="Label"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Last Accessed">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, LastAccessedTime %>">
                         <HeaderStyle Wrap="false" HorizontalAlign="Center" />
                         <ItemStyle Wrap="false" HorizontalAlign="Center" />
                         <ItemTemplate>
                             <asp:Label ID="LastAccessed" runat="server" Text='<%# DateTimeFormatter.Format((DateTime)Eval("LastAccessedTime")) %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Features" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,Features %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:PlaceHolder ID="FeaturePlaceHolder" runat="server"></asp:PlaceHolder>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="No devices were found using the provided criteria." />
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="<%$Resources: SR,NoDevicesWereFound %>" />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <AlternatingRowStyle CssClass="GlobalGridViewRow" />

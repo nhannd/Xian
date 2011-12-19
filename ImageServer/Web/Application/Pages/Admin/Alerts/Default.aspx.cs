@@ -13,6 +13,7 @@ using System;
 using System.Security.Permissions;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 {
@@ -21,7 +22,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            SetPageTitle(App_GlobalResources.Titles.AlertsPageTitle);
+            SetPageTitle(Titles.AlertsPageTitle);
         }
     }
 }

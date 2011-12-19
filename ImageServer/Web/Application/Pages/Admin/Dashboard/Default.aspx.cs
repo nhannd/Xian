@@ -12,8 +12,8 @@
 using System;
 using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {

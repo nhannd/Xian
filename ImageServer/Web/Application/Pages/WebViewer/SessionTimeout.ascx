@@ -1,5 +1,19 @@
-<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionTimeout.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.SessionTimeout" %>
+
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
+
+
 
 <script type="text/javascript">
     var countdownTimer;
@@ -100,13 +114,12 @@
     function UpdateCountdownPanel()
     {
         var timeLeft = Math.round(GetSecondsLeft());
-        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("No activity is detected. For security reasons, this session will end in " + timeLeft + " seconds.");        
+        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("<%= SR.SessionTimeoutCountdownMessage %>".replace("{0}", timeLeft));
     }
     
 </script>
 
 
-        
 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <div class="FixedPos">
@@ -116,7 +129,8 @@
                     <td>
                     <asp:Panel runat="server" ID="CountdownBanner" CssClass="CountdownBanner">
                         <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage" style="font-family: Sans-Serif; font-weight: bold"></asp:Label> 
-                        <input type="button" value="Cancel" onclick="javascript: HideSessionWarning(); return false;"></asp:Button>           
+                        <asp:Button runat="server" ID="KeepAliveLink" Text="<%$Resources: Labels,Cancel %>"
+                                    Font-Size="12px" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>
                     </asp:Panel></td>
                     </tr>
                 </table>                

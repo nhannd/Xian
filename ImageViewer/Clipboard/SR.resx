@@ -318,4 +318,7 @@ Text Overlay: {6}</value>
   <data name="LabelOn" xml:space="preserve">
     <value>ON</value>
   </data>
+  <data name="MessageClipboardCopyFailed" xml:space="preserve">
+    <value>Failed to add item(s) to clipboard</value>
+  </data>
 </root>

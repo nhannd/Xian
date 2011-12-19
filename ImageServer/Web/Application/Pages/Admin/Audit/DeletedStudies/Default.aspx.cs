@@ -13,7 +13,7 @@ using System;
 using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -38,7 +38,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
             SetPageTitle(Titles.DeletedStudiesPageTitle);
 
-            DataBind();
+            if (Page.IsPostBack)
+            {
+            	// Reload the data on post-back
+            	// Note: databinding also happens on initial rendering because the grid pager 
+            	// does so on Page_Load.
+                DataBind();
+            }
         }
 
         #endregion

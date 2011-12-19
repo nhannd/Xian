@@ -50,8 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Initialize();
 
-			var x = true;
-			if (Context.Viewer != null && Context.Viewer.StudyTree != null)
+		    if (Context.Viewer != null && Context.Viewer.StudyTree != null)
 			{
 				var patient = CollectionUtils.FirstElement(Context.Viewer.StudyTree.Patients);
 				if (patient != null)

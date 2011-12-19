@@ -14,11 +14,11 @@ using System.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Application
 {
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application
         {
             Platform.Log(LogLevel.Info, "{0} has logged out.", SessionManager.Current.User.Identity.Name);
             SessionManager.SignOut();
-            Response.Redirect(SessionManager.LoginUrl);
+            Response.Redirect(SessionManager.LoginUrl, false);
         }
 
         protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)

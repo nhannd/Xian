@@ -65,21 +65,7 @@ namespace ClearCanvas.Common.Configuration
 
 		private static bool IsLocalSettingsGroup(Type t)
 		{
-			var attributes = t.GetCustomAttributes(typeof (SettingsProviderAttribute), true);
-			if (attributes.Length == 0)
-				return true;
-
-			var attribute = (SettingsProviderAttribute)attributes[0];
-			if (attribute.ProviderTypeName == typeof(LocalFileSettingsProvider).AssemblyQualifiedName)
-				return true;
-
-			if (attribute.ProviderTypeName == typeof(ExtendedLocalFileSettingsProvider).AssemblyQualifiedName)
-				return true;
-
-			if (attribute.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName && StandardSettingsProvider.IsLocal)
-				return true;
-
-			return false;
+			return ApplicationSettingsHelper.IsLocal(t);
 		}
 
 		private static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(Predicate<Type> includePredicate)

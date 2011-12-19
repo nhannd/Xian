@@ -55,11 +55,6 @@ namespace ClearCanvas.Ris.Client
 		public abstract object SelectedOriginal { get; set;}
 
 		/// <summary>
-		/// Gets the report if the merge is to take place.
-		/// </summary>
-		public abstract string MergeReport { get; set; }
-
-		/// <summary>
 		/// Handles the accept button.
 		/// </summary>
 		public abstract void Accept();
@@ -99,7 +94,7 @@ namespace ClearCanvas.Ris.Client
 			this.Validation.Add(new ValidationRule("SelectedOriginal",
 				delegate
 				{
-					bool isIdentical = IsSameItem(_selectedDuplicate, _selectedOriginal);
+					var isIdentical = IsSameItem(_selectedDuplicate, _selectedOriginal);
 					return new ValidationResult(!isIdentical, SR.MessageMergeIdenticalItems);
 				}));
 		}
@@ -114,13 +109,6 @@ namespace ClearCanvas.Ris.Client
 			get { return new List<TSummary>(_items); }
 		}
 
-		public override void Start()
-		{
-			ShowReport();
-
-			base.Start();
-		}
-
 		#region Abstract/overridable members
 
 		/// <summary>
@@ -130,14 +118,6 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="y"></param>
 		/// <returns></returns>
 		protected abstract bool IsSameItem(TSummary x, TSummary y);
-
-		/// <summary>
-		/// Generate a report for the merge.
-		/// </summary>
-		/// <param name="duplicate"></param>
-		/// <param name="original"></param>
-		/// <returns></returns>
-		protected abstract string GenerateReport(TSummary duplicate, TSummary original);
 
 		#endregion
 
@@ -158,8 +138,6 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedDuplicate = (TSummary) value;
 					NotifyPropertyChanged("SelectedDuplicate");
-
-					ShowReport();
 				}
 			}
 		}
@@ -179,19 +157,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedOriginal = (TSummary) value;
 					NotifyPropertyChanged("SelectedOriginal");
-
-					ShowReport();
 				}
-			}
-		}
-
-		public override string MergeReport
-		{
-			get { return _mergeReport; }
-			set
-			{
-				_mergeReport = value;
-				NotifyPropertyChanged("MergeReport");
 			}
 		}
 
@@ -209,18 +175,11 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Switch()
 		{
-			object temp = this.SelectedOriginal;
+			var temp = this.SelectedOriginal;
 			this.SelectedOriginal = this.SelectedDuplicate;
 			this.SelectedDuplicate = temp;
 		}
 
 		#endregion
-
-		private void ShowReport()
-		{
-			this.MergeReport = _selectedDuplicate == null || _selectedOriginal == null || IsSameItem(_selectedDuplicate, _selectedOriginal)
-				? string.Empty
-				: GenerateReport(_selectedDuplicate, _selectedOriginal);
-		}
 	}
 }

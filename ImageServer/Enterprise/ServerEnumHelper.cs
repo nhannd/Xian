@@ -9,8 +9,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
@@ -21,15 +23,18 @@ namespace ClearCanvas.ImageServer.Enterprise
     /// <typeparam name="TBroker">The broker class to be used to load the enumerated values.</typeparam>
     /// <remarks>
     /// </remarks>
-    sealed public class  ServerEnumHelper<TEnum, TBroker>
+    public class  ServerEnumHelper<TEnum, TBroker>
         where TEnum : ServerEnum, new()
         where TBroker : IEnumBroker<TEnum>
     {
+
         #region Static private members
-		static readonly object _syncLock = new object();
-    	private static bool _loaded = false;
+		
+        static readonly object _syncLock = new object();
+    	private static bool _loaded;
         static List<TEnum> _list = new List<TEnum>();
         static readonly Dictionary<short, TEnum> _dict = new Dictionary<short, TEnum>();
+
         #endregion Static private members
 
         #region Constructors
@@ -38,6 +43,20 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         private ServerEnumHelper()
         {
+            
+        }
+
+        static ServerEnumHelper()
+        {
+            try
+            {
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Warn, "Unable to instantiate ServerEnum Description transatlor: {0}", ex.Message);
+
+                Platform.Log(LogLevel.Warn, "Use default server enum description translator");
+            }
         }
 
         #endregion Constructors
@@ -104,5 +123,7 @@ namespace ClearCanvas.ImageServer.Enterprise
 
         #endregion Public methods
 
+
     }
+    
 }

@@ -80,6 +80,61 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				return false;
 		}
 
+		// TODO (CR May 2011): Doesn't feel 100% like this method belongs here,
+		// but it doesn't quite fit into DicomPixelData either, which is probably where it should go.
+
+		/// <summary>
+		/// Extracts all overlays embedded in pixel data and populates the <see cref="DicomTags.OverlayData"/> attribute.
+		/// </summary>
+		/// <returns>True if any overlays were actually extracted, otherwise false.</returns>
+		/// <remarks>Certain restrictions apply to the use of this method:
+		/// <list type="bullet">
+		/// <item><see cref="IodBase.DicomAttributeProvider"/> must be a <see cref="DicomAttributeCollection"/>.</item>
+		/// <item>The <see cref="DicomTags.PixelData"/> attribute must not contain encapsulated pixel data.
+		/// Check the <see cref="TransferSyntax"/> of the source message before calling this method.</item>
+		/// </list>
+		/// </remarks>
+		public bool ExtractEmbeddedOverlays()
+		{
+			var collection = base.DicomAttributeProvider as DicomAttributeCollection;
+			if (collection == null)
+				throw new ArgumentException("Module must wrap a DicomAttributeCollection in order to extract overlays.");
+
+			DicomAttribute attribute;
+			if (!DicomAttributeProvider.TryGetAttribute(DicomTags.PixelData, out attribute))
+			{
+				Platform.Log(LogLevel.Debug, "Sop does not appear to have any pixel data from which to extract embedded overlays.");
+				return false;
+			}
+
+			if (attribute is DicomFragmentSequence)
+			{
+				Platform.Log(LogLevel.Debug, "Sop pixel data must be uncompressed to extract overlays.");
+				return false;
+			}
+
+			if (attribute.IsNull)
+			{
+				Platform.Log(LogLevel.Debug, "Sop pixel data has no valid value and cannot have embedded overlays extracted.");
+				return false;
+			}
+
+			var pixelData = new DicomUncompressedPixelData(collection);
+			bool anyExtracted = false;
+			// Check if Overlay is embedded in pixels
+			foreach (var overlay in this)
+			{
+				if (overlay.HasOverlayData)
+					continue;
+
+				Platform.Log(LogLevel.Debug, "SOP Instance has embedded overlay in pixel data, extracting");
+				overlay.ExtractEmbeddedOverlay(pixelData);
+				anyExtracted = true;
+			}
+
+			return anyExtracted;
+		}
+
 		internal static uint ComputeTagOffset(int index)
 		{
 			return (uint) index*2*0x10000;
@@ -800,17 +855,24 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			}
 		}
 
+		[Obsolete("Just calls ExtractEmbeddedOverlay.")]
+		public bool ConvertEmbeddedOverlay(DicomUncompressedPixelData pd)
+		{
+			return ExtractEmbeddedOverlay(pd);
+		}
+
 		/// <summary>
-		/// Fills the <see cref="OverlayData"/> property with the overlay that had been encoded
-		/// in the <see cref="DicomTags.PixelData"/> of the SOP Instance. 
+		/// Fills the <see cref="OverlayData"/> property with the overlay(s) that had been encoded
+		/// in the <see cref="DicomTags.PixelData"/> of the SOP Instance.  If the image is a
+		/// multi-frame, overlay data is extracted from all the frames.
 		/// </summary>
-		/// <param name="pd">The pixel data that contains the encoded overlay.</param>
+		/// <param name="pd">The pixel data that contains the encoded overlay(s).</param>
 		/// <exception cref="DicomException">Thrown if <paramref name="pd"/> is not a valid source of embedded overlay data.</exception>
 		/// <returns>True if the <see cref="OverlayData"/> was populated with data encoded in the pixel data; False if <see cref="OverlayData"/> is not empty.</returns>
-		public unsafe bool ConvertEmbeddedOverlay(DicomUncompressedPixelData pd)
+		public unsafe bool ExtractEmbeddedOverlay(DicomUncompressedPixelData pd)
 		{
-			byte[] oldOverlayData = this.OverlayData;
-			if (oldOverlayData != null && oldOverlayData.Length > 0)
+			byte[] overlayData = this.OverlayData;
+			if (overlayData != null && overlayData.Length > 0)
 				return false;
 
 			// General sanity checks
@@ -821,71 +883,40 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			if (pd.BitsStored == 16 && pd.BitsAllocated == 16)
 				throw new DicomException("Unable to remove overlay with 16 Bits Stored and 16 Bits Allocated");
 
+			if (OverlayBitPosition <= pd.HighBit && OverlayBitPosition >= pd.LowBit)
+				throw new DicomException(String.Format("Invalid overlay bit position ({0}); overlay would be in the middle of the pixel data.", OverlayBitPosition));
+
 			int frameSize = pd.UncompressedFrameSize;
-			int overlaySize = frameSize/pd.BitsAllocated;
-			if (frameSize%pd.BitsAllocated > 0)
-				overlaySize++;
+			int overlayDataLength = (int)Math.Ceiling((frameSize * pd.NumberOfFrames)/(pd.BitsAllocated*1d));
+            int frameLength = frameSize/pd.BytesAllocated;
 
-			int numValues = frameSize/pd.BytesAllocated;
+            // Ensure even length overlay
+            if (overlayDataLength % 2 == 1) overlayDataLength++;
 
-			byte[] overlay = new byte[overlaySize];
+			overlayData = new byte[overlayDataLength];
 			int overlayOffset = 0;
-			// Embededded overlays must exist for all frames, they can't be for a subset
-			for (int i = 0; i < pd.NumberOfFrames; i++)
+			byte overlayMask = 0x01;
+
+			if (pd.BitsAllocated <= 8)
 			{
-				byte[] frameData = pd.GetFrame(i);
-
-				if (pd.BitsAllocated <= 8)
+				var embeddedOverlayMask = ((byte)(0x1 << OverlayBitPosition));
+				// Embededded overlays must exist for all frames, they can't be for a subset
+				for (int i = 0; i < pd.NumberOfFrames; i++)
 				{
-					byte pixelMask = ((byte) (0x1 << this.OverlayBitPosition));
-					byte overlayMask = 0x01;
-
-					fixed (byte* pFrameData = frameData)
-					{
-						byte* pixelData = pFrameData;
-						for (int p = 0; p < numValues; p++, pixelData++)
-						{
-							if ((*pixelData & pixelMask) != 0)
-							{
-								overlay[overlayOffset] |= overlayMask;
-								*pixelData &= (byte) ~pixelMask;
-							}
-
-							if (overlayMask == 0x80)
-							{
-								overlayMask = 0x01;
-								overlayOffset++;
-							}
-							else
-								overlayMask <<= 1;
-						}
-					}
+					byte[] frameData = pd.GetFrame(i);
+					ExtractEmbeddedOverlay(frameData, frameLength, embeddedOverlayMask, overlayData, ref overlayOffset, ref overlayMask);
+					pd.ReplaceFrame(i, frameData);
 				}
-				else
+			}
+			else
+			{
+				var embeddedOverlayMask = ((ushort)(0x1 << OverlayBitPosition));
+				// Embededded overlays must exist for all frames, they can't be for a subset
+				for (int i = 0; i < pd.NumberOfFrames; i++)
 				{
-					fixed (byte* pFrameData = frameData)
-					{
-						ushort pixelMask = ((ushort) (0x1 << OverlayBitPosition));
-						byte overlayMask = 0x01;
-
-						ushort* pixelData = (ushort*) pFrameData;
-						for (int p = 0; p < numValues; p++, pixelData++)
-						{
-							if ((*pixelData & pixelMask) != 0)
-							{
-								overlay[overlayOffset] |= overlayMask;
-								*pixelData &= (ushort) ~pixelMask;
-							}
-
-							if (overlayMask == 0x80)
-							{
-								overlayMask = 0x01;
-								overlayOffset++;
-							}
-							else
-								overlayMask <<= 1;
-						}
-					}
+					byte[] frameData = pd.GetFrame(i);
+					ExtractEmbeddedOverlay(frameData, frameLength, embeddedOverlayMask, overlayData, ref overlayOffset, ref overlayMask);
+					pd.ReplaceFrame(i, frameData);
 				}
 			}
 
@@ -895,12 +926,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			if (this.IsBigEndianOW)
 			{
 				// Just do a bulk swap, performance isn't much of an issue.
-				ByteBuffer buffer = new ByteBuffer(overlay, Endian.Little);
+				ByteBuffer buffer = new ByteBuffer(overlayData, Endian.Little);
 				buffer.Swap2();
 				this.OverlayData = buffer.ToBytes();
 			}
 			else
-				this.OverlayData = overlay;
+				this.OverlayData = overlayData;
 
 			// Cleanup Rows/Columns if necessary
 			if (this.OverlayColumns == 0)
@@ -909,6 +940,60 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				this.OverlayRows = pd.ImageHeight;
 
 			return true;
+		}
+
+		private static unsafe void ExtractEmbeddedOverlay(byte[] frameData, int frameLength, byte embeddedOverlayMask, byte[] overlayData, ref int overlayOffset, ref byte overlayMask)
+		{
+			var pixelMask = (byte)~embeddedOverlayMask;
+			fixed (byte* pFrameData = frameData)
+			{
+				var pixelData = pFrameData;
+				for (int p = 0; p < frameLength; p++, pixelData++)
+				{
+					if ((*pixelData & embeddedOverlayMask) != 0)
+					{
+						overlayData[overlayOffset] |= overlayMask;
+						*pixelData &= pixelMask;
+					}
+
+					if (overlayMask == 0x80)
+					{
+						overlayMask = 0x01;
+						overlayOffset++;
+					}
+					else
+					{
+						overlayMask <<= 1;
+					}
+				}
+			}
+		}
+
+		private static unsafe void ExtractEmbeddedOverlay(byte[] frameData, int frameLength, ushort embeddedOverlayMask, byte[] overlayData, ref int overlayOffset, ref byte overlayMask)
+		{
+			var pixelMask = (ushort)~embeddedOverlayMask;
+			fixed (byte* pFrameData = frameData)
+			{
+				var pixelData = (ushort*)pFrameData;
+				for (int p = 0; p < frameLength; p++, pixelData++)
+				{
+					if ((*pixelData & embeddedOverlayMask) != 0)
+					{
+						overlayData[overlayOffset] |= overlayMask;
+						*pixelData &= pixelMask;
+					}
+
+					if (overlayMask == 0x80)
+					{
+						overlayMask = 0x01;
+						overlayOffset++;
+					}
+					else
+					{
+						overlayMask <<= 1;
+					}
+				}
+			}
 		}
 	}
 }

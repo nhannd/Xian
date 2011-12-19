@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -26,6 +27,12 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
+				if (SettingsStore.IsSupported && !SettingsStore.IsStoreOnline)
+				{
+					base.Context.DesktopWindow.ShowMessageBox(Desktop.SR.MessageSettingsStoreOffline, MessageBoxActions.Ok);
+					return;
+				}
+
 				CustomizeViewerActionModelsComponent component = new CustomizeViewerActionModelsComponent(this.ImageViewer);
 
 				DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, SR.TitleCustomizeActionModels, "CustomizeActionModels")
@@ -36,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, this.Context.DesktopWindow);
+				ExceptionHandler.Report(ex, SR.MessageActionModelUpdateFailure, Context.DesktopWindow);
 			}
 		}
 	}

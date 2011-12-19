@@ -27,19 +27,41 @@ namespace ClearCanvas.Dicom.Audit
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public DicomInstancesAccessedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
-			EventIdentificationTypeEventActionCode action)
+        public DicomInstancesAccessedAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome,
+			EventIdentificationContentsEventActionCode action)
 			: base("DicomInstancesAccessed")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMInstancesAccessed;
-			AuditMessage.EventIdentification.EventActionCode = action;
-			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
-			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
-			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
+		    AuditMessage.EventIdentification = new EventIdentificationContents
+		                                           {
+		                                               EventID = EventID.DICOMInstancesAccessed,
+		                                               EventActionCode = action,
+		                                               EventActionCodeSpecified = true,
+		                                               EventDateTime = Platform.Time.ToUniversalTime(),
+		                                               EventOutcomeIndicator = outcome
+		                                           };
 
-			InternalAddAuditSource(auditSource);
+		    InternalAddAuditSource(auditSource);
 		}
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public DicomInstancesAccessedAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome,
+            EventIdentificationContentsEventActionCode action, EventTypeCode type)
+            : base("DicomInstancesAccessed")
+        {
+            AuditMessage.EventIdentification = new EventIdentificationContents
+                                                   {
+                                                       EventID = EventID.DICOMInstancesAccessed,
+                                                       EventActionCode = action,
+                                                       EventActionCodeSpecified = true,
+                                                       EventTypeCode = new[] {type},
+                                                       EventDateTime = Platform.Time.ToUniversalTime(),
+                                                       EventOutcomeIndicator = outcome
+                                                   };
+
+            InternalAddAuditSource(auditSource);
+        }
 
 		/// <summary>
 		/// The identity of the person or process manipulating the data. If both

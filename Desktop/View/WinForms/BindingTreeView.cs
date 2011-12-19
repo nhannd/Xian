@@ -325,8 +325,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
     	[DefaultValue(false)]
-        public bool CheckBoxes
-        {
+    	public bool CheckBoxes
+    	{
     		get { return _checkBoxes; }
     		set
     		{
@@ -336,7 +336,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     				OnCheckBoxesChanged();
     			}
     		}
-        }
+    	}
 
         [DefaultValue(false)]
         public bool SelectionDisabled
@@ -381,6 +381,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		[DefaultValue(100)]
+		[Localizable(true)]
 		public int SearchTextBoxWidth
 		{
 			get { return _searchTextBox.Width; }
@@ -415,6 +416,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _iconResourceSize = value; }
     	}
 
+		[DefaultValue(ColorDepth.Depth32Bit)]
         public ColorDepth IconColorDepth
         {
             get { return _imageList.ColorDepth; }

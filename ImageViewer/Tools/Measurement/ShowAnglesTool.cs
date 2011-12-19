@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[CheckedStateObserver("activate", "ShowAngles", "ShowAnglesChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ShowAnglesToolSmall.png", "Icons.ShowAnglesToolMedium.png", "Icons.ShowAnglesToolLarge.png")]
 	[Tooltip("activate", "TooltipShowAngles")]
-	[GroupHint("activate", "Tools.Image.Measurement.Angle")]
+    [GroupHint("activate", "Tools.Image.Annotations.Measurement.Angle")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public partial class ShowAnglesTool : ImageViewerTool
 	{

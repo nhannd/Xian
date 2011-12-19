@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using NHibernate;
 using ClearCanvas.Enterprise.Core;
@@ -25,7 +26,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 	{
 		private UpdateContextInterceptor _interceptor;
 		private IEntityChangeSetRecorder _changeSetRecorder;
-		private readonly DomainObjectValidator _validator;
+		private IDomainObjectValidator _validator;
 		private readonly ChangeTracker _validationChangeTracker; 
 
 		/// <summary>
@@ -43,6 +44,17 @@ namespace ClearCanvas.Enterprise.Hibernate
 			_changeSetRecorder = new DefaultEntityChangeSetRecorder();
 			_validator = new DomainObjectValidator();
 			_validationChangeTracker = new ChangeTracker();
+		}
+
+		/// <summary>
+		/// Disable domain object validation on this context.
+		/// </summary>
+		/// <remarks>
+		/// This feature should be used with care.
+		/// </remarks>
+		public void DisableValidation()
+		{
+			_validator = DomainObjectValidator.NullValidator;
 		}
 
 		#region IUpdateContext members
@@ -103,9 +115,9 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		protected override ISession CreateSession()
 		{
-			_interceptor = new UpdateContextInterceptor(_validator);
+			_interceptor = new UpdateContextInterceptor(this);
 			_interceptor.AddChangeTracker(_validationChangeTracker);
-			return this.PersistentStore.SessionFactory.OpenSession(_interceptor);
+			return PersistentStore.SessionFactory.OpenSession(_interceptor);
 		}
 
 		protected override void LockCore(DomainObject obj, DirtyState dirtyState)
@@ -113,16 +125,21 @@ namespace ClearCanvas.Enterprise.Hibernate
 			switch (dirtyState)
 			{
 				case DirtyState.Dirty:
-					this.Session.Update(obj);
+					Session.Update(obj);
 					break;
 				case DirtyState.New:
 					CheckRequiredFields(obj);
-					this.Session.Save(obj);
+					Session.Save(obj);
 					break;
 				case DirtyState.Clean:
-					this.Session.Lock(obj, LockMode.None);
+					Session.Lock(obj, LockMode.None);
 					break;
 			}
+		}
+
+		internal IDomainObjectValidator Validator
+		{
+			get { return _validator; }
 		}
 
 		internal override bool ReadOnly
@@ -182,7 +199,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// flush first
 			// this will apply low-level validation from within the interceptor callbacks prior to writing to db
 			// and it will ensure that the _validationChangeTracker is up to date
-			this.Session.Flush();
+			Session.Flush();
 
 			// _validationChangeTracker is used to determine which entities need high-level validation
 			// apply high-level validation to modified entities (excluding those that have been deleted)
@@ -207,7 +224,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			if (_changeSetRecorder != null)
 			{
 				// write to the "ChangeSet" audit log
-				var auditLog = new AuditLog(null, "ChangeSet");
+				var auditLog = new AuditLog(ProductInformation.Component, "ChangeSet");
 				_changeSetRecorder.WriteLogEntry(_interceptor.FullChangeSet, auditLog);
 			}
 		}

@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 {
@@ -187,11 +188,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 {
                     if (WorkQueueGridView.DataSource == null)
                     {
-                        message.Message = "Please enter search criteria to find work queue items.";
+                        message.Message = SR.WorkQueuePleaseEnterSearchCritera;
                     }
                     else
                     {
-                        message.Message = "No work queue items found matching the provided criteria.";
+                        message.Message = SR.NoWorkQueueFound;
                     }
                 }
 

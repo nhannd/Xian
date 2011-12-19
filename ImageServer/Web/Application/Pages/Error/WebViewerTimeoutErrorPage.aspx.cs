@@ -11,8 +11,10 @@
 
 using System;
 using System.Web.UI;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 {
@@ -20,13 +22,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            SetPageTitle(App_GlobalResources.Titles.TimeoutErrorPageTitle);
+            SetPageTitle(Titles.TimeoutErrorPageTitle);
         }
 
         protected override void Render(HtmlTextWriter writer)
         {
             base.Render(writer);
             SessionManager.SignOut();
+            Platform.Log(LogLevel.Info, "Session has timed out");
         }
     }
 }

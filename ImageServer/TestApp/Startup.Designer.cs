@@ -1,3 +1,15 @@
+#region License
+
+// Copyright (c) 2010, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+
 namespace ClearCanvas.ImageServer.TestApp
 {
     partial class Startup
@@ -37,6 +49,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.button1 = new System.Windows.Forms.Button();
             this.UsageTracking = new System.Windows.Forms.Button();
             this.DatabaseGenerator = new System.Windows.Forms.Button();
+            this.ProductVerify = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TestRule
@@ -126,13 +139,23 @@ namespace ClearCanvas.ImageServer.TestApp
             this.DatabaseGenerator.TabIndex = 4;
             this.DatabaseGenerator.Text = "Database Generator";
             this.DatabaseGenerator.UseVisualStyleBackColor = true;
-            this.DatabaseGenerator.Click += new System.EventHandler(this.DatabaseGenerator_Click);
+            // 
+            // ProductVerify
+            // 
+            this.ProductVerify.Location = new System.Drawing.Point(28, 395);
+            this.ProductVerify.Name = "ProductVerify";
+            this.ProductVerify.Size = new System.Drawing.Size(182, 51);
+            this.ProductVerify.TabIndex = 4;
+            this.ProductVerify.Text = "Product Verify";
+            this.ProductVerify.UseVisualStyleBackColor = true;
+            this.ProductVerify.Click += new System.EventHandler(this.ProductVerify_Click);
             // 
             // Startup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(467, 470);
+            this.Controls.Add(this.ProductVerify);
             this.Controls.Add(this.DatabaseGenerator);
             this.Controls.Add(this.UsageTracking);
             this.Controls.Add(this.button1);
@@ -159,5 +182,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button UsageTracking;
         private System.Windows.Forms.Button DatabaseGenerator;
+        private System.Windows.Forms.Button ProductVerify;
     }
 }

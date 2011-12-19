@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
 			if (PermissionsHelper.IsInRoles(AuthorityTokens.Configuration.DefaultServers))
-				listPages.Add(new ConfigurationPage<DefaultServersConfigurationComponent>("DefaultServerConfiguration"));
+				listPages.Add(new ConfigurationPage<DefaultServersConfigurationComponent>("DicomConfiguration/DefaultServerConfiguration"));
 			
 			return listPages.AsReadOnly();
 		}

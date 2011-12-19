@@ -9,9 +9,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
@@ -20,9 +18,6 @@ namespace ClearCanvas.Desktop
 	/// </summary>
 	public class FileExtensionFilter
 	{
-		private string _filter;
-		private string _description;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -30,27 +25,19 @@ namespace ClearCanvas.Desktop
 		/// <param name="description"></param>
 		public FileExtensionFilter(string filter, string description)
 		{
-			_filter = filter;
-			_description = description;
+			Filter = filter;
+			Description = description;
 		}
 
 		/// <summary>
 		/// Gets or sets the value of the filter, which must be a wildcard expression (e.g. *.txt).
 		/// </summary>
-		public string Filter
-		{
-			get { return _filter; }
-			set { _filter = value; }
-		}
+		public string Filter { get; set; }
 
 		/// <summary>
 		/// Gets or sets the value displayed for the filter, e.g. Text files (*.txt).
 		/// </summary>
-		public string Description
-		{
-			get { return _description; }
-			set { _description = value; }
-		}
+		public string Description { get; set; }
 	}
 
 
@@ -59,10 +46,6 @@ namespace ClearCanvas.Desktop
 	/// </summary>
 	public class FileDialogCreationArgs
 	{
-		private string _fileExtension;
-		private string _filename;
-		private string _directory;
-		private string _title;
 		private readonly List<FileExtensionFilter> _filters;
 
 		/// <summary>
@@ -74,9 +57,10 @@ namespace ClearCanvas.Desktop
 		/// <param name="filters"></param>
 		public FileDialogCreationArgs(string filename, string directory, string fileExtension, IEnumerable<FileExtensionFilter> filters)
 		{
-			_directory = directory;
-			_filename = filename;
-			_fileExtension = fileExtension;
+			Directory = directory;
+			FileName = filename;
+			FileExtension = fileExtension;
+			PreventSaveToInstallPath = true;	// default to true, since this is good policy in the majority of use cases
 			_filters = new List<FileExtensionFilter>(filters);
 		}
 
@@ -91,40 +75,41 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		public FileDialogCreationArgs()
+			: this(null, null, null, new FileExtensionFilter[] { })
+		{
+			
+		}
+
+		/// <summary>
 		/// Gets or sets the default extension to append to the filename, if not specified by user.
 		/// </summary>
-		public string FileExtension
-		{
-			get { return _fileExtension; }
-			set { _fileExtension = value; }
-		}
+		public string FileExtension { get; set; }
 
 		/// <summary>
 		/// Gets or sets the initial value of the file name.
 		/// </summary>
-		public string FileName
-		{
-			get { return _filename; }
-			set { _filename = value; }
-		}
+		public string FileName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the initial directory.
 		/// </summary>
-		public string Directory
-		{
-			get { return _directory; }
-			set { _directory = value; }
-		}
+		public string Directory { get; set; }
 
 		/// <summary>
 		/// Gets or sets the title of the file dialog.
 		/// </summary>
-		public string Title
-		{
-			get { return _title; }
-			set { _title = value; }
-		}
+		public string Title { get; set; }
+
+		/// <summary>
+		/// For an Open File dialog, gets or sets a value indicating whether the dialog allows multiple files to be selected.
+		/// </summary>
+		/// <remarks>
+		/// This property is ignored for a Save File dialog.
+		/// </remarks>
+		public bool MultiSelect { get; set; }
 
 		/// <summary>
 		/// Gets the list of file extension filters.
@@ -133,5 +118,10 @@ namespace ClearCanvas.Desktop
 		{
 			get { return _filters; }
 		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether to prevent saving files to the install directory or any of its child directories.
+		/// </summary>
+		public bool PreventSaveToInstallPath { get; set; }
 	}
 }

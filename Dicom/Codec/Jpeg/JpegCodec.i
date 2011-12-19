@@ -7,9 +7,14 @@ namespace IJGVERS {
 	  struct jpeg_error_mgr pub;
 	};
 
-	// error handler, executes longjmp
+	// original code executed a longjmp, which jumped back to an error routine in the codec.
+	// Changed to just throw an exception.
 	void ErrorExit(j_common_ptr cinfo) {
 		ErrorStruct *myerr = (ErrorStruct *)cinfo->err;
+		char buffer[JMSG_LENGTH_MAX];
+		(*cinfo->err->format_message)((jpeg_common_struct *)cinfo, buffer); /* Create the message */
+		Platform::Log(LogLevel::Error, "IJG: {0}", gcnew String(buffer));
+		throw gcnew DicomCodecException(gcnew String(buffer));
 	}
 
 	// message handler for warning messages and the like
@@ -45,8 +50,6 @@ namespace IJGVERS {
 
 	// callbacks for compress-destination-manager
 	void initDestination(j_compress_ptr cinfo) {
-		//GCHandle^ thisHdl = GCHandle::FromIntPtr(IntPtr(cinfo->client_data));
-		//JPEGCODEC^ thisPtr = (JPEGCODEC^)thisHdl->Target;
 		JPEGCODEC^ thisPtr = (JPEGCODEC^)JPEGCODEC::This;
 		thisPtr->MemoryBuffer = gcnew MemoryStream();
 		cinfo->dest->next_output_byte = thisPtr->DataPtr;
@@ -54,8 +57,6 @@ namespace IJGVERS {
 	}
 
 	ijg_boolean emptyOutputBuffer(j_compress_ptr cinfo) {
-		//GCHandle^ thisHdl = GCHandle::FromIntPtr(IntPtr(cinfo->client_data));
-		//JPEGCODEC^ thisPtr = (JPEGCODEC^)thisHdl->Target;
 		JPEGCODEC^ thisPtr = (JPEGCODEC^)JPEGCODEC::This;
 		thisPtr->MemoryBuffer->Write(thisPtr->DataBuffer, 0, IJGE_BLOCKSIZE);
 		cinfo->dest->next_output_byte = thisPtr->DataPtr;
@@ -64,8 +65,6 @@ namespace IJGVERS {
 	}
 
 	void termDestination(j_compress_ptr cinfo) {
-		//GCHandle^ thisHdl = GCHandle::FromIntPtr(IntPtr(cinfo->client_data));
-		//JPEGCODEC^ thisPtr = (JPEGCODEC^)thisHdl->Target;
 		JPEGCODEC^ thisPtr = (JPEGCODEC^)JPEGCODEC::This;
 		int count = IJGE_BLOCKSIZE - cinfo->dest->free_in_buffer;
 		thisPtr->MemoryBuffer->Write(thisPtr->DataBuffer, 0, count);
@@ -225,6 +224,8 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 	pin_ptr<unsigned char> DataPin = &DataBuffer[0];
 	DataPtr = DataPin;
 	
+	struct jpeg_compress_struct cinfo;
+		
 	try {
 		if (oldPixelData->IsPlanar && oldPixelData->SamplesPerPixel > 1) {
 			newPixelData->PlanarConfiguration = 0;
@@ -241,15 +242,15 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 			    if (oldPixelData->SopClass->Uid->Equals(Dicom::SopClass::MrImageStorageUid)
 			        && !oldPixelData->HasDataVoiLuts)
 				{
-					DicomUncompressedPixelData::TogglePixelRepresentation(frameData, oldPixelData->BitsStored, oldPixelData->BitsAllocated);
+					int rescaleAmount;
+					DicomUncompressedPixelData::TogglePixelRepresentation(frameData, oldPixelData->HighBit, oldPixelData->BitsStored, oldPixelData->BitsAllocated, rescaleAmount);
 					newPixelData->PixelRepresentation = 0;
 					if (oldPixelData->HasLinearVoiLuts)
 					{
-					    int offset = (int)Math::Pow(2,(newPixelData->BitsStored - 1));
 					    for (int i = 0; i < newPixelData->LinearVoiLuts->Count; i++ )
     					{
     						Window old = newPixelData->LinearVoiLuts[i];
-							newPixelData->LinearVoiLuts[i] = gcnew Window(old.Width, old.Center + offset);
+							newPixelData->LinearVoiLuts[i] = gcnew Window(old.Width, old.Center + rescaleAmount);
     					}
 					}
 
@@ -259,19 +260,19 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 			}
 			else
 			{		
-				DicomUncompressedPixelData::TogglePixelRepresentation(frameData, oldPixelData->BitsStored, oldPixelData->BitsAllocated);
-				newPixelData->DecimalRescaleIntercept -= (int)Math::Pow(2,(newPixelData->BitsStored - 1));
+				int rescaleAmount;
+				DicomUncompressedPixelData::TogglePixelRepresentation(frameData, oldPixelData->HighBit, oldPixelData->BitsStored, oldPixelData->BitsAllocated, rescaleAmount);
+				newPixelData->DecimalRescaleIntercept -= rescaleAmount;
 				newPixelData->PixelRepresentation = 0;
 			}
 		}
 		
 
-		struct jpeg_compress_struct cinfo;
 		struct IJGVERS::ErrorStruct jerr;
 		cinfo.err = jpeg_std_error(&jerr.pub);
 		jerr.pub.error_exit = IJGVERS::ErrorExit;
 		jerr.pub.output_message = IJGVERS::OutputMessage;
-
+	
 		jpeg_create_compress(&cinfo);
 
 		cinfo.client_data = nullptr;
@@ -289,10 +290,12 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		cinfo.image_height = oldPixelData->ImageHeight;
 		cinfo.input_components = oldPixelData->SamplesPerPixel;
 		cinfo.in_color_space = IJGVERS::getJpegColorSpace(oldPixelData->PhotometricInterpretation);
-
+        //cinfo.dct_method = JDCT_FLOAT;
+		
 		jpeg_set_defaults(&cinfo);
 		
-
+		cinfo.optimize_coding = true;
+		
 		if (Mode == JpegMode::Baseline || Mode == JpegMode::Sequential) {
 			jpeg_set_quality(&cinfo, params->Quality, 0);
 		}
@@ -307,6 +310,8 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		else {
 			jpeg_simple_lossless(&cinfo, Predictor, PointTransform);
 		}
+		
+		cinfo.smoothing_factor = params->SmoothingFactor;	
 
 		if (Mode == JpegMode::Lossless) {
 			jpeg_set_colorspace(&cinfo, cinfo.in_color_space);
@@ -332,18 +337,14 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 				}
 			}
 			else {
-				//if (params->SampleFactor == JpegSampleFactor::Unknown)
-					jpeg_set_colorspace(&cinfo, cinfo.in_color_space);
+				jpeg_set_colorspace(&cinfo, cinfo.in_color_space);
 
 				// JPEG color space is not YCbCr, disable subsampling.
 				cinfo.comp_info[0].h_samp_factor = 1;
 				cinfo.comp_info[0].v_samp_factor = 1;
 			}
 		}
-		
-		cinfo.optimize_coding = true;
-		cinfo.smoothing_factor = params->SmoothingFactor;
-		
+				
 		// all other components are set to 1x1
 		for (int sfi = 1; sfi < MAX_COMPONENTS; sfi++) {
 			cinfo.comp_info[sfi].h_samp_factor = 1;
@@ -361,16 +362,15 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		}
 
 		jpeg_finish_compress(&cinfo);
-		jpeg_destroy_compress(&cinfo);
-
+		
 		if ((MemoryBuffer->Length %2 ) == 1)
 			MemoryBuffer->WriteByte(0);
 			
 		newPixelData->AddFrameFragment(MemoryBuffer->ToArray());
 	} finally {
 		MemoryBuffer = nullptr;
-	}
-	
+	    jpeg_destroy_compress(&cinfo);
+    }	
 }
 
 

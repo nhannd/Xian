@@ -36,6 +36,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Gets or sets the associated label text.
         /// </summary>
+		[Localizable(true)]
         public string LabelText
         {
             get { return _label.Text; }

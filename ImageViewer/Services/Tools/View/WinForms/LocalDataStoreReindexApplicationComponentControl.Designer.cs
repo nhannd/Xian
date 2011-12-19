@@ -59,33 +59,30 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LocalDataStoreReindexApplicationComponentControl));
 			this._reindexProgressControl = new ClearCanvas.ImageViewer.Services.Tools.View.WinForms.ImportProgressControl();
 			this.SuspendLayout();
 			// 
 			// _reindexProgressControl
 			// 
 			this._reindexProgressControl.AcceptButton = null;
-			this._reindexProgressControl.AutoSize = true;
+			resources.ApplyResources(this._reindexProgressControl, "_reindexProgressControl");
 			this._reindexProgressControl.AvailableCount = 0;
-			this._reindexProgressControl.CancelButton = null;
 			this._reindexProgressControl.ButtonEnabled = true;
-			this._reindexProgressControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._reindexProgressControl.ButtonText = "Cancel";
+			this._reindexProgressControl.CancelButton = null;
 			this._reindexProgressControl.FailedSteps = 0;
-			this._reindexProgressControl.Location = new System.Drawing.Point(0, 0);
 			this._reindexProgressControl.Name = "_reindexProgressControl";
-			this._reindexProgressControl.Size = new System.Drawing.Size(777, 188);
 			this._reindexProgressControl.StatusMessage = "Status:";
-			this._reindexProgressControl.TabIndex = 10;
 			this._reindexProgressControl.TotalProcessed = 0;
 			this._reindexProgressControl.TotalToProcess = 100;
 			// 
 			// LocalDataStoreReindexApplicationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._reindexProgressControl);
 			this.Name = "LocalDataStoreReindexApplicationComponentControl";
-			this.Size = new System.Drawing.Size(777, 188);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

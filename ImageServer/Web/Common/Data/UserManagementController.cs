@@ -16,8 +16,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -25,11 +25,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	{
         public List<UserRowData> GetAllUsers()
         {
-            List<UserRowData> data = null;
+            List<UserRowData> data;
             
             using(UserManagement service = new UserManagement())
             {
-                data = CollectionUtils.Map<UserSummary, UserRowData>(
+                data = CollectionUtils.Map(
                     service.FindUsers(new ListUsersRequest()),
                     delegate(UserSummary summary)
                     {
@@ -49,23 +49,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 try
                 {
-                    UserDetail newUser = new UserDetail();
+                    UserDetail newUser = new UserDetail
+                                             {
+                                                 UserName = user.UserName,
+                                                 DisplayName = user.DisplayName,
+                                                 Enabled = user.Enabled,
+                                                 CreationTime = Platform.Time,
+                                                 PasswordExpiryTime = Platform.Time,
+                                                 ResetPassword = true // TODO: Why do we need to reset password here?
+                                             };
 
-                    newUser.UserName = user.UserName;
-                    newUser.DisplayName = user.DisplayName;
-                    newUser.Enabled = user.Enabled;
-                    newUser.CreationTime = Platform.Time;
-                    newUser.ResetPassword = true;
 
                     List<AuthorityGroupSummary> groups = new List<AuthorityGroupSummary>();
 
                     foreach (UserGroup userGroup in user.UserGroups)
                     {
-                        groups.Add(new AuthorityGroupSummary(new EntityRef(userGroup.UserGroupRef), userGroup.Name));
+                        groups.Add(new AuthorityGroupSummary(new EntityRef(userGroup.UserGroupRef), userGroup.Name,userGroup.Name, false));
                     }
 
                     newUser.AuthorityGroups = groups;
-
                     service.AddUser(newUser);
                     success = true;
 
@@ -74,7 +76,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                 	Platform.Log(LogLevel.Error, ex, "Unexpected exception adding user: {0}", user.DisplayName);
                 }
-            };
+            }
 
             return success;
         }
@@ -87,17 +89,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 try
                 {
-                    UserDetail updateUser = new UserDetail();
-
-                    updateUser.UserName = user.UserName;
-                    updateUser.DisplayName = user.DisplayName;
-                    updateUser.Enabled = user.Enabled;
+                    UserDetail updateUser = new UserDetail
+                                                {
+                                                    UserName = user.UserName,
+                                                    DisplayName = user.DisplayName,
+                                                    EmailAddress = user.EmailAddress,
+                                                    Enabled = user.Enabled
+                                                };
 
                     List<AuthorityGroupSummary> groups = new List<AuthorityGroupSummary>();
 
                     foreach(UserGroup userGroup in user.UserGroups)
                     {
-                        groups.Add(new AuthorityGroupSummary(new EntityRef(userGroup.UserGroupRef), userGroup.Name));
+                        groups.Add(new AuthorityGroupSummary(new EntityRef(userGroup.UserGroupRef), userGroup.Name, userGroup.Name,false));
                     }
 
                     updateUser.AuthorityGroups = groups;
@@ -109,7 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                 	Platform.Log(LogLevel.Error, ex, "Unexpected exception updating user: {0}", user.DisplayName);
                 }
-            };
+            }
 
             return success;
         }
@@ -130,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                     exists = true;
                 }
-            };
+            }
 
             return exists;
         }
@@ -151,7 +155,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 	Platform.Log(LogLevel.Error, ex, "Unexpected exception resetting password for user: {0}",
                 	             user.DisplayName);
                 }
-            };
+            }
 
             return success;
         }
@@ -172,7 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user: {0}",
 								 user.DisplayName);
                 }
-            };
+            }
 
             return success;
         }
@@ -196,14 +200,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         }
                     }
                 }
-            };
+            }
 
             return exists;
         }
 
         public bool AddUserGroup(UserGroupRowData userGroup)
         {
-            bool success = false;
+            bool success;
 
             using(AuthorityManagement service = new AuthorityManagement())
             {
@@ -214,59 +218,62 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     tokens.Add(new AuthorityTokenSummary(token.Name, token.Description));
                 }
 
-                service.AddAuthorityGroup(userGroup.Name, tokens);
+                service.AddAuthorityGroup(userGroup.Name, userGroup.Description, userGroup.DataGroup, tokens);
                 success = true;
-            };
+            }
 
+            //TODO: Catch exception?
             return success;
         }
 
         public bool UpdateUserGroup(UserGroupRowData userGroup)
         {
-            bool success = false;
+            bool success;
 
             using(AuthorityManagement service = new AuthorityManagement())
         
             {
-                AuthorityGroupDetail detail = new AuthorityGroupDetail();
-                detail.AuthorityGroupRef = new EntityRef(userGroup.Ref);
-                detail.Name = userGroup.Name;
-                
+                AuthorityGroupDetail detail = new AuthorityGroupDetail
+                                                  {
+                                                      AuthorityGroupRef = new EntityRef(userGroup.Ref),
+                                                      Name = userGroup.Name,
+                                                      Description = userGroup.Description,
+                                                      DataGroup = userGroup.DataGroup
+                                                  };
+
                 foreach(TokenSummary token in userGroup.Tokens)
                 {
                     detail.AuthorityTokens.Add(new AuthorityTokenSummary(token.Name, token.Description));
                 }
 
-                service.UpdateAuthorityGroup(detail);
+                service.UpdateAuthorityGroup(detail, userGroup.Password);
                 success = true;
-            };
+            }
 
+            //TODO: Catch exception?
             return success;
         }
 
-        public bool DeleteUserGroup(UserGroupRowData userGroup)
+        public void DeleteUserGroup(UserGroupRowData userGroup, bool checkIfGroupIsEmpty)
         {
-            bool success = false;
-
-            using(AuthorityManagement service = new AuthorityManagement())
+            using (AuthorityManagement service = new AuthorityManagement())
             {
                 try
                 {
-                    service.DeleteAuthorityGroup(new EntityRef(userGroup.Ref));
-                    success = true;
+                    EntityRef entityRef = new EntityRef(userGroup.Ref);
+                    service.DeleteAuthorityGroup(entityRef, checkIfGroupIsEmpty);
                 }
                 catch (Exception ex)
                 {
-                	Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user group: {0}.", userGroup.Name);
+                    Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user group: {0}.", userGroup.Name);
+                    throw;
                 }
-            };
-
-            return success;
+            }
         }
 
         public bool UpdateTokens(List<TokenRowData> tokens)
         {
-            bool success = false;
+            bool success;
 
             using(AuthorityManagement service = new AuthorityManagement())
             {
@@ -279,8 +286,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                    service.ImportAuthorityTokens(tokenList);
                    success = true;
-            };
-
+            }
+            
+            //TODO: Catch exception?
             return success;
         }
     }

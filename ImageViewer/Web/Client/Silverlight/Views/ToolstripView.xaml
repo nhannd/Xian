@@ -1,11 +1,19 @@
-﻿<UserControl x:Class="ClearCanvas.ImageViewer.Web.Client.Silverlight.Views.ToolstripView"
+﻿<!-- 
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+-->
+<UserControl x:Class="ClearCanvas.ImageViewer.Web.Client.Silverlight.Views.ToolstripView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:ToolkitRef="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit" 
     mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     d:DesignHeight="36" d:DesignWidth="447"
-    xmlns:my="clr-namespace:ClearCanvas.Web.Client.Silverlight;assembly=ClearCanvas.Web.Client.Silverlight">
+    xmlns:my="clr-namespace:ClearCanvas.Web.Client.Silverlight;assembly=ClearCanvas.Web.Client.Silverlight" LayoutUpdated="OnLayoutUpdated" >
 
     <my:MenuManager.AttachedContextMenu>
         <my:ContextMenu x:Name="DummyMenu"/>

@@ -21,6 +21,7 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks.ServiceLockPanel.js", "application/x-javascript")]
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks
@@ -69,21 +70,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         {
             base.OnInit(e);
             IList<ServiceLockTypeEnum> types = ServiceLockTypeEnum.GetAll();
-            TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.All)); 
+            TypeDropDownList.Items.Add(new ListItem(SR.All)); 
             foreach (ServiceLockTypeEnum t in types)
             {
-                TypeDropDownList.Items.Add(new ListItem(t.Description, t.Lookup));
+                TypeDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
             }
 
             EditServiceLockDialog.ServiceLockUpdated += AddEditServiceLockDialog_ServiceLockUpdated; 
             
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerServiceSingleItem, App_GlobalResources.SR.GridPagerServiceMultipleItems, ServiceLockGridViewControl.TheGrid, delegate { return ServiceLockGridViewControl.ServiceLocks != null ? ServiceLockGridViewControl.ServiceLocks.Count : 0; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerServiceSingleItem, SR.GridPagerServiceMultipleItems, ServiceLockGridViewControl.TheGrid, delegate { return ServiceLockGridViewControl.ServiceLocks != null ? ServiceLockGridViewControl.ServiceLocks.Count : 0; }, ImageServerConstants.GridViewPagerPosition.Top);
             ServiceLockGridViewControl.Pager = GridPagerTop;
            
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
+            StatusFilter.Items.Add(new ListItem(SR.All));
+            StatusFilter.Items.Add(new ListItem(SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(SR.Disabled));
 
             FileSystemsConfigurationController fileSystemController = new FileSystemsConfigurationController();
             IList<Model.Filesystem> fileSystems = fileSystemController.GetAllFileSystems();
@@ -162,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             {
                 if (service.Lock)
                 {
-                    ConfirmEditDialog.Message = App_GlobalResources.SR.ServiceLockUpdate_Confirm_ServiceIsLocked;
+                    ConfirmEditDialog.Message = SR.ServiceLockUpdate_Confirm_ServiceIsLocked;
                     ConfirmEditDialog.MessageType =
                         MessageBox.MessageTypeEnum.YESNO;
                     ConfirmEditDialog.Show();
@@ -207,7 +208,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
 
             ServiceLockConfigurationController controller = new ServiceLockConfigurationController();
 
-            if (TypeDropDownList.SelectedValue != App_GlobalResources.SR.All)
+            if (TypeDropDownList.SelectedValue != SR.All)
             {
                 criteria.ServiceLockTypeEnum.EqualTo(ServiceLockTypeEnum.GetEnum(TypeDropDownList.SelectedValue));
             }

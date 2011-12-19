@@ -24,6 +24,8 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 	[TestFixture]
 	public class DicomFilteredAnnotationLayoutStoreTests
 	{
+		private const int _countLayoutsInDicomFilteredLayoutStoreXml = 12;
+
 		public DicomFilteredAnnotationLayoutStoreTests()
 		{ 
 		}
@@ -58,7 +60,6 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
 			Assert.AreEqual(4, layouts.Count);
 
-			const int layoutCount = 12;
 			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 			using (Stream stream = resolver.OpenResource("DicomFilteredAnnotationLayoutStoreDefaults.xml"))
 			{
@@ -67,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 			}
 
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
-			Assert.AreEqual(layoutCount, layouts.Count);
+			Assert.AreEqual(_countLayoutsInDicomFilteredLayoutStoreXml, layouts.Count);
 
 			DicomFilteredAnnotationLayout layout = DicomFilteredAnnotationLayoutStore.Instance.GetFilteredLayout("Dicom.Filtered.MR");
 			layout = CopyLayout(layout, "Dicom.Filtered.RT");
@@ -75,14 +76,14 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 
 			DicomFilteredAnnotationLayoutStore.Instance.Update(layout);
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
-			Assert.AreEqual(layoutCount + 1, layouts.Count);
+			Assert.AreEqual(_countLayoutsInDicomFilteredLayoutStoreXml + 1, layouts.Count);
 
 			layout = DicomFilteredAnnotationLayoutStore.Instance.GetFilteredLayout("Dicom.Filtered.RT");
 			Assert.IsNotNull(layout);
 
 			DicomFilteredAnnotationLayoutStore.Instance.RemoveFilteredLayout("Dicom.Filtered.RT");
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
-			Assert.AreEqual(layoutCount, layouts.Count);
+			Assert.AreEqual(_countLayoutsInDicomFilteredLayoutStoreXml, layouts.Count);
 
 			layout = DicomFilteredAnnotationLayoutStore.Instance.GetFilteredLayout("Dicom.Filtered.RT");
 			Assert.IsNull(layout);
@@ -100,15 +101,15 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 			DicomFilteredAnnotationLayoutStore.Instance.Update(layouts);
 
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
-			Assert.AreEqual(layoutCount + 4, layouts.Count);
+			Assert.AreEqual(_countLayoutsInDicomFilteredLayoutStoreXml + 4, layouts.Count);
 
 			DicomFilteredAnnotationLayoutStore.Instance.RemoveFilteredLayout("Dicom.Filtered.RT");
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
-			Assert.AreEqual(layoutCount + 3, layouts.Count);
+			Assert.AreEqual(_countLayoutsInDicomFilteredLayoutStoreXml + 3, layouts.Count);
 
 			DicomFilteredAnnotationLayoutStore.Instance.RemoveFilteredLayout("Dicom.Filtered.SC");
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
-			Assert.AreEqual(layoutCount + 2, layouts.Count);
+			Assert.AreEqual(_countLayoutsInDicomFilteredLayoutStoreXml + 2, layouts.Count);
 
 			layout = DicomFilteredAnnotationLayoutStore.Instance.GetFilteredLayout("Dicom.Filtered.AllMatch");
 			Assert.IsNotNull(layout);

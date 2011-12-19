@@ -18,17 +18,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{
 		public static Color ClearCanvasDarkBlue
 		{
-			get { return Color.FromArgb(58, 136, 60); }
+			get { return Color.FromArgb(61, 152, 209); }
 		}
 
 		public static Color ClearCanvasBlue
 		{
-			get { return Color.FromArgb(77, 180, 79); }
+			get { return Color.FromArgb(124, 177, 221); }
 		}
 
 		public static Color ClearCanvasLightBlue
 		{
-			get { return Color.FromArgb(112, 220, 114); }
+			get { return Color.FromArgb(186, 210, 236); }
 		}
 
 		public static void SetTitleBarStyle(TitleBar titleBar)

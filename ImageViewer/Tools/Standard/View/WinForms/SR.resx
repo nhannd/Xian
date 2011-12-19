@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="LabelDefault" xml:space="preserve">
+    <value>(Default)</value>
+  </data>
   <data name="TitleDetails" xml:space="preserve">
     <value>Details</value>
+  </data>
+  <data name="TooltipToolAppliesToEntireDisplaySet" xml:space="preserve">
+    <value>When checked, tool will apply to the entire display set</value>
+  </data>
+  <data name="TooltipToolAppliesToSelectedImage" xml:space="preserve">
+    <value>When checked, tool will apply separately to each image</value>
   </data>
 </root>

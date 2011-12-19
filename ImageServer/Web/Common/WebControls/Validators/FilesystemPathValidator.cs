@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (String.IsNullOrEmpty(path))
             {
-                ErrorMessage = "Path must be specified";
+                ErrorMessage = ValidationErrors.FilesystemPathCannotBeEmpty;
                 return false;
             }
 
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             }
             catch (IndexOutOfRangeException)
             {
-                ErrorMessage = "Invalid Path: " + path;
+                ErrorMessage = String.Format(ValidationErrors.FilesystemPathInvalidOrUnreachable, path);
                 return false;
             }
             catch (Exception e)

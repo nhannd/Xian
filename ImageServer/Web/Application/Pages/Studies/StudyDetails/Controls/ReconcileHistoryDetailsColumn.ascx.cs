@@ -13,6 +13,8 @@ using System;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -42,6 +44,43 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 }
                 return _description;
             }
+        }
+
+        
+        protected string ChangeSummaryText
+        {
+            get{
+                return ActionTranslator.Translate(ReconcileHistory.Action);
+            }
+        }
+
+        protected string PerformedBy
+        {
+            get
+            {
+                return String.Format(SR.StudyDetails_History_Reconcile_PerformedBy, ReconcileHistory.UserName ?? SR.Unknown);
+            }
+        }
+    }
+
+
+    public static class ActionTranslator
+    {
+        public static string Translate(StudyReconcileAction action)
+        {
+            switch (action)
+            {
+                case StudyReconcileAction.CreateNewStudy:
+                    return HtmlUtility.Encode(SR.StudyDetails_Reconcile_NewStudy_Description);
+                case StudyReconcileAction.Discard:
+                    return HtmlUtility.Encode(SR.StudyDetails_Reconcile_Discard_Description);
+                case StudyReconcileAction.Merge:
+                    return HtmlUtility.Encode(SR.StudyDetails_Reconcile_Merge_Description);
+                case StudyReconcileAction.ProcessAsIs:
+                    return HtmlUtility.Encode(SR.StudyDetails_Reconcile_ProcessAsIs_Description);
+            }
+
+            return HtmlUtility.Encode(HtmlUtility.GetEnumInfo(action).LongDescription);
         }
     }
 }

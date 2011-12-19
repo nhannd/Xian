@@ -1,3 +1,14 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.SearchPanel" %>
 
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="localAsp" %>
@@ -13,7 +24,7 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons" style="margin-top: 4px;">
-                                        <ccUI:ToolbarButton ID="ViewImageButton" runat="server" SkinID="ViewImagesButton" />
+                                        <ccUI:ToolbarButton ID="ViewImageButton" runat="server" SkinID="<%$Image:ViewImagesButton%>" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

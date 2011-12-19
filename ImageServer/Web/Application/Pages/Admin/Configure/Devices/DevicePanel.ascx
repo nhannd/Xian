@@ -1,3 +1,16 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
+<%@ Import Namespace="Resources" %>
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DevicePanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel" %>
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
@@ -24,38 +37,38 @@
                             <table cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td align="left">
-                                        <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchTextBoxLabel"
+                                        <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, AETitle %>" CssClass="SearchTextBoxLabel"
                                             EnableViewState="False"></asp:Label><br />
                                         <asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by AE Title"></asp:TextBox>
                                     </td>
                                     <td align="left" valign="bottom">
-                                        <asp:Label ID="Label6" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
+                                        <asp:Label ID="Label6" runat="server" Text="<%$Resources: SearchFieldLabels, DeviceDescription %>" CssClass="SearchTextBoxLabel"
                                             EnableViewState="False"></asp:Label><br />
                                         <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Description"></asp:TextBox>
                                     </td>
                                     <td align="left">
-                                        <asp:Label ID="Label2" runat="server" Text="IP Address" CssClass="SearchTextBoxLabel"
+                                        <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, IPAddress %>" CssClass="SearchTextBoxLabel"
                                             EnableViewState="False"></asp:Label><br />
                                         <asp:TextBox ID="IPAddressFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by IP Address"></asp:TextBox>
                                     </td>
                                     <td align="left" valign="bottom">
-                                        <asp:Label ID="Label3" runat="server" Text="Status" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                        <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, DeviceStatus %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                         <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                         </asp:DropDownList>
                                     </td>
                                     <td align="left" valign="bottom">
-                                        <asp:Label ID="Label4" runat="server" Text="DHCP" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                        <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels, DHCP %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                         <asp:DropDownList ID="DHCPFilter" runat="server" CssClass="SearchDropDownList">
                                         </asp:DropDownList>
                                     </td>
                                     <td align="left" valign="bottom">
-                                        <asp:Label ID="Label5" runat="server" Text="Device Type" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                        <asp:Label ID="Label5" runat="server" Text="<%$Resources: SearchFieldLabels, DeviceType %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                         <asp:ListBox ID="DeviceTypeFilter" runat="server" CssClass="SearchDropDownList" SelectionMode="Multiple">
                                         </asp:ListBox>
                                     </td>
                                     <td align="right" valign="bottom">
                                         <asp:Panel ID="Panel3" runat="server" CssClass="SearchButtonPanel">
-                                            <ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
+                                            <ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" /></asp:Panel>
                                     </td>
                                 </tr>
                             </table>
@@ -70,9 +83,9 @@
                                     <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                         <ContentTemplate>
                                             <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                                <ccUI:ToolbarButton ID="AddDeviceButton" runat="server" SkinID="AddButton" OnClick="AddDeviceButton_Click" />
-                                                <ccUI:ToolbarButton ID="EditDeviceButton" runat="server" SkinID="EditButton" OnClick="EditDeviceButton_Click" />
-                                                <ccUI:ToolbarButton ID="DeleteDeviceButton" runat="server" SkinID="DeleteButton"
+                                                <ccUI:ToolbarButton ID="AddDeviceButton" runat="server" SkinID="<%$Image:AddButton%>" OnClick="AddDeviceButton_Click" />
+                                                <ccUI:ToolbarButton ID="EditDeviceButton" runat="server" SkinID="<%$Image:EditButton%>" OnClick="EditDeviceButton_Click" />
+                                                <ccUI:ToolbarButton ID="DeleteDeviceButton" runat="server" SkinID="<%$Image:DeleteButton%>"
                                                     OnClick="DeleteDeviceButton_Click" />
                                             </asp:Panel>
                                         </ContentTemplate>

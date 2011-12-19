@@ -13,24 +13,27 @@ using System;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
+using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security
 {
     class CustomFormAuthenticationModule : IHttpModule
     {
-        private bool _contextDisposed = false;
+        private bool _contextDisposed;
 
         #region IHttpModule Members
 
         private HttpApplication _context;
         public void Dispose()
         {
+        	AppDomain.CurrentDomain.DomainUnload-=CurrentDomain_DomainUnload;
+        	
             if (_context != null && !_contextDisposed)
             {
-                _context.AuthenticateRequest -= AuthorizeRequest;
+                _context.AuthorizeRequest -= AuthorizeRequest;
                 _context.Disposed -= ContextDisposed;
             }
         }
@@ -38,8 +41,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         public void Init(HttpApplication context)
         {
             _context = context;
+            AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
             _context.AuthorizeRequest += AuthorizeRequest;
             _context.Disposed += ContextDisposed;
+        }
+
+        static void CurrentDomain_DomainUnload(object sender, EventArgs e)
+        {
+            Platform.Log(LogLevel.Info, "App Domain Is Unloaded");
         }
 
         void ContextDisposed(object sender, EventArgs e)
@@ -49,6 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 
         static void AuthorizeRequest(object sender, EventArgs e)
         {
+            SessionInfo session=null;
             try
             {
                 if (HttpContext.Current.User.Identity.IsAuthenticated && HttpContext.Current.User.Identity is FormsIdentity)
@@ -64,7 +74,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                     String tokenId = fields[0];
                     String userDisplayName = fields[1];
                     SessionToken token = new SessionToken(tokenId, ticket.Expiration);
-                    SessionInfo  session = new SessionInfo(loginId.Name, userDisplayName, token);
+                    session = new SessionInfo(loginId.Name, userDisplayName, token);
 
                     // Initialize the session. This will throw exception if the session is no longer
                     // valid. For eg, time-out.
@@ -86,9 +96,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             }
             catch (SessionValidationException)
             {
-                // redirect to login screen
-                String error = String.Format("The current session is no longer valid.");
-                SessionManager.TerminateSession(error);
+                // SessionValidationException is thrown when the session id is invalid or the session already expired.
+                // If session already expired, 
+                if (session != null && session.Credentials.SessionToken.ExpiryTime < Platform.Time)
+                {
+                    SessionManager.SignOut(session);
+                }
+                else
+                {
+                    // redirect to login screen
+                    SessionManager.TerminateSession("The current session is no longer valid.", SR.MessageCurrentSessionNoLongerValid);
+                }
             }
             catch(Exception ex)
             {

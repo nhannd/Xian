@@ -20,8 +20,5 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 	{
 		[DataMember]
 		public List<ExternalPractitionerSummary> Duplicates;
-
-		[DataMember]
-		public List<OrderDetail> AffectedOrders;
 	}
 }

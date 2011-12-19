@@ -22,8 +22,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	public class RoiAreaAnalyzer : IRoiAnalyzer
 	{
 		private Units _units = Units.Centimeters;
+	    private RoiAnalyzerUpdateCallback _updateCallback;
 
-		/// <summary>
+	    /// <summary>
 		/// Gets or sets the base unit of measurement in which analysis is performed.
 		/// </summary>
 		public Units Units
@@ -83,5 +84,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 
 			return text;
 		}
+
+	    /// TODO (CR Nov 2011): remove
+        public void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback)
+        {
+            _updateCallback = callback;
+        }
 	}
 }

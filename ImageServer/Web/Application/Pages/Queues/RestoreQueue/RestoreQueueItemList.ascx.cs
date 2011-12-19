@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using Resources;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
@@ -260,11 +261,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                 {
                     if (RestoreQueueGrid.DataSource == null)
                     {
-                        message.Message = "Please enter search criteria to find studies.";
+                        message.Message = SR.RestoreQueuePleaseEnterSearchCriteria;
                     }
                     else
                     {
-                        message.Message = "No studies found matching the provided criteria.";
+                        message.Message = SR.NoRestoreQueueItemFound;
                     }
                 }
 

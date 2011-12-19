@@ -137,13 +137,14 @@ namespace ClearCanvas.ImageViewer
 
 			BuildLogicalWorkspace();
 			ValidateLogicalWorkspace();
-			LayoutPhysicalWorkspace();
-			FillPhysicalWorkspace();
+			LayoutAndFillPhysicalWorkspace();
 			
 			// Now, only after showing the "primary study", sort the image sets according to study order. (yes, this calls SortStudies)
 			SortImageSets();
 
-			ImageViewer.PhysicalWorkspace.Draw();
+            ImageViewer.PhysicalWorkspace.Draw();
+            ImageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+
 			OnLayoutCompleted();
 		}
 
@@ -153,7 +154,9 @@ namespace ClearCanvas.ImageViewer
 		protected virtual void OnLayoutCompleted()
 		{
 			_layoutCompleted = true;
-			ImageViewer.EventBroker.StudyLoaded += OnPriorStudyLoaded;
+            ImageViewer.EventBroker.StudyLoaded += OnPriorStudyLoaded;
+            ImageViewer.EventBroker.StudyLoadFailed += OnPriorStudyLoadFailed;
+            ImageViewer.EventBroker.OnLayoutCompleted();
 		}
 
 		#endregion
@@ -205,6 +208,19 @@ namespace ClearCanvas.ImageViewer
 
 			if (!AllowEmptyViewer)
 				throw new NoVisibleDisplaySetsException("The Layout operation has resulted in no images to be displayed.");
+		}
+
+		/// <summary>
+		/// Performs layout and fill of the physical workspace.
+		/// </summary>
+		/// <remarks>
+		/// Default implementation simply calls <see cref="LayoutPhysicalWorkspace"/> followed
+		/// by <see cref="FillPhysicalWorkspace"/>.
+		/// </remarks>
+		protected virtual void LayoutAndFillPhysicalWorkspace()
+		{
+			LayoutPhysicalWorkspace();
+			FillPhysicalWorkspace();
 		}
 
 		/// <summary>
@@ -280,11 +296,10 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		protected virtual IPatientData ReconcilePatient(Study study)
-		{
-			//The study tree naturally does the grouping that we need.
-			return new StudyRootStudyIdentifier(study.ParentPatient, study.GetIdentifier());
-		}
+        protected virtual IPatientData ReconcilePatient(IStudyRootData studyData)
+        {
+            return studyData;
+        }
 
 		/// <summary>
 		/// Creates a <see cref="DicomImageSetDescriptor"/> for the given <see cref="IStudyRootStudyIdentifier">study</see>.
@@ -301,8 +316,18 @@ namespace ClearCanvas.ImageViewer
 		{
 			return new ImageSet(CreateImageSetDescriptor(studyData));
 		}
-		
-		/// <summary>
+
+        /// <summary>
+        /// Updates the contents of the given <see cref="IImageSet"/> by populating it with <see cref="IDisplaySet"/>s created
+        /// from the given <see cref="Study"/>.
+        /// </summary>
+        protected virtual void FillImageSet(IImageSet imageSet, Study study)
+        {
+            foreach (Series series in study.Series)
+                UpdateImageSet(imageSet, series);
+        }
+
+	    /// <summary>
 		/// Updates the contents of the given <see cref="IImageSet"/> by populating it with <see cref="IDisplaySet"/>s created
 		/// from the given <see cref="Series"/>.
 		/// </summary>
@@ -373,34 +398,47 @@ namespace ClearCanvas.ImageViewer
 		private IStudyRootStudyIdentifier GetStudyIdentifier(Study study)
 		{
 			if (ReconcilePatientInfo)
-				return new StudyRootStudyIdentifier(ReconcilePatient(study), study.GetIdentifier());
+			{
+			    var studyIdentifier = study.GetIdentifier();
+                return new StudyRootStudyIdentifier(ReconcilePatient(studyIdentifier), studyIdentifier);
+			}
 
 			return study.GetIdentifier();
 		}
 
 		private void BuildFromStudy(Study study)
 		{
-			IImageSet imageSet = GetImageSet(study.StudyInstanceUid);
-			// Abort if image set has already been added
-			if (imageSet != null)
-				return;
+			IImageSet existing = GetImageSet(study.StudyInstanceUid);
+            if (existing != null)
+			{
+                var descriptor = (IDicomImageSetDescriptor)existing.Descriptor;
+                if (descriptor.LoadStudyError == null)
+                {
+                    // Abort if valid image set has already been added.
+                    return;
+                }
+			}
 
-			imageSet = CreateImageSet(GetStudyIdentifier(study));
-			if (imageSet.Uid != study.StudyInstanceUid)
-				throw new InvalidOperationException("ImageSet Uid must be the same as Study Instance Uid.");
+            var imageSet = CreateImageSet(GetStudyIdentifier(study));
+            if (imageSet.Uid != study.StudyInstanceUid)
+			    throw new InvalidOperationException("ImageSet Uid must be the same as Study Instance Uid.");
 
 			SortSeries(study.Series);
 
 			foreach (Series series in study.Series)
-			{
 				SortSops(series.Sops);
-				UpdateImageSet(imageSet, series);
-			}
 
-			if (imageSet.DisplaySets.Count == 0)
-				imageSet.Dispose();
-			else
-				AddImageSet(imageSet);
+            FillImageSet(imageSet, study);
+
+            if (existing == null)
+            {
+                AddImageSet(imageSet);
+            }
+            else
+            {
+                LogicalWorkspace.ImageSets[LogicalWorkspace.ImageSets.IndexOf(existing)] = imageSet;
+                existing.Dispose();
+            }
 		}
 
 		private void AddImageSet(IImageSet imageSet)
@@ -487,7 +525,22 @@ namespace ClearCanvas.ImageViewer
 			BuildFromStudy(study);
 		}
 
-		#region Disposal
+        private void OnPriorStudyLoadFailed(object sender, StudyLoadFailedEventArgs e)
+        {
+            bool notFoundError = e.Error is NotFoundLoadStudyException;
+            if (!notFoundError && (e.Error is LoadSopsException || e.Error is StudyLoaderNotFoundException))
+            {
+                if (null != GetImageSet(e.Study.StudyInstanceUid))
+                    return;
+
+                var reconciled = (ReconcilePatientInfo ? ReconcilePatient(e.Study) : e.Study) ?? e.Study;
+                var studyItem = new StudyRootStudyIdentifier(reconciled, e.Study);
+                ImageSetDescriptor descriptor = new DicomImageSetDescriptor(studyItem, e.Study.Server, e.Error);
+                AddImageSet(new ImageSet(descriptor));
+            }
+        }
+
+	    #region Disposal
 
 		/// <summary>
 		/// Implementation of <see cref="IDisposable"/>.
@@ -497,7 +550,8 @@ namespace ClearCanvas.ImageViewer
 			if (disposing && _imageViewer != null)
 			{
 				_imageViewer.EventBroker.StudyLoaded -= OnPriorStudyLoaded;
-				_imageViewer = null;
+                _imageViewer.EventBroker.StudyLoadFailed -= OnPriorStudyLoadFailed;
+                _imageViewer = null;
 			}
 		}
 

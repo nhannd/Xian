@@ -37,7 +37,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		protected static Dialect GetDialect(Configuration config)
+		public static Dialect GetDialect(Configuration config)
 		{
 			return Dialect.GetDialect(config.Properties);
 		}

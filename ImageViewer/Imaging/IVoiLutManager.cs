@@ -24,22 +24,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Implementors must not return null from the <see cref="IVoiLutInstaller.VoiLut"/> method.
 	/// </remarks>
 	/// <seealso cref="IVoiLutProvider"/>
-	/// <seealso cref="IComposableLut"/>
+	/// <seealso cref="IVoiLut"/>
 	public interface IVoiLutManager : IVoiLutInstaller, IMemorable
 	{
 		/// <summary>
 		/// Gets the currently installed Voi Lut.
 		/// </summary>
-		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
+		/// <returns>The Voi Lut as an <see cref="IVoiLut"/>.</returns>
 		[Obsolete("Use the VoiLut property instead.")]
-		IComposableLut GetLut();
+		IVoiLut GetLut();
 
 		/// <summary>
 		/// Installs a new Voi Lut.
 		/// </summary>
 		/// <param name="voiLut">The Lut to be installed.</param>
 		[Obsolete("Use the InstallVoiLut method instead.")]
-		void InstallLut(IComposableLut voiLut);
+		void InstallLut(IVoiLut voiLut);
 
 		/// <summary>
 		/// Toggles the state of the <see cref="IVoiLutInstaller.Invert"/> property.

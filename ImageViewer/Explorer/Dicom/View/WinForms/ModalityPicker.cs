@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 		}
 
+		[Localizable(true)]
 		public string LabelText
 		{
 			get { return _label.Text; }
@@ -149,16 +150,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		private void UpdateText()
 		{
-			string newText = "";
-			foreach (string checkedModality in _checkedModalities.Keys)
-			{
-				newText += checkedModality + @", ";
-			}
-
-			if (newText.Length > 0)
-				newText = newText.Remove(newText.Length - 2);
-
-			this._modalitiesString.Text = newText;
+			var items = new List<string>(_checkedModalities.Keys);
+			_modalitiesString.Text = string.Join(SR.FormatListSeparator, items.ToArray());
 		}
 
 		private void OnShowModalityListClick(object sender, EventArgs e)

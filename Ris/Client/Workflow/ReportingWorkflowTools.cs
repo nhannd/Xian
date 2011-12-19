@@ -238,11 +238,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					try
 					{
-						ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, null);
+						try
+						{
+							ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, null);
+						}
+						catch (FaultException<SupervisorValidationException>)
+						{
+							ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, GetSupervisorRef());
+						}
 					}
-					catch (FaultException<SupervisorValidationException>)
+					catch (Exception e)
 					{
-						ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, GetSupervisorRef());
+						ExceptionHandler.Report(e, this.Context.DesktopWindow);
 					}
 
 					this.Context.InvalidateFolders(typeof(Folders.Reporting.VerifiedFolder));

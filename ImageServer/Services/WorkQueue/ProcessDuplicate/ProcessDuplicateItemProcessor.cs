@@ -285,10 +285,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         private ImageSetDetails LoadDuplicateDetails()
         {
             IList<WorkQueueUid> uids = LoadAllWorkQueueUids();
-            ImageSetDetails details = new ImageSetDetails();
+            ImageSetDetails details = null;
             foreach(WorkQueueUid uid in  uids)
             {
                 DicomFile file = LoadDuplicateDicomFile(uid, true);
+
+                if (details == null)
+                    details = new ImageSetDetails(file.DataSet);
+
                 details.InsertFile(file);
             }
 

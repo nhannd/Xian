@@ -10,132 +10,91 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Net;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using System.Net;
 
 namespace ClearCanvas.Enterprise.Common.Setup
 {
 	/// <summary>
 	/// Connects to the enterprise server and imports settings groups, authority tokens, and authority groups.
 	/// </summary>
-    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class SetupApplication : IApplicationRoot
-    {
-        #region IApplicationRoot Members
+	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+	public class SetupApplication : IApplicationRoot
+	{
+		#region IApplicationRoot Members
 
-        public void RunApplication(string[] args)
-        {
-            SetupCommandLine cmdLine = new SetupCommandLine();
-            try
-            {
-                cmdLine.Parse(args);
+		public void RunApplication(string[] args)
+		{
+			var cmdLine = new SetupCommandLine();
+			try
+			{
+				cmdLine.Parse(args);
 
-				using(new AuthenticationScope(cmdLine.UserName, "setup", Dns.GetHostName(), cmdLine.Password))
+				using (new AuthenticationScope(cmdLine.UserName, "setup", Dns.GetHostName(), cmdLine.Password))
 				{
 					// first import the tokens, since the default groups will likely depend on these tokens
-                    if (cmdLine.ImportAuthorityTokens)
-                    {
-                        ImportAuthorityTokens(cmdLine.SysAdminGroup);
-                    }
+					if (cmdLine.ImportAuthorityTokens)
+					{
+						var addToGroups = string.IsNullOrEmpty(cmdLine.SysAdminGroup) ? new string[] { } : new[] { cmdLine.SysAdminGroup };
+						SetupHelper.ImportAuthorityTokens(addToGroups);
+					}
 
 					// import authority groups
-					if(cmdLine.ImportDefaultAuthorityGroups)
+					if (cmdLine.ImportDefaultAuthorityGroups)
 					{
-						ImportAuthorityGroups();
+						SetupHelper.ImportAuthorityGroups();
 					}
 
 					// import settings groups
-                    if (cmdLine.ImportSettingsGroups)
-                    {
-                        ImportSettingsGroups();
-                    }
+					if (cmdLine.ImportSettingsGroups)
+					{
+						ImportSettingsGroups();
+					}
 
 					if (cmdLine.MigrateSharedSettings)
 					{
 						MigrateSharedSettings(cmdLine.PreviousExeConfigFilename);
+					}
 				}
-            }
-            }
+			}
 			catch (CommandLineException e)
 			{
 				Console.WriteLine(e.Message);
 			}
-        }
-
-		private void MigrateSharedSettings(string previousExeConfigFilename)
-		{
-			foreach (SettingsGroupDescriptor group in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
-				SettingsMigrator.MigrateSharedSettings(group, previousExeConfigFilename);
 		}
 
-        #endregion
+		#endregion
+
+		private static void MigrateSharedSettings(string previousExeConfigFilename)
+		{
+			foreach (var group in SettingsGroupDescriptor.ListInstalledSettingsGroups(false))
+				SettingsMigrator.MigrateSharedSettings(group, previousExeConfigFilename);
+		}
 
 		/// <summary>
 		/// Import settings groups defined in local plugins.
 		/// </summary>
-        private static void ImportSettingsGroups()
-        {
-            List<SettingsGroupDescriptor> groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
-            Platform.GetService<Configuration.IConfigurationService>(
-                delegate(Configuration.IConfigurationService service)
-                {
-                    foreach (SettingsGroupDescriptor group in groups)
-                    {
-                        List<SettingsPropertyDescriptor> props = SettingsPropertyDescriptor.ListSettingsProperties(group);
-                        service.ImportSettingsGroup(
-                            new Configuration.ImportSettingsGroupRequest(group, props));
-                    }
-                });
-        }
-
-		/// <summary>
-		/// Import authority tokens defined in local plugins.
-		/// </summary>
-		private static void ImportAuthorityTokens(string sysAdminGroup)
+		private static void ImportSettingsGroups()
 		{
-			string[] addToGroups = string.IsNullOrEmpty(sysAdminGroup) ? new string[] { } : new string[] { sysAdminGroup };
+			var groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
 
-			AuthorityTokenDefinition[] tokens = AuthorityGroupSetup.GetAuthorityTokens();
+			foreach (var g in groups)
+			{
+				Platform.Log(LogLevel.Info, "Import settings group {0}, Version={1}, Type={2}", g.Name, g.Version.ToString(), g.AssemblyQualifiedTypeName);
+			}
 
-			List<AuthorityTokenSummary> summaries = CollectionUtils.Map<AuthorityTokenDefinition, AuthorityTokenSummary>(tokens,
-								delegate(AuthorityTokenDefinition t)
-								{
-									return new AuthorityTokenSummary(t.Token, t.Description);
-								});
-
-			Platform.GetService<IAuthorityGroupAdminService>(
-				delegate(IAuthorityGroupAdminService service)
+			Platform.GetService(
+				delegate(Configuration.IConfigurationService service)
 				{
-					service.ImportAuthorityTokens(
-						new ImportAuthorityTokensRequest(summaries, new List<string>(addToGroups)));
+					foreach (var group in groups)
+					{
+						var props = SettingsPropertyDescriptor.ListSettingsProperties(group);
+						service.ImportSettingsGroup(new Configuration.ImportSettingsGroupRequest(group, props));
+					}
 				});
 		}
 
-		/// <summary>
-		/// Import authority groups defined in local plugins.
-		/// </summary>
-		private static void ImportAuthorityGroups()
-		{
-			AuthorityGroupDefinition[] groups = AuthorityGroupSetup.GetDefaultAuthorityGroups();
-
-			Platform.GetService<IAuthorityGroupAdminService>(
-				delegate(IAuthorityGroupAdminService service)
-				{
-					service.ImportAuthorityGroups(
-						new ImportAuthorityGroupsRequest(
-							CollectionUtils.Map<AuthorityGroupDefinition, AuthorityGroupDetail>(groups,
-								delegate(AuthorityGroupDefinition g)
-								{
-									return new AuthorityGroupDetail(null, g.Name,
-										CollectionUtils.Map<string, AuthorityTokenSummary>(g.Tokens,
-											delegate(string t) { return new AuthorityTokenSummary(t, null); }));
-								})));
-				});
-		}
-    }
+	}
 }

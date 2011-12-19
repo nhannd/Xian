@@ -23,7 +23,6 @@
 }
 
 .multiSelectOptions {
-	width: 175px;
 	max-height: 300px;
 	margin-top: -1px;
 	overflow: auto;

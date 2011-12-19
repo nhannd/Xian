@@ -38,10 +38,22 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		private static IEnumerable<IComparable> GetCompareValues(Sop sop)
 		{
-			yield return sop.StudyInstanceUid;
-			yield return sop.SeriesInstanceUid;
+            //Group be common study level attributes
+            yield return sop.StudyInstanceUid;
+
+            //Group by common series level attributes
+            //This sorts "FOR PRESENTATION" images to the beginning (except in reverse, of course).
+            if (!sop.IsImage)
+                yield return 1;
+            else
+                yield return ((ImageSop)sop).PresentationIntentType == "FOR PRESENTATION" ? 0 : 1;
+
+            yield return sop.SeriesNumber;
+            yield return sop.SeriesDescription;
+            yield return sop.SeriesInstanceUid;
 
 			yield return sop.InstanceNumber;
+			yield return sop[DicomTags.AcquisitionNumber].GetInt32(0, 0);
 		}
 
 		/// <summary>

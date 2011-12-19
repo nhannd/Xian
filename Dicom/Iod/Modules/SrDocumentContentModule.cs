@@ -202,8 +202,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <value>The dicom sequence item.</value>
 		DicomSequenceItem IIodMacro.DicomSequenceItem
 		{
-			get { throw new NotSupportedException("The method or operation is not implemented."); }
-			set { throw new NotSupportedException("The method or operation is not implemented."); }
+			get { return DicomAttributeProvider as DicomSequenceItem; }
+			set { DicomAttributeProvider = value; }
 		}
 
 		#endregion

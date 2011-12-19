@@ -12,12 +12,10 @@
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer
 {
 	//NOTE: keep this internal for now, as I'm not too sure of their usefulness right now.
-
 	internal interface IImageSetFactory
 	{
 		void SetStudyTree(StudyTree studyTree);
@@ -25,17 +23,17 @@ namespace ClearCanvas.ImageViewer
 		IImageSet CreateImageSet(Study study);
 	}
 
-	internal abstract class ImageSetFactory : IImageSetFactory
+	internal class ImageSetFactory : IImageSetFactory
 	{
 		private StudyTree _studyTree;
 		private readonly IDisplaySetFactory _displaySetFactory;
 
-		public ImageSetFactory()
+	    public ImageSetFactory()
 			: this(new BasicDisplaySetFactory())
 		{
 		}
 
-		public ImageSetFactory(IDisplaySetFactory displaySetFactory)
+        public ImageSetFactory(IDisplaySetFactory displaySetFactory)
 		{
 			_displaySetFactory = displaySetFactory;
 		}
@@ -65,7 +63,7 @@ namespace ClearCanvas.ImageViewer
 
 			if (displaySets.Count > 0)
 			{
-				imageSet = new ImageSet(CreateImageSetDescriptor(study.GetIdentifier()));
+				imageSet = new ImageSet(CreateImageSetDescriptor(study));
 				
 				foreach (IDisplaySet displaySet in displaySets)
 					imageSet.DisplaySets.Add(displaySet);
@@ -76,17 +74,12 @@ namespace ClearCanvas.ImageViewer
 
 		protected virtual List<IDisplaySet> CreateDisplaySets(Study study)
 		{
-			List<IDisplaySet> displaySets = new List<IDisplaySet>();
-
-			foreach (Series series in study.Series)
-				displaySets.AddRange(_displaySetFactory.CreateDisplaySets(series));
-
-			return displaySets;
+		    return _displaySetFactory.CreateDisplaySets(study);
 		}
 
-		protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyIdentifier)
+        protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(Study study)
 		{
-			return new DicomImageSetDescriptor(studyIdentifier);
+			return new DicomImageSetDescriptor(study.GetIdentifier());
 		}
 	}
 }

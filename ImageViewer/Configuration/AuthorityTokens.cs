@@ -14,7 +14,7 @@ using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
 	internal class DefineAuthorityGroups : IDefineAuthorityGroups
 	{
 		#region IDefineAuthorityGroups Members
@@ -24,30 +24,40 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return new AuthorityGroupDefinition[]
             {
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
+                    DefaultAuthorityGroups.HealthcareAdministrators,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
 				   }),
 
 				new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
+                    DefaultAuthorityGroups.Technologists,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
+                    DefaultAuthorityGroups.Radiologists,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
+                    DefaultAuthorityGroups.RadiologyResidents,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
+                    DefaultAuthorityGroups.EmergencyPhysicians,
+                    false,
 				    new string[] 
 				    {
 						AuthorityTokens.Configuration.DefaultServers
@@ -60,10 +70,16 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 	public static class AuthorityTokens
 	{
+		[AuthorityToken(Description = "Allow publishing of locally created data to remote servers.")]
+		public const string Publishing = "Viewer/Publishing";
+
 		public static class Configuration
 		{
 			[AuthorityToken(Description = "Allow configuration of default servers.")]
 			public const string DefaultServers = "Viewer/Configuration/Default Servers";
+
+		    [AuthorityToken(Description = "Allow configuration of data publishing options.", Formerly = "Viewer/Administration/Key Images")]
+			public const string Publishing = "Viewer/Configuration/Publishing";
 		}
 	}
 }

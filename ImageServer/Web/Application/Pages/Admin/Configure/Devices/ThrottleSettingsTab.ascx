@@ -1,5 +1,19 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+<%@ Import Namespace="Resources" %>
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ThrottleSettingsTab.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.ThrottleSettingsTab" %>
+    
+    
 
 <script type="text/javascript">
     Sys.Application.add_load(page_load);
@@ -29,23 +43,22 @@
 
 <asp:Panel runat="server" CssClass="DeviceSettingThrottleTab-GroupPanel">
     <div class="DialogMessagePanel" style="width: 460px;">
-        Specify the maximum number of simultaneous connections Image Server can initiate
-        for this device.
+        <%=SR.AdminDevices_ThrottleSettings_Info %>
     </div>
     <table width="100%">
         <tr>
             <td>
-                <span style="white-space: nowrap">Number of Connections Allowed:</span>
+                <span style="white-space: nowrap"><%= InputLabels.AdminDevices_ThrottleSettings_NumConnectionsAllowed%></span>
             </td>
             <td>
                 <table>
                     <tr>
                         <td>
                             <asp:RadioButton runat="server" ID="UnlimitedCheckBox" GroupName="MaxConnection"
-                                Text="Unlimited" />
+                                Text="<%$Resources: InputLabels,AdminDevices_ThrottleSettings_Unlimited%>" />
                         </td>
                         <td>
-                            <asp:RadioButton runat="server" ID="LimitedCheckBox" GroupName="MaxConnection" Text="Limited" />
+                            <asp:RadioButton runat="server" ID="LimitedCheckBox" GroupName="MaxConnection" Text="<%$Resources: InputLabels,AdminDevices_ThrottleSettings_Limited%>" />
                         </td>
                         <td>
                             <table>
@@ -69,4 +82,4 @@
 <ccValidator:RangeValidator ID="MaxConnectionTextBoxValidator" runat="server" ConditionalCheckBoxID="LimitedCheckBox"
     ControlToValidate="MaxConnectionTextBox" InvalidInputIndicatorID="InvalidRangeIndicator"
     ValidationGroup="ThrottleSettingsValidationGroup" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"
-    MinValue="1" MaxValue="100" Text="The value must be between 1 and 100"></ccValidator:RangeValidator>
+    MinValue="1" MaxValue="100" Text="<%$Resources: InputValidation,AdminDevices_ThrottleSettings_InvalidNumOfConnections%>"></ccValidator:RangeValidator>

@@ -16,7 +16,7 @@ using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             {
                 foreach (DeviceTypeEnum t in deviceTypes)
                 {
-                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                    DeviceTypeFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
                 }
             }
             else
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 int count = 0;
                 foreach (DeviceTypeEnum t in deviceTypes)
                 {
-                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                    DeviceTypeFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
                     DeviceTypeFilter.Items[count].Selected = typeItems[count].Selected;
                     count++;
                 }

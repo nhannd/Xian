@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (String.IsNullOrEmpty(partitionFolder))
             {
-                ErrorMessage = "Folder must be specified";
+                ErrorMessage = ValidationErrors.PartitionFolderCannotBeEmpty;
                 return false;
             }
 
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (list.Count > 0)
             {
-                ErrorMessage = String.Format("Partition Folder '{0}' is already in use", partitionFolder);
+                ErrorMessage = String.Format(ValidationErrors.PartitionFolderIsInUse, partitionFolder);
                 return false;
             }
 

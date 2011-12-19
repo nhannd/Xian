@@ -11,9 +11,10 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -238,21 +239,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         private void ReprocessWorkQueueItem(Model.WorkQueue item)
         {
-            var controller = new WorkQueueController();
-            if (controller.ReprocessWorkQueueItem(item))
+            try
             {
-                MessageBox.Message = SR.ReprocessOK;
-                MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
-                MessageBox.Show();
+                var controller = new WorkQueueController();
+                if (controller.ReprocessWorkQueueItem(item))
+                {
+                    MessageBox.Message = SR.ReprocessOK;
+                    MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+                    MessageBox.Show();
+                }
+                else
+                {
+                    ShowErrorMessage(SR.ReprocessFailed);
+                }
             }
-            else
+            catch(InvalidStudyStateOperationException  ex)
             {
-                MessageBox.Message = SR.ReprocessFailed;
-                MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
-                MessageBox.Show();
+                ShowErrorMessage(ex.Message);
             }
         }
 
+        private void ShowErrorMessage(string error)
+        {
+            MessageBox.Message = error;
+            MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
+            MessageBox.Show();
+        }
         private void LoadWorkQueueItemKey()
         {
             string requestedGuid = Page.Request.QueryString[SELECTED_WORKQUEUES_UIDS_KEY];

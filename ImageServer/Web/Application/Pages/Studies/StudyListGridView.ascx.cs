@@ -15,6 +15,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
@@ -205,6 +206,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                             row.Attributes.Add("canviewimagesreason", reason);
                         }
 
+                        var status = (Label) row.FindControl("StudyStatusEnum");
+                        status.Text = ServerEnumDescription.GetLocalizedDescription(study.StudyStatusEnum);
 
                         LinkButton button = (LinkButton) row.FindControl("ReconcileLinkButton");
                         Label label = (Label)row.FindControl("SeparatorLabel");
@@ -235,7 +238,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 														 "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
 									                     study.ThePartition.Key;
 									button.Visible = true;
-									button.Text = study.QueueStudyStateEnum.Description;
+									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
 									label.Visible = true;
 								}								
 							}
@@ -247,7 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 														 "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
 														 study.ThePartition.Key;
 									button.Visible = true;
-									button.Text = study.QueueStudyStateEnum.Description;
+									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
 									label.Visible = true;									
 								}
 							}
@@ -259,7 +262,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 									                     "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
 									                     study.ThePartition.Key;
 									button.Visible = true;
-									button.Text = study.QueueStudyStateEnum.Description;
+									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
 									label.Visible = true;
 								}
 							}
@@ -281,7 +284,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
                 if (message != null)
                 {
-                    message.Message = TheGrid.DataSource == null ? "Please enter search criteria to find studies." : "No studies found matching the provided criteria.";
+                    message.Message = TheGrid.DataSource == null ? SR.PleaseEnterSearchCriteriaToFindStudies: SR.NoStudiesFound;
                 }
             } 
         }

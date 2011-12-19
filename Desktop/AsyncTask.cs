@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -76,7 +77,7 @@ namespace ClearCanvas.Desktop
 					{
 						context.Error(e);
 					}
-				}, false);
+				}, false) {ThreadUICulture = ThreadUICulture, ThreadCulture = ThreadCulture};
 
 			_backgroundTask.Terminated += TerminatedEventHandler;
 			_backgroundTask.Run();
@@ -105,6 +106,20 @@ namespace ClearCanvas.Desktop
 		{
 			Platform.Log(LogLevel.Error, e);
 		}
+
+		#region Thread Culture Support
+
+		/// <summary>
+		/// Gets or sets the culture for the asynchronous task. If NULL, the culture will not be modified.
+		/// </summary>
+		public CultureInfo ThreadCulture { get; set; }
+
+		/// <summary>
+		/// Gets or sets the culture used by the Resource Manager to look up culture-specific resources for the asynchronous task. If NULL, the culture will not be modified.
+		/// </summary>
+		public CultureInfo ThreadUICulture { get; set; }
+
+		#endregion
 
 		#region IDisposable Members
 

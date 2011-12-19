@@ -15,10 +15,11 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
+using ClearCanvas.Web.Enterprise.Admin;
+using Resources;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users
@@ -102,10 +103,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             if (Page.IsPostBack == false)
             {
-                using (AuthorityManagement service = new AuthorityManagement())
+                using (var service = new AuthorityManagement())
                  {
                     IList<AuthorityGroupSummary> list = service.ListAllAuthorityGroups();
-                    IList<ListItem> items = CollectionUtils.Map<AuthorityGroupSummary, ListItem>(
+                    IList<ListItem> items = CollectionUtils.Map(
                         list,
                         delegate(AuthorityGroupSummary summary)
                         {
@@ -114,7 +115,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                         );
                     UserGroupListBox.Items.AddRange(CollectionUtils.ToArray(items));
                 };
-
             }
             else
             {
@@ -185,6 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
 
             User.DisplayName = DisplayName.Text;
+            User.EmailAddress = EmailAddressId.Text;
 
             User.UserGroups.Clear();
             foreach (ListItem item in UserGroupListBox.Items)
@@ -194,8 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                     User.UserGroups.Add(new UserGroup(
                         item.Value, item.Text));
                 }
-            } 
-  
+            }
         }
 
         #endregion Protected methods
@@ -206,9 +206,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             if (EditMode)
             {
-                ModalDialog1.Title = App_GlobalResources.SR.DialogEditUserTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                ModalDialog1.Title = SR.DialogEditUserTitle;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
+
                 UserLoginId.ReadOnly = true;
                 UserLoginId.Style.Add("Color", "#999999");
                 EnabledRow.Visible = true;
@@ -216,6 +217,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 OriginalUserLoginId.Value = User.UserName;
                 DisplayName.Text = User.DisplayName;
                 UserEnabledCheckbox.Checked = User.Enabled;
+                EmailAddressId.Text = User.EmailAddress;
 
                 List<UserGroup> groups = User.UserGroups;
 
@@ -227,9 +229,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
             else
             {
-                ModalDialog1.Title = App_GlobalResources.SR.DialogAddUserTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                ModalDialog1.Title = SR.DialogAddUserTitle;
+                OKButton.Visible = true;
+                UpdateButton.Visible = false;
+                
                 EnabledRow.Visible = false;
                 UserLoginId.ReadOnly = false;
                 UserLoginId.Style.Add("Color", "#000000");
@@ -242,7 +245,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 UserLoginId.Text = string.Empty;
                 OriginalUserLoginId.Value = string.Empty;
                 DisplayName.Text = string.Empty;
-                UserEnabledCheckbox.Checked = false;
+                EmailAddressId.Text = string.Empty; 
+                UserEnabledCheckbox.Checked = false;                
                 UserGroupListBox.SelectedIndex = -1;
             }
         }

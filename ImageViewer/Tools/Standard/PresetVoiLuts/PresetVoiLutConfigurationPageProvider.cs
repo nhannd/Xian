@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 			if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
-				listPages.Add(new ConfigurationPage<PresetVoiLutConfigurationComponent>("TitleWindowLevel"));
+				listPages.Add(new ConfigurationPage<PresetVoiLutConfigurationComponent>("TitleTools/TitleWindowLevel"));
 			return listPages.AsReadOnly();
 		}
 

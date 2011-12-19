@@ -58,19 +58,21 @@ namespace ClearCanvas.ImageViewer
 			string message;
 			if (e is InUseLoadStudyException)
 			{
-				message = SR.MessageStudyInUse;
+                message = SR.MessageLoadStudyFailedInUse;
 			}
 			else if (e is NearlineLoadStudyException)
 			{
-				message = SR.MessageStudyNearline;
+				message = ((NearlineLoadStudyException) e).IsStudyBeingRestored
+                            ? SR.MessageLoadStudyFailedNearline
+                            : String.Format("{0}  {1}", SR.MessageLoadStudyFailedNearlineNoRestore, SR.MessageContactPacsAdmin);
 			}
 			else if (e is OfflineLoadStudyException)
 			{
-				message = SR.MessageStudyOffline;
+                message = SR.MessageLoadStudyFailedOffline;
 			}
 			else if (e is NotFoundLoadStudyException)
 			{
-				message = SR.MessageStudyNotFound;
+                message = SR.MessageLoadStudyFailedNotFound;
 			}
 			else
 			{
@@ -218,6 +220,12 @@ namespace ClearCanvas.ImageViewer
 			: base(studyInstanceUid, message, innerException)
 		{
 		}
+
+		/// <summary>
+		/// Indicates whether or not the server is going to automatically restore
+		/// the nearline study due to the request ... or that just so happens to already be the case.
+		/// </summary>
+		public bool IsStudyBeingRestored { get; set; }
 
 		private static string FormatMessage(string studyInstanceUid)
 		{

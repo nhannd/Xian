@@ -1,9 +1,24 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
+
 <%@ Import namespace="Microsoft.JScript"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
+
+
 
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.Helpers" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeleteSeriesConfirmDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteSeriesConfirmDialog" %>
+<%@ Import Namespace="Resources"%>
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="<%$ Resources:Titles, DeleteSeriesConfirmDialogTitle %>" Width="800px">
     <ContentTemplate>
@@ -55,18 +70,12 @@
                                         <HeaderTemplate>
                                             <table  cellspacing="0" width="100%" class="DeleteStudiesConfirmTable">
                                                 <tr>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader" align="Center">
-                                                        Series #</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader" align="center">
-                                                        Modality</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Description</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader" align="Center">
-                                                        Instances</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Series Instance UID</th>
-                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                        Performed On</th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader" align="Center"><%= ColumnHeaders.SeriesNumber %></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader" align="center"><%= ColumnHeaders.Modality%></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.SeriesDescription%></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader" align="Center"><%= ColumnHeaders.Instances%></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.SeriesInstanceUID%></th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader"><%= ColumnHeaders.PerformedOn%></th>
                                                 </tr>
                                         </HeaderTemplate>
                                         <ItemTemplate>
@@ -109,7 +118,7 @@
                     
                     <tr valign="top">
                         <td>
-                            <asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel" Text="Reason:"></asp:Label>                            
+                            <asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel" Text="<%$ Resources: Labels, DeleteSeriesConfirmDialog_Reason %>"></asp:Label>                            
                         </td>
                         <td>
                              <table cellpadding="0" cellspacing="0">
@@ -125,7 +134,7 @@
                    <tr>
                         <td valign="top">
                             <asp:Label ID="Label3" runat="server" CssClass="DialogTextBoxLabel" 
-                                            Text='Comment:'></asp:Label> 
+                                            Text="<%$ Resources: Labels, DeleteSeriesConfirmDialog_Comment %>"></asp:Label> 
                              
                         </td>
                         <td>
@@ -145,7 +154,7 @@
                     <tr id="ReasonSavePanel" runat="server">
                         <td>
                             <asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel" 
-                                                Text="Save reason as:"></asp:Label> 
+                                                Text="<%$ Resources: Labels, DeleteSeriesConfirmDialog_SaveReasonAs %>"></asp:Label> 
                                  
                         </td>
                         <td>
@@ -169,9 +178,9 @@
             <tr align="right">
                 <td>
                     <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                        <ccUI:ToolbarButton ID="DeleteSeriesButton" runat="server" SkinID="OKButton" 
+                        <ccUI:ToolbarButton ID="DeleteSeriesButton" runat="server" SkinID="<%$Image:OKButton%>" 
                            OnClick="DeleteSeriesButton_Clicked" ValidationGroup="SeriesGroup" />
-                        <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton"
+                        <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="<%$Image:CancelButton%>"
                             OnClick="CancelButton_Clicked" />
                     </asp:Panel>
                 </td>
@@ -181,14 +190,14 @@
        <ccValidator:ConditionalRequiredFieldValidator ID="CommentValidator" runat="server"
                                                 ControlToValidate="Comment" InvalidInputIndicatorID="InvalidCommentIndicator" 
                                                 ValidationGroup="SeriesGroup"
-                                                Text="You must provide a comment about the reason for deleting the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
+                                                Text="<%$Resources: InputValidation, DeleteSeriesConfirmDialog_MissingComment %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
        <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
                                                 ControlToValidate="ReasonListBox" InvalidInputIndicatorID="InvalidReasonIndicator" 
                                                 ValidationGroup="SeriesGroup"
-                                                Text="You must specify the reason for deleting the studies for future auditing purposes." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
+                                                Text="<%$Resources: InputValidation,DeleteSeriesConfirmDialog_MissingReason %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>
        <ccValidator:ConditionalRequiredFieldValidator ID="SaveReasonAsNameValidator" runat="server"
                                                 ControlToValidate="SaveReasonAsName" InvalidInputIndicatorID="InvalidSaveReasonAsNameInputIndicator" 
                                                 ValidationGroup='SeriesGroup'
-                                                Text="You must specify a name for the reason." Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>           
+                                                Text="<%$Resources: InputValidation,DeleteSeriesConfirmDialog_MissingName %>" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"></ccValidator:ConditionalRequiredFieldValidator>           
     </ContentTemplate>
 </ccAsp:ModalDialog>

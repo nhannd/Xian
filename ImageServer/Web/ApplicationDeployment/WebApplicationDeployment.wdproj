@@ -2,6 +2,20 @@
   Microsoft Visual Studio 2005 Web Deployment Project 
   http://go.microsoft.com/fwlink/?LinkId=55111
 --><Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+
+  <Choose>
+    <When Condition="$(DistributionBuild)">
+      <PropertyGroup>
+        <DeploymentOutputDir>$(DistributionDir)\Web</DeploymentOutputDir>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DeploymentOutputDir>.\$(Configuration)</DeploymentOutputDir>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -14,32 +28,28 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>.\Debug</OutputPath>
+    <OutputPath>$(DeploymentOutputDir)</OutputPath>
     <EnableUpdateable>true</EnableUpdateable>
-    <UseMerge>false</UseMerge>
-    <SingleAssemblyName>
-    </SingleAssemblyName>
+    <UseMerge>true</UseMerge>
+    <SingleAssemblyName>ClearCanvas.ImageServer.Web.Application.Deployment</SingleAssemblyName>
     <VirtualDirectoryAlias>
     </VirtualDirectoryAlias>
     <ReplaceExistingVirtualDirectory>true</ReplaceExistingVirtualDirectory>
     <ContentAssemblyName>
     </ContentAssemblyName>
-    <AssemblyPrefixName>
-    </AssemblyPrefixName>
     <UseFixedNames>true</UseFixedNames>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
-    <OutputPath>.\Release</OutputPath>
+    <OutputPath>$(DeploymentOutputDir)</OutputPath>
     <EnableUpdateable>true</EnableUpdateable>
-    <UseMerge>false</UseMerge>
-    <SingleAssemblyName>
-    </SingleAssemblyName>
+    <UseMerge>true</UseMerge>
+    <SingleAssemblyName>ClearCanvas.ImageServer.Web.Application.Deployment</SingleAssemblyName>
     <UseFixedNames>true</UseFixedNames>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WebDeployment\v9.0\Microsoft.WebDeployment.targets"/>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WebDeployment\v9.0\Microsoft.WebDeployment.targets"/>
   <ItemGroup>
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\.svn\**\*.*;$(SourceWebPhysicalPath)\**\.svn\**\*.*"/>
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\*.pdb"/>
@@ -50,7 +60,13 @@
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Old_App_Code"/>
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Builds\**\*.*"/>
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\logs\**\*.*"/>
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\bin\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\bin\BilinearInterpolation.dll"/>
   </ItemGroup>
+  <ItemGroup>
+    <IncludeInDeployment Include="$(SourceWebPhysicalPath)\bin\BilinearInterpolation.dll"/>
+    <IncludeInDeployment Include="$(SourceWebPhysicalPath)\bin\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+  </ItemGroup> 
   <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <WebConfigReplacementFiles Include="ConnectionStrings.config">
       <Section>connectionStrings</Section>
@@ -60,13 +76,16 @@
        Other similar extension points exist, see Microsoft.WebDeployment.targets.
   -->
   <Target Name="BeforeBuild">
-  </Target>
+		<RemoveDir Directories="$(OutputPath)"/>
+	</Target>
   <Target Name="BeforeMerge">
   </Target>
   <Target Name="AfterMerge">
   </Target>
   <Target Name="AfterBuild">
-    <Message Text="Cleaning up deploy folder...."/>
+    <Message Text="Cleaning up...."/>
     <RemoveDir Directories="$(OutputPath)\obj;$(OutputPath)\Builds;$(OutputPath)\Old_App_Code;$(OutputPath)\Properties"/>
+    <RemoveDir Directories="Source;TempBuildDir"/>
+    <Copy SourceFiles="@(IncludeInDeployment)" DestinationFolder="$(DeploymentOutputDir)\bin" SkipUnchangedFiles="false" />
   </Target>
 </Project>

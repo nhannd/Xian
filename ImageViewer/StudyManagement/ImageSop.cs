@@ -95,10 +95,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public virtual string AnatomicalOrientationType
 		{
-			get { return this[DicomTags.AnatomicalOrientationType].ToString(); }
+			get
+			{
+			    return this[DicomTags.AnatomicalOrientationType].ToString();
+			}
 		}
 
 		#endregion
+
+        #region DX Series Module
+
+        /// <summary>
+        /// Gets the Anatomical Orientation Type.
+        /// </summary>
+        public virtual string PresentationIntentType
+        {
+            get
+            {
+                return this[DicomTags.PresentationIntentType].ToString();
+            }
+        }
+
+        #endregion
 
 		#region General Image Module
 

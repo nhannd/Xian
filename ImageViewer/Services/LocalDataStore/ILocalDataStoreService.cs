@@ -37,7 +37,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		/// regardless of the retrieve level, which is why the <see cref="RetrieveStudyInformation"/> 
 		/// object is passed as a parameter.
 		/// </summary>
-		/// </summary>
 		/// <param name="information">information about the study retrieval</param>
 		[OperationContract]
 		void RetrieveStarted(RetrieveStudyInformation information);

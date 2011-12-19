@@ -19,7 +19,7 @@ using ClearCanvas.Server.ShredHost;
 namespace ClearCanvas.ImageServer.Services.Common.Shreds
 {
     /// <summary>
-    /// Plugin to handle streaming request for the ImageServer.
+    /// Plugin to host ImageServer-specific web services.
     /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
     public class RemoteServicesServer : WcfShred
@@ -73,12 +73,12 @@ namespace ClearCanvas.ImageServer.Services.Common.Shreds
 
         public override string GetDisplayName()
         {
-            return "Remote Services Server";
+            return SR.RemoteImageServerServicesServer;
         }
 
         public override string GetDescription()
         {
-            return "Provide remote services to clients.";
+            return SR.RemoteImageServerServicesServerDescription;
         }
 
         #endregion

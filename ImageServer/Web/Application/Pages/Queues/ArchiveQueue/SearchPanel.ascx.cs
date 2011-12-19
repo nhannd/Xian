@@ -22,6 +22,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -115,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
                            
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, delegate { return ArchiveQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, delegate { return ArchiveQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             ArchiveQueueItemList.Pager = GridPagerTop;
 
             MessageBox.Confirmed += delegate(object data)
@@ -161,9 +162,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             int prevSelectedIndex = StatusFilter.SelectedIndex;
             StatusFilter.Items.Clear();
-            StatusFilter.Items.Add(new ListItem("All", "All"));
+            StatusFilter.Items.Add(new ListItem(SR.All, "All"));
             foreach (ArchiveQueueStatusEnum s in statusItems)
-                StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
+                StatusFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(s), s.Lookup));
             StatusFilter.SelectedIndex = prevSelectedIndex;
 
             DeleteItemButton.Roles = AuthorityTokens.ArchiveQueue.Delete;
@@ -200,14 +201,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             if (items != null && items.Count>0)
             {
-                if (items.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleArchiveQueueDelete);
-                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleArchiveQueueDelete);
+                if (items.Count > 1) MessageBox.Message = string.Format(SR.MultipleArchiveQueueDelete);
+                else MessageBox.Message = string.Format(SR.SingleArchiveQueueDelete);
 
                 MessageBox.Message += "<table style=\"border: solid #CCCCCC 2px; margin-top: 5px;\">";
                 foreach (Model.ArchiveQueue item in items)
                 {
-                    MessageBox.Message += String.Format("<tr><td style=\"font-weight: bold; color: #618FAD\">Study Instance Uid:</td><td style=\"font-weight: normal; color: black;\">{0}</td></tr>", 
-                                    StudyStorage.Load(item.StudyStorageKey).StudyInstanceUid);
+                    MessageBox.Message += String.Format("<tr><td style=\"font-weight: bold; color: #618FAD\">{0}:</td><td style=\"font-weight: normal; color: black;\">{1}</td></tr>", 
+                        SR.StudyInstanceUID,            
+                        StudyStorage.Load(item.StudyStorageKey).StudyInstanceUid);
                 }
                 MessageBox.Message += "</table>";
 

@@ -1333,12 +1333,22 @@ namespace ClearCanvas.Dicom.Tests
                 attrib = CreateAttribute();
                 try
                 {
-                    attrib.SetStringValue("200010");
-                    Assert.Fail("Above statement should throw exception: must be at least 8 characters"); // NOTE: This is our implementation only, standard doesn't enforce this.
+                    attrib.SetStringValue("2000");
                 }
                 catch (DicomDataException e)
                 {
-                    Assert.AreEqual(0,  attrib.Count);
+                    Assert.Fail("Above statement should succeed; Date/Time values can have trailing null components except for the year.");
+                }
+
+                attrib = CreateAttribute();
+                try
+                {
+                    attrib.SetStringValue("200");
+                    Assert.Fail("Above statement should fail; Date/Time values can have trailing null components except for the year.");
+                }
+                catch (DicomDataException e)
+                {
+                    Assert.AreEqual(0, attrib.Count);
                     Assert.AreEqual(0, attrib.StreamLength);
                 }
 

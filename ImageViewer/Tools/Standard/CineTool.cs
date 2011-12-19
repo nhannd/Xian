@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -9,8 +9,11 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
@@ -25,18 +28,43 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class CineTool : ImageViewerTool
 	{
-		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
+		[ThreadStatic]
+		private static Dictionary<IDesktopWindow, IShelf> _shelves;
+		[ThreadStatic]
+		private static Dictionary<IImageViewer, CineTool> _tools;
+
+		private SynchronizationContext _synchronizationContext;
 
 		public CineTool() {}
+
+		private static Dictionary<IDesktopWindow, IShelf> Shelves
+		{
+			get
+			{
+				if (_shelves == null)
+					_shelves = new Dictionary<IDesktopWindow, IShelf>();
+				return _shelves;
+			}	
+		}
+
+		private static Dictionary<IImageViewer, CineTool> Tools
+		{
+			get
+			{
+				if (_tools == null)
+					_tools = new Dictionary<IImageViewer, CineTool>();
+				return _tools;
+			}
+		}
 
 		public void Activate()
 		{
 			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
 
 			// check if a layout component is already displayed
-			if (_shelves.ContainsKey(desktopWindow))
+			if (Shelves.ContainsKey(desktopWindow))
 			{
-				_shelves[desktopWindow].Activate();
+				Shelves[desktopWindow].Activate();
 			}
 			else
 			{
@@ -57,8 +85,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private static void LaunchShelf(IDesktopWindow desktopWindow, IApplicationComponent component, ShelfDisplayHint shelfDisplayHint)
 		{
 			IShelf shelf = ApplicationComponent.LaunchAsShelf(desktopWindow, component, SR.TitleCine, "Cine", shelfDisplayHint);
-			_shelves[desktopWindow] = shelf;
-			_shelves[desktopWindow].Closed += OnShelfClosed;
+			Shelves[desktopWindow] = shelf;
+			Shelves[desktopWindow].Closed += OnShelfClosed;
 		}
 
 		private static void OnShelfClosed(object sender, ClosedEventArgs e)
@@ -73,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			IShelf shelf = (IShelf) sender;
 			shelf.Closed -= OnShelfClosed;
-			_shelves.Remove(shelf.DesktopWindow);
+			Shelves.Remove(shelf.DesktopWindow);
 		}
 	}
 }

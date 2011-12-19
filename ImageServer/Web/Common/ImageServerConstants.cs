@@ -9,6 +9,9 @@
 
 #endregion
 
+using System.Globalization;
+using System.Threading;
+
 public class ImageServerConstants
     {
         #region GridViewPagerPosition enum
@@ -59,6 +62,27 @@ public class ImageServerConstants
 
         public class ImageURLs
         {
+            private static string LocalizedRootImageUrl
+            {
+                get
+                {
+                    var culture = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("en")
+                        ? "" 
+                        : Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+                    return string.Format("~/App_Themes/{0}/{1}/images/", Theme, culture);
+                }
+            }
+
+            public static string IdeographyName
+            {
+                get { return LocalizedRootImageUrl + "Indicators/IdeographicName.gif"; }
+            }
+
+            public static string PhoneticName
+            {
+                get { return LocalizedRootImageUrl + "Indicators/PhoneticName.gif"; }
+            }
+
             public const string AddButtonDisabled = "images/Buttons/AddDisabled.png";
             public const string AddButtonEnabled = "images/Buttons/AddEnabled.png";
             public const string AddButtonHover = "images/Buttons/AddHover.png";
@@ -128,12 +152,6 @@ public class ImageServerConstants
             public static readonly string WebViewerPagerPreviousEnabled =
                 string.Format("~/Pages/WebViewer/Images/WebViewerPagerPreviousEnabled.png", Theme);
 
-            public static readonly string IdeographyName =
-                string.Format("~/App_Themes/{0}/images/Indicators/IdeographicName.gif", Theme);
-
-            public static readonly string PhoneticName =
-                string.Format("~/App_Themes/{0}/images/Indicators/PhoneticName.gif", Theme);
-
             public static readonly string QueryFeature =
                 string.Format("~/App_Themes/{0}/images/Indicators/QueryFeature.png", Theme);
 
@@ -158,12 +176,14 @@ public class ImageServerConstants
 
         public class PageURLs
         {
+            public const string AboutPage = "~/Pages/Help/About.aspx";
             public const string AdminUserPage = "~/Pages/Admin/UserManagement/Users/Default.aspx";
             public const string ApplicationLog = "~/Pages/Admin/ApplicationLog/Default.aspx";
             public const string ArchiveQueuePage = "~/Pages/Queues/ArchiveQueue/Default.aspx";
             public const string AuthorizationErrorPage = "~/Pages/Error/AuthorizationErrorPage.aspx";
             public const string BarChartPage = "~/Pages/Common/BarChart.aspx?pct={0}&high={1}&low={2}";
             public const string CookiesErrorPage = "~/Pages/Error/CookiesRequired.aspx";
+            public const string DashboardPage = "~/Pages/Admin/Dashboard/Default.aspx";
             public const string ErrorPage = "~/Pages/Error/ErrorPage.aspx";
             public const string JavascriptErrorPage = "~/Pages/Error/JavascriptRequired.aspx";
             public const string LoginPage = "~/Pages/Login/Default.aspx";
@@ -239,6 +259,7 @@ public class ImageServerConstants
             public const string ListStudies = "liststudies";
             public const string AeTitle = "aetitle";
             public const string ApplicationName = "application";
+            public const string Language = "Language";
         }
         	
         #endregion

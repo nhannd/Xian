@@ -64,27 +64,42 @@ namespace ClearCanvas.ImageViewer.TestTools
 		private void ChangeToSyntax(TransferSyntax syntax)
 		{
 			string[] files = BuildFileList();
-			var args = new SelectFolderDialogCreationArgs() {AllowCreateNewFolder = true, Prompt = "Select output folder" };
+			var args = new SelectFolderDialogCreationArgs
+			           	{
+			           		Path = GetDirectoryOfFirstPath(),
+							AllowCreateNewFolder = true, 
+							Prompt = "Select output folder"
+			           	};
+
 			var result = base.Context.DesktopWindow.ShowSelectFolderDialogBox(args);
 			if (result.Action != DialogBoxAction.Ok)
 				return;
-			
-			try
+
+			foreach (string file in files)
 			{
-				foreach (string file in files)
+				try
 				{
 					DicomFile dicomFile = new DicomFile(file);
 					dicomFile.Load();
 					dicomFile.ChangeTransferSyntax(syntax);
-					string fileName = System.IO.Path.Combine(result.FileName, dicomFile.MediaStorageSopInstanceUid);
-					fileName += ".dcm";
+					string sourceFileName = System.IO.Path.GetFileNameWithoutExtension(file);
+					string fileName = System.IO.Path.Combine(result.FileName, sourceFileName);
+					fileName += ".compressed.dcm";
 					dicomFile.Save(fileName);
 				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, Context.DesktopWindow);
+				}
 			}
-			catch(Exception e)
-			{
-				ExceptionHandler.Report(e, Context.DesktopWindow);
-			}
+		}
+
+		private string GetDirectoryOfFirstPath()
+		{
+			foreach (string path in Context.SelectedPaths)
+				return System.IO.Path.GetDirectoryName(path);
+
+			return null;
 		}
 
 		private string[] BuildFileList()

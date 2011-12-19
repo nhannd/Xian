@@ -17,6 +17,7 @@ using System.Xml;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
@@ -111,8 +112,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             }
 
             ArchiveTypeDropDownList.Items.Clear();
-            ArchiveTypeDropDownList.Items.Add(new ListItem("HSM Archive", "HsmArchive"));
 
+            foreach (ArchiveTypeEnum archiveTypeEnum in ArchiveTypeEnum.GetAll())
+            {
+                ArchiveTypeDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(archiveTypeEnum), archiveTypeEnum.Lookup));
+            }
+            
         }
 
 
@@ -155,20 +160,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             // SkinID cannot be set dynamically after Page_PreInit.
             if (EditMode)
             {
-                ModalDialog.Title = App_GlobalResources.Titles.EditPartitionArchiveTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                ModalDialog.Title = Titles.EditPartitionArchiveTitle;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
             }
             else
             {
-                ModalDialog.Title = App_GlobalResources.Titles.AddPartitionArchiveTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                ModalDialog.Title = Titles.AddPartitionArchiveTitle;
+                OKButton.Visible = true;
+                UpdateButton.Visible = false;
             }
 
             if (PartitionArchive == null)
             {
-                Description.Text = "Partition Archive Name";
+                Description.Text = SR.AdminPartitionArchive_AddEditDialog_ArchiveNameDefaultText;
                 ArchiveDelay.Text = "12";
                 EnabledCheckBox.Checked = true;
                 ReadOnlyCheckBox.Checked = false;
@@ -233,11 +238,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             {
                 if (EditMode)
                 {
-                    ModalDialog.Title = App_GlobalResources.Titles.EditPartitionArchiveTitle;
+                    ModalDialog.Title = Titles.EditPartitionArchiveTitle;
                 }
                 else
                 {
-                    ModalDialog.Title = App_GlobalResources.Titles.AddPartitionArchiveTitle;
+                    ModalDialog.Title = Titles.AddPartitionArchiveTitle;
                 }
             }
 

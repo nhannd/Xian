@@ -10,13 +10,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Policy;
-using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.ServiceModel.Security;
-using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 {
@@ -48,9 +44,26 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 			// establish endpoint
 			host.AddServiceEndpoint(args.ServiceContract, binding, "");
 
+#if DEBUG
+			// We need to expose the metadata in order to generate client proxy code for some service
+			// used in applications that cannot reference any CC assemblies.
+            if (host.Description.Behaviors.Find<ServiceMetadataBehavior>() == null)
+            {
+                ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
+                smb.HttpGetEnabled = true;
+                smb.HttpGetUrl = new Uri(string.Format("http://localhost:8001/{0}/mex", args.ServiceContract.Name));
+                Platform.Log(LogLevel.Debug, "Service Metadata endpoint: {0}", smb.HttpGetUrl);
+                host.Description.Behaviors.Add(smb);
+            }
+            var endpoint = host.AddServiceEndpoint(typeof(IMetadataExchange), binding, args.ServiceContract.Name);
+            Platform.Log(LogLevel.Debug, "MetadataExchange Endpoint for {0}: {1}", args.ServiceContract.Name, endpoint.ListenUri);
+            
+#endif
+
 			// set up the certificate - required for transmitting custom credentials
             host.Credentials.ServiceCertificate.SetCertificate(
-                StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, args.HostUri.Host);
+		        args.CertificateSearchDirective.StoreLocation, args.CertificateSearchDirective.StoreName,
+		        args.CertificateSearchDirective.FindType, args.CertificateSearchDirective.FindValue);
 		}
 
 		#endregion

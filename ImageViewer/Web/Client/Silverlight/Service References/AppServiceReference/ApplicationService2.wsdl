@@ -8,7 +8,7 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
-  <wsdl:import namespace="http://www.clearcanvas.ca/web/application" location="http://thanh/ImageServerTrunk/Services/ApplicationService.svc?wsdl=wsdl0" />
+  <wsdl:import namespace="http://www.clearcanvas.ca/web/application" location="http://thanh/ImageServer/Services/ApplicationService.svc?wsdl=wsdl0" />
   <wsdl:types />
   <wsdl:binding name="CustomBinding_IApplicationService" type="i0:IApplicationService">
     <wsp:PolicyReference URI="#CustomBinding_IApplicationService_policy" />
@@ -21,6 +21,9 @@
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
+      <wsdl:fault name="OutOfResourceFaultFault">
+        <soap12:fault use="literal" name="OutOfResourceFaultFault" namespace="" />
+      </wsdl:fault>
       <wsdl:fault name="SessionValidationFaultFault">
         <soap12:fault use="literal" name="SessionValidationFaultFault" namespace="" />
       </wsdl:fault>
@@ -49,12 +52,6 @@
         <soap12:fault use="literal" name="InvalidOperationFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
-    <wsdl:operation name="ReportPerformance">
-      <soap12:operation soapAction="http://www.clearcanvas.ca/web/application/IApplicationService/ReportPerformance" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-    </wsdl:operation>
     <wsdl:operation name="GetPendingEvent">
       <soap12:operation soapAction="http://www.clearcanvas.ca/web/application/IApplicationService/GetPendingEvent" style="document" />
       <wsdl:input>
@@ -66,6 +63,12 @@
       <wsdl:fault name="InvalidOperationFaultFault">
         <soap12:fault use="literal" name="InvalidOperationFaultFault" namespace="" />
       </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ReportPerformance">
+      <soap12:operation soapAction="http://www.clearcanvas.ca/web/application/IApplicationService/ReportPerformance" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
     </wsdl:operation>
     <wsdl:operation name="SetProperty">
       <soap12:operation soapAction="http://www.clearcanvas.ca/web/application/IApplicationService/SetProperty" style="document" />
@@ -79,9 +82,9 @@
   </wsdl:binding>
   <wsdl:service name="ApplicationService">
     <wsdl:port name="CustomBinding_IApplicationService" binding="tns:CustomBinding_IApplicationService">
-      <soap12:address location="http://thanh/ImageServerTrunk/Services/ApplicationService.svc/basicHttp" />
+      <soap12:address location="http://thanh/ImageServer/Services/ApplicationService.svc/basicHttp" />
       <wsa10:EndpointReference>
-        <wsa10:Address>http://thanh/ImageServerTrunk/Services/ApplicationService.svc/basicHttp</wsa10:Address>
+        <wsa10:Address>http://thanh/ImageServer/Services/ApplicationService.svc/basicHttp</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

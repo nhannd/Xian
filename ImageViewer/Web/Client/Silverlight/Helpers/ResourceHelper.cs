@@ -22,12 +22,4 @@ using System.Windows.Shapes;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
-    public class ResourceHelper
-    {
-        private static SR _stringResource = new SR();
-
-
-        public SR StringResource { get { return _stringResource; } }
-
-    }
 }

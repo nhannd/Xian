@@ -241,16 +241,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 			_toolStrip.ImageList = GetImageList(Settings.Default.ToolbarIconSize);
 
-			_btnBack.ImageKey = "Back";
-			_btnForward.ImageKey = "Next";
-			_btnUp.ImageKey = "Up";
-			_btnRefresh.ImageKey = "Refresh";
-			_btnHome.ImageKey = "Home";
-			_btnShowFolders.ImageKey = "ShowFolders";
-			_btnViews.ImageKey = "View";
+			_btnBack.ImageKey = @"Back";
+			_btnForward.ImageKey = @"Next";
+			_btnUp.ImageKey = @"Up";
+			_btnRefresh.ImageKey = @"Refresh";
+			_btnHome.ImageKey = @"Home";
+			_btnShowFolders.ImageKey = @"ShowFolders";
+			_btnViews.ImageKey = @"View";
 
 			_addressStrip.ImageList = _smallIconImageList;
-			_btnGo.ImageKey = "Go";
+			_btnGo.ImageKey = @"Go";
 		}
 
 		private void InitializeHistoryMenu()

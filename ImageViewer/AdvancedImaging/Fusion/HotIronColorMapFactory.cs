@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			get { return _colorMapDescription; }
 		}
 
-		public IDataLut Create()
+		public IColorMap Create()
 		{
 			return new DicomPaletteColorMap(_colorMapDescription, PaletteColorLut.HotIron);
 		}

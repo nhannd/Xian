@@ -18,6 +18,7 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
@@ -31,8 +32,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
             ServerPartitionTabs.SetupLoadPartitionTabs(CreatePartitionTab);
             DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
-
-            SetPageTitle(App_GlobalResources.Titles.StudiesPageTitle);
+            
+            SetPageTitle(Titles.StudiesPageTitle);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -57,6 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 panel.ServerPartition = partition;
                 panel.ID = "SearchPanel_" + partition.AeTitle;
                 panel.DeleteButtonClicked += SearchPanel_DeleteButtonClicked;
+                panel.AssignAuthorityGroupsButtonClicked += SearchPanel_AssignAuthorityGroupsButtonClicked;
                 _partitionPanelMap.Add(partition.AeTitle, panel);
             }
             return panel;
@@ -83,7 +85,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 _partitionPanelMap[partitionAE].Refresh();
         }
 
-        private void SearchPanel_DeleteButtonClicked(object sender, SearchPanelDeleteButtonClickedEventArgs e)
+        private void SearchPanel_DeleteButtonClicked(object sender, SearchPanelButtonClickedEventArgs e)
         {
             List<StudySummary> list = new List<StudySummary>();
             list.AddRange(e.SelectedStudies);
@@ -112,5 +114,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             DeleteStudyConfirmDialog.Show();
         }
 
+        private void SearchPanel_AssignAuthorityGroupsButtonClicked(object sender, SearchPanelButtonClickedEventArgs e)
+        {
+            List<StudySummary> list = new List<StudySummary>();
+            list.AddRange(e.SelectedStudies);
+            ShowAddAuthorityGroupDialog(list);
+        }
+
+        protected void ShowAddAuthorityGroupDialog(IList<StudySummary> studyList)
+        {
+            AddAuthorityGroupsDialog.Initialize(studyList);
+            AddAuthorityGroupsDialog.Show();
+        }
     }
 }

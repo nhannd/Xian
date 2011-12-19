@@ -22,11 +22,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		/// </summary>
 		[DataMember]
 		public OrderDetail DryRunMergedOrder;
-
-		/// <summary>
-		/// If a dry-run was requested and failed, specifies the failure reason.
-		/// </summary>
-		[DataMember]
-		public string DryRunFailureReason;
 	}
 }

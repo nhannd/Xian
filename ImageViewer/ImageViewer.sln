@@ -50,7 +50,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{5C17A246-C4AB-4D66-8715-425192D88D6E} = {5C17A246-C4AB-4D66-8715-425192D88D6E}
 		{5C17A246-C4AB-4D66-8715-425192D88D6E} = {5C17A246-C4AB-4D66-8715-425192D88D6E}
 		{EF31F846-50FD-4997-BE2B-D4C1F7437038} = {EF31F846-50FD-4997-BE2B-D4C1F7437038}
-		{25AC834B-D1BC-427B-8BA3-6528A2970DD8} = {25AC834B-D1BC-427B-8BA3-6528A2970DD8}
 		{14243C4C-F3D9-4A7A-83D5-B09EB79686AC} = {14243C4C-F3D9-4A7A-83D5-B09EB79686AC}
 		{76E7A94E-5DCB-4B12-8D9E-7BD5084CE073} = {76E7A94E-5DCB-4B12-8D9E-7BD5084CE073}
 		{76E7A94E-5DCB-4B12-8D9E-7BD5084CE073} = {76E7A94E-5DCB-4B12-8D9E-7BD5084CE073}
@@ -58,8 +57,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{ACCD054F-5788-4747-959A-551E6E4B477C} = {ACCD054F-5788-4747-959A-551E6E4B477C}
 		{FC609751-68F8-4A87-87E1-D1BF366C350F} = {FC609751-68F8-4A87-87E1-D1BF366C350F}
 		{BD56AC53-F4B2-46AA-9371-D0E6F569A9D2} = {BD56AC53-F4B2-46AA-9371-D0E6F569A9D2}
-		{DDAB9D5C-4705-4216-B863-91EEF219A8DD} = {DDAB9D5C-4705-4216-B863-91EEF219A8DD}
-		{DDAB9D5C-4705-4216-B863-91EEF219A8DD} = {DDAB9D5C-4705-4216-B863-91EEF219A8DD}
 		{A3FD975D-F9A7-4435-B4E2-BB7FAEB92B44} = {A3FD975D-F9A7-4435-B4E2-BB7FAEB92B44}
 		{A3FD975D-F9A7-4435-B4E2-BB7FAEB92B44} = {A3FD975D-F9A7-4435-B4E2-BB7FAEB92B44}
 		{EC0DF366-6E48-4473-977B-9107764AC3A3} = {EC0DF366-6E48-4473-977B-9107764AC3A3}
@@ -234,10 +231,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Vol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.EnterpriseDesktop", "EnterpriseDesktop\ClearCanvas.ImageViewer.EnterpriseDesktop.csproj", "{DDAB9D5C-4705-4216-B863-91EEF219A8DD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms", "EnterpriseDesktop\View\WinForms\ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.csproj", "{25AC834B-D1BC-427B-8BA3-6528A2970DD8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Utilities.StudyFilters", "Utilities\StudyFilters\ClearCanvas.ImageViewer.Utilities.StudyFilters.csproj", "{49A47B83-BC95-4E1D-96A8-3DF05673797F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms", "Utilities\StudyFilters\View\WinForms\ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.csproj", "{DBBB259C-EACC-425D-991B-265A0CE93446}"
@@ -276,6 +269,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest 
 		ManifestInputDicomEditor.xml = ManifestInputDicomEditor.xml
 		ManifestInputDicomRemote.xml = ManifestInputDicomRemote.xml
 		ManifestInputEnterprise.xml = ManifestInputEnterprise.xml
+		ManifestInputExternals.xml = ManifestInputExternals.xml
 		ManifestInputFusion.xml = ManifestInputFusion.xml
 		ManifestInputHelpFiles.xml = ManifestInputHelpFiles.xml
 		ManifestInputHelpUpdate.xml = ManifestInputHelpUpdate.xml
@@ -287,6 +281,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest 
 		ManifestInputStudyBrowser.xml = ManifestInputStudyBrowser.xml
 		ManifestInputStudyComposer.xml = ManifestInputStudyComposer.xml
 		ManifestInputStudyFilters.xml = ManifestInputStudyFilters.xml
+		ManifestInputSynchronizationTools.xml = ManifestInputSynchronizationTools.xml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Executable", "..\Executable\ClearCanvas.Executable.csproj", "{EA26AAB0-85FE-4ECC-BB9A-D99374869AA5}"
@@ -493,14 +488,6 @@ Global
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDAB9D5C-4705-4216-B863-91EEF219A8DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDAB9D5C-4705-4216-B863-91EEF219A8DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDAB9D5C-4705-4216-B863-91EEF219A8DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDAB9D5C-4705-4216-B863-91EEF219A8DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{25AC834B-D1BC-427B-8BA3-6528A2970DD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{25AC834B-D1BC-427B-8BA3-6528A2970DD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25AC834B-D1BC-427B-8BA3-6528A2970DD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25AC834B-D1BC-427B-8BA3-6528A2970DD8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{49A47B83-BC95-4E1D-96A8-3DF05673797F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{49A47B83-BC95-4E1D-96A8-3DF05673797F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49A47B83-BC95-4E1D-96A8-3DF05673797F}.Release|Any CPU.ActiveCfg = Release|Any CPU

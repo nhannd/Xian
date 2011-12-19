@@ -14,12 +14,14 @@ using System.Security.Permissions;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks
 {
     [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Configuration.ServiceScheduling)]
     public partial class Default : BasePage
     {
+
         #region Private members
 
         #endregion Private members
@@ -45,7 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         {
             DataBind();
 
-            SetPageTitle(App_GlobalResources.Titles.ServiceSchedulingPageTitle);           
+            SetPageTitle(Titles.ServiceSchedulingPageTitle);           
         }
 
         #endregion  Protected methods

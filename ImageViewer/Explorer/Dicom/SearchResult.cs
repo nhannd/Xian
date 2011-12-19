@@ -11,7 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					columns.Add(column);
 				}
 			}
-			catch (NotSupportedException) {}
+			catch (NotSupportedException) { }
 			return columns;
 		}
 
@@ -301,20 +301,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingModality,
-				delegate(StudyItem item) { return DicomStringHelper.GetDicomStringArray(item.ModalitiesInStudy); },
+				delegate(StudyItem item) { return DicomStringHelper.GetDicomStringArray(SortModalities(item.ModalitiesInStudy)); },
 				0.25f);
 
 			columns.Add(column);
 
+			var iconColumn = new TableColumn<StudyItem, IconSet>(
+				SR.ColumnHeadingAttachments,
+				GetAttachmentsIcon,
+				0.25f)
+								{
+									ResourceResolver = new ResourceResolver(typeof(SearchResult).Assembly),
+									Comparison = (x, y) => x.HasAttachments().CompareTo(y.HasAttachments())
+								};
+
+			columns.Add(iconColumn);
+
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingReferringPhysician,
 				delegate(StudyItem item)
-					{
-						if (item.ReferringPhysiciansName != null)
-							return item.ReferringPhysiciansName.FormattedName;
-						else
-							return "";
-					},
+				{
+					if (item.ReferringPhysiciansName != null)
+						return item.ReferringPhysiciansName.FormattedName;
+					else
+						return "";
+				},
 				0.6f);
 
 			columns.Add(column);
@@ -326,37 +337,37 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			var column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingNumberOfInstances,
 				delegate(StudyItem item)
-					{
-						if (item.NumberOfStudyRelatedInstances.HasValue)
-							return item.NumberOfStudyRelatedInstances.ToString();
-						else
-							return "";
-					},
+				{
+					if (item.NumberOfStudyRelatedInstances.HasValue)
+						return item.NumberOfStudyRelatedInstances.ToString();
+					else
+						return "";
+				},
 				null,
 				0.3f,
 					delegate(StudyItem study1, StudyItem study2)
-				                      	         	{
-				                      	         		int? instances1 = study1.NumberOfStudyRelatedInstances;
-														int? instances2 = study2.NumberOfStudyRelatedInstances;
+					{
+						int? instances1 = study1.NumberOfStudyRelatedInstances;
+						int? instances2 = study2.NumberOfStudyRelatedInstances;
 
-														if (instances1 == null)
-				                      	         		{
-															if (instances2 == null)
-																return 0;
-															else
-																return 1;
-				                      	         		}
-														else if (instances2 == null)
-				                      	         		{
-				                      	         			return -1;
-				                      	         		}
+						if (instances1 == null)
+						{
+							if (instances2 == null)
+								return 0;
+							else
+								return 1;
+						}
+						else if (instances2 == null)
+						{
+							return -1;
+						}
 
-				                      	         		return -instances1.Value.CompareTo(instances2.Value);
-													});
+						return -instances1.Value.CompareTo(instances2.Value);
+					});
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 
-			return new TableColumnBase<StudyItem>[] {column};
+			return new TableColumnBase<StudyItem>[] { column };
 		}
 
 		protected static IEnumerable<TableColumnBase<StudyItem>> CreateServerColumns()
@@ -446,6 +457,46 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				return dicomDate;
 
 			return date.ToString(Format.DateFormat);
+		}
+
+		private static IconSet GetAttachmentsIcon(StudyItem item)
+		{
+			return item.HasAttachments() ? new IconSet("AttachmentsExtraSmall.png") : null;
+		}
+
+		private static string[] SortModalities(IEnumerable<string> modalities)
+		{
+			var list = new List<string>(modalities);
+			list.Remove(@"DOC"); // the DOC modality is a special case and handled via the attachments icon
+			list.Sort((x, y) =>
+			              {
+			                  var result = GetModalityPriority(x).CompareTo(GetModalityPriority(y));
+			                  if (result == 0)
+			                      result = string.Compare(x, y, StringComparison.InvariantCultureIgnoreCase);
+			                  return result;
+			              });
+			return list.ToArray();
+		}
+
+		private static int GetModalityPriority(string modality)
+		{
+			const int imageModality = 0; // sort all known image modalities to top
+			const int unknownModality = 1; // unknown modalities may be images or may simply be other documents - sort after known images, but before known ancillary documents
+			const int srModality = 2;
+			const int koModality = 3;
+			const int prModality = 4;
+
+			switch (modality)
+			{
+				case @"SR":
+					return srModality;
+				case @"KO":
+					return koModality;
+				case @"PR":
+					return prModality;
+				default:
+					return StandardModalities.Modalities.Contains(modality) ? imageModality : unknownModality;
+			}
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// the full window, since the true values won't necessarily have any real meaning.
 	/// </remarks>
 	[Cloneable]
-	public class AdjustableDataLut : ComposableLut, IBasicVoiLutLinear, IDataLut
+	public class AdjustableDataLut : ComposableVoiLut, IBasicVoiLutLinear, IDataLut
 	{
 		private class Memento
 		{
@@ -66,6 +66,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#region Private Fields
+
+		private double _minInputValue;
+		private double _maxInputValue;
 
 		private readonly DataLut _dataLut;
 		private readonly BasicVoiLutLinear _linearLut;
@@ -167,10 +170,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public override int MinInputValue
+		public override double MinInputValue
 		{
-			get { return _dataLut.MinInputValue; }
-			set { _dataLut.MinInputValue = value; }
+			get { return _minInputValue; }
+			set { _dataLut.MinInputValue = (int) Math.Round(_minInputValue = value); }
 		}
 
 		/// <summary>
@@ -179,10 +182,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public override int MaxInputValue
+		public override double MaxInputValue
 		{
-			get { return _dataLut.MaxInputValue; }
-			set { _dataLut.MaxInputValue = value; }
+			get { return _maxInputValue; }
+			set { _dataLut.MaxInputValue = (int) Math.Round(_maxInputValue = value); }
 		}
 
 		/// <summary>
@@ -230,18 +233,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		/// <summary>
-		/// Gets the output value of the lut at a given input index.
+		/// Gets the output value of the lut at a given input.
 		/// </summary>
-		public override int this[int index]
+		public override int this[double input]
 		{
-			get
-			{
-				return _linearLut[_dataLut[index]];
-			}
-			protected set
-			{
-				throw new InvalidOperationException("This lut type is read-only.");
-			}
+			get { return _linearLut[_dataLut[(int) Math.Round(input)]]; }
 		}
 
 		#region Public Methods
@@ -284,7 +280,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Returns null.
 		/// </summary>
 		/// <remarks>
-		/// Override this member only when necessary.  If this method is overridden, <see cref="ComposableLut.SetMemento"/> must also be overridden.
+		/// Override this member only when necessary.  If this method is overridden, <see cref="ComposableLutBase.SetMemento"/> must also be overridden.
 		///  </remarks>
 		/// <returns>null, unless overridden.</returns>
 		public override object CreateMemento()
@@ -296,12 +292,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Does nothing unless overridden.
 		/// </summary>
 		/// <remarks>
-		/// If you override <see cref="ComposableLut.CreateMemento"/> to capture the Lut's state, you must also override this method
+		/// If you override <see cref="ComposableLutBase.CreateMemento"/> to capture the Lut's state, you must also override this method
 		/// to allow the state to be restored.
 		/// </remarks>
 		/// <param name="memento">The memento object from which to restore the Lut's state.</param>
 		/// <exception cref="InvalidOperationException">Thrown if <paramref name="memento"/> is <B>not</B> null, 
-		/// which would indicate that <see cref="ComposableLut.CreateMemento"/> has been overridden, but <see cref="ComposableLut.SetMemento"/> has not.</exception>
+		/// which would indicate that <see cref="ComposableLutBase.CreateMemento"/> has been overridden, but <see cref="ComposableLutBase.SetMemento"/> has not.</exception>
 		public override void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
@@ -319,7 +315,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Overrides
 
 		/// <summary>
-		/// Fires the <see cref="ComposableLut.LutChanged"/> event.
+		/// Fires the <see cref="ComposableLutBase.LutChanged"/> event.
 		/// </summary>
 		/// <remarks>
 		/// Inheritors should call this method when any property of the Lut has changed.
@@ -335,6 +331,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		#region IDataLut Members
+
+		int IDataLut.this[int index]
+		{
+			get { return this[index]; }
+		}
+
+		int IDataLut.MinInputValue
+		{
+			get { return (int) Math.Round(MinInputValue); }
+			set { MinInputValue = value; }
+		}
+
+		int IDataLut.MaxInputValue
+		{
+			get { return (int) Math.Round(MaxInputValue); }
+			set { MaxInputValue = value; }
+		}
 
 		int IDataLut.FirstMappedPixelValue
 		{
@@ -367,6 +380,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 				return _lutDataCache;
 			}
+		}
+
+		IDataLut IDataLut.Clone()
+		{
+			return (IDataLut) Clone();
 		}
 
 		#endregion

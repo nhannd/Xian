@@ -203,7 +203,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					Platform.Log(LogLevel.Error, ex, "An error has occured while rendering the contents of a tile.");
 
-					_lastRenderExceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
+					_lastRenderExceptionMessage = ex is RenderingException ? ((RenderingException) ex).UserMessage : ex.Message;
 
 					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
 					// if we do, we'll get a "Object is currently in use elsewhere" exception
@@ -359,7 +359,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					Platform.Log(LogLevel.Error, ex, "An error has occured while refreshing the contents of a tile.");
 
-					var exceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
+					var exceptionMessage = ex is RenderingException ? ((RenderingException) ex).UserMessage : ex.Message;
 
 					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
 					// if we do, we'll get a "Object is currently in use elsewhere" exception
@@ -446,12 +446,19 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
+            bool handled = false;
 			object message = _inputTranslator.OnMouseMove(e);
-			if (message == null)
-				return;
+			if (message != null)
+			{
+                if (_tileController != null)
+                    handled = _tileController.ProcessMessage(message);
+			}
 
-			if (_tileController != null)
-				_tileController.ProcessMessage(message);
+            if (!handled)
+            {
+                base.OnMouseMove(e);
+            }
+			
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
@@ -631,7 +638,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
-		private void OnContextMenuStripOpening(object sender, CancelEventArgs e)
+	    private void OnContextMenuStripOpening(object sender, CancelEventArgs e)
 		{
 			if (_tileController == null || _tileController.ContextMenuProvider == null)
 			{
@@ -727,5 +734,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				unavailableItem.Dispose();
 			}
 		}
+
+        internal void ProcessKeyUp(KeyEventArgs ev)
+        {
+            OnKeyUp(ev);
+        }
+
+        internal void ProcessKeyDown(KeyEventArgs args)
+	    {
+	        OnKeyDown(args);
+	    }
 	}
 }

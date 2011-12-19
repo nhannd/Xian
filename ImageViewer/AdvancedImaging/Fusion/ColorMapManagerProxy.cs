@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		#region IColorMapManager Members
 
 		[Obsolete("Use the ColorMap property instead.")]
-		IDataLut IColorMapManager.GetColorMap()
+		IColorMap IColorMapManager.GetColorMap()
 		{
 			return _placeholderColorMapManager.GetColorMap();
 		}
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		#region IColorMapInstaller Members
 
-		IDataLut IColorMapInstaller.ColorMap
+		IColorMap IColorMapInstaller.ColorMap
 		{
 			get { return _placeholderColorMapManager.ColorMap; }
 		}
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			InstallColorMap();
 		}
 
-		void IColorMapInstaller.InstallColorMap(IDataLut colorMap)
+		void IColorMapInstaller.InstallColorMap(IColorMap colorMap)
 		{
 			_placeholderColorMapManager.InstallColorMap(colorMap);
 			InstallColorMap();
@@ -217,8 +217,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		private class XColorMapInstaller : IColorMapInstaller
 		{
-			private IDataLut _alphaColorMap;
-			private IDataLut _colorMap;
+			private IColorMap _alphaColorMap;
+			private IColorMap _colorMap;
 			private string _colorMapName = HotIronColorMapFactory.ColorMapName;
 			private bool _thresholding = false;
 			private float _opacity = 0.5f;
@@ -228,8 +228,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			public XColorMapInstaller Clone()
 			{
 				var clone = new XColorMapInstaller();
-				clone._alphaColorMap = _alphaColorMap != null ? (IDataLut) _alphaColorMap.Clone() : null;
-				clone._colorMap = _colorMap != null ? (IDataLut) _colorMap.Clone() : null;
+				clone._alphaColorMap = _alphaColorMap != null ? (IColorMap) _alphaColorMap.Clone() : null;
+				clone._colorMap = _colorMap != null ? (IColorMap) _colorMap.Clone() : null;
 				clone._colorMapName = _colorMapName;
 				clone._thresholding = _thresholding;
 				clone._opacity = _opacity;
@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				}
 			}
 
-			public IDataLut ColorMap
+			public IColorMap ColorMap
 			{
 				get
 				{
@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				this.InstallColorMap(descriptor.Name);
 			}
 
-			public void InstallColorMap(IDataLut colorMap)
+			public void InstallColorMap(IColorMap colorMap)
 			{
 				if (_colorMap != colorMap)
 				{

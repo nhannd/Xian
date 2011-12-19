@@ -42,10 +42,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private readonly int _imageRows;
 		private readonly int _imageColumns;
 		private readonly string _modality;
+		private readonly bool _subnormalModalityLut;
 		private readonly PixelData _pixelData;
 		private readonly PixelAspectRatio _pixelAspectRatio;
 		private readonly PixelSpacing _normalizedPixelSpacing;
-		private readonly IComposableLut _modalityLut;
+		private readonly RescaleUnits _modalityLutUnits;
+		private readonly IModalityLut _modalityLut;
+		private readonly IPresentationImage _presentationImage;
 
 		private RectangleF _boundingBox;
 
@@ -61,6 +64,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 			_imageRows = provider.ImageGraphic.Rows;
 			_imageColumns = provider.ImageGraphic.Columns;
+			_presentationImage = presentationImage;
 
 			_pixelData = provider.ImageGraphic.PixelData;
 			if (presentationImage is IModalityLutProvider)
@@ -72,12 +76,25 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				_normalizedPixelSpacing = frame.NormalizedPixelSpacing;
 				_pixelAspectRatio = frame.PixelAspectRatio;
 				_modality = frame.ParentImageSop.Modality;
+				_modalityLutUnits = frame.RescaleUnits;
+				_subnormalModalityLut = frame.IsSubnormalRescale;
 			}
 			else
 			{
 				_normalizedPixelSpacing = new PixelSpacing(0, 0);
 				_pixelAspectRatio = new PixelAspectRatio(0, 0);
+				_modalityLutUnits = RescaleUnits.None;
+				_subnormalModalityLut = false;
 			}
+		}
+
+
+		///<summary>
+        /// Gets the presentation image from which the ROI was created.
+        ///</summary>
+        public IPresentationImage PresentationImage
+		{
+			get { return _presentationImage; }
 		}
 
 		/// <summary>
@@ -131,9 +148,25 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <summary>
 		/// Gets the modality LUT of the image, if one exists.
 		/// </summary>
-		public IComposableLut ModalityLut
+		public IModalityLut ModalityLut
 		{
 			get { return _modalityLut; }
+		}
+
+		/// <summary>
+		/// Gets the units of the modality LUT output of the image.
+		/// </summary>
+		public RescaleUnits ModalityLutUnits
+		{
+			get { return _modalityLutUnits; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether or not the modality LUT is subnormal (i.e. the modality LUT output all map to a single distinct value).
+		/// </summary>
+		public bool SubnormalModalityLut
+		{
+			get { return _subnormalModalityLut; }
 		}
 
 		/// <summary>
@@ -155,14 +188,33 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		{
 			get
 			{
-				//TODO (cr Feb 2010): convert to positive rectangle as a safety precaution.
-				if (_boundingBox.IsEmpty)
-					_boundingBox = ComputeBounds();
-				return _boundingBox;
+                if (_boundingBox.IsEmpty)
+                    _boundingBox = RectangleUtilities.ConvertToPositiveRectangle(ComputeBounds());
+
+			    return _boundingBox;
 			}
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Returns a bounding box that has been rounded to the nearest whole pixel(s).
+        /// </summary>
+        /// <remarks>
+        /// Uses <see cref="RectangleUtilities.RoundInflate"/> to ensure the bounding box
+        /// returned will encompass every pixel that is inside the ROI.
+        /// </remarks>
+        /// <param name="constrainToImage">Whether or not the returned rectangle should also be constrained to the image bounds.</param>
+	    public Rectangle GetBoundingBoxRounded(bool constrainToImage)
+	    {
+	        Rectangle bounds = RectangleUtilities.RoundInflate(BoundingBox);
+	        if (constrainToImage)
+	        {
+                bounds.Intersect(new Rectangle(0, 0, this.ImageSize.Width - 1, this.ImageSize.Height - 1));
+	        }
+	        
+            return bounds;
+	    }
+
+	    /// <summary>
 		/// Called by <see cref="BoundingBox"/> to compute the tightest bounding box of the region of interest.
 		/// </summary>
 		/// <remarks>
@@ -202,7 +254,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			get { return IsBoundingBoxInImage(); }
 		}
 
-		/// <summary>
+        
+
+	    /// <summary>
 		/// Tests to see if the given point is contained within the region of interest.
 		/// </summary>
 		/// <remarks>
@@ -242,12 +296,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>An enumeration of points.</returns>
 		public IEnumerable<PointF> GetPixelCoordinates()
 		{
-			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
-			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
-			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
-			for (int x = bounds.Left; x < bounds.Right; x++)
+            Rectangle bounds = GetBoundingBoxRounded(true);
+            for (int x = bounds.Left; x <= bounds.Right; x++)
 			{
-				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				for (int y = bounds.Top; y <= bounds.Bottom; y++)
 				{
 					PointF p = new PointF(x, y);
 					if (this.Contains(p))
@@ -265,12 +317,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.PixelData == null)
 				yield break;
 
-			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
-			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
-			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
-			for (int x = bounds.Left; x < bounds.Right; x++)
+            Rectangle bounds = GetBoundingBoxRounded(true);
+            for (int x = bounds.Left; x <= bounds.Right; x++)
 			{
-				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				for (int y = bounds.Top; y <= bounds.Bottom; y++)
 				{
 					PointF p = new PointF(x, y);
 					if (this.Contains(p))
@@ -286,30 +336,38 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// If the <see cref="ModalityLut"/> is null, then this method enumerates the same values as <see cref="GetRawPixelValues"/>.
 		/// </remarks>
 		/// <returns>An enumeration of modality LUT transformed pixel values.</returns>
+		[Obsolete]
+		// TODO CR (Oct 11): replace entirely with one that returns doubles but without the real world units - breaking existing code is the least of our worries since anyone using this old version might get wrong values
 		public IEnumerable<int> GetPixelValues()
 		{
-			if (this.PixelData == null)
-				yield break;
+			int dummy;
+			foreach (var pixelValue in GetPixelValues(out dummy))
+				yield return (int) Math.Round(pixelValue);
+		}
 
+		public IEnumerable<double> GetPixelValues(out int realWorldUnits)
+		{
+			realWorldUnits = 0;
+			if (this.PixelData == null)
+				return new double[0];
+
+		    /// TODO (CR Nov 2011): Why a list rather than yield?
+			List<double> values = new List<double>();
 			LutFunction lut = v => v;
 			if (this.ModalityLut != null)
 				lut = v => this.ModalityLut[v];
 
-			//TODO (CR Sept 2010): put these 2 lines into a method, since it's used numerous times.  Even if it were
-			//only used once, a method name tells someone what this does instead of having to figure it out.
-
-			//TODO (CR Sept 2010): should be RoundInflate, not Ceiling.
-			Rectangle bounds = Rectangle.Ceiling(this.BoundingBox);
-			bounds.Intersect(new Rectangle(Point.Empty, this.ImageSize));
-			for (int x = bounds.Left; x < bounds.Right; x++)
+		    Rectangle bounds = GetBoundingBoxRounded(true);
+			for (int x = bounds.Left; x <= bounds.Right; x++)
 			{
-				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				for (int y = bounds.Top; y <= bounds.Bottom; y++)
 				{
 					PointF p = new PointF(x, y);
 					if (this.Contains(p))
-						yield return lut(this.PixelData.GetPixel(x, y));
+						values.Add(lut(this.PixelData.GetPixel(x, y)));
 				}
 			}
+			return values;
 		}
 
 		/// <summary>
@@ -359,7 +417,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>True if the bounding box intersects the image; False otherwise.</returns>
 		private bool IsBoundingBoxInImage()
 		{
-			RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(this.BoundingBox);
+            RectangleF boundingBox = BoundingBox;
 
 			if (boundingBox.Width == 0 || boundingBox.Height == 0)
 				return false;
@@ -373,6 +431,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return true;
 		}
 
-		private delegate int LutFunction(int v);
+		private delegate double LutFunction(int v);
 	}
 }

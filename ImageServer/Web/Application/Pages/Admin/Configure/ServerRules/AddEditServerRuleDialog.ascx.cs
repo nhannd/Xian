@@ -19,7 +19,7 @@ using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules
 {
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             var ruleTypeList = new Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>>();
             foreach (ISampleRule extension in extensions)
             {
-                if (!ruleTypeList.ContainsKey(extension.Type))
+                if (!ruleTypeList.ContainsKey(extension.Type)  && !extension.Type.Equals(ServerRuleTypeEnum.DataAccess))
                     ruleTypeList.Add(extension.Type, extension.ApplyTimeList);
             }
 
@@ -421,8 +421,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             if (EditMode)
             {
                 ModalDialog.Title = SR.DialogEditServerRuleTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
 
                 DefaultCheckBox.Checked = _rule.DefaultRule;
                 EnabledCheckBox.Checked = _rule.Enabled;
@@ -438,7 +438,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
                 // Fill in the drop down menus
                 RuleTypeDropDownList.Items.Add(new ListItem(
-                                                   _rule.ServerRuleTypeEnum.Description,
+                                                   ServerEnumDescription.GetLocalizedDescription(_rule.ServerRuleTypeEnum),
                                                    _rule.ServerRuleTypeEnum.Lookup));
 
                 IList<ServerRuleApplyTimeEnum> list = new List<ServerRuleApplyTimeEnum>();
@@ -449,7 +449,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
                 foreach (ServerRuleApplyTimeEnum applyTime in list)
                     RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            applyTime.Description,
+                                                            ServerEnumDescription.GetLocalizedDescription(applyTime),
                                                             applyTime.Lookup));
 
 
@@ -484,8 +484,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             else
             {
                 ModalDialog.Title = SR.DialogAddServerRuleTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
 
                 DefaultCheckBox.Checked = false;
                 EnabledCheckBox.Checked = true;
@@ -525,12 +525,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
                         foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[type])
                             RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                                    applyTime.Description,
+                                                                    ServerEnumDescription.GetLocalizedDescription(applyTime),
                                                                     applyTime.Lookup));
                     }
 
                     RuleTypeDropDownList.Items.Add(new ListItem(
-                                                       type.Description, type.Lookup));
+                                                       ServerEnumDescription.GetLocalizedDescription(type), type.Lookup));
                 }
 
                 ServerRuleValidator.RuleTypeControl = RuleTypeDropDownList.SelectedValue;

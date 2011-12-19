@@ -1,6 +1,6 @@
 /* License
  * 
- * Copyright (c) 2010, ClearCanvas Inc.
+ * Copyright (c) 2011, ClearCanvas Inc.
  * All rights reserved.
  * http://www.clearcanvas.ca
  *
@@ -52,6 +52,19 @@ function RecalculateWatermark()
     }
 }
 
+function DisableWatermarkInput() {
+
+    $("#@@LW_PERCENTAGE_INPUT_CLIENTID@@").attr('disabled', 'disabled');
+    $("#@@HW_PERCENTAGE_INPUT_CLIENTID@@").attr('disabled', 'disabled');
+}
+
+function EnableWatermarkInput() {
+
+    $("#@@LW_PERCENTAGE_INPUT_CLIENTID@@").removeAttr('disabled');
+    $("#@@HW_PERCENTAGE_INPUT_CLIENTID@@").removeAttr('disabled');
+}
+
+
 
 // Returns a string containing a percentage value formatted to 
 // the number of decimal places specified by "decimalpoints"
@@ -99,10 +112,13 @@ function ValidationFilesystemPathParams()
     return params;
 }
 
-function OnLoadFilesystemInfoError(result)
-{
-    if (result.get_message() != "Index was outside the bounds of the array.") 
+function OnLoadFilesystemInfoError(result) {
+
+    // TODO: What is this?
+    if (result.get_message() != "Index was outside the bounds of the array.")
         alert('Error: ' + result.get_message());
+
+    DisableWatermarkInput();
 }
 
 
@@ -126,7 +142,9 @@ function OnLoadFilesystemInfoSuccess(result)
         used = document.getElementById('@@USED_SIZE_INDICATOR_CLIENTID@@');
         used.innerHTML = FormatSize(sizeUsed.value) + ' (' + FormatPercentage(sizeUsed.value/sizeTotal.value, 4) +')';
 
+        EnableWatermarkInput();
         RecalculateWatermark();
+        
     }
     else
     {
@@ -137,12 +155,14 @@ function OnLoadFilesystemInfoSuccess(result)
         sizeUsed.value  = 0;
         
         total = document.getElementById('@@TOTAL_SIZE_INDICATOR_CLIENTID@@');                                       
-        total.innerHTML = 'Unknown';
+        total.innerHTML = SR.Unknown;
         
         used = document.getElementById('@@USED_SIZE_INDICATOR_CLIENTID@@');
-        used.innerHTML = 'Unknown';
-        
+        used.innerHTML = SR.Unknown;
+
         RecalculateWatermark();
+
+        DisableWatermarkInput();
     }
     
 }

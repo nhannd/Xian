@@ -20,6 +20,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy.Extensions.LogHistory;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -35,17 +36,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         public string GetReason(string reasonString)
         {
-            if (string.IsNullOrEmpty(reasonString)) return "None Specified";
+            if (string.IsNullOrEmpty(reasonString)) return SR.NoneSpecified;
             string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
             return reason[0];
         }
 
         public string GetComment(string reasonString)
         {
-            if (string.IsNullOrEmpty(reasonString)) return "None Specified";
+            if (string.IsNullOrEmpty(reasonString)) return SR.NoneSpecified;
             string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
-            if (reason.Length == 1) return "None Specified";
+            if (reason.Length == 1) return SR.NoneSpecified;
             return reason[1];
+        }
+
+        protected string ChangeSummaryText
+        {
+            get
+            {
+                return ChangeLog.Series.Count == 1
+                    ? string.Format(SR.StudyDetails_History_OneSeriesDeletedBy, ChangeLog.Series.Count, ChangeLog.UserId ?? SR.Unknown)
+                    : string.Format(SR.StudyDetails_History_MultipleSeriesDeletedBy, ChangeLog.Series.Count, ChangeLog.UserId ?? SR.Unknown);
+            }
         }
     }
 }

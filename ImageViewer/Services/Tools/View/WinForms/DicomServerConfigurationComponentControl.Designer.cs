@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomServerConfigurationComponentControl));
 			this._aeTitle = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._port = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._refreshButton = new System.Windows.Forms.Button();
@@ -66,45 +67,33 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			// _aeTitle
 			// 
-			this._aeTitle.LabelText = "AE Title";
-			this._aeTitle.Location = new System.Drawing.Point(2, 2);
-			this._aeTitle.Margin = new System.Windows.Forms.Padding(2);
-			this._aeTitle.Mask = "";
+			resources.ApplyResources(this._aeTitle, "_aeTitle");
 			this._aeTitle.Name = "_aeTitle";
-			this._aeTitle.Size = new System.Drawing.Size(150, 41);
-			this._aeTitle.TabIndex = 1;
+			this._aeTitle.ToolTip = null;
 			this._aeTitle.Value = null;
 			// 
 			// _port
 			// 
-			this._port.LabelText = "Port";
-			this._port.Location = new System.Drawing.Point(2, 49);
-			this._port.Margin = new System.Windows.Forms.Padding(2);
-			this._port.Mask = "";
+			resources.ApplyResources(this._port, "_port");
 			this._port.Name = "_port";
-			this._port.Size = new System.Drawing.Size(150, 41);
-			this._port.TabIndex = 2;
+			this._port.ToolTip = null;
 			this._port.Value = null;
 			// 
 			// _refreshButton
 			// 
-			this._refreshButton.Location = new System.Drawing.Point(4, 95);
+			resources.ApplyResources(this._refreshButton, "_refreshButton");
 			this._refreshButton.Name = "_refreshButton";
-			this._refreshButton.Size = new System.Drawing.Size(75, 23);
-			this._refreshButton.TabIndex = 5;
-			this._refreshButton.Text = "Refresh";
 			this._refreshButton.UseVisualStyleBackColor = true;
 			this._refreshButton.Click += new System.EventHandler(this._refreshButton_Click);
 			// 
 			// DicomServerConfigurationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._refreshButton);
 			this.Controls.Add(this._port);
 			this.Controls.Add(this._aeTitle);
 			this.Name = "DicomServerConfigurationComponentControl";
-			this.Size = new System.Drawing.Size(158, 137);
 			this.ResumeLayout(false);
 
         }

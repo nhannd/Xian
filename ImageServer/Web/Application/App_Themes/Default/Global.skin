@@ -1,6 +1,11 @@
 <%@ Register assembly="ClearCanvas.ImageServer.Web.Common" namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" tagPrefix="ccUI" %>
 <%@ Register src="~/Controls/InvalidInputIndicator.ascx" tagPrefix="ccASP" tagName="InvalidInputIndicator" %>
 
+
+
+<%-- Splash screen --%>
+<asp:Panel runat="server" SkinID="LoginSplash" BackImageUrl="images/LoginSplash.png"/>
+
 <%-- Header and Menu Images --%>
 
 <asp:Image runat="server" SkinID="Logo" ImageUrl="images/Header/ClearCanvasLogo.png" Height="68" Width="210" />
@@ -53,8 +58,10 @@
 <ccUI:ToolbarButton runat="server" SkinID="DiscardButton" EnabledImageURL="images/Buttons/DiscardEnabled.png" DisabledImageURL="images/Buttons/DiscardDisabled.png" HoverImageURL="images/Buttons/DiscardHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ResetPasswordButton" EnabledImageURL="images/Buttons/ResetPasswordEnabled.png" DisabledImageURL="images/Buttons/ResetPasswordDisabled.png" HoverImageURL="images/Buttons/ResetPasswordHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ViewImagesButton" EnabledImageURL="images/Buttons/ViewImagesEnabled.png" DisabledImageURL="images/Buttons/ViewImagesDisabled.png" HoverImageURL="images/Buttons/ViewImagesHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="AddDataAccessButton" EnabledImageURL="images/Buttons/AddDataAccessEnabled.png" DisabledImageURL="images/Buttons/AddDataAccessDisabled.png" HoverImageURL="images/Buttons/AddDataAccessHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="CopyButton" EnabledImageURL="images/Buttons/CopyEnabled.png" DisabledImageURL="images/Buttons/CopyDisabled.png" HoverImageURL="images/Buttons/CopyHover.png"/>
 
-<asp:LinkButton runat="server" SkinId="CloseButton" Text="Close" CssClass="CloseButton" />
+<asp:LinkButton runat="server" SkinId="CloseButton"  CssClass="CloseButton" />
 
 <%-- Tables --%>
 
@@ -82,4 +89,5 @@
 <ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="~/App_Themes/Default/images/Indicators/HelpSmall.png" Visible="true" />
 <ccUI:GridView runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView" CaptionAlign="Top" Width="100%" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#d6f2ce" GridLines="Horizontal" BackColor="White" AllowSorting="True" PageSize="1" CellPadding="0" CellSpacing="0" AllowPaging="True" BorderWidth="0px" HorizontalAlign="left" />
 <ccUI:GridView SkinID="WebViewerMultipleStudiesGridView" runat="server" AutoGenerateColumns="False" CssClass="WebViewerGridView" CaptionAlign="Top" Width="100%" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#666666" GridLines="Horizontal" BackColor="Black" AllowSorting="True" PageSize="1" CellPadding="0" CellSpacing="0" AllowPaging="True" BorderWidth="0px" HorizontalAlign="left" />
+<ccUI:Warning runat="server" SkinID="Warning" ImageUrl="images/Indicators/Warning.png" />
 

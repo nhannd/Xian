@@ -1,11 +1,27 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="JavascriptRequired.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.JavascriptRequired" %>
+<%--  License
 
-<asp:Content runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">
-	    <asp:label ID="Label1" Text="Javascript is currently disabled on your browser." runat="server" />
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="JavascriptRequired.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.JavascriptRequired" %>
+<%@ Import Namespace="Resources"%>
+
+
+<asp:Content ID="Content2" runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">
+	    <asp:label ID="Label2" runat="server">
+	    <%= ErrorMessages.JavascriptIsDisabled %>
+	    </asp:label>
 
 </asp:Content>
 
-<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="DescriptionPlaceHolder">
-		ClearCanvas ImageServer requires Javascript in order to run. 
-		Please enable Javascript on your browser and click <a href="../../Default.aspx" class="ErrorLink">here</a> to try again.
+<asp:Content ID="Content3" runat="server" ContentPlaceHolderID="DescriptionPlaceHolder">
+        <div id="Div1" runat="server" onclick="window.location='../../Default.aspx'">
+		    <%= ErrorMessages.JavascriptIsDisabledLongDescription%>
+		</div>
 </asp:Content>

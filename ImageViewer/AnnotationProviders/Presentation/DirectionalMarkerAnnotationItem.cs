@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			}
 
 			//this should never happen.
-			throw new IndexOutOfRangeException(SR.ExceptionTransformedEdgeDoesNotMatch);
+            throw new IndexOutOfRangeException(SR.ExceptionTransformedEdgeDoesNotMatch);
 		}
 
 		/// <summary>

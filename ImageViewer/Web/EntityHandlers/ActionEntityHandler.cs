@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Layout.Basic;
@@ -126,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public override bool IsEquivalentTo(ActionNodeEntityHandler other)
 		{
-			if (other.GetType() != this.GetType())
+			if (other.GetType() != GetType())
 				return false;
 
 			return AreEquivalent(ChildHandlers, ((BranchActionEntityHandler)other).ChildHandlers);
@@ -195,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public override bool IsEquivalentTo(ActionNodeEntityHandler other)
 		{
-			if (other.GetType() != this.GetType())
+			if (other.GetType() != GetType())
 				return false;
 
 			return Action.ActionID == ((ActionEntityHandler)other).Action.ActionID;
@@ -223,6 +224,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			webAction.Label = Action.Label;
 			webAction.Enabled = Action.Enabled;
 			webAction.Visible = Action.Visible;
+		    webAction.Available = Action.Available;
 
 			if (Action.IconSet == null)
 				return;
@@ -282,6 +284,18 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			NotifyEntityPropertyChanged("IconSet", CreateWebIconSet(Action));
 		}
 
+
+        protected override string[] GetDebugInfo()
+        {
+            StringBuilder info = new StringBuilder();
+            info.AppendLine(string.Format("Action ID : {0}", Action.ActionID));
+            info.AppendLine(string.Format("Action Label : {0}", Action.Label));
+            info.AppendLine(string.Format("Action Path : {0}", Action.Path));
+            info.AppendLine(string.Format("Action Availablity : {0}", Action.Available)); 
+            
+            return new[] {info.ToString()};
+        }
+
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
@@ -296,11 +310,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 	public class ClickActionEntityHandler : ActionEntityHandler
 	{
-		public ClickActionEntityHandler()
-			: base()
-		{
-		}
-
 		public new IClickAction Action
 		{
 			get { return (IClickAction)base.Action; }	
@@ -326,7 +335,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			webClickAction.Checked = Action.Checked;
 		}
 
-		public override void ProcessMessage(Message message)
+	    public override void ProcessMessage(Message message)
 		{
 			if (message is ActionClickedMessage)
 				Action.Click();

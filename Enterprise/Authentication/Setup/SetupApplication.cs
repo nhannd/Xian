@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Authentication.Imex;
 using ClearCanvas.Enterprise.Core;
@@ -37,7 +36,7 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 
 				using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
 				{
-					((IUpdateContext)PersistenceScope.CurrentContext).ChangeSetRecorder.OperationName = this.GetType().FullName;
+					((IUpdateContext)PersistenceScope.CurrentContext).ChangeSetRecorder.OperationName = GetType().FullName;
 
 					// import authority tokens
 					AuthorityTokenImporter tokenImporter = new AuthorityTokenImporter();
@@ -46,8 +45,9 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 
 					// create the sys admin group, which has all tokens assigned by default
 					string[] tokenStrings = CollectionUtils.Map<AuthorityToken, string, List<string>>(allTokens,
-					   delegate(AuthorityToken t) { return t.Name; }).ToArray();
-					AuthorityGroupDefinition adminGroupDef = new AuthorityGroupDefinition(cmdLine.SysAdminGroup, tokenStrings);
+					                                                                                  t => t.Name).ToArray();
+                    AuthorityGroupDefinition adminGroupDef = new AuthorityGroupDefinition(cmdLine.SysAdminGroup, cmdLine.SysAdminGroup, false,
+				                                                                          tokenStrings);
 					AuthorityGroupImporter groupImporter = new AuthorityGroupImporter();
 
 					IList<AuthorityGroup> groups = 
@@ -55,7 +55,7 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 
 					// find the admin group entity that was just created
 					AuthorityGroup adminGroup = CollectionUtils.SelectFirst(groups,
-						delegate(AuthorityGroup g) { return g.Name == cmdLine.SysAdminGroup; });
+					                                                        g => g.Name == cmdLine.SysAdminGroup);
 
 					// create the "sa" user
 					CreateSysAdminUser(adminGroup, cmdLine, PersistenceScope.CurrentContext, Console.Out);
@@ -76,7 +76,7 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 			}
         }
 
-        private void CreateSysAdminUser(AuthorityGroup adminGroup, SetupCommandLine cmdLine, IPersistenceContext context, TextWriter log)
+        private static void CreateSysAdminUser(AuthorityGroup adminGroup, SetupCommandLine cmdLine, IPersistenceContext context, TextWriter log)
         {
             try
             {
@@ -90,12 +90,14 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
             }
             catch (EntityNotFoundException)
             {
-                HashedSet<AuthorityGroup> groups = new HashedSet<AuthorityGroup>();
-                groups.Add(adminGroup);
+                HashedSet<AuthorityGroup> groups = new HashedSet<AuthorityGroup>
+                                                       {
+                                                           adminGroup
+                                                       };
 
                 // create sa user using initial password, set to expire never
                 User saUser = User.CreateNewUser(
-					new UserInfo(cmdLine.SysAdminUserName, cmdLine.SysAdminDisplayName, null, null),
+					new UserInfo(cmdLine.SysAdminUserName, cmdLine.SysAdminDisplayName, null, null, null),
 					Password.CreatePassword(cmdLine.SysAdminInitialPassword, null),
                     groups);
                 context.Lock(saUser, DirtyState.New);

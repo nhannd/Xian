@@ -50,6 +50,7 @@ namespace ClearCanvas.Enterprise.Authentication {
                 true, // initially enabled
                 Platform.Time, // creation time
                 null, // last login time
+                userInfo.EmailAddress,
                 authorityGroups,
                 new HashedSet<UserSession>()  // empty session collection
                 );

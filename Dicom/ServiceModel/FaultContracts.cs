@@ -60,6 +60,9 @@ namespace ClearCanvas.Dicom.ServiceModel
 	{
 		public StudyNearlineFault()
 		{ }
+
+		[DataMember(IsRequired = false)]
+		public bool IsStudyBeingRestored { get; set; }
 	}
 
 	//[DataContract(Namespace = DicomNamespace.Value)]

@@ -120,6 +120,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[2] = new PointF(1, 1);
 			data[3] = new PointF(0, 1);
 
+			var offset = PolygonF.TestVertexNormalization(data);
+
 			// test for a possible buffer overrun in the computation
 			foreach (PointF garbagePoint in SimulatedBufferOverrunPoints)
 			{
@@ -131,19 +133,19 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 						// inside PolygonF, the vertexCount is always exactly the expected array length
 						// which is 4 (the 5th point simulates garbage data beyond the array)
 						int vertexCount = data.Length - 1;
-						Assert.IsTrue(PolygonF.TestContains(new PointF(0.5f, 0.5f), points, vertexCount)); // inside
-						Assert.IsFalse(PolygonF.TestContains(new PointF(0.5f, 1.5f), points, vertexCount)); // above
-						Assert.IsFalse(PolygonF.TestContains(new PointF(0f, 1.5f), points, vertexCount)); // above
+						Assert.IsTrue(PolygonF.TestContains(new PointF(0.5f, 0.5f) - offset, points, vertexCount)); // inside
+						Assert.IsFalse(PolygonF.TestContains(new PointF(0.5f, 1.5f) - offset, points, vertexCount)); // above
+						Assert.IsFalse(PolygonF.TestContains(new PointF(0f, 1.5f) - offset, points, vertexCount)); // above
 
-						Assert.IsTrue(PolygonF.TestContains(new PointF(0f, 0.5f), points, vertexCount)); // left edge
-						Assert.IsFalse(PolygonF.TestContains(new PointF(1f, 0.5f), points, vertexCount)); // right edge
-						Assert.IsTrue(PolygonF.TestContains(new PointF(0.5f, 0f), points, vertexCount)); // bottom edge
-						Assert.IsFalse(PolygonF.TestContains(new PointF(0.5f, 1f), points, vertexCount)); // top edge
+						Assert.IsTrue(PolygonF.TestContains(new PointF(0f, 0.5f) - offset, points, vertexCount)); // left edge
+						Assert.IsFalse(PolygonF.TestContains(new PointF(1f, 0.5f) - offset, points, vertexCount)); // right edge
+						Assert.IsTrue(PolygonF.TestContains(new PointF(0.5f, 0f) - offset, points, vertexCount)); // bottom edge
+						Assert.IsFalse(PolygonF.TestContains(new PointF(0.5f, 1f) - offset, points, vertexCount)); // top edge
 
-						Assert.IsTrue(PolygonF.TestContains(new PointF(0f, 0f), points, vertexCount)); // bottom left corner
-						Assert.IsFalse(PolygonF.TestContains(new PointF(0f, 1f), points, vertexCount)); // top left corner
-						Assert.IsFalse(PolygonF.TestContains(new PointF(1f, 0f), points, vertexCount)); // bottom right corner
-						Assert.IsFalse(PolygonF.TestContains(new PointF(1f, 1f), points, vertexCount)); // top right corner
+						Assert.IsTrue(PolygonF.TestContains(new PointF(0f, 0f) - offset, points, vertexCount)); // bottom left corner
+						Assert.IsFalse(PolygonF.TestContains(new PointF(0f, 1f) - offset, points, vertexCount)); // top left corner
+						Assert.IsFalse(PolygonF.TestContains(new PointF(1f, 0f) - offset, points, vertexCount)); // bottom right corner
+						Assert.IsFalse(PolygonF.TestContains(new PointF(1f, 1f) - offset, points, vertexCount)); // top right corner
 					}
 				}
 			}
@@ -164,6 +166,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[8] = new PointF(255, 209);
 			data[9] = new PointF(254, 201);
 
+			var offset = PolygonF.TestVertexNormalization(data);
+
 			// test for a possible buffer overrun in the computation
 			foreach (PointF garbagePoint in SimulatedBufferOverrunPoints)
 			{
@@ -175,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 						// inside PolygonF, the vertexCount is always exactly the expected array length
 						// which is 10 (the 11th point simulates garbage data beyond the array)
 						int vertexCount = data.Length - 1;
-						Assert.IsTrue(PolygonF.TestContains(new PointF(249, 209), points, vertexCount));
+						Assert.IsTrue(PolygonF.TestContains(new PointF(249, 209) - offset, points, vertexCount));
 					}
 				}
 			}
@@ -189,6 +193,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[1] = new PointF(1, 0);
 			data[2] = new PointF(1, 1);
 			data[3] = new PointF(0, 1);
+
+			PolygonF.TestVertexNormalization(data);
 
 			// test for a possible buffer overrun in the computation
 			foreach (PointF garbagePoint in SimulatedBufferOverrunPoints)
@@ -215,6 +221,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[1] = new PointF(1, 0);
 			data[2] = new PointF(0, 1);
 			data[3] = new PointF(1, 1);
+
+			PolygonF.TestVertexNormalization(data);
 
 			// test for a possible buffer overrun in the computation
 			foreach (PointF garbagePoint in SimulatedBufferOverrunPoints)
@@ -305,6 +313,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[2] = new PointF(1, 1);
 			data[3] = new PointF(0, 1);
 
+			PolygonF.TestVertexNormalization(data);
+
 			unsafe
 			{
 				fixed (PointF* points = data)
@@ -323,6 +333,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[1] = new PointF(1, 0);
 			data[2] = new PointF(1, 1);
 			data[3] = new PointF(0, 1);
+
+			PolygonF.TestVertexNormalization(data);
 
 			// test for a possible buffer overrun in the computation
 			foreach (PointF garbagePoint in SimulatedBufferOverrunPoints)
@@ -347,6 +359,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[0] = new PointF(-10001, 10000);
 			data[1] = new PointF(-10001, 10002);
 			data[2] = new PointF(-10000, 10002);
+
+			PolygonF.TestVertexNormalization(data);
 
 			// test for a possible buffer overrun in the computation
 			foreach (PointF garbagePoint in SimulatedBufferOverrunPoints)
@@ -377,6 +391,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[2] = new PointF(side, side);
 			data[3] = new PointF(0, side);
 
+			PolygonF.TestVertexNormalization(data);
+
 			RectangleF bounding = RectangleUtilities.ComputeBoundingRectangle(data);
 
 			unsafe
@@ -403,6 +419,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[1] = new PointF(side, 0);
 			data[2] = new PointF(0, side);
 			data[3] = new PointF(side, side);
+
+			PolygonF.TestVertexNormalization(data);
 
 			RectangleF bounding = RectangleUtilities.ComputeBoundingRectangle(data);
 
@@ -431,6 +449,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[2] = new PointF(side, side);
 			data[3] = new PointF(0, side);
 			data[4] = new PointF(side/2f, side/2f);
+
+			PolygonF.TestVertexNormalization(data);
 
 			RectangleF bounding = RectangleUtilities.ComputeBoundingRectangle(data);
 
@@ -466,6 +486,8 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			data[3] = new PointF(side, side);
 			data[4] = new PointF(side/2f, side/2f);
 
+			PolygonF.TestVertexNormalization(data);
+
 			RectangleF bounding = RectangleUtilities.ComputeBoundingRectangle(data);
 
 			// test for a possible buffer overrun in the computation
@@ -484,6 +506,29 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 					}
 				}
 			}
+		}
+
+		[Test]
+		public void TestVertexNormalization()
+		{
+			var data = new[]
+			           	{
+			           		new PointF(8000, 8000),
+			           		new PointF(10000, 10000),
+			           		new PointF(9503, 9763),
+			           		new PointF(9273, 8000),
+			           		new PointF(10000, 9939),
+			           		new PointF(8799, 8103)
+			           	};
+
+			var offset = PolygonF.TestVertexNormalization(data);
+			Assert.AreEqual(new SizeF(9000, 9000), offset);
+			Assert.AreEqual(new PointF(-1000, -1000), data[0]);
+			Assert.AreEqual(new PointF(1000, 1000), data[1]);
+			Assert.AreEqual(new PointF(503, 763), data[2]);
+			Assert.AreEqual(new PointF(273, -1000), data[3]);
+			Assert.AreEqual(new PointF(1000, 939), data[4]);
+			Assert.AreEqual(new PointF(-201, -897), data[5]);
 		}
 
 		/// <summary>

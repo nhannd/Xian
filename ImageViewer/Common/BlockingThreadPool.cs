@@ -15,9 +15,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-	//TODO: incorporate this kind of thing into the thread pools in common, where the items being 
-	//processed can be added and/or removed.
-	internal class BlockingThreadPool<T> : ThreadPoolBase
+	/// <remarks>
+	/// DO NOT USE THIS CLASS, as it will be removed or refactored in the future.
+	/// </remarks>
+	public class BlockingThreadPool<T> : ThreadPoolBase
 	{
 		private readonly IBlockingEnumerator<T> _blockingEnumerator;
 		private readonly ProcessItemDelegate<T> _processItem;

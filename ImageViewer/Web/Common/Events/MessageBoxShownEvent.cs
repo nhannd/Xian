@@ -20,5 +20,10 @@ namespace ClearCanvas.ImageViewer.Web.Common.Events
     {
         [DataMember(IsRequired = true)]
         public MessageBox MessageBox { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("MessageBoxShownEvent [{0}]", MessageBox);
+        }
     }
 }

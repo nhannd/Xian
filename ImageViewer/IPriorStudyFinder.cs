@@ -9,10 +9,23 @@
 
 #endregion
 
+using System;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+    public class PriorStudyFinderResult
+    {
+        public PriorStudyFinderResult(StudyItemList studies, bool resultsComplete)
+        {
+            ResultsComplete = resultsComplete;
+            Studies = studies;
+        }
+
+        public StudyItemList Studies { get; private set; }
+        public bool ResultsComplete { get; set; }
+    }
+
 	/// <summary>
 	/// Defines the interface for finding related (or 'prior') studies
 	/// based on the studies that are already loaded in an <see cref="IImageViewer"/>'s <see cref="StudyTree"/>.
@@ -32,7 +45,7 @@ namespace ClearCanvas.ImageViewer
 		/// Gets the list of prior studies.
 		/// </summary>
 		/// <returns></returns>
-		StudyItemList FindPriorStudies();
+        PriorStudyFinderResult FindPriorStudies();
 
 		/// <summary>
 		/// Cancels the search for prior studies.
