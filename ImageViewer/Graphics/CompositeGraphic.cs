@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
 
@@ -284,17 +285,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns>An enumeration of child graphics.</returns>
 		public IEnumerable<IGraphic> EnumerateChildGraphics(bool reverse)
 		{
-			if (reverse)
-				return this.ReverseEnumerateChildGraphics();
-			return this.Graphics;
-		}
-
-		private IEnumerable<IGraphic> ReverseEnumerateChildGraphics()
-		{
-			for (int graphicIndex = this.Graphics.Count - 1; graphicIndex >= 0; --graphicIndex)
-			{
-				yield return this.Graphics[graphicIndex];
-			}
+		    return reverse ? Graphics.Reverse() : Graphics;
 		}
 	}
 }

@@ -1,3 +1,15 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerRulePanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel" %>
 
@@ -18,26 +30,26 @@
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label1" runat="server" Text="Type" CssClass="SearchTextBoxLabel" EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="Search by type" />
+                                                <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleType %>" CssClass="SearchTextBoxLabel" EnableViewState="False" /><br />
+                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="<%$Resources: Tooltips, SearchByType %>" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Apply Time" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleApplyType %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
-                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="Search by apply time"/>
+                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="<%$Resources: Tooltips, SearchByApplyTime %>"/>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Status" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleStatus %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Default" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleDefault %>" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>
                                             <td align="right" valign="bottom">
-                                                <asp:Panel ID="Panel2" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click"/></asp:Panel>
+                                                <asp:Panel ID="Panel2" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click"/></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
@@ -52,9 +64,9 @@
                             <asp:UpdatePanel ID="ToolbarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="AddServerRuleButton" runat="server" SkinID="AddButton" OnClick="AddServerRuleButton_Click" />
-                                        <ccUI:ToolbarButton ID="EditServerRuleButton" runat="server" SkinID="EditButton" OnClick="EditServerRuleButton_Click" />
-                                        <ccUI:ToolbarButton ID="DeleteServerRuleButton" runat="server" SkinID="DeleteButton" OnClick="DeleteServerRuleButton_Click" />
+                                        <ccUI:ToolbarButton ID="AddServerRuleButton" runat="server" SkinID="<%$Image:AddButton%>" OnClick="AddServerRuleButton_Click" />
+                                        <ccUI:ToolbarButton ID="EditServerRuleButton" runat="server" SkinID="<%$Image:EditButton%>" OnClick="EditServerRuleButton_Click" />
+                                        <ccUI:ToolbarButton ID="DeleteServerRuleButton" runat="server" SkinID="<%$Image:DeleteButton%>" OnClick="DeleteServerRuleButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

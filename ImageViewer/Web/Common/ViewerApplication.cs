@@ -12,9 +12,35 @@
 using System.Runtime.Serialization;
 using ClearCanvas.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
+using System;
 
 namespace ClearCanvas.ImageViewer.Web.Common
 {
+    [DataContract]
+    public class LayoutConfiguration
+    {
+        [DataMember(IsRequired = true)]
+        public int Rows { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int Columns { get; set; }
+    }
+
+    [DataContract]
+    public class LoadStudyOptions
+    {
+        [DataMember(IsRequired = false)]
+		public bool KeyImagesOnly {get; set;}
+        /// <summary>
+        /// Exclude priors
+        /// </summary>
+        [DataMember(IsRequired = false)]
+        public bool ExcludePriors { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public LayoutConfiguration PreferredLayout { get; set; }
+    }
+
 	[DataContract(Namespace = ViewerNamespace.Value)]
 	public class StartViewerApplicationRequest : StartApplicationRequest
 	{
@@ -29,6 +55,9 @@ namespace ClearCanvas.ImageViewer.Web.Common
 
 		[DataMember(IsRequired = false)]
 		public string[] PatientId { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public LoadStudyOptions LoadStudyOptions { get; set; }
 
         [DataMember(IsRequired = false)]
         public string ApplicationName { get; set; }

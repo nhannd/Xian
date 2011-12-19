@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Application.Services
             StaffAssembler staffAssembler = new StaffAssembler();
             StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
             return new OrderNoteSummary(
-                orderNote.GetRef(),
+                orderNote.OID == null ? null : orderNote.GetRef(), // may be a virtual order note, which is transient
                 orderNote.Category,
                 orderNote.CreationTime,
                 orderNote.PostTime,

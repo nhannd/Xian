@@ -24,15 +24,15 @@ using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
-    public partial class DropDownButton : UserControl, IActionUpdate, IToolstripDropdownButton
+    public partial class DropDownButton : UserControl, IActionUpdate, IToolstripDropdownButton, IDisposable
 	{
         private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
         private readonly WebDropDownButtonAction _actionItem;
         private IPopup _dropMenu;
-        private readonly ActionDispatcher _actionDispatcher;
+        private ActionDispatcher _actionDispatcher;
         private WebIconSize _iconSize;
-
+        private bool _disposed = false;
 
         private WebIconSize IconSize {
             get { return _iconSize; }
@@ -69,16 +69,47 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             StackPanelVerticalComponent.MouseEnter += ButtonComponent_MouseEnter;
             StackPanelVerticalComponent.MouseLeave += ButtonComponent_MouseLeave;
 
-			Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;
+            Visibility = _actionItem.DesiredVisiblility;
 
 			ButtonComponent.IsEnabled = _actionItem.Enabled;
 			DropButtonComponent.IsEnabled = _actionItem.Enabled;
 
             IndicateChecked(_actionItem.IsCheckAction && _actionItem.Checked);
 
-            if (_actionItem.IconSet.HasOverlay) OverlayCheckedIndicator.Opacity = 1;
-            else OverlayCheckedIndicator.Opacity = 0;
+            OverlayCheckedIndicator.Opacity = _actionItem.IconSet.HasOverlay ? 1 : 0;
 		}
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (_actionDispatcher != null)
+                {
+                    _actionDispatcher.Remove(_actionItem.Identifier);
+                    _actionDispatcher = null;
+                }
+
+                StackPanelVerticalComponent.MouseEnter -= ButtonComponent_MouseEnter;
+                StackPanelVerticalComponent.MouseLeave -= ButtonComponent_MouseLeave;
+                ButtonComponent.Click -= OnClick;
+                DropButtonComponent.Click -= OnDropClick;
+            
+                if (_dropMenu != null)
+                {
+                    if (disposing)
+                        _dropMenu.Dispose();
+                    _dropMenu = null;
+                }
+
+                _disposed = true;
+            }
+        }
 
         void ButtonComponent_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -120,10 +151,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
 		public void Update(PropertyChangedEvent e)
 		{
-			if (e.PropertyName.Equals("Visible"))
+            if (e.PropertyName.Equals("Available"))
+            {
+                _actionItem.Visible = (bool)e.Value;
+                Visibility = _actionItem.DesiredVisiblility;
+            }
+            else if (e.PropertyName.Equals("Visible"))
 			{
 				_actionItem.Visible = (bool)e.Value;
-				Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;
+                Visibility = _actionItem.DesiredVisiblility;
 			}
 			else if (e.PropertyName.Equals("Enabled"))
 			{
@@ -277,6 +313,5 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         }
 
         #endregion
-
-    }
+	}
 }

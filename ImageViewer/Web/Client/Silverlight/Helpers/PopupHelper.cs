@@ -10,17 +10,12 @@
 #endregion
 
 using System;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Threading;
 using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
+using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
@@ -52,15 +47,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
                             _currentWindow.Close();
 
                         _currentWindow = value;
-
+                        PopupManager.FirePopupOpened();
                         if (_currentWindow != null)
                         {
                             _currentWindow.Closed += (s, e) => {
                                 if (CurrentPopup == s)
                                 {
-                                    _currentWindow = null; 
-                                }
-                                
+                                    _currentWindow = null;
+                                    PopupManager.FirePopupClosed();
+                                }                                
                             };
                         }
                     }
@@ -77,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
         {
             var msgBox = new ChildWindow();
             CurrentPopup = msgBox;
-            msgBox.Style = System.Windows.Application.Current.Resources["PopupMessageWindow"] as Style;
+            msgBox.Style = Application.Current.Resources["PopupMessageWindow"] as Style;
             msgBox.BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0xBA, 0xD2, 0xEC));
             msgBox.Title = title;
 
@@ -92,15 +87,21 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             {
                 foreach (Button b in buttons)
                 {
-                    b.Click += (s, e) => { msgBox.Close(); };
-                    panel.Children.Add(b);
+                    b.Click += (s, e) =>
+                                   {
+                                       msgBox.Close();
+                                   };
+                    buttonPanel.Children.Add(b);
                 }
 
             }
             else
             {
-                var closeButton = new Button { Content = "Close", HorizontalAlignment = HorizontalAlignment.Center,  };
-                closeButton.Click += (s, e) => { msgBox.Close(); };
+                var closeButton = new Button { Content = Labels.ButtonClose, HorizontalAlignment = HorizontalAlignment.Center, };
+                closeButton.Click += (s, e) =>
+                                         {
+                                             msgBox.Close();
+                                         };
                 buttonPanel.Children.Add(closeButton);
 
             }
@@ -108,7 +109,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             panel.Children.Add(buttonPanel);
             msgBox.Content = panel;
 
+            msgBox.IsTabStop = true;
             msgBox.Show();
+			msgBox.Focus();
+
+            PopupManager.CloseActivePopup();
             return msgBox;
         }
 
@@ -124,18 +129,21 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             msgBox.MaxWidth = Application.Current.Host.Content.ActualWidth * 0.5; 
             
             msgBox.Content = new TextBlock() { Text = message, Margin = new Thickness(20), Foreground = new SolidColorBrush(Colors.White), FontSize = 14 };
+            msgBox.IsTabStop = true;
             msgBox.Show();
-
+			msgBox.Focus();
+            
             _currentWindow = msgBox;
+            PopupManager.CloseActivePopup();
             return msgBox;
         }
 
-        public static ChildWindow PopupMessage(string title, string message, string closeButtonLabel)
+        public static ChildWindow PopupMessage(string title, string message, string closeButtonLabel, bool closeWindow)
         {
             var msgBox = new ChildWindow();
             CurrentPopup = msgBox;
             
-            msgBox.Style = System.Windows.Application.Current.Resources["PopupMessageWindow"] as Style;
+            msgBox.Style = Application.Current.Resources["PopupMessageWindow"] as Style;
             msgBox.BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0xBA, 0xD2, 0xEC));
             msgBox.Title = title;
             msgBox.MaxWidth = Application.Current.Host.Content.ActualWidth * 0.5;
@@ -143,13 +151,24 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             StackPanel content = new StackPanel();
             content.Children.Add(new TextBlock() { Text = message, Margin = new Thickness(20), Foreground = new SolidColorBrush(Colors.White), FontSize = 14, HorizontalAlignment=HorizontalAlignment.Center });
 
-            Button closeButton = new Button() { Content = closeButtonLabel, FontSize = 14, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(20) };
-            closeButton.Click += (s, o) => { msgBox.Close(); };
+            Button closeButton = new Button { Content = closeButtonLabel, FontSize = 14, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(20) };
+            closeButton.Click += (s, o) =>
+                                     {
+                                         msgBox.Close();
+                                         if (closeWindow)
+                                         {
+                                             BrowserWindow.Close();
+                                         }
+                                     };
             content.Children.Add(closeButton);
             msgBox.Content = content;
+            msgBox.IsTabStop = true;
+            
             msgBox.Show();
-
+            msgBox.Focus();
+            
             _currentWindow = msgBox;
+            PopupManager.CloseActivePopup();
             return msgBox;
         }
     }

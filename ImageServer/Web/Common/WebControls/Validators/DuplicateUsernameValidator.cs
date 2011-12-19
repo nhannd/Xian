@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (String.IsNullOrEmpty(username))
             {
-                ErrorMessage = "Username is required.";
+                ErrorMessage = ValidationErrors.UsernameCannotBeEmpty;
                 return false;
             }
 
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (controller.ExistsUsername(username) && !username.Equals(originalUsername))
             {
-                ErrorMessage = "Username already exists.";
+                ErrorMessage = String.Format(ValidationErrors.UsernameAlreadyExists, username);
                 return false;
             }
 

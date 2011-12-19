@@ -24,7 +24,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
 	public class RoiStatisticsAnalyzer : IRoiAnalyzer
 	{
-		/// <summary>
+	    private RoiAnalyzerUpdateCallback _updateCallback;
+
+	    /// <summary>
 		/// This property is not applicable to this analyzer.
 		/// </summary>
 		Units IRoiAnalyzer.Units
@@ -64,40 +66,37 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 
 			bool isGrayscale = roi.PixelData is GrayscalePixelData;
 
+			var meanValue = SR.StringNotApplicable;
+			var stdDevValue = SR.StringNotApplicable;
+
 			if (isGrayscale && roi.ContainsPixelData)
 			{
 				if (mode == RoiAnalysisMode.Responsive)
 				{
-					sb.AppendFormat(SR.FormatMean, SR.StringNoValue);
-					sb.AppendLine();
-					sb.AppendFormat(SR.FormatStdDev, SR.StringNoValue);
-					return sb.ToString();
-				}
-
-				double mean = statisticsProvider.Mean;
-				double stdDev = statisticsProvider.StandardDeviation;
-
-				if (roi.Modality == "CT")
-				{
-					sb.AppendFormat(SR.FormatMeanCT, mean);
-					sb.AppendLine();
-					sb.AppendFormat(SR.FormatStdDevCT, stdDev);
+					meanValue = stdDevValue = SR.StringNoValue;
 				}
 				else
 				{
-					sb.AppendFormat(SR.FormatMean, mean);
-					sb.AppendLine();
-					sb.AppendFormat(SR.FormatStdDev, stdDev);
+					double mean = statisticsProvider.Mean;
+					double stdDev = statisticsProvider.StandardDeviation;
+
+					var units = roi.ModalityLutUnits.Label;
+					var displayFormat = @"{0:" + (roi.SubnormalModalityLut ? @"G3" : @"F1") + "}" + (!string.IsNullOrEmpty(units) ? ' ' + units : string.Empty);
+
+					meanValue = string.Format(displayFormat, mean);
+					stdDevValue = string.Format(displayFormat, stdDev);
 				}
 			}
-			else
-			{
-				sb.AppendFormat(SR.FormatMean, SR.StringNotApplicable);
-				sb.AppendLine();
-				sb.AppendFormat(SR.FormatStdDev, SR.StringNotApplicable);
-			}
 
+			sb.AppendFormat(SR.FormatMean, meanValue);
+			sb.AppendLine();
+			sb.AppendFormat(SR.FormatStdDev, stdDevValue);
 			return sb.ToString();
 		}
+
+        public void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback)
+        {
+            _updateCallback = callback;
+        }
 	}
 }

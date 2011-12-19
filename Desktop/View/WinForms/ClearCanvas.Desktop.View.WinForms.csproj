@@ -14,6 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +40,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -46,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionViewUtils.cs" />
     <Compile Include="ActiveMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -64,6 +69,7 @@
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CloseHelperComponentView.cs" />
+    <Compile Include="CommonDialogHook.cs" />
     <Compile Include="Configuration\ActionModelConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -81,6 +87,13 @@
       <DependentUpon>ClickActionKeystrokePropertyComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\ClickActionKeystrokePropertyComponentView.cs" />
+    <Compile Include="Configuration\ConfigurationDialogComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationDialogComponentControl.Designer.cs">
+      <DependentUpon>ConfigurationDialogComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationDialogComponentView.cs" />
     <Compile Include="Configuration\RenameNodeComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -146,6 +159,16 @@
     </Compile>
     <Compile Include="KeyStrokeCaptureBox.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LocalePicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextBoxToolbarItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WinFormsApplicationComponentView.cs" />
+    <Compile Include="LocalizableUserControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="WorkspaceDialogBoxForm.cs">
       <SubType>Form</SubType>
@@ -551,8 +574,14 @@
     <EmbeddedResource Include="Configuration\ClickActionKeystrokePropertyComponentControl.resx">
       <DependentUpon>ClickActionKeystrokePropertyComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ConfigurationDialogComponentControl.resx">
+      <DependentUpon>ConfigurationDialogComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Configuration\RenameNodeComponentControl.resx">
       <DependentUpon>RenameNodeComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExceptionDialogControl.resx">
+      <DependentUpon>ExceptionDialogControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>

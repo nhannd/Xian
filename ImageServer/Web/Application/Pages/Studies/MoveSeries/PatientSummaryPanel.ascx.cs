@@ -14,6 +14,7 @@ using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
 {
@@ -49,36 +50,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
 
                 if (bdate!=null)
                 {
+                    //TODO: Fix this. The patient's age should not changed whether the study is viewed today or next year.
                     TimeSpan age = Platform.Time - bdate.Value;
                     if (age > TimeSpan.FromDays(365))
                     {
-                        PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);
+                        PatientAge.Text = String.Format("{0:0} {1}", age.TotalDays / 365, SR.Years);
                     }
                     else if (age > TimeSpan.FromDays(30))
                     {
-                        PatientAge.Text = String.Format("{0:0} month(s)", age.TotalDays / 30);
+                        PatientAge.Text = String.Format("{0:0} {1}", age.TotalDays / 30, SR.Months);
                     }
                     else
                     {
-                        PatientAge.Text = String.Format("{0:0} day(s)", age.TotalDays);
+                        PatientAge.Text = String.Format("{0:0} {1}", age.TotalDays, SR.Days);
                     }
                 }
                 else
                 {
-                    PatientAge.Text = "Unknown";
+                    PatientAge.Text = SR.Unknown;
                 }
 
 
                 if (String.IsNullOrEmpty(_patientSummary.Sex))
-                    PatientSex.Text = "Unknown";
+                    PatientSex.Text = SR.Unknown;
                 else
                 {
                     if (_patientSummary.Sex.StartsWith("F"))
-                        PatientSex.Text = "Female";
+                        PatientSex.Text = SR.Female;
                     else if (_patientSummary.Sex.StartsWith("M"))
-                        PatientSex.Text = "Male";
+                        PatientSex.Text = SR.Male;
                     else
-                        PatientSex.Text = "Unknown";
+                        PatientSex.Text = SR.Unknown;
                 }
 
 

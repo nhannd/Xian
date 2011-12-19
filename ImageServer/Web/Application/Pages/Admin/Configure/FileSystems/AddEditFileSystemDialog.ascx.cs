@@ -16,6 +16,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.WebControls;
+using Resources;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems
@@ -107,7 +108,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             HighWatermarkTextBox.Attributes["onkeyup"] = "RecalculateWatermark()";
             LowWatermarkTextBox.Attributes["onkeyup"] = "RecalculateWatermark()";
 
-            EditFileSystemValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditFileSystemValidationError;
+            EditFileSystemValidationSummary.HeaderText = ErrorMessages.EditFileSystemValidationError;
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -182,22 +183,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             // SkinID cannot be set dynamically after Page_PreInit.
             if (EditMode)
             {
-                ModalDialog.Title = App_GlobalResources.SR.DialogEditFileSystemTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                ModalDialog.Title = SR.DialogEditFileSystemTitle;
+                OKButton.Visible = false;
+                UpdateButton.Visible = true;
             }
             else
             {
-                ModalDialog.Title = App_GlobalResources.SR.DialogAddFileSystemTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+                ModalDialog.Title = SR.DialogAddFileSystemTitle;
+                OKButton.Visible = true;
+                UpdateButton.Visible = false;
             }
 
             // update the dropdown list
             TiersDropDownList.Items.Clear();
             foreach (FilesystemTierEnum tier in _tiers)
             {
-                TiersDropDownList.Items.Add(new ListItem(tier.Description, tier.Lookup));
+                TiersDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(tier), tier.Lookup));
             }
 
             if (FileSystem == null)
@@ -270,10 +271,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             {
                 if (EditMode)
                 {
-                    ModalDialog.Title = App_GlobalResources.SR.DialogEditFileSystemTitle;
+                    ModalDialog.Title = SR.DialogEditFileSystemTitle;
                 } else
                 {
-                    ModalDialog.Title = App_GlobalResources.SR.DialogAddFileSystemTitle;
+                    ModalDialog.Title = SR.DialogAddFileSystemTitle;
                 }
             }
 

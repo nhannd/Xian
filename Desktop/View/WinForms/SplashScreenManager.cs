@@ -53,7 +53,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		// Constants
 		private const double OpacityDelta = 0.20;	// 20%
-		private const int CloseDelay = 2000;		// 2.0 seconds
+		private const int CloseDelay = 20;			// 0.02 seconds
 		private const int TimerInterval = 50;		// 50 ms
 
 		/// <summary>
@@ -84,14 +84,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// delay followed by a fade out.
 		/// </summary>
 		/// <param name="formToActivate">The new form to activate once the splash screen is closed.</param>
-		public static void DismissSplashScreen(Form formToActivate)
+		public static bool DismissSplashScreen(Form formToActivate)
 		{
 			// Shared resource access follows
 			mutex.WaitOne();
 
 			// Make sure it's already launched and not being dismissed
 			if (_displayThread == null || _closing)
-				return;
+			{
+				mutex.ReleaseMutex();
+				return false;
+			}
 
 			// Flag the splash screen for closing
 			_closing = true;
@@ -111,6 +114,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_dismissTimer.Interval = 50;
 
 			_dismissTimer.Start();
+
+			return true;
 		}
 
 		/// <summary>

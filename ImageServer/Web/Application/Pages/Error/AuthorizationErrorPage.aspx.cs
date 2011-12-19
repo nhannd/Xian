@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 {
@@ -34,7 +35,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
                 DescriptionLabel.Text = Context.Items[ImageServerConstants.ContextKeys.ErrorDescription].ToString();
             }
 
-            SetPageTitle(App_GlobalResources.Titles.AuthorizationErrorPageTitle);
+            #region UnitTest
+            if (false==String.IsNullOrEmpty(Page.Request.QueryString["test"]))
+            {
+                StackTraceMessage.Visible = true;
+                StackTraceTextBox.Visible = true;
+                StackTraceTextBox.Text = "Dummy stack trace";
+            }
+            #endregion
+
+            SetPageTitle(Titles.AuthorizationErrorPageTitle);
         }
 
         protected void Logout_Click(Object sender, EventArgs e)

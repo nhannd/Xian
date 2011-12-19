@@ -11,6 +11,7 @@
 
 using System;
 using System.ServiceModel;
+using System.Threading;
 using System.Web;
 using System.Web.Security;
 using System.Xml;
@@ -18,9 +19,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using SR = Resources.SR;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 {
@@ -28,6 +30,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (SessionManager.Current != null)
+            {
+                // already logged in. Maybe from a different page
+                HttpContext.Current.Response.Redirect(FormsAuthentication.GetRedirectUrl(SessionManager.Current.Credentials.UserName, false), true);
+            } 
+            
+            if (!ServerPlatform.IsManifestVerified)
+            {
+                ManifestWarningTextLabel.Text = SR.NonStandardInstallation;
+            }
+
             DataBind();
 
             SetPageTitle(Titles.LoginPageTitle);
@@ -41,7 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             	// Here we assume it's stand-alone if the DefaultAuthenticationService plugin is enabled.
                 // This is not perfect but at least it works.                
             	XmlDocument doc = new XmlDocument();
-                doc.Load(Server.MapPath("~/Web.Config"));
+                doc.Load(Server.MapPath("~/critical.Config"));
                 XmlNode node = doc.SelectSingleNode("//extensions/extension[@class='ClearCanvas.ImageServer.Services.Common.Authentication.DefaultAuthenticationService, ClearCanvas.ImageServer.Services.Common']");
                 return node != null && bool.Parse(node.Attributes["enabled"].Value) == false;
             }
@@ -49,12 +62,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 
         protected void LoginClicked(object sender, EventArgs e)
         {
+            if (SessionManager.Current != null)
+            {
+                // already logged in. Maybe from different page
+                HttpContext.Current.Response.Redirect(FormsAuthentication.GetRedirectUrl(SessionManager.Current.Credentials.UserName, false), true);
+            } 
+
             try
-            {               
+            {
                 SessionManager.InitializeSession(UserName.Text, Password.Text);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, SessionManager.Current.Credentials.DisplayName));
 				ServerPlatform.LogAuditMessage(audit);
 			}
@@ -64,18 +83,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 PasswordExpiredDialog.Show(UserName.Text, Password.Text);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
 				ServerPlatform.LogAuditMessage(audit);
 			}
             catch (UserAccessDeniedException ex)
             {
                 Platform.Log(LogLevel.Error, ex, ex.Message);
-                ShowError(ex.Message);
+                ShowError(ErrorMessages.UserAccessDenied);
                 UserName.Focus();
 
                 UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-                    EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, UserAuthenticationEventType.Login);
+                    EventIdentificationContentsEventOutcomeIndicator.SeriousFailureActionTerminated, UserAuthenticationEventType.Login);
                 audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
                 ServerPlatform.LogAuditMessage(audit);
             }
@@ -85,7 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 ShowError(ErrorMessages.CannotContactEnterpriseServer);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
 				ServerPlatform.LogAuditMessage(audit);
 			}
@@ -95,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 ShowError(ex.Message);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
 				ServerPlatform.LogAuditMessage(audit);
 			}

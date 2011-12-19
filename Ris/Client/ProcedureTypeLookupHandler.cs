@@ -42,6 +42,7 @@ namespace ClearCanvas.Ris.Client
 			ProcedureType = null;
 
 			ProcedureTypeSummaryComponent summaryComponent = new ProcedureTypeSummaryComponent(true);
+			summaryComponent.IncludeDeactivatedItems = this.IncludeDeactivatedItems;
 			if (!string.IsNullOrEmpty(query))
 			{
 				summaryComponent.Name = query;

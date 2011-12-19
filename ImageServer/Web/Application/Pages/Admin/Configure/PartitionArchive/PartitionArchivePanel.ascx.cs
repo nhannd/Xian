@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel.js", "application/x-javascript")]
 
@@ -98,19 +99,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             int archiveSelectedIndex = ArchiveTypeFilter.SelectedIndex;
 
             ArchiveTypeFilter.Items.Clear();
-            ArchiveTypeFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            ArchiveTypeFilter.Items.Add(new ListItem(SR.All));
             foreach (ArchiveTypeEnum archiveTypeEnum in ArchiveTypeEnum.GetAll())
             {
                 ArchiveTypeFilter.Items.Add(
-                    new ListItem(archiveTypeEnum.Description, archiveTypeEnum.Lookup));
+                    new ListItem(ServerEnumDescription.GetLocalizedDescription(archiveTypeEnum), archiveTypeEnum.Lookup));
             }
             ArchiveTypeFilter.SelectedIndex = archiveSelectedIndex;
 
             int statusSelectedIndex = StatusFilter.SelectedIndex;
             StatusFilter.Items.Clear();
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All, App_GlobalResources.SR.All));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled, App_GlobalResources.SR.Enabled));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled, App_GlobalResources.SR.Disabled));
+            StatusFilter.Items.Add(new ListItem(SR.All, SR.All));
+            StatusFilter.Items.Add(new ListItem(SR.Enabled, SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(SR.Disabled, SR.Disabled));
             StatusFilter.SelectedIndex = statusSelectedIndex;
         }
 
@@ -128,7 +129,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             // initialize the controller
             _theController = new PartitionArchiveConfigController();
 
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, delegate { return PartitionArchives.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerPartitionSingleItem, SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, delegate { return PartitionArchives.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
             PartitionArchiveGridPanel.Pager = GridPagerTop;
 
         }

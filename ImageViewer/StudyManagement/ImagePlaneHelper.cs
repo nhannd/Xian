@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -23,50 +24,67 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class ImagePlaneHelper
 	{
-		private readonly Frame _frame;
-
 		// No sense recalculating these things since they never change.
-		private Vector3D _imagePositionPatient;
-		private Vector3D _normalVector;
 		private Matrix _rotationMatrix;
 		private Matrix _pixelToPatientTransform;
+	    private Vector3D _normalVector;
 
-		internal ImagePlaneHelper(Frame frame)
+        internal ImagePlaneHelper(Frame frame)
+            : this(frame.ImagePositionPatient, frame.ImageOrientationPatient, frame.PixelSpacing)
+        {
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+	    public ImagePlaneHelper(ImagePositionPatient imagePositionPatient, ImageOrientationPatient imageOrientationPatient, PixelSpacing pixelSpacing)
 		{
-			Platform.CheckForNullReference(frame, "frame");
-			_frame = frame;
+            Platform.CheckForNullReference(imagePositionPatient, "imagePositionPatient");
+            Platform.CheckForNullReference(imageOrientationPatient, "imageOrientationPatient");
+            Platform.CheckForNullReference(pixelSpacing, "pixelSpacing");
+
+            PixelSpacing = pixelSpacing;
+		    ImageOrientationPatient = imageOrientationPatient;
+	        ImagePositionPatient = imagePositionPatient;
+            ImagePositionPatientVector = new Vector3D((float)ImagePositionPatient.X, (float)ImagePositionPatient.Y, (float)ImagePositionPatient.Z);
 		}
 
-		private Vector3D ImagePositionPatient
-		{
-			get
-			{
-				if (_imagePositionPatient == null)
-				{
-					ImagePositionPatient position = _frame.ImagePositionPatient;
-					_imagePositionPatient = new Vector3D((float)position.X, (float)position.Y, (float)position.Z);
-				}
+        public ImagePositionPatient ImagePositionPatient { get; private set; }
+        public ImageOrientationPatient ImageOrientationPatient { get; private set; }
+        public PixelSpacing PixelSpacing { get; private set; }
+        public Vector3D ImagePositionPatientVector { get; private set; }
 
-				return _imagePositionPatient;
-			}
-		}
+        /// <summary>
+        /// Gets whether or not the patient orientation and pixel spacing values are valid and
+        /// can therefore be used to transform between patient and image coordinates.
+        /// </summary>
+	    public bool IsValid
+	    {
+	        get
+	        {
+	            if (ImageOrientationPatient.IsNull)
+                    return false;
+                
+                if (PixelSpacing.IsNull)
+                    return false;
 
-		/// <summary>
+	            var normal = GetNormalVector();
+	            return normal != null && !normal.IsNull;
+	        }
+	    }
+
+        /// <summary>
 		/// Converts the input image position (expressed in pixels) to the patient coordinate system.
 		/// </summary>
 		/// <returns>A position vector, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
 		public Vector3D ConvertToPatient(PointF positionPixels)
 		{
-			ImageOrientationPatient orientation = _frame.ImageOrientationPatient;
-			PixelSpacing pixelSpacing = _frame.PixelSpacing;
-
-			if (orientation.IsNull || pixelSpacing.IsNull)
+            if (ImageOrientationPatient.IsNull || PixelSpacing.IsNull)
 				return null;
 
-			Vector3D position = this.ImagePositionPatient;
 			// A shortcut for when the pixel position is (0, 0).
-			if (positionPixels.X == 0F && positionPixels.Y == 0F)
-				return position;
+            if (positionPixels.X == 0F && positionPixels.Y == 0F)
+                return ImagePositionPatientVector;
 
 			// Calculation of position in patient coordinates using 
 			// the matrix method described in Dicom PS 3.3 C.7.6.2.1.1.
@@ -75,15 +93,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				_pixelToPatientTransform = new Matrix(4, 4);
 
-				_pixelToPatientTransform.SetColumn(0, (float)(orientation.RowX * pixelSpacing.Column),
-									 (float)(orientation.RowY * pixelSpacing.Column),
-									 (float)(orientation.RowZ * pixelSpacing.Column), 0F);
+                _pixelToPatientTransform.SetColumn(0, (float)(ImageOrientationPatient.RowX * PixelSpacing.Column),
+                                     (float)(ImageOrientationPatient.RowY * PixelSpacing.Column),
+                                     (float)(ImageOrientationPatient.RowZ * PixelSpacing.Column), 0F);
 
-				_pixelToPatientTransform.SetColumn(1, (float)(orientation.ColumnX * pixelSpacing.Row),
-									 (float)(orientation.ColumnY * pixelSpacing.Row),
-									 (float)(orientation.ColumnZ * pixelSpacing.Row), 0F);
+                _pixelToPatientTransform.SetColumn(1, (float)(ImageOrientationPatient.ColumnX * PixelSpacing.Row),
+                                     (float)(ImageOrientationPatient.ColumnY * PixelSpacing.Row),
+                                     (float)(ImageOrientationPatient.ColumnZ * PixelSpacing.Row), 0F);
 
-				_pixelToPatientTransform.SetColumn(3, position.X, position.Y, position.Z, 1F);
+                _pixelToPatientTransform.SetColumn(3, ImagePositionPatientVector.X, ImagePositionPatientVector.Y, ImagePositionPatientVector.Z, 1F);
 			}
 
 			Matrix columnMatrix = new Matrix(4, 1);
@@ -137,7 +155,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public Vector3D ConvertToImagePlane(Vector3D positionPatient)
 		{
 			Platform.CheckForNullReference(positionPatient, "positionPatient");
-			return ConvertToImagePlane(positionPatient, this.ImagePositionPatient);
+            return ConvertToImagePlane(positionPatient, this.ImagePositionPatientVector);
 		}
 
 		/// <summary>
@@ -146,30 +164,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>The corresponding pixel coordinate, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
 		public PointF? ConvertToImage(PointF positionMillimetres)
 		{
-			PixelSpacing spacing = _frame.PixelSpacing;
-			if (spacing.IsNull)
+			if (PixelSpacing.IsNull)
 				return null;
 
-			return new PointF(positionMillimetres.X / (float)spacing.Column, positionMillimetres.Y / (float)spacing.Row);
+            return new PointF(positionMillimetres.X / (float)PixelSpacing.Column, positionMillimetres.Y / (float)PixelSpacing.Row);
 		}
 
-		/// <summary>
-		/// Gets the normal vector describing the plane of the image in patient coordinates.
-		/// </summary>
-		/// <returns>The normal vector, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
-		public Vector3D GetNormalVector()
+        /// <summary>
+        /// Converts a point in the image expressed in pixels to a point expressed in mm.
+        /// </summary>
+        public PointF? ConvertFromImage(PointF positionPixels)
+        {
+            if (PixelSpacing.IsNull)
+                return null;
+
+            return new PointF(positionPixels.X * (float)PixelSpacing.Column, positionPixels.Y * (float)PixelSpacing.Row);
+        }
+
+        /// <summary>
+        /// Gets the normal vector describing the plane of the image in patient coordinates.
+        /// </summary>
+        /// <returns>The normal vector, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
+        public Vector3D GetNormalVector()
+        {
+            if (_normalVector == null)
+                _normalVector = GetNormalVector(ImageOrientationPatient);
+            return _normalVector;
+        }
+
+        /// <summary>
+        /// Gets the normal vector describing the plane of the image in patient coordinates.
+        /// </summary>
+        /// <returns>The normal vector, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
+        public static Vector3D GetNormalVector(ImageOrientationPatient imageOrientationPatient)
 		{
-			ImageOrientationPatient orientation = _frame.ImageOrientationPatient;
-			if (orientation.IsNull)
+            if (imageOrientationPatient.IsNull)
 				return null;
 
-			if (_normalVector == null)
-			{
-				Vector3D left = new Vector3D((float)orientation.RowX, (float)orientation.RowY, (float)orientation.RowZ);
-				_normalVector = left.Cross(new Vector3D((float)orientation.ColumnX, (float)orientation.ColumnY, (float)orientation.ColumnZ));
-			}
-
-			return _normalVector;
+            var left = new Vector3D((float)imageOrientationPatient.RowX, (float)imageOrientationPatient.RowY, (float)imageOrientationPatient.RowZ);
+            var normal = left.Cross(new Vector3D((float)imageOrientationPatient.ColumnX, (float)imageOrientationPatient.ColumnY, (float)imageOrientationPatient.ColumnZ));
+            return FloatComparer.AreEqual(normal.Magnitude, 0) ? Vector3D.Null : normal.Normalize();
 		}
 
 		/// <summary>
@@ -182,15 +216,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			if (_rotationMatrix == null)
 			{
-				ImageOrientationPatient orientation = _frame.ImageOrientationPatient;
-				if (orientation.IsNull)
+                if (ImageOrientationPatient.IsNull)
 					return null;
 
 				Vector3D normal = GetNormalVector();
+                if (normal == null || normal.IsNull)
+                    return null;
 
 				_rotationMatrix = new Matrix(3, 3);
-				_rotationMatrix.SetRow(0, (float)orientation.RowX, (float)orientation.RowY, (float)orientation.RowZ);
-				_rotationMatrix.SetRow(1, (float)orientation.ColumnX, (float)orientation.ColumnY, (float)orientation.ColumnZ);
+                _rotationMatrix.SetRow(0, (float)ImageOrientationPatient.RowX, (float)ImageOrientationPatient.RowY, (float)ImageOrientationPatient.RowZ);
+                _rotationMatrix.SetRow(1, (float)ImageOrientationPatient.ColumnX, (float)ImageOrientationPatient.ColumnY, (float)ImageOrientationPatient.ColumnZ);
 				_rotationMatrix.SetRow(2, normal.X, normal.Y, normal.Z);
 			}
 

@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             IList<WorkQueuePriorityEnum> priorities = WorkQueuePriorityEnum.GetAll();
             foreach (WorkQueuePriorityEnum priority in priorities)
             {
-                PriorityDropDownList.Items.Add(new ListItem(priority.Description, priority.Lookup));
+                PriorityDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(priority), priority.Lookup));
             }
 
             ScheduleNowCheckBox.Checked = false;

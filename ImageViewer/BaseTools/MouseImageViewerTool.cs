@@ -224,6 +224,11 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 		}
 
+        /// <summary>
+        /// Gets whether or not this tool should be automatically selected/activated when the viewer opens initially.
+        /// </summary>
+        public bool InitiallyActive { get; internal set; }
+
 		/// <summary>
 		/// Gets or sets a value indicating whether this tool is currently active or not.  
 		/// </summary>
@@ -332,25 +337,28 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </remarks>
 		protected virtual void OnMouseToolSettingsChanged(MouseToolSettingsProfile.Setting setting)
 		{
-			if (setting != null && !setting.IsEmpty)
-			{
-				this.MouseButton = setting.MouseButton.GetValueOrDefault(this.MouseButton);
+		    if (setting == null || setting.IsEmpty)
+                return;
 
-				var oldDefaultMouseButtonShortcut = this.DefaultMouseButtonShortcut ?? new MouseButtonShortcut(XMouseButtons.None, ModifierFlags.None);
-				var defaultMouseButton = setting.DefaultMouseButton.GetValueOrDefault(oldDefaultMouseButtonShortcut.MouseButton);
-				if (defaultMouseButton == XMouseButtons.None && this.DefaultMouseButtonShortcut != null)
-				{
-					this.DefaultMouseButtonShortcut = null;
-				}
-				else if (defaultMouseButton != XMouseButtons.None)
-				{
-					var defaultMouseButtonModifiers = setting.DefaultMouseButtonModifiers.GetValueOrDefault(oldDefaultMouseButtonShortcut.Modifiers.ModifierFlags);
-					if (oldDefaultMouseButtonShortcut.MouseButton != defaultMouseButton || oldDefaultMouseButtonShortcut.Modifiers.ModifierFlags != defaultMouseButtonModifiers)
-						this.DefaultMouseButtonShortcut = new MouseButtonShortcut(defaultMouseButton, defaultMouseButtonModifiers);
-				}
+		    this.MouseButton = setting.MouseButton.GetValueOrDefault(this.MouseButton);
 
-				// do not refresh the **initially** active property - we want to keep the current activation state of the tool!
-			}
+		    var oldDefaultMouseButtonShortcut = this.DefaultMouseButtonShortcut ?? new MouseButtonShortcut(XMouseButtons.None, ModifierFlags.None);
+		    var defaultMouseButton = setting.DefaultMouseButton.GetValueOrDefault(oldDefaultMouseButtonShortcut.MouseButton);
+		    if (defaultMouseButton == XMouseButtons.None && this.DefaultMouseButtonShortcut != null)
+		    {
+		        this.DefaultMouseButtonShortcut = null;
+		    }
+		    else if (defaultMouseButton != XMouseButtons.None)
+		    {
+		        var defaultMouseButtonModifiers = setting.DefaultMouseButtonModifiers.GetValueOrDefault(oldDefaultMouseButtonShortcut.Modifiers.ModifierFlags);
+		        if (oldDefaultMouseButtonShortcut.MouseButton != defaultMouseButton || oldDefaultMouseButtonShortcut.Modifiers.ModifierFlags != defaultMouseButtonModifiers)
+		            this.DefaultMouseButtonShortcut = new MouseButtonShortcut(defaultMouseButton, defaultMouseButtonModifiers);
+		    }
+
+		    //We DO change the initially active property of the tool because
+		    //it essentially identifies the default mouse tool for each mouse button.
+		    if (setting.InitiallyActive.HasValue)
+		        InitiallyActive = setting.InitiallyActive.Value;
 		}
 
         /// <summary>

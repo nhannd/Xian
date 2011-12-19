@@ -41,7 +41,7 @@ namespace ClearCanvas.Common.UsageTracking
         #region Private Members
         
         private static event EventHandler<ItemEventArgs<DisplayMessage>> Message;
-        private static readonly object SyncLock = new object();
+        private static readonly object _syncLock = new object();
         private static bool _first = true;
         #endregion
 
@@ -58,12 +58,12 @@ namespace ClearCanvas.Common.UsageTracking
 		{
             add
             {
-                lock (SyncLock)
+                lock (_syncLock)
                     Message += value;
             }
             remove
             {
-                lock (SyncLock)
+                lock (_syncLock)
                     Message -= value;
             }
         }
@@ -80,11 +80,13 @@ namespace ClearCanvas.Common.UsageTracking
         {
             try
             {
-                lock (SyncLock)
+                lock (_syncLock)
                 {
                     if (_first)
                     {
-                        //TODO double check to see if this is required on final configuration
+                        // Note, this is required when in debug mode and communicating with 4rf,
+                        // which doesn't have an official cert, it isn't required for communicating with
+                        // the production server.
                         ServicePointManager.ServerCertificateValidationCallback +=
                             ((sender, certificate, chain, sslPolicyErrors) =>
                              true);
@@ -106,10 +108,15 @@ namespace ClearCanvas.Common.UsageTracking
                     WSHttpBinding binding = new WSHttpBinding();
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost:8080/UsageTracking");
 #elif	DEBUG
-                    WSHttpBinding binding = new WSHttpBinding();
-                    EndpointAddress endpointAddress = new EndpointAddress("http://localhost/Tracking/Service.svc");
+                   // WSHttpBinding binding = new WSHttpBinding(SecurityMode.None);
+                   // EndpointAddress endpointAddress = new EndpointAddress("http://localhost/Tracking/Service.svc");
+                    WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
+                    binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
+                    binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+                    EndpointAddress endpointAddress = new EndpointAddress("https://4rf/Tracking/Service.svc");
 #else
-                    //TODO:  This should be updated to real address
+                    // This is updated to the real address as part of the build process, when appropriate and
+                    // doing an official build.
                     WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
                     binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
                     binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
@@ -180,22 +187,39 @@ namespace ClearCanvas.Common.UsageTracking
         /// </returns>
         public static UsageMessage GetUsageMessage()
         {
-            UsageMessage msg = new UsageMessage
-                                   {
-                                       Version = ProductInformation.GetVersion(true, true),
-                                       Product = ProductInformation.Product,
-                                       Component = ProductInformation.Component,
-                                       Edition = ProductInformation.Edition,
-                                       Release = ProductInformation.Release,
-                                       //TODO (CR February 2011) - High: We should have left this as a property on ProductInformation rather than checking for empty string.
-                                       AllowDiagnosticUse = ProductInformation.Release == string.Empty,
-                                       Region = CultureInfo.CurrentCulture.Name,
-                                       Timestamp = Platform.Time,
-                                       OS = Environment.OSVersion.ToString(),
-                                       MachineIdentifier =  EnvironmentUtilities.MachineIdentifier,
-                                       MessageType = UsageType.Other,
-                                       LicenseString = LicenseInformation.LicenseKey,
-                                   };
+            UsageMessage msg;
+
+            // if license key cannot be retrieved, send an empty string to maintain the existing data on the server
+            string licenseString = string.Empty; 
+            try
+            {
+                licenseString = LicenseInformation.LicenseKey;
+            }
+            catch(Exception ex)
+            {
+                Platform.Log(LogLevel.Debug, ex, "An error has occurred when trying to get the license string");
+            }
+            finally
+            {
+                msg = new UsageMessage
+                {
+                    Version = ProductInformation.GetVersion(true, true),
+                    Product = ProductInformation.Product,
+                    Component = ProductInformation.Component,
+                    Edition = ProductInformation.Edition,
+                    Release = ProductInformation.Release,
+                    //TODO (CR February 2011) - High: We should have left this as a property on ProductInformation rather than checking for empty string.
+                    AllowDiagnosticUse = ProductInformation.Release == string.Empty,
+                    Region = CultureInfo.CurrentCulture.Name,
+                    Timestamp = Platform.Time,
+                    OS = Environment.OSVersion.ToString(),
+                    MachineIdentifier = EnvironmentUtilities.MachineIdentifier,
+                    MessageType = UsageType.Other,
+                    LicenseString = licenseString,
+                };
+
+            }
+
             return msg;
         }
 

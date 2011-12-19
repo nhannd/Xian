@@ -45,11 +45,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// </summary>
         public string ValidationExpression { get; set; }
 
-		/// <summary>
-		/// Is the value Required?
-		/// </summary>
-		public bool Required { get; set; }
-
         #endregion Public Properties
 
         #region Protected Methods
@@ -72,7 +67,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             var template =
                 new ScriptTemplate(this,
                                    "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionValidator.js");
-            template.Replace("@@REQUIRED@@", Required ? "true" : "false");
             template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
             template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
                              ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");

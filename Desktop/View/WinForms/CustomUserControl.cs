@@ -18,7 +18,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// This class should be used the base class for all user controls, rather than directly inheriting
     /// from <see cref="UserControl"/>.  Provides a mechanism for handling default Accept and Cancel buttons.
     /// </summary>
-    public class CustomUserControl : UserControl
+    public class CustomUserControl : LocalizableUserControl
     {
         private IButtonControl _acceptButton;
         private IButtonControl _cancelButton;

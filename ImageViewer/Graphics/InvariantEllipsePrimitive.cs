@@ -15,6 +15,7 @@ using System.Drawing.Drawing2D;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -22,7 +23,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// An elliptical <see cref="InvariantPrimitive"/>.
 	/// </summary>
 	[Cloneable(true)]
-	[DicomSerializableGraphicAnnotation(typeof (EllipseGraphicAnnotationSerializer))]
+    /// TODO (CR Oct 2011): Should these actually be serializable given that presentation states won't show them invariant.
+    [DicomSerializableGraphicAnnotation(typeof(EllipseGraphicAnnotationSerializer))]
 	public class InvariantEllipsePrimitive : InvariantBoundablePrimitive
 	{
 		/// <summary>
@@ -93,22 +95,25 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns></returns>
 		public override bool Contains(PointF point)
 		{
-			//TODO: duplicated from EllipsePrimitive - should combine.
-			GraphicsPath path = new GraphicsPath();
-			bool result;
+		    /// TODO (CR Oct 2011): duplicated from EllipsePrimitive - should combine.
+            if (CoordinateSystem == CoordinateSystem.Destination)
+                point = SpatialTransform.ConvertToSource(point);
 
-			this.CoordinateSystem = CoordinateSystem.Source;
-			path.AddEllipse(this.Rectangle);
-			this.ResetCoordinateSystem();
+            CoordinateSystem = CoordinateSystem.Source;
+            // Semi major/minor axes
+            float a = Width / 2;
+            float b = Height / 2;
+            RectangleF rect = BoundingBox;
+            ResetCoordinateSystem();
 
-			if (this.CoordinateSystem == CoordinateSystem.Destination)
-				path.Transform(SpatialTransform.CumulativeTransform);
+            // Center of ellipse
+            float xCenter = rect.Left + a;
+            float yCenter = rect.Top + b;
 
-			result = path.IsVisible(point);
+            float x = point.X - xCenter;
+            float y = point.Y - yCenter;
 
-			path.Dispose();
-
-			return result;
-		}
+		    return (x*x)/(a*a) + (y*y)/(b*b) <= 1;
+        }
 	}
 }

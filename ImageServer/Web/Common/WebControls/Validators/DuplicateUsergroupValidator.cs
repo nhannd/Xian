@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (String.IsNullOrEmpty(groupName))
             {
-                ErrorMessage = "User Group is required.";
+                ErrorMessage = ValidationErrors.UserGroupCannotBeEmpty;
                 return false;
             }
 
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (controller.ExistsUsergroup(groupName) && !groupName.Equals(originalgroupName))
             {
-                ErrorMessage = "User Group already exists.";
+                ErrorMessage = string.Format(ValidationErrors.UserGroupAlreadyExists, groupName);
                 return false;
             }
 

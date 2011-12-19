@@ -11,16 +11,6 @@
 
 using System;
 using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Web.Client.Silverlight
 {
@@ -37,13 +27,13 @@ namespace ClearCanvas.Web.Client.Silverlight
 
     internal class MenuItemCoordinator : IMenuItemCoordinator
     {
-        private DelayedEventPublisher _delayedEventPublisher;
+        private DelayedEventPublisher<EventArgs> _delayedEventPublisher;
         private IMenuItem _highlightedItem;
 
         internal MenuItemCoordinator(MenuBase menu)
         {
             Menu = menu;
-            _delayedEventPublisher = new DelayedEventPublisher(menu.Dispatcher, SetExpandedItem);
+            _delayedEventPublisher = new DelayedEventPublisher<EventArgs>(SetExpandedItem, TimeSpan.FromMilliseconds(350));
         }
 
         private MenuBase Menu { get; set; }

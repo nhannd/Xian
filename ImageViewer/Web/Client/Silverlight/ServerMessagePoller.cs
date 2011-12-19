@@ -10,55 +10,45 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Threading;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
+using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-    internal class MessagePollerEventReceivedEventArgs:EventArgs
+    internal class ServerEventReceivedEventArgs : EventArgs
     {
         public EventSet EventSet { get; set; }
     }
-    internal class MessagePollerErrorEventArgs : EventArgs
+
+    internal class ServerChannelFaultEventArgs : EventArgs
     {
         public Exception Error { get; set; }
+
+        public String ErrorMessage { get; set; }
     }
 
     internal class ServerMessagePoller : IDisposable
     {
         const int MinPollDelaySinceLastActivity = 100; // 100 ms since last activity
 
-        private ApplicationServiceClient _service;
+        private ServerMessageSender _service;
         private Thread _pollingThread;
         private bool _stop;
-
-        private object _sync = new object();
-
-
-        private long _lastPollTick = Environment.TickCount;
+        private readonly object _syncLock = new object();
         private int _pendingPollingCount;
+        private bool _disposed = false;
 
-        public event EventHandler<MessagePollerEventReceivedEventArgs> MessageReceived;
-        
-        public ServerMessagePoller(ApplicationServiceClient service)
+        public ServerMessagePoller(ServerMessageSender service)
         {
             _service = service;
-            _service.GetPendingEventCompleted += OnGetPendingEventCompleted;
+            _service.PollCompleted += OnGetPendingEventCompleted;
         }
 
-        
         public void Start()
         {
             _pollingThread = new Thread(ThreadStart);
+            _pollingThread.Name = String.Format("Polling Thread[{0}]", _pollingThread.ManagedThreadId);
             _pollingThread.Start();
         }
 
@@ -66,117 +56,103 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             while (true)
             {
-                if (_stop || _service.InnerChannel.State != System.ServiceModel.CommunicationState.Opened)
+                if (_stop || _service.Faulted)
                 {
                     return;
                 }
 
-                if (ApplicationContext.Current == null)
-                {
-                    Thread.Sleep(50);
-                    continue;
-                }
-
-
-                // TODO: REVIEW THIS
-                // Per MSDN:
-                // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-                // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
                 long now = Environment.TickCount;
-                if (now - ApplicationActivityMonitor.Instance.LastActivityTick < MinPollDelaySinceLastActivity)
+
+                // TimeSpan used to deal with roll over of TickCount
+                // Note: Environment.TickCount unit is in ms
+                if (TimeSpan.FromMilliseconds(now - ApplicationActivityMonitor.Instance.LastActivityTick) < TimeSpan.FromMilliseconds(MinPollDelaySinceLastActivity))
                 {
-                    Thread.Sleep(50);
-                    continue;
+                    lock (_syncLock)
+                    {
+                        Monitor.Wait(_syncLock, 50);
+                        continue;
+                    }
                 }
 
                 if (!DoPoll())
                 {
-                    Thread.Sleep(50);
+                    lock (_syncLock)
+                    {
+                        Monitor.Wait(_syncLock, 50);
+                    }
                 }
-
             }
         }
 
         private void OnGetPendingEventCompleted(object sender, GetPendingEventCompletedEventArgs e)
         {
-            _lastPollTick = Environment.TickCount;
             Interlocked.Decrement(ref _pendingPollingCount);
 
-            lock (_sync)
+            lock (_syncLock)
             {
-                Monitor.PulseAll(_sync);
-            }
-
-
-            if (e.Error != null)
-            {
-                ErrorHandler.HandleException(e.Error);
-            }
-            else
-            {
-                if (e.Result != null)
-                {
-
-                    if (e.Result.Events != null)
-                    {
-                        if (MessageReceived != null)
-                        {
-                            MessageReceived(this, new MessagePollerEventReceivedEventArgs { EventSet = e.Result });
-                        }
-
-                    }
-
-                }
-            }
+                Monitor.PulseAll(_syncLock);
+            }          
         }
 
         private bool DoPoll()
         {
             if (_pendingPollingCount == 0 && _service != null)
             {
-                lock (_sync)
+                Interlocked.Increment(ref _pendingPollingCount);
+
+                int maxWaitTime = 10000; //ms
+
+                try
                 {
-                    Interlocked.Increment(ref _pendingPollingCount);
+                    _service.CheckForPendingEvents(maxWaitTime);
 
-                    int maxWaitTime = 10000;
-
-                    try
+                    lock (_syncLock)
                     {
-                        // TODO: the client may have disconnected
-                        _service.GetPendingEventAsync(new GetPendingEventRequest() { ApplicationId = ApplicationContext.Current.ID, MaxWaitTime = maxWaitTime });
-
-                        Monitor.Wait(_sync, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
-                    }
-                    catch (Exception)
-                    {
-                        // catch exception to prevent crashing
-                    }
-                    finally
-                    {
-                        
-
-                        // TODO: REVIEW THIS
-                        // Per MSDN:
-                        // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
-                        // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
-                        _lastPollTick = Environment.TickCount;
-                    }
+                        Monitor.Wait(_syncLock, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
+                    } 
                 }
+                catch (Exception x)
+                {
+                    // catch exception to prevent crashing
+                    Platform.Log(LogLevel.Error, x, "Unexpected exception polling for server data");
+                }
+
                 return true;
             }
 
             return false;
-
         }
 
         #region IDisposable Members
 
         public void Dispose()
         {
-            if (_pollingThread != null)
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
             {
                 _stop = true;
-                _service.GetPendingEventCompleted -= OnGetPendingEventCompleted;
+                if (_service != null)
+                {
+                    _service.PollCompleted -= OnGetPendingEventCompleted;
+                    _service = null;
+                }
+
+                if (_pollingThread != null)
+                {
+                    lock (_syncLock)
+                        Monitor.PulseAll(_syncLock);
+
+                    _pollingThread.Join(500);
+                    _pollingThread = null;
+                }
+
+                _disposed = true;
             }
         }
 

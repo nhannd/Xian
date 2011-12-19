@@ -15,6 +15,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 {
@@ -250,11 +251,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                 {
                     if (ArchiveQueueGrid.DataSource == null)
                     {
-                        message.Message = "Please enter search criteria to find archive items.";
+                        message.Message = Labels.ArchiveQueue_EnterSearchCriteria;
                     }
                     else
                     {
-                        message.Message = "No items found matching the provided criteria.";
+                        message.Message = Labels.ArchiveQueue_NoResults;
                     }
                 }
 

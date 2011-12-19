@@ -11,11 +11,18 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.Configuration
 {
+	[ExtensionPoint]
+	public sealed class ConfigurationDialogComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
+
+	[AssociateView(typeof(ConfigurationDialogComponentViewExtensionPoint))]
 	public class ConfigurationDialogComponent : NavigatorComponentContainer
 	{
 		private class NavigatorPagePathComparer : IComparer<NavigatorPage>
@@ -46,6 +53,8 @@ namespace ClearCanvas.Desktop.Configuration
 
 		private readonly int _initialPageIndex;
 		private readonly ConfigurationPageManager _configurationPageManager;
+		private SettingsStoreWatcher _settingsStoreWatcher;
+		private string _configurationWarning;
 
 		internal ConfigurationDialogComponent(string initialPagePath)
 			: base(ConfigurationDialogSettings.Default.ShowApplyButton)
@@ -79,6 +88,11 @@ namespace ClearCanvas.Desktop.Configuration
 				throw new Exception(SR.MessageNoConfigurationPagesExist);
 		}
 
+		public string ConfigurationWarning
+		{
+			get { return _configurationWarning; }
+		}
+
 		public IEnumerable<IConfigurationPage> ConfigurationPages
 		{
 			get { return _configurationPageManager.Pages; }
@@ -87,8 +101,42 @@ namespace ClearCanvas.Desktop.Configuration
 		public override void Start()
 		{
 			base.Start();
-
 			MoveTo(_initialPageIndex);
+
+			if (!SettingsStore.IsSupported)
+				return;
+
+			if (!SettingsStore.IsStoreOnline)
+			{
+				_configurationWarning = SR.LabelConfigurationWarningOffline;
+				return;
+			}
+
+			_settingsStoreWatcher = new SettingsStoreWatcher();
+			_settingsStoreWatcher.IsStoreOnlineChanged += SettingsStoreOnlineChanged;
+		}
+
+		private void SettingsStoreOnlineChanged(object sender, EventArgs e)
+		{
+			if (_settingsStoreWatcher == null || _settingsStoreWatcher.IsStoreOnline)
+				return;
+
+			_configurationWarning = SR.LabelConfigurationWarningOffline;
+			NotifyPropertyChanged("ConfigurationWarning");
+
+			_settingsStoreWatcher.IsStoreOnlineChanged -= SettingsStoreOnlineChanged;
+			_settingsStoreWatcher.Dispose();
+		}
+
+		public override void Stop()
+		{
+			if (_settingsStoreWatcher != null)
+			{
+				_settingsStoreWatcher.IsStoreOnlineChanged -= SettingsStoreOnlineChanged;
+				_settingsStoreWatcher.Dispose();
+			}
+
+			base.Stop();
 		}
 
 		public override void Accept()
@@ -127,10 +175,7 @@ namespace ClearCanvas.Desktop.Configuration
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
-					delegate()
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				                        () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 	}

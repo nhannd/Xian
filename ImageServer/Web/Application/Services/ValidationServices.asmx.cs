@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             {
                 result.Success = false;
                 result.ErrorCode = -1;
-                result.ErrorText = "Path cannot be empty";
+                result.ErrorText = ValidationErrors.FilesystemPathCannotBeEmpty ;
                 return result;
             }
 
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
                 else
                 {
                     result.Success = false;
-                    result.ErrorText = String.Format("{0} is either invalid or not reachable.", path);
+                    result.ErrorText = String.Format(ValidationErrors.FilesystemPathInvalidOrUnreachable, path);
                 }
                 return result;
             }
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             {
                 result.Success = false;
                 result.ErrorCode = 100;
-                result.ErrorText = String.Format("Cannot validate path {0}: {1}", path, e.Message);
+                result.ErrorText = String.Format(ValidationErrors.UnableToValidatePath, path, e.Message);
             }
 
             return result;
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             {
                 result.Success = false;
                 result.ErrorCode = -1;
-                result.ErrorText = "Username is required.";
+                result.ErrorText = ValidationErrors.UsernameCannotBeEmpty;
                 return result;
             }
 
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             {
                 result.Success = false;
                 result.ErrorCode = -1;
-                result.ErrorText = "Username already exists.";
+                result.ErrorText = String.Format(ValidationErrors.UsernameAlreadyExists, username);
                 return result;
                 
             } else
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             {
                 result.Success = false;
                 result.ErrorCode = -1;
-                result.ErrorText = "User Group is required.";
+                result.ErrorText =  ValidationErrors.UserGroupCannotBeEmpty;
                 return result;
             }
 
@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             {
                 result.Success = false;
                 result.ErrorCode = -1;
-                result.ErrorText = "User Group already exists.";
+                result.ErrorText = String.Format(ValidationErrors.UserGroupAlreadyExists, userGroupName); ;
                 return result;
             }
             else
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
 
             if (String.IsNullOrEmpty(serverRule))
             {
-                result.ErrorText = "Server Rule XML must be specified";
+                result.ErrorText = ValidationErrors.ServerRuleXMLIsMissing;
                 result.Success = false;
                 result.ErrorCode = -5000;
                 return result;
@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
 			}
 			catch (Exception e)
 			{
-				result.ErrorText = "Unable to parse rule type: " + e.Message;
+				result.ErrorText = String.Format(ValidationErrors.UnableToParseServerRuleXML, e.Message);
 				result.Success = false;
 				result.ErrorCode = -5000;
 				return result;
@@ -199,18 +199,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             try
             {
                 string xml = Microsoft.JScript.GlobalObject.unescape(serverRule);
+                
+                if (type.Equals(ServerRuleTypeEnum.DataAccess))
+                {
+                    // Validated DataAccess rules only have the condition.  Make a fake 
+                    // rule that includes a non-op action
+                    xml = String.Format("<rule>{0}<action><no-op/></action></rule>", xml);
+                }
+
                 theDoc.LoadXml(xml);
             }
             catch (Exception e)
             {
-                result.ErrorText = "Unable to parse XML: " + e.Message;
+                result.ErrorText = String.Format(ValidationErrors.UnableToParseServerRuleXML, e.Message);
                 result.Success = false;
                 result.ErrorCode = -5000;
                 return result;
             }
 
             string error;
-            if (false == ClearCanvas.ImageServer.Rules.Rule.ValidateRule(type, theDoc, out error))
+            if (false == Rules.Rule.ValidateRule(type, theDoc, out error))
             {
                 result.ErrorText = error;
                 result.Success = false;

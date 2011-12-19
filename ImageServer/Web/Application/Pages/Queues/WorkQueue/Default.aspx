@@ -1,7 +1,19 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Default"
     Title="Work Queue | ClearCanvas ImageServer" %>
-    
+ 
+
+  
 <%@ MasterType  virtualPath="~/GlobalMasterPage.master"%>    
 
 <%@ Register Src="Edit/ScheduleWorkQueueDialog.ascx" TagName="ScheduleWorkQueueDialog" TagPrefix="localAsp" %>
@@ -36,12 +48,12 @@
                         <table>
                             <tr>
                                 <td>
-                                    <span class="SearchTextBoxLabel" style="color: white">Refresh:</span>
+                                    <span class="SearchTextBoxLabel" style="color: white"><%= Labels.Refresh %>:</span>
                                 </td>
                                 <td>
                                     <asp:DropDownList ID="RefreshRateEnabled" runat="server" CssClass="SearchDropDownList" OnSelectedIndexChanged="RefreshRate_IndexChanged" AutoPostBack="true">
-                                        <asp:ListItem Selected="True" Value="Y" Text="Yes"/>
-                                        <asp:ListItem Value="N" Text="No" Selected="True"/>
+                                        <asp:ListItem Selected="True" Value="Y" Text="<%$Resources: Labels,Yes %>"/>
+                                        <asp:ListItem Value="N" Selected="True" Text="<%$Resources: Labels,No %>"/>
                                     </asp:DropDownList> 
                                 </td>
                                 <td>

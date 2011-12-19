@@ -18,10 +18,11 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Desktop;
+using Action=ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
-    [MenuAction("launch", "global-menus/Admin/Users", "Launch")]
+    [MenuAction("launch", "global-menus/MenuAdmin/MenuUsers", "Launch")]
     [ActionPermission("launch", ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class UserSummaryTool : Tool<IDesktopToolContext>
@@ -34,6 +35,12 @@ namespace ClearCanvas.Enterprise.Desktop
             {
                 try
                 {
+					if (Application.SessionStatus != SessionStatus.Online)
+					{
+						Context.DesktopWindow.ShowMessageBox(SR.MessageServerOffline, MessageBoxActions.Ok);
+						return;
+					}
+
                     UserSummaryComponent component = new UserSummaryComponent();
 
                     _workspace = ApplicationComponent.LaunchAsWorkspace(

@@ -36,6 +36,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		public void Init()
 		{
 			Platform.SetExtensionFactory(new NullExtensionFactory());
+            GC.Collect();
 		}
 
 		[TestFixtureTearDown]

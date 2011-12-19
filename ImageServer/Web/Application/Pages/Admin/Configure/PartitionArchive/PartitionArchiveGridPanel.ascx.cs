@@ -17,6 +17,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
@@ -139,7 +140,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
                 {
                     Model.PartitionArchive pa = e.Row.DataItem as Model.PartitionArchive;
                     Label archiveTypeLabel = e.Row.FindControl("ArchiveType") as Label;
-                    archiveTypeLabel.Text = pa.ArchiveTypeEnum.Description;
+                    archiveTypeLabel.Text = ServerEnumDescription.GetLocalizedDescription(pa.ArchiveTypeEnum);
 
                     Label configXml = e.Row.FindControl("ConfigurationXML") as Label;
                     configXml.Text = XmlUtils.GetXmlDocumentAsString(pa.ConfigurationXml, true);

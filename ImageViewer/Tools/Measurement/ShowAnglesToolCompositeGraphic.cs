@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -152,6 +152,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 						_selectedLine.Points.PointsCleared += OnSelectedLinePointsCleared;
 					}
 
+					Visible = _selectedLine != null;
 					_isDirty = true;
 				}
 			}

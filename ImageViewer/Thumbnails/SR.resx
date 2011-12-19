@@ -134,8 +134,9 @@
   <data name="MenuView" xml:space="preserve">
     <value>View</value>
   </data>
-  <data name="MessageLoadFailed" xml:space="preserve">
-    <value>Loading failed.  See log.</value>
+  <data name="MessageFormatStudyNotLoadable" xml:space="preserve">
+    <value>{0}
+{1}</value>
   </data>
   <data name="MessageLoading" xml:space="preserve">
     <value>Loading ...</value>

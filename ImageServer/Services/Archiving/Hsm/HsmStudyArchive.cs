@@ -193,14 +193,18 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
                         if (!commandProcessor.Execute())
                         {
-                            Platform.Log(LogLevel.Error, "Unexpected failure archiving study: {0}", commandProcessor.FailureReason);
+                            Platform.Log(LogLevel.Error,
+                                         "Unexpected failure archiving study ({0}) to archive {1}: {2}, zip filename: {3}",
+                                         _storageLocation.StudyInstanceUid, _hsmArchive.PartitionArchive.Description,
+                                         commandProcessor.FailureReason, zipFilename);
 
                             queueItem.FailureDescription = commandProcessor.FailureReason;
                             _hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
                         }
                         else
-                            Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
-                                         _hsmArchive.PartitionArchive.Description);
+                            Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1} to zip {2}",
+                                         _storageLocation.StudyInstanceUid,
+                                         _hsmArchive.PartitionArchive.Description, zipFilename);
 
 						// Log the current FilesystemQueue settings
 						_storageLocation.LogFilesystemQueue();

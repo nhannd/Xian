@@ -61,8 +61,6 @@
   <ItemGroup>
     <ConfigFiles Include="$(ProjectDir)\..\Executable\Logging.config" />
     <ConfigFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.ImageServer.ShredHostService.exe.config" />
-	<ConfigFiles Include="$(ProjectDir)\..\Executable\bin\$(Configuration)\ClearCanvas.ImageServer.Executable.exe.config" />
-
   </ItemGroup>
 
   <!-- Shared library files, to be placed in common directory -->
@@ -75,11 +73,6 @@
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\nunit.framework.dll" />
   </ItemGroup>
   
-  <!-- License files -->
-  <ItemGroup>
-    <LicenseFiles Include="$(ProjectDir)\..\..\License.rtf" />
-  </ItemGroup>
-
   <!-- Execution files -->
   <ItemGroup>
     <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.ImageServer.ShredHostService.exe" />
@@ -103,9 +96,6 @@
 
     <!-- Copy shared libraries -->
     <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" />
-
-    <!-- Copy license file -->
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
     <!-- Copy execution files -->
     <Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />

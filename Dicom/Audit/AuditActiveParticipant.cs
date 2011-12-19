@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ClearCanvas.Dicom.Audit
@@ -44,7 +43,7 @@ namespace ClearCanvas.Dicom.Audit
 		protected string _userName = null;
 		protected bool? _userIsRequestor = null;
 		protected string _networkAccessPointId = null;
-		protected CodedValueType _roleIdCode = null;
+        protected RoleIDCode _roleIdCode = null;
 
 		protected AuditActiveParticipant()
 		{
@@ -196,7 +195,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// This field is extended by Dicom.  It is typically filled in by the <see cref="DicomAuditHelper"/> derived classes.
 		/// </para>
 		/// </remarks>
-		public CodedValueType RoleIdCode
+		public RoleIDCode RoleIdCode
 		{
 			get { return _roleIdCode; }
 			set { _roleIdCode = value; }

@@ -22,12 +22,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		private static readonly Dictionary<ICachedColorMapKey, CacheItem> _cache = new Dictionary<ICachedColorMapKey, CacheItem>();
 		private static readonly object _syncLock = new object();
 
-		public static IDataLut GetColorMap(string colorMapName, byte alpha, bool thresholding)
+		public static IColorMap GetColorMap(string colorMapName, byte alpha, bool thresholding)
 		{
 			return new CachedColorMapProxy(new AlphaColorMapKey(colorMapName, alpha, thresholding));
 		}
 
-		public static IDataLut GetColorMap(IDataLut colorMap, byte alpha, bool thresholding)
+		public static IColorMap GetColorMap(IColorMap colorMap, byte alpha, bool thresholding)
 		{
 			return new CachedColorMapProxy(new CustomAlphaColorMapKey(colorMap, alpha, thresholding));
 		}
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 		private interface ICachedColorMapKey
 		{
-			IDataLut CreateColorMap();
+			IColorMap CreateColorMap();
 		}
 
 		#endregion
@@ -75,9 +75,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_thresholding = thresholding;
 			}
 
-			public IDataLut CreateColorMap()
+			public IColorMap CreateColorMap()
 			{
-				IDataLut baseColorMap;
+				IColorMap baseColorMap;
 				if (_colorMapName == HotIronColorMapFactory.ColorMapName)
 				{
 					baseColorMap = new HotIronColorMapFactory().Create();
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		[Cloneable(true)]
 		private class CustomAlphaColorMapKey : ICachedColorMapKey, IEquatable<CustomAlphaColorMapKey>
 		{
-			private readonly IDataLut _colorMap;
+			private readonly IColorMap _colorMap;
 			private readonly byte _alpha;
 			private readonly bool _thresholding;
 
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			/// </summary>
 			private CustomAlphaColorMapKey() {}
 
-			public CustomAlphaColorMapKey(IDataLut colorMap, byte alpha, bool thresholding)
+			public CustomAlphaColorMapKey(IColorMap colorMap, byte alpha, bool thresholding)
 				: this()
 			{
 				_colorMap = colorMap;
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_thresholding = thresholding;
 			}
 
-			public IDataLut CreateColorMap()
+			public IColorMap CreateColorMap()
 			{
 				return new AlphaColorMap(_colorMap, _alpha, _thresholding);
 			}
@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		#region CachedColorMapProxy Class
 
 		[Cloneable(true)]
-		private class CachedColorMapProxy : ComposableLut, IDataLut
+		private class CachedColorMapProxy : ColorMapBase
 		{
 			private readonly ICachedColorMapKey _colorMapKey;
 			private int _minInputValue;
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				_colorMapKey = colorMapKey;
 			}
 
-			private IDataLut RealColorMap
+			private IColorMap RealColorMap
 			{
 				get
 				{
@@ -231,27 +231,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				}
 			}
 
-			public override int MinOutputValue
-			{
-				get { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
-				protected set { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
-			}
-
-			public override int MaxOutputValue
-			{
-				get { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
-				protected set { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
-			}
-
 			public override int this[int index]
 			{
 				get { return RealColorMap[index]; }
 				protected set { throw new InvalidOperationException("The color map data cannot be altered."); }
-			}
-
-			public new CachedColorMapProxy Clone()
-			{
-				return (CachedColorMapProxy) base.Clone();
 			}
 
 			public override string GetKey()
@@ -266,12 +249,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 			#region IDataLut Members
 
-			public int FirstMappedPixelValue
+			public override int FirstMappedPixelValue
 			{
 				get { return RealColorMap.FirstMappedPixelValue; }
 			}
 
-			public int[] Data
+			public override int[] Data
 			{
 				get { return RealColorMap.Data; }
 			}
@@ -311,7 +294,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					_maxInputValue = maxInputValue;
 				}
 
-				public IDataLut CreateColorMap()
+				public IColorMap CreateColorMap()
 				{
 					var colorMap = _colorMapKey.CreateColorMap();
 					colorMap.MinInputValue = _minInputValue;
@@ -353,7 +336,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		{
 			private readonly object _syncLock = new object();
 			private readonly LargeObjectContainerData _largeObjectData = new LargeObjectContainerData(Guid.NewGuid()) {RegenerationCost = RegenerationCost.Low};
-			private volatile IDataLut _realColorMap;
+			private volatile IColorMap _realColorMap;
 
 			private readonly ICachedColorMapKey _key;
 
@@ -367,11 +350,11 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				return _key.ToString();
 			}
 
-			public IDataLut RealColorMap
+			public IColorMap RealColorMap
 			{
 				get
 				{
-					IDataLut realLut = _realColorMap;
+					IColorMap realLut = _realColorMap;
 					if (realLut != null)
 						return realLut;
 
@@ -379,7 +362,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						if (_realColorMap != null)
 							return _realColorMap;
-						_realColorMap = new CompiledColorMap(_key.CreateColorMap());
+
+						var source = _key.CreateColorMap();
+						_realColorMap = new SimpleColorMap(source.MinInputValue, source.Data, source.GetKey(), source.GetDescription());
 
 						//just use the creation time as the "last access time", otherwise it can get expensive when called in a tight loop.
 						_largeObjectData.UpdateLastAccessTime();
@@ -451,29 +436,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			void ILargeObjectContainer.Unlock()
 			{
 				_largeObjectData.Unlock();
-			}
-
-			#endregion
-
-			#region CompiledColorMap Class
-
-			//TODO (CR Sept 2010): just use SimpleDataLut directly?
-			private class CompiledColorMap : SimpleDataLut
-			{
-				internal CompiledColorMap(IDataLut source)
-					: base(source.MinInputValue, source.Data, 0, 0, source.GetKey(), source.GetDescription()) {}
-
-				public override int MinOutputValue
-				{
-					get { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
-					protected set { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
-				}
-
-				public override int MaxOutputValue
-				{
-					get { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
-					protected set { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
-				}
 			}
 
 			#endregion

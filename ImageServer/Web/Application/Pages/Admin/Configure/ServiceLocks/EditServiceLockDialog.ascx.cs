@@ -18,6 +18,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
 using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
+using Resources;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks
@@ -178,7 +179,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
                 }
                 else
                 {
-                    ErrorMessageBox.Message = App_GlobalResources.SR.ServiceLockUpdateFailed_ContactAdmin;
+                    ErrorMessageBox.Message = SR.ServiceLockUpdateFailed_ContactAdmin;
                     ErrorMessageBox.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
                     ErrorMessageBox.Show();
@@ -202,8 +203,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
                 // only rebind the data if the dialog has been closed
                 if (ModalDialog.State == ModalDialog.ShowState.Hide)
                 {
-                    Type.Text = service.ServiceLockTypeEnum.Description;
-                    Description.Text = service.ServiceLockTypeEnum.LongDescription;
+                    Type.Text = ServerEnumDescription.GetLocalizedDescription(service.ServiceLockTypeEnum);
+                    Description.Text = ServerEnumDescription.GetLocalizedLongDescription(service.ServiceLockTypeEnum);
                     Enabled.Checked = service.Enabled;
 
                     if (service.FilesystemKey != null)

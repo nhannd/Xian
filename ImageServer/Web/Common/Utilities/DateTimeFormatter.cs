@@ -91,8 +91,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
 
         static DateTimeFormatter()
         {
-            CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
-            DateTimeFormatInfo fmt = culture.DateTimeFormat;
+        	DateTimeFormatInfo fmt = Thread.CurrentThread.CurrentCulture.DateTimeFormat;
             
             DefaultDateFormat = null;
             if (String.IsNullOrEmpty(UISettings.Default.DateFormat))

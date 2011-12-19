@@ -235,17 +235,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         protected void StudyIntegrityQueueItemList_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.EmptyDataRow)
-            {
-                EmptySearchResultsMessage message =
-                                        (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
-                if (message != null)
-                {
-                    message.Message = "No reconcile items for this study.";
-                }
-
-            }
-            else
+            if (e.Row.RowType != DataControlRowType.EmptyDataRow)
             {
                 GridViewRow row = e.Row;
 

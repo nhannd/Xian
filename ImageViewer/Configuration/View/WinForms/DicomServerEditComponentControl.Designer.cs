@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomServerEditComponentControl));
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -75,10 +76,10 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._dicom = new System.Windows.Forms.GroupBox();
 			this._general = new System.Windows.Forms.GroupBox();
 			this._streaming = new System.Windows.Forms.GroupBox();
-			this.label7 = new System.Windows.Forms.Label();
-			this._wadoServicePort = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this._headerServicePort = new System.Windows.Forms.TextBox();
+			this.label7 = new System.Windows.Forms.Label();
+			this._wadoServicePort = new System.Windows.Forms.TextBox();
 			this._dicom.SuspendLayout();
 			this._general.SuspendLayout();
 			this._streaming.SuspendLayout();
@@ -86,110 +87,70 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			// 
 			// label1
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(41, 29);
+			resources.ApplyResources(this.label1, "label1");
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(69, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Server Name";
 			// 
 			// label2
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(66, 25);
+			resources.ApplyResources(this.label2, "label2");
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(44, 13);
-			this.label2.TabIndex = 1;
-			this.label2.Text = "AE Title";
 			// 
 			// label3
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(81, 58);
+			resources.ApplyResources(this.label3, "label3");
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(29, 13);
-			this.label3.TabIndex = 2;
-			this.label3.Text = "Host";
 			// 
 			// label4
 			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(84, 56);
+			resources.ApplyResources(this.label4, "label4");
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(26, 13);
-			this.label4.TabIndex = 3;
-			this.label4.Text = "Port";
 			// 
 			// label5
 			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(62, 89);
+			resources.ApplyResources(this.label5, "label5");
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(48, 13);
-			this.label5.TabIndex = 4;
-			this.label5.Text = "Location";
 			// 
 			// _serverName
 			// 
-			this._serverName.Location = new System.Drawing.Point(116, 26);
+			resources.ApplyResources(this._serverName, "_serverName");
 			this._serverName.Name = "_serverName";
-			this._serverName.Size = new System.Drawing.Size(216, 20);
-			this._serverName.TabIndex = 3;
 			// 
 			// _ae
 			// 
-			this._ae.Location = new System.Drawing.Point(116, 22);
+			resources.ApplyResources(this._ae, "_ae");
 			this._ae.Name = "_ae";
-			this._ae.Size = new System.Drawing.Size(216, 20);
-			this._ae.TabIndex = 0;
 			// 
 			// _host
 			// 
-			this._host.Location = new System.Drawing.Point(116, 55);
+			resources.ApplyResources(this._host, "_host");
 			this._host.Name = "_host";
-			this._host.Size = new System.Drawing.Size(216, 20);
-			this._host.TabIndex = 4;
 			// 
 			// _port
 			// 
-			this._port.Location = new System.Drawing.Point(116, 53);
+			resources.ApplyResources(this._port, "_port");
 			this._port.Name = "_port";
-			this._port.Size = new System.Drawing.Size(216, 20);
-			this._port.TabIndex = 1;
 			// 
 			// _location
 			// 
-			this._location.Location = new System.Drawing.Point(116, 86);
+			resources.ApplyResources(this._location, "_location");
 			this._location.Name = "_location";
-			this._location.Size = new System.Drawing.Size(216, 20);
-			this._location.TabIndex = 5;
 			// 
 			// _btnAccept
 			// 
-			this._btnAccept.Location = new System.Drawing.Point(109, 376);
+			resources.ApplyResources(this._btnAccept, "_btnAccept");
 			this._btnAccept.Name = "_btnAccept";
-			this._btnAccept.Size = new System.Drawing.Size(75, 23);
-			this._btnAccept.TabIndex = 3;
-			this._btnAccept.Text = "OK";
 			this._btnAccept.UseVisualStyleBackColor = true;
 			// 
 			// _btnCancel
 			// 
-			this._btnCancel.Location = new System.Drawing.Point(190, 376);
+			resources.ApplyResources(this._btnCancel, "_btnCancel");
 			this._btnCancel.Name = "_btnCancel";
-			this._btnCancel.Size = new System.Drawing.Size(75, 23);
-			this._btnCancel.TabIndex = 4;
-			this._btnCancel.Text = "Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
 			// 
 			// _isStreaming
 			// 
-			this._isStreaming.AutoSize = true;
-			this._isStreaming.Location = new System.Drawing.Point(32, 27);
+			resources.ApplyResources(this._isStreaming, "_isStreaming");
 			this._isStreaming.Name = "_isStreaming";
-			this._isStreaming.Size = new System.Drawing.Size(65, 17);
-			this._isStreaming.TabIndex = 2;
-			this._isStreaming.Text = "Enabled";
 			this._isStreaming.UseVisualStyleBackColor = true;
 			// 
 			// _dicom
@@ -198,12 +159,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._dicom.Controls.Add(this._ae);
 			this._dicom.Controls.Add(this.label4);
 			this._dicom.Controls.Add(this._port);
-			this._dicom.Location = new System.Drawing.Point(13, 142);
+			resources.ApplyResources(this._dicom, "_dicom");
 			this._dicom.Name = "_dicom";
-			this._dicom.Size = new System.Drawing.Size(348, 91);
-			this._dicom.TabIndex = 1;
 			this._dicom.TabStop = false;
-			this._dicom.Text = "DICOM";
 			// 
 			// _general
 			// 
@@ -213,12 +171,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._general.Controls.Add(this._host);
 			this._general.Controls.Add(this.label5);
 			this._general.Controls.Add(this._location);
-			this._general.Location = new System.Drawing.Point(13, 12);
+			resources.ApplyResources(this._general, "_general");
 			this._general.Name = "_general";
-			this._general.Size = new System.Drawing.Size(348, 124);
-			this._general.TabIndex = 0;
 			this._general.TabStop = false;
-			this._general.Text = "General";
 			// 
 			// _streaming
 			// 
@@ -227,48 +182,33 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._streaming.Controls.Add(this._headerServicePort);
 			this._streaming.Controls.Add(this.label7);
 			this._streaming.Controls.Add(this._wadoServicePort);
-			this._streaming.Location = new System.Drawing.Point(13, 239);
+			resources.ApplyResources(this._streaming, "_streaming");
 			this._streaming.Name = "_streaming";
-			this._streaming.Size = new System.Drawing.Size(348, 123);
-			this._streaming.TabIndex = 2;
 			this._streaming.TabStop = false;
-			this._streaming.Text = "ClearCanvas Image Streaming";
-			// 
-			// label7
-			// 
-			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(35, 86);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(97, 13);
-			this.label7.TabIndex = 16;
-			this.label7.Text = "Image Service Port";
-			// 
-			// _wadoServicePort
-			// 
-			this._wadoServicePort.Location = new System.Drawing.Point(138, 83);
-			this._wadoServicePort.Name = "_wadoServicePort";
-			this._wadoServicePort.Size = new System.Drawing.Size(194, 20);
-			this._wadoServicePort.TabIndex = 4;
 			// 
 			// label6
 			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(29, 53);
+			resources.ApplyResources(this.label6, "label6");
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(103, 13);
-			this.label6.TabIndex = 14;
-			this.label6.Text = "Header Service Port";
 			// 
 			// _headerServicePort
 			// 
-			this._headerServicePort.Location = new System.Drawing.Point(138, 50);
+			resources.ApplyResources(this._headerServicePort, "_headerServicePort");
 			this._headerServicePort.Name = "_headerServicePort";
-			this._headerServicePort.Size = new System.Drawing.Size(194, 20);
-			this._headerServicePort.TabIndex = 3;
+			// 
+			// label7
+			// 
+			resources.ApplyResources(this.label7, "label7");
+			this.label7.Name = "label7";
+			// 
+			// _wadoServicePort
+			// 
+			resources.ApplyResources(this._wadoServicePort, "_wadoServicePort");
+			this._wadoServicePort.Name = "_wadoServicePort";
 			// 
 			// DicomServerEditComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._btnCancel);
 			this.Controls.Add(this._btnAccept);
@@ -276,7 +216,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this.Controls.Add(this._dicom);
 			this.Controls.Add(this._streaming);
 			this.Name = "DicomServerEditComponentControl";
-			this.Size = new System.Drawing.Size(374, 414);
 			this._dicom.ResumeLayout(false);
 			this._dicom.PerformLayout();
 			this._general.ResumeLayout(false);

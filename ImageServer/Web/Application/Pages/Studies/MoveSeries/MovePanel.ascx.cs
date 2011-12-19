@@ -21,6 +21,7 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.MovePanel.js", "application/x-javascript")]
 
@@ -110,7 +111,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
             _theController = new DeviceConfigurationController();
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid, delegate { return DeviceGridPanel.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerDeviceSingleItem, SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid, delegate { return DeviceGridPanel.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
             DeviceGridPanel.Pager = GridPagerTop;
 
             MoveConfirmation.Confirmed += delegate(object data)
@@ -185,9 +186,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
 
             if (DHCPFilter.Items.Count == 0)
             {
-                DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
-                DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.DHCP));
-                DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.NoDHCP));
+                DHCPFilter.Items.Add(new ListItem(SR.All));
+                DHCPFilter.Items.Add(new ListItem(SR.DHCP));
+                DHCPFilter.Items.Add(new ListItem(SR.NoDHCP));
             }
 
             IList<DeviceTypeEnum> deviceTypes = DeviceTypeEnum.GetAll();
@@ -196,7 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
             {
                 foreach (DeviceTypeEnum t in deviceTypes)
                 {
-                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                    DeviceTypeFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
                 }
             }
             else
@@ -207,7 +208,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                 int count = 0;
                 foreach (DeviceTypeEnum t in deviceTypes)
                 {
-                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                    DeviceTypeFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
                     DeviceTypeFilter.Items[count].Selected = typeItems[count].Selected;
                     count++;
                 }
@@ -336,7 +337,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                     i++;
                 }
 
-                MoveConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(App_GlobalResources.SR.MoveSeriesMessage, destinationDevices));
+                MoveConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(SR.MoveSeriesMessage, destinationDevices));
                 
                 MoveConfirmation.Message += DialogHelper.createSeriesTable(SeriesGridView.SeriesList);
 

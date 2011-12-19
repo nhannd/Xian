@@ -349,7 +349,7 @@
     <value>Laterality (Series)</value>
   </data>
   <data name="Dicom_GeneralSeries_Laterality_Label" xml:space="preserve">
-    <value>Laterality</value>
+    <value>Lat</value>
   </data>
   <data name="Dicom_GeneralSeries_Modality_DisplayName" xml:space="preserve">
     <value>Modality</value>
@@ -572,30 +572,30 @@
   </data>
   <data name="FormatDegrees" xml:space="preserve">
     <value>{0}°</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
-  <data name="FormatkV" xml:space="preserve">
+  <data name="FormatKilovolts" xml:space="preserve">
     <value>{0} kV</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
   <data name="FormatLateralityViewPosition" xml:space="preserve">
     <value>{0}/{1}</value>
   </data>
-  <data name="FormatmA" xml:space="preserve">
+  <data name="FormatMilliamps" xml:space="preserve">
     <value>{0} mA</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
-  <data name="Formatmm1" xml:space="preserve">
-    <value>{0:F1} mm</value>
+  <data name="FormatMillimeters" xml:space="preserve">
+    <value>{0} mm</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
-  <data name="Formatms" xml:space="preserve">
-    <value>{0:F2} ms</value>
+  <data name="FormatMilliseconds" xml:space="preserve">
+    <value>{0} ms</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
   <data name="FormatTeslas" xml:space="preserve">
-    <value>{0:F1}T</value>
-  </data>
-  <data name="Label_kilograms" xml:space="preserve">
-    <value>kg</value>
-  </data>
-  <data name="Label_metres" xml:space="preserve">
-    <value>m</value>
+    <value>{0} T</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
   <data name="Presentation_AppliedLut_DisplayName" xml:space="preserve">
     <value>Lut (Applied)</value>
@@ -648,9 +648,6 @@
   <data name="Presentation_Zoom_DisplayName" xml:space="preserve">
     <value>Zoom</value>
   </data>
-  <data name="Presentation_Zoom_Indicator" xml:space="preserve">
-    <value>x</value>
-  </data>
   <data name="Presentation_Zoom_Label" xml:space="preserve">
     <value>Zoom</value>
   </data>
@@ -680,15 +677,13 @@
   </data>
   <data name="Format2Dimensions" xml:space="preserve">
     <value>{0} x {1}</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
   <data name="Dicom_PatientStudy_Composite_PatientsAgeSex_DisplayName" xml:space="preserve">
     <value>Patient's Age and Sex</value>
   </data>
   <data name="Dicom_PatientStudy_Composite_PatientsAgeSex_Label" xml:space="preserve">
     <value>Age/Sex</value>
-  </data>
-  <data name="FormatPatientsAgeSex" xml:space="preserve">
-    <value>{0}/{1}</value>
   </data>
   <data name="AnnotationItemProviders_Dicom_DXImage_DisplayName" xml:space="preserve">
     <value>Dicom (DX Image)</value>
@@ -736,7 +731,7 @@
     <value>Filter</value>
   </data>
   <data name="Dicom_DXImage_KVP_DisplayName" xml:space="preserve">
-    <value>KVP</value>
+    <value>DX_KVP</value>
   </data>
   <data name="Dicom_DXImage_KVP_Label" xml:space="preserve">
     <value>KVP</value>
@@ -759,26 +754,125 @@
   <data name="Dicom_PatientStudy_Composite_PatientsAgeSexBirthDate_Label" xml:space="preserve">
     <value>Age/Sex/DOB</value>
   </data>
-  <data name="FormatPatientsAgeSexBirthDate" xml:space="preserve">
-    <value>{0}/{1}/{2}</value>
-  </data>
   <data name="ValueNil" xml:space="preserve">
     <value>-</value>
   </data>
   <data name="FormatNewtons" xml:space="preserve">
     <value>{0} N</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
   </data>
-  <data name="Format_mAs" xml:space="preserve">
+  <data name="FormatMilliampSeconds" xml:space="preserve">
     <value>{0} mAs</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatCentimeters" xml:space="preserve">
+    <value>{0} cm</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatDisplaySetNumberAndCount" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="FormatFrameNumberAndCount" xml:space="preserve">
+    <value>Fr: {0}/{1}</value>
+  </data>
+  <data name="FormatImageNumberAndCount" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="FormatKilograms" xml:space="preserve">
+    <value>{0} kg</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatLossyCompressionRatio" xml:space="preserve">
+    <value>{0}({1})</value>
+  </data>
+  <data name="FormatMeters" xml:space="preserve">
+    <value>{0} m</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatSeriesNumberAndCount" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="FormatZoomFactor" xml:space="preserve">
+    <value>{0}x</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="SeparatorLossyCompressionRatio" xml:space="preserve">
+    <value>/</value>
+  </data>
+  <data name="Dicom_Patient_PatientBreed_DisplayName" xml:space="preserve">
+    <value>Patient Breed</value>
+  </data>
+  <data name="Dicom_Patient_PatientBreed_Label" xml:space="preserve">
+    <value>Breed</value>
+  </data>
+  <data name="Dicom_Patient_PatientSpecies_DisplayName" xml:space="preserve">
+    <value>Patient Species</value>
+  </data>
+  <data name="Dicom_Patient_PatientSpecies_Label" xml:space="preserve">
+    <value>Species</value>
+  </data>
+  <data name="Dicom_Patient_ResponsibleOrganization_DisplayName" xml:space="preserve">
+    <value>Responsible Organization</value>
+  </data>
+  <data name="Dicom_Patient_ResponsibleOrganization_Label" xml:space="preserve">
+    <value>Responsible Organization</value>
+  </data>
+  <data name="Dicom_Patient_ResponsiblePerson_DisplayName" xml:space="preserve">
+    <value>Responsible Person</value>
   </data>
   <data name="Presentation_ImageCalibration_DisplayName" xml:space="preserve">
     <value>Image Calibration</value>
   </data>
-  <data name="Presentation_ImageCalibration_Label" xml:space="preserve">
-    <value>Calibration</value>
+  <data name="Dicom_Patient_ResponsiblePerson_Label" xml:space="preserve">
+    <value>Responsible Person</value>
+  </data>
+  <data name="FormatCodeSequence" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedCaudal" xml:space="preserve">
+    <value>Cd</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedCranial" xml:space="preserve">
+    <value>Cr</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedDistal" xml:space="preserve">
+    <value>Di</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedDorsal" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedLateral" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedLeft" xml:space="preserve">
+    <value>Le</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedMedial" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedPalmar" xml:space="preserve">
+    <value>Pa</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedPlantar" xml:space="preserve">
+    <value>Pl</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedProximal" xml:space="preserve">
+    <value>Pr</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedRight" xml:space="preserve">
+    <value>Rt</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedRostral" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="ValueDirectionalMarkersQuadrupedVentral" xml:space="preserve">
+    <value>V</value>
   </data>
   <data name="FormatCalibrationDetails" xml:space="preserve">
     <value>{0} ({1})</value>
+  </data>
+  <data name="Presentation_ImageCalibration_Label" xml:space="preserve">
+    <value>Calibration</value>
   </data>
   <data name="ValueActualSpacingCalibration" xml:space="preserve">
     <value>Actual</value>
@@ -803,5 +897,76 @@
   </data>
   <data name="ValueUnknownCalibration" xml:space="preserve">
     <value>Unknown</value>
+  </data>
+  <data name="SeparatorSingleLine" xml:space="preserve">
+    <value>\</value>
+  </data>
+  <data name="FormatHertzPerPixel" xml:space="preserve">
+    <value>{0} Hz/px</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="FormatMillimetersPerSecond" xml:space="preserve">
+    <value>{0} mm/s</value>
+    <comment>Do not use format specifiers here - inputs are preformatted strings!</comment>
+  </data>
+  <data name="Dicom_CTImage_TablePosition_DisplayName" xml:space="preserve">
+    <value>Table Position</value>
+  </data>
+  <data name="Dicom_CTImage_TablePosition_Label" xml:space="preserve">
+    <value>Pos</value>
+  </data>
+  <data name="Dicom_CTImage_TableSpeed_DisplayName" xml:space="preserve">
+    <value>Table Speed</value>
+  </data>
+  <data name="Dicom_CTImage_TableSpeed_Label" xml:space="preserve">
+    <value>Spd</value>
+  </data>
+  <data name="Dicom_DXImage_ContrastBolusAgent_DisplayName" xml:space="preserve">
+    <value>Contrast/Bolus Agent</value>
+  </data>
+  <data name="Dicom_DXImage_ContrastBolusAgent_Label" xml:space="preserve">
+    <value>Contrast/Bolus</value>
+  </data>
+  <data name="Dicom_MRImage_FlipAngle_DisplayName" xml:space="preserve">
+    <value>Flip Angle</value>
+  </data>
+  <data name="Dicom_MRImage_FlipAngle_Label" xml:space="preserve">
+    <value>Flip</value>
+  </data>
+  <data name="Dicom_MRImage_InversionTime_DisplayName" xml:space="preserve">
+    <value>Inverstion Time</value>
+  </data>
+  <data name="Dicom_MRImage_InversionTime_Label" xml:space="preserve">
+    <value>TI</value>
+  </data>
+  <data name="Dicom_MRImage_NumberOfAverages_DisplayName" xml:space="preserve">
+    <value>Number of Averages</value>
+  </data>
+  <data name="Dicom_MRImage_NumberOfAverages_Label" xml:space="preserve">
+    <value>#Avgs</value>
+  </data>
+  <data name="Dicom_MRImage_PixelBandwidth_DisplayName" xml:space="preserve">
+    <value>Pixel Bandwidth</value>
+  </data>
+  <data name="Dicom_MRImage_PixelBandwidth_Label" xml:space="preserve">
+    <value>BW</value>
+  </data>
+  <data name="Dicom_MRImage_TriggerTime_DisplayName" xml:space="preserve">
+    <value>Trigger Time</value>
+  </data>
+  <data name="Dicom_MRImage_TriggerTime_Label" xml:space="preserve">
+    <value>Trig</value>
+  </data>
+  <data name="FormatTablePositionSpeed" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="Dicom_CTImage_Composite_TablePositionSpeed_DisplayName" xml:space="preserve">
+    <value>Table Position/Speed</value>
+  </data>
+  <data name="Dicom_CTImage_Composite_TablePositionSpeed_Label" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="SeparatorAgeSexBirthDate" xml:space="preserve">
+    <value>/</value>
   </data>
 </root>

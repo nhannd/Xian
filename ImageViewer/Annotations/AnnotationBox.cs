@@ -145,11 +145,11 @@ namespace ClearCanvas.ImageViewer.Annotations
 			if (string.IsNullOrEmpty(annotationText))
 			{
 				if (this.ConfigurationOptions.ShowLabelIfValueEmpty)
-					annotationText = string.Format("{0}: -", annotationLabel);
+					annotationText = string.Format(SR.FormatAnnotationItem, annotationLabel, SR.ValueNil);
 			}
 			else if (this.ConfigurationOptions.ShowLabel)
 			{
-				annotationText = string.Format("{0}: {1}", annotationLabel, annotationText);
+				annotationText = string.Format(SR.FormatAnnotationItem, annotationLabel, annotationText);
 			}
 
 			return annotationText;

@@ -11,22 +11,29 @@
 
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 {
 	[DataContract]
 	public class MergeDuplicateContactPointResponse : DataContractBase
 	{
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="updatedOriginal">The updated data for the original record.</param>
-		public MergeDuplicateContactPointResponse(ExternalPractitionerContactPointSummary updatedOriginal)
+		public MergeDuplicateContactPointResponse(ExternalPractitionerContactPointSummary mergedContactPoint)
 		{
-			this.UpdatedOriginal = updatedOriginal;
+			MergedContactPoint = mergedContactPoint;
+		}
+
+		public MergeDuplicateContactPointResponse(long costEstimate)
+		{
+			this.CostEstimate = costEstimate;
 		}
 
 		[DataMember]
-		public ExternalPractitionerContactPointSummary UpdatedOriginal;
+		public ExternalPractitionerContactPointSummary MergedContactPoint;
+
+		[DataMember]
+		public long CostEstimate;
+
+
 	}
 }

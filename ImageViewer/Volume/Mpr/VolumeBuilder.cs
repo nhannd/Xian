@@ -18,6 +18,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Comparers;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
@@ -55,7 +56,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			private Vector3D _voxelSpacing;
 			private Size3D _volumeSize;
 			private double? _gantryTilt;
-			private int? _pixelPaddingValue;
 			private int? _paddingRows;
 
 			#endregion
@@ -144,45 +144,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 			}
 
-			/// <summary>
-			/// Gets or computes a pixel value suitable for volume padding purposes.
-			/// </summary>
-			/// <remarks>
-			/// This property will try to use the value of either <see cref="DicomTags.PixelPaddingValue"/>,
-			/// <see cref="DicomTags.SmallestPixelValueInSeries"/> or <see cref="DicomTags.SmallestImagePixelValue"/>
-			/// (in order of preference). If none of these attributes exist in the dataset, then a suitable value is
-			/// computed based on <see cref="DicomTags.BitsStored"/>, <see cref="DicomTags.PixelRepresentation"/>,
-			/// and <see cref="DicomTags.PhotometricInterpretation"/>.
-			/// </remarks>
-			private int PixelPaddingValue
-			{
-				get
-				{
-					if (!_pixelPaddingValue.HasValue)
-					{
-						bool isSigned = _frames[0].Frame.PixelRepresentation != 0;
-						bool isMonochrome1 = _frames[0].Frame.PhotometricInterpretation.Equals(PhotometricInterpretation.Monochrome1);
-						int bitsStored = _frames[0].Frame.BitsStored;
-						int pixelPaddingValue = ComputeMinPixelValue(bitsStored, isSigned, isMonochrome1);
-
-						DicomAttribute attribute;
-						if (_frames[0].Sop.DataSource.TryGetAttribute(DicomTags.PixelPaddingValue, out attribute))
-							pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
-						else if (_frames[0].Sop.DataSource.TryGetAttribute(DicomTags.SmallestPixelValueInSeries, out attribute))
-							pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
-						else if (_frames[0].Sop.DataSource.TryGetAttribute(DicomTags.SmallestImagePixelValue, out attribute))
-							pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
-
-						// these next few lines may look positively stupid, but they are here for a good reason (See Ticket #7026)
-						if (isSigned)
-							_pixelPaddingValue = (short) pixelPaddingValue;
-						else
-							_pixelPaddingValue = (ushort) pixelPaddingValue;
-					}
-					return _pixelPaddingValue.Value;
-				}
-			}
-
 			private int PaddingRows
 			{
 				get
@@ -226,98 +187,222 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				PrepareFrames(_frames); // this also sorts the frames into order by slice location
 
 				// Construct a model SOP data source based on the first frame's DICOM header
-				VolumeSopDataSourcePrototype sopDataSourcePrototype = VolumeSopDataSourcePrototype.Create(_frames[0].Sop.DataSource);
+				var sopDataSourcePrototype = VolumeSopDataSourcePrototype.Create(_frames[0].Sop.DataSource, 16, 16, false);
 
-				if (_frames[0].Frame.PixelRepresentation == 0)
-				{
-					ushort[] volumeArray = BuildVolumeArray((ushort) this.PixelPaddingValue);
+				// compute normalized modality LUT
+				double normalizedSlope, normalizedIntercept;
+				ComputeNormalizedModalityLut(_frames, out normalizedSlope, out normalizedIntercept);
+				sopDataSourcePrototype[DicomTags.RescaleSlope].SetFloat64(0, normalizedSlope);
+				sopDataSourcePrototype[DicomTags.RescaleIntercept].SetFloat64(0, normalizedIntercept);
+				sopDataSourcePrototype[DicomTags.RescaleType] = _frames[0].Sop.DataSource[DicomTags.RescaleType].Copy();
+				sopDataSourcePrototype[DicomTags.Units] = _frames[0].Sop.DataSource[DicomTags.Units].Copy(); // PET series use this attribute to designate rescale units
 
-					Volume vol = new Volume(null, volumeArray, this.VolumeSize, this.VoxelSpacing, this.ImagePositionPatient, this.ImageOrientationPatient, sopDataSourcePrototype,
-					                        this.PixelPaddingValue);
-					return vol;
-				}
-				else
-				{
-					short[] volumeArray = BuildVolumeArray((short) this.PixelPaddingValue);
+				// compute normalized VOI windows
+				VoiWindow.SetWindows(ComputeNormalizedVoiWindows(_frames, normalizedSlope, normalizedIntercept), sopDataSourcePrototype);
 
-					Volume vol = new Volume(volumeArray, null, this.VolumeSize, this.VoxelSpacing, this.ImagePositionPatient, this.ImageOrientationPatient, sopDataSourcePrototype,
-					                        this.PixelPaddingValue);
-					return vol;
-				}
+				// compute the volume padding value
+				var pixelPaddingValue = ComputePixelPaddingValue(_frames, normalizedSlope, normalizedIntercept);
+
+				int minVolumeValue, maxVolumeValue;
+				var volumeArray = BuildVolumeArray(pixelPaddingValue, normalizedSlope, normalizedIntercept, out minVolumeValue, out maxVolumeValue);
+				var volume = new Volume(null, volumeArray, VolumeSize, VoxelSpacing, ImagePositionPatient, ImageOrientationPatient, sopDataSourcePrototype, pixelPaddingValue, _frames[0].Frame.SeriesInstanceUid, minVolumeValue, maxVolumeValue);
+				return volume;
 			}
 
 			// Builds the volume array. Takes care of Gantry Tilt correction (pads rows at top/bottom accordingly)
-			private T[] BuildVolumeArray<T>(T pixelPadValue)
+			private ushort[] BuildVolumeArray(ushort pixelPadValue, double normalizedSlope, double normalizedIntercept, out int minVolumeValue, out int maxVolumeValue)
 			{
-				T[] volumeData = MemoryManager.Allocate<T>(this.VolumeSize.Volume, TimeSpan.FromSeconds(10));
+				var volumeData = MemoryManager.Allocate<ushort>(VolumeSize.Volume, TimeSpan.FromSeconds(10));
+				var min = int.MaxValue;
+				var max = int.MinValue;
 
 				float lastFramePos = (float) _frames[_frames.Count - 1].Frame.ImagePositionPatient.Z;
 
 				int position = 0;
-				for (int n = 0; n < _frames.Count; n++)
+				using (var lutFactory = LutFactory.Create())
 				{
-					position = CopyFrameData(_frames[n].Frame, volumeData, position, pixelPadValue, lastFramePos, this.VolumeSize, this.PaddingRows, this.GantryTilt, this.VoxelSpacing);
-					_callback(n, _frames.Count);
+					for (var n = 0; n < _frames.Count; n++)
+					{
+						var sourceFrame = _frames[n].Frame;
+						var frameDimensions = VolumeSize;
+						var paddingRows = PaddingRows;
+						var gantryTilt = GantryTilt;
+
+						// PadTop takes care of padding rows for gantry tilt correction
+						int countRowsPaddedAtTop = 0;
+						if (paddingRows > 0)
+						{
+							// figure out how many rows need to be padded at the top
+							float deltaMm = lastFramePos - (float) sourceFrame.ImagePositionPatient.Z;
+							double padTopMm = Math.Tan(gantryTilt)*deltaMm;
+							countRowsPaddedAtTop = (int) (padTopMm/this.VoxelSpacing.Y + 0.5f);
+
+							//TODO (cr Oct 2009): verify that IPP of the first image is correct for the volume.
+							// account for the tilt in negative radians: we start padding from the bottom first in this case
+							if (gantryTilt < 0)
+								countRowsPaddedAtTop += paddingRows;
+
+							int stop = position + countRowsPaddedAtTop*frameDimensions.Width;
+							for (int i = position; i < stop; i++)
+								volumeData[i] = pixelPadValue;
+							position = stop;
+						}
+
+						// Copy frame data
+						var frameData = sourceFrame.GetNormalizedPixelData();
+						var frameBitsStored = sourceFrame.BitsStored;
+						var frameBytesPerPixel = sourceFrame.BitsAllocated/8;
+						var frameIsSigned = sourceFrame.PixelRepresentation != 0;
+						var frameModalityLut = lutFactory.GetModalityLutLinear(frameBitsStored, frameIsSigned, sourceFrame.RescaleSlope, sourceFrame.RescaleIntercept);
+						int frameMin, frameMax;
+						CopyFrameData(frameData, frameBytesPerPixel, frameIsSigned, frameModalityLut, volumeData, position, normalizedSlope, normalizedIntercept, out frameMin, out frameMax);
+						position += frameData.Length/sizeof (ushort);
+						min = Math.Min(min, frameMin);
+						max = Math.Max(max, frameMax);
+
+						// Finish out any padding left over from PadTop
+						if (paddingRows > 0) // Pad bottom
+						{
+							int stop = position + ((paddingRows - countRowsPaddedAtTop)*frameDimensions.Width);
+							for (int i = position; i < stop; i++)
+								volumeData[i] = pixelPadValue;
+							position = stop;
+						}
+
+						// update progress
+						_callback(n, _frames.Count);
+					}
 				}
 
+				minVolumeValue = min;
+				maxVolumeValue = max;
 				return volumeData;
 			}
 
-			private static int CopyFrameData<T>(Frame sourceFrame, T[] volumeData, int position, T pixelPaddingValue, float lastFrameLocation, Size3D frameDimensions, int paddingRows, double gantryTilt, Vector3D pixelSpacing)
+			private static void CopyFrameData(byte[] frameData, int frameBytesPerPixel, bool frameIsSigned, IModalityLut frameModalityLut, ushort[] volumeData, int volumeStart, double normalizedSlope, double normalizedIntercept, out int minFramePixel, out int maxFramePixel)
 			{
-				// PadTop takes care of padding rows for gantry tilt correction
-				int countRowsPaddedAtTop = 0;
-				if (paddingRows > 0)
+				var pixelCount = frameData.Length/frameBytesPerPixel;
+				unsafe
 				{
-					// figure out how many rows need to be padded at the top
-					float deltaMm = lastFrameLocation - (float) sourceFrame.ImagePositionPatient.Z;
-					double padTopMm = Math.Tan(gantryTilt)*deltaMm;
-					countRowsPaddedAtTop = (int) (padTopMm/pixelSpacing.Y + 0.5f);
+					var min = int.MaxValue;
+					var max = int.MinValue;
 
-					//TODO (cr Oct 2009): verify that IPP of the first image is correct for the volume.
-					// account for the tilt in negative radians: we start padding from the bottom first in this case
-					if (gantryTilt < 0)
-						countRowsPaddedAtTop += paddingRows;
+					fixed (byte* pFrameData = frameData)
+					fixed (ushort* pVolumeData = volumeData)
+					{
+						if (frameBytesPerPixel == 2)
+						{
+							var pFrameData16 = (short*) pFrameData;
+							for (var i = 0; i < pixelCount; ++i)
+							{
+							    /// TODO (CR Nov 2011): Although perhaps less pretty, it's a bit more efficient
+							    /// to break this out into 2 loops.
+								var frameValue = frameModalityLut[frameIsSigned ? (int) pFrameData16[i] : (ushort) pFrameData16[i]];
+								var volumeValue = (frameValue - normalizedIntercept)/normalizedSlope;
+								var volumePixel = (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(volumeValue)));
+                                /// TODO (CR Nov 2011): Writes are volatile, so slightly more efficient to only do the assignment when necessary
+                                min = Math.Min(min, volumePixel);
+								max = Math.Max(max, volumePixel);
+								pVolumeData[volumeStart + i] = volumePixel;
+							}
+						}
+						else if (frameBytesPerPixel == 1)
+						{
+							for (var i = 0; i < pixelCount; ++i)
+							{
+                                /// TODO (CR Nov 2011): Although perhaps less pretty, it's a bit more efficient
+                                /// to break this out into 2 loops.
+                                var frameValue = frameModalityLut[frameIsSigned ? (int)(sbyte)pFrameData[i] : pFrameData[i]];
+								var volumeValue = (frameValue - normalizedIntercept)/normalizedSlope;
+								var volumePixel = (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(volumeValue)));
+							    /// TODO (CR Nov 2011): Writes are volatile, so slightly more efficient to only do the assignment when necessary
+                                min = Math.Min(min, volumePixel);
+								max = Math.Max(max, volumePixel);
+								pVolumeData[volumeStart + i] = volumePixel;
+							}
+						}
+					}
 
-					int stop = position + countRowsPaddedAtTop*frameDimensions.Width;
-					for (int i = position; i < stop; i++)
-						volumeData[i] = pixelPaddingValue;
-					position = stop;
+					minFramePixel = min;
+					maxFramePixel = max;
 				}
-
-				// Copy frame data
-				byte[] frameData = sourceFrame.GetNormalizedPixelData();
-				Buffer.BlockCopy(frameData, 0, volumeData, position*sizeof (short), frameData.Length);
-				position += frameData.Length/sizeof (short);
-
-				// Finish out any padding left over from PadTop
-				if (paddingRows > 0) // Pad bottom
-				{
-					int stop = position + ((paddingRows - countRowsPaddedAtTop)*frameDimensions.Width);
-					for (int i = position; i < stop; i++)
-						volumeData[i] = pixelPaddingValue;
-					position = stop;
-				}
-
-				return position;
 			}
 
 			#endregion
 
 			#region Misc
 
-			private static int ComputeMinPixelValue(int bitsStored, bool isSigned, bool isMonochrome1)
+			private static void ComputeNormalizedModalityLut(IEnumerable<IFrameReference> frames, out double slope, out double intercept)
 			{
-				// fix to valid range of bitsStored
-				if (bitsStored < 1)
-					bitsStored = 1;
-				else if (bitsStored > 16)
-					bitsStored = 16;
+				var rangeMin = double.MaxValue;
+				var rangeMax = double.MinValue;
+				foreach (var frameReference in frames)
+				{
+					var bitsStored = frameReference.Frame.BitsStored;
+					var isSigned = frameReference.Frame.PixelRepresentation != 0;
+					var rescaleSlope = frameReference.Frame.RescaleSlope;
+					var rescaleIntercept = frameReference.Frame.RescaleIntercept;
+					rangeMax = Math.Max(rangeMax, DicomPixelData.GetMaxPixelValue(bitsStored, isSigned)*rescaleSlope + rescaleIntercept);
+					rangeMin = Math.Min(rangeMin, DicomPixelData.GetMinPixelValue(bitsStored, isSigned)*rescaleSlope + rescaleIntercept);
+				}
+				intercept = rangeMin;
+				slope = (rangeMax - rangeMin)/65535;
+			}
 
-				if (isSigned) // full value range of a signed image is -(2**(bS-1)) to (2**(bS-1))-1, and we always take the value that represents ''dark''
-					return isMonochrome1 ? (1 << (bitsStored - 1)) - 1 : -(1 << (bitsStored - 1));
-				else // full value range of an unsigned image is 0 to (2**bS)-1, and we always take the value that represents ''dark''
-					return isMonochrome1 ? (1 << bitsStored) - 1 : 0;
+			private static IEnumerable<VoiWindow> ComputeNormalizedVoiWindows(IList<IFrameReference> frames, double normalizedSlope, double normalizedIntercept)
+			{
+				var normalizedWindows = new List<VoiWindow>(VoiWindow.GetWindows(frames[0].Sop.DataSource));
+				if (frames[0].ImageSop.Modality == @"PT" && frames[0].Frame.IsSubnormalRescale)
+				{
+					// for PET images with subnormal rescale, the VOI window will always be applied directly to the original stored pixel values
+					// since MPR will not have access to original stored pixel values, we compute the VOI window through original modality LUT and inverted normalized modality LUT
+					var normalizedVoiSlope = frames[0].Frame.RescaleSlope/normalizedSlope;
+					var normalizedVoiIntercept = (frames[0].Frame.RescaleIntercept - normalizedIntercept)/normalizedSlope;
+					for (var i = 0; i < normalizedWindows.Count; ++i)
+					{
+						var window = normalizedWindows[i]; // round the computed windows - the extra precision is not useful for display anyway
+						normalizedWindows[i] = new VoiWindow(Math.Ceiling(window.Width*normalizedVoiSlope), Math.Round(window.Center*normalizedVoiSlope + normalizedVoiIntercept), window.Explanation);
+					}
+				}
+				return normalizedWindows;
+			}
+
+			/// <summary>
+			/// Computes a pixel value suitable for volume padding purposes.
+			/// </summary>
+			/// <remarks>
+			/// This function will try to use the value of either <see cref="DicomTags.PixelPaddingValue"/>,
+			/// <see cref="DicomTags.SmallestPixelValueInSeries"/> or <see cref="DicomTags.SmallestImagePixelValue"/>
+			/// (in order of preference). If none of these attributes exist in the dataset, then a suitable value is
+			/// computed based on <see cref="DicomTags.BitsStored"/>, <see cref="DicomTags.PixelRepresentation"/>,
+			/// and <see cref="DicomTags.PhotometricInterpretation"/>.
+			/// </remarks>
+			private static ushort ComputePixelPaddingValue(IList<IFrameReference> frames, double normalizedSlope, double normalizedIntercept)
+			{
+				var isSigned = frames[0].Frame.PixelRepresentation != 0;
+				var isMonochrome1 = frames[0].Frame.PhotometricInterpretation.Equals(PhotometricInterpretation.Monochrome1);
+				var bitsStored = Math.Max(1, Math.Min(16, frames[0].Frame.BitsStored));
+				var pixelPaddingValue = isMonochrome1 ? DicomPixelData.GetMaxPixelValue(bitsStored, isSigned) : DicomPixelData.GetMinPixelValue(bitsStored, isSigned);
+
+				DicomAttribute attribute;
+				if (frames[0].Sop.DataSource.TryGetAttribute(DicomTags.PixelPaddingValue, out attribute))
+					pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
+				else if (frames[0].Sop.DataSource.TryGetAttribute(DicomTags.SmallestPixelValueInSeries, out attribute))
+					pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
+				else if (frames[0].Sop.DataSource.TryGetAttribute(DicomTags.SmallestImagePixelValue, out attribute))
+					pixelPaddingValue = attribute.GetInt32(0, pixelPaddingValue);
+
+				// these next few lines may look positively stupid, but they are here for a good reason (See Ticket #7026)
+				if (isSigned)
+					pixelPaddingValue = (short) pixelPaddingValue;
+				else
+					pixelPaddingValue = (ushort) pixelPaddingValue;
+
+				// since the volume now stores values with original modality LUT and normalizing function applied, we must apply same to this value (#9417)
+				var rescaledPaddingValue = frames[0].Frame.RescaleSlope*pixelPaddingValue + frames[0].Frame.RescaleIntercept;
+				var normalizedPaddingValue = (rescaledPaddingValue - normalizedIntercept)/normalizedSlope;
+
+				return (ushort) Math.Max(ushort.MinValue, Math.Min(ushort.MaxValue, Math.Round(normalizedPaddingValue)));
 			}
 
 			private double ComputeTiltAboutX()

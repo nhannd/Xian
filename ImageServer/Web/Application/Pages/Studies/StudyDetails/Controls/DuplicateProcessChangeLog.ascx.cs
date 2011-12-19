@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -42,22 +43,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 if (ChangeLog == null)
                 {
-                    return "N/A";
+                    return SR.Unknown;
                 }
                 else
                 {
                     switch(ChangeLog.Action)
                     {
                         case ProcessDuplicateAction.Delete:
-                            return "Delete duplicate SOPs.";
+                            return SR.StudyDetails_History_Duplicate_Delete;
                         case ProcessDuplicateAction.OverwriteAsIs:
-                            return "Overwrite existing SOPs and preserve data in duplicates.";
+                            return SR.StudyDetails_History_Duplicate_OverwriteAsIs;
                         case ProcessDuplicateAction.OverwriteUseDuplicates:
-                            return "Overwrite existing SOPs and update study with information in duplicates.";
+                            return SR.StudyDetails_History_Duplicate_OverwriteWithDuplicateData;
 
                         case ProcessDuplicateAction.OverwriteUseExisting:
-                            return "Overwrite existing SOPs and use the existing study information.";
-                    
+                            return SR.StudyDetails_History_Duplicate_OverwriteWithExistingData;
+
                         default:
                             return ChangeLog.Action.ToString();
 
@@ -72,20 +73,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 if (ChangeLog == null)
                 {
-                    return "N/A";
+                    return SR.Unknown;
                 }
 
                 switch (ChangeLog.Action)
                 {
                     case ProcessDuplicateAction.Delete:
-                        return "Delete Duplicates.";
+                        return SR.StudyDetails_History_Duplicate_Delete;
                     case ProcessDuplicateAction.OverwriteAsIs:
-                        return "Accept Duplicates As Is.";
+                        return SR.StudyDetails_History_Duplicate_OverwriteAsIs;
                     case ProcessDuplicateAction.OverwriteUseDuplicates:
-                        return "Accept Duplicates and Update Existing Study";
+                        return SR.StudyDetails_History_Duplicate_OverwriteWithDuplicateData;
 
                     case ProcessDuplicateAction.OverwriteUseExisting:
-                        return "Accept Modified Duplicates.";
+                        return SR.StudyDetails_History_Duplicate_OverwriteWithExistingData;
 
                     default:
                         return ChangeLog.Action.ToString();

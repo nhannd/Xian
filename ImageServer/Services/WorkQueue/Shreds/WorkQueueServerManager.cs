@@ -17,6 +17,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 {
@@ -30,7 +31,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 	/// processor supports high priority queue types for processing studies, editing studies, and 
 	/// doing moves/auto-routes.  The secondary processor will process any queue entries.
 	/// </remarks>
-	public class WorkQueueServerManager : ThreadedService
+	public sealed class WorkQueueServerManager : ThreadedService
 	{
 		#region Private Members
 		private static WorkQueueServerManager _instance;
@@ -144,7 +145,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 			}
 		}
 
-		protected override void Initialize()
+		protected override bool Initialize()
 		{
 			if (_theProcessor == null)
 			{
@@ -159,10 +160,34 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 					readContext.Dispose();
 				}
 
-				_theProcessor = new WorkQueueProcessor(_threadCount, ThreadStop, Name); 
-			
-			}				
-		}
+                WorkQueueManagerExtensionPoint xp = new WorkQueueManagerExtensionPoint();
+                IWorkQueueManagerExtensionPoint[] extensions = CollectionUtils.Cast<IWorkQueueManagerExtensionPoint>(xp.CreateExtensions()).ToArray();
+                foreach (IWorkQueueManagerExtensionPoint extension in extensions)
+                {
+                    try
+                    {
+                        extension.OnInitializing(this);
+                    }
+                    catch (WorkQueueInitializationException ex)
+                    {
+                        bool logException = !AttributeUtils.HasAttribute<ExceptionLogAdviceAttribute>(extension.GetType())
+                            || (!AttributeUtils.GetAttribute<ExceptionLogAdviceAttribute>(extension.GetType()).Suppress);
+
+                        if (logException)
+                        {
+                            Platform.Log(LogLevel.Error, ex, "Unable to initializating work queue server manager");
+                        }
+                        this.ThreadRetryDelay = (int) ex.RetryDelay.TotalMilliseconds;
+                        return false;
+                    }
+                }
+
+                _theProcessor = new WorkQueueProcessor(_threadCount, ThreadStop, Name);
+
+			}
+
+            return true;
+        }
 
 		protected override void Run()
 		{
@@ -177,6 +202,41 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 				_theProcessor = null;
 			}
 		}
+
 		#endregion
+
 	}
+
+    /// <summary>
+    /// Represents exception thrown during initialization of the work queue processor
+    /// </summary>
+    public class WorkQueueInitializationException : Exception
+    {
+        /// <summary>
+        /// Gets the minimum amount of time during which the caller 
+        /// should not attempt to initialize the work queue processor
+        /// </summary>
+        public TimeSpan RetryDelay { get; private set;}
+
+        public WorkQueueInitializationException(string error, TimeSpan retryDelay):
+            base(error)
+        {
+            RetryDelay = retryDelay;
+        }
+
+    }
+
+    public interface IWorkQueueManagerExtensionPoint 
+    {
+        /// <summary>
+        /// Called when work queue processor is being initialized
+        /// </summary>
+        /// <exception cref="WorkQueueInitializationException"></exception>
+        void OnInitializing(WorkQueueServerManager manager);
+    }
+
+    [ExtensionPoint]
+    public class WorkQueueManagerExtensionPoint : ExtensionPoint<IWorkQueueManagerExtensionPoint>
+    {
+    }
 }

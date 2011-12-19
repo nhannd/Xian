@@ -22,7 +22,8 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class EventBroker
 	{
-		#region Private fields
+	    
+	    #region Private fields
 
 		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
 		private event EventHandler<ImageBoxDrawingEventArgs> _imageBoxDrawingEvent;
@@ -45,6 +46,7 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<DisplaySetChangedEventArgs> _displaySetChanged;
 
 		private event EventHandler<CloneCreatedEventArgs> _cloneCreated;
+        private EventHandler _layoutCompletedEvent;
 
 		#endregion
 
@@ -178,6 +180,17 @@ namespace ClearCanvas.ImageViewer
 			add { _studyLoadedEvent += value; }
 			remove { _studyLoadedEvent -= value; }
 		}
+
+        public event EventHandler LayoutCompleted
+        {
+            add { _layoutCompletedEvent += value; }
+            remove { _layoutCompletedEvent -= value; }
+        }
+
+        internal void OnLayoutCompleted()
+        {
+            EventsHelper.Fire(_layoutCompletedEvent, this, EventArgs.Empty);
+        }
 
 		internal void OnStudyLoaded(StudyLoadedEventArgs studyLoadedArgs)
 		{

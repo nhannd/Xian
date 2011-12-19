@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common;

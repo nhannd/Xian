@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -19,7 +19,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	public abstract class OverlayToolBase : Tool<IImageViewerToolContext>
 	{
-		private static readonly IList<OverlayToolBase> _toolRegistry = new List<OverlayToolBase>();
+		[ThreadStatic]
+		private static IList<OverlayToolBase> _toolRegistry = new List<OverlayToolBase>();
 		private event EventHandler _checkedChanged;
 		private bool _checked;
 
@@ -33,11 +34,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_checked = @checked;
 		}
 
+		private static IList<OverlayToolBase> ToolRegistry
+		{
+			get
+			{
+				if (_toolRegistry == null)
+					_toolRegistry = new List<OverlayToolBase>();
+				return _toolRegistry;
+			}
+		}
+
 		public override void Initialize()
 		{
 			base.Initialize();
 
-			_toolRegistry.Add(this);
+			ToolRegistry.Add(this);
 
 			this.Context.Viewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
 		}
@@ -46,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			this.Context.Viewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
 
-			_toolRegistry.Remove(this);
+			ToolRegistry.Remove(this);
 
 			base.Dispose(disposing);
 		}
@@ -123,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public static IEnumerable<OverlayToolBase> EnumerateTools(IImageViewer imageViewer)
 		{
-			foreach (OverlayToolBase overlayTool in _toolRegistry)
+			foreach (OverlayToolBase overlayTool in ToolRegistry)
 			{
 				if (overlayTool.Context != null && overlayTool.Context.Viewer == imageViewer)
 					yield return overlayTool;

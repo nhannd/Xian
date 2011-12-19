@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (String.IsNullOrEmpty(aeTitle))
             {
-                ErrorMessage = "AE Title must be specified";
+                ErrorMessage = ValidationErrors.AETitleCannotBeEmpty;
                 return false;
             }
 
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             if (list.Count > 0)
             {
-                ErrorMessage = String.Format("AE Title '{0}' is already in use", aeTitle);
+                ErrorMessage = String.Format(ValidationErrors.AETitleIsInUse, aeTitle);
                 return false;
             }
 

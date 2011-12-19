@@ -32,13 +32,15 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			_threadPool.ThreadPoolName = "HsmArchive Pool";
 		}
 
-		protected override void Initialize()
+		protected override bool Initialize()
 		{
 			_hsmArchive.ResetFailedArchiveQueueItems();
 
 			// Start the thread pool
 			if (!_threadPool.Active)
 				_threadPool.Start();
+
+            return true;
 		}
 
 		/// <summary>

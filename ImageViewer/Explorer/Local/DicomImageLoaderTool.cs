@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, Context.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageUnableToOpenImages, Context.DesktopWindow);
 			}
 		}
 

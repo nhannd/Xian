@@ -9,36 +9,65 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace ClearCanvas.Common.Configuration
 {
-    /// <summary>
-    /// Defines the interface to a mechanism for the storage of configuration data.
-    /// </summary>
-    /// <remarks>
-    /// This interface is more general purpose than <see cref="ISettingsStore"/>, in that it allows storage
-    /// of arbitrary configuration "documents" that need not conform to any particular structure.
-    /// </remarks>
-    public interface IConfigurationStore
-    {
-        /// <summary>
-        /// Obtains the specified document for the specified user and instance key.  If user is null,
-        /// the shared document is obtained.
-        /// </summary>
-        /// <remarks>
-        /// Implementors should throw a <see cref="ConfigurationDocumentNotFoundException"/> if the requested document does not exist.
-        /// </remarks>
-        /// <exception cref="ConfigurationDocumentNotFoundException">The requested document does not exist.</exception>
-        TextReader GetDocument(string name, Version version, string user, string instanceKey);
+	/// <summary>
+	/// Represents a configuration document.
+	/// </summary>
+	public interface IConfigurationDocument
+	{
+		/// <summary>
+		/// Gets the document header.
+		/// </summary>
+		ConfigurationDocumentHeader Header { get; }
 
-        /// <summary>
-        /// Stores the specified document for the current user and instance key.  If user is null,
-        /// the document is stored as a shared document.
-        /// </summary>
-        void PutDocument(string name, Version version, string user, string instanceKey, TextReader content);
-    }
+		/// <summary>
+		/// Gets the entire content of the document as a string.
+		/// </summary>
+		/// <returns></returns>
+		string ReadAll();
+
+		/// <summary>
+		/// Gets a reader that can read the document content.
+		/// </summary>
+		/// <returns></returns>
+		TextReader GetReader();
+	}
+
+
+
+	/// <summary>
+	/// Defines the interface to a mechanism for the storage of configuration data.
+	/// </summary>
+	/// <remarks>
+	/// This interface is more general purpose than <see cref="ISettingsStore"/>, in that it allows storage
+	/// of arbitrary configuration "documents" that need not conform to any particular structure.
+	/// </remarks>
+	public interface IConfigurationStore
+	{
+		/// <summary>
+		/// Lists documents in the configuration that match the specified query.
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<ConfigurationDocumentHeader> ListDocuments(ConfigurationDocumentQuery query);
+
+		/// <summary>
+		/// Retrieves the specified document.
+		/// </summary>
+		/// <exception cref="ConfigurationDocumentNotFoundException">The requested document does not exist.</exception>
+		IConfigurationDocument GetDocument(ConfigurationDocumentKey documentKey);
+
+		/// <summary>
+		/// Stores the specified document.
+		/// </summary>
+		void PutDocument(ConfigurationDocumentKey documentKey, TextReader content);
+
+		/// <summary>
+		/// Stores the specified document.
+		/// </summary>
+		void PutDocument(ConfigurationDocumentKey documentKey, string content);
+	}
 }

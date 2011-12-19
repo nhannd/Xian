@@ -194,7 +194,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			if (!string.IsNullOrEmpty(patientOrientation.Row))
 			{
-				switch (char.ToUpperInvariant(patientOrientation.Row[0]))
+				switch (char.ToUpperInvariant(patientOrientation.Row.Code[0]))
 				{
 					case _orientationLeft:
 						leftVector = new Vector3D(+1, 0, 0);
@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			if (!string.IsNullOrEmpty(patientOrientation.Column))
 			{
-				switch (char.ToUpperInvariant(patientOrientation.Column[0]))
+				switch (char.ToUpperInvariant(patientOrientation.Column.Code[0]))
 				{
 					case _orientationLeft:
 						leftVector = new Vector3D(0, +1, 0);

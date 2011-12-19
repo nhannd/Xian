@@ -35,12 +35,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
             ServerPartitionConfigController partitionController = new ServerPartitionConfigController();
             IList<ServerPartition> partitions = partitionController.GetAllPartitions();
 
-            double totalStudies = 0;
+            long totalStudies = 0;
             foreach(ServerPartition partition in partitions)
             {
-                totalStudies += partition.StudyCount;   
+                totalStudies += partition.StudyCount;
             }
-            TotalStudiesLabel.Text = totalStudies.ToString("n").Replace(".00", "");
+            TotalStudiesLabel.Text = totalStudies.ToString();
 
             _partitions = partitions;
             StudiesDataList.DataSource = _partitions;

@@ -16,7 +16,7 @@ using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             List<StudyIntegrityReasonEnum> reasons = StudyIntegrityReasonEnum.GetAll();
             foreach (StudyIntegrityReasonEnum reason in reasons)
             {
-                ReasonListBox.Items.Add(new ListItem(reason.Description, reason.Lookup));
+                ReasonListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription( reason), reason.Lookup));
             }
 
             if (!string.IsNullOrEmpty(PatientNameFromUrl) || !string.IsNullOrEmpty(PatientIdFromUrl))

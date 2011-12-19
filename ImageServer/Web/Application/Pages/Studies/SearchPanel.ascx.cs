@@ -28,12 +28,13 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
-    public class SearchPanelDeleteButtonClickedEventArgs:EventArgs
+    public class SearchPanelButtonClickedEventArgs:EventArgs
     {
         private IEnumerable<StudySummary> _selectedStudies;
         public IEnumerable<StudySummary> SelectedStudies
@@ -48,14 +49,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         #region Private members
         private ServerPartition _serverPartition;
         private StudyController _controller = new StudyController();
-        private EventHandler<SearchPanelDeleteButtonClickedEventArgs> _deleteButtonClickedHandler;
+        private EventHandler<SearchPanelButtonClickedEventArgs> _deleteButtonClickedHandler;
+        private EventHandler<SearchPanelButtonClickedEventArgs> _assignAuthorityGroupsButtonClickedHandler;
     	#endregion Private members
 
         #region Events
-        public event EventHandler<SearchPanelDeleteButtonClickedEventArgs> DeleteButtonClicked
+        public event EventHandler<SearchPanelButtonClickedEventArgs> DeleteButtonClicked
         {
             add { _deleteButtonClickedHandler += value; }
             remove { _deleteButtonClickedHandler -= value; }
+        }
+
+        public event EventHandler<SearchPanelButtonClickedEventArgs> AssignAuthorityGroupsButtonClicked
+        {
+            add { _assignAuthorityGroupsButtonClickedHandler += value; }
+            remove { _assignAuthorityGroupsButtonClickedHandler -= value; }
         }
         #endregion
 
@@ -111,12 +119,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         }
 
         [ExtenderControlProperty]
+        [ClientPropertyName("AssignAuthorityGroupsButtonClientID")]
+        public string AssignAuthorityGroupsButtonClientID
+        {
+            get { return AssignAuthorityGroupsButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
         [ClientPropertyName("StudyListClientID")]
         public string StudyListClientID
         {
             get { return StudyListGridView.TheGrid.ClientID; }
         }
-
+        
         [ExtenderControlProperty]
         [ClientPropertyName("OpenStudyPageUrl")]
         public string OpenStudyPageUrl
@@ -149,7 +164,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         [ClientPropertyName("ViewImageButtonClientID")]
         public string ViewImageButtonClientID
         {
-            get { return ViewImageButton.ClientID; }
+            get { return ViewImagesButton.ClientID; }
         }
 
         public ServerPartition ServerPartition
@@ -164,12 +179,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         private void SetupChildControls()
         {
+            foreach(StudyStatusEnum s in  StudyStatusEnum.GetAll())
+            {
+                StatusListBox.Items.Add(new ListItem(){ Text = ServerEnumDescription.GetLocalizedDescription(s), Value = s.Lookup});
+            }
+
             ClearToStudyDateButton.Attributes["onclick"] = ScriptHelper.ClearDate(ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID);
             ClearFromStudyDateButton.Attributes["onclick"] = ScriptHelper.ClearDate(FromStudyDate.ClientID, FromStudyDateCalendarExtender.ClientID);
             ToStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID, "To Date must be greater than From Date");
             FromStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, FromStudyDate.ClientID, FromStudyDateCalendarExtender.ClientID, "From Date must be less than To Date");
             
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerStudySingleItem, SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             StudyListGridView.Pager = GridPagerTop;
 
             ConfirmStudySearchMessageBox.Confirmed += delegate(object data) {
@@ -257,12 +277,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         };
 
             //Set Roles
-            ViewImageButton.Roles = ImageServerConstants.WebViewerAuthorityToken;
+            ViewImagesButton.Roles = ImageServerConstants.WebViewerAuthorityToken;
             ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
             MoveStudyButton.Roles = AuthorityTokens.Study.Move;
             DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
             RestoreStudyButton.Roles = AuthorityTokens.Study.Restore;
-
+            AssignAuthorityGroupsButton.Roles = ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup;
         }
 
     	#endregion Private Methods
@@ -296,7 +316,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-
             SetupChildControls();
         }
         
@@ -304,7 +323,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {   
             if(DisplaySearchWarning) {
                 StudyListGridView.DataBindOnPreRender = false;
-                ConfirmStudySearchMessageBox.Message = App_GlobalResources.SR.NoFiltersSearchWarning;
+                ConfirmStudySearchMessageBox.Message = SR.NoFiltersSearchWarning;
                    ConfirmStudySearchMessageBox.MessageStyle = "font-weight: bold; color: #205F87;";
                 ConfirmStudySearchMessageBox.Show();
             } else
@@ -343,7 +362,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 					sb.Append(';');
 			}
 
-        	QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationTypeEventOutcomeIndicator.Success,
+        	QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationContentsEventOutcomeIndicator.Success,
 				new AuditPersonActiveParticipant(SessionManager.Current.Credentials.UserName,
 											 null,
 											 SessionManager.Current.Credentials.DisplayName),
@@ -357,13 +376,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
 			if (studies != null && studies.Count > 0)
 			{
-			    string message = studies.Count > 1 ? string.Format(App_GlobalResources.SR.MultipleStudyRestore):
-				                                    string.Format(App_GlobalResources.SR.SingleStudyRestore);
+			    string message = studies.Count > 1 ? string.Format(SR.MultipleStudyRestore):
+				                                    string.Format(SR.SingleStudyRestore);
 
 			    RestoreMessageBox.Message = DialogHelper.createConfirmationMessage(message);
                 RestoreMessageBox.Message += DialogHelper.createStudyTable(studies);
 				
-			    RestoreMessageBox.Title = App_GlobalResources.Titles.RestoreStudyConfirmation;
+			    RestoreMessageBox.Title = Titles.RestoreStudyConfirmation;
                 RestoreMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
 				IList<Study> studyList = new List<Study>();
 				foreach (StudySummary summary in studies)
@@ -376,9 +395,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected void DeleteStudyButton_Click(object sender, ImageClickEventArgs e)
         {
             StudyListGridView.RefreshCurrentPage();
-            SearchPanelDeleteButtonClickedEventArgs args = new SearchPanelDeleteButtonClickedEventArgs();
-            args.SelectedStudies = StudyListGridView.SelectedStudies;
+            SearchPanelButtonClickedEventArgs args = new SearchPanelButtonClickedEventArgs
+                                                         {
+                                                             SelectedStudies = StudyListGridView.SelectedStudies
+                                                         };
             EventsHelper.Fire(_deleteButtonClickedHandler, this, args);
+        }
+
+        protected void AssignAuthorityGroupsButton_Click(object sender, ImageClickEventArgs e)
+        {
+            StudyListGridView.RefreshCurrentPage();
+            SearchPanelButtonClickedEventArgs args = new SearchPanelButtonClickedEventArgs
+                                                         {
+                                                             SelectedStudies = StudyListGridView.SelectedStudies
+                                                         };
+            EventsHelper.Fire(_assignAuthorityGroupsButtonClickedHandler, this, args);
         }
 
         protected void OpenStudyButton_Click(object sender, ImageClickEventArgs e)

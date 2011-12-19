@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             ServiceLock item = row.DataItem as ServiceLock;
             if (typeLabel != null && item!=null)
             {
-                typeLabel.Text = item.ServiceLockTypeEnum.Description;
+                typeLabel.Text = ServerEnumDescription.GetLocalizedDescription(item.ServiceLockTypeEnum);
             }
         }
 
@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             ServiceLock item = row.DataItem as ServiceLock;
             if (descLabel != null && item != null)
             {
-                descLabel.Text = item.ServiceLockTypeEnum.LongDescription;
+                descLabel.Text = ServerEnumDescription.GetLocalizedLongDescription(item.ServiceLockTypeEnum);
             }
         }
 

@@ -9,7 +9,6 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
@@ -24,5 +23,8 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 
 		[DataMember]
 		public EntityRef AuthorityGroupRef;
+
+	    [DataMember] 
+        public bool DeleteOnlyWhenEmpty;
 	}
 }

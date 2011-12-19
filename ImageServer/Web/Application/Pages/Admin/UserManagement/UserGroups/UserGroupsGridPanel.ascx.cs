@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -47,21 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         private IList<UserGroupRowData> _userGroupRows;
         #endregion Private members
 
-        private static void CustomizeTokensColumn(GridViewRowEventArgs e)
-        {
-            TextBox textBox = ((TextBox) e.Row.FindControl("TokensTextBox"));
-            UserGroupRowData rowData = e.Row.DataItem as UserGroupRowData;
-
-            if (rowData != null)
-            {
-                string tokenList = string.Empty;
-                foreach (TokenSummary token in rowData.Tokens)
-                {
-                    tokenList += token.Description + "\n";
-                }
-                textBox.Text = tokenList;
-            }
-        }
+        
         
         /// <summary>
         /// Retrieve reference to the grid control being used to display the devices.
@@ -162,11 +149,44 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (UserGroupGrid.EditIndex != e.Row.RowIndex)
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
-                {
+                {                    
                     CustomizeTokensColumn(e);
+                    CustomizeDataGroupColumn(e);
                 }
             }
+        }
 
+        private static void CustomizeTokensColumn(GridViewRowEventArgs e)
+        {
+            TextBox textBox = ((TextBox)e.Row.FindControl("TokensTextBox"));
+            UserGroupRowData rowData = e.Row.DataItem as UserGroupRowData;
+
+            if (rowData != null)
+            {
+                string tokenList = string.Empty;
+                foreach (TokenSummary token in rowData.Tokens)
+                {
+                    tokenList += token.Description + "\n";
+                }
+                textBox.Text = tokenList;
+            }
+        }
+
+        protected void CustomizeDataGroupColumn(GridViewRowEventArgs e)
+        {
+            var img = ((Image)e.Row.FindControl("DataGroupImage"));
+            if (img != null)
+            {
+                bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DataGroup"));
+                if (active)
+                {
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
+                }
+                else
+                {
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
+                }
+            }
         }
 
         protected void DisposeUserGroupsDataSource(object sender, ObjectDataSourceDisposingEventArgs e)

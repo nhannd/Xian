@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.ServerPartitionPanel.js", "application/x-javascript")]
 
@@ -114,13 +115,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             base.OnInit(e);
 
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, ServerPartitionGridPanel.TheGrid, delegate { return Partitions.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerPartitionSingleItem, SR.GridPagerPartitionMultipleItems, ServerPartitionGridPanel.TheGrid, delegate { return Partitions.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
             ServerPartitionGridPanel.Pager = GridPagerTop;
             GridPagerTop.Reset();
 
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
+            StatusFilter.Items.Add(new ListItem(SR.All));
+            StatusFilter.Items.Add(new ListItem(SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(SR.Disabled));
 
         }
 

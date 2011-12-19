@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.Dicom.Iod.ContextGroups;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -354,26 +355,34 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Gets or sets the value of PatientSpeciesCodeSequence in the underlying collection. Type 1C.
 		/// </summary>
-		public PatientSpeciesCodeSequence PatientSpeciesCodeSequence
+		public Species PatientSpeciesCodeSequence
 		{
 			get
 			{
+
 				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.PatientSpeciesCodeSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
-				return new PatientSpeciesCodeSequence(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
+
+				var dicomSequenceItem = ((DicomSequenceItem[])dicomAttribute.Values)[0];
+				return new Species(new CodeSequenceMacro(dicomSequenceItem));
 			}
 			set
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.PatientSpeciesCodeSequence];
 				if (value == null)
 				{
 					base.DicomAttributeProvider[DicomTags.PatientSpeciesCodeSequence] = null;
 					return;
 				}
-				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+
+				var dicomAttribute = base.DicomAttributeProvider[DicomTags.PatientSpeciesCodeSequence];
+
+				var sequenceItem = new CodeSequenceMacro();
+				value.WriteToCodeSequence(sequenceItem);
+
+				dicomAttribute.Values = new DicomSequenceItem[] { sequenceItem.DicomSequenceItem };
 			}
 		}
 
@@ -397,22 +406,25 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Gets or sets the value of PatientBreedCodeSequence in the underlying collection. Type 3.
 		/// </summary>
-		public PatientBreedCodeSequence[] PatientBreedCodeSequence
+		public Breed[] PatientBreedCodeSequence
 		{
 			get
 			{
+
 				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.PatientBreedCodeSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
 				}
 
-				PatientBreedCodeSequence[] result = new PatientBreedCodeSequence[dicomAttribute.Count];
-				DicomSequenceItem[] items = (DicomSequenceItem[]) dicomAttribute.Values;
-				for (int n = 0; n < items.Length; n++)
-					result[n] = new PatientBreedCodeSequence(items[n]);
+				var results = new Breed[dicomAttribute.Count];
+				var sequenceItems = (DicomSequenceItem[])dicomAttribute.Values;
+				for (var n = 0; n < sequenceItems.Length; n++)
+				{
+					results[n] = new Breed(new CodeSequenceMacro(sequenceItems[n]));
+				}
 
-				return result;
+				return results;
 			}
 			set
 			{
@@ -422,9 +434,13 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 
-				DicomSequenceItem[] result = new DicomSequenceItem[value.Length];
-				for (int n = 0; n < value.Length; n++)
-					result[n] = value[n].DicomSequenceItem;
+				var result = new DicomSequenceItem[value.Length];
+				for (var n = 0; n < value.Length; n++)
+				{
+					var codeSequence = new CodeSequenceMacro();
+					value[n].WriteToCodeSequence(codeSequence);
+					result[n] = codeSequence.DicomSequenceItem;
+				}
 
 				base.DicomAttributeProvider[DicomTags.PatientBreedCodeSequence].Values = result;
 			}

@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
-			const string nullString = "-";
+			string nullString = SR.ValueNil;
 
 			IImageSopProvider provider = presentationImage as IImageSopProvider;
 			if (provider == null)

@@ -35,6 +35,7 @@ namespace ClearCanvas.Desktop.Help
 			_version.Text = String.Format(AboutSettings.Default.VersionTextFormat, ProductInformation.GetVersion(true, true, true));
 			_copyright.Text = ProductInformation.Copyright;
 			_license.Text = ProductInformation.License;
+			_closeButton.Text = SR.LabelClose;
 
             _manifest.Visible = !ManifestVerification.Valid;
            

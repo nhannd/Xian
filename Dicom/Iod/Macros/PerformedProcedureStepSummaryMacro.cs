@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros.PerformedProcedureStepSummary;
 using ClearCanvas.Dicom.Iod.Macros.PerformedProcedureStepSummary.PerformedProtocolCodeSequence;
 using ClearCanvas.Dicom.Utilities;
@@ -19,7 +20,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 	/// <summary>
 	/// PerformedProcedureStepSummary Macro
 	/// </summary>
-	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 10.13 (Table 10-16)</remarks>
+	/// <remarks>As defined in the DICOM Standard 2009, Part 3, Section 10.13 (Table 10-16)</remarks>
 	public interface IPerformedProcedureStepSummaryMacro : IIodMacro
 	{
 		/// <summary>
@@ -56,8 +57,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 	/// <summary>
 	/// PerformedProcedureStepSummary Macro
 	/// </summary>
-	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 10.13 (Table 10-16)</remarks>
-	internal class PerformedProcedureStepSummaryMacro : SequenceIodBase, IPerformedProcedureStepSummaryMacro
+	/// <remarks>As defined in the DICOM Standard 2009, Part 3, Section 10.13 (Table 10-16)</remarks>
+	internal class PerformedProcedureStepSummaryMacro : IodBase, IPerformedProcedureStepSummaryMacro
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PerformedProcedureStepSummaryMacro"/> class.
@@ -67,13 +68,41 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PerformedProcedureStepSummaryMacro"/> class.
 		/// </summary>
-		/// <param name="dicomSequenceItem">The dicom sequence item.</param>
-		public PerformedProcedureStepSummaryMacro(DicomSequenceItem dicomSequenceItem) : base(dicomSequenceItem) {}
+		/// <param name="dicomSequenceItem">The DICOM attribute provider.</param>
+		public PerformedProcedureStepSummaryMacro(IDicomAttributeProvider dicomSequenceItem) : base(dicomSequenceItem) {}
+
+		/// <summary>
+		/// Gets or sets the DICOM attribute provider as a sequence item.
+		/// </summary>
+		public DicomSequenceItem DicomSequenceItem
+		{
+			get { return DicomAttributeProvider as DicomSequenceItem; }
+			set { DicomAttributeProvider = value; }
+		}
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
 		/// </summary>
-		public void InitializeAttributes() {}
+		public void InitializeAttributes()
+		{
+			// nothing to initialize - all attributes are type 3
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="ClearCanvas.Dicom.DicomTag"/>s used by this macro.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags
+		{
+			get
+			{
+				yield return DicomTags.PerformedProcedureStepId;
+				yield return DicomTags.PerformedProcedureStepStartDate;
+				yield return DicomTags.PerformedProcedureStepStartTime;
+				yield return DicomTags.PerformedProcedureStepDescription;
+				yield return DicomTags.PerformedProtocolCodeSequence;
+				yield return DicomTags.CommentsOnThePerformedProcedureStep;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the value of PerformedProcedureStepId in the underlying collection. Type 3.
@@ -200,7 +229,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <summary>
 		/// PerformedProtocol Code Sequence
 		/// </summary>
-		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 10.13 (Table 10-16)</remarks>
+		/// <remarks>As defined in the DICOM Standard 2009, Part 3, Section 10.13 (Table 10-16)</remarks>
 		internal class PerformedProtocolCodeSequenceClass : CodeSequenceMacro, IPerformedProtocolCodeSequence
 		{
 			/// <summary>
@@ -268,7 +297,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// <summary>
 			/// ProtocolContext Sequence
 			/// </summary>
-			/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 10.13 (Table 10-16)</remarks>
+			/// <remarks>As defined in the DICOM Standard 2009, Part 3, Section 10.13 (Table 10-16)</remarks>
 			internal class ProtocolContextSequenceClass : ContentItemMacro, IProtocolContextSequence
 			{
 				/// <summary>
@@ -331,7 +360,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <summary>
 		/// PerformedProtocol Code Sequence
 		/// </summary>
-		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 10.13 (Table 10-16)</remarks>
+		/// <remarks>As defined in the DICOM Standard 2009, Part 3, Section 10.13 (Table 10-16)</remarks>
 		public interface IPerformedProtocolCodeSequence : IIodMacro
 		{
 			/// <summary>
@@ -350,7 +379,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// <summary>
 			/// ProtocolContext Sequence
 			/// </summary>
-			/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 10.13 (Table 10-16)</remarks>
+			/// <remarks>As defined in the DICOM Standard 2009, Part 3, Section 10.13 (Table 10-16)</remarks>
 			public interface IProtocolContextSequence : IIodMacro
 			{
 				/// <summary>

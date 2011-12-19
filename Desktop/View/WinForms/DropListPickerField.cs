@@ -103,6 +103,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _nullItem = value; }
 	    }
 
+		[Localizable(true)]
 		public string LabelText
 		{
 			get { return _label.Text; }
@@ -184,16 +185,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void UpdateText()
 		{
-			string newText = "";
-			foreach (object item in _checkedItems)
-			{
-				newText += FormatItem(item) + @", ";
-			}
-
-			if (newText.Length > 0)
-				newText = newText.Remove(newText.Length - 2);
-
-			this._itemString.Text = newText;
+			var items = CollectionUtils.Map<object, string>(_checkedItems, FormatItem);
+			_itemString.Text = string.Join(SR.FormatListSeparator, items.ToArray());
 		}
 
         private void _showItemListButton_Click(object sender, EventArgs e)

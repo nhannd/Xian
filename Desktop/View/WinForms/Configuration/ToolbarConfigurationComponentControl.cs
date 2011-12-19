@@ -10,11 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Configuration.Standard;
 
@@ -30,8 +25,10 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 
 			_component = component;
 
+			_toolbarSize.DataSource = Enum.GetValues(typeof (IconSize));
+
 			_wrapToolbars.DataBindings.Add("Checked", _component, "Wrap", false, DataSourceUpdateMode.OnPropertyChanged);
-			_toolbarSize.DataBindings.Add("Text", _component, "IconSize", true, DataSourceUpdateMode.OnPropertyChanged);
+			_toolbarSize.DataBindings.Add("Value", _component, "IconSize", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 }

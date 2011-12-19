@@ -180,9 +180,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							{
 								if (frame.LossyImageCompressionRatio.Length > 0)
 								{
-									var lossyRatios = StringUtilities.Combine(frame.LossyImageCompressionRatio, "/", "F1");
+									var lossyRatios = StringUtilities.Combine(frame.LossyImageCompressionRatio, SR.SeparatorLossyCompressionRatio, "F1");
 									if (!String.IsNullOrEmpty(lossyRatios))
-										return String.Format("{0}({1})", SR.ValueLossy, lossyRatios);
+										return String.Format(SR.FormatLossyCompressionRatio, SR.ValueLossy, lossyRatios);
 								}
 
 								if (!String.IsNullOrEmpty(frame.LossyImageCompression))

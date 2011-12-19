@@ -246,6 +246,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 			UserInfo userInfo = new UserInfo(
 				UserName,
 				DisplayName,
+                "test@clearcanvas.ca",
 				null,
 				null);
 			User user = User.CreateNewUser(userInfo, DefaultPassword);

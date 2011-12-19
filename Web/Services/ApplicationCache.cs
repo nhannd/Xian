@@ -16,12 +16,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Web.Services
 {
-	public abstract partial class Application
-	{
-		private class Cache
+	internal class Cache
 		{
-		    private const int CheckIntervalInSeconds = 30;
-            private const int ApplicationShutdownDelayInSeconds = 10;
+		    private const int CheckIntervalInSeconds = 15;
+            private const int ApplicationShutdownDelayInSeconds = 5;
 
 			public static readonly Cache Instance;
 
@@ -36,52 +34,69 @@ namespace ClearCanvas.Web.Services
 		    
             private Timer _cleanupTimer;
 
+		    internal object SyncLock
+		    {
+                get { return _syncLock; }
+		    }
+
+		    internal int Count
+		    {
+		        get{
+                    lock (_syncLock)
+                    {
+                        return _applications.Count;
+                    }
+		        }
+		    }
 
             private Cache()
             {
                 // TODO: Cleanup ther timer?
                 _cleanupTimer = new Timer(OnCleanupTimerCallback, null, TimeSpan.FromSeconds(CheckIntervalInSeconds),
                                           TimeSpan.FromSeconds(CheckIntervalInSeconds));
-                
             }
 
             private void OnCleanupTimerCallback(object ignore)
             {
                 try
                 {
-                    if (_appsToBeRemoved.Count > 0)
+                    lock (_syncLock)
                     {
-                        
-                        List<Guid> removalList = new List<Guid>();
-                        foreach (Guid appId in _appsToBeRemoved.Keys)
+                        if (_appsToBeRemoved.Count > 0)
                         {
-                            if (DateTime.Now - _appsToBeRemoved[appId] > TimeSpan.FromSeconds(ApplicationShutdownDelayInSeconds))
-                            {
-                                removalList.Add(appId);
-                            }
-                        }
 
-                        if (removalList.Count>0)
-                        {
-                            foreach(Guid appId in removalList)
+                            List<Guid> removalList = new List<Guid>();
+                            foreach (Guid appId in _appsToBeRemoved.Keys)
                             {
-                                Application app = null;
-                                try
+                                if (DateTime.Now - _appsToBeRemoved[appId] >
+                                    TimeSpan.FromSeconds(ApplicationShutdownDelayInSeconds))
                                 {
-                                    lock (_syncLock)
-                                    {
-                                        app = _applications[appId];
-                                        _applications.Remove(appId);
-                                    }
-                                    _appsToBeRemoved.Remove(appId);
+                                    removalList.Add(appId);
                                 }
-                                finally
+                            }
+
+                            if (removalList.Count > 0)
+                            {
+                                string appInstanceName = null;
+                                foreach (Guid appId in removalList)
                                 {
-                                    if (app != null)
+                                    Application app = null;
+                                    try
                                     {
-                                        app.DisposeMembers();
+
+                                        app = _applications[appId];
+                                        appInstanceName = app.InstanceName;
+                                        _applications.Remove(appId);
+                                        _appsToBeRemoved.Remove(appId);
                                     }
-                                    Platform.Log(LogLevel.Info, "Application {0} removed from cache.", appId);
+                                    finally
+                                    {
+                                        if (app != null)
+                                        {
+                                            app.DisposeMembers();
+                                        }
+                                        Platform.Log(LogLevel.Info, "{0} removed from cache.", appInstanceName);
+                                    }
                                 }
                             }
                         }
@@ -98,7 +113,8 @@ namespace ClearCanvas.Web.Services
 				lock (_syncLock)
 				{
 					_applications.Add(application.Identifier, application);
-                    application.Stopped += delegate { Remove(application.Identifier); };
+				    var identifier = application.Identifier;
+                    application.Stopped += delegate { Remove(identifier); };
 				}
 			}
 
@@ -111,27 +127,20 @@ namespace ClearCanvas.Web.Services
 				}
 			}
 
-			public void Remove(Guid applicationId)
+		    private void Remove(Guid applicationId)
 			{
 				lock (_syncLock)
 				{
 					if (!_applications.ContainsKey(applicationId))
 						return;
 
-					// NOTE: For non-duplex binding we can't remove the app right away
-					// because the client still hasn't received the last event. If the app 
-					// is removed from the cache here, the client won't be able to poll
-					// the remaining messages beause the app id is no longer valid.
-					// 
 					// App shutdown must be delayed to give the client some time to poll the remaining events.
-					//
-                    _appsToBeRemoved.Add(applicationId, DateTime.Now);
-                    
-					// _applications.Remove(applicationId);
-					// Platform.Log(LogLevel.Debug, "Application {0} removed from cache.", applicationId);
+                    if (!_appsToBeRemoved.ContainsKey(applicationId))
+                        _appsToBeRemoved.Add(applicationId, DateTime.Now);            
 				}
 			}
 
+            // CR 3-22-2011, This is no longer used now that we're hosted in IIS.
 			public void StopAndClearAll(string message)
 			{
 				lock (_syncLock)
@@ -145,6 +154,5 @@ namespace ClearCanvas.Web.Services
 					_applications.Clear();
 				}
 			}
-		}
-	}
+		}	
 }

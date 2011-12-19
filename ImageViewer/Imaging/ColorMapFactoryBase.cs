@@ -12,13 +12,13 @@
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A base implementation for Color Map factories.
+	/// A base implementation for <see cref="IColorMap"/> factories.
 	/// </summary>
-	/// <typeparam name="T">Must be derived from <see cref="ColorMap"/> and have a parameterless default constructor.</typeparam>
+	/// <typeparam name="T">Must be derived from <see cref="IColorMap"/> and have a parameterless default constructor.</typeparam>
 	/// <seealso cref="IColorMapFactory"/>
-	/// <seealso cref="ColorMap"/>
+	/// <seealso cref="IColorMap"/>
 	public abstract class ColorMapFactoryBase<T> : IColorMapFactory
-		where T : ColorMap, new()
+		where T : IColorMap, new()
 	{
 		#region Protected Constructor
 
@@ -47,9 +47,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public abstract string Description { get; }
 
 		/// <summary>
-		/// Creates and returns a <see cref="ColorMap"/>.
+		/// Creates and returns a <see cref="IColorMap"/>.
 		/// </summary>
-		public IDataLut Create()
+		public IColorMap Create()
 		{
 			return new T();
 		}

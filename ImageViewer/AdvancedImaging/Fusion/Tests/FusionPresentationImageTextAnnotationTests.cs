@@ -118,12 +118,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			foreach (var patient in studyTree.Patients)
 			{
 				foreach (var study in patient.Studies)
-				{
-					foreach (var series in study.Series)
-					{
-						displaySets.AddRange(displaySetFactory.CreateDisplaySets(series));
-					}
-				}
+                    displaySets.AddRange(displaySetFactory.CreateDisplaySets(study));
 			}
 			return displaySets;
 		}

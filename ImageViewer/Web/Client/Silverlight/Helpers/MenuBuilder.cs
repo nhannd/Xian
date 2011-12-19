@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 
     internal class MenuBuilder
     {
-        internal static IPopup BuildContextMenu(WebActionNode model, ServerEventDispatcher dispatcher)
+        internal static IPopup BuildContextMenu(WebActionNode model, ServerEventMediator dispatcher)
         {
             return BuildContextMenu(model, new ActionDispatcher(dispatcher));
         }
@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
     internal class MenuAdapter : PopupProxy, IDisposable
     {
         private readonly ContextMenu _menu;
+        private bool _disposed = false;
 
         public MenuAdapter(ContextMenu menu, WebActionNode model, ActionDispatcher actionDispatcher)
             : base(menu)
@@ -83,18 +84,32 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 
         public void Dispose()
         {
-            foreach (MenuItem item in _menu.Items)
-                ReleaseMenuItem(item);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        private void ReleaseMenuItem(MenuItem item)
+        protected virtual void Dispose(bool disposing)
         {
-            MenuItemBinding binding = item.Tag as MenuItemBinding;
+            if (!_disposed)
+            {
+                foreach (MenuItem item in _menu.Items)
+                    ReleaseMenuItem(item, disposing);
+                _disposed = true;
+            }
+        }
+
+        private void ReleaseMenuItem(MenuItem item, bool disposing)
+        {
+            var binding = item.Tag as MenuItemBinding;
             if (binding != null)
-                binding.ReleaseDispatcher();
+            {
+                if (disposing)
+                    binding.Dispose();
+                item.Tag = null;
+            }
 
             foreach (MenuItem child in item.Items)
-                ReleaseMenuItem(child);
+                ReleaseMenuItem(child, disposing);    
         }
 
         private static MenuItem BuildMenuItem(WebActionNode node, ActionDispatcher dispatcher)
@@ -110,11 +125,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
                     if (subNode.Children == null || subNode.Children.Count == 0)
                     {
                         MenuItem menuItem = BuildActionMenuItem(subNode, dispatcher);
-                        if (menuItem.IsChecked)
-                            thisMenu.IsChecked = true;
 
                         if (menuItem != null)
-                            thisMenu.Items.Add(menuItem);
+                        {
+                            if (menuItem.IsChecked)
+                                thisMenu.IsChecked = true;
+
+                            if (menuItem != null)
+                                thisMenu.Items.Add(menuItem);
+                        }
+                        
                     }
                     else
                     {
@@ -128,12 +148,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
                         }
                     }
                 }
+
+                // Don't show the menu if it has no children
+                thisMenu.Visibility = node.DesiredVisiblility;
             }
             else
             {
                 WebAction actionNode = node as WebAction;
-
-                // Skip those that aren't visible
                 thisMenu = BuildActionMenuItem(actionNode, dispatcher);
             }
 
@@ -148,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             {
                 IsEnabled = actionNode.Enabled,
                 IsChecked = (actionNode is WebClickAction) && (actionNode as WebClickAction).Checked,
-                Visibility = actionNode.Visible ? Visibility.Visible : Visibility.Collapsed
+                Visibility = actionNode.DesiredVisiblility
             };
 
             var binding = new MenuItemBinding(actionNode, dispatcher, item);
@@ -208,10 +229,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 
 		public void Update(PropertyChangedEvent e)
         {
-            if (e.PropertyName.Equals("Visible"))
+            if (e.PropertyName.Equals("Available"))
+            {
+                _actionItem.Available = (bool)e.Value;
+                Item.Visibility = _actionItem.DesiredVisiblility;
+            }
+            else if (e.PropertyName.Equals("Visible"))
             {
 				_actionItem.Visible = (bool)e.Value;
-				Item.Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;
+                Item.Visibility = _actionItem.DesiredVisiblility;
             }
             else if (e.PropertyName.Equals("Enabled"))
             {

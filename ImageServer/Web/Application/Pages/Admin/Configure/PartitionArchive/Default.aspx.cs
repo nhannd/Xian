@@ -17,6 +17,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
@@ -73,7 +74,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         {
             UpdateUI();
 
-            SetPageTitle(App_GlobalResources.Titles.PartitionArchivesPageTitle);
+            SetPageTitle(Titles.PartitionArchivesPageTitle);
         }
 
         #endregion Protected Methods
@@ -134,8 +135,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 
         public void DeletePartition(Model.PartitionArchive partitionArchive)
         {
-            DeleteConfirmDialog.Message = String.Format(
-                    "Are you sure you want to delete partition archive \"{0}\" and all related settings permanently?", partitionArchive.Description);
+            DeleteConfirmDialog.Message = String.Format(SR.AdminPartitionArchive_DeleteDialog_AreYouSure, partitionArchive.Description);
             DeleteConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             DeleteConfirmDialog.Data = partitionArchive.GetKey();
             DeleteConfirmDialog.Show();

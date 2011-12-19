@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             ServerPartition partition = row.DataItem as ServerPartition;
             Label lbl = row.FindControl("DuplicateSopDescription") as Label; // The label is added in the template
-            lbl.Text = partition.DuplicateSopPolicyEnum.Description;
+            lbl.Text = ServerEnumDescription.GetLocalizedDescription(partition.DuplicateSopPolicyEnum);
         }
 
         #endregion Protected methods

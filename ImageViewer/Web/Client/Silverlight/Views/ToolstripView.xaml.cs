@@ -11,26 +11,27 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
-    public partial class ToolstripView : UserControl
+    public partial class ToolstripView : IDisposable
     {
-        private Dictionary<Guid, IToolstripButton> _buttonLookup = new Dictionary<Guid, IToolstripButton>();
+        private readonly Dictionary<Guid, IToolstripButton> _buttonLookup = new Dictionary<Guid, IToolstripButton>();
         private ActionDispatcher _dispatcher;
-        private ServerEventDispatcher _eventDispatcher;
+        private ServerEventMediator _eventMediator;
         WebIconSize _desiredIconSize = WebIconSize.Medium;
+        private bool _disposed = false;
 
-        public ServerEventDispatcher EventDispatcher
+        public ServerEventMediator EventDispatcher
         {
             set
             {
-                _eventDispatcher = value;
-                _dispatcher = new ActionDispatcher(_eventDispatcher);
+                _eventMediator = value;
+                _dispatcher = new ActionDispatcher(_eventMediator);
+                _eventMediator.TileHasCaptureChanged += EventBrokerTileHasCapture;
             }
         }
 
@@ -38,8 +39,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
         {
             InitializeComponent();
             System.Windows.Application.Current.Host.Content.Resized += OnApplicationResized;
-
-            EventBroker.TileHasCaptureChanged += new EventHandler(EventBroker_TileHasCapture);
         }
 
         public void OnLoseFocus(object sender, EventArgs e)
@@ -52,6 +51,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 if (dropButton.IsVisible)
                     dropButton.Hide();
             }
+        }
+
+        public void OnLayoutUpdated(object sender, EventArgs e)
+        {
+            // Had problems here when the initial rendering is off screen, and then it is rendered on screen.  This fixes the heights.
+            if (Height == 0.0 || Width == 0.0)
+                OnApplicationResized(sender, e);
         }
 
         private void OnApplicationResized(object sender, EventArgs e)
@@ -77,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 				//TODO: what if there are children?
 				if (action is WebDropDownButtonAction)
                 {
-                    DropDownButton theButton = new DropDownButton(_dispatcher, action as WebDropDownButtonAction,_desiredIconSize);
+                    var theButton = new DropDownButton(_dispatcher, action as WebDropDownButtonAction,_desiredIconSize);
 
 					_buttonLookup.Add(action.Identifier, theButton);
                     theButton.RegisterOnMouseEnter(OnMouseEnter);
@@ -88,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 else if (action is WebDropDownAction)
                 {
 
-                    LayoutDropDown theButton = new LayoutDropDown(_dispatcher, action as WebDropDownAction,_desiredIconSize);
+                    var theButton = new LayoutDropDown(_dispatcher, action as WebDropDownAction,_desiredIconSize);
 
                     _buttonLookup.Add(action.Identifier, theButton);
                     theButton.RegisterOnMouseEnter(OnMouseEnter);
@@ -98,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
                 }
                 else
                 {
-                    StandardButton theButton = new StandardButton(_dispatcher, action as WebClickAction, _desiredIconSize);
+                    var theButton = new StandardButton(_dispatcher, action as WebClickAction, _desiredIconSize);
 
                     _buttonLookup.Add(action.Identifier, theButton);
                     theButton.RegisterOnMouseEnter(OnMouseEnter);
@@ -116,26 +122,27 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             AddHelpButton();
 
             UpdateLayout();
-            Height = LayoutRoot.ActualHeight;
-            UpdateLayout();
+            if (LayoutRoot.ActualHeight != 0)
+            {
+                Height = LayoutRoot.ActualHeight;
+                UpdateLayout();
+            }
         }
 
         private void AddHelpButton()
         {
-            HelpButton theButton = new HelpButton();
+            var theButton = new HelpButton();
             theButton.SetIconSize(_desiredIconSize);
             LayoutRoot.Children.Add(theButton);
             theButton.RegisterOnMouseEnter(OnMouseEnter);
             theButton.RegisterOnMouseLeave(OnMouseLeave);
         }
         
-        void EventBroker_TileHasCapture(object sender, EventArgs e)
+        void EventBrokerTileHasCapture(object sender, EventArgs e)
         {
-            Tile tile = sender as Tile;
+            var tile = sender as Tile;
             LayoutRoot.IsHitTestVisible = !tile.HasCapture;
         }
-
-        
 
 		private void OnMouseEnter(IToolstripButton button)
         {
@@ -162,6 +169,48 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
             foreach (IToolstripButton stripButton in _buttonLookup.Values)
             {
                 stripButton.SetIconSize(_desiredIconSize);
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                System.Windows.Application.Current.Host.Content.Resized -= OnApplicationResized;
+
+                if (disposing)
+                {
+                    foreach (var c in LayoutRoot.Children)
+                    {
+                        var d = c as IDisposable;
+                        if (d!= null)
+                            d.Dispose();
+                    }
+                } 
+                
+                if (_dispatcher != null)
+                {
+                    _dispatcher.Dispose();
+                    _dispatcher = null;
+                }
+
+                if (_eventMediator != null)
+                {
+                    _eventMediator.TileHasCaptureChanged -= EventBrokerTileHasCapture;
+                    _eventMediator = null;
+                }
+             
+
+                LayoutRoot.Children.Clear();
+
+                _disposed = true;
             }
         }
     }

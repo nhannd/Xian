@@ -13,11 +13,17 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Web.Common
 {
-	//TODO (CR May 2010): Namespace, IsRequired?
     [DataContract]
     public class SessionValidationFault
     {
-        [DataMember]
+        [DataMember(IsRequired=false)]
+        public string ErrorMessage { get; set; }
+    }
+
+    [DataContract(Namespace = Namespace.Value)]
+    public class OutOfResourceFault
+    {
+        [DataMember(IsRequired = false)]
         public string ErrorMessage { get; set; }
     }
 }

@@ -1,4 +1,7 @@
 /*
+// License (non-CC)
+//
+// 
 // jQuery multiSelect
 //
 // Version 1.0.3 beta
@@ -48,7 +51,8 @@ if (jQuery) (function($) {
             // Default options
             if (!o) var o = {};
             if (o.selectAll == undefined) o.selectAll = true;
-            if (o.selectAllText == undefined) o.selectAllText = "Select All";
+            //if (o.selectAllText == undefined) o.selectAllText = "Select All";
+            if (o.selectAllText == undefined) o.selectAllText = SR.SelectAll;
             if (o.noneSelected == undefined) o.noneSelected = 'Select options';
             if (o.oneOrMoreSelected == undefined) o.oneOrMoreSelected = '% selected';
             if (o.dropdownStyle == undefined) o.dropdownStyle = '';
@@ -64,19 +68,22 @@ if (jQuery) (function($) {
                 }
                 html += '" />';
                 html += '<div class="multiSelectOptions" style="position: absolute; z-index: 99999; display: none;';
-                if (o.dropdownStyle) {
+                if (o.dropdownStyle) 
+                {
                     html += o.dropdownStyle;
-                    var width = o.dropdownStyle.substring(o.dropdownStyle.indexOf("width:") + 6);
-                    width = width.substring(0, width.indexOf("px")) - 35; //remove 40pixels to account for the checkbox.
+
+                    //Note: width = auto
+                    //var width = o.dropdownStyle.substring(o.dropdownStyle.indexOf("width:") + 6);
+                    //width = width.substring(0, width.indexOf("px")) - 35; //remove 40pixels to account for the checkbox.
                 }
                 html += '">';
                 if (o.selectAll) html += '<label class="selectAll"><input type="checkbox" class="selectAll" />' + o.selectAllText + '</label>';
                 $(select).find('OPTION').each(function() {
                     if ($(this).val() != '') {
-                        html += '<label><input type="checkbox" name="' + $(select).attr('name') + '" value="' + $(this).val() + '"';
+                        html += '<label style="white-space: nowrap;"><input type="checkbox" name="' + $(select).attr('name') + '" value="' + $(this).val() + '"';
                         if ($(this).attr('selected')) html += ' checked="checked"';
                         var text = $(this).html();
-                        if (width) text = fitStringToWidth(text, width, null);
+                        //if (width) text = fitStringToWidth(text, width, null);
                         html += ' />' + text + '</label>';
                     }
                 });
@@ -280,7 +287,7 @@ if (jQuery) (function($) {
                     listHeight += this.offsetHeight;
                 });
                 // @todo - made this height configurable
-                if (listHeight > 200) $(this).next('.multiSelectOptions').css({ height: '200px' });
+                //if (listHeight > 200) $(this).next('.multiSelectOptions').css({ height: '200px' });
             }
 
             // Disappear on hover out

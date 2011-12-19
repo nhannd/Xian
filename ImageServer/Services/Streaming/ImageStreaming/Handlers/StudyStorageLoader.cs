@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
@@ -27,25 +28,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
         }
         public ServerTransientError(String message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-    }
-
-    public class StudyNotFoundException : Exception
-    {
-        public StudyNotFoundException(String message) : base(message)
-        {
-        }
-    }
-
-    public class StudyNotOnlineException : ServerTransientError
-    {
-        public StudyNotOnlineException(String message)
-            : base(message)
-        {
-        }
-
-        public StudyNotOnlineException()
         {
         }
     }
@@ -161,9 +143,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             
             }
 
+        	//TODO (CR April 2011): Should this be "not found"?
             if (location == null)
-                throw new StudyNotOnlineException(String.Format(SR.FaultStudyIsNearline, studyInstanceUid));
-
+                throw new StudyIsNearlineException(false);
                
             return location;
 		}

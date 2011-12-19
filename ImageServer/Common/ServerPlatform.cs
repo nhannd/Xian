@@ -41,6 +41,8 @@ namespace ClearCanvas.ImageServer.Common
     	private static string _hostId;
     	private static string _serverInstanceId;
     	private static string _processorId;
+
+        private static bool? _manifestVerified;
     	#endregion
 
         /// <summary>
@@ -354,7 +356,41 @@ namespace ClearCanvas.ImageServer.Common
     		}
     	}
 
-		public static StudyHistory CreateStudyHistoryRecord(IUpdateContext updateContext,
+
+	    public static bool IsManifestVerified
+	    {
+	        get
+	        {
+                if (_manifestVerified == null)
+                {
+                    lock (_syncLock)
+                    {
+                        if (_manifestVerified == null)
+                        {
+                            try
+                            {
+                                Platform.GetService(delegate(IProductVerificationService service)
+                                {
+                                    var result = service.Verify(new ProductVerificationRequest());
+                                    _manifestVerified = result.IsManifestValid;
+                                }
+                                    );
+                            }
+                            catch (Exception ex)
+                            {
+                                // This is called on every page. We don't want to fill up the log.
+                                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                                    Platform.Log(LogLevel.Error, "Error occurred when trying to communicate with shred host manifest service :{0}", ex.Message);
+                            }
+                        }
+                    }
+                }
+
+                return _manifestVerified.HasValue ? _manifestVerified.Value : false;
+	        }
+	    }
+
+	    public static StudyHistory CreateStudyHistoryRecord(IUpdateContext updateContext,
 			StudyStorageLocation primaryStudyLocation, StudyStorageLocation secondaryStudyLocation,
 			StudyHistoryTypeEnum type, object entryInfo, object changeLog)
 		{
@@ -465,6 +501,19 @@ namespace ClearCanvas.ImageServer.Common
             groupFolderPath = Path.Combine(groupFolderPath, sop.GroupID);
 
             return groupFolderPath;
+        }
+
+        /// <summary>
+        /// Helper method to return the path to the root folder under which duplicates are stored.
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <returns></returns>
+        public static String GetDuplicateFolderRootPath(StudyStorageLocation studyStorage)
+        {
+            String path = Path.Combine(studyStorage.FilesystemPath, studyStorage.PartitionFolder);
+            path = Path.Combine(path, ReconcileStorageFolder);
+
+            return path;
         }
 
         /// <summary>

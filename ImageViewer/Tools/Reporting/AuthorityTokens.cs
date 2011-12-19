@@ -14,7 +14,7 @@ using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
 	internal class DefineAuthorityGroups : IDefineAuthorityGroups
 	{
 		#region IDefineAuthorityGroups Members
@@ -51,10 +51,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting
 	
 	public static class AuthorityTokens
 	{
-		[AuthorityToken(Description = "Grant access to key image administration, such as publishing configuration.")]
-		public const string KeyImageAdministration = "Viewer/Administration/Key Images";
-		
-		[AuthorityToken(Description = "Grant access to key image functionality.")]
-		public const string KeyImages = "Viewer/Reporting/Key Images";
+		[AuthorityToken(Description = "Grant access to key image functionality.", Formerly = "Viewer/Reporting/Key Images")]
+		public const string KeyImages = "Viewer/Study/Key Images";
 	}
 }

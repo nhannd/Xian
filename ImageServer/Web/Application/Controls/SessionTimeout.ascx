@@ -1,13 +1,30 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
+<%@ Import Namespace="Resources" %>
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionTimeout.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.SessionTimeout" %>
+
 
 <script type="text/javascript">
     var countdownTimer;
+    var loginPage = "<%= ResolveClientUrl(FormsAuthentication.LoginUrl) %>";
     var redirectPage = "<%= ResolveClientUrl("~/Pages/Error/TimeoutErrorPage.aspx") %>";
     var loginId = "<%= HttpContext.Current.User.Identity.Name %>";
     var minCountdownLength = <%= MinCountDownDuration.TotalSeconds %>;
     var timeLeft;
     var hideWarning = true;
+    var loggedOut = false;
+    
     Sys.Application.add_load(initCountdownTimer);
     
     function initCountdownTimer(){ 
@@ -27,6 +44,13 @@
         }
         
         timeLeft = GetSecondsLeft();
+        
+        if (loggedOut)
+        {
+            Logout();
+            return;
+        }
+        
         
         if (timeLeft<= 0)
         {
@@ -50,7 +74,10 @@
     {
         var expiryTime = GetExpiryTime();
                	    
-        if (expiryTime==null) return 0;
+        if (expiryTime==null) {
+            window.status  = " [ Session Does Not Exist ]";
+            return 0;
+        }
 
         var utcNow = new Date();
         utcNow.setMinutes(utcNow.getMinutes() + utcNow.getTimezoneOffset());
@@ -64,20 +91,37 @@
         return timeLeft;
     }
     
-    
     function GetExpiryTime() {
        
-        var name = "ImageServer." + loginId + "=";
+        var cookieName = "<%= SessionManager.GetExpiryTimeCookieName() %>";
         var ca = document.cookie.split(';');
         
         for(var i=0;i < ca.length;i++) {
 		    var c = ca[i];
 		    while (c.charAt(0)==' ') c = c.substring(1,c.length); // trim leading space
-		    if (c.indexOf(name) == 0) {
-		        return GetDateFromString(c.substring(name.length,c.length));
+		    if (c.indexOf(cookieName) == 0) {
+		        if (c.indexOf('=')<0)
+	            {
+	                // Expiry time has been removed. This happens when user logs out from another page.
+	                // See SessionManager.ForceOtherPagesToLogout()
+	                loggedOut = true;
+	                return null;
+	            }
+		        else 
+		        {
+		            // cookie format:  ImageServer.userid=yyyy-mm-dd hh:mm:ss
+		            var cookieValue = c.split('=')[1];
+		            return GetDateFromString(cookieValue);
+                }
 		    }
 	    }   
 	    return null;    
+    }
+    
+    function Logout()
+    {
+        window.location = loginPage;
+            
     }
     
     function GetDateFromString(value)
@@ -127,20 +171,15 @@
         
         if (!updating)
         {
-            if (timeLeft > minCountdownLength)
-                countdownTimer = setTimeout("Countdown()", (timeLeft-minCountdownLength)*1000 );
-            else if (timeLeft>30)
-                countdownTimer = setTimeout("Countdown()", 5*1000 /* every 5 seconds */);
-            else
-                countdownTimer = setTimeout("Countdown()", 1000 /* every second */);
-               
+            countdownTimer = setTimeout("Countdown()", 1000 );
         }
     }
     
     function UpdateCountdownPanel()
     {
         var timeLeft = GetSecondsLeft();
-        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("No activity is detected. For security reasons, this session will end in " + timeLeft + " seconds.");        
+        //$("#<%= SessionTimeoutWarningMessage.ClientID %>").html("No activity is detected. For security reasons, this session will end in " + timeLeft + " seconds.");        
+        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("<%= SR.SessionTimeoutCountdownMessage %>".replace("{0}", timeLeft));
     }
     
 </script>
@@ -159,7 +198,7 @@
                     <td>
                     <asp:Panel runat="server" ID="CountdownBanner" CssClass="CountdownBanner">
                         <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage"></asp:Label> 
-                        <asp:Button runat="server" ID="KeepAliveLink" Text="Cancel" Font-Size="12px" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
+                        <asp:Button runat="server" ID="KeepAliveLink" Text="<%$Resources: Labels,Cancel %>" Font-Size="12px" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
                     </asp:Panel></td>
                     </tr>
                 </table>                

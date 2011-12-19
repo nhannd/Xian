@@ -34,6 +34,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImagePropertiesApplicationComponentControl));
 			this._properties = new ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.CustomPropertyGrid();
 			this.SuspendLayout();
 			// 
@@ -42,23 +43,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._properties.BackColor = System.Drawing.SystemColors.ControlDarkDark;
 			this._properties.CategoryForeColor = System.Drawing.SystemColors.ControlLightLight;
 			this._properties.CommandsVisibleIfAvailable = false;
-			this._properties.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._properties.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this._properties, "_properties");
 			this._properties.Name = "_properties";
 			this._properties.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-			this._properties.Size = new System.Drawing.Size(443, 644);
-			this._properties.TabIndex = 0;
 			this._properties.ToolbarVisible = false;
 			this._properties.ViewBackColor = System.Drawing.Color.Black;
 			this._properties.ViewForeColor = System.Drawing.Color.WhiteSmoke;
 			// 
 			// ImagePropertiesApplicationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._properties);
 			this.Name = "ImagePropertiesApplicationComponentControl";
-			this.Size = new System.Drawing.Size(443, 644);
 			this.ResumeLayout(false);
 
 		}

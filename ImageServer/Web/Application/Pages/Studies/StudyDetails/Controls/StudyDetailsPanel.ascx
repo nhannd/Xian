@@ -1,18 +1,33 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="StudyDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanel" %>
+<%@ Import Namespace="Resources"%>
 
 <%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="localAsp" %>
 <%@ Register Src="StudyDetailsTabs.ascx" TagName="StudyDetailsTabs" TagPrefix="localAsp" %>
 <%@ Register Src="StudyStateAlertPanel.ascx" TagName="StudyStateAlertPanel" TagPrefix="localAsp" %>
 
+
+
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
             <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
-                <td class="MainContentTitle">Study Details</td><td class="MainContentTitleButtonPanel">
-                    <ccUI:ToolbarButton runat="server" ID="EditStudyButton" SkinID="EditStudyButton" OnClick="EditStudyButton_Click" />
-                    <ccUI:ToolbarButton runat="server" ID="DeleteStudyButton" SkinID="DeleteStudyButton" OnClick="DeleteStudyButton_Click" />
-                    <ccUI:ToolbarButton runat="server" ID="ReprocessStudyButton" SkinID="ReprocessStudyButton" OnClick="ReprocessButton_Click" />
+                <td class="MainContentTitle"><%= Titles.StudyDetails%></td><td class="MainContentTitleButtonPanel">
+                    <ccUI:ToolbarButton runat="server" ID="EditStudyButton" SkinID="<%$Image:EditStudyButton%>" OnClick="EditStudyButton_Click" />
+                    <ccUI:ToolbarButton runat="server" ID="DeleteStudyButton" SkinID="<%$Image:DeleteStudyButton%>" OnClick="DeleteStudyButton_Click" />
+                    <ccUI:ToolbarButton runat="server" ID="ReprocessStudyButton" SkinID="<%$Image:ReprocessStudyButton%>" OnClick="ReprocessButton_Click" />
                 </td>
             </tr>
             <tr>

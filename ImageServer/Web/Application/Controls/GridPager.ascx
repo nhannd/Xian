@@ -1,5 +1,16 @@
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="GridPager.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.GridPager" %>
+<%--  License
 
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
+<%@ Control Language="C#" AutoEventWireup="true" Codebehind="GridPager.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.GridPager" %>
+<%@ Import Namespace="Resources" %>
 <table width="100%" cellpadding="0" cellspacing="0" class="GlobalGridPager">
     <tr>
         <td align="left" style="padding-left: 6px;">
@@ -37,7 +48,7 @@
                
             <asp:UpdateProgress ID="SearchUpdateProgress" runat="server" DisplayAfter="50">
                 <ProgressTemplate>
-                    <asp:Image ID="Image10" runat="server" SkinID="Searching" />
+                    <asp:Image ID="Image10" runat="server" SkinID="<%$Image:Searching %>"/>
                 </ProgressTemplate>
             </asp:UpdateProgress>
 
@@ -57,7 +68,7 @@
                     </td>
                     <td nowrap="nowrap">
                         <asp:panel ID="CurrentPageContainer" runat="server">
-                            <asp:Label ID="Label3" runat="server" Text="Page" CssClass="GlobalGridPagerLabel" />
+                            <asp:Label ID="Label3" runat="server" Text="<%$Resources: GridPager, Page %>" CssClass="GlobalGridPagerLabel" />
                             <asp:TextBox ID="CurrentPage" runat="server" Width="85px" CssClass="GridViewTextBox"
                                 Style="font-size: 12px;" />
                             <asp:Label ID="PageCountLabel" runat="server" Text="Label" CssClass="GlobalGridPagerLabel" />

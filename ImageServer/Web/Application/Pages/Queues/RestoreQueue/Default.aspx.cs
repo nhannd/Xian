@@ -14,6 +14,7 @@ using System.Security.Permissions;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 {
@@ -32,7 +33,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                                                                return panel;
                                                            });
 
-			SetPageTitle(App_GlobalResources.Titles.RestoreQueuePageTitle);
+			SetPageTitle(Titles.RestoreQueuePageTitle);
         }
     }
 }

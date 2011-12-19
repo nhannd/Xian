@@ -9,79 +9,67 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using ClearCanvas.Dicom.Iod.Macros;
-using ClearCanvas.Dicom.Iod.Modules.PresentationStateMask;
+using ClearCanvas.Dicom.Iod.Sequences;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
 	/// <summary>
 	/// PresentationStateMask Module
 	/// </summary>
-	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.13 (Table C.11.13-1)</remarks>
+	/// <remarks>As defined in the DICOM Standard 2011, Part 3, Section C.11.13 (Table C.11.13-1)</remarks>
 	public class PresentationStateMaskModuleIod : IodBase
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PresentationStateMaskModuleIod"/> class.
 		/// </summary>	
-		public PresentationStateMaskModuleIod() : base() {}
+		public PresentationStateMaskModuleIod() {}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PresentationStateMaskModuleIod"/> class.
 		/// </summary>
-		public PresentationStateMaskModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
+		public PresentationStateMaskModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
 
 		/// <summary>
-		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// Gets or sets the value of MaskSubtractionSequence in the underlying collection. Type 1C.
 		/// </summary>
-		public void InitializeAttributes()
-		{
-			this.MaskSubtractionSequence = null;
-			this.RecommendedViewingMode = RecommendedViewingMode.None;
-		}
-
-		/// <summary>
-		/// Gets or sets the value of MaskSubtractionSequence in the underlying collection. Type 3.
-		/// </summary>
-		public IMaskSubtractionSequence MaskSubtractionSequence
+		public MaskSubtractionSequenceIod MaskSubtractionSequence
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
-				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
-				{
+				var dicomAttribute = DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
+				if (dicomAttribute.IsNull || dicomAttribute.IsEmpty)
 					return null;
-				}
-				return new MaskSubtractionSequenceItem(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
+				return new MaskSubtractionSequenceIod(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
 				if (value == null)
 				{
-					base.DicomAttributeProvider[DicomTags.MaskSubtractionSequence] = null;
+					DicomAttributeProvider[DicomTags.MaskSubtractionSequence] = null;
 					return;
 				}
-				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+
+				var dicomAttribute = DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
+				dicomAttribute.Values = new[] {value.DicomSequenceItem};
 			}
 		}
 
 		/// <summary>
-		/// Creates the MaskSubtractionSequence in the underlying collection. Type 3.
+		/// Creates the MaskSubtractionSequence in the underlying collection. Type 1C.
 		/// </summary>
-		public IMaskSubtractionSequence CreateMaskSubtractionSequence()
+		public MaskSubtractionSequenceIod CreateMaskSubtractionSequence()
 		{
-			DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
-			if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
+			var dicomAttribute = DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
+			if (dicomAttribute.IsNull || dicomAttribute.IsEmpty)
 			{
-				DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();
-				dicomAttribute.Values = new DicomSequenceItem[] {dicomSequenceItem};
-				IMaskSubtractionSequence sequenceType = new MaskSubtractionSequenceItem(dicomSequenceItem);
+				var dicomSequenceItem = new DicomSequenceItem();
+				dicomAttribute.Values = new[] {dicomSequenceItem};
+				var sequenceType = new MaskSubtractionSequenceIod(dicomSequenceItem);
 				sequenceType.InitializeAttributes();
 				return sequenceType;
 			}
-			return new MaskSubtractionSequenceItem(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
+			return new MaskSubtractionSequenceIod(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 		}
 
 		/// <summary>
@@ -89,133 +77,34 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public RecommendedViewingMode RecommendedViewingMode
 		{
-			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.RecommendedViewingMode].GetString(0, string.Empty), RecommendedViewingMode.None); }
+			get { return ParseEnum(DicomAttributeProvider[DicomTags.RecommendedViewingMode].GetString(0, string.Empty), RecommendedViewingMode.None); }
 			set
 			{
 				if (value == RecommendedViewingMode.None)
 				{
-					base.DicomAttributeProvider[DicomTags.RecommendedViewingMode] = null;
+					DicomAttributeProvider[DicomTags.RecommendedViewingMode] = null;
 					return;
 				}
-				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.RecommendedViewingMode], value);
+				SetAttributeFromEnum(DicomAttributeProvider[DicomTags.RecommendedViewingMode], value);
 			}
 		}
 
-		/// <summary>
-		/// MaskSubtraction Sequence
-		/// </summary>
-		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.13 (Table C.11.13-1)</remarks>
-		internal class MaskSubtractionSequenceItem : SequenceIodBase, IMaskSubtractionSequence
+		public void InitializeAttributes()
 		{
-			/// <summary>
-			/// Initializes a new instance of the <see cref="MaskSubtractionSequence"/> class.
-			/// </summary>
-			public MaskSubtractionSequenceItem() : base() {}
-
-			/// <summary>
-			/// Initializes a new instance of the <see cref="MaskSubtractionSequence"/> class.
-			/// </summary>
-			/// <param name="dicomSequenceItem">The dicom sequence item.</param>
-			public MaskSubtractionSequenceItem(DicomSequenceItem dicomSequenceItem) : base(dicomSequenceItem) {}
-
-			/// <summary>
-			/// Initializes the underlying collection to implement the module or sequence using default values.
-			/// </summary>
-			public void InitializeAttributes() {}
-
-			/// <summary>
-			/// Gets or sets the value of MaskOperation in the underlying collection. Type 1.
-			/// </summary>
-			public MaskOperation MaskOperation
-			{
-				get { return ParseEnum(base.DicomAttributeProvider[DicomTags.MaskOperation].GetString(0, string.Empty), MaskOperation.None); }
-				set
-				{
-					if (value == MaskOperation.None)
-						throw new ArgumentOutOfRangeException("value", "MaskOperation is Type 1 Required.");
-					SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.MaskOperation], value);
-				}
-			}
-
-			/// <summary>
-			/// Gets or sets the value of ContrastFrameAveraging in the underlying collection. Type 1C.
-			/// </summary>
-			public int? ContrastFrameAveraging
-			{
-				get
-				{
-					int result;
-					if (base.DicomAttributeProvider[DicomTags.ContrastFrameAveraging].TryGetInt32(0, out result))
-						return result;
-					return null;
-				}
-				set
-				{
-					if (!value.HasValue)
-					{
-						base.DicomAttributeProvider[DicomTags.ContrastFrameAveraging] = null;
-						return;
-					}
-					base.DicomAttributeProvider[DicomTags.ContrastFrameAveraging].SetInt32(0, value.Value);
-				}
-			}
+			MaskSubtractionSequence = null;
+			RecommendedViewingMode = RecommendedViewingMode.None;
 		}
 
 		/// <summary>
 		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
 		/// </summary>
-		public static IEnumerable<uint> DefinedTags {
-			get {
+		public static IEnumerable<uint> DefinedTags
+		{
+			get
+			{
 				yield return DicomTags.MaskSubtractionSequence;
 				yield return DicomTags.RecommendedViewingMode;
 			}
-		}
-	}
-
-	namespace PresentationStateMask
-	{
-		/// <summary>
-		/// MaskSubtraction Sequence
-		/// </summary>
-		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.13 (Table C.11.13-1)</remarks>
-		public interface IMaskSubtractionSequence : IIodMacro
-		{
-			/// <summary>
-			/// Gets or sets the value of MaskOperation in the underlying collection. Type 1.
-			/// </summary>
-			MaskOperation MaskOperation { get; set; }
-
-			/// <summary>
-			/// Gets or sets the value of ContrastFrameAveraging in the underlying collection. Type 1C.
-			/// </summary>
-			int? ContrastFrameAveraging { get; set; }
-		}
-
-		/// <summary>
-		/// Enumerated values for the <see cref="DicomTags.RecommendedViewingMode"/> attribute .
-		/// </summary>
-		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.13 (Table C.11-13-1)</remarks>
-		public enum RecommendedViewingMode {
-			Sub,
-
-			/// <summary>
-			/// Represents the null value, which is equivalent to the unknown status.
-			/// </summary>
-			None
-		}
-
-		/// <summary>
-		/// Enumerated values for the <see cref="DicomTags.MaskOperation"/> attribute .
-		/// </summary>
-		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.13 (Table C.11.13-1)</remarks>
-		public enum MaskOperation {
-			Avg_Sub,
-			Tid,
-
-			/// <summary>
-			/// Represents the null value, which is equivalent to the unknown status.
-			/// </summary>
-			None
 		}
 	}
 }

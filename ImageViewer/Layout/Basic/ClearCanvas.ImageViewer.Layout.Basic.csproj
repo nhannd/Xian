@@ -1,4 +1,5 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -21,7 +22,9 @@
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation />
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -34,9 +37,9 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -57,6 +60,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -77,6 +81,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -112,6 +117,9 @@
       <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
     </Reference>
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -125,7 +133,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BasicDicomPresentationState.cs" />
     <Compile Include="ContextMenuActionFactory.cs" />
     <Compile Include="ContextMenuLayoutTool.cs" />
     <Compile Include="DefaultContextMenuActionFactory.cs" />
@@ -144,9 +151,12 @@
     <Compile Include="DisplaySetCreationConfigurationComponent.cs" />
     <Compile Include="DisplaySetFactoryExtensionPoint.cs" />
     <Compile Include="ExplodeTileTool.cs" />
+    <Compile Include="DisplaySetCreationOptions.cs" />
+    <Compile Include="ImageBoxFillingStrategy.cs" />
     <Compile Include="LayoutChangerAction.cs" />
     <Compile Include="LayoutComponent.cs" />
     <Compile Include="ConfigurationPageProvider.cs" />
+    <Compile Include="LayoutManager2.cs" />
     <Compile Include="LayoutSettings.cs" />
     <Compile Include="LayoutSettings.Designer.cs">
       <DependentUpon>LayoutSettings.settings</DependentUpon>
@@ -172,8 +182,9 @@
     <Compile Include="DisplaySetNavigationTool.cs" />
     <Compile Include="ExplodeImageBoxTool.cs" />
     <Compile Include="ListObserver.cs" />
+    <Compile Include="Tests\ImageSetFillerTests.cs" />
     <Compile Include="Tests\LayoutManagerTests.cs" />
-    <Compile Include="UnavailableImageSetDescriptor.cs" />
+    <Compile Include="Tests\PriorStudyFinderTests.cs" />
     <Compile Include="XmlActionsApplicator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -190,7 +201,7 @@
       <LastGenOutput>DefaultPatientReconciliationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="DisplaySetCreationSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>DisplaySetCreationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="LayoutSettings.settings">
@@ -234,7 +245,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

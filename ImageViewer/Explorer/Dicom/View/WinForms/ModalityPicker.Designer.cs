@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModalityPicker));
 			this._showModalityListButton = new System.Windows.Forms.Button();
 			this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._modalitiesString = new System.Windows.Forms.Label();
@@ -68,62 +69,42 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _showModalityListButton
 			// 
-			this._showModalityListButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._showModalityListButton.Location = new System.Drawing.Point(161, 17);
-			this._showModalityListButton.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._showModalityListButton, "_showModalityListButton");
 			this._showModalityListButton.Name = "_showModalityListButton";
-			this._showModalityListButton.Size = new System.Drawing.Size(25, 21);
-			this._showModalityListButton.TabIndex = 2;
 			this._showModalityListButton.TabStop = false;
-			this._showModalityListButton.Text = "...";
 			this._showModalityListButton.UseVisualStyleBackColor = true;
 			this._showModalityListButton.Click += new System.EventHandler(this.OnShowModalityListClick);
 			// 
 			// _contextMenuStrip
 			// 
 			this._contextMenuStrip.AllowMerge = false;
-			this._contextMenuStrip.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+			resources.ApplyResources(this._contextMenuStrip, "_contextMenuStrip");
 			this._contextMenuStrip.DropShadowEnabled = false;
 			this._contextMenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
 			this._contextMenuStrip.Name = "contextMenuStrip1";
 			this._contextMenuStrip.ShowImageMargin = false;
 			this._contextMenuStrip.ShowItemToolTips = false;
-			this._contextMenuStrip.Size = new System.Drawing.Size(36, 4);
 			// 
 			// _modalitiesString
 			// 
-			this._modalitiesString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this._modalitiesString, "_modalitiesString");
 			this._modalitiesString.AutoEllipsis = true;
 			this._modalitiesString.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this._modalitiesString.Enabled = false;
-			this._modalitiesString.Location = new System.Drawing.Point(3, 18);
-			this._modalitiesString.Margin = new System.Windows.Forms.Padding(2);
 			this._modalitiesString.Name = "_modalitiesString";
-			this._modalitiesString.Size = new System.Drawing.Size(156, 20);
-			this._modalitiesString.TabIndex = 1;
 			// 
 			// _label
 			// 
-			this._label.AutoSize = true;
-			this._label.Location = new System.Drawing.Point(2, 0);
-			this._label.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._label, "_label");
 			this._label.Name = "_label";
-			this._label.Size = new System.Drawing.Size(29, 13);
-			this._label.TabIndex = 3;
-			this._label.Text = "label";
 			// 
 			// ModalityPicker
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
 			this.Controls.Add(this._label);
 			this.Controls.Add(this._modalitiesString);
 			this.Controls.Add(this._showModalityListButton);
-			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "ModalityPicker";
-			this.Size = new System.Drawing.Size(187, 41);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

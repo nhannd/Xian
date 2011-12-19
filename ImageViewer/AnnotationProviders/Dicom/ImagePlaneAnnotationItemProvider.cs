@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							if (double.IsNaN(thickness) || thickness == 0)
 								return "";
 
-							return String.Format(SR.Formatmm1, frame.SliceThickness);
+							return String.Format(SR.FormatMillimeters, frame.SliceThickness.ToString("F1"));
 						},
 						DicomDataFormatHelper.RawStringFormat
 					)

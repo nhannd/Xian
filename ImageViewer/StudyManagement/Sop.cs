@@ -17,6 +17,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Validation;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -274,7 +275,165 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		#endregion	
+		#region Species
+
+		/// <summary>
+		/// Gets the patient species description.
+		/// </summary>
+		public virtual string PatientSpeciesDescription
+		{
+			get { return this[DicomTags.PatientSpeciesDescription].GetString(0, null); }
+		}
+
+		/// <summary>
+		/// Gets the coding scheme designator of the patient species code sequence.
+		/// </summary>
+		public virtual string PatientSpeciesCodeSequenceCodingSchemeDesignator
+		{
+			get
+			{
+				var attribute = this[DicomTags.PatientSpeciesCodeSequence];
+				if (attribute.IsNull || attribute.Count == 0)
+					return null;
+				
+				var codeSquenceMacro = new CodeSequenceMacro(((DicomSequenceItem[]) attribute.Values)[0]);
+				return codeSquenceMacro.CodingSchemeDesignator;
+			}
+		}
+
+		/// <summary>
+		/// Gets the code value of the patient species code sequence.
+		/// </summary>
+		public virtual string PatientSpeciesCodeSequenceCodeValue
+		{
+			get
+			{
+				var attribute = this[DicomTags.PatientSpeciesCodeSequence];
+				if (attribute.IsNull || attribute.Count == 0)
+					return null;
+
+				var codeSquenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])attribute.Values)[0]);
+				return codeSquenceMacro.CodeValue;
+			}
+		}
+
+		/// <summary>
+		/// Gets the code meaning of the patient species code sequence.
+		/// </summary>
+		public string PatientSpeciesCodeSequenceCodeMeaning
+		{
+			get
+			{
+				var attribute = this[DicomTags.PatientSpeciesCodeSequence];
+				if (attribute.IsNull || attribute.Count == 0)
+					return null;
+
+				var codeSquenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])attribute.Values)[0]);
+				return codeSquenceMacro.CodeMeaning;
+			}
+		}
+
+		#endregion
+
+		#region Breed
+
+		/// <summary>
+		/// Gets the patient breed description.
+		/// </summary>
+		public virtual string PatientBreedDescription
+		{
+			get { return this[DicomTags.PatientBreedDescription].GetString(0, null); }
+		}
+
+		/// <summary>
+		/// Gets the coding scheme designator of the patient breed code sequence.
+		/// </summary>
+		public virtual string PatientBreedCodeSequenceCodingSchemeDesignator
+		{
+			get
+			{
+				var attribute = this[DicomTags.PatientBreedCodeSequence];
+				if (attribute.IsNull || attribute.Count == 0)
+					return null;
+
+				var codeSquenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])attribute.Values)[0]);
+				return codeSquenceMacro.CodingSchemeDesignator;
+			}
+		}
+
+		/// <summary>
+		/// Gets the code value of the patient breed code sequence.
+		/// </summary>
+		public virtual string PatientBreedCodeSequenceCodeValue
+		{
+			get
+			{
+				var attribute = this[DicomTags.PatientBreedCodeSequence];
+				if (attribute.IsNull || attribute.Count == 0)
+					return null;
+
+				var codeSquenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])attribute.Values)[0]);
+				return codeSquenceMacro.CodeValue;
+			}
+		}
+
+		/// <summary>
+		/// Gets the code meaning of the patient breed code sequence.
+		/// </summary>
+		public virtual string PatientBreedCodeSequenceCodeMeaning
+		{
+			get
+			{
+				var attribute = this[DicomTags.PatientBreedCodeSequence];
+				if (attribute.IsNull || attribute.Count == 0)
+					return null;
+
+				var codeSquenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])attribute.Values)[0]);
+				return codeSquenceMacro.CodeMeaning;
+			}
+		}
+
+		#endregion
+
+		#region Responsible Person/Organization
+
+		/// <summary>
+		/// Gets the responsible person for the patient.
+		/// </summary>
+		public virtual PersonName ResponsiblePerson
+		{
+			get
+			{
+				string responsiblePerson;
+				responsiblePerson = this[DicomTags.ResponsiblePerson].GetString(0, null);
+				return new PersonName(responsiblePerson ?? "");
+			}
+		}
+
+		/// <summary>
+		/// Gets the role of the responsible person for the patient.
+		/// </summary>
+		public virtual string ResponsiblePersonRole
+		{
+			get { return this[DicomTags.ResponsiblePersonRole].GetString(0, null); }
+		}
+
+		/// <summary>
+		/// Gets the organization responsible for the patient.
+		/// </summary>
+		public virtual string ResponsibleOrganization
+		{
+			get { return this[DicomTags.ResponsibleOrganization].GetString(0, null); }
+		}
+
+		#endregion
+
+		#endregion
+
+		string IPatientData.ResponsiblePerson
+		{
+			get { return ResponsiblePerson.ToString(); }
+		}
 
 		string IPatientData.PatientsName
 		{

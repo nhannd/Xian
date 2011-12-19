@@ -35,33 +35,45 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         #endregion
 
-
+        [DicomFieldContainerAttribute]
         public class SeriesDetails
         {
+            [DicomField(DicomTags.SeriesDescription)]
             public string Description { get; set; }
 
+            [DicomField(DicomTags.Modality)]
             public string Modality { get; set; }
 
+            [DicomField(DicomTags.NumberOfSeriesRelatedInstances)]
             public int NumberOfInstances { get; set; }
 
+            [DicomField(DicomTags.SeriesInstanceUid)]
             public string SeriesInstanceUid { get; set; }
 
+            [DicomField(DicomTags.SeriesNumber)]
             public string SeriesNumber { get; set; }
         }
 
+        [DicomFieldContainerAttribute]
         public class PatientInfo
         {
+            [DicomField(DicomTags.PatientsName)]
             public string Name { get; set; }
 
+            [DicomField(DicomTags.PatientsSex)]
             public string Sex { get; set; }
 
+            [DicomField(DicomTags.PatientsBirthDate)]
             public string BirthDate { get; set; }
 
+            [DicomField(DicomTags.PatientId)]
             public string PatientID { get; set; }
 
+            [DicomField(DicomTags.IssuerOfPatientId)]
             public string IssuerOfPatientID { get; set; }
         }
 
+        [DicomFieldContainerAttribute]
         public class StudyInfo
         {
             public StudyInfo()
@@ -72,12 +84,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
             public IEnumerable<SeriesDetails> Series { get; set; }
 
+            [DicomField(DicomTags.StudyDate)]
             public string StudyDate { get; set; }
 
             public PatientInfo Patient { get; set; }
 
+            [DicomField(DicomTags.AccessionNumber)]
             public string AccessionNumber { get; set; }
 
+            [DicomField(DicomTags.StudyInstanceUid)]
             public string StudyInstanceUid { get; set; }
         }
 
@@ -202,10 +217,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get
 			{
                 if (!StudyExists)
+                {
+                    //TODO: Study is stuck in SIQ
                     return false;
+                }
 
-				if (_study.IsLocked || _study.IsNearline || _study.IsLocked || _study.IsProcessing)
+                string reason;
+				if (!_study.CanScheduleReconcile(out reason))
 					return false;
+
 				return true;
 			}
 		}

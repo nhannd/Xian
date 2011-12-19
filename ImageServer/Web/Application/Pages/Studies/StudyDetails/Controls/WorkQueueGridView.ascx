@@ -1,8 +1,20 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="WorkQueueGridView.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.WorkQueueGridView" %>
+<%@ Import Namespace="Resources"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Common"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Data"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Model" %>
+
     
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>
@@ -18,51 +30,51 @@
                        MouseHoverRowHighlightEnabled="false"
                        GridLines="Horizontal" BackColor="White" >
                         <Columns>
-                            <asp:BoundField DataField="WorkQueueTypeEnum" HeaderText="Type">
+                            <asp:BoundField DataField="WorkQueueTypeEnum" HeaderText="<%$Resources: ColumnHeaders, WorkQueueType %>">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>
-                            <asp:TemplateField HeaderText="Schedule">
+                            <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, WorkQueueSchedule %>">
                                 <HeaderStyle wrap="False" />    
                                 <ItemTemplate>
                                     <ccUI:DateTimeLabel ID="ScheduledTime" runat="server" Value='<%# Eval("ScheduledTime") %>' ></ccUI:DateTimeLabel>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:BoundField DataField="WorkQueuePriorityEnum" HeaderText="Priority">
+                            <asp:BoundField DataField="WorkQueuePriorityEnum" HeaderText="<%$Resources: ColumnHeaders,WorkQueuePriority %>">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>
-                            <asp:TemplateField HeaderText="Status">
+                            <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,WorkQueueStatus %>">
                                 <HeaderStyle wrap="False" />    
                                 <ItemTemplate>
                                     <table>
                                     <tr>
                                     <td style="border-bottom:none"><%# Eval("WorkQueueStatusEnum")  %></td>
                                     <td style="border-bottom:none"><asp:Image runat="server" Visible='<%# !(Container.DataItem as WorkQueue).WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) && !ServerPlatform.IsActiveWorkQueue(Container.DataItem as WorkQueue) %>'  ImageAlign="AbsBottom" ID="StuckIcon" SkinID="WarningSmall" 
-                                        ToolTip="There does not seem to be any activity for this item. The server may not be running or there is a problem with this entry."/></td>
+                                        ToolTip="<%$Resources: Tooltips, WorkQueueIsStuck %>"/></td>
                                     </tr>
                                     </table>
                                 </ItemTemplate>
                             </asp:TemplateField>
                                 
-                            <asp:BoundField DataField="ProcessorID" HeaderText="Processing Server">
+                            <asp:BoundField DataField="ProcessorID" HeaderText="<%$Resources: ColumnHeaders,WorkQueueProcessingServer %>">
                                 <HeaderStyle wrap="False" />  
                             </asp:BoundField>
-                            <asp:BoundField DataField="FailureDescription" HeaderText="Notes">
+                            <asp:BoundField DataField="FailureDescription" HeaderText="<%$Resources: ColumnHeaders,WorkQueueNotes %>">
                                 <HeaderStyle wrap="False" />  
                             </asp:BoundField>                            
                         </Columns>
                         <EmptyDataTemplate>
                             <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" >
                                 <asp:TableHeaderRow CssClass="GlobalGridViewHeader">
-                                    <asp:TableHeaderCell>Type</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Schedule</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Priority</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Status</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Processing Server</asp:TableHeaderCell>
-                                    <asp:TableHeaderCell>Notes</asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.WorkQueueType %></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.WorkQueueSchedule %></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.WorkQueuePriority %></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.WorkQueueStatus%></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.WorkQueueProcessingServer%></asp:TableHeaderCell>
+                                    <asp:TableHeaderCell><%= ColumnHeaders.WorkQueueNotes%></asp:TableHeaderCell>
                                 </asp:TableHeaderRow>
                                 <asp:TableRow>
                                     <asp:TableCell ColumnSpan="6" Height="50" HorizontalAlign="Center">
-                                        <asp:panel runat="server" CssClass="GlobalGridViewEmptyText">No Work Queue items for this study.</asp:panel>
+                                        <asp:panel runat="server" CssClass="GlobalGridViewEmptyText"><%= SR.StudyDetails_NoWorkQueueForThisStudy%></asp:panel>
                                     </asp:TableCell>
                                 </asp:TableRow>
                             </asp:Table>

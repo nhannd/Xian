@@ -13,8 +13,10 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-	//TODO: work this into common, so that all thread pools aren't tied to queues that can't be changed.
-	internal interface IBlockingEnumerator<T> : IEnumerable<T>
+	/// <remarks>
+	/// DO NOT USE THIS CLASS, as it will be removed or refactored in the future.
+	/// </remarks>
+	public interface IBlockingEnumerator<T> : IEnumerable<T>
 	{
 		bool IsBlocking { get; set; }
 	}

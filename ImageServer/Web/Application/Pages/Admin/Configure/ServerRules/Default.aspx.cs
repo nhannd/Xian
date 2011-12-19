@@ -14,7 +14,7 @@ using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -127,8 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
         /// <param name="partition"></param>
         public void OnDeleteRule(ServerRule rule, ServerPartition partition)
         {
-            ConfirmDialog.Message = string.Format("Are you sure you want to remove rule \"{0}\" from partition {1}?",
-                                                  rule.RuleName, partition.AeTitle);
+            ConfirmDialog.Message = string.Format(SR.AdminServerRules_DeleteDialog_AreYouSure,rule.RuleName, partition.AeTitle);
             ConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ConfirmDialog.Data = rule.GetKey();
             ConfirmDialog.Show();

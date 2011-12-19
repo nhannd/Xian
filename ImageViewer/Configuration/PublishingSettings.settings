@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Configuration" GeneratedClassName="PublishingSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="PublishToDefaultServers" Description="Specifies that created SOP instances are to be published to Default Servers" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="PublishLocalToSourceAE" Description="Specifies that created SOP instances are to be published to the Source AE as specified in the study's headers" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

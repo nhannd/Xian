@@ -267,12 +267,9 @@ namespace ClearCanvas.Dicom.Codec.Rle
 
         public void Encode(DicomUncompressedPixelData oldPixelData, DicomCompressedPixelData newPixelData, DicomCodecParameters parameters)
         {
-            DicomRleCodecParameters rleParams = parameters as DicomRleCodecParameters;
+            DicomRleCodecParameters rleParams = parameters as DicomRleCodecParameters ?? new DicomRleCodecParameters();
 
-            if (rleParams == null)
-                throw new DicomCodecException("Unexpected RLE Codec parameters");
-
-			// Convert to RGB
+            // Convert to RGB
 			if (oldPixelData.HasPaletteColorLut && parameters.ConvertPaletteToRGB)
 			{
 				oldPixelData.ConvertPaletteColorToRgb();
@@ -497,10 +494,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
 
         public void Decode(DicomCompressedPixelData oldPixelData, DicomUncompressedPixelData newPixelData, DicomCodecParameters parameters)
         {
-            DicomRleCodecParameters rleParams = parameters as DicomRleCodecParameters;
-
-            if (rleParams == null)
-                throw new DicomCodecException("Unexpected RLE Codec parameters");
+            DicomRleCodecParameters rleParams = parameters as DicomRleCodecParameters ?? new DicomRleCodecParameters();
 
             int pixelCount = oldPixelData.ImageWidth * oldPixelData.ImageHeight;
             int numberOfSegments = oldPixelData.BytesAllocated * oldPixelData.SamplesPerPixel;
@@ -557,10 +551,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
         public void DecodeFrame(int frame, DicomCompressedPixelData oldPixelData,
                                 DicomUncompressedPixelData newPixelData, DicomCodecParameters parameters)
         {
-            DicomRleCodecParameters rleParams = parameters as DicomRleCodecParameters;
-
-            if (rleParams == null)
-                throw new DicomCodecException("Unexpected RLE Codec parameters");
+            DicomRleCodecParameters rleParams = parameters as DicomRleCodecParameters ?? new DicomRleCodecParameters();
 
             int pixelCount = oldPixelData.ImageWidth * oldPixelData.ImageHeight;
             int numberOfSegments = oldPixelData.BytesAllocated * oldPixelData.SamplesPerPixel;

@@ -17,6 +17,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
 {
@@ -68,6 +69,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
                         break;
                 }
             }
+
+            SetPageTitle(Titles.MoveStudiesPageTitle);
         }
 
         protected void Page_Load(object sender, EventArgs e)

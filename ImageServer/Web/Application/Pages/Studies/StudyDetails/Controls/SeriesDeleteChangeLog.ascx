@@ -1,5 +1,17 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SeriesDeleteChangeLog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.SeriesDeleteChangeLog" %>
+<%@ Import Namespace="Resources"%>
+
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Edit" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
@@ -10,15 +22,15 @@
     $(document).ready(function() {
         $("#<%=HistoryDetailsPanel.ClientID%>").hide();
         $("#<%=ShowHideDetails.ClientID%>").click(function() {
-            if ($("#<%=ShowHideDetails.ClientID%>").text() == "[Show Details]") {
+        if ($("#<%=ShowHideDetails.ClientID%>").text() == "[<%= Labels.StudyDetails_History_ShowDetails %>]") {
                 $("#<%=HistoryDetailsPanel.ClientID%>").show();
-                $("#<%=ShowHideDetails.ClientID%>").text("[Hide Details]");
+                $("#<%=ShowHideDetails.ClientID%>").text("[<%= Labels.StudyDetails_History_HideDetails %>]");
                 $("#<%=SummaryPanel.ClientID %>").css("font-weight", "bold");
                 $("#<%=SummaryPanel.ClientID %>").css("margin-top", "5px");
                 $("#<%=ShowHideDetails.ClientID%>").css("font-weight", "normal");
             } else {
                 $("#<%=HistoryDetailsPanel.ClientID%>").hide();
-                $("#<%=ShowHideDetails.ClientID%>").text("[Show Details]");
+                $("#<%=ShowHideDetails.ClientID%>").text("[<%= Labels.StudyDetails_History_ShowDetails %>]");
                 $("#<%=SummaryPanel.ClientID %>").css("font-weight", "normal");
                 $("#<%=SummaryPanel.ClientID %>").css("margin-top", "0px");
                 $("#<%=ShowHideDetails.ClientID%>").css("font-weight", "normal");
@@ -30,14 +42,14 @@
 </script>
 
 <div runat="server" id="SummaryPanel">
-    <%# string.Format("{0} series {1} deleted by {2}", ChangeLog.Series.Count, ChangeLog.Series.Count>1? "were":"was", ChangeLog.UserId ?? "Unknown") %>
-    <a href="#" id="ShowHideDetails" style="margin-left: 5px;" runat="server">[Show Details]</a>
+    <%= ChangeSummaryText %>
+    <a href="#" id="ShowHideDetails" style="margin-left: 5px;" runat="server">[<%= Labels.StudyDetails_History_ShowDetails %>]</a>
 </div>
 <div id="HistoryDetailsPanel" runat="server" class="HistoryDetailsPanel">
     <table class="ReasonSummary" cellspacing="0" cellpadding="0">
         <tr>
             <td class="HistoryDetailsLabel">
-                Reason:
+                <%= Labels.SeriesDeleteDialog_Reason %>
             </td>
             <td align="left">
                 <%= GetReason(ChangeLog.Reason) %>
@@ -45,7 +57,7 @@
         </tr>
         <tr>
             <td class="HistoryDetailsLabel">
-                Comment:
+                <%= Labels.SeriesDeleteDialog_Comment%>
             </td>
             <td align="left">
                 <%= GetComment(ChangeLog.Reason) %>
@@ -53,7 +65,7 @@
         </tr>
         <tr>
             <td class="HistoryDetailsLabel" colspan="2" nowrap="nowrap" style="padding-top: 8px;">
-                Deleted&nbsp;Series
+                <%= Labels.StudyDetails_History_SeriesDeleted %>
             </td>
         </tr>
     </table>
@@ -63,13 +75,13 @@
     <table width="100%" cellspacing="0">
         <tr style="color: #205F87; background: #eeeeee; padding-top: 2px;">
             <td>
-                <b>Description</b>
+                <b><%= ColumnHeaders.SeriesDescription %></b>
             </td>
             <td>
-                <b>Modality</b>
+                <b><%= ColumnHeaders.Modality%></b>
             </td>
             <td>
-                <b>Instances</b>
+                <b><%= ColumnHeaders.Instances%></b>
             </td>
         </tr>
         <% foreach (SeriesInformation series in ChangeLog.Series)

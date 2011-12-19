@@ -277,6 +277,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to add item(s) to clipboard.
+        /// </summary>
+        internal static string MessageClipboardCopyFailed {
+            get {
+                return ResourceManager.GetString("MessageClipboardCopyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient Id: {0}
         ///Patient Name: {1}
         ///Study Date: {2}

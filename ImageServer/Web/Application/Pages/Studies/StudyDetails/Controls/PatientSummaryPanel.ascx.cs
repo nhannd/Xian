@@ -14,6 +14,7 @@ using System.Web.UI;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -57,16 +58,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     switch (_patientSummary.PatientsAge.Substring(3))
                     {
                         case "Y":
-                            patientAge += " Years";
+                            patientAge += " " + SR.Years;
                             break;
                         case "M":
-                            patientAge += " Months";
+                            patientAge += " " + SR.Months;
                             break;
                         case "W":
-                            patientAge += " Weeks";
+                            patientAge += " " + SR.Weeks;
                             break;
                         default:
-                            patientAge += " Days";
+                            patientAge += " " + SR.Days;
                             break;
                     }
 
@@ -77,21 +78,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 				}
 				else
 				{
-    				PatientAge.Text = "Unknown";
+                    PatientAge.Text = SR.Years;
 				}
 
             	if (String.IsNullOrEmpty(_patientSummary.Sex))
-                    PatientSex.Text = "Unknown";
+                    PatientSex.Text = SR.Unknown;
                 else
                 {
                     if (_patientSummary.Sex.StartsWith("F"))
-                        PatientSex.Text = "Female";
+                        PatientSex.Text = SR.Female;
                     else if (_patientSummary.Sex.StartsWith("M"))
-                        PatientSex.Text = "Male";
+                        PatientSex.Text = SR.Male;
                     else if (_patientSummary.Sex.StartsWith("O"))
-                        PatientSex.Text = "Other";
+                        PatientSex.Text = SR.Other;
                     else
-                        PatientSex.Text = "Unknown";
+                        PatientSex.Text = SR.Unknown;
                 }
 
 

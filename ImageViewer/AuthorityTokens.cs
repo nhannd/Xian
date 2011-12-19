@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer
 		public const string EmergencyPhysicians = "Emergency Physicians";
 	}
 
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
 	internal class DefineAuthorityGroups : IDefineAuthorityGroups
 	{
 		#region IDefineAuthorityGroups Members
@@ -60,49 +60,61 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public AuthorityGroupDefinition[] GetAuthorityGroups()
 		{
-			return new AuthorityGroupDefinition[]
-            {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-				    new string[] 
-				    {
-						AuthorityTokens.ViewerVisible,
-						AuthorityTokens.Study.Open
-				   }),
+		    return new AuthorityGroupDefinition[]
+		               {
+		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
+		                                                DefaultAuthorityGroups.HealthcareAdministrators,
+		                                                false,
+		                                                new string[]
+		                                                    {
+		                                                        AuthorityTokens.ViewerVisible,
+		                                                        AuthorityTokens.Study.Open
+		                                                    }),
 
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.Clerical,
-				    new string[] 
-				    {
-						AuthorityTokens.ViewerVisible
-				   }),
+		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.Clerical,
+		                                                DefaultAuthorityGroups.Clerical,
+		                                                false,
+		                                                new string[]
+		                                                    {
+		                                                        AuthorityTokens.ViewerVisible
+		                                                    }),
 
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
-                    new string[] 
-                    {
-						AuthorityTokens.ViewerVisible,
-						AuthorityTokens.Study.Open
-                    }),
+		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
+		                                                DefaultAuthorityGroups.Technologists,
+		                                                false,
+		                                                new string[]
+		                                                    {
+		                                                        AuthorityTokens.ViewerVisible,
+		                                                        AuthorityTokens.Study.Open
+		                                                    }),
 
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-                    new string[] 
-                    {
-						AuthorityTokens.ViewerVisible,
-						AuthorityTokens.Study.Open
-                   }),
+		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
+		                                                DefaultAuthorityGroups.Radiologists,
+		                                                false,
+		                                                new string[]
+		                                                    {
+		                                                        AuthorityTokens.ViewerVisible,
+		                                                        AuthorityTokens.Study.Open
+		                                                    }),
 
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-                    new string[] 
-                    {
-						AuthorityTokens.ViewerVisible,
-						AuthorityTokens.Study.Open
-                   }),
+		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
+		                                                DefaultAuthorityGroups.RadiologyResidents,
+		                                                false,
+		                                                new string[]
+		                                                    {
+		                                                        AuthorityTokens.ViewerVisible,
+		                                                        AuthorityTokens.Study.Open
+		                                                    }),
 
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
-                    new string[] 
-                    {
-						AuthorityTokens.ViewerVisible,
-						AuthorityTokens.Study.Open
-                    })
-            };
+		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
+		                                                DefaultAuthorityGroups.EmergencyPhysicians,
+		                                                false,
+		                                                new string[]
+		                                                    {
+		                                                        AuthorityTokens.ViewerVisible,
+		                                                        AuthorityTokens.Study.Open
+		                                                    })
+		               };
 		}
 
 		#endregion

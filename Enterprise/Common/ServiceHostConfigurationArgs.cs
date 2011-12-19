@@ -10,45 +10,48 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IdentityModel.Selectors;
-using System.IdentityModel.Policy;
+using ClearCanvas.Enterprise.Common.ServiceConfiguration.Server;
 
 namespace ClearCanvas.Enterprise.Common
 {
 	/// <summary>
 	/// Arguments for configuration of a service host.
 	/// </summary>
-    public struct ServiceHostConfigurationArgs
-    {
-        public ServiceHostConfigurationArgs(Type serviceContract, Uri hostUri, bool authenticated,
-			int maxReceivedMessageSize)
-        {
-            ServiceContract = serviceContract;
-            HostUri = hostUri;
-            Authenticated = authenticated;
-            MaxReceivedMessageSize = maxReceivedMessageSize;
-        }
+	public struct ServiceHostConfigurationArgs
+	{
+		public ServiceHostConfigurationArgs(Type serviceContract, Uri hostUri, bool authenticated,
+			int maxReceivedMessageSize, CertificateSearchDirective certificateSearchParams)
+		{
+			ServiceContract = serviceContract;
+			HostUri = hostUri;
+			Authenticated = authenticated;
+			MaxReceivedMessageSize = maxReceivedMessageSize;
+			CertificateSearchDirective = certificateSearchParams;
+		}
+
+		/// <summary>
+		/// The parameters used for finding the certificate
+		/// </summary>
+		public CertificateSearchDirective CertificateSearchDirective;
 
 		/// <summary>
 		/// The service contract for which the host is created.
 		/// </summary>
-        public Type ServiceContract;
+		public Type ServiceContract;
 
 		/// <summary>
 		/// The URI on which the service is being exposed.
 		/// </summary>
-        public Uri HostUri;
+		public Uri HostUri;
 
 		/// <summary>
 		/// A value indicating whether the service is authenticated, or allows anonymous access.
 		/// </summary>
-        public bool Authenticated;
+		public bool Authenticated;
 
 		/// <summary>
 		/// The maximum allowable size of received messages, in bytes.
 		/// </summary>
-        public int MaxReceivedMessageSize;
-    }
+		public int MaxReceivedMessageSize;
+	}
 }

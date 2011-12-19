@@ -68,6 +68,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 									e.Value = _component.FormatCurrentLocation(e.ListItem);
 								};
 
+			_currentRoom.DataBindings.Add("Value", _component, "CurrentRoom", true, DataSourceUpdateMode.OnPropertyChanged);
+			_currentBed.DataBindings.Add("Value", _component, "CurrentBed", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_ambulatoryStatus.DataSource = _component.AmbulatoryStatusChoices;
 			_ambulatoryStatus.DataBindings.Add("Value", _component, "AmbulatoryStatus", true, DataSourceUpdateMode.OnPropertyChanged);
 		}

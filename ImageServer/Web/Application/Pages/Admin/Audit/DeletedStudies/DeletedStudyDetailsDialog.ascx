@@ -1,3 +1,15 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
+
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.Model"%>
 <%@ Import namespace="System.ComponentModel"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Application.Helpers"%>
@@ -15,7 +27,7 @@
                 <tr align="right">
                     <td>
                         <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                            <ccUI:ToolbarButton ID="CloseButton" runat="server" SkinID="OKButton" ValidationGroup="DeleteStudyDialogValidationGroup" OnClick="CloseClicked" /> 
+                            <ccUI:ToolbarButton ID="CloseButton" runat="server" SkinID="<%$Image:OKButton%>" ValidationGroup="DeleteStudyDialogValidationGroup" OnClick="CloseClicked" /> 
                         </asp:Panel>
 
                     </td>

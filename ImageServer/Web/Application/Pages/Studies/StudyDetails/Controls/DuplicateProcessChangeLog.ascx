@@ -1,23 +1,36 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
+
+
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Edit" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DuplicateProcessChangeLog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DuplicateProcessChangeLog" %>
+<%@ Import Namespace="Resources"%>
 
 <script type="text/javascript">
 
     $(document).ready(function() {
         $("#<%=HistoryDetailsPanel.ClientID%>").hide();
         $("#<%=ShowHideDetails.ClientID%>").click(function() {
-            if ($("#<%=ShowHideDetails.ClientID%>").text() == "[Show Details]") {
+        if ($("#<%=ShowHideDetails.ClientID%>").text() == "[<%= Labels.StudyDetails_History_ShowDetails %>]") {
                 $("#<%=HistoryDetailsPanel.ClientID%>").show();
-                $("#<%=ShowHideDetails.ClientID%>").text("[Hide Details]");
+                $("#<%=ShowHideDetails.ClientID%>").text("[<%= Labels.StudyDetails_History_HideDetails %>]");
                 $("#<%=SummaryPanel.ClientID %>").css("font-weight", "bold");
                 $("#<%=SummaryPanel.ClientID %>").css("margin-top", "5px");
                 $("#<%=ShowHideDetails.ClientID%>").css("font-weight", "normal");
             } else {
                 $("#<%=HistoryDetailsPanel.ClientID%>").hide();
-                $("#<%=ShowHideDetails.ClientID%>").text("[Show Details]");
+                $("#<%=ShowHideDetails.ClientID%>").text("[<%= Labels.StudyDetails_History_ShowDetails %>]");
                 $("#<%=SummaryPanel.ClientID %>").css("font-weight", "normal");
                 $("#<%=SummaryPanel.ClientID %>").css("margin-top", "0px");
                 $("#<%=ShowHideDetails.ClientID%>").css("font-weight", "normal");
@@ -30,7 +43,7 @@
 
 <div id="SummaryPanel" runat="server">
     <%# String.Format("{0}", ChangeLogShortDescription)%>
-    <a href="#" id="ShowHideDetails" style="margin-left: 5px;" runat="server">[Show Details]</a>
+    <a href="#" id="ShowHideDetails" style="margin-left: 5px;" runat="server">[<%= Labels.StudyDetails_History_ShowDetails %>]</a>
 </div>
 <div id="HistoryDetailsPanel" runat="server" class="HistoryDetailsPanel">
     <table width="100%" border="0" cellpadding="5">
@@ -39,30 +52,30 @@
                 <table border="0" width="100%">
                     <tr>
                         <td class="HistoryDetailsLabel">
-                            <span style="padding-left: 5px">Study (Snapshot):</span>
+                            <span style="padding-left: 5px"><%= Labels.StudyDetails_History_Duplicate_StudySnapshot %></span>
                         </td>
                     </tr>
                     <tr>
                         <td style="border: none">
                             <div>
-                                <pre style="padding-left: 10px">Patient ID = <%= ChangeLog.StudySnapShot.PatientInfo.PatientId%></pre>
-                                <pre style="padding-left: 10px">Issuer of Patient ID = <%= ChangeLog.StudySnapShot.PatientInfo.IssuerOfPatientId%></pre>
-                                <pre style="padding-left: 10px">Patient's Name = <%= ChangeLog.StudySnapShot.PatientInfo.Name%></pre>
-                                <pre style="padding-left: 10px">Patient's Birth date = <%= ChangeLog.StudySnapShot.PatientInfo.PatientsBirthdate%></pre>
-                                <pre style="padding-left: 10px">Patient's Sex = <%= ChangeLog.StudySnapShot.PatientInfo.Sex%></pre>
-                                <pre style="padding-left: 10px">Accession Number = <%= ChangeLog.StudySnapShot.AccessionNumber%></pre>
-                                <pre style="padding-left: 10px">Study Date = <%= ChangeLog.StudySnapShot.StudyDate%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.PatientID %>= <%= ChangeLog.StudySnapShot.PatientInfo.PatientId%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.IssuerOfPatientID %> = <%= ChangeLog.StudySnapShot.PatientInfo.IssuerOfPatientId%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.PatientName %>= <%= ChangeLog.StudySnapShot.PatientInfo.Name%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.PatientBirthdate %> = <%= ChangeLog.StudySnapShot.PatientInfo.PatientsBirthdate%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.PatientsSex %>= <%= ChangeLog.StudySnapShot.PatientInfo.Sex%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.AccessionNumber %> = <%= ChangeLog.StudySnapShot.AccessionNumber%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.StudyDate %> = <%= ChangeLog.StudySnapShot.StudyDate%></pre>
                                 <div class="DuplicateDialogSeriesPanel">
                                     <table width="100%" class="DuplicateDialogSeriesTable">
                                         <tr style="background: #e0e0e0;">
                                             <td>
-                                                Description
+                                                <%= Labels.Description %>
                                             </td>
                                             <td>
-                                                Modality
+                                                <%= Labels.Modality %>
                                             </td>
                                             <td>
-                                                Instances
+                                                <%= Labels.Instances %>
                                             </td>
                                         </tr>
                                         <% foreach (SeriesInformation series in ChangeLog.StudySnapShot.Series)
@@ -90,7 +103,7 @@
                 <table border="0" width="100%">
                     <tr>
                         <td class="HistoryDetailsLabel">
-                            <span style="padding-left: 5px">Duplicate Images:</span>
+                            <span style="padding-left: 5px"><%= Labels.StudyDetails_History_Duplicate_DuplicateImages%></span>
                         </td>
                     </tr>
                     <tr>
@@ -98,28 +111,28 @@
                             <div style="margin-left: 2px;">
                                 <%  if (ChangeLog.DuplicateDetails == null || ChangeLog.DuplicateDetails.StudyInfo == null)
                                     { %>
-                                N/A
+                                    <%= SR.NotAvailable %>
                                 <%  }
                                     else
                                     { %>
-                                <pre style="padding-left: 10px">Patient ID = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.PatientId%></pre>
-                                <pre style="padding-left: 10px">Issuer of Patient ID = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.IssuerOfPatientId%></pre>
-                                <pre style="padding-left: 10px">Patient's Name = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.Name%></pre>
-                                <pre style="padding-left: 10px">Patient's Birth date = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.PatientsBirthdate%></pre>
-                                <pre style="padding-left: 10px">Patient's Sex = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.Sex%></pre>
-                                <pre style="padding-left: 10px">Accession Number = <%= ChangeLog.DuplicateDetails.StudyInfo.AccessionNumber%></pre>
-                                <pre style="padding-left: 10px">Study Date = <%= ChangeLog.DuplicateDetails.StudyInfo.StudyDate%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.PatientID %> = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.PatientId%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.IssuerOfPatientID %> = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.IssuerOfPatientId%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.PatientName %>= <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.Name%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.PatientBirthdate %> = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.PatientsBirthdate%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.PatientsSex %> = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.Sex%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.AccessionNumber %> = <%= ChangeLog.DuplicateDetails.StudyInfo.AccessionNumber%></pre>
+                                <pre style="padding-left: 10px"><%= Labels.StudyDate %> =  <%= ChangeLog.DuplicateDetails.StudyInfo.StudyDate%></pre>
                                 <div class="DuplicateDialogSeriesPanel">
                                     <table width="100%" class="DuplicateDialogSeriesTable">
                                         <tr style="background: #e0e0e0;">
                                             <td>
-                                                Description
+                                                <%= Labels.Description %>
                                             </td>
                                             <td>
-                                                Modality
+                                                <%= Labels.Modality %>
                                             </td>
                                             <td>
-                                                Instances
+                                                <%= Labels.Instances %>
                                             </td>
                                         </tr>
                                         <% foreach (SeriesInformation series in ChangeLog.DuplicateDetails.StudyInfo.Series)
@@ -149,14 +162,14 @@
     <table border="0" width="100%">
         <tr>
             <td>
-                <asp:Label ID="Label1" runat="server" CssClass="HistoryDetailsLabel">Performed by : </asp:Label><%= ChangeLog.UserName ?? "Unknown" %>
+                <%= String.Format(SR.StudyDetails_History_Duplicate_PerformedBy, ChangeLog.UserName ?? SR.Unknown) %>
             </td>
         </tr>
     </table>
     <table border="0" width="100%">
         <tr>
             <td class="HistoryDetailsLabel">
-                <span style="margin-left: 5px">Changes Applied: </span>
+                <span style="margin-left: 5px"><%= Labels.StudyDetails_History_Duplicate_ChangesApplied %></span>
             </td>
         </tr>
         <tr>
@@ -165,13 +178,13 @@
                     <table width="100%" cellspacing="0">
                         <tr style="color: #205F87; background: #eeeeee; padding-top: 2px;">
                             <td>
-                                <b>Tag</b>
+                                <b><%= ColumnHeaders.Tag %></b>
                             </td>
                             <td>
-                                <b>Original Value</b>
+                                <b><%= ColumnHeaders.OldValue%></b>
                             </td>
                             <td>
-                                <b>New Value</b>
+                                <b><%= ColumnHeaders.NewValue%></b>
                             </td>
                         </tr>
                         <%{

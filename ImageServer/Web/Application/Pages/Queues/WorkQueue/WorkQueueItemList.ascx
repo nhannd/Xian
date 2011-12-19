@@ -1,6 +1,17 @@
+<%-- License
+
+Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+--%>
+
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="WorkQueueItemList.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.WorkQueueItemList" %>
+<%@ Import Namespace="Resources"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Model"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Common"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Data.DataSource"%>
@@ -22,42 +33,42 @@
 						OnDataBound="WorkQueueListView_DataBound"
 						DataKeyNames="Key" SelectUsingDataKeys="true">
 						<Columns>
-						<asp:BoundField HeaderText="Patient ID" DataField="PatientId" HeaderStyle-HorizontalAlign="Left" HeaderStyle-Wrap="false" ItemStyle-Wrap="false"/>
-						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
+						<asp:BoundField HeaderText="<%$Resources: ColumnHeaders,PatientID %>" DataField="PatientId" HeaderStyle-HorizontalAlign="Left" HeaderStyle-Wrap="false" ItemStyle-Wrap="false"/>
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,PatientName %>" HeaderStyle-HorizontalAlign="Left">
 								<headerstyle wrap="false" horizontalalign="Left" />
 								<itemstyle wrap="false" />
 							<itemtemplate>
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
                         </itemtemplate>
 						</asp:TemplateField>
-						<asp:BoundField HeaderText="Type" DataField="TypeString" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false"/>
-						<asp:TemplateField HeaderText="Schedule">
+						<asp:BoundField HeaderText="<%$Resources: ColumnHeaders,WorkQueueType %>" DataField="TypeString" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false"/>
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,WorkQueueSchedule %>">
 							<headerstyle wrap="false" horizontalalign="Center" />
 							<itemstyle wrap="false" horizontalalign="Center"/>
 							<itemtemplate>
 								<asp:Label ID="Schedule" runat="server" Text='<%# DateTimeFormatter.Format((DateTime)Eval("ScheduledDateTime")) %>'></asp:Label>
 							</itemtemplate>
 						</asp:TemplateField>
-						<asp:BoundField HeaderText="Priority" DataField="PriorityString" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
-						<asp:TemplateField HeaderText="Status">
+						<asp:BoundField HeaderText="<%$Resources: ColumnHeaders,WorkQueuePriority %>" DataField="PriorityString" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,WorkQueueStatus %>">
 							<headerstyle wrap="false" horizontalalign="Center" />
 							<itemstyle wrap="false" horizontalalign="Center" />
 							<itemtemplate>
 								<asp:Label ID="StatusLabel" runat="server" Text='<%# Eval("StatusString") %>'></asp:Label>
 								
 								<asp:Image runat="server" Visible='<%# !(Container.DataItem as WorkQueueSummary).TheWorkQueueItem.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) && !ServerPlatform.IsActiveWorkQueue((Container.DataItem as WorkQueueSummary).TheWorkQueueItem) %>'  ImageAlign="AbsBottom" ID="StuckIcon" SkinID="WarningSmall"
-								    ToolTip="There does not seem to be any activity for this entry. The server may not be running or there is a problem with this entry."/>
+								    ToolTip="<%$Resources: Tooltips,WorkQueueIsStuck %>"/>
 							</itemtemplate>
 						</asp:TemplateField>
 						
-						<asp:TemplateField HeaderText="Processing Server">
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,WorkQueueProcessingServer %>">
 							<headerstyle wrap="false" horizontalalign="Center" />
 							<itemstyle wrap="false" horizontalalign="Center" />
 							<itemtemplate>
 								<asp:Label ID="ServerInfoLabel" runat="server" Text='<%# Eval("ProcessorID") %>'></asp:Label>
 							</itemtemplate>
 						</asp:TemplateField>
-						<asp:TemplateField HeaderText="Notes">
+						<asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,WorkQueueNotes %>">
 							<headerstyle wrap="false" horizontalalign="Left" />
 							<itemstyle wrap="false" horizontalalign="Left" />
 							<itemtemplate>

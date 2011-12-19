@@ -11,8 +11,6 @@
 
 using System;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 
@@ -21,22 +19,24 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
     [DataContract]
     public class UserDetail : DataContractBase
     {
-        public UserDetail(string userId, string displayName, DateTime creationTime, DateTime? validFrom, DateTime? validUntil, 
-            DateTime? lastLoginTime, bool enabled, List<AuthorityGroupSummary> authorityGroups)
+        public UserDetail(string userId, string displayName, string emailAddress, DateTime creationTime, DateTime? validFrom, DateTime? validUntil, 
+            DateTime? lastLoginTime, bool enabled, DateTime? expiryTime, List<AuthorityGroupSummary> authorityGroups)
         {
-            this.UserName = userId;
-            this.DisplayName = displayName;
-            this.AuthorityGroups = authorityGroups;
-            this.CreationTime = creationTime;
-            this.ValidFrom = validFrom;
-            this.ValidUntil = validUntil;
-            this.LastLoginTime = lastLoginTime;
-            this.Enabled = enabled;
+            UserName = userId;
+            DisplayName = displayName;
+            AuthorityGroups = authorityGroups;
+            CreationTime = creationTime;
+            ValidFrom = validFrom;
+            ValidUntil = validUntil;
+            LastLoginTime = lastLoginTime;
+            Enabled = enabled;
+            PasswordExpiryTime = expiryTime;
+            EmailAddress = emailAddress;
         }
 
         public UserDetail()
         {
-            this.AuthorityGroups = new List<AuthorityGroupSummary>();
+            AuthorityGroups = new List<AuthorityGroupSummary>();
         }
 
         [DataMember]
@@ -68,5 +68,11 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
         /// </summary>
         [DataMember]
         public bool ResetPassword;
+
+        [DataMember]
+        public DateTime? PasswordExpiryTime;
+
+        [DataMember]
+        public string EmailAddress;
     }
 }

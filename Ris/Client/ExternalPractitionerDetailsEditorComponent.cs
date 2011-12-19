@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -161,6 +162,20 @@ namespace ClearCanvas.Ris.Client
 		public bool CanVerify
 		{
 			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitionerVerification); }
+		}
+
+		public bool HasWarning
+		{
+			get { return _practitionerDetail.IsMerged; }
+		}
+
+		public string WarningMessage
+		{
+			get
+			{
+				var destination = PersonNameFormat.Format(_practitionerDetail.MergeDestination.Name);
+				return string.Format(SR.WarnEditMergedPractitioner, destination);
+			}
 		}
 
 		#endregion

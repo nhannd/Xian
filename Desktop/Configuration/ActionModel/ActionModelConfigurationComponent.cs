@@ -22,11 +22,10 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	[ExtensionPoint]
 	public sealed class ActionModelConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
-	//TODO (CR Sept 2010): Name?
 	/// <summary>
-	/// View model interface for the <see cref="ActionModelConfigurationComponent"/>.
+	/// Interface for the <see cref="ActionModelConfigurationComponent"/>.
 	/// </summary>
-	public interface IActionModelConfigurationComponentViewModel
+	public interface IActionModelConfigurationComponent
 	{
 		/// <summary>
 		/// Gets the current action model configuration <see cref="ITree"/>.
@@ -70,7 +69,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	}
 
 	[AssociateView(typeof (ActionModelConfigurationComponentViewExtensionPoint))]
-	public partial class ActionModelConfigurationComponent : ApplicationComponent, IConfigurationApplicationComponent, IActionModelConfigurationComponentViewModel
+	public partial class ActionModelConfigurationComponent : ApplicationComponent, IConfigurationApplicationComponent, IActionModelConfigurationComponent
 	{
 		private const string _tolbarActionSite = "actionmodelconfig-toolbar";
 		private const string _contextMenuActionSite = "actionmodelconfig-contextmenu";
@@ -151,7 +150,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			get { return _site; }
 		}
 
-		ITree IActionModelConfigurationComponentViewModel.ActionModelTreeRoot
+		ITree IActionModelConfigurationComponent.ActionModelTreeRoot
 		{
 			get { return _actionModelTreeRoot.Tree; }
 		}
@@ -185,17 +184,17 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			set { _validationPolicy = value; }
 		}
 
-		ActionModelRoot IActionModelConfigurationComponentViewModel.ToolbarActionModel
+		ActionModelRoot IActionModelConfigurationComponent.ToolbarActionModel
 		{
 			get { return _toolbarActionModel; }
 		}
 
-		ActionModelRoot IActionModelConfigurationComponentViewModel.ContextMenuActionModel
+		ActionModelRoot IActionModelConfigurationComponent.ContextMenuActionModel
 		{
 			get { return _contextMenuActionModel; }
 		}
 
-		INodeProperties IActionModelConfigurationComponentViewModel.SelectedNodeProperties
+		INodeProperties IActionModelConfigurationComponent.SelectedNodeProperties
 		{
 			get { return _propertiesContainerHost.Component; }
 		}

@@ -23,15 +23,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// are provided that cover most, if not all, Linear Voi Lut use cases.  You should not need
 	/// to derive directly from this class.
 	/// </remarks>
-	/// <seealso cref="ComposableLut"/>
-	/// <seealso cref="IComposableLut"/>
+	/// <seealso cref="ComposableVoiLut"/>
+	/// <seealso cref="IVoiLut"/>
 	[Cloneable(true)]
-	public abstract class VoiLutLinearBase : ComposableLut
+	public abstract class VoiLutLinearBase : ComposableVoiLut
 	{
 		#region Private Fields
 
-		private int _minInputValue;
-		private int _maxInputValue;
+		private double _minInputValue;
+		private double _maxInputValue;
 		private double _windowRegionStart;
 		private double _windowRegionEnd;
 		private bool _recalculate;
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the output value of the Lut at a given input <paramref name="index"/>.
 		/// </summary>
-		public sealed override int this[int index]
+		public sealed override int this[double index]
 		{
 			get
 			{
@@ -82,23 +82,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 					_recalculate = false;
 				}
 
-				if (index < _windowRegionStart)
-				{
-					return this.MinOutputValue;
-				}
-				else if (index > _windowRegionEnd)
-				{
-					return this.MaxOutputValue;
-				}
-				else
-				{
-					double scale = ((index - (this.GetWindowCenter() - 0.5)) / (this.GetWindowWidth() - 1)) + 0.5;
-					return (int)((scale * (this.MaxOutputValue - this.MinOutputValue)) + this.MinOutputValue);
-				}
-			}
-			protected set
-			{
-				throw new InvalidOperationException(SR.ExceptionLinearLutDataCannotBeSet);
+				if (index <= _windowRegionStart)
+					return MinOutputValue;
+				if (index > _windowRegionEnd)
+					return MaxOutputValue;
+
+				double scale = ((index - (GetWindowCenter() - 0.5)) / (GetWindowWidthInternal() - 1)) + 0.5;
+				return Math.Min(MaxOutputValue, Math.Max(MinOutputValue, (int) Math.Round((scale*(MaxOutputValue - MinOutputValue)) + MinOutputValue)));
 			}
 		}
 
@@ -108,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public sealed override int MinInputValue
+		public sealed override double MinInputValue
 		{
 			get { return _minInputValue; }
 			set
@@ -127,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This value should not be modified by your code.  It will be set internally by the framework.
 		/// </remarks>
-		public sealed override int MaxInputValue
+		public sealed override double MaxInputValue
 		{
 			get { return _maxInputValue; }
 			set
@@ -146,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <exception cref="MemberAccessException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MinOutputValue
 		{
-			get { return _minInputValue; }
+			get { return (int) Math.Round(_minInputValue); }
 			protected set { throw new InvalidOperationException(SR.ExceptionMinimumOutputValueIsNotSettable); }
 		}
 
@@ -156,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <exception cref="MemberAccessException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MaxOutputValue
 		{
-			get { return _maxInputValue; }
+			get { return (int) Math.Round(_maxInputValue); }
 			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
 
@@ -177,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return String.Format("{0}_{1}_{2}_{3}",
 				this.MinInputValue,
 				this.MaxInputValue,
-				this.GetWindowWidth(),
+                this.GetWindowWidthInternal(),
 				this.GetWindowCenter());
 		}
 
@@ -197,11 +187,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void Calculate()
 		{
-			double halfWindow = (this.GetWindowWidth() - 1) / 2;
-			_windowRegionStart = this.GetWindowCenter() - 0.5 - halfWindow;
-			_windowRegionEnd = this.GetWindowCenter() - 0.5 + halfWindow;
+			double halfWindow = (GetWindowWidthInternal() - 1) / 2;
+			_windowRegionStart = GetWindowCenter() - 0.5 - halfWindow;
+			_windowRegionEnd = GetWindowCenter() - 0.5 + halfWindow;
 		}
 		
+		private double GetWindowWidthInternal()
+		{
+			return Math.Max(1, GetWindowWidth());
+		}
+
 		#endregion
 	}
 }

@@ -36,7 +36,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         private readonly FilesystemReprocessStatistics _stats = new FilesystemReprocessStatistics();
         private readonly Dictionary<ServerPartition, ServerRulesEngine> _engines = new Dictionary<ServerPartition, ServerRulesEngine>();
 		private readonly Dictionary<ServerPartition, ServerRulesEngine> _postArchivalEngines = new Dictionary<ServerPartition, ServerRulesEngine>();
-		#endregion
+        private readonly Dictionary<ServerPartition, ServerRulesEngine> _dataAccessEngine = new Dictionary<ServerPartition, ServerRulesEngine>();
+        #endregion
 
         #region Private Methods
 
@@ -86,7 +87,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <param name="location">The storage location of the study to process.</param>
         /// <param name="engine">The rules engine to use when processing the study.</param>
         /// <param name="postArchivalEngine">The rules engine used for studies that have been archived.</param>
-        private static void ProcessStudy(ServerPartition partition, StudyStorageLocation location, ServerRulesEngine engine, ServerRulesEngine postArchivalEngine)
+        /// <param name="dataAccessEngine">The rules engine strictly used for setting data acess.</param>
+        private static void ProcessStudy(ServerPartition partition, StudyStorageLocation location, ServerRulesEngine engine, ServerRulesEngine postArchivalEngine, ServerRulesEngine dataAccessEngine)
         {
             if (!location.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle) || !location.AcquireWriteLock())
             {
@@ -109,25 +111,25 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 					using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
 					{
 						// Check for existing archive queue entries
-						IArchiveQueueEntityBroker archiveQueueBroker = read.GetBroker<IArchiveQueueEntityBroker>();
-						ArchiveQueueSelectCriteria archiveQueueCriteria = new ArchiveQueueSelectCriteria();
+						var archiveQueueBroker = read.GetBroker<IArchiveQueueEntityBroker>();
+						var archiveQueueCriteria = new ArchiveQueueSelectCriteria();
 						archiveQueueCriteria.StudyStorageKey.EqualTo(location.Key);
 						archiveQueueExists = archiveQueueBroker.Count(archiveQueueCriteria) > 0;
 
 
-						IArchiveStudyStorageEntityBroker archiveStorageBroker = read.GetBroker<IArchiveStudyStorageEntityBroker>();
-						ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
+						var archiveStorageBroker = read.GetBroker<IArchiveStudyStorageEntityBroker>();
+						var archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
 						archiveStudyStorageCriteria.StudyStorageKey.EqualTo(location.Key);
 						archiveStudyStorageExists = archiveStorageBroker.Count(archiveStudyStorageCriteria) > 0;
 
-						IFilesystemQueueEntityBroker filesystemQueueBroker = read.GetBroker<IFilesystemQueueEntityBroker>();
-						FilesystemQueueSelectCriteria filesystemQueueCriteria = new FilesystemQueueSelectCriteria();
+						var filesystemQueueBroker = read.GetBroker<IFilesystemQueueEntityBroker>();
+						var filesystemQueueCriteria = new FilesystemQueueSelectCriteria();
 						filesystemQueueCriteria.StudyStorageKey.EqualTo(location.Key);
 						filesystemQueueCriteria.FilesystemQueueTypeEnum.EqualTo(FilesystemQueueTypeEnum.DeleteStudy);
 						filesystemDeleteExists = filesystemQueueBroker.Count(filesystemQueueCriteria) > 0;
 					}
                     
-                    ServerActionContext context = new ServerActionContext(msg, location.FilesystemKey, partition, location.GetKey());
+                    var context = new ServerActionContext(msg, location.FilesystemKey, partition, location.Key);
                     using (context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor"))
                     {
 						// Check if the Study has been archived 
@@ -135,7 +137,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 						{
 							// Add a command to delete the current filesystemQueue entries, so that they can 
 							// be reinserted by the rules engine.
-							context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.GetKey(), ServerRuleApplyTimeEnum.StudyArchived));
+							context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.Key, ServerRuleApplyTimeEnum.StudyArchived));
 
 							// How to deal with exiting FilesystemQueue entries is problematic here.  If the study
 							// has been migrated off tier 1, we probably don't want to modify the tier migration 
@@ -144,12 +146,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 							// We just re-run the rules engine at this point, and delete only the StudyPurge entries,
 							// since those we know at least would only be applied for archived studies.
 							postArchivalEngine.Execute(context);
+
+                            // Post Archive doesn't allow data access rules.  Force Data Access rules to be reapplied
+                            // to these studies also.
+						    dataAccessEngine.Execute(context);
 						}
 						else
 						{
 							// Add a command to delete the current filesystemQueue entries, so that they can 
 							// be reinserted by the rules engine.
-							context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.GetKey(),ServerRuleApplyTimeEnum.StudyProcessed));
+							context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.Key,ServerRuleApplyTimeEnum.StudyProcessed));
 
 							// Execute the rules engine, insert commands to update the database into the command processor.
 							engine.Execute(context);
@@ -157,7 +163,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 							// Re-do insert into the archive queue.
 							// Note: the stored procedure will update the archive entry if it already exists
 							context.CommandProcessor.AddCommand(
-								new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey()));
+								new InsertArchiveQueueCommand(location.ServerPartitionKey, location.Key));
 						}
 
                     	// Do the actual database updates.
@@ -174,9 +180,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                 {
                     location.ReleaseWriteLock();
                 }
-            }
-
-            
+            }            
         }
 
         /// <summary>
@@ -202,6 +206,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                 // Since we found a partition, we should find a rules engine too.
                 ServerRulesEngine engine = _engines[partition];
             	ServerRulesEngine postArchivalEngine = _postArchivalEngines[partition];
+                ServerRulesEngine dataAccessEngine = _dataAccessEngine[partition];
 
 				foreach (DirectoryInfo dateDir in partitionDir.GetDirectories())
 				{
@@ -252,7 +257,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 									continue;
 							}
 
-							ProcessStudy(partition, location, engine, postArchivalEngine);
+                            ProcessStudy(partition, location, engine, postArchivalEngine, dataAccessEngine);
 							_stats.NumStudies++;
 
 							if (CancelPending) return;
@@ -299,23 +304,25 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         {
 			using (ExecutionContext context = new ExecutionContext())
 			{
-				IServerPartitionEntityBroker broker = context.ReadContext.GetBroker<IServerPartitionEntityBroker>();
-				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+				var broker = context.ReadContext.GetBroker<IServerPartitionEntityBroker>();
+				var criteria = new ServerPartitionSelectCriteria();
 				IList<ServerPartition> partitions = broker.Find(criteria);
 
 				foreach (ServerPartition partition in partitions)
 				{
-					ServerRulesEngine engine =
-						new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, partition.GetKey());
-					_engines.Add(partition, engine);
+					var engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, partition.Key);
+                    engine.Load();
+                    _engines.Add(partition, engine);
+					
+					engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyArchived, partition.Key);
+                    engine.Load();
+                    _postArchivalEngines.Add(partition, engine);
 
-					engine.Load();
-
-					engine =
-						new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyArchived, partition.GetKey());
-					_postArchivalEngines.Add(partition, engine);
-
-					engine.Load();
+                    engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, partition.Key);
+				    engine.AddIncludeType(ServerRuleTypeEnum.DataAccess);
+                    engine.Load(); 
+                    _dataAccessEngine.Add(partition, engine);
+                    
 				}
 			}
         }

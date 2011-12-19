@@ -1,5 +1,18 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Application.Helpers"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.Model"%>
+
+
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeletedStudyDetailsDialogGeneralPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudyDetailsDialogGeneralPanel" %>
 <asp:Panel ID="Panel3" runat="server">
     <table width="100%">
@@ -8,53 +21,53 @@
                 <asp:DetailsView ID="StudyDetailView" runat="server" AutoGenerateRows="False" GridLines="Horizontal"
                     CellPadding="4" CssClass="GlobalGridView" Width="100%">
                     <Fields>
-                        <asp:TemplateField HeaderText="Patient's Name: ">
+                        <asp:TemplateField HeaderText="<%$Resources: DetailedViewFieldLabels, PatientName %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
                                 <ccUI:PersonNameLabel ID="PatientsName" runat="server" PersonName='<%# Eval("PatientsName") %>'
                                     PersonNameType="Dicom"></ccUI:PersonNameLabel>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:BoundField DataField="PatientId" HeaderText="Patient Id: ">
+                        <asp:BoundField DataField="PatientId" HeaderText="<%$Resources: DetailedViewFieldLabels, PatientID %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="StudyDescription" HeaderText="Study Description: ">
+                        <asp:BoundField DataField="StudyDescription" HeaderText="<%$Resources: DetailedViewFieldLabels, StudyDescription %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="AccessionNumber" HeaderText="Accession Number: ">
+                        <asp:BoundField DataField="AccessionNumber" HeaderText="<%$Resources: DetailedViewFieldLabels, AccessionNumber %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:TemplateField HeaderText="Study Date/Time: ">
+                        <asp:TemplateField HeaderText="<%$Resources: DetailedViewFieldLabels, StudyDateTime %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
                                 <ccUI:DALabel ID="StudyDate" runat="server" Value='<%# Eval("StudyDate") %>'></ccUI:DALabel>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:BoundField DataField="StudyInstanceUid" HeaderText="Study Instance UID: ">
+                        <asp:BoundField DataField="StudyInstanceUid" HeaderText="<%$Resources: DetailedViewFieldLabels, StudyInstanceUID %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="PartitionAE" HeaderText="Partition AE: ">
+                        <asp:BoundField DataField="PartitionAE" HeaderText="<%$Resources: DetailedViewFieldLabels, Partition %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="BackupFolderPath" HeaderText="Backup Location:">
+                        <asp:BoundField DataField="BackupFolderPath" HeaderText="<%$Resources: DetailedViewFieldLabels, AdminDeletedStudies_BackupLocation %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:TemplateField HeaderText="Reason For Deletion: ">
+                        <asp:TemplateField HeaderText="<%$Resources: DetailedViewFieldLabels, AdminDeletedStudies_ReasonForDeletion %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
                                 <%# HtmlEncoder.EncodeText((Container.DataItem as DeletedStudyInfo).ReasonForDeletion)%>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Delete Date/Time: ">
+                        <asp:TemplateField HeaderText="<%$Resources: DetailedViewFieldLabels, AdminDeletedStudies_DeletionDateTime %> ">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
                                 <ccUI:DateTimeLabel ID="DeleteDate" runat="server" Value='<%# Eval("DeleteTime") %>'></ccUI:DateTimeLabel>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Deleted By: ">
+                        <asp:TemplateField HeaderText="<%$Resources: DetailedViewFieldLabels, AdminDeletedStudies_DeletedBy %>">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
-                                <%# (Container.DataItem as DeletedStudyInfo).UserName ?? "Unknown" %> 
+                                <%# (Container.DataItem as DeletedStudyInfo).UserName ?? SR.Unknown %> 
                                 <%# String.IsNullOrEmpty((Container.DataItem as DeletedStudyInfo).UserId) 
                                         ? String.Empty 
                                         : String.Format(" (ID={0})", (Container.DataItem as DeletedStudyInfo).UserId)%>

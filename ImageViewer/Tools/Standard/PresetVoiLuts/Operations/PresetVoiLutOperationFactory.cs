@@ -13,11 +13,25 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	public abstract class PresetVoiLutOperationFactory<PresetVoiLutOperationComponentType> : IPresetVoiLutOperationFactory
+    public sealed class PresetVoiLutOperationFactoryExtensionPoint : ExtensionPoint<IPresetVoiLutOperationFactory>
+    {
+    }
+
+    public interface IPresetVoiLutOperationFactory
+    {
+        string Name { get; }
+        string Description { get; }
+
+        bool CanCreateMultiple { get; }
+
+        IPresetVoiLutOperation Create(PresetVoiLutConfiguration configuration);
+        IPresetVoiLutOperationComponent GetEditComponent(PresetVoiLutConfiguration configuration);
+    }
+
+    public abstract class PresetVoiLutOperationFactory<PresetVoiLutOperationComponentType> : IPresetVoiLutOperationFactory
 		where PresetVoiLutOperationComponentType : PresetVoiLutOperationComponent, new()
 	{
 		#region IPresetVoiLutOperationFactory Members

@@ -1,5 +1,5 @@
 ﻿<%-- License
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -132,8 +132,6 @@
 				<img src="http://go.microsoft.com/fwlink/?LinkId=161376" alt="Get Microsoft Silverlight"
 					style="border-style: none" />
 			</a>
-		</object><!-- note: any space or newline after this will cause vertical scroll bar displayed in IE8 when Compatibility View mode is turned off--><iframe id="_sl_historyFrame" style="visibility: hidden; height: 0px; width: 0px; border: 0px"></iframe>
-	</div>
-	</form>
+		</object><!-- note: any space or newline after this will cause vertical scroll bar displayed in IE8 when Compatibility View mode is turned off--><iframe id="_sl_historyFrame" style="visibility: hidden; height: 0px; width: 0px; border: 0px"></iframe></div></form>
 </body>
 </html>

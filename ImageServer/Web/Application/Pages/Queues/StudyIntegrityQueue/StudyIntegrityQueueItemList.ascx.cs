@@ -16,6 +16,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
@@ -217,8 +218,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 if (message != null)
                 {
                     message.Message = StudyIntegrityQueueGridView.DataSource == null
-                                          ? "Please enter search criteria to find studies."
-                                          : "No studies found matching the provided criteria.";
+                                          ? SR.PleaseEnterSearchCriteriaToFindStudies
+                                          : SR.NoSIQItemsFound;
                 }
             }
             else

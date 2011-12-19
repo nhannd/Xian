@@ -16,7 +16,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
@@ -236,15 +236,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 			if (EditMode)
 			{
 				ModalDialog1.Title = SR.DialogEditDeviceTitle;
-				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-				OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
 				DeviceTypeDropDownList.Items.FindByValue(Device.DeviceTypeEnum.Lookup).Selected = true;
+			    OKButton.Visible = false;
+			    UpdateButton.Visible = true;
 			}
 			else
 			{
 				ModalDialog1.Title = SR.DialogAddDeviceTitle;
-				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-				OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+				OKButton.Visible = true;
+                UpdateButton.Visible = false;
 			}
 
 		}
@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             foreach (DeviceTypeEnum t in deviceTypes)
             {
                 DeviceTypeDropDownList.Items.Add(
-                    new ListItem(t.Description, t.Lookup)
+                    new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup)
                     );
             }
 

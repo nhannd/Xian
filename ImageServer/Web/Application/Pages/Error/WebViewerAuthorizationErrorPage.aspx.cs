@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 {    
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
                 DescriptionLabel.Text = Context.Items[ImageServerConstants.ContextKeys.ErrorDescription].ToString();
             }
 
-            SetPageTitle(App_GlobalResources.Titles.AuthorizationErrorPageTitle);
+            SetPageTitle(Titles.AuthorizationErrorPageTitle);
         }
     }
 }

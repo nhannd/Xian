@@ -16,6 +16,7 @@ using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using NHibernate;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -75,6 +76,10 @@ namespace ClearCanvas.Enterprise.Hibernate
 				query.Froms[0].Joins.Add(new HqlJoin("x." + fetchJoin, null, HqlJoinMode.Inner, true));
 			}
 
+			// apply lock hint
+			if (options.LockForUpdate)
+				query.SetLockMode("x", LockMode.Upgrade);
+	
 			var or = new HqlOr();
 			foreach (var c in criteria)
 			{

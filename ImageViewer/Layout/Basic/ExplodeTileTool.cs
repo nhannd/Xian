@@ -87,8 +87,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				if (selectedImage != null)
 					imageBox.TopLeftPresentationImage = selectedImage;
 
-				imageBox.SelectDefaultTile();
 				imageBox.Draw();
+                imageBox.SelectDefaultTile();
 
 				memorableCommand.EndState = imageBox.CreateMemento();
 
@@ -185,7 +185,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			imageBox.DisplaySetLocked = locked;
 
 			imageBox.TopLeftPresentationImage = selectedImage;
-			imageBox.SelectDefaultTile();
 
 			memorableCommand.EndState = imageBox.CreateMemento();
 
@@ -195,7 +194,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			imageBox.ParentPhysicalWorkspace.ImageViewer.CommandHistory.AddCommand(historyCommand);
 		
 			imageBox.Draw();
-		}
+            imageBox.SelectDefaultTile();
+        }
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{

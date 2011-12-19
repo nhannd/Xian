@@ -21,7 +21,6 @@ namespace ClearCanvas.Dicom.Iod.Tests
 	{
 		public ImageOrientationPatientTests()
 		{ 
-		
 		}
 
 		[Test]

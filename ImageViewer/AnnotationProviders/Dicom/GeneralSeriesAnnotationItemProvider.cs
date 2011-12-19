@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						{
 							if (frame.ParentImageSop.ParentSeries != null)
 							{
-								return String.Format("{0}/{1}", frame.ParentImageSop.SeriesNumber, 
+								return String.Format(SR.FormatSeriesNumberAndCount, frame.ParentImageSop.SeriesNumber, 
 									frame.ParentImageSop.ParentSeries.ParentStudy.Series.Count);
 							}
 							else

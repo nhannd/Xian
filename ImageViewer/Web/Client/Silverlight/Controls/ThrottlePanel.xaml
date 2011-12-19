@@ -15,10 +15,18 @@
     mc:Ignorable="d"
     xmlns:toolkitinput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
     xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
-    xmlns:local="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls"
+    xmlns:local="clr-namespace:ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls" 
     >
 
-    <toolkit:WrapPanel>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Styles.xaml" x:Name="Styles"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <toolkit:WrapPanel Name="LayoutRoot">
         <StackPanel>
             <StackPanel.Resources>
                 <local:EnumValuesConverter x:Name="enumConverter"/>
@@ -34,8 +42,9 @@
 
             <StackPanel Margin="10">
                 <TextBlock Text="Mouse Move Msg" Foreground="White"/>
-                <ComboBox x:Name="Strategies" ItemsSource="{Binding Strategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
-                          SelectedItem="{Binding Strategy, Mode=TwoWay}" IsEnabled="False"/>
+                <ComboBox x:Name="Strategies" Foreground="Black" ItemsSource="{Binding Strategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
+                          SelectedItem="{Binding Strategy, Mode=TwoWay}" IsEnabled="False">
+                </ComboBox>
             </StackPanel>
             <StackPanel x:Name="RTTWithOffsetPanel"  Margin="10" Visibility="Collapsed" >
                 <TextBlock Text="Offset (ms)" Foreground="White"/>
@@ -48,7 +57,7 @@
 
             <StackPanel Margin="10" >
                 <TextBlock Text="Lag Detection" Foreground="White"/>
-                <ComboBox x:Name="LagDetectionStrategies" ItemsSource="{Binding LagDetectionStrategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
+                <ComboBox x:Name="LagDetectionStrategies" Foreground="Black" ItemsSource="{Binding LagDetectionStrategy, Converter={StaticResource enumConverter}, Mode=OneTime}"
                           SelectedItem="{Binding LagDetectionStrategy, Mode=TwoWay}" IsEnabled="False">
                                         
                 </ComboBox>

@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 					_listenerList.Add(ipV4Scp);
 					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
 											ServerPlatform.AuditSource, 
-											EventIdentificationTypeEventOutcomeIndicator.Success, 
+											EventIdentificationContentsEventOutcomeIndicator.Success, 
 											ApplicationActivityType.ApplicationStarted, 
 											new AuditProcessActiveParticipant(ipV4Scp.AeTitle));
 					ServerPlatform.LogAuditMessage(helper);
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 				{
 					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
 											ServerPlatform.AuditSource,
-											EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable,
+											EventIdentificationContentsEventOutcomeIndicator.MajorFailureActionMadeUnavailable,
 											ApplicationActivityType.ApplicationStarted,
 											new AuditProcessActiveParticipant(ipV4Scp.AeTitle));
 					ServerPlatform.LogAuditMessage(helper);
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 					_listenerList.Add(ipV6Scp);
 					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
 											ServerPlatform.AuditSource,
-											EventIdentificationTypeEventOutcomeIndicator.Success,
+											EventIdentificationContentsEventOutcomeIndicator.Success,
 											ApplicationActivityType.ApplicationStarted,
 											new AuditProcessActiveParticipant(ipV6Scp.AeTitle));
 					ServerPlatform.LogAuditMessage(helper);
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 				{
 					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
 						ServerPlatform.AuditSource,
-						EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable,
+						EventIdentificationContentsEventOutcomeIndicator.MajorFailureActionMadeUnavailable,
 						ApplicationActivityType.ApplicationStarted,
 						new AuditProcessActiveParticipant(ipV6Scp.AeTitle));
 					ServerPlatform.LogAuditMessage(helper);
@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 						scpsToDelete.Add(scp);
 						ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
 												ServerPlatform.AuditSource,
-												EventIdentificationTypeEventOutcomeIndicator.Success,
+												EventIdentificationContentsEventOutcomeIndicator.Success,
 												ApplicationActivityType.ApplicationStopped,
 												new AuditProcessActiveParticipant(scp.AeTitle));
 						ServerPlatform.LogAuditMessage(helper);
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		#endregion
 
 		#region Public Methods
-		protected override void Initialize()
+		protected override bool Initialize()
 		{
 			if (_partitions == null)
 			{
@@ -228,6 +228,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 
 				_partitions = new List<ServerPartition>(ServerPartitionMonitor.Instance);
 			}
+
+            return true;
 		}
 
 		/// <summary>
@@ -263,7 +265,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 					scp.Stop();
 					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
 								ServerPlatform.AuditSource,
-								EventIdentificationTypeEventOutcomeIndicator.Success,
+								EventIdentificationContentsEventOutcomeIndicator.Success,
 								ApplicationActivityType.ApplicationStopped,
 								new AuditProcessActiveParticipant(scp.AeTitle));
 					ServerPlatform.LogAuditMessage(helper);

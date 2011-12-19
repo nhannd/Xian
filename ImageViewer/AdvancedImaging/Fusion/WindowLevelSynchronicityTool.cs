@@ -63,7 +63,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 						return;
 
 					// find any available display set containing the same series as the individual layers and capture its VOI LUT
-					IComposableLut baseVoiLut = null, overlayVoiLut = null;
+					IVoiLut baseVoiLut = null, overlayVoiLut = null;
+					Frame baseFrame = null, overlayFrame = null;
 					var descriptor = (PETFusionDisplaySetDescriptor) e.NewDisplaySet.Descriptor;
 					foreach (IImageBox imageBox in ImageViewer.PhysicalWorkspace.ImageBoxes)
 					{
@@ -74,9 +75,15 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 
 						var seriesUid = ((IImageSopProvider) selectedImage).ImageSop.SeriesInstanceUid;
 						if (baseVoiLut == null && seriesUid == descriptor.SourceSeries.SeriesInstanceUid)
+						{
 							baseVoiLut = ((IVoiLutProvider) selectedImage).VoiLutManager.VoiLut;
+							baseFrame = ((IImageSopProvider) selectedImage).Frame;
+						}
 						else if (overlayVoiLut == null && seriesUid == descriptor.PETSeries.SeriesInstanceUid)
+						{
 							overlayVoiLut = ((IVoiLutProvider) selectedImage).VoiLutManager.VoiLut;
+							overlayFrame = ((IImageSopProvider)selectedImage).Frame;
+						}
 
 						if (baseVoiLut != null && overlayVoiLut != null)
 							break;
@@ -86,18 +93,18 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					{
 						var fusionImage = (FusionPresentationImage) e.NewDisplaySet.PresentationImages[0];
 						if (baseVoiLut == null)
-							baseVoiLut = GetInitialVoiLut(fusionImage.Frame);
+							baseVoiLut = GetInitialVoiLut(baseFrame = fusionImage.Frame);
 						if (overlayVoiLut == null)
-							overlayVoiLut = GetInitialVoiLut(fusionImage.OverlayFrameData.OverlayData.Frames[0]);
+							overlayVoiLut = GetInitialVoiLut(overlayFrame = fusionImage.OverlayFrameData.OverlayData.Frames[0]);
 					}
 
 					// replicate the captured VOI LUTs to the fusion images
 					foreach (FusionPresentationImage image in e.NewDisplaySet.PresentationImages)
 					{
 						if (baseVoiLut != null)
-							image.BaseVoiLutManager.InstallVoiLut(ReplicateVoiLut(baseVoiLut));
+							InstallVoiLut(image, baseVoiLut, baseFrame, false);
 						if (overlayVoiLut != null)
-							image.OverlayVoiLutManager.InstallVoiLut(ReplicateVoiLut(overlayVoiLut));
+							InstallVoiLut(image, overlayVoiLut, overlayFrame, true);
 					}
 				}
 			}
@@ -129,7 +136,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 							// replicate the captured VOI LUT to the fusion images
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
 							{
-								image.BaseVoiLutManager.InstallVoiLut(ReplicateVoiLut(sourceVoiLut));
+								InstallVoiLut(image, sourceVoiLut, ((IImageSopProvider)e.PresentationImage).Frame, false);
 								anyVisibleChange |= (image.Visible);
 							}
 						}
@@ -138,7 +145,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 							// replicate the captured VOI LUT to the fusion images
 							foreach (FusionPresentationImage image in displaySet.PresentationImages)
 							{
-								image.OverlayVoiLutManager.InstallVoiLut(ReplicateVoiLut(sourceVoiLut));
+								InstallVoiLut(image, sourceVoiLut, ((IImageSopProvider)e.PresentationImage).Frame, true);
 								anyVisibleChange |= (image.Visible);
 							}
 						}
@@ -157,19 +164,55 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		}
 
 		/// <summary>
-		/// Attempts to replicate the specified <paramref name="sourceVoiLut"/>. If the LUT is not linear, computes a dummy LUT.
+		/// Attempts to install an appropriate equivalent of the specified <paramref name="sourceVoiLut"/> to a fusion image. If the LUT is not linear, computes a dummy LUT.
 		/// </summary>
-		private static IComposableLut ReplicateVoiLut(IComposableLut sourceVoiLut)
+		private static void InstallVoiLut(FusionPresentationImage fusionImage, IVoiLut sourceVoiLut, Frame sourceFrame, bool applyToOverlay)
 		{
-			if (sourceVoiLut is IVoiLutLinear)
+			IVoiLut newVoiLut;
+			if (sourceVoiLut is MinMaxPixelCalculatedLinearLut)
+			{
+				if (applyToOverlay)
+				{
+					// if the overlay source image is using a min/max calculated LUT, install a custom calculated LUT that delay-computes min/max from the fusion data
+					// we need to delay-compute this because the fusion image graphic is delay-generated, and thus not necessarily available until just before rendering!
+					var skipModalityLut = sourceFrame.ParentImageSop.Modality == @"PT" && sourceFrame.IsSubnormalRescale;
+					newVoiLut = new FusionOverlayMinMaxVoiLutLinear(fusionImage, !skipModalityLut);
+				}
+				else
+				{
+					// if the base source image is using a min/max calculated LUT, install a similarly min/max calculated LUT for the base of the fusion image
+					newVoiLut = new MinMaxPixelCalculatedLinearLut(fusionImage.ImageGraphic.PixelData);
+				}
+			}
+			else if (sourceVoiLut is IVoiLutLinear)
 			{
 				var voiLutLinear = (IVoiLutLinear) sourceVoiLut;
-				return new BasicVoiLutLinear(voiLutLinear.WindowWidth, voiLutLinear.WindowCenter);
+				var normalizedVoiSlope = 1.0;
+				var normalizedVoiIntercept = 0.0;
+				if (applyToOverlay && sourceFrame.ParentImageSop.Modality == @"PT" && sourceFrame.IsSubnormalRescale)
+				{
+					// for subnormal PET rescale slope cases, the original VOI windows must be transformed through the same process as what MPR did to the pixel data
+					normalizedVoiSlope = sourceFrame.RescaleSlope/fusionImage.OverlayFrameData.OverlayRescaleSlope;
+					normalizedVoiIntercept = (sourceFrame.RescaleIntercept - fusionImage.OverlayFrameData.OverlayRescaleIntercept)/fusionImage.OverlayFrameData.OverlayRescaleSlope;
+				}
+				newVoiLut = new BasicVoiLutLinear(voiLutLinear.WindowWidth*normalizedVoiSlope, voiLutLinear.WindowCenter*normalizedVoiSlope + normalizedVoiIntercept);
 			}
-			return new IdentityVoiLinearLut();
+			else
+			{
+				// if the source image is using some non-linear LUT, just install a default pass-through LUT
+				newVoiLut = new IdentityVoiLinearLut();
+			}
+
+			if (applyToOverlay)
+				fusionImage.OverlayVoiLutManager.InstallVoiLut(newVoiLut);
+			else
+				fusionImage.BaseVoiLutManager.InstallVoiLut(newVoiLut);
 		}
 
-		private static IComposableLut GetInitialVoiLut(Frame frame)
+		/// <summary>
+		/// Gets the initial VOI LUT for the source frames (base or overlay). This is NOT the LUT used on the fusion image! See <see cref="InstallVoiLut"/>.
+		/// </summary>
+		private static IVoiLut GetInitialVoiLut(Frame frame)
 		{
 			if (frame != null)
 			{
@@ -178,8 +221,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					var voiLut = InitialVoiLutProvider.Instance.GetLut(image);
 					if (voiLut == null && image is IImageGraphicProvider)
 					{
-						//TODO (CR Sept 2010): will this always happen for the PT layer?  Could it be an
-						//average of the w/l of the source PT image frames?
 						var pixelData = ((IImageGraphicProvider) image).ImageGraphic.PixelData;
 						if (pixelData is GrayscalePixelData)
 							voiLut = new MinMaxPixelCalculatedLinearLut((GrayscalePixelData) pixelData);

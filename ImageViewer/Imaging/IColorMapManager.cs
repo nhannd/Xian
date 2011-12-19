@@ -16,8 +16,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	//TODO: change how this manager/provider relationship works ... it just doesn't feel right.
 
-	//TODO: the color map shouldn't *have* to be a data lut - it could be calculated.
-
 	/// <summary>
 	/// A Color Map Manager, which is responsible for managing installation and restoration
 	/// of color maps via the Memento pattern.
@@ -38,6 +36,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets the currently installed color map.
 		/// </summary>
 		[Obsolete("Use the ColorMap property instead.")]
-		IDataLut GetColorMap();
+		IColorMap GetColorMap();
 	}
 }

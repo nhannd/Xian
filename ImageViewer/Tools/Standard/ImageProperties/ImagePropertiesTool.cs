@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -23,22 +23,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 	[MenuAction("show", "imageviewer-contextmenu/MenuImageProperties", "Show")]
 	[Tooltip("show", "TooltipImageProperties")]
 	[IconSet("show", IconScheme.Colour, "ImagePropertiesToolSmall.png", "ImagePropertiesToolMedium.png", "ImagePropertiesToolLarge.png")]
-	[GroupHint("show", "Application.View.ImageProperties")]
+	[GroupHint("show", "Tools.Image.Information")]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ImagePropertiesTool : ImageViewerTool
 	{
-		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
+		[ThreadStatic]
+		private static Dictionary<IDesktopWindow, IShelf> _shelves;
 		
 		public ImagePropertiesTool()
 		{
+		}
+
+		private static Dictionary<IDesktopWindow, IShelf> Shelves
+		{
+			get
+			{
+				if (_shelves == null)
+					_shelves = new Dictionary<IDesktopWindow, IShelf>();
+				return _shelves;
+			}
 		}
 
 		private IShelf ComponentShelf
 		{
 			get
 			{
-				if (_shelves.ContainsKey(Context.DesktopWindow))
-					return _shelves[Context.DesktopWindow];
+				if (Shelves.ContainsKey(Context.DesktopWindow))
+					return Shelves[Context.DesktopWindow];
 
 				return null;
 			}
@@ -58,8 +69,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 					IShelf shelf = ApplicationComponent.LaunchAsShelf(Context.DesktopWindow, component,
 						SR.TitleImageProperties, "ImageProperties", ShelfDisplayHint.DockLeft);
 
-					_shelves.Add(Context.DesktopWindow, shelf);
-					shelf.Closed += delegate { _shelves.Remove(desktopWindow); };
+					Shelves.Add(Context.DesktopWindow, shelf);
+					shelf.Closed += delegate { Shelves.Remove(desktopWindow); };
 				}
 				catch(Exception e)
 				{

@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[DropDownAction("show", "global-toolbars/ToolbarStandard/ToolbarChangeLayout", "LayoutDropDownMenuModel")]
 	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
 	[Tooltip("show", "TooltipChangeLayout")]
-	[GroupHint("show", "Application.Workspace.Layout.Basic")]
+	[GroupHint("show", "Tools.Layout")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 
 	/// <summary>

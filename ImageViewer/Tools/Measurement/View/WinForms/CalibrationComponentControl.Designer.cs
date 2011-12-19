@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CalibrationComponentControl));
 			this._length = new System.Windows.Forms.NumericUpDown();
 			this.label2 = new System.Windows.Forms.Label();
 			this._ok = new System.Windows.Forms.Button();
@@ -68,49 +69,35 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.View.WinForms
 			// 
 			// _length
 			// 
-			this._length.Location = new System.Drawing.Point(49, 20);
+			resources.ApplyResources(this._length, "_length");
 			this._length.Name = "_length";
-			this._length.Size = new System.Drawing.Size(64, 20);
-			this._length.TabIndex = 0;
-			this._length.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label2
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(119, 22);
+			resources.ApplyResources(this.label2, "label2");
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(21, 13);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "cm";
 			// 
 			// _ok
 			// 
-			this._ok.Location = new System.Drawing.Point(16, 52);
+			resources.ApplyResources(this._ok, "_ok");
 			this._ok.Name = "_ok";
-			this._ok.Size = new System.Drawing.Size(75, 23);
-			this._ok.TabIndex = 3;
-			this._ok.Text = "OK";
 			this._ok.UseVisualStyleBackColor = true;
 			// 
 			// _cancel
 			// 
-			this._cancel.Location = new System.Drawing.Point(97, 52);
+			resources.ApplyResources(this._cancel, "_cancel");
 			this._cancel.Name = "_cancel";
-			this._cancel.Size = new System.Drawing.Size(75, 23);
-			this._cancel.TabIndex = 4;
-			this._cancel.Text = "Cancel";
 			this._cancel.UseVisualStyleBackColor = true;
 			// 
 			// CalibrationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._cancel);
 			this.Controls.Add(this._ok);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this._length);
 			this.Name = "CalibrationComponentControl";
-			this.Size = new System.Drawing.Size(190, 92);
 			((System.ComponentModel.ISupportInitialize)(this._length)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

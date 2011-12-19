@@ -9,9 +9,6 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
-
 namespace ClearCanvas.ImageServer.Model
 {
     /// <summary>

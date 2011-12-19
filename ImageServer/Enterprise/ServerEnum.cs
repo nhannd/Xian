@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
@@ -17,8 +18,9 @@ namespace ClearCanvas.ImageServer.Enterprise
     /// A specialized <see cref="ServerEntity"/> that represents an enumerated value.
     /// </summary>
     [Serializable]
-    public abstract class ServerEnum : ServerEntity
+    public abstract partial class ServerEnum : ServerEntity
     {
+        
         #region Constructors
 
         /// <summary>
@@ -46,8 +48,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// The enumerated value itself.
         /// </summary>
-		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Enum")]
-		public short Enum
+        [EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Enum")]
+        public short Enum
         {
             get { return _enumValue; }
             set { _enumValue = value; }
@@ -56,7 +58,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A lookup string.
         /// </summary>
-		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Lookup")]
+        [EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Lookup")]
         public string Lookup
         {
             get { return _lookup; }
@@ -66,8 +68,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A short description of the enumerated value.
         /// </summary>
-		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Description")]
-		public string Description
+        [EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Description")]
+        public string Description
         {
             get { return _description; }
             set { _description = value; }
@@ -76,8 +78,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A long description of the enumerated value.
         /// </summary>
-		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "LongDescription")]
-		public string LongDescription
+        [EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "LongDescription")]
+        public string LongDescription
         {
             get { return _longDescription; }
             set { _longDescription = value; }
@@ -111,14 +113,9 @@ namespace ClearCanvas.ImageServer.Enterprise
             {
                 return e.Enum == Enum;
             }
-            else
-                return false;
+            return false;
         }
 
-		public override string ToString()
-		{
-			return Description;
-		}
         #endregion
 
         #region Operators
@@ -128,9 +125,9 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         public static bool operator ==(ServerEnum t1, ServerEnum t2)
         {
-            if ((object) t1 == null && (object) t2 == null)
+            if ((object)t1 == null && (object)t2 == null)
                 return true;
-            if ((object) t1 == null || (object) t2 == null)
+            if ((object)t1 == null || (object)t2 == null)
                 return false;
             return t1.Equals(t2);
         }
@@ -140,13 +137,80 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         public static bool operator !=(ServerEnum t1, ServerEnum t2)
         {
-            if ((object) t1 == null && (object) t2 == null)
+            if ((object)t1 == null && (object)t2 == null)
                 return false;
-            if ((object) t1 == null || (object) t2 == null)
+            if ((object)t1 == null || (object)t2 == null)
                 return true;
             return !t1.Equals(t2);
         }
 
         #endregion
+    }
+
+    public class ServerEnumExtensionPoint : ExtensionPoint<IServerEnumDescriptionTranslator>
+    { }
+
+    /// <summary>
+    /// Localization Support implementation for ServerEnum
+    /// </summary>
+    public abstract partial class ServerEnum
+    {
+        private static readonly IServerEnumDescriptionTranslator _descriptionTranslator;
+
+        static ServerEnum()
+        {
+            try
+            {
+                _descriptionTranslator =
+                    new ServerEnumExtensionPoint().CreateExtension() as IServerEnumDescriptionTranslator;
+            }
+            catch(Exception ex)
+            {
+                Platform.Log(LogLevel.Warn, "Unable to instantiate ServerEnum Description transatlor: {0}", ex.Message);
+
+                Platform.Log(LogLevel.Warn, "Use default server enum description translator");
+                _descriptionTranslator = new DefaultServerEnumDescriptionTranslator();
+            }
+        }
+
+        public string LocalizedDescription
+        {
+            get
+            {
+                return _descriptionTranslator != null ? _descriptionTranslator.GetLocalizedDescription(this) : Description;
+            }
+        }
+
+        public string LocalizedLongDescription
+        {
+            get
+            {
+                return _descriptionTranslator != null ? _descriptionTranslator.GetLocalizedLongDescription(this) : Description;
+            }
+        }
+
+        public override string ToString()
+        {
+            return _descriptionTranslator != null ? _descriptionTranslator.GetLocalizedDescription(this) : Description;
+        }
+    }
+
+    internal class DefaultServerEnumDescriptionTranslator : IServerEnumDescriptionTranslator
+    {
+        public string GetLocalizedDescription(ServerEnum serverEnum)
+        {
+            return serverEnum.Description;
+        }
+
+        public string GetLocalizedLongDescription(ServerEnum serverEnum)
+        {
+            return serverEnum.LongDescription;
+        }
+    }
+
+    public interface IServerEnumDescriptionTranslator
+    {
+        string GetLocalizedDescription(ServerEnum serverEnum);
+        string GetLocalizedLongDescription(ServerEnum serverEnum);
     }
 }

@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
@@ -84,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 					XmlNodeList propertyNodes = groupNode.SelectNodes("image-property");
 					if (propertyNodes == null)
 					{
-						Platform.Log(LogLevel.Debug, "tag-variable name attribute is empty");
+						Platform.Log(LogLevel.Debug, "image-property-group element does not define any image-property elements");
 						continue;
 					}
 
@@ -97,28 +98,26 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
                         
 						if (String.IsNullOrEmpty(tagVariableName))
 						{
-							Platform.Log(LogLevel.Debug, "tag-variable name attribute is empty");	
+							Platform.Log(LogLevel.Debug, "tag-variable-name attribute is empty");	
 							continue;
 						}
 
-						DicomTag tag = DicomTagDictionary.GetDicomTag(tagVariableName);
+						var tag = LookupDicomTag(tagVariableName);
 						if (tag == null)
 						{
-							Platform.Log(LogLevel.Debug, "tag-variable name doesn't match a valid DicomTag");	
+							Platform.Log(LogLevel.Debug, "tag-variable-name doesn't match a valid DicomTag");	
 							continue;
 						}
 
-						//TODO (cr Oct 2009): add ability to look up by hex-value, too
-						string tagName = LookupTagName(tagVariableName);
-						if (String.IsNullOrEmpty(tagName))
-							tagName = tag.Name;
+						string tagName = null;
+						XmlAttribute attribute = propertyNode.Attributes["label"];
+						if (attribute != null)
+							tagName = attribute.Value;
 
-						string description;
-						XmlAttribute attribute = propertyNode.Attributes["description"];
+						string description = null;
+						attribute = propertyNode.Attributes["description"];
 						if (attribute != null)
 							description = attribute.Value;
-						else
-							description = LookupTagDescription(tagVariableName);
 
 						string separator = null;
 						attribute = propertyNode.Attributes["separator"];
@@ -145,7 +144,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 			return properties.ToArray();
 		}
 
-		//TODO: rethink this - I don't really like that the values are then looked up in resources.  Too limiting for those adding to the xml doc.
+		private static DicomTag LookupDicomTag(string tag)
+		{
+			uint tagValue;
+			if (uint.TryParse(tag, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out tagValue))
+			{
+				// very simple support for private tags, since the toolkit won't try to read it anyway
+				if (DicomTag.IsPrivateGroup((ushort) (0x00FFFF & (tagValue >> 16))))
+					return new DicomTag(tagValue, "Private Tag", "PrivateTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+				return DicomTagDictionary.GetDicomTag(tagValue);
+			}
+			return DicomTagDictionary.GetDicomTag(tag);
+		}
+
 		private static string LookupCategory(string category)
 		{
 			if (String.IsNullOrEmpty(category))
@@ -159,31 +170,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 				return resolved;
 		}
 
-		private static string LookupTagName(string tagName)
-		{
-			if (String.IsNullOrEmpty(tagName))
-				return "";
-
-			string lookup = String.Format("Name{0}", tagName);
-			string resolved = _resolver.LocalizeString(lookup);
-			if (lookup == resolved)
-				return tagName;
-			else
-				return resolved;
-		}
-
-		private static string LookupTagDescription(string tagName)
-		{
-			if (String.IsNullOrEmpty(tagName))
-				return "";
-
-			string lookup = String.Format("Description{0}", tagName);
-			string resolved = _resolver.LocalizeString(lookup);
-			if (lookup == resolved)
-				return tagName;
-			else
-				return resolved;
-		}
 		#endregion
 	}
 }

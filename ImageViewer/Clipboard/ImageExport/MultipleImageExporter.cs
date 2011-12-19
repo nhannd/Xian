@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				{
 					ItemsToExport.ForEach(delegate(IClipboardItem item) { item.Lock(); });
 
-					BackgroundTask task = new BackgroundTask(Export, true);
+					BackgroundTask task = new BackgroundTask(Export, true) {ThreadUICulture = Application.CurrentUICulture};
 
 					ProgressDialogComponent progressComponent = new ProgressDialogComponent(task, true, ProgressBarStyle.Blocks);
 

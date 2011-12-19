@@ -15,17 +15,15 @@ using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
 {
     public partial class Launch : System.Web.UI.Page
     {
-        //private string _sessionId;
-        
         public string UserID
         {
             get;
@@ -204,11 +202,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
                     {
                         partitionCriteria.AeTitle.EqualTo(initParams.AeTitle);
                         IList<ServerPartition> partitions = partitionAdapter.GetServerPartitions(partitionCriteria);
+
+                        //TODO: What if the AE Title is invalid?
+                        
                         if(partitions.Count == 1)
                         {
                             partition = partitions[0];
                         }
                     }
+
+                    //TODO: The logic below is very weird.
 
                     foreach (string patientId in initParams.PatientIds)
                     {
@@ -224,7 +227,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
                             studyCriteria = new StudySelectCriteria();
                             if (partition != null) studyCriteria.ServerPartitionKey.EqualTo(partition.Key);
                             SetStringCondition(studyCriteria.AccessionNumber, accession);
-                            studyCount += controller.GetStudyCount(studyCriteria);
+
+                            // TODO: studyCount is either 0 or 1  entering this block. If the same study is found, studyCount is incremented to 2, which is wrong
+                            studyCount += controller.GetStudyCount(studyCriteria); 
                         }
 
                     if (studyCount < 2 && initParams.StudyInstanceUids.Count > 0)
@@ -232,6 +237,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
                         studyCriteria = new StudySelectCriteria();
                         if (partition != null) studyCriteria.ServerPartitionKey.EqualTo(partition.Key);
                         studyCriteria.StudyInstanceUid.In(initParams.StudyInstanceUids);
+                        
+                        // TODO: studyCount is either 0 or 1 entering this block. If the same study is found, studyCount is incremented to 2, which is wrong
                         studyCount += controller.GetStudyCount(studyCriteria);
               
                     }

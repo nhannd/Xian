@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web;
 using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
@@ -18,7 +19,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using SR=ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 if (SelectedWorkQueueItemList.WorkQueueItems != null &&
                     SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
                 {
-                    MessageDialog.Message = SR.WorkQueueNoLongerAvailable;
+                    MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR","WorkQueueNoLongerAvailable") as string;
                     MessageDialog.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 if (wq == null)
                 {
                     // the workqueue no longer exist in the db
-                    MessageDialog.Message = SR.WorkQueueRescheduleFailed_ItemNotAvailable;
+                    MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR","WorkQueueRescheduleFailed_ItemNotAvailable") as string;
                     MessageDialog.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
                 if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                 {
-                    MessageDialog.Message = SR.WorkQueueRescheduleConfirm_ItemBeingProcessed;
+                    MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR","WorkQueueRescheduleConfirm_ItemBeingProcessed") as string;
                     MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
                     return; // don't apply the changes
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 
                 if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
                 {
-                    MessageDialog.Message = SR.WorkQueueRescheduleFailed_ItemHasFailed;
+                    MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR","WorkQueueRescheduleFailed_ItemHasFailed") as string;
                     MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
                     return; // don't apply the changes
@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             if (SelectedWorkQueueItemList.WorkQueueItems == null || SelectedWorkQueueItemList.WorkQueueItems.Count == 0)
             {
                 MessageDialog.BackgroundCSS = string.Empty;
-                MessageDialog.Message = SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR", "SelectedWorkQueueNoLongerOnTheList") as string;
                 MessageDialog.MessageStyle = "color: red; font-weight: bold;";
                 MessageDialog.MessageType =
                     MessageBox.MessageTypeEnum.ERROR;
@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     {
                         MessageDialog.MessageType =
                             MessageBox.MessageTypeEnum.ERROR;
-                        MessageDialog.Message = SR.WorkQueueRescheduleFailed_MustBeInFuture;
+                        MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR","WorkQueueRescheduleFailed_MustBeInFuture") as string;
                         MessageDialog.Show();
                         ModalDialog.Show();
                     }
@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                             MessageDialog.MessageType =
                                 MessageBox.MessageTypeEnum.ERROR;
                             MessageDialog.Message =
-                                String.Format(SR.WorkQueueRescheduleFailed_Exception, e.Message);
+                                String.Format(HttpContext.GetGlobalResourceObject("SR", "WorkQueueRescheduleFailed_Exception") as string, e.Message);
                             MessageDialog.Show();
                         }
                     }
@@ -342,7 +342,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             if (SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
             {
-                MessageDialog.Message = SR.WorkQueueNoLongerAvailable;
+                MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR", "WorkQueueNoLongerAvailable") as string;
                 MessageDialog.MessageType =
                     MessageBox.MessageTypeEnum.INFORMATION;
                 MessageDialog.Show();

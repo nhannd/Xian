@@ -11,7 +11,7 @@ namespace <%= namespace %>
     /// </summary>
 	[UniqueKey("Code", new [] { "Code" })]
 	[UniqueKey("Value", new [] { "Value" })]
-    public class <%= className %> : EnumValue
+    public partial class <%= className %> : EnumValue
     {
 		/// <summary>
 		/// Default constructor.

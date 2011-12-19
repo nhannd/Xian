@@ -11,7 +11,9 @@
 
 using System;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -43,19 +45,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 if (_studySummary.IsProcessing)
                 {
-                    ShowAlert(App_GlobalResources.SR.StudyBeingProcessed);
+                    ShowAlert(SR.StudyBeingProcessed);
                 }
                 else if (_studySummary.IsLocked)
                 {
-                    ShowAlert(_studySummary.QueueStudyStateEnum.LongDescription);
+                    ShowAlert(ServerEnumDescription.GetLocalizedLongDescription(_studySummary.QueueStudyStateEnum));
                 }
                 else if (_studySummary.IsNearline)
                 {
-                    ShowAlert(App_GlobalResources.SR.StudyIsNearline);
+                    ShowAlert(SR.StudyIsNearline);
                 }
                 else if (_studySummary.IsReconcileRequired)
                 {
-                    ShowAlert(App_GlobalResources.SR.StudyRequiresReconcilie);
+                    ShowAlert(SR.StudyRequiresReconcilie);
                 }
             }
 

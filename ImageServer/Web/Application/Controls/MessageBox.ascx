@@ -1,6 +1,17 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="MessageBox.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.MessageBox" %>
-
+<%@ Import Namespace="Resources" %>
 <%@ Register Src="ModalDialog.ascx" TagName="ModalDialog" TagPrefix="localAsp" %>
 
 <localAsp:ModalDialog ID="ModalDialog" runat="server" Title="" >
@@ -21,10 +32,10 @@
                         </td>
                         <td align="right">
                             <asp:Panel ID="ButtonPanel" runat="server" DefaultButton="NoButton" CssClass="ConfirmationButtonPanel">
-                                            <ccUI:ToolbarButton ID="YesButton" runat="server" SkinID="YesButton" OnClick="YesButton_Click" />
-                                            <ccUI:ToolbarButton ID="NoButton" runat="server" SkinID="NoButton" OnClick="NoButton_Click"  />
-                                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="OKButton" OnClick="OKButton_Click"  />
-                                            <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
+                                            <ccUI:ToolbarButton ID="YesButton" runat="server" SkinID="<%$Image:YesButton%>" OnClick="YesButton_Click" />
+                                            <ccUI:ToolbarButton ID="NoButton" runat="server" SkinID="<%$Image:NoButton%>" OnClick="NoButton_Click"  />
+                                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="<%$Image:OKButton%>" OnClick="OKButton_Click"  />
+                                            <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="<%$Image:CancelButton%>" OnClick="CancelButton_Click" />
                             </asp:Panel>
                            
                         </td>

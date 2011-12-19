@@ -22,6 +22,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
+using Resources;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -101,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
                           
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             RestoreQueueItemList.Pager = GridPagerTop;
 
             MessageBox.Confirmed += delegate(object data)
@@ -147,9 +148,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
             int prevSelectedIndex = StatusFilter.SelectedIndex;
             StatusFilter.Items.Clear();
-            StatusFilter.Items.Add(new ListItem("All", "All"));
+            StatusFilter.Items.Add(new ListItem(SR.All, "All"));
             foreach (RestoreQueueStatusEnum s in statusItems)
-                StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
+                StatusFilter.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(s), s.Lookup));
             StatusFilter.SelectedIndex = prevSelectedIndex;
 
             DeleteItemButton.Roles = AuthorityTokens.RestoreQueue.Delete;
@@ -188,14 +189,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
             if (items != null && items.Count>0)
             {
-                if (items.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleRestoreQueueDelete);
-                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleRestoreQueueDelete);
+                if (items.Count > 1) MessageBox.Message = string.Format(SR.MultipleRestoreQueueDelete);
+                else MessageBox.Message = string.Format(SR.SingleRestoreQueueDelete);
 
                 MessageBox.Message += "<table>";
                 foreach (Model.RestoreQueue item in items)
                 {
                     String text = "";
-                    String.Format("<tr align='left'><td>Study Instance Uid:{0}&nbsp;</td></tr>", 
+                    String.Format("<tr align='left'><td>{0}:{1}</td></tr>",
+                                    SR.StudyInstanceUID,
                                     StudyStorage.Load(item.StudyStorageKey).StudyInstanceUid);
                     MessageBox.Message += text;
                 }

@@ -98,10 +98,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                 return;
             }
 
-        	Platform.Log(LogLevel.Info,
-        	             "Starting Cleanup of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
-        	             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
-        	             Study.AccessionNumber, ServerPartition.Description);
+            if (Study == null)
+                Platform.Log(LogLevel.Info, "Starting Cleanup of unprocessed study");
+            else
+                Platform.Log(LogLevel.Info,
+                             "Starting Cleanup of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+                             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+                             Study.AccessionNumber, ServerPartition.Description);
 
             string basePath = StorageLocation.GetStudyPath();
 
@@ -137,10 +140,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                 context.Commit();
             }
 
-        	Platform.Log(LogLevel.Info,
-        	             "Completed Cleanup of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
-        	             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
-        	             Study.AccessionNumber, ServerPartition.Description);
+            if (Study == null)
+                Platform.Log(LogLevel.Info, "Completed cleanup of unprocessed study.");
+            else
+                Platform.Log(LogLevel.Info,
+                             "Completed Cleanup of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+                             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+                             Study.AccessionNumber, ServerPartition.Description);
 
 			PostProcessing(item, 
 				WorkQueueProcessorStatus.Pending, 

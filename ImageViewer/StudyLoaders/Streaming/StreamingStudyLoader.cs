@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.ServiceModel;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -49,21 +50,33 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
     [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
     public class StreamingStudyLoader : StudyLoader
     {
+        private const string _loaderName = "CC_STREAMING";
+
         private IEnumerator<InstanceXml> _instances;
         private ApplicationEntity _serverAe;
 
         public StreamingStudyLoader()
-            : base("CC_STREAMING")
+            : this(_loaderName)
         {
-        	PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(new StreamingCorePrefetchingStrategy(), "CC_STREAMING", SR.DescriptionPrefetchingStrategy)
-        	                      	{
-        	                      		Enabled = StreamingSettings.Default.RetrieveConcurrency > 0,
-        	                      		RetrievalThreadConcurrency = Math.Max(StreamingSettings.Default.RetrieveConcurrency, 1),
-        	                      		DecompressionThreadConcurrency = Math.Max(StreamingSettings.Default.DecompressConcurrency, 1),
-        	                      		FrameLookAheadCount = StreamingSettings.Default.ImageWindow >= 0 ? (int?) StreamingSettings.Default.ImageWindow : null,
-        	                      		SelectedImageBoxWeight = Math.Max(StreamingSettings.Default.SelectedWeighting, 1),
-        	                      		UnselectedImageBoxWeight = Math.Max(StreamingSettings.Default.UnselectedWeighting, 0)
-        	                      	};
+        }
+
+        public StreamingStudyLoader(string name):
+            base(name)
+        {
+            InitStrategy();
+        }
+
+        protected virtual void InitStrategy()
+        {
+            PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(new StreamingCorePrefetchingStrategy(), _loaderName, SR.DescriptionPrefetchingStrategy)
+                                      {
+                                          Enabled = StreamingSettings.Default.RetrieveConcurrency > 0,
+                                          RetrievalThreadConcurrency = Math.Max(StreamingSettings.Default.RetrieveConcurrency, 1),
+                                          DecompressionThreadConcurrency = Math.Max(StreamingSettings.Default.DecompressConcurrency, 1),
+                                          FrameLookAheadCount = StreamingSettings.Default.ImageWindow >= 0 ? (int?) StreamingSettings.Default.ImageWindow : null,
+                                          SelectedImageBoxWeight = Math.Max(StreamingSettings.Default.SelectedWeighting, 1),
+                                          UnselectedImageBoxWeight = Math.Max(StreamingSettings.Default.UnselectedWeighting, 0)
+                                      };
         }
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
@@ -146,7 +159,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             }
             catch (FaultException<StudyIsNearlineFault> e)
             {
-                throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
+				throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e)
+					{ IsStudyBeingRestored = e.Detail.IsStudyBeingRestored };
             }
             catch (FaultException<StudyNotFoundFault> e)
             {
@@ -154,10 +168,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             }
             catch (FaultException e)
             {
-                //TODO: remove this hack.  Not sure why the ImageServer throws a generic fault when there's a more specialized one.
+                //TODO: Some versions (pre-Team) of the ImageServer
+				//throw a generic fault when a study is nearline, instead of the more specialized one.
                 string message = e.Message.ToLower();
                 if (message.Contains("nearline"))
-                    throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
+					throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e)
+						{ IsStudyBeingRestored = true }; //assume true in legacy case.
 
                 throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
             }
@@ -165,6 +181,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             {
                 if (client != null)
                     client.Abort();
+
                 throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
             }
         }

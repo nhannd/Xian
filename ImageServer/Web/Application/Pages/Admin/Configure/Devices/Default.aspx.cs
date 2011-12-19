@@ -15,7 +15,7 @@ using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using Resources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -169,14 +169,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         {
             if (controller.GetRelatedWorkQueueCount(dev) > 0)
             {
-                DeleteConfirmation.Message = string.Format("The device {0} has entries in the WorkQueue and cannot be deleted.",
-                                                          dev.AeTitle);
-                DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;             
+                DeleteConfirmation.Message = string.Format(ErrorMessages.AdminDevices_DeleteDevice_PendingWorkQueue,dev.AeTitle);
+                DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.ERROR;             
             }
             else
             {
-                DeleteConfirmation.Message = string.Format("Are you sure you want to remove {0} from partition {1}?",
-                                                           dev.AeTitle, serverPartition.AeTitle);
+                DeleteConfirmation.Message = string.Format(SR.AdminDevices_DeleteDevice_AreYouSure, dev.AeTitle, serverPartition.AeTitle);
                 DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.YESNO;
             }
 

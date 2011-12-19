@@ -14,9 +14,10 @@ using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-	//Similar to the BlockingQueue, except that items can be added and removed.
-	//TODO: the behaviour of this class and it's API should be refactored if it's going to be reused.
-	internal class BlockingCollection<T> : ICollection<T>, IBlockingEnumerator<T>
+	/// <remarks>
+	/// DO NOT USE THIS CLASS, as it will be removed or refactored in the future.
+	/// </remarks>
+	public class BlockingCollection<T> : ICollection<T>, IBlockingEnumerator<T>
 	{
 		private readonly object _syncLock = new object();
 		private readonly List<T> _items = new List<T>();

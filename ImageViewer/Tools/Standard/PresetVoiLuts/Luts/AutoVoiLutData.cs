@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
@@ -19,9 +20,15 @@ using DataLut=ClearCanvas.ImageViewer.Imaging.DataLut;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
-	internal interface IAutoVoiLut : IComposableLut
+    public interface IAutoVoiLut : IVoiLut
 	{
-		bool IsLast { get; }
+        bool IsHeader { get; }
+        bool IsData { get; }
+
+        int Index { get; }
+        string Explanation { get; }
+
+        bool IsLast { get; }
 		void ApplyNext();
 	}
 
@@ -34,37 +41,62 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		{
 		}
 
-		public bool IsLast
-		{
-			get { return ((AutoVoiDataLut) base.DataLut).IsLast; }
-		}
+        public AutoVoiDataLut AutoVoiDataLut { get { return ((AutoVoiDataLut) base.DataLut); } }
 
-		public void ApplyNext()
+	    public bool IsHeader
+	    {
+            get { return AutoVoiDataLut.IsHeader; }
+	    }
+
+        public bool IsData
+        {
+            get { return AutoVoiDataLut.IsData; }
+        }
+
+        public string Explanation
+        {
+            get { return AutoVoiDataLut.Explanation; }
+        }
+
+	    public int Index
+	    {
+            get { return AutoVoiDataLut.Index; }    
+            set
+            {
+                AutoVoiDataLut.Index = value;
+                Reset();
+            }
+	    }
+
+        public bool IsLast
+        {
+            get { return AutoVoiDataLut.IsLast; }
+        }
+        
+        public void ApplyNext()
 		{
-			((AutoVoiDataLut) base.DataLut).ApplyNext();
-			this.Reset();
+			AutoVoiDataLut.ApplyNext();
+			Reset();
 		}
 	}
 
 	[Cloneable(true)]
-	internal abstract class AutoVoiDataLut : DataLut, IAutoVoiLut
+    internal abstract class AutoVoiDataLut : DataVoiLut, IAutoVoiLut
 	{
 		#region Memento
 
 		private class AutoVoiDataLutMemento : IEquatable<AutoVoiDataLutMemento>
 		{
 			public readonly int Index;
-			public readonly string Name;
 
-			public AutoVoiDataLutMemento(string name, int index)
+			public AutoVoiDataLutMemento(int index)
 			{
-				this.Name = name;
 				this.Index = index;
 			}
 
 			public override int GetHashCode()
 			{
-				return this.Index.GetHashCode() ^ this.Name.GetHashCode() ^ 0x589bf89d;
+				return this.Index.GetHashCode() ^ 0x589bf89d;
 			}
 
 			public override bool Equals(object obj)
@@ -76,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 			public bool Equals(AutoVoiDataLutMemento other)
 			{
-				return other != null && this.Name == other.Name && this.Index == other.Index;
+				return other != null && this.Index == other.Index;
 			}
 		}
 
@@ -101,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			Platform.CheckForEmptyString(keyPrefix, "keyPrefix");
 
 			_keyPrefix = keyPrefix;
-			_dataLuts = dataLuts;
+			_dataLuts = new ReadOnlyCollection<VoiDataLut>(dataLuts);
 			_index = -1;
 
 			ApplyNext();
@@ -114,40 +146,35 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		#endregion
 
-		#region Protected Properties
-
-		protected int Index
-		{
-			get { return _index; }
-			set
-			{
-				int lastIndex = _index;
-				_index = value;
-				if (_index >= _dataLuts.Count)
-					_index = 0;
-
-				if (lastIndex != _index)
-				{
-					VoiDataLut lut = _dataLuts[_index];
-					base.MinInputValue = lut.FirstMappedPixelValue;
-					base.MaxInputValue = lut.LastMappedPixelValue;
-					base.MinOutputValue = lut.MinOutputValue;
-					base.MaxOutputValue = lut.MaxOutputValue;
-
-					base.OnLutChanged();
-				}
-			}
-		}
-
-		#endregion
-
 		#region Public Properties/Methods
 
-		public abstract string Name { get; }
+        public abstract bool IsHeader { get; }
 
-		public bool IsLast
+        public bool IsData { get { return true; } }
+
+        public int Index
+        {
+            get { return _index; }
+            set
+            {
+                Platform.CheckArgumentRange(value, 0, _dataLuts.Count-1, "index");
+                if (Equals(value, _index))
+                    return;
+
+                _index = value;
+                VoiDataLut lut = _dataLuts[_index];
+                base.MinInputValue = lut.FirstMappedPixelValue;
+                base.MaxInputValue = lut.LastMappedPixelValue;
+                base.MinOutputValue = lut.MinOutputValue;
+                base.MaxOutputValue = lut.MaxOutputValue;
+
+                base.OnLutChanged();
+            }
+        }
+        
+        public bool IsLast
 		{
-			get { return _index >= _dataLuts.Count - 1; }
+			get { return _index == _dataLuts.Count - 1; }
 		}
 
 		public override int FirstMappedPixelValue
@@ -172,7 +199,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		public void ApplyNext()
 		{
-			this.Index = _index + 1;
+            if (IsLast)
+                Index = 0;
+		    else
+                Index++;
 		}
 
 		public override string GetKey()
@@ -191,13 +221,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		public override sealed object CreateMemento()
 		{
-			return new AutoVoiDataLutMemento(this.Name, this.Index);
+			return new AutoVoiDataLutMemento(this.Index);
 		}
 
 		public override sealed void SetMemento(object memento)
 		{
-			AutoVoiDataLutMemento lutMemento = (AutoVoiDataLutMemento) memento;
-			Platform.CheckTrue(this.Name == lutMemento.Name, "Memento has a different creator.");
+			var lutMemento = (AutoVoiDataLutMemento) memento;
 			this.Index = lutMemento.Index;
 		}
 
@@ -207,7 +236,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 	[Cloneable(true)]
 	internal sealed class AutoImageVoiDataLut : AutoVoiDataLut
 	{
-		private readonly string _name = "AutoImageVoiDataLut";
 		private AutoImageVoiDataLut(IList<VoiDataLut> dataLuts, string keyPrefix) : base(dataLuts, keyPrefix) {}
 
 		/// <summary>
@@ -215,21 +243,46 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		/// </summary>
 		private AutoImageVoiDataLut() : base() {}
 
-		public override string Name
-		{
-			get { return _name; }
-		}
+        public override bool IsHeader
+        {
+            get { return true; }
+        }
 
-		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
-		{
-			return provider != null && provider.DicomVoiLuts.ImageVoiDataLuts.Count > 0;
-		}
+        public static bool CanCreateFrom(IDicomVoiLutsProvider provider, string lutExplanation)
+        {
+            return provider != null && null != CollectionUtils.SelectFirst(provider.DicomVoiLuts.ImageVoiDataLuts, lut => lut.Explanation == lutExplanation);
+        }
+
+        public static bool CanCreateFrom(IDicomVoiLutsProvider provider, int lutIndex)
+        {
+            return provider != null && provider.DicomVoiLuts.ImageVoiDataLuts.Count > lutIndex;
+        }
+
+        public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
+        {
+            return CanCreateFrom(provider, 0);
+        }
 
 		public static AutoImageVoiDataLut CreateFrom(IDicomVoiLutsProvider provider)
 		{
+		    return CreateFrom(provider, 0);
+		}
+
+		public static AutoImageVoiDataLut CreateFrom(IDicomVoiLutsProvider provider, string lutExplanation)
+		{
+            var luts = provider.DicomVoiLuts.ImageVoiDataLuts;
+            int index;
+            for (index = 0; index < luts.Count; ++index)
+                if (luts[index].Explanation == lutExplanation) break;
+
+		    return CreateFrom(provider, index);
+		}
+
+	    public static AutoImageVoiDataLut CreateFrom(IDicomVoiLutsProvider provider, int lutIndex)
+		{
 			IDicomVoiLuts luts = provider.DicomVoiLuts;
 			IList<VoiDataLut> dataLuts;
-			if (luts.ImageVoiDataLuts.Count > 0)
+			if (luts.ImageVoiDataLuts.Count > lutIndex)
 				dataLuts = luts.ImageVoiDataLuts;
 			else
 				return null;
@@ -237,14 +290,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			foreach (VoiDataLut lut in dataLuts)
 				lut.CorrectMinMaxOutput(); //see the comment for this method.
 
-			return new AutoImageVoiDataLut(dataLuts, string.Format("{0}:{1}", provider.DicomVoiLuts.ImageSopInstanceUid, provider.DicomVoiLuts.ImageSopFrameNumber));
+            string keyPrefix = string.Format("{0}:{1}", luts.ImageSopInstanceUid, luts.ImageSopFrameNumber);
+	        return new AutoImageVoiDataLut(dataLuts, keyPrefix) {Index = lutIndex};
 		}
 	}
 
 	[Cloneable(true)]
 	internal sealed class AutoPresentationVoiDataLut : AutoVoiDataLut
 	{
-		private readonly string _name = "AutoPresentationVoiDataLut";
 		private AutoPresentationVoiDataLut(IList<VoiDataLut> dataLuts, string keyPrefix) : base(dataLuts, keyPrefix) {}
 
 		/// <summary>
@@ -252,15 +305,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		/// </summary>
 		private AutoPresentationVoiDataLut() : base() {}
 
-		public override string Name
-		{
-			get { return _name; }
-		}
-
-		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
-		{
-			return provider != null && provider.DicomVoiLuts.PresentationVoiDataLuts.Count > 0;
-		}
+        public override bool IsHeader
+        {
+            get { return false; }
+        }
 
 		public override string GetDescription()
 		{
@@ -271,7 +319,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			return String.Format(SR.FormatAutoVoiDataLutDescription, name);
 		}
 
-		public static AutoPresentationVoiDataLut CreateFrom(IDicomVoiLutsProvider provider)
+        public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
+        {
+            return provider != null && provider.DicomVoiLuts.PresentationVoiDataLuts.Count > 0;
+        }
+        
+        public static AutoPresentationVoiDataLut CreateFrom(IDicomVoiLutsProvider provider)
 		{
 			IDicomVoiLuts luts = provider.DicomVoiLuts;
 			IList<VoiDataLut> dataLuts;

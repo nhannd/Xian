@@ -29,6 +29,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,19 +50,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KeyImageConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="KeyImageConfigurationComponentControl.Designer.cs">
-      <DependentUpon>KeyImageConfigurationComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="KeyImageConfigurationComponentView.cs" />
     <Compile Include="KeyImageInformationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -73,9 +70,6 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="KeyImageConfigurationComponentControl.resx">
-      <DependentUpon>KeyImageConfigurationComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="KeyImageInformationEditorComponentControl.resx">
       <DependentUpon>KeyImageInformationEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>

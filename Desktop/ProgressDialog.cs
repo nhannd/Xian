@@ -69,6 +69,9 @@ namespace ClearCanvas.Desktop
         /// <param name="progressBarStyle">The style of the progress bar.</param>
         public static void Show(BackgroundTask task, IDesktopWindow desktopWindow, bool autoClose, ProgressBarStyle progressBarStyle)
         {
+        	// as the progress dialog involves UI, the task should *always* be run under the application UI culture
+        	task.ThreadUICulture = Application.CurrentUICulture;
+
             ProgressDialogComponent progressComponent = new ProgressDialogComponent(task, autoClose, progressBarStyle);
             ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
                 desktopWindow,

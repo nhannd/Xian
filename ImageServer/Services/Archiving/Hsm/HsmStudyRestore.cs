@@ -140,11 +140,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                     // fails, we just set back to pending and recheck.
                     try
                     {
-                        FileStream stream = File.OpenRead(zipFile);
-                        // Read a byte, just in case that makes a difference.
-                        stream.ReadByte();
-                        stream.Close();
-                        stream.Dispose();
+                        using (FileStream stream = File.OpenRead(zipFile))
+                        {
+                            // Read a byte, just in case that makes a difference.
+                            stream.ReadByte();
+                            stream.Close();                         
+                        }
                     }
                     catch (DirectoryNotFoundException ex)
                     {
@@ -154,6 +155,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                                         ? string.Empty : _location.StudyInstanceUid) 
                                         : _studyStorage.StudyInstanceUid);
                         // Just "Fail", the directory is not found.
+                        queueItem.FailureDescription = string.Format("Directory not found for file, cannot restore: {0}", zipFile);
                         _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed,
                                                        Platform.Time);
                         return;
@@ -384,12 +386,18 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _location.StudyInstanceUid,
 										 _hsmArchive.PartitionArchive.Description);
 
+						    _location = ReloadStorageLocation();
                             OnStudyRestored(_location);
 						}
 					}
 				}
 			}
-			catch (Exception e)
+            catch (StudyIntegrityValidationFailure ex)
+            {
+                // study has been restored but it seems corrupted. Need to reprocess it.
+                ReprocessStudy(_location, ex.Message);
+            }
+            catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
 							 _location.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
@@ -397,5 +405,18 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 			}
 		}
+
+        private StudyStorageLocation ReloadStorageLocation()
+        {
+            using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+                                                                {StudyStorageKey = _location.Key};
+                IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
+                _location = broker.FindOne(parms);
+            }
+
+            return _location;
+        }
 	}
 }

@@ -10,26 +10,31 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class VisitLocationDetail : DataContractBase
-    {
-        [DataMember]
-        public LocationSummary Location;
+	[DataContract]
+	public class VisitLocationDetail : DataContractBase
+	{
+		[DataMember]
+		public LocationSummary Location;
 
-        [DataMember]
-        public EnumValueInfo Role;
+		[DataMember]
+		public string Room;
 
-        [DataMember]
-        public DateTime? StartTime;
+		[DataMember]
+		public string Bed;
 
-        [DataMember]
-        public DateTime? EndTime;
-    }
+		[DataMember]
+		public EnumValueInfo Role;
+
+		[DataMember]
+		public DateTime? StartTime;
+
+		[DataMember]
+		public DateTime? EndTime;
+	}
 }

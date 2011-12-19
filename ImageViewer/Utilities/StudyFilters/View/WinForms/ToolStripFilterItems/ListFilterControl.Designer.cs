@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListFilterControl));
 			this._listBox = new System.Windows.Forms.CheckedListBox();
 			this._buttonPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._btnCancel = new System.Windows.Forms.Button();
@@ -33,13 +34,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			// _listBox
 			// 
 			this._listBox.CheckOnClick = true;
-			this._listBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			resources.ApplyResources(this._listBox, "_listBox");
 			this._listBox.FormattingEnabled = true;
-			this._listBox.IntegralHeight = false;
-			this._listBox.Location = new System.Drawing.Point(0, 0);
 			this._listBox.Name = "_listBox";
-			this._listBox.Size = new System.Drawing.Size(174, 221);
-			this._listBox.TabIndex = 0;
 			this._listBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this._listBox_ItemCheck);
 			this._listBox.MouseLeave += new System.EventHandler(this._listBox_MouseLeave);
 			// 
@@ -47,30 +44,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			// 
 			this._buttonPanel.Controls.Add(this._btnCancel);
 			this._buttonPanel.Controls.Add(this._btnOk);
-			this._buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this._buttonPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this._buttonPanel.Location = new System.Drawing.Point(0, 221);
+			resources.ApplyResources(this._buttonPanel, "_buttonPanel");
 			this._buttonPanel.Name = "_buttonPanel";
-			this._buttonPanel.Size = new System.Drawing.Size(174, 28);
-			this._buttonPanel.TabIndex = 1;
 			// 
 			// _btnCancel
 			// 
-			this._btnCancel.Location = new System.Drawing.Point(96, 3);
+			resources.ApplyResources(this._btnCancel, "_btnCancel");
 			this._btnCancel.Name = "_btnCancel";
-			this._btnCancel.Size = new System.Drawing.Size(75, 23);
-			this._btnCancel.TabIndex = 0;
-			this._btnCancel.Text = "Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
 			this._btnCancel.Click += new System.EventHandler(this._btnCancel_Click);
 			// 
 			// _btnOk
 			// 
-			this._btnOk.Location = new System.Drawing.Point(15, 3);
+			resources.ApplyResources(this._btnOk, "_btnOk");
 			this._btnOk.Name = "_btnOk";
-			this._btnOk.Size = new System.Drawing.Size(75, 23);
-			this._btnOk.TabIndex = 1;
-			this._btnOk.Text = "OK";
 			this._btnOk.UseVisualStyleBackColor = true;
 			this._btnOk.Click += new System.EventHandler(this._btnOk_Click);
 			// 
@@ -80,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			this.Controls.Add(this._listBox);
 			this.Controls.Add(this._buttonPanel);
 			this.Name = "ListFilterControl";
-			this.Size = new System.Drawing.Size(174, 249);
+			resources.ApplyResources(this, "$this");
 			this._buttonPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 

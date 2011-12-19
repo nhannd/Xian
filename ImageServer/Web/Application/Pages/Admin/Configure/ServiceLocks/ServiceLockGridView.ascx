@@ -1,3 +1,14 @@
+<%--  License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+--%>
+
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks.ServiceLockGridView"
     Codebehind="ServiceLockGridView.ascx.cs" %>
@@ -14,45 +25,45 @@
                 OnPageIndexChanging="GridView_PageIndexChanging"
                 PageSize="20">
                 <Columns>
-                    <asp:TemplateField HeaderText="Type">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, ServiceType %>">
                         <ItemTemplate>
                            <asp:Label ID="Type" runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Description">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, ServiceDescription %>">
                         <ItemTemplate>
                            <asp:Label ID="Description" runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Enabled">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, Enabled %>">
                         <ItemTemplate>
                             <asp:Image ID="EnabledImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Locked">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, ServiceLocked %>">
                         <ItemTemplate>
                             <asp:Image ID="LockedImage" runat="server" SkinId="Unchecked" />
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
-                     <asp:TemplateField HeaderText="Schedule">
+                     <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, ServiceSchedule %>">
                         <ItemTemplate>
                             <ccUI:DateTimeLabel ID="Schedule" runat="server" Value='<%# Eval("ScheduledTime") %>' ></ccUI:DateTimeLabel>
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" Wrap="true" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Filesystem">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, ServiceFilesystem %>">
                         <ItemTemplate>
                             <asp:Label ID="Filesystem" runat="server" Text=""/>
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center"/>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Processor ID&nbsp;">
+                    <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, ServiceProcessorID %>">
                         <ItemTemplate>
                             <asp:Label ID="ProcessorID" runat="server" Text='<%# Eval("ProcessorID") %>' style="padding-right: 5px;"></asp:Label>
                         </ItemTemplate>
@@ -61,7 +72,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No services were found using the provided criteria." />
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR, NoServicesFound %>" />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <AlternatingRowStyle CssClass="GlobalGridViewRow" />                

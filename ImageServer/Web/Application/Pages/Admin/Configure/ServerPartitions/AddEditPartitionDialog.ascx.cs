@@ -13,6 +13,7 @@ using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions
 {
@@ -101,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                     }
                 </script>");
 
-            EditPartitionValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditPartitionValidationError;
+            EditPartitionValidationSummary.HeaderText = ErrorMessages.EditPartitionValidationError;
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -164,7 +165,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             DuplicateSopDropDownList.Items.Clear();
             foreach (DuplicateSopPolicyEnum policyEnum in DuplicateSopPolicyEnum.GetAll())
             {
-            	ListItem item = new ListItem(policyEnum.Description, policyEnum.Lookup);
+            	ListItem item = new ListItem(ServerEnumDescription.GetLocalizedDescription(policyEnum), policyEnum.Lookup);
                 DuplicateSopDropDownList.Items.Add(item);
             }
 
@@ -268,15 +269,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
 			if (EditMode)
 			{
-				ModalDialog.Title = App_GlobalResources.SR.DialogEditPartitionTitle;
-				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
-			}
+				ModalDialog.Title = SR.DialogEditPartitionTitle;
+				OKButton.Visible = false;
+                UpdateButton.Visible = true;
+            }
 			else
 			{
-				ModalDialog.Title = App_GlobalResources.SR.DialogAddPartitionTitle;
-				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+				ModalDialog.Title = SR.DialogAddPartitionTitle;
+				OKButton.Visible = true;
+                UpdateButton.Visible = false;
 			}
 
             if (updateUI)

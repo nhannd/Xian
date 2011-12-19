@@ -15,6 +15,7 @@ using System.Web.UI;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using System.Threading;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {

@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchPanelComponentControl));
 			this._patientID = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._accessionNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._patientsName = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -72,175 +73,125 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._referringPhysiciansName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._modalityPicker = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker();
+			this._progressBar = new System.Windows.Forms.ProgressBar();
+			this._searchingLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _patientID
 			// 
-			this._patientID.LabelText = "Patient ID";
-			this._patientID.Location = new System.Drawing.Point(17, 46);
-			this._patientID.Margin = new System.Windows.Forms.Padding(2);
-			this._patientID.Mask = "";
+			resources.ApplyResources(this._patientID, "_patientID");
 			this._patientID.Name = "_patientID";
-			this._patientID.PasswordChar = '\0';
-			this._patientID.Size = new System.Drawing.Size(156, 41);
-			this._patientID.TabIndex = 0;
 			this._patientID.ToolTip = null;
 			this._patientID.Value = null;
 			// 
 			// _accessionNumber
 			// 
-			this._accessionNumber.LabelText = "Accession#";
-			this._accessionNumber.Location = new System.Drawing.Point(359, 46);
-			this._accessionNumber.Margin = new System.Windows.Forms.Padding(2);
-			this._accessionNumber.Mask = "";
+			resources.ApplyResources(this._accessionNumber, "_accessionNumber");
 			this._accessionNumber.Name = "_accessionNumber";
-			this._accessionNumber.PasswordChar = '\0';
-			this._accessionNumber.Size = new System.Drawing.Size(156, 41);
-			this._accessionNumber.TabIndex = 2;
 			this._accessionNumber.ToolTip = null;
 			this._accessionNumber.Value = null;
 			// 
 			// _patientsName
 			// 
-			this._patientsName.LabelText = "Name";
-			this._patientsName.Location = new System.Drawing.Point(188, 46);
-			this._patientsName.Margin = new System.Windows.Forms.Padding(2);
-			this._patientsName.Mask = "";
+			resources.ApplyResources(this._patientsName, "_patientsName");
 			this._patientsName.Name = "_patientsName";
-			this._patientsName.PasswordChar = '\0';
-			this._patientsName.Size = new System.Drawing.Size(156, 41);
-			this._patientsName.TabIndex = 1;
 			this._patientsName.ToolTip = null;
 			this._patientsName.Value = null;
 			// 
 			// _studyDateFrom
 			// 
-			this._studyDateFrom.LabelText = "Study Date (From)";
-			this._studyDateFrom.Location = new System.Drawing.Point(17, 95);
-			this._studyDateFrom.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._studyDateFrom, "_studyDateFrom");
 			this._studyDateFrom.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._studyDateFrom.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._studyDateFrom.Name = "_studyDateFrom";
 			this._studyDateFrom.Nullable = true;
-			this._studyDateFrom.Size = new System.Drawing.Size(154, 41);
-			this._studyDateFrom.TabIndex = 4;
 			this._studyDateFrom.Value = null;
 			// 
 			// _studyDateTo
 			// 
-			this._studyDateTo.LabelText = "Study Date (To)";
-			this._studyDateTo.Location = new System.Drawing.Point(188, 95);
-			this._studyDateTo.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._studyDateTo, "_studyDateTo");
 			this._studyDateTo.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._studyDateTo.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._studyDateTo.Name = "_studyDateTo";
 			this._studyDateTo.Nullable = true;
-			this._studyDateTo.Size = new System.Drawing.Size(155, 41);
-			this._studyDateTo.TabIndex = 5;
 			this._studyDateTo.Value = null;
 			// 
 			// _studyDescription
 			// 
-			this._studyDescription.LabelText = "Study Description";
-			this._studyDescription.Location = new System.Drawing.Point(530, 46);
-			this._studyDescription.Margin = new System.Windows.Forms.Padding(2);
-			this._studyDescription.Mask = "";
+			resources.ApplyResources(this._studyDescription, "_studyDescription");
 			this._studyDescription.Name = "_studyDescription";
-			this._studyDescription.PasswordChar = '\0';
-			this._studyDescription.Size = new System.Drawing.Size(156, 41);
-			this._studyDescription.TabIndex = 3;
 			this._studyDescription.ToolTip = null;
 			this._studyDescription.Value = null;
 			// 
 			// _searchButton
 			// 
 			this._searchButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Search;
-			this._searchButton.Location = new System.Drawing.Point(710, 62);
+			resources.ApplyResources(this._searchButton, "_searchButton");
 			this._searchButton.Name = "_searchButton";
-			this._searchButton.Size = new System.Drawing.Size(90, 25);
-			this._searchButton.TabIndex = 8;
-			this._searchButton.Text = "Search";
-			this._searchButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchButton.UseVisualStyleBackColor = true;
 			this._searchButton.Click += new System.EventHandler(this.OnSearchButtonClicked);
 			// 
 			// _searchLastWeekButton
 			// 
 			this._searchLastWeekButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Last7Days;
-			this._searchLastWeekButton.Location = new System.Drawing.Point(806, 95);
+			resources.ApplyResources(this._searchLastWeekButton, "_searchLastWeekButton");
 			this._searchLastWeekButton.Name = "_searchLastWeekButton";
-			this._searchLastWeekButton.Size = new System.Drawing.Size(90, 25);
-			this._searchLastWeekButton.TabIndex = 11;
-			this._searchLastWeekButton.Text = "Last 7 days";
-			this._searchLastWeekButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchLastWeekButton.UseVisualStyleBackColor = true;
 			this._searchLastWeekButton.Click += new System.EventHandler(this.OnSearchLastWeekButtonClick);
 			// 
 			// _clearButton
 			// 
 			this._clearButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Clear;
-			this._clearButton.Location = new System.Drawing.Point(710, 95);
+			resources.ApplyResources(this._clearButton, "_clearButton");
 			this._clearButton.Name = "_clearButton";
-			this._clearButton.Size = new System.Drawing.Size(90, 25);
-			this._clearButton.TabIndex = 10;
-			this._clearButton.Text = "Clear";
-			this._clearButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._clearButton.UseVisualStyleBackColor = true;
 			this._clearButton.Click += new System.EventHandler(this.OnClearButonClicked);
 			// 
 			// _searchTodayButton
 			// 
 			this._searchTodayButton.Image = global::ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.Properties.Resources.Today;
-			this._searchTodayButton.Location = new System.Drawing.Point(806, 62);
+			resources.ApplyResources(this._searchTodayButton, "_searchTodayButton");
 			this._searchTodayButton.Name = "_searchTodayButton";
-			this._searchTodayButton.Size = new System.Drawing.Size(90, 25);
-			this._searchTodayButton.TabIndex = 9;
-			this._searchTodayButton.Text = "Today";
-			this._searchTodayButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchTodayButton.UseVisualStyleBackColor = true;
 			this._searchTodayButton.Click += new System.EventHandler(this.OnSearchTodayButtonClicked);
 			// 
 			// _titleBar
 			// 
-			this._titleBar.Dock = System.Windows.Forms.DockStyle.Top;
-			this._titleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			resources.ApplyResources(this._titleBar, "_titleBar");
 			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._titleBar.Location = new System.Drawing.Point(0, 0);
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Size = new System.Drawing.Size(925, 30);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
-			this._titleBar.TabIndex = 20;
-			this._titleBar.Text = "Search";
 			// 
 			// _referringPhysiciansName
 			// 
-			this._referringPhysiciansName.LabelText = "Referring Physician";
-			this._referringPhysiciansName.Location = new System.Drawing.Point(359, 95);
-			this._referringPhysiciansName.Margin = new System.Windows.Forms.Padding(2);
-			this._referringPhysiciansName.Mask = "";
+			resources.ApplyResources(this._referringPhysiciansName, "_referringPhysiciansName");
 			this._referringPhysiciansName.Name = "_referringPhysiciansName";
-			this._referringPhysiciansName.PasswordChar = '\0';
-			this._referringPhysiciansName.Size = new System.Drawing.Size(156, 41);
-			this._referringPhysiciansName.TabIndex = 6;
 			this._referringPhysiciansName.ToolTip = null;
 			this._referringPhysiciansName.Value = null;
 			// 
 			// _modalityPicker
 			// 
-			this._modalityPicker.AutoSize = true;
-			this._modalityPicker.LabelText = "Modality";
-			this._modalityPicker.Location = new System.Drawing.Point(530, 95);
-			this._modalityPicker.Margin = new System.Windows.Forms.Padding(2);
+			resources.ApplyResources(this._modalityPicker, "_modalityPicker");
 			this._modalityPicker.Name = "_modalityPicker";
-			this._modalityPicker.Size = new System.Drawing.Size(156, 41);
-			this._modalityPicker.TabIndex = 7;
+			// 
+			// _progressBar
+			// 
+			resources.ApplyResources(this._progressBar, "_progressBar");
+			this._progressBar.Name = "_progressBar";
+			// 
+			// _searchingLabel
+			// 
+			resources.ApplyResources(this._searchingLabel, "_searchingLabel");
+			this._searchingLabel.Name = "_searchingLabel";
 			// 
 			// SearchPanelComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Controls.Add(this._searchingLabel);
+			this.Controls.Add(this._progressBar);
 			this.Controls.Add(this._referringPhysiciansName);
 			this.Controls.Add(this._titleBar);
 			this.Controls.Add(this._patientID);
@@ -255,7 +206,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.Controls.Add(this._searchLastWeekButton);
 			this.Controls.Add(this._clearButton);
 			this.Name = "SearchPanelComponentControl";
-			this.Size = new System.Drawing.Size(925, 151);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -276,5 +226,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
 		private ModalityPicker _modalityPicker;
 		private ClearCanvas.Desktop.View.WinForms.TextField _referringPhysiciansName;
+		private System.Windows.Forms.ProgressBar _progressBar;
+		private System.Windows.Forms.Label _searchingLabel;
     }
 }

@@ -29,16 +29,139 @@
 
 #endregion
 
+using System;
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common
 {
+    /// <summary>
+    /// An interface for a license provider.
+    /// </summary>
+    /// <remarks>
+    /// The framework provides an <see cref="ILicenseProvider"/>,
+    /// which uses the <see cref="LicenseProviderExtensionPoint"/> internally.
+    /// </remarks>
+    public interface ILicenseProvider
+    {
+        /// <summary>
+        /// Gets the current license and machine Id.
+        /// </summary>
+        void GetLicenseInfo(out string licenseKey, out string machineID, out int sessionCount);
+
+        /// <summary>
+        /// Sets the current license
+        /// </summary>
+        /// <param name="licenseKey"></param>
+        void SetLicenseInfo(string licenseKey);
+    }
+
+    /// <summary>
+    /// An extension point for <see cref="ILicenseProvider"/>s.
+    /// </summary>
+    /// <remarks>
+    /// Used internally by the framework to create a <see cref="ILicenseProvider"/> for
+    /// use by the application.
+    /// </remarks>
+    [ExtensionPoint]
+    public sealed class LicenseProviderExtensionPoint : ExtensionPoint<ILicenseProvider>
+    {
+    }
+
+    /// <summary>
+    /// Internal class that uses the local settings as the license provider.
+    /// </summary>
+    internal class LocalLicenseProvider: ILicenseProvider
+    {
+        public void GetLicenseInfo(out string licenseKey, out string machineID, out int sessionCount)
+        {
+            licenseKey = ApplicationSettingsExtensions.GetSharedPropertyValue(new LicenseSettings(), "LicenseKey").ToString();
+            machineID = EnvironmentUtilities.MachineIdentifier;
+            sessionCount = 1;
+        }
+
+        public void SetLicenseInfo(string licenseKey)
+        {
+            ApplicationSettingsExtensions.SetSharedPropertyValue(new LicenseSettings(), "LicenseKey", licenseKey);
+        }
+    }
+
 	/// <summary>
 	/// Provides access to the current license key.
 	/// </summary>
 	public static class LicenseInformation
 	{
+	    private static readonly object SyncRoot = new object();
+	    private static ILicenseProvider _licenseProvider;
+        private static string _licenseKey;
+	    private static string _machineIdentifier;
+	    private static int _sessionCount;
+
+        private static void CheckProvider()
+        {
+            if (_licenseProvider != null) return;
+
+            lock (SyncRoot)
+            {
+                if (_licenseProvider != null) return;
+
+                try
+                {
+                    // check for a license provider extension
+                    LicenseProviderExtensionPoint xp = new LicenseProviderExtensionPoint();
+                    _licenseProvider = (ILicenseProvider) xp.CreateExtension();
+                }
+                catch (NotSupportedException)
+                {
+                    // can't find time provider, default to local time
+                    Platform.Log(LogLevel.Debug, SR.LogLicenseProviderNotFound);
+
+                    _licenseProvider = new LocalLicenseProvider();
+                }
+            }
+        }
+
+        /// <summary>
+        /// A count of the current active sessions
+        /// </summary>
+        public static int SessionCount
+        {
+            get
+            {
+                CheckProvider();
+
+                lock (SyncRoot)
+                {
+                    if (_machineIdentifier == null)
+                    {
+                        _licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
+                    }
+                    return _sessionCount;
+                }
+            }
+        }
+
+	    /// <summary>
+        /// A unique identifier for the machine based on the processor ID and drive ID
+        /// </summary>
+	    public static string MachineIdentifier
+	    {
+	        get
+	        {               
+                CheckProvider();
+
+                lock (SyncRoot)
+                {
+                    if (_machineIdentifier == null)
+                    {
+                        _licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
+                    }
+                    return _machineIdentifier;
+                }
+	        }
+	    }
+
 		/// <summary>
 		/// Gets and sets the license key string from the local app.config file.
 		/// </summary>
@@ -48,10 +171,39 @@ namespace ClearCanvas.Common
 		/// <returns></returns>
 		public static string LicenseKey
 		{
-			get { return ApplicationSettingsExtensions.GetSharedPropertyValue(new LicenseSettings(), "LicenseKey").ToString(); }
-			set { ApplicationSettingsExtensions.SetSharedPropertyValue(new LicenseSettings(), "LicenseKey", value); }
+			get
+			{
+                CheckProvider();
+
+                lock (SyncRoot)
+                {
+                    if (_machineIdentifier == null)
+                    {
+                        _licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
+                    }
+                    return _licenseKey;
+                }
+			}
+			set
+			{
+                CheckProvider();
+                                
+                lock (SyncRoot)
+                {
+                    _licenseKey = value;
+                    _licenseProvider.SetLicenseInfo(_licenseKey);
+                }
+			}
 		}
-	}
+
+        /// <summary>
+        /// Forces license information to be reloaded when it is requested next time
+        /// </summary>
+        public static void Reset()
+        {
+            _machineIdentifier = null; // will force reload when requested
+        }
+    }
 
 	[SettingsGroupDescription("Settings that store the license information.")]
 	[SettingsProvider(typeof(LocalFileSettingsProvider))]

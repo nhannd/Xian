@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,17 +21,17 @@ using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
-	public partial class StandardButton : UserControl, IActionUpdate, IToolstripButton
+	public partial class StandardButton : IActionUpdate, IToolstripButton, IDisposable
 	{
 	    private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
         private readonly WebClickAction _actionItem;
-        private readonly ActionDispatcher _actionDispatcher;
+        private ActionDispatcher _actionDispatcher;
         private WebIconSize _iconSize;
+	    private bool _disposed = false;
 
         private WebIconSize IconSize
         {
-            get { return _iconSize; }
             set
             {
                 if (_iconSize != value)
@@ -50,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 			_actionItem = icon;
             _actionDispatcher = dispatcher;
 
-			dispatcher.Register(_actionItem.Identifier, this);
+            _actionDispatcher.Register(_actionItem.Identifier, this);
 
             SetIconSize(iconSize); 
             SetIcon();
@@ -59,28 +58,41 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
 			ButtonComponent.Click += OnClick;
 
-			if (_actionItem.Visible)
-				Visibility = Visibility.Visible;
-			else
-				Visibility = Visibility.Collapsed;
+            Visibility = _actionItem.DesiredVisiblility;
 
 			ButtonComponent.IsEnabled = _actionItem.Enabled;
-            ButtonComponent.MouseEnter += ButtonComponent_MouseEnter;
-            ButtonComponent.MouseLeave += ButtonComponent_MouseLeave;
+            ButtonComponent.MouseEnter += ButtonComponentMouseEnter;
+            ButtonComponent.MouseLeave += ButtonComponentMouseLeave;
 
 			IndicateChecked(_actionItem.IsCheckAction && _actionItem.Checked);
 
-            if (_actionItem.IconSet.HasOverlay) OverlayCheckedIndicator.Opacity = 1;
-            else OverlayCheckedIndicator.Opacity = 0;
+            OverlayCheckedIndicator.Opacity = _actionItem.IconSet.HasOverlay ? 1 : 0;
 		}
 
-        void ButtonComponent_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                if (_actionDispatcher != null)
+                {
+                    _actionDispatcher.Remove(_actionItem.Identifier);
+                    _actionDispatcher = null;
+                }
+
+                ButtonComponent.MouseEnter -= ButtonComponentMouseEnter;
+                ButtonComponent.MouseLeave -= ButtonComponentMouseLeave;
+                ButtonComponent.Click -= OnClick;
+                _disposed = true;
+            }
+        }
+
+        void ButtonComponentMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (_mouseLeaveEvent != null)
                 _mouseLeaveEvent(this);
         }
 
-        void ButtonComponent_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        void ButtonComponentMouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (_mouseEnterEvent != null)
                 _mouseEnterEvent(this);
@@ -100,11 +112,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
 		public void Update(PropertyChangedEvent e)
 		{
-			if (e.PropertyName.Equals("Visible"))
+            if (e.PropertyName.Equals("Available"))
+            {
+                _actionItem.Available = (bool)e.Value;
+                Visibility = _actionItem.DesiredVisiblility;
+            }
+            else if (e.PropertyName.Equals("Visible"))
 			{
 				_actionItem.Visible = (bool)e.Value;
 
-				Visibility = _actionItem.Visible ? Visibility.Visible : Visibility.Collapsed;
+                Visibility = _actionItem.DesiredVisiblility;
 			}
 			else if (e.PropertyName.Equals("Enabled"))
 			{
@@ -152,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             if (_actionItem == null)
                 return;
 
-            BitmapImage bi = new BitmapImage();
+            var bi = new BitmapImage();
 
             if (_actionItem.IconSet != null)
             {
@@ -176,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
                 }
             }
 
-            Image theImage = new Image
+            var theImage = new Image
             {
                 Source = bi
             };
@@ -204,11 +221,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         private void IndicateChecked(bool isChecked) {
             if (isChecked)
             {
-                var outerGlow = new DropShadowEffect();
-                outerGlow.ShadowDepth = 0;
-                outerGlow.BlurRadius = 20;
-                outerGlow.Opacity = 1;
-                outerGlow.Color = ClearCanvasStyle.ClearCanvasCheckedButtonGlow;
+                var outerGlow = new DropShadowEffect
+                                    {
+                                        ShadowDepth = 0,
+                                        BlurRadius = 20,
+                                        Opacity = 1,
+                                        Color = ClearCanvasStyle.ClearCanvasCheckedButtonGlow
+                                    };
                 ButtonComponent.Effect = outerGlow;
                 CheckedIndicator.Stroke = new SolidColorBrush(ClearCanvasStyle.ClearCanvasButtonOutlineChecked);
                 CheckedIndicator.Fill = new SolidColorBrush(ClearCanvasStyle.ClearCanvasButtonOutlineChecked);

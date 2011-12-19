@@ -12,7 +12,6 @@
 using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -27,6 +26,7 @@ namespace ClearCanvas.Ris.Application.Common
 			bool isVerified,
 			DateTime? lastVerifiedTime,
 			DateTime? lastEditedTime,
+			bool isMerged,
 			bool deactivated)
 		{
 			this.PractitionerRef = pracRef;
@@ -36,6 +36,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.IsVerified = isVerified;
 			this.LastVerifiedTime = lastVerifiedTime;
 			this.LastEditedTime = lastEditedTime;
+			this.IsMerged = isMerged;
 			this.Deactivated = deactivated;
 		}
 
@@ -63,6 +64,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public DateTime? LastEditedTime { get; private set; }
+
+		[DataMember]
+		public bool IsMerged;
 
 		[DataMember]
 		public bool Deactivated;
@@ -94,6 +98,7 @@ namespace ClearCanvas.Ris.Application.Common
 				this.IsVerified,
 				this.LastVerifiedTime,
 				this.LastEditedTime,
+				this.IsMerged,
 				this.Deactivated);
 		}
 
