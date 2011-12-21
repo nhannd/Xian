@@ -18,17 +18,32 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{
 		public static Color ClearCanvasDarkBlue
 		{
-			get { return Color.FromArgb(61, 152, 209); }
+			get
+			{
+				if (Application.CurrentUITheme != null)
+					return Application.CurrentUITheme.Colors.BasicColorDark;
+				return Color.FromArgb(61, 152, 209);
+			}
 		}
 
 		public static Color ClearCanvasBlue
 		{
-			get { return Color.FromArgb(124, 177, 221); }
+			get
+			{
+				if (Application.CurrentUITheme != null)
+					return Application.CurrentUITheme.Colors.BasicColor;
+				return Color.FromArgb(124, 177, 221);
+			}
 		}
 
 		public static Color ClearCanvasLightBlue
 		{
-			get { return Color.FromArgb(186, 210, 236); }
+			get
+			{
+				if (Application.CurrentUITheme != null)
+					return Application.CurrentUITheme.Colors.BasicColorLight;
+				return Color.FromArgb(186, 210, 236);
+			}
 		}
 
 		public static void SetTitleBarStyle(TitleBar titleBar)
@@ -36,8 +51,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			titleBar.BackColor = ClearCanvasDarkBlue;
 			titleBar.ForeColor = Color.White;
 			titleBar.GradientActiveColor = ClearCanvasDarkBlue;
-			titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToGradientColor;
-			titleBar.GradientDirection = Crownwood.DotNetMagic.Controls.GradientDirection.TopToBottom;
+			titleBar.GradientColoring = GradientColoring.LightBackToGradientColor;
+			titleBar.GradientDirection = GradientDirection.TopToBottom;
 		}
 	}
 }
