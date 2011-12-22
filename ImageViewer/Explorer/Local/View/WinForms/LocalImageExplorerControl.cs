@@ -21,6 +21,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
@@ -209,11 +210,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		private static void InitializeImageList(ImageList imageList, string sizeString)
 		{
 			Type type = typeof (LocalImageExplorerControl);
+			var resourceResolver = new ActionResourceResolver(type);
 
 			string[] icons = {"Back", "Next", "Up", "Refresh", "Home", "ShowFolders", "View", "Go"};
 			foreach (string iconName in icons)
 			{
-				using (Stream ioStream = type.Assembly.GetManifestResourceStream(string.Format("{0}.Icons.{1}Tool{2}.png", type.Namespace, iconName, sizeString)))
+				var resourceName = string.Format("{0}.Icons.{1}Tool{2}.png", type.Namespace, iconName, sizeString);
+				using (var ioStream = resourceResolver.OpenResource(resourceName))
 				{
 					if (ioStream == null)
 						continue;
