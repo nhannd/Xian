@@ -224,12 +224,22 @@ namespace ClearCanvas.Desktop
         /// of the <see cref="Quitting"/> event.
         /// </remarks>
         /// <returns>True if the application successfully quits, or false if it does not.</returns>
+        /// <seealso cref="Shutdown"/>
         public static bool Quit()
         {
 			_instance.Quit(false);
         	return _instance._guiToolkit == null;
         }
 
+		/// <summary>
+		/// Forcibly closes all open desktop windows and terminates the application.
+		/// </summary>
+		/// <remarks>
+		/// The call will forcibly terminate the application without allowing desktop components
+		/// to cancel the operation. To allow desktop components an opportunity to cancel the operation,
+		/// consider calling <see cref="Quit"/> instead.
+		/// </remarks>
+		/// <seealso cref="Quit"/>
 		public static void Shutdown()
 		{
 			_instance.Quit(true);
@@ -249,7 +259,7 @@ namespace ClearCanvas.Desktop
         }
 
     	/// <summary>
-    	/// Gets or sets the current application UI culture.
+    	/// Gets or sets the current application UI <see cref="CultureInfo">culture</see>.
     	/// </summary>
     	public static CultureInfo CurrentUICulture
     	{
@@ -267,11 +277,11 @@ namespace ClearCanvas.Desktop
     	}
 
     	/// <summary>
-    	/// Gets or sets the current application UI theme.
+    	/// Gets or sets the current application UI <see cref="ApplicationTheme">theme</see>.
     	/// </summary>
 		public static ApplicationTheme CurrentUITheme
     	{
-    		get { return _instance != null ? _instance.CurrentUIThemeCore : null; }
+    		get { return _instance != null ? _instance.CurrentUIThemeCore : ApplicationTheme.DefaultApplicationTheme; }
 			set { if (_instance != null) _instance.CurrentUIThemeCore = value; }
     	}
 
@@ -546,7 +556,7 @@ namespace ClearCanvas.Desktop
     		{
     			lock (_currentUIThemeSyncLock)
     			{
-    				return _currentUITheme;
+    				return _currentUITheme ?? ApplicationTheme.DefaultApplicationTheme;
     			}
     		}
     		set
