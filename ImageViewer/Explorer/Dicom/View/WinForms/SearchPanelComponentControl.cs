@@ -35,7 +35,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.AcceptButton = _searchButton;
 			_component = component;
 
-			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 			_titleBar.DataBindings.Add("Text", component, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_modalityPicker.SetAvailableModalities(_component.AvailableSearchModalities);

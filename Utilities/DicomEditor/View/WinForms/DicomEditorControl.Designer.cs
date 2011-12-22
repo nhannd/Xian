@@ -62,7 +62,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
         {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomEditorControl));
 			this._dicomTagTable = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._dicomEditorTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._dicomEditorTitleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
 			this.SuspendLayout();
 			// 
 			// _dicomTagTable
@@ -76,11 +76,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			// _dicomEditorTitleBar
 			// 
 			resources.ApplyResources(this._dicomEditorTitleBar, "_dicomEditorTitleBar");
-			this._dicomEditorTitleBar.ForeColor = System.Drawing.SystemColors.WindowText;
-			this._dicomEditorTitleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._dicomEditorTitleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._dicomEditorTitleBar.Name = "_dicomEditorTitleBar";
-			this._dicomEditorTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			// 
 			// DicomEditorControl
 			// 
@@ -96,6 +92,6 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.TableView _dicomTagTable;
-        private Crownwood.DotNetMagic.Controls.TitleBar _dicomEditorTitleBar;
+        private ClearCanvas.Desktop.View.WinForms.TitleBar _dicomEditorTitleBar;
     }
 }

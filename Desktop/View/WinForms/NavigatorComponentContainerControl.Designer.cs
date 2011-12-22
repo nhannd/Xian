@@ -71,7 +71,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._applyButton = new System.Windows.Forms.Button();
 			this._nextButton = new System.Windows.Forms.Button();
 			this._backButton = new System.Windows.Forms.Button();
-			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._titleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -160,10 +160,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _titleBar
 			// 
 			resources.ApplyResources(this._titleBar, "_titleBar");
-			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			// 
 			// NavigatorComponentContainerControl
 			// 
@@ -193,7 +190,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.Button _nextButton;
         private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.Button _cancelButton;
-		private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
+		private ClearCanvas.Desktop.View.WinForms.TitleBar _titleBar;
 		private System.Windows.Forms.Button _applyButton;
     }
 }

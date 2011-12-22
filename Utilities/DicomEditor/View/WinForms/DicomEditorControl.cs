@@ -25,7 +25,6 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
             Platform.CheckForNullReference(component, "component");
             InitializeComponent();
 
-			ClearCanvasStyle.SetTitleBarStyle(_dicomEditorTitleBar);
             _dicomEditorComponent = component;
 
             _dicomTagTable.Table = _dicomEditorComponent.DicomTagData;

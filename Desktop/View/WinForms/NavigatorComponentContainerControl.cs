@@ -100,8 +100,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
             InitializeComponent();
 
-			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
-
             _nodeMap = new Dictionary<NavigatorPage, TreeNode>();
 
             _component = component;
