@@ -70,6 +70,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
                 context.Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);   
             }
         }
+        public static void ThrowError(string message)
+        {
+            context = HttpContext.Current;
+
+            context.Server.ClearError();
+
+            Platform.Log(LogLevel.Error, message);
+            context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, message);
+            context.Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);
+        }
 
         public static void ThrowException(AuthorizationException e)
         {

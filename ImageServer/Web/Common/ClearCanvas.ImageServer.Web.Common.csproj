@@ -162,6 +162,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="ThemeManager.cs" />
     <Compile Include="UICommonSettings.cs" />
     <Compile Include="UISettings.cs" />
     <Compile Include="UserProfile.cs" />
