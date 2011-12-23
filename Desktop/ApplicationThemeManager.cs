@@ -57,7 +57,7 @@ namespace ClearCanvas.Desktop
 					themeResourceProviders[theme.Id].Add(theme);
 				}
 			}
-			_themes = CollectionUtils.Map(themeResourceProviders, kvp => new KeyValuePair<string, ApplicationTheme>(kvp.Key, new ApplicationTheme(kvp.Value)));
+			_themes = CollectionUtils.Map(themeResourceProviders, kvp => new KeyValuePair<string, ApplicationTheme>(kvp.Key, new ApplicationTheme(kvp.Key, kvp.Value)));
 			_themes.Add(string.Empty, ApplicationTheme.DefaultApplicationTheme);
 		}
 

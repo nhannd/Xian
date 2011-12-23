@@ -30,33 +30,17 @@ namespace ClearCanvas.Desktop
 	public sealed class ApplicationTheme
 	{
 		private readonly IList<IApplicationThemeResourceProvider> _providers;
+		private readonly string _id;
 
 		/// <summary>
 		/// Initializes a new <see cref="ApplicationTheme"/>.
 		/// </summary>
-		/// <param name="provider">An <see cref="IApplicationThemeResourceProvider"/> implementation that provides the style information.</param>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="provider"/> is null.</exception>
-		/// <exception cref="ArgumentException">Thrown if <paramref name="provider"/> has a null or empty value for <see cref="IApplicationThemeResourceProvider.Id"/>.</exception>
-		internal ApplicationTheme(IApplicationThemeResourceProvider provider)
-		{
-			Platform.CheckForNullReference(provider, "provider");
-			Platform.CheckForEmptyString(provider.Id, "provider.Id");
-			_providers = new List<IApplicationThemeResourceProvider> {provider};
-		}
-
-		/// <summary>
-		/// Initializes a new <see cref="ApplicationTheme"/>.
-		/// </summary>
+		/// <param name="id">The ID of the <see cref="ApplicationTheme"/> to be initialized.</param>
 		/// <param name="providers">A collection of <see cref="IApplicationThemeResourceProvider"/> implementations that, combined, provide the style information.</param>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="providers"/> is null.</exception>
-		/// <exception cref="ArgumentException">Thrown if <paramref name="providers"/> is an empty collection or it has a null or empty value for <see cref="IApplicationThemeResourceProvider.Id"/>.</exception>
-		internal ApplicationTheme(IEnumerable<IApplicationThemeResourceProvider> providers)
+		internal ApplicationTheme(string id, IEnumerable<IApplicationThemeResourceProvider> providers)
 		{
-			Platform.CheckForNullReference(providers, "providers");
-			_providers = new List<IApplicationThemeResourceProvider>(providers);
-
-			Platform.CheckTrue(_providers.Count > 0, @"At least one theme resource provider must be specified");
-			Platform.CheckForEmptyString(_providers[0].Id, "provider.Id");
+			_id = id;
+			_providers = new List<IApplicationThemeResourceProvider>(providers).AsReadOnly();
 		}
 
 		/// <summary>
@@ -64,7 +48,7 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		public string Id
 		{
-			get { return _providers[0].Id; }
+			get { return _id; }
 		}
 
 		/// <summary>
@@ -183,6 +167,39 @@ namespace ClearCanvas.Desktop
 			return ApplicationThemeManager.GetTheme(id);
 		}
 
+		/// <summary>
+		/// Creates a new user-defined <see cref="ApplicationTheme"/>.
+		/// </summary>
+		/// <param name="id">The ID of the <see cref="ApplicationTheme"/> to be created.</param>
+		/// <param name="provider">An <see cref="IApplicationThemeResourceProvider"/> implementation that provides the style information.</param>
+		/// <param name="additionalProviders">Additional <see cref="IApplicationThemeResourceProvider"/> implementations.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="provider"/> is NULL.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="id"/> is NULL or empty.</exception>
+		public static ApplicationTheme CreateTheme(string id, IApplicationThemeResourceProvider provider, params IApplicationThemeResourceProvider[] additionalProviders)
+		{
+			Platform.CheckForNullReference(provider, "provider");
+
+			var providers = new List<IApplicationThemeResourceProvider> {provider};
+			if (additionalProviders != null) providers.AddRange(additionalProviders);
+			return CreateTheme(id, providers);
+		}
+
+		/// <summary>
+		/// Creates a new user-defined <see cref="ApplicationTheme"/>.
+		/// </summary>
+		/// <param name="id">The ID of the <see cref="ApplicationTheme"/> to be created.</param>
+		/// <param name="providers">A collection of <see cref="IApplicationThemeResourceProvider"/> implementations that provide the style information.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="providers"/> is NULL.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="id"/> is NULL or empty, or <paramref name="providers"/> does not contain at least one provider.</exception>
+		public static ApplicationTheme CreateTheme(string id, IEnumerable<IApplicationThemeResourceProvider> providers)
+		{
+			Platform.CheckForNullReference(providers, "providers");
+			Platform.CheckTrue(CollectionUtils.FirstElement(providers) != null, "The providers collection must contain at least one provider.");
+			Platform.CheckForEmptyString(id, "id");
+
+			return new ApplicationTheme(id, providers);
+		}
+
 		#endregion
 
 		#region Default Application Theme
@@ -190,12 +207,7 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Gets an <see cref="ApplicationTheme"/> representing the default application style.
 		/// </summary>
-		public static readonly ApplicationTheme DefaultApplicationTheme = new ApplicationTheme();
-
-		private ApplicationTheme()
-		{
-			_providers = new List<IApplicationThemeResourceProvider> {new DefaultApplicationThemeResourceProvider()};
-		}
+		public static readonly ApplicationTheme DefaultApplicationTheme = new ApplicationTheme(string.Empty, new[] {new DefaultApplicationThemeResourceProvider()});
 
 		/// <summary>
 		/// A default theme resource provider, which is really just a placeholder that provides no alternative resources and only the basic stock "ClearCanvas Blue" colour scheme
