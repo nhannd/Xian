@@ -9,10 +9,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
@@ -20,82 +16,101 @@ using ClearCanvas.Desktop.Configuration;
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	[ExtensionPoint]
-	public sealed class DicomExplorerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-	{
-	}
+	public sealed class DicomExplorerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
-	[AssociateView(typeof(DicomExplorerConfigurationComponentViewExtensionPoint))]
+	[AssociateView(typeof (DicomExplorerConfigurationComponentViewExtensionPoint))]
 	public class DicomExplorerConfigurationComponent : ConfigurationApplicationComponent
 	{
-		private bool _showPhoneticIdeographicNames = false;
-		private bool _showNumberOfImagesInStudy = false;
+		private SearchResultColumnOptionCollection _resultColumns = new SearchResultColumnOptionCollection();
 		private bool _selectDefaultServerOnStartup = false;
 
-		public DicomExplorerConfigurationComponent()
+		protected SearchResultColumnOptionCollection ResultColumns
 		{
+			get { return _resultColumns; }
 		}
 
 		public bool SelectDefaultServerOnStartup
 		{
-			get
-			{
-				return _selectDefaultServerOnStartup;
-			}
+			get { return _selectDefaultServerOnStartup; }
 			set
 			{
+				if (SelectDefaultServerOnStartup == value)
+					return;
+
 				_selectDefaultServerOnStartup = value;
 				NotifyPropertyChanged("SelectDefaultServerOnStartup");
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 
 		public bool ShowPhoneticIdeographicNames
 		{
-			get 
+			get { return ShowPhoneticName || ShowIdeographicName; }
+			set
 			{
-				return _showPhoneticIdeographicNames; 
+				if (ShowPhoneticIdeographicNames == value)
+					return;
+
+				ShowPhoneticName = ShowIdeographicName = value;
+				Modified = true;
 			}
-			set 
-			{ 
-				_showPhoneticIdeographicNames = value;
+		}
+
+		public bool ShowPhoneticName
+		{
+			get { return _resultColumns[SR.ColumnHeadingPhoneticName].Visible; }
+			set
+			{
+				if (ShowPhoneticName == value)
+					return;
+
+				_resultColumns[SR.ColumnHeadingPhoneticName].Visible = value;
+				NotifyPropertyChanged("ShowPhoneticName");
 				NotifyPropertyChanged("ShowPhoneticIdeographicNames");
-				this.Modified = true;
+				Modified = true;
+			}
+		}
+
+		public bool ShowIdeographicName
+		{
+			get { return _resultColumns[SR.ColumnHeadingIdeographicName].Visible; }
+			set
+			{
+				if (ShowIdeographicName == value)
+					return;
+
+				_resultColumns[SR.ColumnHeadingIdeographicName].Visible = value;
+				NotifyPropertyChanged("ShowIdeographicName");
+				NotifyPropertyChanged("ShowPhoneticIdeographicNames");
+				Modified = true;
 			}
 		}
 
 		public bool ShowNumberOfImagesInStudy
 		{
-			get
-			{
-				return _showNumberOfImagesInStudy;
-			}
+			get { return _resultColumns[SR.ColumnHeadingNumberOfInstances].Visible; }
 			set
 			{
-				_showNumberOfImagesInStudy = value;
+				if (ShowNumberOfImagesInStudy == value)
+					return;
+
+				_resultColumns[SR.ColumnHeadingNumberOfInstances].Visible = value;
 				NotifyPropertyChanged("ShowNumberOfImagesInStudy");
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 
 		public override void Start()
 		{
 			_selectDefaultServerOnStartup = DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup;
-			_showPhoneticIdeographicNames = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
-			_showNumberOfImagesInStudy = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
+			_resultColumns = new SearchResultColumnOptionCollection(DicomExplorerConfigurationSettings.Default.ResultColumns);
 			base.Start();
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
 		}
 
 		public override void Save()
 		{
 			DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup = SelectDefaultServerOnStartup;
-			DicomExplorerConfigurationSettings.Default.ShowIdeographicName = this.ShowPhoneticIdeographicNames;
-			DicomExplorerConfigurationSettings.Default.ShowPhoneticName = this.ShowPhoneticIdeographicNames;
-			DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy = this.ShowNumberOfImagesInStudy;
+			DicomExplorerConfigurationSettings.Default.ResultColumns = _resultColumns;
 			DicomExplorerConfigurationSettings.Default.Save();
 		}
 	}
