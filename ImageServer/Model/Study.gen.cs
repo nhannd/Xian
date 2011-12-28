@@ -33,6 +33,9 @@ namespace ClearCanvas.ImageServer.Model
             ,Int32 _numberOfStudyRelatedSeries_
             ,Int32 _numberOfStudyRelatedInstances_
             ,Decimal _studySizeInKB_
+            ,String _responsiblePerson_
+            ,String _responsibleOrganization_
+            ,XmlDocument _keyXml_
             ,String _specificCharacterSet_
             ,ServerEntityKey _studyStorageKey_
             ,String _patientsName_
@@ -55,6 +58,9 @@ namespace ClearCanvas.ImageServer.Model
             NumberOfStudyRelatedSeries = _numberOfStudyRelatedSeries_;
             NumberOfStudyRelatedInstances = _numberOfStudyRelatedInstances_;
             StudySizeInKB = _studySizeInKB_;
+            ResponsiblePerson = _responsiblePerson_;
+            ResponsibleOrganization = _responsibleOrganization_;
+            KeyXml = _keyXml_;
             SpecificCharacterSet = _specificCharacterSet_;
             StudyStorageKey = _studyStorageKey_;
             PatientsName = _patientsName_;
@@ -93,6 +99,17 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudySizeInKB")]
         public Decimal StudySizeInKB
+        { get; set; }
+        [DicomField(DicomTags.ResponsiblePerson, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsiblePerson")]
+        public String ResponsiblePerson
+        { get; set; }
+        [DicomField(DicomTags.ResponsibleOrganization, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsibleOrganization")]
+        public String ResponsibleOrganization
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="GUIDXml")]
+        public XmlDocument KeyXml
         { get; set; }
         [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
@@ -184,6 +201,9 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.NumberOfStudyRelatedSeries = entity.NumberOfStudyRelatedSeries;
             updateColumns.NumberOfStudyRelatedInstances = entity.NumberOfStudyRelatedInstances;
             updateColumns.StudySizeInKB = entity.StudySizeInKB;
+            updateColumns.ResponsiblePerson = entity.ResponsiblePerson;
+            updateColumns.ResponsibleOrganization = entity.ResponsibleOrganization;
+            updateColumns.KeyXml = entity.KeyXml;
             updateColumns.SpecificCharacterSet = entity.SpecificCharacterSet;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.PatientsName = entity.PatientsName;

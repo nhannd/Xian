@@ -51,7 +51,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
           get { return _FilesystemReinventory; }
       }
       /// <summary>
-      /// This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem.
+      /// This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem that have not been archived.  Studies that have been archived will have Study Archived and Data Access rules applied.
       /// </summary>
       public static ServiceLockTypeEnum FilesystemStudyProcess
       {

@@ -69,6 +69,9 @@
     <Compile Include="IStudyPreProcessor.cs" />
     <Compile Include="PatientNameRules.cs" />
     <Compile Include="PreProcessors.cs" />
+    <Compile Include="Process\IInsertExtension.cs" />
+    <Compile Include="Query\IExtendedQueryKeys.cs" />
+    <Compile Include="Query\QueryHelper.cs" />
     <Compile Include="Reconcile\StudyMatchingMap.cs" />
     <Compile Include="Edit\WebEditStudyCommandCompiler.cs" />
     <Compile Include="Edit\WebEditStudyContext.cs" />

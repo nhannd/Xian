@@ -22,6 +22,7 @@ using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -42,6 +43,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		private bool _cancelReceived;
 		private readonly Queue<DicomMessage> _responseQueue = new Queue<DicomMessage>(DicomSettings.Default.BufferedQueryResponses);
 		private readonly object _syncLock = new object();
+        private readonly List<IExtendedQueryKeys> _queryExtensions = new List<IExtendedQueryKeys>();
+ 
         #endregion
 
 		#region Public Properties
@@ -67,11 +70,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Patient Root and Study Root queries.
         /// </summary>
         public QueryScpExtension()
-        {
-            SupportedSop sop = new SupportedSop
-                               	{
-                               		SopClass = SopClass.PatientRootQueryRetrieveInformationModelFind
-                               	};
+		{
+		    var sop = new SupportedSop
+		                  {
+		                      SopClass = SopClass.PatientRootQueryRetrieveInformationModelFind
+		                  };
 			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
             sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
             _list.Add(sop);
@@ -83,7 +86,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
             sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
             _list.Add(sop);
-        }
+
+            var ep = new QueryKeysExtensionPoint();
+            foreach (IExtendedQueryKeys q in ep.CreateExtensions())
+                _queryExtensions.Add(q);
+		}
 
         #endregion
 
@@ -97,8 +104,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		/// <param name="msg">The query message to be audited</param>
 		private static void AuditLog(AssociationParameters parms, EventIdentificationContentsEventOutcomeIndicator outcome, DicomMessage msg)
 		{
-			QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource,
-			                                               outcome, parms, msg.AffectedSopClassUid, msg.DataSet);
+		    var helper = new QueryAuditHelper(ServerPlatform.AuditSource,
+		                                      outcome, parms, msg.AffectedSopClassUid, msg.DataSet);
 			ServerPlatform.LogAuditMessage(helper);
 		}
 
@@ -111,13 +118,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="key">The <see cref="ServerEntityKey"/> for the <see cref="Study"/>.</param>
         private static void LoadModalitiesInStudy(IPersistenceContext read, DicomMessageBase response, ServerEntityKey key)
         {
-            IQueryModalitiesInStudy select = read.GetBroker<IQueryModalitiesInStudy>();
+            var select = read.GetBroker<IQueryModalitiesInStudy>();
 
-            ModalitiesInStudyQueryParameters parms = new ModalitiesInStudyQueryParameters {StudyKey = key};
+            var parms = new ModalitiesInStudyQueryParameters {StudyKey = key};
 
-        	IList<Series> list = select.Find(parms);
+        	var list = select.Find(parms);
 
-            string value = string.Empty;
+            var value = string.Empty;
             foreach (Series series in list)
             {
                 value = value.Length == 0 
@@ -136,13 +143,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="row">The <see cref="Series"/> entity to load the related <see cref="RequestAttributes"/> entity for.</param>
         private static void LoadRequestAttributes(IPersistenceContext read, DicomMessageBase response, Series row)
         {
-			IRequestAttributesEntityBroker select = read.GetBroker<IRequestAttributesEntityBroker>();
+			var select = read.GetBroker<IRequestAttributesEntityBroker>();
 
-			RequestAttributesSelectCriteria criteria = new RequestAttributesSelectCriteria();
+			var criteria = new RequestAttributesSelectCriteria();
 
             criteria.SeriesKey.EqualTo(row.Key);
 
-            IList<RequestAttributes> list = select.Find(criteria);
+            var list = select.Find(criteria);
 
             if (list.Count == 0)
             {
@@ -152,7 +159,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             foreach (RequestAttributes request in list)
             {
-                DicomSequenceItem item = new DicomSequenceItem();
+                var item = new DicomSequenceItem();
                 item[DicomTags.ScheduledProcedureStepId].SetStringValue(request.ScheduledProcedureStepId);
                 item[DicomTags.RequestedProcedureId].SetStringValue(request.RequestedProcedureId);
 
@@ -168,9 +175,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns>A list of <see cref="ServerEntityKey"/>s.</returns>
         private List<ServerEntityKey> LoadStudyKey(IPersistenceContext read, string[] studyInstanceUid)
         {
-            IStudyEntityBroker find = read.GetBroker<IStudyEntityBroker>();
+            var find = read.GetBroker<IStudyEntityBroker>();
 
-            StudySelectCriteria criteria = new StudySelectCriteria();
+            var criteria = new StudySelectCriteria();
             criteria.ServerPartitionKey.EqualTo(Partition.Key);
             if (studyInstanceUid.Length > 1)
                 criteria.StudyInstanceUid.In(studyInstanceUid);
@@ -179,7 +186,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             IList<Study> list = find.Find(criteria);
 
-            List<ServerEntityKey> serverList = new List<ServerEntityKey>();
+            var serverList = new List<ServerEntityKey>();
 
             foreach (Study row in list)
                 serverList.Add(row.GetKey());
@@ -251,17 +258,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 							else
 								dataSet[DicomTags.PatientsBirthDate].SetStringValue(study.PatientsBirthDate);
 							break;
-
-                        default:
-                            if (!tag.IsPrivate)
-                                dataSet[tag].SetNullValue();
-                            break;
-
+                    
 						// Meta tags that should have not been in the RQ, but we've already set
 						case DicomTags.RetrieveAeTitle:
 						case DicomTags.InstanceAvailability:
 						case DicomTags.SpecificCharacterSet:
                     		break;
+
+                        default:
+                            if (!tag.IsPrivate)
+                                dataSet[tag].SetNullValue();
+
+                            foreach (var q in _queryExtensions)
+                                q.PopulatePatient(response, tag, row, study);
+
+                            break;
                     }
                 }
                 catch (Exception e)
@@ -350,16 +361,18 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         case DicomTags.QueryRetrieveLevel:
                             dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
                             break;
-                        default:
-                            if (!tag.IsPrivate)
-                                dataSet[tag].SetNullValue();
-                            break;
-
 						// Meta tags that should have not been in the RQ, but we've already set
 						case DicomTags.RetrieveAeTitle:
 						case DicomTags.InstanceAvailability:
 						case DicomTags.SpecificCharacterSet:
 							break;
+                        default:
+                            if (!tag.IsPrivate)
+                                dataSet[tag].SetNullValue();
+
+                            foreach (var q in _queryExtensions)
+                                q.PopulateStudy(response, tag, row);
+                            break;
                     }
                 }
                 catch (Exception e)
@@ -388,12 +401,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         	Study theStudy = Study.Load(read, row.StudyKey);
         	StudyStorage storage = StudyStorage.Load(read, theStudy.ServerPartitionKey, theStudy.StudyInstanceUid);
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
-			if (storage.StudyStatusEnum == StudyStatusEnum.Nearline)
-				dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
-			else
-				dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
+            dataSet[DicomTags.InstanceAvailability].SetStringValue(storage.StudyStatusEnum == StudyStatusEnum.Nearline
+                                                                       ? "NEARLINE"
+                                                                       : "ONLINE");
 
-			if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
+            if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
 			{
 				dataSet[DicomTags.SpecificCharacterSet].SetStringValue(theStudy.SpecificCharacterSet);
 				dataSet.SpecificCharacterSet = theStudy.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
@@ -441,15 +453,19 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         case DicomTags.QueryRetrieveLevel:
                             dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("SERIES");
                             break;
-                        default:
-                            if (!tag.IsPrivate)
-                                dataSet[tag].SetNullValue();
-                            break;
 						// Meta tags that should have not been in the RQ, but we've already set
 						case DicomTags.RetrieveAeTitle:
 						case DicomTags.InstanceAvailability:
 						case DicomTags.SpecificCharacterSet:
 							break;
+                        default:
+                            if (!tag.IsPrivate)
+                                dataSet[tag].SetNullValue();
+
+                            foreach (var q in _queryExtensions)
+                                q.PopulateSeries(response, tag, row);
+
+                            break;
                     }
                 }
                 catch (Exception e)
@@ -528,83 +544,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             }
         }
 
-        /// <summary>
-        /// Set a <see cref="ISearchCondition{T}"/> for a <see cref="ServerEntityKey"/> reference.
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <param name="vals"></param>
-        private static void SetKeyCondition(ISearchCondition<ServerEntityKey> cond, ServerEntityKey[] vals)
-        {
-            if (vals == null || vals.Length == 0)
-                return;
-
-            if (vals.Length == 1)
-                cond.EqualTo(vals[0]);
-            else
-                cond.In(vals);
-        }
-
-        /// <summary>
-        /// Set a <see cref="ISearchCondition{T}"/> for an array of matching string values.
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <param name="vals"></param>
-        private static void SetStringArrayCondition(ISearchCondition<string> cond, string[] vals)
-        {
-            if (vals == null || vals.Length == 0)
-                return;
-
-            if (vals.Length == 1)
-                cond.EqualTo(vals[0]);
-            else
-                cond.In(vals);
-        }
-
-        /// <summary>
-        /// Set a <see cref="ISearchCondition{T}"/> for a DICOM range matching string value.
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <param name="val"></param>
-        private static void SetRangeCondition(ISearchCondition<string> cond, string val)
-        {
-            if (val.Length == 0)
-                return;
-
-            if (val.Contains("-"))
-            {
-                string[] vals = val.Split(new[] {'-'});
-                if (val.IndexOf('-') == 0)
-                    cond.LessThanOrEqualTo(vals[1]);
-                else if (val.IndexOf('-') == val.Length - 1)
-                    cond.MoreThanOrEqualTo(vals[0]);
-                else
-                    cond.Between(vals[0], vals[1]);
-            }
-            else
-                cond.EqualTo(val);
-        }
-
-        /// <summary>
-        /// Set a <see cref="ISearchCondition{T}"/> for DICOM string based (wildcard matching) value.
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <param name="val"></param>
-        private static void SetStringCondition(ISearchCondition<string> cond, string val)
-        {
-            if (val.Length == 0)
-                return;
-
-            if (val.Contains("*") || val.Contains("?"))
-            {
-				String value = val.Replace("%", "[%]").Replace("_", "[_]");
-				value = value.Replace('*', '%');
-                value = value.Replace('?', '_');
-                cond.Like(value);
-            }
-            else
-                cond.EqualTo(val);
-        }
-
 		private void SendBufferedResponses(DicomServer server, byte presentationId, DicomMessage requestMessage)
 		{
 			while (_responseQueue.Count > 0)
@@ -630,17 +569,17 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceivePatientQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<DicomTag> tagList = new List<DicomTag>();
+            var tagList = new List<DicomTag>();
 
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                IPatientEntityBroker find = read.GetBroker<IPatientEntityBroker>();
+                var find = read.GetBroker<IPatientEntityBroker>();
 
-                PatientSelectCriteria criteria = new PatientSelectCriteria();
+                var criteria = new PatientSelectCriteria();
                 criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
                 DicomAttributeCollection data = message.DataSet;
-            	StudySelectCriteria studySelect = new StudySelectCriteria();
+            	var studySelect = new StudySelectCriteria();
             	bool studySubSelect = false;
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
@@ -649,18 +588,18 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         switch (attrib.Tag.TagValue)
                         {
                             case DicomTags.PatientsName:
-								SetStringCondition(criteria.PatientsName, data[DicomTags.PatientsName].GetString(0, string.Empty));
+								QueryHelper.SetStringCondition(criteria.PatientsName, data[DicomTags.PatientsName].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientId:
-								SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, string.Empty));
+								QueryHelper.SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, string.Empty));
                                 break;
                             case DicomTags.IssuerOfPatientId:
-                                SetStringCondition(criteria.IssuerOfPatientId,
+                                QueryHelper.SetStringCondition(criteria.IssuerOfPatientId,
 												   data[DicomTags.IssuerOfPatientId].GetString(0, string.Empty));
                                 break;
 							case DicomTags.PatientsSex:
 								// Specify a subselect on Patients Sex in Study
-								SetStringArrayCondition(studySelect.PatientsSex,
+								QueryHelper.SetStringArrayCondition(studySelect.PatientsSex,
 														(string[])data[DicomTags.PatientsSex].Values);
 								if (!studySubSelect)
 								{
@@ -671,7 +610,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 							case DicomTags.PatientsBirthDate:
 								// Specify a subselect on Patients Birth Date in Study
-								SetStringArrayCondition(studySelect.PatientsBirthDate,
+								QueryHelper.SetStringArrayCondition(studySelect.PatientsBirthDate,
 														(string[])data[DicomTags.PatientsBirthDate].Values);
 								if (!studySubSelect)
 								{
@@ -679,8 +618,17 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 									studySubSelect = true;
 								}
 								break;
-
                             default:
+                                foreach (var q in _queryExtensions)
+                                {
+                                    bool extensionSubSelect;
+                                    q.OnReceivePatientLevelQuery(message, attrib.Tag, criteria, studySelect, out extensionSubSelect);
+                                    if (extensionSubSelect && !studySubSelect)
+                                    {
+                                        criteria.StudyRelatedEntityCondition.Exists(studySelect);
+                                        studySubSelect = true;
+                                    }
+                                }
                                 break;
                         }
                 }
@@ -701,7 +649,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 													throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 												}
 
-                                            	DicomMessage response = new DicomMessage();
+                                            	var response = new DicomMessage();
 												PopulatePatient(response, tagList, row);
                                             	_responseQueue.Enqueue(response);
 
@@ -716,7 +664,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
 					if (CancelReceived)
 					{
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 					}
@@ -724,7 +672,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						  && DicomSettings.Default.MaxQueryResponses < resultCount)
 					{
 						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}", resultCount, server.AssociationParams.CallingAE);
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
 						AuditLog(server.AssociationParams,
@@ -733,7 +681,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					else
 					{
 						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 						                         DicomStatuses.QueryRetrieveUnableToProcess);
 						AuditLog(server.AssociationParams,
@@ -743,7 +691,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 }
             }
 
-            DicomMessage finalResponse = new DicomMessage();
+            var finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
 			AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
         	return;
@@ -758,13 +706,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceiveStudyLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<DicomTag> tagList = new List<DicomTag>();
+            var tagList = new List<DicomTag>();
 
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                IStudyEntityBroker find = read.GetBroker<IStudyEntityBroker>();
+                var find = read.GetBroker<IStudyEntityBroker>();
 
-                StudySelectCriteria criteria = new StudySelectCriteria();
+                var criteria = new StudySelectCriteria();
                 criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
                 DicomAttributeCollection data = message.DataSet;
@@ -775,51 +723,53 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         switch (attrib.Tag.TagValue)
                         {
                             case DicomTags.StudyInstanceUid:
-                                SetStringArrayCondition(criteria.StudyInstanceUid,
+                                QueryHelper.SetStringArrayCondition(criteria.StudyInstanceUid,
                                                         (string[]) data[DicomTags.StudyInstanceUid].Values);
                                 break;
                             case DicomTags.PatientsName:
-								SetStringCondition(criteria.PatientsName, data[DicomTags.PatientsName].GetString(0, string.Empty));
+								QueryHelper.SetStringCondition(criteria.PatientsName, data[DicomTags.PatientsName].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientId:
-								SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, string.Empty));
+								QueryHelper.SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientsBirthDate:
-                                SetRangeCondition(criteria.PatientsBirthDate,
+                                QueryHelper.SetRangeCondition(criteria.PatientsBirthDate,
 												  data[DicomTags.PatientsBirthDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientsSex:
-								SetStringCondition(criteria.PatientsSex, data[DicomTags.PatientsSex].GetString(0, string.Empty));
+								QueryHelper.SetStringCondition(criteria.PatientsSex, data[DicomTags.PatientsSex].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyDate:
-								SetRangeCondition(criteria.StudyDate, data[DicomTags.StudyDate].GetString(0, string.Empty));
+								QueryHelper.SetRangeCondition(criteria.StudyDate, data[DicomTags.StudyDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyTime:
-								SetRangeCondition(criteria.StudyTime, data[DicomTags.StudyTime].GetString(0, string.Empty));
+								QueryHelper.SetRangeCondition(criteria.StudyTime, data[DicomTags.StudyTime].GetString(0, string.Empty));
                                 break;
                             case DicomTags.AccessionNumber:
-                                SetStringCondition(criteria.AccessionNumber,
+                                QueryHelper.SetStringCondition(criteria.AccessionNumber,
 												   data[DicomTags.AccessionNumber].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyId:
-								SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, string.Empty));
+								QueryHelper.SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyDescription:
-                                SetStringCondition(criteria.StudyDescription,
+                                QueryHelper.SetStringCondition(criteria.StudyDescription,
 												   data[DicomTags.StudyDescription].GetString(0, string.Empty));
                                 break;
                             case DicomTags.ReferringPhysiciansName:
-                                SetStringCondition(criteria.ReferringPhysiciansName,
+                                QueryHelper.SetStringCondition(criteria.ReferringPhysiciansName,
 												   data[DicomTags.ReferringPhysiciansName].GetString(0, string.Empty));
                                 break;
                             case DicomTags.ModalitiesInStudy:
                                 // Specify a subselect on Modality in series
-                                SeriesSelectCriteria seriesSelect = new SeriesSelectCriteria();
-                                SetStringArrayCondition(seriesSelect.Modality,
+                                var seriesSelect = new SeriesSelectCriteria();
+                                QueryHelper.SetStringArrayCondition(seriesSelect.Modality,
                                                         (string[]) data[DicomTags.ModalitiesInStudy].Values);
                                 criteria.SeriesRelatedEntityCondition.Exists(seriesSelect);
                                 break;
                             default:
+                                foreach (var q in _queryExtensions)
+                                    q.OnReceiveStudyLevelQuery(message, attrib.Tag, criteria);
                                 break;
                         }
                 }
@@ -831,7 +781,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
 						// First find the Online studies
-                    	StudyStorageSelectCriteria storageCriteria = new StudyStorageSelectCriteria();
+                    	var storageCriteria = new StudyStorageSelectCriteria();
                     	storageCriteria.StudyStatusEnum.NotEqualTo(StudyStatusEnum.Nearline);
 						storageCriteria.QueueStudyStateEnum.NotIn(new[] {QueueStudyStateEnum.DeleteScheduled, QueueStudyStateEnum.WebDeleteScheduled, QueueStudyStateEnum.EditScheduled});
                     	criteria.StudyStorageRelatedEntityCondition.Exists(storageCriteria);
@@ -849,7 +799,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 														throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 													}
 
-                                                    DicomMessage response = new DicomMessage();
+                                                    var response = new DicomMessage();
                                                     PopulateStudy(subRead, response, tagList, row, "ONLINE");
 													_responseQueue.Enqueue(response);
 
@@ -877,7 +827,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 														throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 													}
 
-													DicomMessage response = new DicomMessage();
+													var response = new DicomMessage();
 													PopulateStudy(subRead, response, tagList, row, "NEARLINE");
 													_responseQueue.Enqueue(response);
 
@@ -893,7 +843,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
 					if (CancelReceived)
 					{
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 						AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
@@ -903,7 +853,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						  && DicomSettings.Default.MaxQueryResponses < resultCount)
 					{
 						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}", resultCount, server.AssociationParams.CallingAE);
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
 						AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
@@ -912,7 +862,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					else
 					{
 						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 						                         DicomStatuses.ProcessingFailure);
 						AuditLog(server.AssociationParams,
@@ -923,7 +873,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 }
             }
 
-            DicomMessage finalResponse = new DicomMessage();
+            var finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
 
 			AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
@@ -943,11 +893,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             //Read context for the query.
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                List<DicomTag> tagList = new List<DicomTag>();
+                var tagList = new List<DicomTag>();
 
-                ISeriesEntityBroker selectSeries = read.GetBroker<ISeriesEntityBroker>();
+                var selectSeries = read.GetBroker<ISeriesEntityBroker>();
 
-                SeriesSelectCriteria criteria = new SeriesSelectCriteria();
+                var criteria = new SeriesSelectCriteria();
                 criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
                 DicomAttributeCollection data = message.DataSet;
@@ -967,33 +917,35 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                     AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
                                     return;
                                 }
-                                SetKeyCondition(criteria.StudyKey, list.ToArray());
+                                QueryHelper.SetKeyCondition(criteria.StudyKey, list.ToArray());
                                 break;
                             case DicomTags.SeriesInstanceUid:
-                                SetStringArrayCondition(criteria.SeriesInstanceUid,
+                                QueryHelper.SetStringArrayCondition(criteria.SeriesInstanceUid,
                                                         (string[]) data[DicomTags.SeriesInstanceUid].Values);
                                 break;
                             case DicomTags.Modality:
-                                SetStringCondition(criteria.Modality, data[DicomTags.Modality].GetString(0, string.Empty));
+                                QueryHelper.SetStringCondition(criteria.Modality, data[DicomTags.Modality].GetString(0, string.Empty));
                                 break;
                             case DicomTags.SeriesNumber:
-								SetStringCondition(criteria.SeriesNumber, data[DicomTags.SeriesNumber].GetString(0, string.Empty));
+								QueryHelper.SetStringCondition(criteria.SeriesNumber, data[DicomTags.SeriesNumber].GetString(0, string.Empty));
                                 break;
                             case DicomTags.SeriesDescription:
-                                SetStringCondition(criteria.SeriesDescription,
+                                QueryHelper.SetStringCondition(criteria.SeriesDescription,
 												   data[DicomTags.SeriesDescription].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PerformedProcedureStepStartDate:
-                                SetRangeCondition(criteria.PerformedProcedureStepStartDate,
+                                QueryHelper.SetRangeCondition(criteria.PerformedProcedureStepStartDate,
 												  data[DicomTags.PerformedProcedureStepStartDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PerformedProcedureStepStartTime:
-                                SetRangeCondition(criteria.PerformedProcedureStepStartTime,
+                                QueryHelper.SetRangeCondition(criteria.PerformedProcedureStepStartTime,
 												  data[DicomTags.PerformedProcedureStepStartTime].GetString(0, string.Empty));
                                 break;
                             case DicomTags.RequestAttributesSequence: // todo
                                 break;
                             default:
+                                foreach (var q in _queryExtensions)
+                                    q.OnReceiveSeriesLevelQuery(message, attrib.Tag, criteria);
                                 break;
                         }
                 }
@@ -1017,7 +969,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 																throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 															}
 
-                                                        	DicomMessage response = new DicomMessage();
+                                                        	var response = new DicomMessage();
                                                             PopulateSeries(subRead, message, response, tagList, row);
 															_responseQueue.Enqueue(response);
 
@@ -1031,7 +983,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
 					if (CancelReceived)
 					{
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 						AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
@@ -1042,7 +994,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					{
 						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}",resultCount,server.AssociationParams.CallingAE);
 
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
 						AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
@@ -1051,7 +1003,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					else
 					{
 						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationId, message.MessageId, errorResponse,
 						                         DicomStatuses.ProcessingFailure);
 						AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.SeriousFailureActionTerminated, message);
@@ -1060,7 +1012,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	return;
                 }
 
-                DicomMessage finalResponse = new DicomMessage();
+                var finalResponse = new DicomMessage();
                 server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
 
 				AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
@@ -1117,8 +1069,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceiveImageLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<DicomTag> tagList = new List<DicomTag>();
-            List<uint> matchingTagList = new List<uint>();
+            var tagList = new List<DicomTag>();
+            var matchingTagList = new List<uint>();
 
             DicomAttributeCollection data = message.DataSet;
             string studyInstanceUid = data[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
@@ -1133,7 +1085,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         	catch (Exception e)
         	{
         	    Platform.Log(LogLevel.Error, "Unable to load storage location for study {0}: {1}", studyInstanceUid, e.Message);
-                DicomMessage failureResponse = new DicomMessage();
+                var failureResponse = new DicomMessage();
                 failureResponse.DataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
                 failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
                 failureResponse.DataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
@@ -1154,7 +1106,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 SeriesXml seriesXml = studyXml[seriesInstanceUid];
                 if (seriesXml == null)
                 {
-                    DicomMessage failureResponse = new DicomMessage();
+                    var failureResponse = new DicomMessage();
                     failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
                     server.SendCFindResponse(presentationId, message.MessageId, failureResponse,
                                              DicomStatuses.QueryRetrieveUnableToProcess);
@@ -1178,7 +1130,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     {
                         if (CancelReceived)
                         {
-                            DicomMessage failureResponse = new DicomMessage();
+                            var failureResponse = new DicomMessage();
                             failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
                             server.SendCFindResponse(presentationId, message.MessageId, failureResponse,
                                                      DicomStatuses.Cancel);
@@ -1196,7 +1148,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                             break;
                         }
 
-                        DicomMessage response = new DicomMessage();
+                        var response = new DicomMessage();
                         PopulateInstance(message, response, tagList, theInstanceStream);
                         _responseQueue.Enqueue(response);
 
@@ -1207,7 +1159,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 SendBufferedResponses(server, presentationId, message);
 
-                DicomMessage finalResponse = new DicomMessage();
+                var finalResponse = new DicomMessage();
                 server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
 
                 AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.Success, message);
@@ -1215,7 +1167,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexepected exception processing IMAGE level query for study {0}: {1}", studyInstanceUid, e.Message);
-                DicomMessage failureResponse = new DicomMessage();
+                var failureResponse = new DicomMessage();
                 failureResponse.DataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
                 failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
                 failureResponse.DataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
