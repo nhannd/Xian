@@ -2226,8 +2226,10 @@ CREATE PROCEDURE [dbo].[InsertInstance]
 	@PerformedProcedureStepStartTime varchar(16) = null,
 	@SourceApplicationEntityTitle varchar(16) = null,
 	@SpecificCharacterSet varchar(128) = null,
-	@PatientsAge varchar(4) = null
-	
+	@PatientsAge varchar(4) = null,
+	@ResponsiblePerson nvarchar(64) = null,
+	@ResponsibleOrganization nvarchar(64) = null,
+	@QueryXml xml = null
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -2298,12 +2300,12 @@ BEGIN
 				StudyInstanceUid, PatientsName, PatientId, IssuerOfPatientId, PatientsBirthDate, PatientsAge,
 				PatientsSex, StudyDate, StudyTime, AccessionNumber, StudyId,
 				StudyDescription, ReferringPhysiciansName, NumberOfStudyRelatedSeries,
-				NumberOfStudyRelatedInstances,SpecificCharacterSet)
+				NumberOfStudyRelatedInstances,SpecificCharacterSet, ResponsiblePerson, ResponsibleOrganization, QueryXml)
 		VALUES
 				(@StudyGUID, @ServerPartitionGUID, @StudyStorageGUID, @PatientGUID, 
 				@StudyInstanceUid, @PatientsName, @PatientId, @IssuerOfPatientId, @PatientsBirthDate, @PatientsAge,
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
-				@StudyDescription, @ReferringPhysiciansName, 0, 1,@SpecificCharacterSet)
+				@StudyDescription, @ReferringPhysiciansName, 0, 1,@SpecificCharacterSet, @ResponsiblePerson, @ResponsibleOrganization, @QueryXml)
 
 		UPDATE dbo.ServerPartition SET StudyCount=StudyCount+1
 		WHERE GUID=@ServerPartitionGUID

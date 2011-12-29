@@ -17,10 +17,10 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.UpgradeScripts
 {
 
     [ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
-    class UpgradeFrom__4_0_5014_9549 : BaseUpgradeScript
+    class UpgradeFrom_5_0_5655_9770 : BaseUpgradeScript
     {
-        public UpgradeFrom__4_0_5014_9549()
-            : base(new Version(4, 0, 5014, 9549), new Version(5, 0, 5655, 9770), "UpgradeFrom_4_0_5014_9549.sql")
+        public UpgradeFrom_5_0_5655_9770()
+            : base(new Version(5, 0, 5655, 9770), null, "UpgradeFrom_5_0_5655_9770.sql")
         {
         }
     }

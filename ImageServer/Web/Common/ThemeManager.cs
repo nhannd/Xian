@@ -22,9 +22,9 @@ namespace ClearCanvas.ImageServer.Web.Common
         string GetDefaultTheme();
     }
 
-    public class ThemeManagerExtensionPoint:ExtensionPoint<IThemeManager>
+    [ExtensionPoint]
+    public class ThemeManagerExtensionPoint : ExtensionPoint<IThemeManager>
     {
-        
     }
 
     public static class ThemeManager

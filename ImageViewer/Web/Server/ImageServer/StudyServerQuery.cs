@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -45,9 +46,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         /// <param name="key">The <see cref="ServerEntityKey"/> for the <see cref="Study"/>.</param>
         private static void LoadModalitiesInStudy(IPersistenceContext read, DicomMessageBase response, ServerEntityKey key)
         {
-            IQueryModalitiesInStudy select = read.GetBroker<IQueryModalitiesInStudy>();
+            var select = read.GetBroker<IQueryModalitiesInStudy>();
 
-            ModalitiesInStudyQueryParameters parms = new ModalitiesInStudyQueryParameters { StudyKey = key };
+            var parms = new ModalitiesInStudyQueryParameters { StudyKey = key };
 
             IList<Series> list = select.Find(parms);
 
@@ -162,18 +163,19 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         /// Method for processing Study level queries.
         /// </summary>
         /// <param name="message"></param>
+        /// <param name="del"></param>
         /// <returns></returns>
         public override void Query(DicomAttributeCollection message, ServerQueryResultDelegate del)
         {
-            List<uint> tagList = new List<uint>();
+            var tagList = new List<uint>();
 
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                IStudyEntityBroker find = read.GetBroker<IStudyEntityBroker>();
+                var find = read.GetBroker<IStudyEntityBroker>();
 
                 //TODO (CR May 2010): Should change so that the Partition AE Title is passed in the RetrieveAeTitle tag in the query message.
 
-                StudySelectCriteria criteria = new StudySelectCriteria();
+                var criteria = new StudySelectCriteria();
                 if (Partition !=null)
                     criteria.ServerPartitionKey.EqualTo(Partition.Key);
 
@@ -217,56 +219,54 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                         switch (attrib.Tag.TagValue)
                         {
                             case DicomTags.StudyInstanceUid:
-                                SetStringArrayCondition(criteria.StudyInstanceUid,
+                                QueryHelper.SetStringArrayCondition(criteria.StudyInstanceUid,
                                                         (string[]) data[DicomTags.StudyInstanceUid].Values);
                                 break;
                             case DicomTags.PatientsName:
-                                SetStringCondition(criteria.PatientsName,
+                                QueryHelper.SetStringCondition(criteria.PatientsName,
                                                    data[DicomTags.PatientsName].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientId:
-                                SetStringCondition(criteria.PatientId,
+                                QueryHelper.SetStringCondition(criteria.PatientId,
                                                    data[DicomTags.PatientId].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientsBirthDate:
-                                SetRangeCondition(criteria.PatientsBirthDate,
+                                QueryHelper.SetRangeCondition(criteria.PatientsBirthDate,
                                                   data[DicomTags.PatientsBirthDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientsSex:
-                                SetStringCondition(criteria.PatientsSex,
+                                QueryHelper.SetStringCondition(criteria.PatientsSex,
                                                    data[DicomTags.PatientsSex].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyDate:
-                                SetRangeCondition(criteria.StudyDate,
+                                QueryHelper.SetRangeCondition(criteria.StudyDate,
                                                   data[DicomTags.StudyDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyTime:
-                                SetRangeCondition(criteria.StudyTime,
+                                QueryHelper.SetRangeCondition(criteria.StudyTime,
                                                   data[DicomTags.StudyTime].GetString(0, string.Empty));
                                 break;
                             case DicomTags.AccessionNumber:
-                                SetStringCondition(criteria.AccessionNumber,
+                                QueryHelper.SetStringCondition(criteria.AccessionNumber,
                                                    data[DicomTags.AccessionNumber].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyId:
-                                SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, string.Empty));
+                                QueryHelper.SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyDescription:
-                                SetStringCondition(criteria.StudyDescription,
+                                QueryHelper.SetStringCondition(criteria.StudyDescription,
                                                    data[DicomTags.StudyDescription].GetString(0, string.Empty));
                                 break;
                             case DicomTags.ReferringPhysiciansName:
-                                SetStringCondition(criteria.ReferringPhysiciansName,
+                                QueryHelper.SetStringCondition(criteria.ReferringPhysiciansName,
                                                    data[DicomTags.ReferringPhysiciansName].GetString(0, string.Empty));
                                 break;
                             case DicomTags.ModalitiesInStudy:
                                 // Specify a subselect on Modality in series
-                                SeriesSelectCriteria seriesSelect = new SeriesSelectCriteria();
-                                SetStringArrayCondition(seriesSelect.Modality,
+                                var seriesSelect = new SeriesSelectCriteria();
+                                QueryHelper.SetStringArrayCondition(seriesSelect.Modality,
                                                         (string[]) data[DicomTags.ModalitiesInStudy].Values);
                                 criteria.SeriesRelatedEntityCondition.Exists(seriesSelect);
-                                break;
-                            default:
                                 break;
                         }
                 }
@@ -275,7 +275,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                 {
                     // First find the Online studies
-                    StudyStorageSelectCriteria storageCriteria = new StudyStorageSelectCriteria();
+                    var storageCriteria = new StudyStorageSelectCriteria();
                     storageCriteria.StudyStatusEnum.NotEqualTo(StudyStatusEnum.Nearline);
                     storageCriteria.QueueStudyStateEnum.NotIn(new[]
                                                                   {
@@ -287,7 +287,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
                     find.Find(criteria, delegate(Study row)
                                             {
-                                                DicomMessage response = new DicomMessage();
+                                                var response = new DicomMessage();
 
                                             	//TODO (CR May 2010): should the availability be NEARLINE?  The criteria above was for ONLINE studies.
                                                 PopulateStudy(subRead, response, tagList, row, "NEARLINE");
@@ -307,7 +307,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
                     find.Find(criteria, delegate(Study row)
                     {
-                        DicomMessage response = new DicomMessage();
+                        var response = new DicomMessage();
                         PopulateStudy(subRead, response, tagList, row, "NEARLINE");
                         del(response.DataSet);
                     });

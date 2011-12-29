@@ -29,9 +29,6 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         private readonly object _syncLock = new object();
         #endregion
 
-        
-        
-
         #region Public Properties
         public ServerPartition Partition
         {
@@ -64,83 +61,6 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         public abstract void Query(DicomAttributeCollection query, ServerQueryResultDelegate del);
 
         /// <summary>
-        /// Set a <see cref="ISearchCondition{T}"/> for a <see cref="ServerEntityKey"/> reference.
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <param name="vals"></param>
-        protected static void SetKeyCondition(ISearchCondition<ServerEntityKey> cond, ServerEntityKey[] vals)
-        {
-            if (vals == null || vals.Length == 0)
-                return;
-
-            if (vals.Length == 1)
-                cond.EqualTo(vals[0]);
-            else
-                cond.In(vals);
-        }
-
-        /// <summary>
-        /// Set a <see cref="ISearchCondition{T}"/> for an array of matching string values.
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <param name="vals"></param>
-        protected static void SetStringArrayCondition(ISearchCondition<string> cond, string[] vals)
-        {
-            if (vals == null || vals.Length == 0)
-                return;
-
-            if (vals.Length == 1)
-                cond.EqualTo(vals[0]);
-            else
-                cond.In(vals);
-        }
-
-        /// <summary>
-        /// Set a <see cref="ISearchCondition{T}"/> for a DICOM range matching string value.
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <param name="val"></param>
-        protected static void SetRangeCondition(ISearchCondition<string> cond, string val)
-        {
-            if (val.Length == 0)
-                return;
-
-            if (val.Contains("-"))
-            {
-                string[] vals = val.Split(new[] {'-'});
-                if (val.IndexOf('-') == 0)
-                    cond.LessThanOrEqualTo(vals[1]);
-                else if (val.IndexOf('-') == val.Length - 1)
-                    cond.MoreThanOrEqualTo(vals[0]);
-                else
-                    cond.Between(vals[0], vals[1]);
-            }
-            else
-                cond.EqualTo(val);
-        }
-
-        /// <summary>
-        /// Set a <see cref="ISearchCondition{T}"/> for DICOM string based (wildcard matching) value.
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <param name="val"></param>
-        protected static void SetStringCondition(ISearchCondition<string> cond, string val)
-        {
-            if (val.Length == 0)
-                return;
-
-            if (val.Contains("*") || val.Contains("?"))
-            {
-				String value = val.Replace("%", "[%]").Replace("_", "[_]");
-				value = value.Replace('*', '%');
-                value = value.Replace('?', '_');
-                cond.Like(value);
-            }
-            else
-                cond.EqualTo(val);
-        }
-
-        /// <summary>
         /// Find the <see cref="ServerEntityKey"/> reference for a given Study Instance UID and Server Partition.
         /// </summary>
         /// <param name="read">The connection to use to read the values.</param>
@@ -148,9 +68,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         /// <returns>A list of <see cref="ServerEntityKey"/>s.</returns>
         protected List<ServerEntityKey> LoadStudyKey(IPersistenceContext read, string[] studyInstanceUid)
         {
-            IStudyEntityBroker find = read.GetBroker<IStudyEntityBroker>();
+            var find = read.GetBroker<IStudyEntityBroker>();
 
-            StudySelectCriteria criteria = new StudySelectCriteria();
+            var criteria = new StudySelectCriteria();
 
             if (Partition!=null)
                 criteria.ServerPartitionKey.EqualTo(Partition.Key);
@@ -162,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
             IList<Study> list = find.Find(criteria);
 
-            List<ServerEntityKey> serverList = new List<ServerEntityKey>();
+            var serverList = new List<ServerEntityKey>();
 
             foreach (Study row in list)
                 serverList.Add(row.GetKey());

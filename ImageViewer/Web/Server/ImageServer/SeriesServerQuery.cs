@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -41,9 +42,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         /// <param name="row">The <see cref="Series"/> entity to load the related <see cref="RequestAttributes"/> entity for.</param>
         private static void LoadRequestAttributes(IPersistenceContext read, DicomMessageBase response, Series row)
         {
-            IRequestAttributesEntityBroker select = read.GetBroker<IRequestAttributesEntityBroker>();
+            var select = read.GetBroker<IRequestAttributesEntityBroker>();
 
-            RequestAttributesSelectCriteria criteria = new RequestAttributesSelectCriteria();
+            var criteria = new RequestAttributesSelectCriteria();
 
             criteria.SeriesKey.EqualTo(row.GetKey());
 
@@ -57,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
             foreach (RequestAttributes request in list)
             {
-                DicomSequenceItem item = new DicomSequenceItem();
+                var item = new DicomSequenceItem();
                 item[DicomTags.ScheduledProcedureStepId].SetStringValue(request.ScheduledProcedureStepId);
                 item[DicomTags.RequestedProcedureId].SetStringValue(request.RequestedProcedureId);
 
@@ -81,10 +82,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
             Study theStudy = Study.Load(read, row.StudyKey);
             StudyStorage storage = StudyStorage.Load(read, theStudy.ServerPartitionKey, theStudy.StudyInstanceUid);
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(ServerPartitionMonitor.Instance.FindPartition(row.ServerPartitionKey).AeTitle);
-            if (storage.StudyStatusEnum == StudyStatusEnum.Nearline)
-                dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
-            else
-                dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
+            dataSet[DicomTags.InstanceAvailability].SetStringValue(storage.StudyStatusEnum == StudyStatusEnum.Nearline
+                                                                       ? "NEARLINE"
+                                                                       : "ONLINE");
 
             if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
             {
@@ -165,12 +165,12 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
             //Read context for the query.
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                List<uint> tagList = new List<uint>();
+                var tagList = new List<uint>();
 
-                ISeriesEntityBroker selectSeries = read.GetBroker<ISeriesEntityBroker>();
+                var selectSeries = read.GetBroker<ISeriesEntityBroker>();
 
                 //TODO (CR May 2010): Should change so that the Partition AE Title is passed in the RetrieveAeTitle tag in the query message.
-                SeriesSelectCriteria criteria = new SeriesSelectCriteria();
+                var criteria = new SeriesSelectCriteria();
                 if (Partition!=null)
                     criteria.ServerPartitionKey.EqualTo(Partition.Key);
 
@@ -184,33 +184,31 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                             case DicomTags.StudyInstanceUid:
                                 List<ServerEntityKey> list =
                                     LoadStudyKey(read, (string[])data[DicomTags.StudyInstanceUid].Values);
-                                SetKeyCondition(criteria.StudyKey, list.ToArray());
+                                QueryHelper.SetKeyCondition(criteria.StudyKey, list.ToArray());
                                 break;
                             case DicomTags.SeriesInstanceUid:
-                                SetStringArrayCondition(criteria.SeriesInstanceUid,
+                                QueryHelper.SetStringArrayCondition(criteria.SeriesInstanceUid,
                                                         (string[])data[DicomTags.SeriesInstanceUid].Values);
                                 break;
                             case DicomTags.Modality:
-                                SetStringCondition(criteria.Modality, data[DicomTags.Modality].GetString(0, string.Empty));
+                                QueryHelper.SetStringCondition(criteria.Modality, data[DicomTags.Modality].GetString(0, string.Empty));
                                 break;
                             case DicomTags.SeriesNumber:
-                                SetStringCondition(criteria.SeriesNumber, data[DicomTags.SeriesNumber].GetString(0, string.Empty));
+                                QueryHelper.SetStringCondition(criteria.SeriesNumber, data[DicomTags.SeriesNumber].GetString(0, string.Empty));
                                 break;
                             case DicomTags.SeriesDescription:
-                                SetStringCondition(criteria.SeriesDescription,
+                                QueryHelper.SetStringCondition(criteria.SeriesDescription,
                                                    data[DicomTags.SeriesDescription].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PerformedProcedureStepStartDate:
-                                SetRangeCondition(criteria.PerformedProcedureStepStartDate,
+                                QueryHelper.SetRangeCondition(criteria.PerformedProcedureStepStartDate,
                                                   data[DicomTags.PerformedProcedureStepStartDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PerformedProcedureStepStartTime:
-                                SetRangeCondition(criteria.PerformedProcedureStepStartTime,
+                                QueryHelper.SetRangeCondition(criteria.PerformedProcedureStepStartTime,
                                                   data[DicomTags.PerformedProcedureStepStartTime].GetString(0, string.Empty));
                                 break;
                             case DicomTags.RequestAttributesSequence: // todo
-                                break;
-                            default:
                                 break;
                         }
                 }
@@ -223,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                         if (CancelReceived)
                             throw new DicomException("DICOM C-Cancel Received");
 
-                        DicomMessage response = new DicomMessage();
+                        var response = new DicomMessage();
                         PopulateSeries(subRead, message, response, tagList, row);
                         del(response.DataSet);
                     });
