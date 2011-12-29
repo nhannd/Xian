@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageServer.Model
             ,Decimal _studySizeInKB_
             ,String _responsiblePerson_
             ,String _responsibleOrganization_
-            ,XmlDocument _keyXml_
+            ,XmlDocument _queryXml_
             ,String _specificCharacterSet_
             ,ServerEntityKey _studyStorageKey_
             ,String _patientsName_
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Model
             StudySizeInKB = _studySizeInKB_;
             ResponsiblePerson = _responsiblePerson_;
             ResponsibleOrganization = _responsibleOrganization_;
-            KeyXml = _keyXml_;
+            QueryXml = _queryXml_;
             SpecificCharacterSet = _specificCharacterSet_;
             StudyStorageKey = _studyStorageKey_;
             PatientsName = _patientsName_;
@@ -108,8 +108,8 @@ namespace ClearCanvas.ImageServer.Model
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsibleOrganization")]
         public String ResponsibleOrganization
         { get; set; }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="GUIDXml")]
-        public XmlDocument KeyXml
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="QueryXml")]
+        public XmlDocument QueryXml
         { get; set; }
         [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
@@ -203,7 +203,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.StudySizeInKB = entity.StudySizeInKB;
             updateColumns.ResponsiblePerson = entity.ResponsiblePerson;
             updateColumns.ResponsibleOrganization = entity.ResponsibleOrganization;
-            updateColumns.KeyXml = entity.KeyXml;
+            updateColumns.QueryXml = entity.QueryXml;
             updateColumns.SpecificCharacterSet = entity.SpecificCharacterSet;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.PatientsName = entity.PatientsName;

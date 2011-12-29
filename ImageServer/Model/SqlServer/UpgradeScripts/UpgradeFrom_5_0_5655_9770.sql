@@ -19,7 +19,7 @@ GO
 ALTER TABLE dbo.Study ADD
 	ResponsiblePerson nvarchar(64) NULL,
 	ResponsibleOrganization nvarchar(64) NULL,
-	KeyXml xml NULL
+	QueryXml xml NULL
 GO
 
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION

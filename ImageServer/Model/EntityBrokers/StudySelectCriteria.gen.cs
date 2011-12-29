@@ -126,16 +126,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["ResponsibleOrganization"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="GUIDXml")]
-        public ISearchCondition<XmlDocument> KeyXml
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="QueryXml")]
+        public ISearchCondition<XmlDocument> QueryXml
         {
             get
             {
-              if (!SubCriteria.ContainsKey("KeyXml"))
+              if (!SubCriteria.ContainsKey("QueryXml"))
               {
-                 SubCriteria["KeyXml"] = new SearchCondition<XmlDocument>("KeyXml");
+                 SubCriteria["QueryXml"] = new SearchCondition<XmlDocument>("QueryXml");
               }
-              return (ISearchCondition<XmlDocument>)SubCriteria["KeyXml"];
+              return (ISearchCondition<XmlDocument>)SubCriteria["QueryXml"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]

@@ -68,10 +68,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ResponsibleOrganization"] = new EntityUpdateColumn<String>("ResponsibleOrganization", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="GUIDXml")]
-        public XmlDocument KeyXml
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="QueryXml")]
+        public XmlDocument QueryXml
         {
-            set { SubParameters["KeyXml"] = new EntityUpdateColumn<XmlDocument>("KeyXml", value); }
+            set { SubParameters["QueryXml"] = new EntityUpdateColumn<XmlDocument>("QueryXml", value); }
         }
        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]

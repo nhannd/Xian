@@ -552,7 +552,7 @@ CREATE TABLE [dbo].[Study](
 	[StudySizeInKB] [decimal](18, 0) NULL,
 	ResponsiblePerson nvarchar(64) NULL,
 	ResponsibleOrganization nvarchar(64) NULL,
-	KeyXml xml NULL,
+	QueryXml xml NULL,
  CONSTRAINT [PK_Study] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
