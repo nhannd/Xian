@@ -170,17 +170,17 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["ResponsibleOrganization"] = new ProcedureParameter<string>("ResponsibleOrganization", value); }
         }
 
-        public XmlDocument KeyXml
+        public XmlDocument QueryXml
         {
             set
             {
-                SubCriteria["KeyXml"] = new ProcedureParameter<XmlDocument>("KeyXml", value);
+                SubCriteria["QueryXml"] = new ProcedureParameter<XmlDocument>("QueryXml", value);
             }
             get
             {
-                if (SubCriteria.ContainsKey("KeyXml"))
+                if (SubCriteria.ContainsKey("QueryXml"))
                 {
-                    var parm = SubCriteria["KeyXml"] as ProcedureParameter<XmlDocument>;
+                    var parm = SubCriteria["QueryXml"] as ProcedureParameter<XmlDocument>;
                     if (parm != null)
                         return parm.Value;
                 }
