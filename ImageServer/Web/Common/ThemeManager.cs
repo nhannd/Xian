@@ -9,13 +9,17 @@
 
 #endregion
 
+using System;
+using System.Web;
 using ClearCanvas.Common;
+using System.Web.UI;
 
 namespace ClearCanvas.ImageServer.Web.Common
 {
     public interface IThemeManager
     {
-        
+        string GetTheme(Page page);
+        string GetDefaultTheme();
     }
 
     [ExtensionPoint]
@@ -25,22 +29,60 @@ namespace ClearCanvas.ImageServer.Web.Common
 
     public static class ThemeManager
     {
-        public static string CurrentTheme
+        private static readonly IThemeManager _manager;
+        static ThemeManager()
         {
-            get;
-            set;
+            try
+            {
+                var xp = new ThemeManagerExtensionPoint();
+                _manager = xp.CreateExtension() as IThemeManager;
+            }
+            catch(Exception ex)
+            {
+                Platform.Log(LogLevel.Error, "Unable to find theme manager. {0}", ex.Message);
+            }
         }
 
-        public static void ApplyTheme( System.Web.UI.Page p)
+        public static string CurrentTheme
         {
-            if (CurrentTheme == null) CurrentTheme = "Vet";
+            get
+            {
+                var existingTheme = HttpContext.Current.Items["Theme"] as string;
+                if (!string.IsNullOrEmpty(existingTheme))
+                {
+                    return existingTheme;
+                }
+                else
+                {
+                    var theme = _manager != null ? _manager.GetTheme(HttpContext.Current.Handler as Page) : ImageServerConstants.Default;
+                    HttpContext.Current.Items["Theme"] = theme;
+                    return theme;
+                }
 
-            p.Theme = CurrentTheme;
+            }
+        }
+
+        public static void ApplyTheme(Page page)
+        {
+            if (page!=null)
+            {
+                var existingTheme = HttpContext.Current.Items["Theme"] as string;
+                if (!string.IsNullOrEmpty(existingTheme))
+                {
+                    page.Theme = existingTheme;
+                }
+                else
+                {
+                    page.Theme = _manager != null ? _manager.GetTheme(page) : ImageServerConstants.Default;
+                    HttpContext.Current.Items["Theme"] = page.Theme;
+                }
+                
+            }
         }
 
         public static string GetDefaultTheme()
         {
-            return "Default";
+            return _manager != null ? _manager.GetDefaultTheme() : ImageServerConstants.Default;
         }
     }
 }
