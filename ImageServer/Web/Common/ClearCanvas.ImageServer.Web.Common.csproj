@@ -65,6 +65,7 @@
     <Compile Include="Data\ApplicationLogAdaptor.cs" />
     <Compile Include="Data\AlertAdaptor.cs" />
     <Compile Include="Data\AlertController.cs" />
+    <Compile Include="Data\DataSource\IStudySummaryAssembler.cs" />
     <Compile Include="Data\StudyDataAccessAdaptor.cs" />
     <Compile Include="Data\StudyDataAccessController.cs" />
     <Compile Include="Data\StudyEditReasonAdaptor.cs" />
