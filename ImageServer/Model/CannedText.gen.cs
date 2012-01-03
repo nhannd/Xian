@@ -52,20 +52,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public CannedText Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public CannedText Load(IPersistenceContext read, ServerEntityKey key)
         {
-            ICannedTextEntityBroker broker = read.GetBroker<ICannedTextEntityBroker>();
+            var broker = read.GetBroker<ICannedTextEntityBroker>();
             CannedText theObject = broker.Load(key);
             return theObject;
         }
         static public CannedText Insert(CannedText entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 CannedText newEntity = Insert(update, entity);
                 update.Commit();
@@ -74,8 +74,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public CannedText Insert(IUpdateContext update, CannedText entity)
         {
-            ICannedTextEntityBroker broker = update.GetBroker<ICannedTextEntityBroker>();
-            CannedTextUpdateColumns updateColumns = new CannedTextUpdateColumns();
+            var broker = update.GetBroker<ICannedTextEntityBroker>();
+            var updateColumns = new CannedTextUpdateColumns();
             updateColumns.Label = entity.Label;
             updateColumns.Category = entity.Category;
             updateColumns.Text = entity.Text;

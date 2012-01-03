@@ -54,20 +54,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public ServerSopClass Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public ServerSopClass Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IServerSopClassEntityBroker broker = read.GetBroker<IServerSopClassEntityBroker>();
+            var broker = read.GetBroker<IServerSopClassEntityBroker>();
             ServerSopClass theObject = broker.Load(key);
             return theObject;
         }
         static public ServerSopClass Insert(ServerSopClass entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ServerSopClass newEntity = Insert(update, entity);
                 update.Commit();
@@ -76,8 +76,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public ServerSopClass Insert(IUpdateContext update, ServerSopClass entity)
         {
-            IServerSopClassEntityBroker broker = update.GetBroker<IServerSopClassEntityBroker>();
-            ServerSopClassUpdateColumns updateColumns = new ServerSopClassUpdateColumns();
+            var broker = update.GetBroker<IServerSopClassEntityBroker>();
+            var updateColumns = new ServerSopClassUpdateColumns();
             updateColumns.SopClassUid = entity.SopClassUid;
             updateColumns.Description = entity.Description;
             updateColumns.NonImage = entity.NonImage;

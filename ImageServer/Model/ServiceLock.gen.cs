@@ -60,7 +60,9 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
         public XmlDocument State
-        { get; set; }
+        { get { return _State; } set { _State = value; } }
+        [NonSerialized]
+        private XmlDocument _State;
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
         public ServerEntityKey FilesystemKey
         { get; set; }
@@ -72,20 +74,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public ServiceLock Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public ServiceLock Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IServiceLockEntityBroker broker = read.GetBroker<IServiceLockEntityBroker>();
+            var broker = read.GetBroker<IServiceLockEntityBroker>();
             ServiceLock theObject = broker.Load(key);
             return theObject;
         }
         static public ServiceLock Insert(ServiceLock entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ServiceLock newEntity = Insert(update, entity);
                 update.Commit();
@@ -94,8 +96,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public ServiceLock Insert(IUpdateContext update, ServiceLock entity)
         {
-            IServiceLockEntityBroker broker = update.GetBroker<IServiceLockEntityBroker>();
-            ServiceLockUpdateColumns updateColumns = new ServiceLockUpdateColumns();
+            var broker = update.GetBroker<IServiceLockEntityBroker>();
+            var updateColumns = new ServiceLockUpdateColumns();
             updateColumns.ServiceLockTypeEnum = entity.ServiceLockTypeEnum;
             updateColumns.Lock = entity.Lock;
             updateColumns.ScheduledTime = entity.ScheduledTime;

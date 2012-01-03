@@ -110,7 +110,9 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="QueryXml")]
         public XmlDocument QueryXml
-        { get; set; }
+        { get { return _QueryXml; } set { _QueryXml = value; } }
+        [NonSerialized]
+        private XmlDocument _QueryXml;
         [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
         public String SpecificCharacterSet
@@ -171,20 +173,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Study Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public Study Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IStudyEntityBroker broker = read.GetBroker<IStudyEntityBroker>();
+            var broker = read.GetBroker<IStudyEntityBroker>();
             Study theObject = broker.Load(key);
             return theObject;
         }
         static public Study Insert(Study entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 Study newEntity = Insert(update, entity);
                 update.Commit();
@@ -193,8 +195,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public Study Insert(IUpdateContext update, Study entity)
         {
-            IStudyEntityBroker broker = update.GetBroker<IStudyEntityBroker>();
-            StudyUpdateColumns updateColumns = new StudyUpdateColumns();
+            var broker = update.GetBroker<IStudyEntityBroker>();
+            var updateColumns = new StudyUpdateColumns();
             updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.PatientKey = entity.PatientKey;

@@ -52,20 +52,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public DevicePreferredTransferSyntax Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public DevicePreferredTransferSyntax Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IDevicePreferredTransferSyntaxEntityBroker broker = read.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
+            var broker = read.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
             DevicePreferredTransferSyntax theObject = broker.Load(key);
             return theObject;
         }
         static public DevicePreferredTransferSyntax Insert(DevicePreferredTransferSyntax entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 DevicePreferredTransferSyntax newEntity = Insert(update, entity);
                 update.Commit();
@@ -74,8 +74,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public DevicePreferredTransferSyntax Insert(IUpdateContext update, DevicePreferredTransferSyntax entity)
         {
-            IDevicePreferredTransferSyntaxEntityBroker broker = update.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
-            DevicePreferredTransferSyntaxUpdateColumns updateColumns = new DevicePreferredTransferSyntaxUpdateColumns();
+            var broker = update.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
+            var updateColumns = new DevicePreferredTransferSyntaxUpdateColumns();
             updateColumns.DeviceKey = entity.DeviceKey;
             updateColumns.ServerSopClassKey = entity.ServerSopClassKey;
             updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;

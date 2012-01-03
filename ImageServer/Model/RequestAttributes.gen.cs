@@ -55,20 +55,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public RequestAttributes Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public RequestAttributes Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IRequestAttributesEntityBroker broker = read.GetBroker<IRequestAttributesEntityBroker>();
+            var broker = read.GetBroker<IRequestAttributesEntityBroker>();
             RequestAttributes theObject = broker.Load(key);
             return theObject;
         }
         static public RequestAttributes Insert(RequestAttributes entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 RequestAttributes newEntity = Insert(update, entity);
                 update.Commit();
@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public RequestAttributes Insert(IUpdateContext update, RequestAttributes entity)
         {
-            IRequestAttributesEntityBroker broker = update.GetBroker<IRequestAttributesEntityBroker>();
-            RequestAttributesUpdateColumns updateColumns = new RequestAttributesUpdateColumns();
+            var broker = update.GetBroker<IRequestAttributesEntityBroker>();
+            var updateColumns = new RequestAttributesUpdateColumns();
             updateColumns.SeriesKey = entity.SeriesKey;
             updateColumns.RequestedProcedureId = entity.RequestedProcedureId;
             updateColumns.ScheduledProcedureStepId = entity.ScheduledProcedureStepId;

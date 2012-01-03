@@ -112,20 +112,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Device Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public Device Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IDeviceEntityBroker broker = read.GetBroker<IDeviceEntityBroker>();
+            var broker = read.GetBroker<IDeviceEntityBroker>();
             Device theObject = broker.Load(key);
             return theObject;
         }
         static public Device Insert(Device entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 Device newEntity = Insert(update, entity);
                 update.Commit();
@@ -134,8 +134,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public Device Insert(IUpdateContext update, Device entity)
         {
-            IDeviceEntityBroker broker = update.GetBroker<IDeviceEntityBroker>();
-            DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
+            var broker = update.GetBroker<IDeviceEntityBroker>();
+            var updateColumns = new DeviceUpdateColumns();
             updateColumns.Dhcp = entity.Dhcp;
             updateColumns.Enabled = entity.Enabled;
             updateColumns.AllowStorage = entity.AllowStorage;
