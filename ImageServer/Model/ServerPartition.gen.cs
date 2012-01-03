@@ -122,20 +122,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public ServerPartition Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public ServerPartition Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
+            var broker = read.GetBroker<IServerPartitionEntityBroker>();
             ServerPartition theObject = broker.Load(key);
             return theObject;
         }
         static public ServerPartition Insert(ServerPartition entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ServerPartition newEntity = Insert(update, entity);
                 update.Commit();
@@ -144,8 +144,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public ServerPartition Insert(IUpdateContext update, ServerPartition entity)
         {
-            IServerPartitionEntityBroker broker = update.GetBroker<IServerPartitionEntityBroker>();
-            ServerPartitionUpdateColumns updateColumns = new ServerPartitionUpdateColumns();
+            var broker = update.GetBroker<IServerPartitionEntityBroker>();
+            var updateColumns = new ServerPartitionUpdateColumns();
             updateColumns.Enabled = entity.Enabled;
             updateColumns.Description = entity.Description;
             updateColumns.AeTitle = entity.AeTitle;

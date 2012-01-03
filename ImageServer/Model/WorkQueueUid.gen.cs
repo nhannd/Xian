@@ -85,20 +85,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public WorkQueueUid Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public WorkQueueUid Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IWorkQueueUidEntityBroker broker = read.GetBroker<IWorkQueueUidEntityBroker>();
+            var broker = read.GetBroker<IWorkQueueUidEntityBroker>();
             WorkQueueUid theObject = broker.Load(key);
             return theObject;
         }
         static public WorkQueueUid Insert(WorkQueueUid entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 WorkQueueUid newEntity = Insert(update, entity);
                 update.Commit();
@@ -107,8 +107,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public WorkQueueUid Insert(IUpdateContext update, WorkQueueUid entity)
         {
-            IWorkQueueUidEntityBroker broker = update.GetBroker<IWorkQueueUidEntityBroker>();
-            WorkQueueUidUpdateColumns updateColumns = new WorkQueueUidUpdateColumns();
+            var broker = update.GetBroker<IWorkQueueUidEntityBroker>();
+            var updateColumns = new WorkQueueUidUpdateColumns();
             updateColumns.WorkQueueKey = entity.WorkQueueKey;
             updateColumns.Failed = entity.Failed;
             updateColumns.Duplicate = entity.Duplicate;

@@ -56,26 +56,28 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveXml")]
         public XmlDocument ArchiveXml
-        { get; set; }
+        { get { return _ArchiveXml; } set { _ArchiveXml = value; } }
+        [NonSerialized]
+        private XmlDocument _ArchiveXml;
         #endregion
 
         #region Static Methods
         static public ArchiveStudyStorage Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public ArchiveStudyStorage Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IArchiveStudyStorageEntityBroker broker = read.GetBroker<IArchiveStudyStorageEntityBroker>();
+            var broker = read.GetBroker<IArchiveStudyStorageEntityBroker>();
             ArchiveStudyStorage theObject = broker.Load(key);
             return theObject;
         }
         static public ArchiveStudyStorage Insert(ArchiveStudyStorage entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ArchiveStudyStorage newEntity = Insert(update, entity);
                 update.Commit();
@@ -84,8 +86,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public ArchiveStudyStorage Insert(IUpdateContext update, ArchiveStudyStorage entity)
         {
-            IArchiveStudyStorageEntityBroker broker = update.GetBroker<IArchiveStudyStorageEntityBroker>();
-            ArchiveStudyStorageUpdateColumns updateColumns = new ArchiveStudyStorageUpdateColumns();
+            var broker = update.GetBroker<IArchiveStudyStorageEntityBroker>();
+            var updateColumns = new ArchiveStudyStorageUpdateColumns();
             updateColumns.PartitionArchiveKey = entity.PartitionArchiveKey;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;

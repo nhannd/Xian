@@ -112,7 +112,9 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveInfo")]
         public XmlDocument ArchiveInfo
-        { get; set; }
+        { get { return _ArchiveInfo; } set { _ArchiveInfo = value; } }
+        [NonSerialized]
+        private XmlDocument _ArchiveInfo;
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ExtendedInfo")]
         public String ExtendedInfo
         { get; set; }
@@ -121,20 +123,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public StudyDeleteRecord Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public StudyDeleteRecord Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IStudyDeleteRecordEntityBroker broker = read.GetBroker<IStudyDeleteRecordEntityBroker>();
+            var broker = read.GetBroker<IStudyDeleteRecordEntityBroker>();
             StudyDeleteRecord theObject = broker.Load(key);
             return theObject;
         }
         static public StudyDeleteRecord Insert(StudyDeleteRecord entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 StudyDeleteRecord newEntity = Insert(update, entity);
                 update.Commit();
@@ -143,8 +145,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public StudyDeleteRecord Insert(IUpdateContext update, StudyDeleteRecord entity)
         {
-            IStudyDeleteRecordEntityBroker broker = update.GetBroker<IStudyDeleteRecordEntityBroker>();
-            StudyDeleteRecordUpdateColumns updateColumns = new StudyDeleteRecordUpdateColumns();
+            var broker = update.GetBroker<IStudyDeleteRecordEntityBroker>();
+            var updateColumns = new StudyDeleteRecordUpdateColumns();
             updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
             updateColumns.Timestamp = entity.Timestamp;
             updateColumns.ServerPartitionAE = entity.ServerPartitionAE;

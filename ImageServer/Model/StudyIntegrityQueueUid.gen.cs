@@ -66,20 +66,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public StudyIntegrityQueueUid Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public StudyIntegrityQueueUid Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IStudyIntegrityQueueUidEntityBroker broker = read.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
+            var broker = read.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
             StudyIntegrityQueueUid theObject = broker.Load(key);
             return theObject;
         }
         static public StudyIntegrityQueueUid Insert(StudyIntegrityQueueUid entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 StudyIntegrityQueueUid newEntity = Insert(update, entity);
                 update.Commit();
@@ -88,8 +88,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public StudyIntegrityQueueUid Insert(IUpdateContext update, StudyIntegrityQueueUid entity)
         {
-            IStudyIntegrityQueueUidEntityBroker broker = update.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
-            StudyIntegrityQueueUidUpdateColumns updateColumns = new StudyIntegrityQueueUidUpdateColumns();
+            var broker = update.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
+            var updateColumns = new StudyIntegrityQueueUidUpdateColumns();
             updateColumns.StudyIntegrityQueueKey = entity.StudyIntegrityQueueKey;
             updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
             updateColumns.SopInstanceUid = entity.SopInstanceUid;

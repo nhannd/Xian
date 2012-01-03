@@ -266,7 +266,7 @@ namespace ClearCanvas.ImageServer.Model
 						// This however requires breaking the Common --> Model dependency.
 						using (IReadContext readContext = _store.OpenReadContext())
 						{
-							_patient = Patient.Load(readContext, StudyStorage.Study.PatientKey);
+							_patient = Patient.Load(readContext, StudyStorage.GetStudy().PatientKey);
 						}
 					}
 				}

@@ -77,20 +77,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Filesystem Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public Filesystem Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IFilesystemEntityBroker broker = read.GetBroker<IFilesystemEntityBroker>();
+            var broker = read.GetBroker<IFilesystemEntityBroker>();
             Filesystem theObject = broker.Load(key);
             return theObject;
         }
         static public Filesystem Insert(Filesystem entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 Filesystem newEntity = Insert(update, entity);
                 update.Commit();
@@ -99,8 +99,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public Filesystem Insert(IUpdateContext update, Filesystem entity)
         {
-            IFilesystemEntityBroker broker = update.GetBroker<IFilesystemEntityBroker>();
-            FilesystemUpdateColumns updateColumns = new FilesystemUpdateColumns();
+            var broker = update.GetBroker<IFilesystemEntityBroker>();
+            var updateColumns = new FilesystemUpdateColumns();
             updateColumns.FilesystemPath = entity.FilesystemPath;
             updateColumns.Enabled = entity.Enabled;
             updateColumns.ReadOnly = entity.ReadOnly;
