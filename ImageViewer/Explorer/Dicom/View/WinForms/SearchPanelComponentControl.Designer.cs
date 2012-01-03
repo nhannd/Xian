@@ -159,6 +159,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			resources.ApplyResources(this._titleBar, "_titleBar");
 			this._titleBar.Name = "_titleBar";
+			this._titleBar.TextAlignment = System.Drawing.StringAlignment.Near;
 			// 
 			// _referringPhysiciansName
 			// 
@@ -184,6 +185,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// SearchPanelComponentControl
 			// 
+			this.AcceptButton = this._searchButton;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;

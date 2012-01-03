@@ -117,6 +117,7 @@
     <Compile Include="ApplicationThemeManager.cs" />
     <Compile Include="Actions\AbstractAction.cs" />
     <Compile Include="ApplicationThemeResourceProviderBase.cs" />
+    <Compile Include="ApplicationThemeResourceResolver.cs" />
     <Compile Include="Async.cs" />
     <Compile Include="AsyncTask.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />

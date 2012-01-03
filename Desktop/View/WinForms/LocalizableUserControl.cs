@@ -23,6 +23,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 	public class LocalizableUserControl : UserControl
 	{
 		private readonly MethodInvoker _onCurrentUICultureChangedMethod;
+		private readonly MethodInvoker _onCurrentUIThemeChangedMethod;
 
 		/// <summary>
 		/// Initializes a new instance of a <see cref="LocalizableUserControl"/>.
@@ -32,7 +33,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (!DesignMode)
 			{
 				Application.CurrentUICultureChanged += Application_CurrentUICultureChanged;
+				Application.CurrentUIThemeChanged += Application_CurrentUIThemeChanged;
 				_onCurrentUICultureChangedMethod = OnCurrentUICultureChanged;
+				_onCurrentUIThemeChangedMethod = OnCurrentUIThemeChanged;
 			}
 		}
 
@@ -43,7 +46,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
+			{
 				Application.CurrentUICultureChanged -= Application_CurrentUICultureChanged;
+				Application.CurrentUIThemeChanged -= Application_CurrentUIThemeChanged;
+			}
 			base.Dispose(disposing);
 		}
 
@@ -58,13 +64,31 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
+		private void Application_CurrentUIThemeChanged(object sender, EventArgs e)
+		{
+			if (_onCurrentUIThemeChangedMethod != null)
+			{
+				if (InvokeRequired)
+					Invoke(_onCurrentUIThemeChangedMethod);
+				else
+					_onCurrentUIThemeChangedMethod.Invoke();
+			}
+		}
+
 		/// <summary>
 		/// Called when the current application UI culture has changed.
 		/// </summary>
+		/// <seealso cref="Application.CurrentUICulture"/>
 		protected virtual void OnCurrentUICultureChanged()
 		{
 			ApplyControlResources(this);
 		}
+
+		/// <summary>
+		/// Called when the current application UI theme has changed.
+		/// </summary>
+		/// <seealso cref="Application.CurrentUITheme"/>
+		protected virtual void OnCurrentUIThemeChanged() {}
 
 		/// <summary>
 		/// Convenience helper method to apply component resources for a top-level <see cref="UserControl"/>

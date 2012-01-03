@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Reflection;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
@@ -20,7 +18,7 @@ namespace ClearCanvas.Desktop.Actions
 	/// A specialization of the <see cref="ResourceResolver"/> class for use in resolving resources
 	/// related to actions.
 	/// </summary>
-	public class ActionResourceResolver : ResourceResolver
+	public class ActionResourceResolver : ApplicationThemeResourceResolver
 	{
 		/// <summary>
 		/// Constructs an instance of this object for the specified action target.
@@ -41,11 +39,5 @@ namespace ClearCanvas.Desktop.Actions
 		/// <param name="targetType">The action target type for which resources will be resolved.</param>
 		public ActionResourceResolver(Type targetType)
 			: base(targetType, true) {}
-
-		protected override Stream OpenResource(string resourceFullName, Assembly assembly)
-		{
-			var resource = ApplicationThemeManager.OpenResource(resourceFullName, assembly);
-			return resource ?? base.OpenResource(resourceFullName, assembly);
-		}
 	}
 }

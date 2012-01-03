@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using ClearCanvas.Common;
@@ -141,7 +142,7 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Gets a <see cref="Stream"/> to the themed replacement for the specified resource name provided by the <see cref="CurrentTheme"/>.
+		/// Opens the themed replacement for the specified resource name provided by the <see cref="CurrentTheme"/> as a <see cref="Stream"/>.
 		/// </summary>
 		/// <param name="resourceFullName">The fully-qualified name of the resource being requested.</param>
 		/// <returns>A new <see cref="Stream"/> for the resource if the <see cref="CurrentTheme"/> provides a themed replacement; NULL otherwise.</returns>
@@ -151,7 +152,7 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Gets a <see cref="Stream"/> to the themed replacement for the specified resource name provided by the <see cref="CurrentTheme"/>.
+		/// Opens the themed replacement for the specified resource name provided by the <see cref="CurrentTheme"/> as a <see cref="Stream"/>.
 		/// </summary>
 		/// <param name="resourceFullName">The fully-qualified name of the resource being requested.</param>
 		/// <param name="originalAssemblyHint">The original assembly in which the resource was defined, if known. May be NULL if unknown.</param>
@@ -162,6 +163,37 @@ namespace ClearCanvas.Desktop
 			{
 				var currentTheme = CurrentTheme;
 				return currentTheme != null ? currentTheme.OpenResource(resourceFullName, originalAssemblyHint) : null;
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, "An exception was thrown while processing an application theme.");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Opens the themed replacement for the specified image resource provided by the <see cref="CurrentTheme"/> as an <see cref="Image"/>.
+		/// </summary>
+		/// <param name="resourceFullName">The fully-qualified name of the image resource being requested.</param>
+		/// <returns>A new <see cref="Image"/> for the resource if the <see cref="CurrentTheme"/> provides a themed replacement; NULL otherwise.</returns>
+		public static Image OpenImage(string resourceFullName)
+		{
+			return OpenImage(resourceFullName, null);
+		}
+
+		/// <summary>
+		/// Opens the themed replacement for the specified image resource provided by the <see cref="CurrentTheme"/> as an <see cref="Image"/>.
+		/// </summary>
+		/// <param name="resourceFullName">The fully-qualified name of the image resource being requested.</param>
+		/// <param name="originalAssemblyHint">The original assembly in which the image resource was defined, if known. May be NULL if unknown.</param>
+		/// <returns>A new <see cref="Image"/> for the resource if the <see cref="CurrentTheme"/> provides a themed replacement; NULL otherwise.</returns>
+		public static Image OpenImage(string resourceFullName, Assembly originalAssemblyHint)
+		{
+			try
+			{
+				using (var stream = OpenResource(resourceFullName, originalAssemblyHint))
+				using (var image = Image.FromStream(stream))
+					return new Bitmap(image); // #9261 - must return a new clone of image to avoid GDI resource stream sharing exception
 			}
 			catch (Exception ex)
 			{
