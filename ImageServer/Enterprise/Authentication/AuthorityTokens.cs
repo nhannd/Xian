@@ -96,9 +96,11 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
         /// </summary>
         public static class DataAccess
         {
-            [AuthorityToken(Description = "Allow Access to all Studies.")]
+            [AuthorityToken(Description = "Allow access to all studies.")]
             public const string AllStudies = "PACS/Data Access/Access to all Studies";
 
+            [AuthorityToken(Description = "Allow access to all partitions.")]
+            public const string AllPartitions = "PACS/Data Access/Access To All Partitions";
         }
 
         /// <summary>
