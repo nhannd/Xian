@@ -24,13 +24,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideScaleOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideScaleOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Scale.ShowHide")]
-	[IconSet("showHide", IconScheme.Colour, "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
+	[IconSet("showHide", "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
 	//
 	[ButtonAction("toggle", "overlays-dropdown/ToolbarScaleOverlay", "ShowHide")]
 	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
 	[Tooltip("toggle", "TooltipScaleOverlay")]
 	[GroupHint("toggle", "Tools.Image.Overlays.Scale.ShowHide")]
-	[IconSet("toggle", IconScheme.Colour, "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
+	[IconSet("toggle", "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
 	//
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class ScaleOverlayTool : OverlayToolBase

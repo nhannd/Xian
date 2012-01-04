@@ -26,7 +26,7 @@ using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
 	[DropDownButtonAction("dropdown", "global-toolbars/ToolbarMpr/ToolbarReslice", "ActivateLastSelected", "DropDownModel")]
-	[MouseButtonIconSet("dropdown", IconScheme.Colour, "Icons.ResliceToolSmall.png", "Icons.ResliceToolMedium.png", "Icons.ResliceToolLarge.png")]
+	[MouseButtonIconSet("dropdown", "Icons.ResliceToolSmall.png", "Icons.ResliceToolMedium.png", "Icons.ResliceToolLarge.png")]
 	[CheckedStateObserver("dropdown", "Active", "ActivationChanged")]
 	[EnabledStateObserver("dropdown", "Visible", "VisibleChanged")]
 	[VisibleStateObserver("dropdown", "Visible", "VisibleChanged")]

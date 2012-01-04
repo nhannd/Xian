@@ -140,6 +140,19 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
+		/// Gets or sets the current <see cref="ApplicationTheme"/> ID for the desktop application framework.
+		/// </summary>
+		/// <remarks>
+		/// When reading this property, the value returned will be the ID of the current <see cref="ApplicationTheme"/> in use by the desktop application framework.
+		/// When writing to this property, the current <see cref="ApplicationTheme"/> will be set to the defined theme with the matching ID, or the default theme if there are no matching themes.
+		/// </remarks>
+		public static string CurrentThemeId
+		{
+			get { return ApplicationThemeManager.CurrentThemeId; }
+			set { ApplicationThemeManager.CurrentThemeId = value; }
+		}
+
+		/// <summary>
 		/// Gets a collection of <see cref="ApplicationTheme"/>s available in the installation.
 		/// </summary>
 		public static ICollection<ApplicationTheme> Themes

@@ -287,13 +287,13 @@ namespace ClearCanvas.Desktop.Configuration
 				delegate(SettingsProperty p, string text) { p.Value = text; }));
 			_settingsPropertiesTable.Sort(new TableSortParams(_propertyNameColumn, true));
 
-			_settingsGroupsActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+			_settingsGroupsActionModel = new SimpleActionModel(new ApplicationThemeResourceResolver(this.GetType().Assembly));
 			_importAction = _settingsGroupsActionModel.AddAction("import", SR.LabelImport, "ImportToolSmall.png",
 				"Import settings meta-data from local plugins",
 				Import);
 			_importAction.Visible = _configStore.SupportsImport;
 
-			_settingsPropertiesActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+			_settingsPropertiesActionModel = new SimpleActionModel(new ApplicationThemeResourceResolver(this.GetType().Assembly));
 
 			_saveAllAction = _settingsPropertiesActionModel.AddAction("saveall", SR.LabelSaveAll, "SaveToolSmall.png",
 				delegate() { SaveModifiedSettings(false); });

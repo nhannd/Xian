@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 	[ButtonAction("launch", DefaultToolbarActionSite + "/ToolbarLaunchInViewer", "Launch")]
 	[MenuAction("launch", DefaultContextMenuActionSite + "/MenuLaunchInViewer", "Launch")]
 	[EnabledStateObserver("launch", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
-	[IconSet("launch", IconScheme.Colour, "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
+	[IconSet("launch", "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
 	[ViewerActionPermission("launch", ImageViewer.AuthorityTokens.Study.Open)]
 	[ExtensionOf(typeof(StudyFilterToolExtensionPoint))]
 	public class LaunchViewerTool : StudyFilterTool

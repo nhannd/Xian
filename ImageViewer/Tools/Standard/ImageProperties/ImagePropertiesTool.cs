@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 	[MenuAction("show", "global-menus/MenuView/MenuImageProperties", "Show", KeyStroke = XKeys.Control | XKeys.P)]
 	[MenuAction("show", "imageviewer-contextmenu/MenuImageProperties", "Show")]
 	[Tooltip("show", "TooltipImageProperties")]
-	[IconSet("show", IconScheme.Colour, "ImagePropertiesToolSmall.png", "ImagePropertiesToolMedium.png", "ImagePropertiesToolLarge.png")]
+	[IconSet("show", "ImagePropertiesToolSmall.png", "ImagePropertiesToolMedium.png", "ImagePropertiesToolLarge.png")]
 	[GroupHint("show", "Tools.Image.Information")]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ImagePropertiesTool : ImageViewerTool

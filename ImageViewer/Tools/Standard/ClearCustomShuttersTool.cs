@@ -20,12 +20,12 @@ using ClearCanvas.ImageViewer.PresentationStates;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("clear", "imageviewer-contextmenu/MenuClearCustomShutters", "Clear")]
-	[IconSet("clear", IconScheme.Colour, "Icons.ClearCustomShuttersToolSmall.png", "Icons.ClearCustomShuttersToolMedium.png", "Icons.ClearCustomShuttersToolLarge.png")]
+	[IconSet("clear", "Icons.ClearCustomShuttersToolSmall.png", "Icons.ClearCustomShuttersToolMedium.png", "Icons.ClearCustomShuttersToolLarge.png")]
 	[VisibleStateObserver("clear", "Visible", "VisibleChanged")]
 
 	[ButtonAction("clearToolbar", "global-toolbars/ToolbarStandard/ToolbarClearCustomShutters", "Clear")]
 	[Tooltip("clearToolbar", "TooltipClearCustomShutters")]
-	[IconSet("clearToolbar", IconScheme.Colour, "Icons.ClearCustomShuttersToolSmall.png", "Icons.ClearCustomShuttersToolMedium.png", "Icons.ClearCustomShuttersToolLarge.png")]
+	[IconSet("clearToolbar", "Icons.ClearCustomShuttersToolSmall.png", "Icons.ClearCustomShuttersToolMedium.png", "Icons.ClearCustomShuttersToolLarge.png")]
 	[EnabledStateObserver("clearToolbar", "Visible", "VisibleChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

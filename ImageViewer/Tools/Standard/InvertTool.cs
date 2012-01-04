@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuInvert", "Apply")]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarInvert", "Apply", KeyStroke = XKeys.I)]
 	[Tooltip("activate", "TooltipInvert")]
-	[IconSet("activate", IconScheme.Colour, "Icons.InvertToolSmall.png", "Icons.InvertToolMedium.png", "Icons.InvertToolLarge.png")]
+	[IconSet("activate", "Icons.InvertToolSmall.png", "Icons.InvertToolMedium.png", "Icons.InvertToolLarge.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [GroupHint("activate", "Tools.Image.Manipulation.Invert")]
 

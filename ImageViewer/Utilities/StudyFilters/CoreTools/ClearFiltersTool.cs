@@ -19,7 +19,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[ButtonAction("clear", DefaultToolbarActionSite + "/ToolbarClearFilters", "ClearAll")]
-	[IconSet("clear", IconScheme.Colour, "Icons.ClearFiltersToolSmall.png", "Icons.ClearFiltersToolMedium.png", "Icons.ClearFiltersToolLarge.png")]
+	[IconSet("clear", "Icons.ClearFiltersToolSmall.png", "Icons.ClearFiltersToolMedium.png", "Icons.ClearFiltersToolLarge.png")]
 	[Tooltip("clear", "TooltipClearFilters")]
 	[EnabledStateObserver("clear", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]

@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 {
 	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenFiles", "Open")]
 	[Tooltip("Open", "OpenDicomFilesVerbose")]
-	[IconSet("Open", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolMedium.png", "Icons.OpenToolLarge.png")]
+	[IconSet("Open", "Icons.OpenToolSmall.png", "Icons.OpenToolMedium.png", "Icons.OpenToolLarge.png")]
 	[EnabledStateObserver("Open", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]

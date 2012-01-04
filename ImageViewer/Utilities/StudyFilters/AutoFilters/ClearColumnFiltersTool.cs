@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 {
 	[MenuAction("clear", "studyfilters-columnfilters/MenuClearFilters", "Clear")]
 	[EnabledStateObserver("clear", "Enabled", "EnabledChanged")]
-	[IconSet("clear", IconScheme.Colour, "Icons.ClearFiltersSmall.png", "Icons.ClearFiltersSmall.png", "Icons.ClearFiltersSmall.png")]
+	[IconSet("clear", "Icons.ClearFiltersSmall.png", "Icons.ClearFiltersSmall.png", "Icons.ClearFiltersSmall.png")]
 	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
 	public class ClearColumnFiltersTool : AutoFilterTool
 	{

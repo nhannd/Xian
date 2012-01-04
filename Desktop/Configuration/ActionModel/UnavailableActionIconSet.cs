@@ -54,7 +54,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		/// <returns>The requested icon overlay as an <see cref="Image"/>.</returns>
 		private Image GetOverlayIcon(IconSize iconSize)
 		{
-			var resourceResolver = new ResourceResolver(GetType().Assembly);
+			var resourceResolver = new ApplicationThemeResourceResolver(GetType().Assembly);
 			switch (iconSize)
 			{
 				case IconSize.Small:

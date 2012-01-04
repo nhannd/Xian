@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
@@ -115,7 +116,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
 		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
-			IResourceResolver resolver = new ResourceResolver(this.GetType(), true);
+			IResourceResolver resolver = new ApplicationThemeResourceResolver(this.GetType(), true);
 			string @namespace = typeof(RoiCalloutGraphic).FullName;
 
 			List<IAction> actions = new List<IAction>();

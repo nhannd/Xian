@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	[ButtonAction("show", "dicomstudybrowser-toolbar/ToolbarShowSeriesDetails", "Show")]
 
 	[Tooltip("show", "TooltipSeriesDetails")]
-	[IconSet("show", IconScheme.Colour, "Icons.ShowSeriesDetailsToolSmall.png", "Icons.ShowSeriesDetailsToolMedium.png", "Icons.ShowSeriesDetailsToolLarge.png")]
+	[IconSet("show", "Icons.ShowSeriesDetailsToolSmall.png", "Icons.ShowSeriesDetailsToolMedium.png", "Icons.ShowSeriesDetailsToolLarge.png")]
 
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 

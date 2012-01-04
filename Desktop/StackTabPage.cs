@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop
 		{
 			_title = title;
 			_iconSet = iconSet;
-			_resourceResolver = new ResourceResolver(typeof(StackTabPage).Assembly, fallbackResolver);
+			_resourceResolver = new ApplicationThemeResourceResolver(typeof(StackTabPage).Assembly, fallbackResolver);
 		}
 
 		/// <summary>

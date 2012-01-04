@@ -167,7 +167,7 @@ namespace ClearCanvas.Desktop.Actions
 								Label = displayName
 							};
 			if (icon != null)
-				action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
+				action.IconSet = new IconSet(icon, icon, icon);
 
 			if (clickHandler != null)
 			{

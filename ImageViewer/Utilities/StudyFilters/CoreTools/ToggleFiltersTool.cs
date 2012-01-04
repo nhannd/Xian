@@ -19,7 +19,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[ButtonAction("toggle", DefaultToolbarActionSite + "/ToolbarFiltersAreOn", "Toggle")]
-	[IconSet("toggle", IconScheme.Colour, "Icons.ToggleFiltersToolSmall.png", "Icons.ToggleFiltersToolMedium.png", "Icons.ToggleFiltersToolLarge.png")]
+	[IconSet("toggle", "Icons.ToggleFiltersToolSmall.png", "Icons.ToggleFiltersToolMedium.png", "Icons.ToggleFiltersToolLarge.png")]
 	[EnabledStateObserver("toggle", "Enabled", "EnabledChanged")]
 	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
 	[LabelValueObserver("toggle", "Label", "CheckedChanged")]

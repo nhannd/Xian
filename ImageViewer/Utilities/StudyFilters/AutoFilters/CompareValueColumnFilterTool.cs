@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
@@ -59,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 
 					if (this.IsColumnSupported())
 					{
-						ResourceResolver resourceResolver = new ResourceResolver(this.GetType(), false);
+						ResourceResolver resourceResolver = new ApplicationThemeResourceResolver(this.GetType(), false);
 
 						CompareFilterMenuAction equalsAction = CompareFilterMenuAction.CreateAction(
 							this.GetType(), "equals",

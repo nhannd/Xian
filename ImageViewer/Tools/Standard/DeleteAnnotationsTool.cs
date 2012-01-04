@@ -59,11 +59,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	}
 
 	[MenuAction("delete", "basicgraphic-menu/MenuDeleteAnnotation", "Delete")]
-	[IconSet("delete", IconScheme.Colour, "DeleteAnnotationToolSmall.png", "DeleteAnnotationToolMedium.png", "DeleteAnnotationToolLarge.png")]
+	[IconSet("delete", "DeleteAnnotationToolSmall.png", "DeleteAnnotationToolMedium.png", "DeleteAnnotationToolLarge.png")]
 	[GroupHint("delete", "Tools.Annotations.Delete")]
 
 	[MenuAction("deleteall", "basicgraphic-menu/MenuDeleteAllAnnotations", "DeleteAll")]
-	[IconSet("deleteall", IconScheme.Colour, "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
+	[IconSet("deleteall", "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
 	[GroupHint("deleteall", "Tools.Annotations.Delete")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
@@ -107,12 +107,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 	[MenuAction("deleteall", "imageviewer-contextmenu/MenuDeleteAllAnnotations", "DeleteAll")]
 	[VisibleStateObserver("deleteall", "DeleteAllVisible", "DeleteAllVisibleChanged")]
-	[IconSet("deleteall", IconScheme.Colour, "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
+	[IconSet("deleteall", "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
 	[GroupHint("deleteall", "Tools.Image.Annotations.DeleteAll")]
 
 	[ButtonAction("deleteallToolbar", "global-toolbars/ToolbarAnnotation/ToolbarDeleteAllAnnotations", "DeleteAll")]
 	[EnabledStateObserver("deleteallToolbar", "DeleteAllVisible", "DeleteAllVisibleChanged")]
-	[IconSet("deleteallToolbar", IconScheme.Colour, "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
+	[IconSet("deleteallToolbar", "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
 	[Tooltip("deleteallToolbar", "TooltipDeleteAllAnnotations")]
 	[GroupHint("deleteallToolbar", "Tools.Image.Annotations.DeleteAll")]
 

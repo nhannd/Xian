@@ -24,18 +24,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ButtonAction("clearSelected", "receive-queue-toolbar/ClearSelected", "ClearSelected")]
 	[MenuAction("clearSelected", "receive-queue-contextmenu/MenuClear", "ClearSelected")]
 	[Tooltip("clearSelected", "TooltipClearSelected")]
-	[IconSet("clearSelected", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+	[IconSet("clearSelected", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[EnabledStateObserver("clearSelected", "ClearSelectedEnabled", "ClearSelectedEnabledChanged")]
 
 	[ButtonAction("clearAll", "receive-queue-toolbar/ClearAll", "ClearAll")]
 	[Tooltip("clearAll", "TooltipClearAll")]
-	[IconSet("clearAll", IconScheme.Colour, "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png")]
+	[IconSet("clearAll", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png")]
 	[EnabledStateObserver("clearAll", "ClearAllEnabled", "ClearAllEnabledChanged")]
 
 	[ButtonAction("openStudies", "receive-queue-toolbar/ToolbarOpenStudies", "OpenStudies")]
 	[MenuAction("openStudies", "receive-queue-contextmenu/MenuOpenStudies", "OpenStudies")]
 	[Tooltip("openStudies", "TooltipOpenStudies")]
-	[IconSet("openStudies", IconScheme.Colour, "Icons.OpenStudiesToolSmall.png", "Icons.OpenStudiesToolSmall.png", "Icons.OpenStudiesToolSmall.png")]
+	[IconSet("openStudies", "Icons.OpenStudiesToolSmall.png", "Icons.OpenStudiesToolSmall.png", "Icons.OpenStudiesToolSmall.png")]
 	[EnabledStateObserver("openStudies", "OpenStudiesEnabled", "OpenStudiesEnabledChanged")]
 	[ViewerActionPermission("openStudies", ImageViewer.AuthorityTokens.Study.Open)]
 

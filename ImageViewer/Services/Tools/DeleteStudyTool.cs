@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuDeleteStudy", "DeleteStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDeleteStudy")]
-	[IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 
 	[ViewerActionPermission("activate", ImageViewer.Services.AuthorityTokens.Study.Delete)]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]

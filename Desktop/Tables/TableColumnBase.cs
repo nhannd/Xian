@@ -113,7 +113,7 @@ namespace ClearCanvas.Desktop.Tables
             // in the TItem assembly
             if(_resolver == null)
             {
-                _resolver = new ResourceResolver(typeof(TItem).Assembly);
+				_resolver = new ApplicationThemeResourceResolver(typeof(TItem).Assembly);
             }
         }
 

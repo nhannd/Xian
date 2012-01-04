@@ -22,7 +22,7 @@ using ClearCanvas.ImageViewer.Utilities.StudyFilters.Export;
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[DropDownAction("export", DefaultToolbarActionSite + "/ToolbarExport", "DropDownActionModel")]
-	[IconSet("export", IconScheme.Colour, "Icons.SaveToolSmall.png", "Icons.SaveToolMedium.png", "Icons.SaveToolLarge.png")]
+	[IconSet("export", "Icons.SaveToolSmall.png", "Icons.SaveToolMedium.png", "Icons.SaveToolLarge.png")]
 	[EnabledStateObserver("export", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	[ViewerActionPermission("export", AuthorityTokens.Study.Anonymize)]
 	[ViewerActionPermission("export", AuthorityTokens.Study.Export)]

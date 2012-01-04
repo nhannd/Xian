@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[DropDownButtonAction("dropdown", "global-toolbars/ToolbarStandard/ToolbarShowHideOverlays", "ToggleAll", "DropDownActionModel", KeyStroke = XKeys.O)]
 	[Tooltip("dropdown", "TooltipShowHideOverlays")]
 	[GroupHint("dropdown", "Tools.Image.Overlays.Text.ShowHide")]
-	[IconSet("dropdown", IconScheme.Colour, "Icons.ShowHideOverlaysToolSmall.png", "Icons.ShowHideOverlaysToolMedium.png", "Icons.ShowHideOverlaysToolLarge.png")]
+	[IconSet("dropdown", "Icons.ShowHideOverlaysToolSmall.png", "Icons.ShowHideOverlaysToolMedium.png", "Icons.ShowHideOverlaysToolLarge.png")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class ShowHideOverlaysTool : ImageViewerTool
 	{

@@ -25,7 +25,7 @@ namespace ClearCanvas.Desktop.Explorer
 	}
 
 	[MenuAction("show", "global-menus/MenuFile/MenuExplorer", "Show", KeyStroke = XKeys.Control | XKeys.E)]
-	[IconSet("show", IconScheme.Colour, "Icons.ExplorerToolSmall.png", "Icons.ExplorerToolMedium.png", "Icons.ExplorerToolLarge.png")]
+	[IconSet("show", "Icons.ExplorerToolSmall.png", "Icons.ExplorerToolMedium.png", "Icons.ExplorerToolLarge.png")]
 	[GroupHint("show", "Application.Browsing.Explorer")]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]

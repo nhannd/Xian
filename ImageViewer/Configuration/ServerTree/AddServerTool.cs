@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 	[MenuAction("activate", "servertree-contextmenu/MenuAddServer", "AddNewServer")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipAddServer")]
-	[IconSet("activate", IconScheme.Colour, "Icons.AddServerToolSmall.png", "Icons.AddServerToolMedium.png", "Icons.AddServerToolLarge.png")]
+	[IconSet("activate", "Icons.AddServerToolSmall.png", "Icons.AddServerToolMedium.png", "Icons.AddServerToolLarge.png")]
 	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
 	public class AddServerTool : ServerTreeTool
 	{

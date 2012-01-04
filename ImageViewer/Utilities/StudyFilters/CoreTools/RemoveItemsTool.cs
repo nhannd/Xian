@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 	[ButtonAction("remove", DefaultToolbarActionSite + "/ToolbarRemoveItems", "RemoveItems")]
 	[MenuAction("remove", DefaultContextMenuActionSite + "/MenuRemoveItems", "RemoveItems")]
 	[EnabledStateObserver("remove", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
-	[IconSet("remove", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
+	[IconSet("remove", "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
 	//
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class RemoveItemsTool : StudyFilterTool

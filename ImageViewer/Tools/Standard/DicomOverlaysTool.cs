@@ -23,13 +23,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideDicomOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideDicomOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.DicomOverlay.ShowHide")]
-	[IconSet("showHide", IconScheme.Colour, "Icons.DicomOverlaysToolSmall.png", "Icons.DicomOverlaysToolMedium.png", "Icons.DicomOverlaysToolLarge.png")]
+	[IconSet("showHide", "Icons.DicomOverlaysToolSmall.png", "Icons.DicomOverlaysToolMedium.png", "Icons.DicomOverlaysToolLarge.png")]
 	//
 	[ButtonAction("toggle", "overlays-dropdown/ToolbarDicomOverlay", "ShowHide")]
 	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
 	[Tooltip("toggle", "TooltipDicomOverlay")]
 	[GroupHint("toggle", "Tools.Image.Overlays.DicomOverlay.ShowHide")]
-	[IconSet("toggle", IconScheme.Colour, "Icons.DicomOverlaysToolSmall.png", "Icons.DicomOverlaysToolMedium.png", "Icons.DicomOverlaysToolLarge.png")]
+	[IconSet("toggle", "Icons.DicomOverlaysToolSmall.png", "Icons.DicomOverlaysToolMedium.png", "Icons.DicomOverlaysToolLarge.png")]
 	//
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class DicomOverlaysTool : OverlayToolBase

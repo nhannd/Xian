@@ -19,7 +19,7 @@ using Path=System.IO.Path;
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[DropDownAction("add", DefaultToolbarActionSite + "/ToolbarAddItems", "DropDownActionModel")]
-	[IconSet("add", IconScheme.Colour, "Icons.AddItemsToolSmall.png", "Icons.AddItemsToolMedium.png", "Icons.AddItemsToolLarge.png")]
+	[IconSet("add", "Icons.AddItemsToolSmall.png", "Icons.AddItemsToolMedium.png", "Icons.AddItemsToolLarge.png")]
 	//
 	[MenuAction("addFiles", DropDownMenuActionSite + "/MenuAddFiles", "AddItems")]
 	[MenuAction("addFolders", DropDownMenuActionSite + "/MenuAddFolders", "AddItemsByFolder")]

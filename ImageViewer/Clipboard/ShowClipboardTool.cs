@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	[MenuAction("show", "global-menus/MenuView/MenuShowClipboard", "Show")]
 	[DropDownButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowClipboard", "Show", "ClipboardMenuModel")]
 	[Tooltip("show", "TooltipShowClipboard")]
-	[IconSet("show", IconScheme.Colour, "Icons.ShowClipboardToolSmall.png", "Icons.ShowClipboardToolMedium.png", "Icons.ShowClipboardToolLarge.png")]
+	[IconSet("show", "Icons.ShowClipboardToolSmall.png", "Icons.ShowClipboardToolMedium.png", "Icons.ShowClipboardToolLarge.png")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ShowClipboardTool : ImageViewerTool

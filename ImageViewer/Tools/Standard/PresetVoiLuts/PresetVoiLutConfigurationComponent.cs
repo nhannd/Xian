@@ -418,7 +418,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		private void InitializeMenuAndToolbar()
 		{
-			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+			ResourceResolver resolver = new ApplicationThemeResourceResolver(this.GetType().Assembly);
 
 			_toolbarModel = new SimpleActionModel(resolver);
 			_toolbarModel.AddAction("add", SR.LabelAdd, "AddToolSmall.png", OnAdd);

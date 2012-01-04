@@ -21,7 +21,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 	[MenuAction("activate", "dicomeditor-contextmenu/MenuReplicate", "Replicate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipReplicate")]
-	[IconSet("activate", IconScheme.Colour, "Icons.CopyToolSmall.png", "Icons.CopyToolSmall.png", "Icons.CopyToolSmall.png")]
+	[IconSet("activate", "Icons.CopyToolSmall.png", "Icons.CopyToolSmall.png", "Icons.CopyToolSmall.png")]
 	[ExtensionOf(typeof (DicomEditorToolExtensionPoint))]
 	public class ReplicateTool : DicomEditorTool
 	{

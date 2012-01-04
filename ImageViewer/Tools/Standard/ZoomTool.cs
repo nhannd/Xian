@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarZoom", "Select", "ZoomDropDownMenuModel", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.Z)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.ZoomToolSmall.png", "Icons.ZoomToolMedium.png", "Icons.ZoomToolLarge.png")]
+	[MouseButtonIconSet("activate", "Icons.ZoomToolSmall.png", "Icons.ZoomToolMedium.png", "Icons.ZoomToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Zoom")]
 
 	[KeyboardAction("zoomin", "imageviewer-keyboard/ToolsStandardZoom/ZoomIn", "ZoomIn", KeyStroke = XKeys.OemPeriod)]
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			get
 			{
-				SimpleActionModel actionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+				SimpleActionModel actionModel = new SimpleActionModel(new ApplicationThemeResourceResolver(this.GetType().Assembly));
 
 				actionModel.AddAction("fit", SR.LabelZoomFit, null, SR.LabelZoomFit, delegate { SetScale(0); });
 				AddFixedZoomAction(actionModel, 1);

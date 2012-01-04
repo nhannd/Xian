@@ -307,7 +307,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				GetAttachmentsIcon,
 				0.25f)
 								{
-									ResourceResolver = new ResourceResolver(typeof(SearchResult).Assembly),
+									ResourceResolver = new ApplicationThemeResourceResolver(typeof(SearchResult).Assembly),
 									Comparison = (x, y) => x.HasAttachments().CompareTo(y.HasAttachments())
 								};
 

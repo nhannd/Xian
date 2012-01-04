@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
             if (!HitTest(mouseInformation.Location))
                 return new ActionSet();
 
-			IResourceResolver resolver = new ResourceResolver(this.GetType(), true);
+			IResourceResolver resolver = new ApplicationThemeResourceResolver(this.GetType(), true);
 			string @namespace = typeof(TextEditControlGraphic).FullName;
 			MenuAction action = new MenuAction(@namespace + ":edit", new ActionPath(site + "/MenuEditText", resolver), ClickActionFlags.None, resolver);
 			action.GroupHint = new GroupHint("Tools.Graphics.Edit");

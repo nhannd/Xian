@@ -13,6 +13,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -261,7 +262,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			int count = this.Subject.Points.Count;
 			bool hit = base.ControlPoints.HitTest(Point.Round(_lastContextMenuPoint));
 
-			IResourceResolver resolver = new ResourceResolver(this.GetType(), true);
+			IResourceResolver resolver = new ApplicationThemeResourceResolver(this.GetType(), true);
 			string @namespace = typeof (VerticesControlGraphic).FullName;
 
 			MenuAction insertAction = new MenuAction(@namespace + ":insert", new ActionPath(site + "/MenuInsertVertex", resolver), ClickActionFlags.None, resolver);

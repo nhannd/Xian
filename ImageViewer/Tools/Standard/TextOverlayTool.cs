@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideTextOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideTextOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Text.ShowHide")]
-	[IconSet("showHide", IconScheme.Colour, "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
+	[IconSet("showHide", "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
 	//
 	[ButtonAction("toggle", "overlays-dropdown/ToolbarTextOverlay", "ShowHide")]
 	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
 	[Tooltip("toggle", "TooltipTextOverlay")]
 	[GroupHint("toggle", "Tools.Image.Overlays.Text.ShowHide")]
-	[IconSet("toggle", IconScheme.Colour, "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
+	[IconSet("toggle", "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
 	//
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class TextOverlayTool : OverlayToolBase

@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	///		[ButtonAction("activate", "global-toolbars/ToolbarStandard/My Tool", "Select", Flags = ClickActionFlags.CheckAction)]
 	///		[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandard/My Tool", "Select", KeyStroke = XKeys.R)]
 	///		[CheckedStateObserver("activate", "Active", "ActivationChanged")]
-	///		[IconSet("activate", IconScheme.Colour, "Icons.MyToolSmall.png", "Icons.MyToolToolMedium.png", "Icons.MyToolToolLarge.png")]
+	///		[IconSet("activate", "Icons.MyToolSmall.png", "Icons.MyToolToolMedium.png", "Icons.MyToolToolLarge.png")]
 	///		[MouseToolButton(XMouseButtons.Left, true)]
 	/// </code>
 	/// The "Select" parameter in each of the 'Action' attributes refers to the <see cref="MouseImageViewerTool.Select"/> method

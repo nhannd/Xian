@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 			{
 				if (_actions == null)
 				{
-					ResourceResolver rr = new ResourceResolver(this.GetType().Assembly);
+					ResourceResolver rr = new ApplicationThemeResourceResolver(this.GetType().Assembly);
 					List<IAction> actions = new List<IAction>();
 					int n = 0;
 					foreach (TestVolume tv in _volumes)
