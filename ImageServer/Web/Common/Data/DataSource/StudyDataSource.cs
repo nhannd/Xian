@@ -400,6 +400,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public string FromStudyDate { get; set; }
 
+        public string ResponsiblePerson { get; set; }
+
+        public string ResponsibleOrganization { get; set; }
+
 		public ServerPartition Partition { get; set; }
 
 		public string DateFormats { get; set; }
@@ -478,6 +482,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 string key = ReferringPhysiciansName.Replace("*", "%");
                 key = key.Replace("?", "_");
                 criteria.ReferringPhysiciansName.Like(key);
+            }
+
+            if (!String.IsNullOrEmpty(ResponsiblePerson))
+            {
+                string key = ResponsiblePerson.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.ResponsiblePerson.Like(key);
+            }
+
+            if (!String.IsNullOrEmpty(ResponsibleOrganization))
+            {
+                string key = ResponsibleOrganization.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.ResponsibleOrganization.Like(key);
             }
 
 			if(Modalities != null && Modalities.Length > 0)
