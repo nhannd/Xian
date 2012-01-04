@@ -2536,6 +2536,9 @@ BEGIN
 	--PRINT ''Deleting ServerRule''
 	delete dbo.ServerRule where ServerPartitionGUID=@ServerPartitionGUID
 
+	-- PRINT ''Deleting ServerPartitionDataAccess''
+	delete dbo.ServerPartitionDataAccess where ServerPartitionGUID= @ServerPartitionGUID
+
 	IF @DeleteStudies=1
 	BEGIN
 		/* DELETE STUDY, PATIENT AND RELATED TABLES */
