@@ -51,6 +51,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         public string ResponsiblePerson { get; set; }
 
+        public string ResponsiblePersonRole { get; set; }
+
         public string ResponsibleOrganization { get; set; }
 
         public string Species { get; set; }
