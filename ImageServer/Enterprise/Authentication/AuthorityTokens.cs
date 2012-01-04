@@ -131,10 +131,8 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
             [AuthorityToken(Description = "Allow saving of reasons for study edit/delete.")]
             public const string SaveReason = "PACS/Study/SaveReason";
-
-            [AuthorityToken(Description = "Allow display of veterinary tags.")]
+            
             public const string VetTags = "PACS/Study/VetTags";
-
         }
 
         /// <summary>
