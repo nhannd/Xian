@@ -158,6 +158,7 @@
     <Compile Include="Security\CustomFormAuthenticationModule.cs" />
     <Compile Include="Security\SessionManager.cs" />
     <Compile Include="CustomExpressionBuilder.cs" />
+    <Compile Include="ServerPartitionTabsExtensionPoint.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
