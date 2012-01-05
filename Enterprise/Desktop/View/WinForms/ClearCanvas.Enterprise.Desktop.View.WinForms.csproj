@@ -159,10 +159,10 @@
     <None Include="Resources\ClearFilterMini.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ClearFilterSmall.png" />
+    <EmbeddedResource Include="Resources\ClearFilterSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\SearchToolSmall.png" />
+    <EmbeddedResource Include="Resources\SearchToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
