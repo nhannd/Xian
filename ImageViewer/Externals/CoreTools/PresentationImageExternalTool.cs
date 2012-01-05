@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Externals.CoreTools
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class PresentationImageExternalTool : ExternalToolBase
 	{
-		private readonly IResourceResolver _resourceResolver = new ResourceResolver(typeof (PresentationImageExternalTool).Assembly);
+		private readonly IResourceResolver _resourceResolver = new ApplicationThemeResourceResolver(typeof(PresentationImageExternalTool).Assembly);
 
 		private IActionSet _actions = null;
 		private IPresentationImage _selectedPresentationImage = null;

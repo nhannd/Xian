@@ -20,7 +20,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 	[MenuAction("activate", "dicomeditor-contextmenu/MenuDelete", "Delete")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDelete")]
-	[IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[ExtensionOf(typeof (DicomEditorToolExtensionPoint))]
 	public class DeleteTool : DicomEditorTool
 	{

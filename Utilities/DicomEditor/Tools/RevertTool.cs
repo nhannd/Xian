@@ -20,7 +20,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 	[MenuAction("activate", "dicomeditor-contextmenu/MenuRevert", "Revert")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipRevert")]
-	[IconSet("activate", IconScheme.Colour, "Icons.UndoToolSmall.png", "Icons.UndoToolSmall.png", "Icons.UndoToolSmall.png")]
+	[IconSet("activate", "Icons.UndoToolSmall.png", "Icons.UndoToolSmall.png", "Icons.UndoToolSmall.png")]
 	[ExtensionOf(typeof (DicomEditorToolExtensionPoint))]
 	public class RevertTool : DicomEditorTool
 	{

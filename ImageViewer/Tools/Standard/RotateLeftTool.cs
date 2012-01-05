@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarRotateLeft", "Activate", KeyStroke = XKeys.L)]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipRotateLeft")]
-	[IconSet("activate", IconScheme.Colour, "Icons.RotateLeftToolSmall.png", "Icons.RotateLeftToolMedium.png", "Icons.RotateLeftToolLarge.png")]
+	[IconSet("activate", "Icons.RotateLeftToolSmall.png", "Icons.RotateLeftToolMedium.png", "Icons.RotateLeftToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Rotate.Left")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

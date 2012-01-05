@@ -214,7 +214,7 @@ namespace ClearCanvas.Enterprise.Desktop
 				this.SupportsEdit,
 				this.SupportsDelete,
 				this.SupportsDeactivation,
-				new ResourceResolver(this.GetType(), true));
+				new ApplicationThemeResourceResolver(this.GetType(), true));
 
 			if (SupportsAdd)
 			{

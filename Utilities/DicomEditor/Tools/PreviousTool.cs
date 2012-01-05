@@ -18,7 +18,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 	[ButtonAction("activate", "dicomeditor-toolbar/ToolbarPrevious", "Previous")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipPrevious")]
-	[IconSet("activate", IconScheme.Colour, "Icons.PreviousToolSmall.png", "Icons.PreviousToolSmall.png", "Icons.PreviousToolSmall.png")]
+	[IconSet("activate", "Icons.PreviousToolSmall.png", "Icons.PreviousToolSmall.png", "Icons.PreviousToolSmall.png")]
 	[ExtensionOf(typeof (DicomEditorToolExtensionPoint))]
 	public class PreviousTool : DicomEditorTool
 	{

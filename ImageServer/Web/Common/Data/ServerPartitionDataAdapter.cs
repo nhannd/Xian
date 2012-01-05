@@ -11,14 +11,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -242,7 +245,57 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
            }
        }
 
+        public IList<AuthorityGroupDetail> GetAuthorityGroupsForPartition(ServerEntityKey partitionKey)
+        {
+            using (var service = new AuthorityManagement())
+            {
+                IList<AuthorityGroupDetail> tokens = service.ListDataAccessAuthorityGroupDetails();
+                IList<AuthorityGroupDetail> resultGroups = new List<AuthorityGroupDetail>();
 
+                CollectionUtils.ForEach(
+                    tokens,
+                    delegate(AuthorityGroupDetail group)
+                    {
+                        bool include = false;
+                        foreach (var summary in group.AuthorityTokens)
+                        {
+                            if (summary.Name.Equals(
+                                    ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllPartitions))
+                            {
+                                include = true;                                
+                            }
+                            if (summary.Name.Equals(
+                                    ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
+                            {
+                                return;
+                            }
+                        }
+
+                        if (!include)
+                        {
+                            using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                            {
+                                var criteria = new ServerPartitionDataAccessSelectCriteria();
+                                criteria.ServerPartitionKey.EqualTo(partitionKey);
+
+                                var dataCriteria = new DataAccessGroupSelectCriteria();
+                                dataCriteria.AuthorityGroupOID.EqualTo(new ServerEntityKey("AuthorityGroupOID", new Guid(group.AuthorityGroupRef.ToString(false, false))));
+                                dataCriteria.ServerPartitionDataAccessRelatedEntityCondition.Exists(criteria);
+
+                                var broker = readContext.GetBroker<IDataAccessGroupEntityBroker>();
+                                if (broker.Count(dataCriteria) > 0)
+                                    include = true;
+                            }
+                        }
+
+                        if (!include) return;
+
+                        resultGroups.Add(group);
+                    });
+
+                return resultGroups;
+            }
+        }
 
         #endregion Public methods
     }

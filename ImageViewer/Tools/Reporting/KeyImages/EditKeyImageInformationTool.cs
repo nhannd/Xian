@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	[ButtonAction("edit", KeyImageClipboard.ToolbarSite + "/ToolbarEditKeyImageInformation", "Edit")]
 	[Tooltip("edit", "TooltipEditKeyImageInformation")]
-	[IconSet("edit", IconScheme.Colour, "Icons.EditKeyImageInformationToolSmall.png", "Icons.EditKeyImageInformationToolMedium.png", "Icons.EditKeyImageInformationToolLarge.png")]
+	[IconSet("edit", "Icons.EditKeyImageInformationToolSmall.png", "Icons.EditKeyImageInformationToolMedium.png", "Icons.EditKeyImageInformationToolLarge.png")]
 	[EnabledStateObserver("edit", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]
 	internal class EditKeyImageInformationTool : Tool<IClipboardToolContext>

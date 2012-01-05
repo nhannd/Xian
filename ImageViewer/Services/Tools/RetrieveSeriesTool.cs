@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ButtonAction("activate", ToolbarActionSite + "/ToolbarRetrieveSeries", "RetrieveSeries")]
 	[MenuAction("activate", ContextMenuActionSite + "/MenuRetrieveSeries", "RetrieveSeries")]
 	[Tooltip("activate", "TooltipRetrieveSeries")]
-	[IconSet("activate", IconScheme.Colour, "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
+	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[ViewerActionPermission("activate", Services.AuthorityTokens.Study.Retrieve)]
 	[ExtensionOf(typeof (SeriesDetailsToolExtensionPoint))]

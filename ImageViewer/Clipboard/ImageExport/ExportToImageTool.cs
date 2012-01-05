@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	[MenuAction("export", "clipboard-contextmenu/MenuExportToImage", "Export")]
 	[ButtonAction("export", "clipboard-toolbar/ToolbarExportToImage", "Export")]
 	[Tooltip("export", "TooltipExportToImage")]
-	[IconSet("export", IconScheme.Colour, "Icons.ExportToImageToolSmall.png", "Icons.ExportToImageToolSmall.png", "Icons.ExportToImageToolSmall.png")]
+	[IconSet("export", "Icons.ExportToImageToolSmall.png", "Icons.ExportToImageToolSmall.png", "Icons.ExportToImageToolSmall.png")]
 	[EnabledStateObserver("export", "Enabled", "EnabledChanged")]
 	[ViewerActionPermission("export", AuthorityTokens.Clipboard.Export.JPG)]
 	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]

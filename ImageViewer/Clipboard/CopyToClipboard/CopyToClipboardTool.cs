@@ -23,17 +23,17 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 {
 	[MenuAction("copyImage", "imageviewer-contextmenu/MenuClipboard/MenuCopyImageToClipboard", "CopyImage")]
 	[MenuAction("copyImage", ShowClipboardTool.ClipboardToolbarDropdownSite + "/MenuCopyImageToClipboard", "CopyImage")]
-	[IconSet("copyImage", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
+	[IconSet("copyImage", "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
 	[EnabledStateObserver("copyImage", "CopyImageEnabled", "CopyImageEnabledChanged")]
 
 	[MenuAction("copyDisplaySet", "imageviewer-contextmenu/MenuClipboard/MenuCopyDisplaySetToClipboard", "CopyDisplaySet")]
 	[MenuAction("copyDisplaySet", ShowClipboardTool.ClipboardToolbarDropdownSite + "/MenuCopyDisplaySetToClipboard", "CopyDisplaySet")]
-	[IconSet("copyDisplaySet", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
+	[IconSet("copyDisplaySet", "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
 	[EnabledStateObserver("copyDisplaySet", "CopyDisplaySetEnabled", "CopyDisplaySetEnabledChanged")]
 
 	[MenuAction("copySubset", "imageviewer-contextmenu/MenuClipboard/MenuCopySubsetToClipboard", "CopySubset")]
 	[MenuAction("copySubset", ShowClipboardTool.ClipboardToolbarDropdownSite + "/MenuCopySubsetToClipboard", "CopySubset")]
-	[IconSet("copySubset", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
+	[IconSet("copySubset", "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
 	[EnabledStateObserver("copySubset", "CopySubsetEnabled", "CopySubsetEnabledChanged")]
 
 	[ExtensionOf(typeof(ClipboardToolbarToolExtensionPoint))]

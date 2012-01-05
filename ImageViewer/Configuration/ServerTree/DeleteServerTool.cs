@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 	[MenuAction("activate", "servertree-contextmenu/MenuDelete", "DeleteServerServerGroup")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDelete")]
-	[IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
+	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
 	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
 	public class DeleteServerTool : ServerTreeTool
 	{

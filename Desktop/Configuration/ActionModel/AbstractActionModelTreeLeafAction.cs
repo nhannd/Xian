@@ -44,8 +44,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 			IconSet iconSet;
 			if (action.IconSet == null || action.ResourceResolver == null)
 			{
-				iconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelNullSmall.png", "Icons.ActionModelNullMedium.png", "Icons.ActionModelNullLarge.png");
-				ResourceResolver = new ResourceResolver(typeof(AbstractActionModelTreeLeafAction).Assembly, action.ResourceResolver);
+				iconSet = new IconSet("Icons.ActionModelNullSmall.png", "Icons.ActionModelNullMedium.png", "Icons.ActionModelNullLarge.png");
+				ResourceResolver = new ApplicationThemeResourceResolver(typeof(AbstractActionModelTreeLeafAction).Assembly, action.ResourceResolver);
 			}
 			else
 			{

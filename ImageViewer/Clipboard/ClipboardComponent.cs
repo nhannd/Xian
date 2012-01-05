@@ -223,7 +223,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			ClipboardToolContext toolContext = new ClipboardToolContext(this);
 			_toolSet = new ToolSet(new ClipboardToolExtensionPoint(), toolContext);
 
-			_resolver = new ResourceResolver(GetType(), true);
+			_resolver = new ApplicationThemeResourceResolver(GetType(), true);
 			ActionSet toolActions = new ActionSet(_toolSet.Actions);
 			ActionSet deleteToolActions = new ActionSet(GetDeleteActions());
 			IActionSet allActions = toolActions.Union(deleteToolActions);
@@ -303,13 +303,13 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		private static IconSet CreateDeleteAllIconSet()
 		{
-			return new IconSet(IconScheme.Colour, "Icons.DeleteAllClipboardItemsToolSmall.png",
+			return new IconSet("Icons.DeleteAllClipboardItemsToolSmall.png",
 			                   "Icons.DeleteAllClipboardItemsToolSmall.png", "Icons.DeleteClipboardItemToolSmall.png");
 		}
 		
 		private static IconSet CreateDeleteIconSet()
 		{
-			return new IconSet(IconScheme.Colour, "Icons.DeleteClipboardItemToolSmall.png",
+			return new IconSet("Icons.DeleteClipboardItemToolSmall.png",
 			                   "Icons.DeleteClipboardItemToolSmall.png", "Icons.DeleteClipboardItemToolSmall.png");
 		}
 

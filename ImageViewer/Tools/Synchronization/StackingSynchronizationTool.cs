@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[ButtonAction("synchronize", "global-toolbars/ToolbarSynchronization/ToolbarSynchronizeStacking", "ToggleSynchronize", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("synchronize", "SynchronizeActive", "SynchronizeActiveChanged")]
 	[Tooltip("synchronize", "TooltipSynchronizeStacking")]
-	[IconSet("synchronize", IconScheme.Colour, "Icons.SynchronizeToolSmall.png", "Icons.SynchronizeToolMedium.png", "Icons.SynchronizeToolLarge.png")]
+	[IconSet("synchronize", "Icons.SynchronizeToolSmall.png", "Icons.SynchronizeToolMedium.png", "Icons.SynchronizeToolLarge.png")]
 	[GroupHint("synchronize", "Tools.Image.Manipulation.Stacking.Synchronize")]
 
 	[MenuAction("linkStudies", "imageviewer-contextmenu/MenuSynchronizeStackingLinkStudies", "ToggleLinkStudies", InitiallyAvailable = false)]
@@ -72,8 +72,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			_linkStudiesEnabled = false;
 
 			_studiesLinked = true;
-			_linkStudiesIconSet = new IconSet(IconScheme.Colour, "Icons.LinkStudiesToolSmall.png", "Icons.LinkStudiesToolMedium.png", "Icons.LinkStudiesToolLarge.png");
-			_unlinkStudiesIconSet = new IconSet(IconScheme.Colour, "Icons.UnlinkStudiesToolSmall.png", "Icons.UnlinkStudiesToolMedium.png", "Icons.UnlinkStudiesToolLarge.png");
+			_linkStudiesIconSet = new IconSet("Icons.LinkStudiesToolSmall.png", "Icons.LinkStudiesToolMedium.png", "Icons.LinkStudiesToolLarge.png");
+			_unlinkStudiesIconSet = new IconSet("Icons.UnlinkStudiesToolSmall.png", "Icons.UnlinkStudiesToolMedium.png", "Icons.UnlinkStudiesToolLarge.png");
 
 			ResetFrameOfReferenceCalibrations();
 		}

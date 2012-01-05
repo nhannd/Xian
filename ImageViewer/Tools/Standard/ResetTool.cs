@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarReset", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipReset")]
-	[IconSet("activate", IconScheme.Colour, "Icons.ResetToolSmall.png", "Icons.ResetToolMedium.png", "Icons.ResetToolLarge.png")]
+	[IconSet("activate", "Icons.ResetToolSmall.png", "Icons.ResetToolMedium.png", "Icons.ResetToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Reset")]
 
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

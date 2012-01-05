@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarSynchronization/ToolbarReferenceLines", "Toggle", "ReferenceLineDropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActiveChanged")]
 	[Tooltip("activate", "TooltipReferenceLines")]
-	[IconSet("activate", IconScheme.Colour, "Icons.CurrentReferenceLineToolSmall.png", "Icons.CurrentReferenceLineToolMedium.png", "Icons.CurrentReferenceLineToolLarge.png")]
+	[IconSet("activate", "Icons.CurrentReferenceLineToolSmall.png", "Icons.CurrentReferenceLineToolMedium.png", "Icons.CurrentReferenceLineToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Synchronization.ReferenceLines.Current")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private static readonly float _oneDegreeInRadians = (float)(Math.PI / 180);
 
-		private IResourceResolver _resolver = new ResourceResolver(typeof (ReferenceLineTool).Assembly);
+		private IResourceResolver _resolver = new ApplicationThemeResourceResolver(typeof(ReferenceLineTool).Assembly);
 		private ActionModelRoot _dropDownMenuModel;
 
 		#endregion

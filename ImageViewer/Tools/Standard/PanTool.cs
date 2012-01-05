@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarPan", "Select", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.P)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.PanToolSmall.png", "Icons.PanToolMedium.png", "Icons.PanToolLarge.png")]
+	[MouseButtonIconSet("activate", "Icons.PanToolSmall.png", "Icons.PanToolMedium.png", "Icons.PanToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Pan")]
 
 	[KeyboardAction("panleft", "imageviewer-keyboard/ToolsStandardPan/PanLeft", "PanLeft", KeyStroke = XKeys.Control | XKeys.Left)]
