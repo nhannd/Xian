@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -231,7 +232,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// simple static resource caching - the progress bar graphical elements only total about 6 kilobytes
 			if (!_cachedImageResources.ContainsKey(resourceName))
 			{
-				var resourceResolver = new ResourceResolver(Assembly.GetExecutingAssembly());
+				var resourceResolver = new ApplicationThemeResourceResolver(Assembly.GetExecutingAssembly());
 				var image = Image.FromStream(resourceResolver.OpenResource(resourceName));
 				_cachedImageResources.Add(resourceName, image);
 			}

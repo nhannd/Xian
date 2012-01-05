@@ -28,7 +28,7 @@ namespace ClearCanvas.Desktop.Configuration.Tools
 	/// </summary>
 	[MenuAction("show", "global-menus/MenuTools/MenuOptions", "Show", KeyStroke = XKeys.Control | XKeys.O)]
 	[Tooltip("show", "MenuOptions")]
-	[IconSet("show", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolMedium.png", "Icons.OptionsToolLarge.png")]
+	[IconSet("show", "Icons.OptionsToolSmall.png", "Icons.OptionsToolMedium.png", "Icons.OptionsToolLarge.png")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 	[GroupHint("show", "Application.Options")]
 

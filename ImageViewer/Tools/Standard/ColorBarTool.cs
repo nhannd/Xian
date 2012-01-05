@@ -25,14 +25,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[EnabledStateObserver("showHide", "Enabled", "EnabledChanged")]
 	[Tooltip("showHide", "TooltipShowHideColorBar")]
 	[GroupHint("showHide", "Tools.Image.Overlays.ColourBar.ShowHide")]
-	[IconSet("showHide", IconScheme.Colour, "Icons.ColorBarToolSmall.png", "Icons.ColorBarToolMedium.png", "Icons.ColorBarToolLarge.png")]
+	[IconSet("showHide", "Icons.ColorBarToolSmall.png", "Icons.ColorBarToolMedium.png", "Icons.ColorBarToolLarge.png")]
 	//
 	[MenuAction("toggle", "overlays-dropdown/ToolbarColorBar", "ShowHide")]
 	[EnabledStateObserver("toggle", "Enabled", "EnabledChanged")]
 	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
 	[Tooltip("toggle", "TooltipColorBar")]
 	[GroupHint("toggle", "Tools.Image.Overlays.ColourBar.ShowHide")]
-	[IconSet("toggle", IconScheme.Colour, "Icons.ColorBarToolSmall.png", "Icons.ColorBarToolMedium.png", "Icons.ColorBarToolLarge.png")]
+	[IconSet("toggle", "Icons.ColorBarToolSmall.png", "Icons.ColorBarToolMedium.png", "Icons.ColorBarToolLarge.png")]
 	//
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class ColorBarTool : OverlayToolBase

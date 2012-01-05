@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	[MenuAction("export", "clipboard-contextmenu/MenuExportToVideo", "Export")]
 	[ButtonAction("export", "clipboard-toolbar/ToolbarExportToVideo", "Export")]
 	[Tooltip("export", "TooltipExportToVideo")]
-	[IconSet("export", IconScheme.Colour, "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png")]
+	[IconSet("export", "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png")]
 	[EnabledStateObserver("export", "Enabled", "EnabledChanged")]
 	[ViewerActionPermission("export", AuthorityTokens.Clipboard.Export.AVI)]
 	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]

@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideShutterOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideShutterOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Shutter.ShowHide")]
-	[IconSet("showHide", IconScheme.Colour, "Icons.ShutterOverlayToolSmall.png", "Icons.ShutterOverlayToolMedium.png", "Icons.ShutterOverlayToolLarge.png")]
+	[IconSet("showHide", "Icons.ShutterOverlayToolSmall.png", "Icons.ShutterOverlayToolMedium.png", "Icons.ShutterOverlayToolLarge.png")]
 	//
 	[ButtonAction("toggle", "overlays-dropdown/ToolbarShutterOverlay", "ShowHide")]
 	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
 	[Tooltip("toggle", "TooltipShutterOverlay")]
 	[GroupHint("toggle", "Tools.Image.Overlays.Shutter.ShowHide")]
-	[IconSet("toggle", IconScheme.Colour, "Icons.ShutterOverlayToolSmall.png", "Icons.ShutterOverlayToolMedium.png", "Icons.ShutterOverlayToolLarge.png")]
+	[IconSet("toggle", "Icons.ShutterOverlayToolSmall.png", "Icons.ShutterOverlayToolMedium.png", "Icons.ShutterOverlayToolLarge.png")]
 	//
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ShutterOverlayTool : OverlayToolBase

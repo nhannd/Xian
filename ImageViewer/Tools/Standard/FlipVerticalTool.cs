@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarFlipVertical", "Activate", KeyStroke = XKeys.V)]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipFlipVertical")]
-	[IconSet("activate", IconScheme.Colour, "Icons.FlipVerticalToolSmall.png", "Icons.FlipVerticalToolMedium.png", "Icons.FlipVerticalToolLarge.png")]
+	[IconSet("activate", "Icons.FlipVerticalToolSmall.png", "Icons.FlipVerticalToolMedium.png", "Icons.FlipVerticalToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Flip.Vertical")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

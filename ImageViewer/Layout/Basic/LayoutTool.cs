@@ -19,7 +19,7 @@ using System;
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	[DropDownAction("show", "global-toolbars/ToolbarStandard/ToolbarChangeLayout", "LayoutDropDownMenuModel")]
-	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
+	[IconSet("show", "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
 	[Tooltip("show", "TooltipChangeLayout")]
 	[GroupHint("show", "Tools.Layout")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				if (_actionModel == null)
 				{
 					ActionModelRoot root = new ActionModelRoot();
-					ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+					ResourceResolver resolver = new ApplicationThemeResourceResolver(this.GetType().Assembly);
 
 					ActionPath pathBoxes = new ActionPath("root/ToolbarLayoutBoxesChooser", resolver);
 					LayoutChangerAction actionBoxes = new LayoutChangerAction("chooseBoxLayout",

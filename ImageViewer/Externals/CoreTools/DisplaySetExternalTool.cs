@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Externals.CoreTools
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class DisplaySetExternalTool : ExternalToolBase
 	{
-		private readonly IResourceResolver _resourceResolver = new ResourceResolver(typeof (DisplaySetExternalTool).Assembly);
+		private readonly IResourceResolver _resourceResolver = new ApplicationThemeResourceResolver(typeof(DisplaySetExternalTool).Assembly);
 
 		private IActionSet _actions;
 		private IDisplaySet _selectedDisplaySet;

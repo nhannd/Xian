@@ -45,7 +45,7 @@ namespace ClearCanvas.Desktop.Actions
 
 		private event EventHandler _availableChanged;
 
-		private static readonly IResourceResolver _globalResourceResolver = new ResourceResolver(AppDomain.CurrentDomain.GetAssemblies());
+		private static readonly IResourceResolver _globalResourceResolver = new ApplicationThemeResourceResolver(AppDomain.CurrentDomain.GetAssemblies());
 
 		private readonly IResourceResolver _resourceResolver;
 		private readonly IconSet _iconSet;

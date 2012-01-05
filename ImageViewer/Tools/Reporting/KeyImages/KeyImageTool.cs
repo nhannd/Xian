@@ -24,13 +24,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 	[MenuAction("create", "imageviewer-contextmenu/MenuCreateKeyImage", "Create")]
 	[ButtonAction("create", "global-toolbars/ToolbarStandard/ToolbarCreateKeyImage", "Create", KeyStroke = XKeys.Space)]
 	[Tooltip("create", "TooltipCreateKeyImage")]
-	[IconSet("create", IconScheme.Colour, "Icons.CreateKeyImageToolSmall.png", "Icons.CreateKeyImageToolMedium.png", "Icons.CreateKeyImageToolLarge.png")]
+	[IconSet("create", "Icons.CreateKeyImageToolSmall.png", "Icons.CreateKeyImageToolMedium.png", "Icons.CreateKeyImageToolLarge.png")]
 	[EnabledStateObserver("create", "Enabled", "EnabledChanged")]
 	[ViewerActionPermission("create", AuthorityTokens.KeyImages)]
 
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowKeyImages", "Show")]
 	[Tooltip("show", "TooltipShowKeyImages")]
-	[IconSet("show", IconScheme.Colour, "Icons.ShowKeyImagesToolSmall.png", "Icons.ShowKeyImagesToolMedium.png", "Icons.ShowKeyImagesToolLarge.png")]
+	[IconSet("show", "Icons.ShowKeyImagesToolSmall.png", "Icons.ShowKeyImagesToolMedium.png", "Icons.ShowKeyImagesToolLarge.png")]
 	[EnabledStateObserver("show", "ShowEnabled", "ShowEnabledChanged")]
 	[ViewerActionPermission("show", AuthorityTokens.KeyImages)]
 
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public KeyImageTool()
 		{
-			_flashOverlayController = new FlashOverlayController("Icons.CreateKeyImageToolLarge.png", new ResourceResolver(this.GetType(), false));
+			_flashOverlayController = new FlashOverlayController("Icons.CreateKeyImageToolLarge.png", new ApplicationThemeResourceResolver(this.GetType(), false));
 		}
 
 		public bool ShowEnabled

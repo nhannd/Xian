@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	partial class ResliceToolGroup
 	{
 		[MenuAction("activate", "mprviewer-reslicemenu/MenuReslice", "Select", Flags = ClickActionFlags.CheckAction)]
-		[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.ResliceToolLarge.png", "Icons.ResliceToolMedium.png", "Icons.ResliceToolSmall.png")]
+		[MouseButtonIconSet("activate", "Icons.ResliceToolLarge.png", "Icons.ResliceToolMedium.png", "Icons.ResliceToolSmall.png")]
 		[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 		[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 		[LabelValueObserver("activate", "Label", "SliceSetChanged")]

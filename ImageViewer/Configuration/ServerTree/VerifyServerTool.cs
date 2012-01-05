@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 	[MenuAction("activate", "servertree-contextmenu/MenuVerify", "VerifyServer")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipVerify")]
-	[IconSet("activate", IconScheme.Colour, "Icons.VerifyServerToolSmall.png", "Icons.VerifyServerToolMedium.png", "Icons.VerifyServerToolLarge.png")]
+	[IconSet("activate", "Icons.VerifyServerToolSmall.png", "Icons.VerifyServerToolMedium.png", "Icons.VerifyServerToolLarge.png")]
 	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
 	public class VerifyServerTool : ServerTreeTool
 	{

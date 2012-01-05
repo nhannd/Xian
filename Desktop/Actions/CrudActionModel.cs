@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="edit"></param>
         /// <param name="delete"></param>
         public CrudActionModel(bool add, bool edit, bool delete)
-            :this(add, edit, delete, new ResourceResolver(typeof(CrudActionModel).Assembly))
+            :this(add, edit, delete, new ApplicationThemeResourceResolver(typeof(CrudActionModel).Assembly))
         {
         }
 
@@ -73,7 +73,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <param name="delete"></param>
 		/// <param name="fallBackResolver"></param>
 		public CrudActionModel(bool add, bool edit, bool delete, IResourceResolver fallBackResolver)
-			: base(new ResourceResolver(typeof(CrudActionModel).Assembly, fallBackResolver))
+			: base(new ApplicationThemeResourceResolver(typeof(CrudActionModel).Assembly, fallBackResolver))
 		{
 			if (add)
 			{

@@ -22,17 +22,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ButtonAction("clearSelected", "send-queue-toolbar/ClearSelected", "ClearSelected")]
 	[MenuAction("clearSelected", "send-queue-contextmenu/MenuClear", "ClearSelected")]
 	[Tooltip("clearSelected", "TooltipClearSelected")]
-	[IconSet("clearSelected", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+	[IconSet("clearSelected", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[EnabledStateObserver("clearSelected", "ClearSelectedEnabled", "ClearSelectedEnabledChanged")]
 
 	[ButtonAction("clearAll", "send-queue-toolbar/ClearAll", "ClearAll")]
 	[Tooltip("clearAll", "TooltipClearAll")]
-	[IconSet("clearAll", IconScheme.Colour, "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png")]
+	[IconSet("clearAll", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png")]
 	[EnabledStateObserver("clearAll", "ClearAllEnabled", "ClearAllEnabledChanged")]
 
 	[ButtonAction("showBackground", "send-queue-toolbar/ShowBackgroundSends", "ToggleShowBackground", Flags = ClickActionFlags.CheckAction)]
 	[Tooltip("showBackground", "TooltipShowBackgroundSends")]
-	[IconSet("showBackground", IconScheme.Colour, "Icons.ShowBackgroundSendsToolSmall.png", "Icons.ShowBackgroundSendsToolSmall.png", "Icons.ShowBackgroundSendsSmall.png")]
+	[IconSet("showBackground", "Icons.ShowBackgroundSendsToolSmall.png", "Icons.ShowBackgroundSendsToolSmall.png", "Icons.ShowBackgroundSendsSmall.png")]
 	[CheckedStateObserver("showBackground", "ShowBackground", "ShowBackgroundChanged")]
 
 	[ExtensionOf(typeof(SendQueueApplicationComponentToolExtensionPoint))]
