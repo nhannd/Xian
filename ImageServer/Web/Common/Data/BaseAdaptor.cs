@@ -38,6 +38,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         #endregion
 
+
+        protected virtual void OnQuerying(IPersistenceContext context, TCriteria criteria)
+        {
+            
+        }
+
         #region Public Methods
 
         public IList<TServerEntity> Get()
@@ -46,21 +52,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         }
 		public IList<TServerEntity> Get(IPersistenceContext context)
 		{
-			TIEntity find = context.GetBroker<TIEntity>();
+		    TIEntity find = context.GetBroker<TIEntity>();
 			TCriteria criteria = new TCriteria();
-			IList<TServerEntity> list = find.Find(criteria);
+
+            OnQuerying(context, criteria);
+			
+            IList<TServerEntity> list = find.Find(criteria);
 
 			return list;		
 		}
 
-		public TServerEntity Get(ServerEntityKey key)
+
+        public TServerEntity Get(ServerEntityKey key)
 		{
             return Get(HttpContextData.Current.ReadContext, key);
 		}
 
 		public TServerEntity Get(IPersistenceContext context, ServerEntityKey key)
 		{
-			TIEntity select = context.GetBroker<TIEntity>();
+            //TODO: Add data access filter ?
+		    TIEntity select = context.GetBroker<TIEntity>();
 			return select.Load(key);
 		}
 
@@ -71,7 +82,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		public IList<TServerEntity> Get(IPersistenceContext context, TCriteria criteria)
 		{
-
+            OnQuerying(context, criteria);
 			TIEntity select = context.GetBroker<TIEntity>();
 				return select.Find(criteria);
 
@@ -82,6 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		}
 		public IList<TServerEntity> GetRange(IPersistenceContext context, TCriteria criteria, int startIndex, int maxRows)
 		{
+		    OnQuerying(context, criteria);
 			TIEntity select = context.GetBroker<TIEntity>();
 
             // SQL row index starts from 1
@@ -91,6 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
     	public int GetCount(TCriteria criteria)
 		{
+    	    OnQuerying(HttpContextData.Current.ReadContext, criteria);
             TIEntity select = HttpContextData.Current.ReadContext.GetBroker<TIEntity>();
 			return select.Count(criteria);
 		}
@@ -102,8 +115,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		public TServerEntity GetFirst(IPersistenceContext context, TCriteria criteria)
 		{
-				TIEntity select = context.GetBroker<TIEntity>();
-				return select.FindOne(criteria);
+            OnQuerying(context, criteria);
+            TIEntity select = context.GetBroker<TIEntity>();
+			return select.FindOne(criteria);
 		}
 
         public TServerEntity Add(TColumns param)

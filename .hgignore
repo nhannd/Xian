@@ -54,3 +54,4 @@ ImageServer/Web/Application/ClientBin/Silverlight.*.xap
 ImageServer/Web/Application/Logging.config
 ImageServer/Web/Application/Web.config
 ImageServer/Web/Application/critical.config
+ImageServer/Web/Application/Pages/Help/UsersGuide/*
