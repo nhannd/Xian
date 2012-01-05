@@ -9,11 +9,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 {
@@ -25,7 +22,15 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
             AuthorityGroups = authorityGroups;
         }
 
+        public ListAuthorityGroupsResponse(List<AuthorityGroupDetail> authorityGroups)
+        {
+            AuthorityGroupDetails = authorityGroups;
+        }
+
         [DataMember]
         public List<AuthorityGroupSummary> AuthorityGroups;
+
+        [DataMember] 
+        public List<AuthorityGroupDetail> AuthorityGroupDetails;
     }
 }
