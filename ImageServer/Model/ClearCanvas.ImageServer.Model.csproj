@@ -137,6 +137,7 @@
     <Compile Include="EntityBrokers\CannedTextUpdateColumns.gen.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EntityBrokers\DataAccessGroupSelectCriteria.cs" />
     <Compile Include="EntityBrokers\DataAccessGroupSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\DataAccessGroupUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DatabaseVersionSelectCriteria.gen.cs" />

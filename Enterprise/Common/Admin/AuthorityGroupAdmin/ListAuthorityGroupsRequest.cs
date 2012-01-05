@@ -9,10 +9,7 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 {
@@ -21,13 +18,17 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
     {
 		public ListAuthorityGroupsRequest()
 		{
-			this.Page = new SearchResultPage();
+			Page = new SearchResultPage();
 		}
 
 		[DataMember]
 		public SearchResultPage Page;
 
-        [DataMember] 
+        [DataMember]
         public bool? DataGroup;
+
+        [DataMember]
+        public bool? Details;
+
 	}
 }
