@@ -9,12 +9,21 @@
 
 #endregion
 
+using System.Threading;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     public class StudyIntegrityQueueAdaptor : BaseAdaptor<StudyIntegrityQueue, IStudyIntegrityQueueEntityBroker, StudyIntegrityQueueSelectCriteria, StudyIntegrityQueueUpdateColumns>
     {
+        protected override void OnQuerying(IPersistenceContext context, StudyIntegrityQueueSelectCriteria criteria)
+        {
+            StudyDataAccessSelectCriteria subCriteria = DataAccessHelper.GetDataAccessSubCriteriaForUser(context, Thread.CurrentPrincipal);
+            if (subCriteria != null)
+                criteria.StudyDataAccessRelatedEntityCondition.Exists(subCriteria);
+        }
     }
 }

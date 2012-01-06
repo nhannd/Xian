@@ -62,6 +62,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache.cs" />
     <Compile Include="Data\ApplicationLogAdaptor.cs" />
     <Compile Include="Data\AlertAdaptor.cs" />
     <Compile Include="Data\AlertController.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="UICommonSettings.cs" />
     <Compile Include="UISettings.cs" />
     <Compile Include="UserProfile.cs" />
+    <Compile Include="Utilities\DataAccessHelper.cs" />
     <Compile Include="Utilities\HtmlUtility.cs" />
     <Compile Include="Utilities\NameFormatter.cs" />
     <Compile Include="Utilities\ServerUtility.cs" />
