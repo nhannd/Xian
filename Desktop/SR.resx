@@ -466,4 +466,7 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="LabelDefault" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="LabelNotForHumanDiagnosis" xml:space="preserve">
+    <value>Not for Human Diagnosis</value>
+  </data>
 </root>
