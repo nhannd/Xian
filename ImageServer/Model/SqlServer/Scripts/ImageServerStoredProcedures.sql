@@ -618,7 +618,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertServerPartition]    Script Date: 01/08/2008 16:04:34 ******/
+/****** Object:  StoredProcedure [dbo].[InsertServerPartition]    Script Date: 01/09/2012 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -628,7 +628,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 13, 2007
--- Modify date: Dec 17, 2008
+-- Modify date: Jan 09, 2012
 -- Description:	Insert a ServerPartition row
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertServerPartition] 
@@ -814,7 +814,7 @@ BEGIN
 				</rule>'' )
 	COMMIT TRANSACTION
 
-	SELECT * from ServerPartition
+	SELECT * from ServerPartition WHERE GUID=@ServerPartitionGUID
 
 END
 ' 
