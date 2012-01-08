@@ -11,11 +11,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -201,6 +204,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			if (StatusEnum != null)
 				parameters.RestoreQueueStatusEnum = StatusEnum;
+
+
+            List<string> groupOIDs = new List<string>();
+            CustomPrincipal user = Thread.CurrentPrincipal as CustomPrincipal;
+            if (user != null)
+            {
+                if (!user.IsInRole(Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
+                {
+                    foreach (var oid in user.Credentials.DataAccessAuthorityGroups)
+                        groupOIDs.Add(oid.ToString());
+
+                    parameters.CheckDataAccess = true;
+                    parameters.UserAuthorityGroupGUIDs = StringUtilities.Combine(groupOIDs, ",");
+                }
+            }
 
 			IList<RestoreQueue> list = _searchController.FindRestoreQueue(parameters);
 
