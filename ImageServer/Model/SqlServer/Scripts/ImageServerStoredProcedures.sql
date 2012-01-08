@@ -314,7 +314,7 @@ END
 GO
 
 
-/****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
+/****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2012 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -330,6 +330,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 --	July 29, 2009 - Added ProcessorID parameter. (Jon Bluks)
 --	Sept 16, 2009 - Added LastUpdatedTime in the result
 --  Aug 25, 2010  - Removed adding wildcards to text search terms (Steve)
+-- Jan 08, 2012 - Added data access parameters
 -- =============================================
 CREATE PROCEDURE [dbo].[WebQueryWorkQueue] 
 	@ServerPartitionGUID uniqueidentifier = null,
@@ -340,6 +341,8 @@ CREATE PROCEDURE [dbo].[WebQueryWorkQueue]
 	@Type nvarchar(128) = null,
 	@Status nvarchar(128) = null,
 	@Priority smallint = null,
+	@CheckDataAccess bit = 0,
+	@UserAuthorityGroupGUIDs varchar(2048) = null,
 	@StartIndex int,
 	@MaxRowCount int = 25,
 	@ResultCount int OUTPUT
@@ -424,6 +427,64 @@ BEGIN
 		SET @where = @where + ''WorkQueue.ProcessorID Like '''''' + @ProcessorID + '''''' ''
 	END
 
+	DECLARE @DataAccessJoinStmt varchar(5120)
+	SET @DataAccessJoinStmt =''''
+			
+	IF (@CheckDataAccess <> 0)
+	BEGIN
+		IF (@UserAuthorityGroupGUIDs IS NOT NULL)
+		BEGIN
+			Declare @DataAccessFilter varchar(4096)
+
+			DECLARE @NextString NVARCHAR(40)
+			DECLARE @Pos INT
+			DECLARE @NextPos INT
+			DECLARE @String NVARCHAR(40)
+			DECLARE @Delimiter NVARCHAR(40)
+			SET @Delimiter = '',''
+			DECLARE @guids varchar(4096)
+			DECLARE @guid varchar(64)
+			DECLARE @DataAccessFilterStmt varchar(4096)
+
+			SET @guids = ''''
+			
+			-- iterate through the GUIDs
+			SET @String = @UserAuthorityGroupGUIDs + @Delimiter
+			SET @Pos = charindex(@Delimiter,@String)
+			WHILE (@pos <> 0)
+			BEGIN
+				SET @guid = substring(@String,1,@Pos - 1)
+				
+				IF (@guids<>'''')
+					SET @guids = @guids + '',''
+	
+				--PRINT @guid
+				SET @guids = '''' + @guid + ''''
+
+				SET @String = substring(@String,@pos+1,len(@String))
+				SET @pos = charindex(@Delimiter,@String)
+			END 
+
+			SET @DataAccessJoinStmt = '' JOIN StudyDataAccess sda ON sda.StudyStorageGUID=workqueue.StudyStorageGUID 
+									    JOIN DataAccessGroup dag ON dag.GUID = sda.DataAccessGroupGUID '';
+			SET @DataAccessFilterStmt = '' dag.AuthorityGroupOID in ('' + @guids + '') ''
+
+			SET @stmt = @stmt + @DataAccessJoinStmt
+			
+			IF (@where<>'''')
+				SET @where = @where + '' AND ''
+
+			SET @where = @where + @DataAccessFilterStmt	
+			
+		END
+		ELSE -- user is not in any data access group
+		BEGIN
+			DECLARE @dummy varchar
+			-- return everything?	
+		END
+		
+	END
+	
 	if (@where<>'''')
 		SET @stmt = @stmt + '' WHERE '' + @where
 		
@@ -442,6 +503,12 @@ BEGIN
 	BEGIN
 		SET @count = @count + ''LEFT JOIN StudyStorage on StudyStorage.GUID = WorkQueue.StudyStorageGUID ''
 		SET @count = @count + ''LEFT JOIN Study on Study.ServerPartitionGUID=StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid=StudyStorage.StudyInstanceUid ''	
+	
+		IF (@DataAccessJoinStmt <>'''')
+		BEGIN
+			SET @count  = @count + @DataAccessJoinStmt
+		END
+	
 		SET @count = @count + ''WHERE '' + @where
 	END
 
