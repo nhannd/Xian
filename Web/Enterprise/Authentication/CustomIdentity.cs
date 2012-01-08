@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Reflection;
 using System.Security.Principal;
 
 namespace ClearCanvas.Web.Enterprise.Authentication
@@ -17,6 +18,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
     /// <summary>
     /// Custom Identity
     /// </summary>
+    [Obfuscation(Exclude = true)]
     public class CustomIdentity : GenericIdentity
     {
         private readonly string _displayName;

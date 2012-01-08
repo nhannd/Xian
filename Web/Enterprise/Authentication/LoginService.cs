@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Reflection;
 using System.ServiceModel;
 using System.Text;
 using System.Threading;
@@ -24,8 +25,10 @@ namespace ClearCanvas.Web.Enterprise.Authentication
     /// <summary>
     /// Wrapper for <see cref="IAuthenticationService"/> service.
     /// </summary>
+    [Obfuscation(Exclude = true, ApplyToMembers = false)]
     public sealed class LoginService : IDisposable
     {
+        [Obfuscation(Exclude = true)]
         public SessionInfo Login(string userName, string password, string appName)
         {
             Platform.CheckForEmptyString(userName, "userName");
@@ -84,12 +87,14 @@ namespace ClearCanvas.Web.Enterprise.Authentication
             return session;
         }
 
+        [Obfuscation(Exclude = true)]
         public SessionInfo Query(string id)
         {
             var sessionInfo = SessionCache.Instance.Find(id);
             return sessionInfo;
         }
 
+        [Obfuscation(Exclude = true)]
         public void Logout(string tokenId)
         {
             var session = SessionCache.Instance.Find(tokenId);
@@ -110,6 +115,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                     });
         }
 
+        [Obfuscation(Exclude = true)]
         public SessionToken Renew(string tokenId)
         {
             SessionInfo sessionInfo = SessionCache.Instance.Find(tokenId);
@@ -166,6 +172,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
             }            
         }
 
+        [Obfuscation(Exclude = true)]
         public void ChangePassword(string userName, string oldPassword, string newPassword)
         {
             var request = new ChangePasswordRequest(userName, oldPassword, newPassword);
@@ -177,6 +184,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                     });
         }
 
+        [Obfuscation(Exclude = true)]
         public void ResetPassword(string userName)
         {
             ResetPasswordResponse response;

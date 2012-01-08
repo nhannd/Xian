@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 
@@ -19,6 +20,8 @@ namespace ClearCanvas.Web.Enterprise.Admin
     /// <summary>
     /// Wrapper for <see cref="IUserAdminService"/> service.
     /// </summary>
+    /// 
+    [Obfuscation(Exclude = true, ApplyToMembers = true)]
     public sealed class UserManagement : IDisposable
     {
         private IUserAdminService _service;

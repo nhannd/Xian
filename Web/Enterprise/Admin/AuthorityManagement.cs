@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
@@ -21,6 +22,7 @@ namespace ClearCanvas.Web.Enterprise.Admin
     /// <summary>
     /// Wrapper for <see cref="IAuthorityGroupAdminService"/> service.
     /// </summary>
+    [Obfuscation(Exclude = true, ApplyToMembers = true)]
     public sealed class AuthorityManagement : IDisposable
     {
         private IAuthorityGroupAdminService _service;

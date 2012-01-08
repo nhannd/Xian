@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Reflection;
 using System.Security.Principal;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
@@ -18,6 +19,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
     /// <summary>
     /// Custom principal
     /// </summary>
+    [Obfuscation(Exclude = true, ApplyToMembers = true)]
     public class CustomPrincipal : IPrincipal, IUserCredentialsProvider
     {
         private IIdentity _identity;

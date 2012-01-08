@@ -9,11 +9,13 @@
 
 #endregion
 
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Web.Enterprise.Authentication
 {
+    [Obfuscation(Exclude=true, ApplyToMembers=false)]
     public class SessionInfo
     {
         private readonly CustomPrincipal _user;
@@ -37,6 +39,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
         /// <remarks>
         /// Exception will be thrown if session cannot be validated in the process.
         /// </remarks>
+        [Obfuscation(Exclude = true)]
         public bool Valid
         {
             get
@@ -46,11 +49,13 @@ namespace ClearCanvas.Web.Enterprise.Authentication
             }
         }
 
+        [Obfuscation(Exclude = true)]
         public CustomPrincipal User
         {
             get { return _user; }
         }
 
+        [Obfuscation(Exclude = true)]
         public LoginCredentials Credentials
         {
             get
