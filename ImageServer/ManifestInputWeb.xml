@@ -11,7 +11,6 @@
     <File name="Web\Users.xml" />
     <File name="Web\web.config" config="true" />
     <File name="Web\Web.sitemap" />
-    <File name="Web\App_Themes\Default\Global.skin" />
     <File name="Web\logs" ignore="true"/>
     <File name="Web\Pages\Help\UsersGuide" ignore="true"/>
     <File name="Web\bin\AjaxControlToolkit.dll" checksum="true" />
