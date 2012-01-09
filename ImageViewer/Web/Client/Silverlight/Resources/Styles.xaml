@@ -10,7 +10,11 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ClearCanvas.Web.Client.Silverlight;component/Views/BusyIndicator.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    
+
+
+    <ImageSource x:Key="DropDownButtonIcon">/ClearCanvas.ImageServer.Web.Client.Silverlight;component/Assets/Themes/Default/Images/DropDownArrow.png</ImageSource>
+
+
     <!-- BusyIndicatorControl Styles -->
     <Style TargetType="SilverlightView:BusyIndicator" BasedOn="{StaticResource busyIndicatorDefaultStyle}">
         <Setter Property="DisplayAfter" Value="00:00:00.00"/>
