@@ -99,8 +99,8 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             [AuthorityToken(Description = "Allow access to all studies.")]
             public const string AllStudies = "PACS/Data Access/Access to all Studies";
 
-            [AuthorityToken(Description = "Allow access to all partitions.")]
-            public const string AllPartitions = "PACS/Data Access/Access To All Partitions";
+            [AuthorityToken(Description = "Allow access to all ImageServer partitions.")]
+            public const string AllPartitions = "PACS/Data Access/Access to all Partitions";
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             [AuthorityToken(Description = "Allow saving of reasons for study edit/delete.")]
             public const string SaveReason = "PACS/Study/SaveReason";
             
-            public const string VetTags = "PACS/Study/VetTags";
+            public const string VetTags = "PACS/Study/Veterinary Tags";
         }
 
         /// <summary>
