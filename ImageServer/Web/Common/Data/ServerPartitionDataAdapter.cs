@@ -245,12 +245,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
            }
        }
 
-        public IList<AuthorityGroupDetail> GetAuthorityGroupsForPartition(ServerEntityKey partitionKey)
+        public IList<AuthorityGroupDetail> GetAuthorityGroupsForPartition(ServerEntityKey partitionKey, out IList<AuthorityGroupDetail> allStudiesGroup )
         {
             using (var service = new AuthorityRead())
             {
                 IList<AuthorityGroupDetail> tokens = service.ListDataAccessAuthorityGroupDetails();
                 IList<AuthorityGroupDetail> resultGroups = new List<AuthorityGroupDetail>();
+                var internalAllStudiesGroup = new List<AuthorityGroupDetail>();
 
                 CollectionUtils.ForEach(
                     tokens,
@@ -267,6 +268,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                             if (summary.Name.Equals(
                                     ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
                             {
+                                internalAllStudiesGroup.Add(group);
                                 return;
                             }
                         }
@@ -293,6 +295,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         resultGroups.Add(group);
                     });
 
+                allStudiesGroup = internalAllStudiesGroup;
                 return resultGroups;
             }
         }
