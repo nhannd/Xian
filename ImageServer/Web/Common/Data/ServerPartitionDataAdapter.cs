@@ -247,7 +247,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public IList<AuthorityGroupDetail> GetAuthorityGroupsForPartition(ServerEntityKey partitionKey)
         {
-            using (var service = new AuthorityManagement())
+            using (var service = new AuthorityRead())
             {
                 IList<AuthorityGroupDetail> tokens = service.ListDataAccessAuthorityGroupDetails();
                 IList<AuthorityGroupDetail> resultGroups = new List<AuthorityGroupDetail>();

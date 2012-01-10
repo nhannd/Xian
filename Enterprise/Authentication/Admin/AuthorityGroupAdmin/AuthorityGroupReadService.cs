@@ -27,21 +27,26 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
         [ReadOperation]
         public ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request)
         {
-            // Out of caution, requesting all of the authority tokens in the read service is 
-            // treated as a security thread, and we're rejecting the request here.
-            if (request.Details.HasValue && request.Details.Value)
-                throw new UserAccessDeniedException(); 
-        
             var criteria = new AuthorityGroupSearchCriteria();
             criteria.Name.SortAsc(0);
             if (request.DataGroup.HasValue)
                 criteria.DataGroup.EqualTo(request.DataGroup.Value);
 
             var assembler = new AuthorityGroupAssembler();
-            var authorityGroups = CollectionUtils.Map(
-                PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
-                (AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupSummary(authorityGroup));
-            return new ListAuthorityGroupsResponse(authorityGroups);
+            if (request.Details.HasValue && request.Details.Value)
+            {
+                var authorityGroups = CollectionUtils.Map(
+                 PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
+                 (AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupDetail(authorityGroup));
+                return new ListAuthorityGroupsResponse(authorityGroups);
+            }
+            else
+            {
+                var authorityGroups = CollectionUtils.Map(
+                    PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
+                    (AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupSummary(authorityGroup));
+                return new ListAuthorityGroupsResponse(authorityGroups);
+            }
         }
 
         #endregion

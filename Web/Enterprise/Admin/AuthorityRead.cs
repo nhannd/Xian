@@ -46,12 +46,23 @@ namespace ClearCanvas.Web.Enterprise.Admin
             return _service.ListAuthorityGroups(new ListAuthorityGroupsRequest()).AuthorityGroups;
         }
 
+        public IList<AuthorityGroupDetail> ListDataAccessAuthorityGroupDetails()
+        {
+            var rq = new ListAuthorityGroupsRequest
+                         {
+                             DataGroup = true,
+                             Details = true
+                         };
+
+            return _service.ListAuthorityGroups(rq).AuthorityGroupDetails;
+        }
+
         public IList<AuthorityGroupSummary> ListDataAccessAuthorityGroups()
         {
-            ListAuthorityGroupsRequest rq = new ListAuthorityGroupsRequest
-                                                {
-                                                    DataGroup = true
-                                                };
+            var rq = new ListAuthorityGroupsRequest
+                         {
+                             DataGroup = true
+                         };
 
             return _service.ListAuthorityGroups(rq).AuthorityGroups;
         }
