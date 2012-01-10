@@ -257,23 +257,29 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     tokens,
                     delegate(AuthorityGroupDetail group)
                     {
-                        bool include = false;
-                        foreach (var summary in group.AuthorityTokens)
+                        bool allPartitions = false;
+                        bool allStudies = false;
+                        foreach (var token in group.AuthorityTokens)
                         {
-                            if (summary.Name.Equals(
-                                    ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllPartitions))
+                            if (token.Name.Equals(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllPartitions))
                             {
-                                include = true;                                
+                                allPartitions = true;                                
                             }
-                            if (summary.Name.Equals(
-                                    ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
+                            else if (token.Name.Equals(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
                             {
-                                internalAllStudiesGroup.Add(group);
-                                return;
+                                allStudies = true;
                             }
+
+                            if (allPartitions && allStudies) break;
                         }
 
-                        if (!include)
+                        if (allPartitions && allStudies)
+                        {
+                            internalAllStudiesGroup.Add(group);
+                            return;
+                        }
+
+                        if (!allPartitions)
                         {
                             using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                             {
@@ -285,13 +291,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                                 dataCriteria.ServerPartitionDataAccessRelatedEntityCondition.Exists(criteria);
 
                                 var broker = readContext.GetBroker<IDataAccessGroupEntityBroker>();
-                                if (broker.Count(dataCriteria) > 0)
-                                    include = true;
+                                if (broker.Count(dataCriteria) == 0)
+                                    return;
                             }
                         }
 
-                        if (!include) return;
-
+                        if (allStudies)
+                        {
+                            internalAllStudiesGroup.Add(group);
+                            return;
+                        }
+                        
                         resultGroups.Add(group);
                     });
 
