@@ -148,6 +148,7 @@
     <File name="Web\Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.ascx" />
     <File name="Web\Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.js" />
     <File name="Web\Pages\Admin\Configure\ServerPartitions\AddEditPartitionDialog.ascx" />
+    <File name="Web\Pages\Admin\Configure\ServerPartitions\DataAccessGroupPanel.ascx" />
     <File name="Web\Pages\Admin\Configure\ServerPartitions\Default.aspx" />
     <File name="Web\Pages\Admin\Configure\ServerPartitions\ServerPartitionGridPanel.ascx" />
     <File name="Web\Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.ascx" />
