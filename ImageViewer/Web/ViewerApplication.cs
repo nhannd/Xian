@@ -358,9 +358,8 @@ namespace ClearCanvas.ImageViewer.Web
             if (ProductInformation.Name.Equals(ProductInformation.Component))
                 return ProductInformation.GetNameAndVersion(false, false);
 
-            return string.Format("{0}\n{1}\n{2}", ProductInformation.Name,
-                            Concatenate(ProductInformation.Component, ProductInformation.GetVersion(false, true),ProductInformation.Release),
-                            ProductInformation.Edition);
+            return string.Format("{0}\n{1}", ProductInformation.Name,
+                            Concatenate(ProductInformation.Component, String.Format("v{0}", ProductInformation.GetVersion(false, true)),ProductInformation.Edition));
         }
 
         private static string Concatenate(params string[] strings)
