@@ -12,7 +12,10 @@
     </ResourceDictionary.MergedDictionaries>
 
 
-    <ImageSource x:Key="DropDownButtonIcon">/ClearCanvas.ImageServer.Web.Client.Silverlight;component/Assets/Themes/Default/Images/DropDownArrow.png</ImageSource>
+    <ImageSource x:Key="HelpButtonImageSmall">/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/HelpSmall.png</ImageSource>
+    <ImageSource x:Key="HelpButtonImageMedium">/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/HelpMedium.png</ImageSource>
+    <ImageSource x:Key="HelpButtonImageLarge">/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/HelpLarge.png</ImageSource>
+    <ImageSource x:Key="DropDownButtonIcon">/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/DropDownArrow.png</ImageSource>
 
 
     <!-- BusyIndicatorControl Styles -->

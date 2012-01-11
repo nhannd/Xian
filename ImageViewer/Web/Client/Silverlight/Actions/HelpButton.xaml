@@ -26,7 +26,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                     <Button x:Name="ButtonComponent" Background="Transparent" Style="{StaticResource ToolbarButtonStyle}" Padding="0" Click="ButtonComponent_Click" 
                             MouseEnter="ButtonComponent_MouseEnter" MouseLeave="ButtonComponent_MouseLeave">
                         <Button.Content>
-                            <Image x:Name="HelpIcon" />
+                            <Image x:Name="HelpIcon" Source="{StaticResource HelpButtonImageMedium}" />
                         </Button.Content>
                     </Button>
                 </Grid>
