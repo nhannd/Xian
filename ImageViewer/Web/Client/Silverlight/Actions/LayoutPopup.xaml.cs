@@ -26,8 +26,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
     /// </summary>
     public partial class LayoutPopup : UserControl, IPopup, IDisposable
     {
+
+        //TODO: Convert this into a control. Combine Box and inner Rectangle.
         private class Box 
         {
+            static string Key_ToolLayout_PopupBorderStyle = "ToolLayout_PopupBorderStyle";
+            static string Key_ToolLayout_BoxBorderStyle = "ToolLayout_BoxBorderStyle";
+            static string Key_ToolLayout_BoxNormalStyle = "ToolLayout_BoxNormalStyle";
+            static string Key_ToolLayout_BoxHoverStyle = "ToolLayout_BoxHoverStyle";
+
             public delegate void ClickDelegate(WebLayoutChangerAction action, int row, int column);
 
             public int Row {get;set;}
@@ -51,23 +58,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
                 Row = row;
                 Column = col;
 
-                TheBorder = new Border
-                                {
-                                    BorderThickness = new Thickness(1.5),
-                                    CornerRadius = new CornerRadius(0),
-                                    BorderBrush = new SolidColorBrush(ClearCanvasStyle.ClearCanvasBlue),
-                                    Margin = new Thickness(1)
-                                };
+                TheBorder = new Border();
+                TheBorder.Style = System.Windows.Application.Current.Resources[Key_ToolLayout_BoxBorderStyle] as Style;
 
-                TheRectangle = new System.Windows.Shapes.Rectangle
-                                   {
-                                       Width = 20,
-                                       Height = 20,
-                                       MinHeight = 20,
-                                       MinWidth = 20,
-                                       Fill = new SolidColorBrush(Colors.Transparent)
-                                   };
-
+                TheRectangle = new System.Windows.Shapes.Rectangle();
+                TheRectangle.Style = System.Windows.Application.Current.Resources[Key_ToolLayout_BoxNormalStyle] as Style;
 
                 TheBorder.Child = TheRectangle;
                 TheBorder.SetValue(Grid.RowProperty, row);
@@ -90,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             public void Grid_MouseLeave(object sender, MouseEventArgs e)
             {
                 _textBox.Text = _action.Label;
-                TheRectangle.Fill = new SolidColorBrush(Colors.Transparent);
+                TheRectangle.Style = System.Windows.Application.Current.Resources[Key_ToolLayout_BoxNormalStyle] as Style;
             }
 
             void TheRectangle_MouseEnter(object sender, MouseEventArgs e)
@@ -101,11 +96,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
                 {
                     if (theBox.Row <= Row && theBox.Column <= Column)
                     {
-                        theBox.TheRectangle.Fill = new SolidColorBrush(ClearCanvasStyle.ClearCanvasBlue);
+                        theBox.TheRectangle.Style = System.Windows.Application.Current.Resources[Key_ToolLayout_BoxHoverStyle] as Style;
+
                     }
                     else
                     {
-                        theBox.TheRectangle.Fill = new SolidColorBrush(Colors.Transparent);
+                        //theBox.TheRectangle.Fill = new SolidColorBrush(Colors.Transparent);
+                        theBox.TheRectangle.Style = System.Windows.Application.Current.Resources[Key_ToolLayout_BoxNormalStyle] as Style;
+
                     }
                 }
             }

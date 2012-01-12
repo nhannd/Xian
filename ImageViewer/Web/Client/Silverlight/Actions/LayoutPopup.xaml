@@ -38,9 +38,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                         <BlurEffect/>
                     </Rectangle.Effect>
                 </Rectangle>
-                <Border Grid.Column="0" Grid.Row="0" CornerRadius="4" x:Name="HostRoot" 
-                                    BorderBrush="#FFBAD2EC"
-                                    BorderThickness="1.5" Padding="2">
+                <Border Style="{StaticResource ToolLayout_PopupBorderStyle}" Grid.Column="0" Grid.Row="0" x:Name="HostRoot" >
                     <Border.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" Opacity="0.7">
                             <LinearGradientBrush.RelativeTransform>
