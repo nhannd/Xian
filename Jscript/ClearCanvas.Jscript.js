@@ -4,8 +4,6 @@ import System.Collections;
 import ClearCanvas.Common;
 import ClearCanvas.Common.Scripting;
 
-[assembly: ClearCanvas.Common.Plugin()]
-
 package ClearCanvas.Jscript
 {
     /// This class provides an implementation of ClearCanvas.Common.Scripting.ScriptEngineExtensionPoint
