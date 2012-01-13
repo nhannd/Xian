@@ -62,11 +62,21 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
             if (request.DataGroup.HasValue)
                 criteria.DataGroup.EqualTo(request.DataGroup.Value);
 
-			var assembler = new AuthorityGroupAssembler();
-			var authorityGroups = CollectionUtils.Map(
-				PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
-				(AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupSummary(authorityGroup));
-			return new ListAuthorityGroupsResponse(authorityGroups);
+            var assembler = new AuthorityGroupAssembler();
+            if (request.Details.HasValue && request.Details.Value)
+            {
+                var authorityGroups = CollectionUtils.Map(
+                 PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
+                 (AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupDetail(authorityGroup));
+                return new ListAuthorityGroupsResponse(authorityGroups);
+            }
+            else
+            {
+                var authorityGroups = CollectionUtils.Map(
+                    PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
+                    (AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupSummary(authorityGroup));
+                return new ListAuthorityGroupsResponse(authorityGroups);
+            }
 		}
 
 		[ReadOperation]

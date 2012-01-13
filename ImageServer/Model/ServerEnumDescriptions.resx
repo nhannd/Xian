@@ -475,7 +475,7 @@
     <value>Filesystem Reapply Rules</value>
   </data>
   <data name="ServiceLockTypeEnum_FilesystemStudyProcess_LongDescription" xml:space="preserve">
-    <value>This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem.</value>
+    <value>This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem that have not been archived.  Studies that have been archived will have Study Archived and Data Access rules applied.</value>
   </data>
   <data name="ServiceLockTypeEnum_FilesystemLosslessCompress_Description" xml:space="preserve">
     <value>Filesystem Lossless Compress</value>

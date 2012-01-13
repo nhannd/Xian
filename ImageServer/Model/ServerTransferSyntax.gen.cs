@@ -54,20 +54,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public ServerTransferSyntax Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public ServerTransferSyntax Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IServerTransferSyntaxEntityBroker broker = read.GetBroker<IServerTransferSyntaxEntityBroker>();
+            var broker = read.GetBroker<IServerTransferSyntaxEntityBroker>();
             ServerTransferSyntax theObject = broker.Load(key);
             return theObject;
         }
         static public ServerTransferSyntax Insert(ServerTransferSyntax entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ServerTransferSyntax newEntity = Insert(update, entity);
                 update.Commit();
@@ -76,8 +76,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public ServerTransferSyntax Insert(IUpdateContext update, ServerTransferSyntax entity)
         {
-            IServerTransferSyntaxEntityBroker broker = update.GetBroker<IServerTransferSyntaxEntityBroker>();
-            ServerTransferSyntaxUpdateColumns updateColumns = new ServerTransferSyntaxUpdateColumns();
+            var broker = update.GetBroker<IServerTransferSyntaxEntityBroker>();
+            var updateColumns = new ServerTransferSyntaxUpdateColumns();
             updateColumns.Uid = entity.Uid;
             updateColumns.Description = entity.Description;
             updateColumns.Lossless = entity.Lossless;

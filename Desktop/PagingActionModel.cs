@@ -30,7 +30,7 @@ namespace ClearCanvas.Desktop
 		///<param name="controller"></param>
 		///<param name="desktopWindow"></param>
 		public PagingActionModel(IPagingController<TItem> controller, IDesktopWindow desktopWindow)
-			: base(new ResourceResolver(typeof(PagingActionModel<TItem>).Assembly))
+			: base(new ApplicationThemeResourceResolver(typeof(PagingActionModel<TItem>).Assembly))
 		{
 			_controller = controller;
 			_desktopWindow = desktopWindow;

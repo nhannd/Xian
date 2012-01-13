@@ -79,20 +79,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public StudyStorage Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public StudyStorage Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IStudyStorageEntityBroker broker = read.GetBroker<IStudyStorageEntityBroker>();
+            var broker = read.GetBroker<IStudyStorageEntityBroker>();
             StudyStorage theObject = broker.Load(key);
             return theObject;
         }
         static public StudyStorage Insert(StudyStorage entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 StudyStorage newEntity = Insert(update, entity);
                 update.Commit();
@@ -101,8 +101,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public StudyStorage Insert(IUpdateContext update, StudyStorage entity)
         {
-            IStudyStorageEntityBroker broker = update.GetBroker<IStudyStorageEntityBroker>();
-            StudyStorageUpdateColumns updateColumns = new StudyStorageUpdateColumns();
+            var broker = update.GetBroker<IStudyStorageEntityBroker>();
+            var updateColumns = new StudyStorageUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
             updateColumns.InsertTime = entity.InsertTime;

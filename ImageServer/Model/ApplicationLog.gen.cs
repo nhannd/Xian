@@ -67,20 +67,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public ApplicationLog Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public ApplicationLog Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IApplicationLogEntityBroker broker = read.GetBroker<IApplicationLogEntityBroker>();
+            var broker = read.GetBroker<IApplicationLogEntityBroker>();
             ApplicationLog theObject = broker.Load(key);
             return theObject;
         }
         static public ApplicationLog Insert(ApplicationLog entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ApplicationLog newEntity = Insert(update, entity);
                 update.Commit();
@@ -89,8 +89,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public ApplicationLog Insert(IUpdateContext update, ApplicationLog entity)
         {
-            IApplicationLogEntityBroker broker = update.GetBroker<IApplicationLogEntityBroker>();
-            ApplicationLogUpdateColumns updateColumns = new ApplicationLogUpdateColumns();
+            var broker = update.GetBroker<IApplicationLogEntityBroker>();
+            var updateColumns = new ApplicationLogUpdateColumns();
             updateColumns.Host = entity.Host;
             updateColumns.Timestamp = entity.Timestamp;
             updateColumns.LogLevel = entity.LogLevel;

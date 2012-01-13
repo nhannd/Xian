@@ -64,6 +64,8 @@
     <Compile Include="SearchPanelComponent.cs" />
     <Compile Include="SearchResult.cs" />
     <Compile Include="FilterDuplicateStudiesTool.cs" />
+    <Compile Include="SearchResultColumnOption.cs" />
+    <Compile Include="SearchResultColumnOptionCollection.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -143,6 +145,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\AttachmentsExtraSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SearchResultColumnOptionDefault.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

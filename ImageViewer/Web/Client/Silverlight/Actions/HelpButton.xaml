@@ -14,14 +14,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
     xmlns:my="clr-namespace:ClearCanvas.Web.Client.Silverlight;assembly=ClearCanvas.Web.Client.Silverlight">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/Styles.xaml" x:Name="Styles"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
+ 
     <my:MenuManager.AttachedContextMenu>
         <my:ContextMenu x:Name="DummyMenu"/>
     </my:MenuManager.AttachedContextMenu>
@@ -33,7 +26,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                     <Button x:Name="ButtonComponent" Background="Transparent" Style="{StaticResource ToolbarButtonStyle}" Padding="0" Click="ButtonComponent_Click" 
                             MouseEnter="ButtonComponent_MouseEnter" MouseLeave="ButtonComponent_MouseLeave">
                         <Button.Content>
-                            <Image x:Name="HelpIcon" Source="/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/Help.png" />
+                            <Image x:Name="HelpIcon" Source="{StaticResource HelpButtonImageMedium}" />
                         </Button.Content>
                     </Button>
                 </Grid>

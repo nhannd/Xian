@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.UpgradeScripts
     class UpgradeFrom__4_0_5014_9549 : BaseUpgradeScript
     {
         public UpgradeFrom__4_0_5014_9549()
-            : base(new Version(4, 0, 5014, 9549), null, "UpgradeFrom_4_0_5014_9549.sql")
+            : base(new Version(4, 0, 5014, 9549), new Version(5, 0, 5655, 9770), "UpgradeFrom_4_0_5014_9549.sql")
         {
         }
     }

@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SendQueueApplicationComponentControl));
 			this._sendTable = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._titleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
 			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this._statusBar = new System.Windows.Forms.StatusStrip();
 			this._fillerStatusItem = new System.Windows.Forms.ToolStripStatusLabel();
@@ -51,10 +51,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// _titleBar
 			// 
 			resources.ApplyResources(this._titleBar, "_titleBar");
-			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			// 
 			// _toolTip
 			// 
@@ -106,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         #endregion
 
 		private ClearCanvas.Desktop.View.WinForms.TableView _sendTable;
-		private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
+		private ClearCanvas.Desktop.View.WinForms.TitleBar _titleBar;
 		private System.Windows.Forms.ToolTip _toolTip;
 		private System.Windows.Forms.StatusStrip _statusBar;
 		private System.Windows.Forms.ToolStripStatusLabel _fillerStatusItem;

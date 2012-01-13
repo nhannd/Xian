@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Xml;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Enterprise;
 
@@ -155,6 +156,36 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         public string SpecificCharacterSet
         {
             set { SubCriteria["SpecificCharacterSet"] = new ProcedureParameter<string>("SpecificCharacterSet", value); }
+        }
+
+        [DicomField(DicomTags.ResponsiblePerson, DefaultValue = DicomFieldDefault.Null)]
+        public string ResponsiblePerson
+        {
+            set { SubCriteria["ResponsiblePerson"] = new ProcedureParameter<string>("ResponsiblePerson", value); }
+        }
+
+        [DicomField(DicomTags.ResponsibleOrganization, DefaultValue = DicomFieldDefault.Null)]
+        public string ResponsibleOrganization
+        {
+            set { SubCriteria["ResponsibleOrganization"] = new ProcedureParameter<string>("ResponsibleOrganization", value); }
+        }
+
+        public XmlDocument QueryXml
+        {
+            set
+            {
+                SubCriteria["QueryXml"] = new ProcedureParameter<XmlDocument>("QueryXml", value);
+            }
+            get
+            {
+                if (SubCriteria.ContainsKey("QueryXml"))
+                {
+                    var parm = SubCriteria["QueryXml"] as ProcedureParameter<XmlDocument>;
+                    if (parm != null)
+                        return parm.Value;
+                }
+                return null;
+            }
         }
     }
 }

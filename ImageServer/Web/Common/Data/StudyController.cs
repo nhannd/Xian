@@ -249,9 +249,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebDeleteStudy);
         }
 
-        public bool CanManipulateSeries(Study study)
+        public bool CanManipulateSeries(ServerEntityKey studyStorageKey)
         {
-            StudyStorage storage = StudyStorage.Load(study.StudyStorageKey);
+            StudyStorage storage = StudyStorage.Load(studyStorageKey);
             
             return storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle);
         }

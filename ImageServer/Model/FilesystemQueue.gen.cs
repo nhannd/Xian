@@ -63,26 +63,28 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
         public XmlDocument QueueXml
-        { get; set; }
+        { get { return _QueueXml; } set { _QueueXml = value; } }
+        [NonSerialized]
+        private XmlDocument _QueueXml;
         #endregion
 
         #region Static Methods
         static public FilesystemQueue Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public FilesystemQueue Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IFilesystemQueueEntityBroker broker = read.GetBroker<IFilesystemQueueEntityBroker>();
+            var broker = read.GetBroker<IFilesystemQueueEntityBroker>();
             FilesystemQueue theObject = broker.Load(key);
             return theObject;
         }
         static public FilesystemQueue Insert(FilesystemQueue entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 FilesystemQueue newEntity = Insert(update, entity);
                 update.Commit();
@@ -91,8 +93,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public FilesystemQueue Insert(IUpdateContext update, FilesystemQueue entity)
         {
-            IFilesystemQueueEntityBroker broker = update.GetBroker<IFilesystemQueueEntityBroker>();
-            FilesystemQueueUpdateColumns updateColumns = new FilesystemQueueUpdateColumns();
+            var broker = update.GetBroker<IFilesystemQueueEntityBroker>();
+            var updateColumns = new FilesystemQueueUpdateColumns();
             updateColumns.FilesystemQueueTypeEnum = entity.FilesystemQueueTypeEnum;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.FilesystemKey = entity.FilesystemKey;

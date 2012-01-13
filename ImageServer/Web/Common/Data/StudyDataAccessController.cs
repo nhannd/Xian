@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             Dictionary<ServerEntityKey, AuthorityGroupSummary> dic = new Dictionary<ServerEntityKey, AuthorityGroupSummary>();
             var summaries = new List<AuthorityGroupSummary>();
 
-            using (AuthorityManagement service = new AuthorityManagement())
+            using (var service = new AuthorityRead())
             {
                 IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
                 CollectionUtils.ForEach(tokens, delegate(AuthorityGroupSummary group)

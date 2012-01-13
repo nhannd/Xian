@@ -16,7 +16,11 @@ namespace ClearCanvas.Desktop
 	/// <summary>
 	/// Defines possible icon schemes.
 	/// </summary>
+	/// <remarks>
+	/// The use of icon schemes has been deprecated in favour of extensible application GUI themes.
+	/// </remarks>
 	[Flags]
+	[Obsolete("The use of icon schemes has been deprecated in favour of extensible application GUI themes")]
 	public enum IconScheme
 	{
 		/// <summary>

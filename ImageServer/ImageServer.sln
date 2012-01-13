@@ -1,18 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8CBB6D60-FA3F-4DF8-A1F1-47C00311ACF2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build-Configs", "Build-Configs", "{8CBB6D60-FA3F-4DF8-A1F1-47C00311ACF2}"
 	ProjectSection(SolutionItems) = preProject
-		ImageServer.proj = ImageServer.proj
 		ImageServer_ConnectionString_dist.config = ImageServer_ConnectionString_dist.config
-		ImageServer_dist.proj = ImageServer_dist.proj
 		ImageServer_Shreds_dist.config = ImageServer_Shreds_dist.config
 		ImageServer_Shreds_dist.critical.config = ImageServer_Shreds_dist.critical.config
 		ImageServer_Web.config = ImageServer_Web.config
 		ImageServer_web_critical.config = ImageServer_web_critical.config
-		ImageServer_WebPostBuild.proj = ImageServer_WebPostBuild.proj
-		ImageServerManifest.proj = ImageServerManifest.proj
-		Web\ApplicationDeployment\WebApplicationDeployment.wdproj = Web\ApplicationDeployment\WebApplicationDeployment.wdproj
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.TestApp", "TestApp\ClearCanvas.ImageServer.TestApp.csproj", "{7462F6BA-5634-4ED5-A4E1-707F3F43D113}"
@@ -231,14 +226,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Mod
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{CB724C61-BC5B-4D90-B286-7A15043214EC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest Items", "{AA3C5A54-EE47-4309-914A-62B17DC28D8B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build-Manifest", "Build-Manifest", "{AA3C5A54-EE47-4309-914A-62B17DC28D8B}"
 	ProjectSection(SolutionItems) = preProject
 		ManifestInputCommunity.xml = ManifestInputCommunity.xml
 		ManifestInputShredHost.xml = ManifestInputShredHost.xml
 		ManifestInputWeb.xml = ManifestInputWeb.xml
+		ManifestInputWebDefaultTheme.xml = ManifestInputWebDefaultTheme.xml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Web.Enterprise", "..\Web\Enterprise\ClearCanvas.Web.Enterprise.csproj", "{22444EF5-740E-41C2-B6DD-0029BD616338}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build-Scripts", "Build-Scripts", "{B7B23D6D-2EF9-4FBD-A2E5-9420305E033F}"
+	ProjectSection(SolutionItems) = preProject
+		ImageServer.proj = ImageServer.proj
+		ImageServer_dist.proj = ImageServer_dist.proj
+		ImageServer_WebPostBuild.proj = ImageServer_WebPostBuild.proj
+		ImageServerManifest.proj = ImageServerManifest.proj
+		Web\ApplicationDeployment\WebApplicationDeployment.wdproj = Web\ApplicationDeployment\WebApplicationDeployment.wdproj
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

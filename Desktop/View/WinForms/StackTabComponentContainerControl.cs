@@ -77,14 +77,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnTabButtonClick(object sender, EventArgs e)
 		{
-			TitleBar titleBar = (TitleBar)sender;
+			Crownwood.DotNetMagic.Controls.TitleBar titleBar = (Crownwood.DotNetMagic.Controls.TitleBar)sender;
 			TabGroupLeaf tgl = GetLeafForTitleBar(titleBar);
 			ToggleLeaf(tgl);
 		}
 
 		private void OnTabTitleClicked(object sender, EventArgs e)
 		{
-			TitleBar titleBar = (TitleBar) sender;
+			Crownwood.DotNetMagic.Controls.TitleBar titleBar = (Crownwood.DotNetMagic.Controls.TitleBar) sender;
 			TabGroupLeaf selectedLeaf = GetLeafForTitleBar(titleBar);
 
 			if (IsLeafExpanded(selectedLeaf))
@@ -93,7 +93,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnTabTitleDoubleClicked(object sender, EventArgs e)
 		{
-			TitleBar titleBar = (TitleBar) sender;
+			Crownwood.DotNetMagic.Controls.TitleBar titleBar = (Crownwood.DotNetMagic.Controls.TitleBar) sender;
 			TabGroupLeaf tgl = GetLeafForTitleBar(titleBar);
 			ToggleLeaf(tgl);
 		}
@@ -341,7 +341,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return tgl.Space > 0;
 		}
 
-		private static void SetArrowState(TitleBar titleBar, bool open)
+		private static void SetArrowState(Crownwood.DotNetMagic.Controls.TitleBar titleBar, bool open)
 		{
 			switch (titleBar.ArrowButton)
 			{
@@ -362,18 +362,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-		private static TitleBar GetTitleBarForPage(Crownwood.DotNetMagic.Controls.TabPage page)
+		private static Crownwood.DotNetMagic.Controls.TitleBar GetTitleBarForPage(Crownwood.DotNetMagic.Controls.TabPage page)
 		{
 			return ((StackTab) page.Control).TitleBar;
 		}
 
-		private TabGroupLeaf GetLeafForTitleBar(TitleBar titleBar)
+		private TabGroupLeaf GetLeafForTitleBar(Crownwood.DotNetMagic.Controls.TitleBar titleBar)
 		{
 			TabGroupLeaf tgl = _stackTabControl.FirstLeaf();
 			while (tgl != null)
 			{
 				// Extract the StackTabTitleBar instance from page
-				TitleBar tb = GetTitleBarForPage(tgl.TabPages[0]);
+				Crownwood.DotNetMagic.Controls.TitleBar tb = GetTitleBarForPage(tgl.TabPages[0]);
 				if (tb == titleBar)
 					break;
 

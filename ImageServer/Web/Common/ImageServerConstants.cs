@@ -9,8 +9,8 @@
 
 #endregion
 
-using System.Globalization;
 using System.Threading;
+using ClearCanvas.ImageServer.Web.Common;
 
 public class ImageServerConstants
     {
@@ -43,9 +43,16 @@ public class ImageServerConstants
         public const string WebViewerAuthorityToken = "Viewer/Visible";
 
         /// <summary>
-        /// Sets or gets the theme for the web application.
+        /// Sets the current theme.
         /// </summary>
-        public static string Theme { set; get; }
+        /// TODO: This is not static. Consider moving out of this class.
+        public static string Theme
+        {
+            get
+            {
+                return ThemeManager.CurrentTheme;
+            }
+        }
 
         #region Nested type: ContextKeys
 
@@ -60,6 +67,7 @@ public class ImageServerConstants
 
         #region Nested type: ImageURLs
 
+        /// TODO: Not static. Consider moving out of this class.
         public class ImageURLs
         {
             private static string LocalizedRootImageUrl

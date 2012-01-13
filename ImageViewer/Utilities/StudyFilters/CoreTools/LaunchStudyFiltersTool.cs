@@ -17,7 +17,7 @@ using ClearCanvas.Desktop.Tools;
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 {
 	[MenuAction("Open", "global-menus/MenuTools/MenuUtilities/MenuStudyFilters", "Open")]
-	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[IconSet("Open", "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
 	[ViewerActionPermission("Open", AuthorityTokens.StudyFilters)]
 	[ExtensionOf(typeof (DesktopToolExtensionPoint))]
 	public class LaunchStudyFiltersTool : Tool<IDesktopToolContext>

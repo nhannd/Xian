@@ -9,14 +9,11 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -68,6 +65,14 @@ namespace ClearCanvas.ImageServer.Model
 
     public partial class ServerPartition
     {
+        private readonly object _syncLock = new object();
+        bool _dataAccessInfoloaded = false;
+
+        private Dictionary<DataAccessGroup, ServerEntityKey> _mapDataAccessGroupsAuthorityGroups = null;
+
+        IEnumerable<ServerPartitionDataAccess> _dataAccessGroups = null;
+         
+
         public StudyCompareOptions GetComparisonOptions()
         {
             StudyCompareOptions options = new StudyCompareOptions();
@@ -80,5 +85,109 @@ namespace ClearCanvas.ImageServer.Model
 
             return options;
         }
+
+        
+        public IEnumerable<ServerPartitionDataAccess> DataAccessGroups
+        {
+            get
+            {
+                if (_dataAccessGroups==null)
+                {
+                    using(var ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    {
+                        LoadDataAcessInformation(ctx);    
+                    }
+                    
+                }
+                return _dataAccessGroups;
+            }
+        }
+
+        private Dictionary<DataAccessGroup, ServerEntityKey> MapDataAccessGroupsAuthorityGroups
+        {
+            get
+            {
+                if (_mapDataAccessGroupsAuthorityGroups==null)
+                {
+                    using (var ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    {
+
+                        LoadAuthorityGroup(ctx);
+                    }
+                    
+                }
+
+                return _mapDataAccessGroupsAuthorityGroups;
+            }
+        }
+
+        public bool IsAccessAllowed(string authorityGroupOID)
+        {
+            var dataAccessGroup = FindDataAccessGroup(authorityGroupOID);
+            if (dataAccessGroup == null)
+                return false;
+
+            var existingGroups = DataAccessGroups;
+            if (existingGroups == null)
+                return false;
+
+            return CollectionUtils.Contains(existingGroups, g => g.DataAccessGroupKey.Equals(dataAccessGroup.Key)); 
+        }
+
+        public bool IsAccessAllowed(DataAccessGroup group)
+        {
+            var existingGroups = DataAccessGroups;
+            if (existingGroups == null)
+                return false;
+
+            return CollectionUtils.Contains(existingGroups, g => g.DataAccessGroupKey.Equals(group.Key));
+        }
+
+        public void LoadDataAcessInformation(IPersistenceContext context)
+        {
+            lock(_syncLock)
+            {
+                if (_dataAccessInfoloaded)
+                    return;
+
+                IServerPartitionDataAccessEntityBroker broker = context.GetBroker<IServerPartitionDataAccessEntityBroker>();
+                ServerPartitionDataAccessSelectCriteria criteria = new ServerPartitionDataAccessSelectCriteria();
+                criteria.ServerPartitionKey.EqualTo(this.Key);
+                _dataAccessGroups = broker.Find(criteria);
+
+                _dataAccessInfoloaded = true;
+            }
+            
+           
+        }
+
+        private DataAccessGroup FindDataAccessGroup(string authorityGroupOID)
+        {
+            foreach(var entry in MapDataAccessGroupsAuthorityGroups)
+            {
+                if (entry.Value.Key.ToString().Equals(authorityGroupOID))
+                    return entry.Key;
+            }
+
+            return null;
+        }
+
+        private void LoadAuthorityGroup(IPersistenceContext context)
+        {
+            lock (_syncLock)
+            {
+                _mapDataAccessGroupsAuthorityGroups = new Dictionary<DataAccessGroup, ServerEntityKey>();
+
+                IDataAccessGroupEntityBroker dataAccessBroker = context.GetBroker<IDataAccessGroupEntityBroker>();
+                DataAccessGroupSelectCriteria all = new DataAccessGroupSelectCriteria();
+                var dataAccessGroups = dataAccessBroker.Find(all);
+
+                foreach (var group in dataAccessGroups)
+                {
+                    _mapDataAccessGroupsAuthorityGroups.Add(group, group.AuthorityGroupOID);
+                }
+            }
+        }
+
     }
 }

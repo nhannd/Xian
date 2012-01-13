@@ -72,13 +72,13 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
         /// <returns>A string containing the ORDER BY clause.</returns>
         private static string GetSelectOrderBy(String entity, EntitySelectCriteria criteria)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             // recurse on subCriteria
             foreach (SearchCriteria subCriteria in criteria.EnumerateSubCriteria())
             {
                 string variable = string.Format("{0}.{1}", entity, subCriteria.GetKey());
-                SearchConditionBase sc = subCriteria as SearchConditionBase;
+                var sc = subCriteria as SearchConditionBase;
                 if (sc != null)
                 {
                     if (sc.SortPosition != -1)
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
         /// <returns>A string containing the WHERE clause for the column.</returns>
         private static string GetSelectWhereText(string variable, SearchConditionBase sc, SqlCommand command)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             object[] values;             
 
             // With the Server, all primary keys end with "Key".  The database implementation itself
@@ -133,12 +133,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 values = new object[sc.Values.Length];
                 for (int i = 0; i < sc.Values.Length; i++)
                 {
-                    ServerEntityKey key = sc.Values[i] as ServerEntityKey;
+                    var key = sc.Values[i] as ServerEntityKey;
                     if (key != null)
                         values[i] = key.Key;
                     else
                     {
-                        ServerEnum e = sc.Values[i] as ServerEnum;
+                        var e = sc.Values[i] as ServerEnum;
                         values[i] = e != null ? e.Enum : sc.Values[i];
                     }
                 }
@@ -154,18 +154,54 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
             switch (sc.Test)
             {
                 case SearchConditionTest.Equal:
-                    sb.AppendFormat("{0} = @{1}", sqlColumnName, sqlParmName);
-                    command.Parameters.AddWithValue("@" + sqlParmName, values[0]);
+                    var doc = values[0] as XmlDocument;
+                    if (doc != null)
+                    {
+                        var node = doc.SelectSingleNode("/Select/XPath/@path");
+                        string xpath = node == null ? string.Empty : node.Value;
+
+                        node = doc.SelectSingleNode("/Select/Select/@value");
+                        string val = node == null ? string.Empty : node.Value;
+
+                        if (!string.IsNullOrEmpty(xpath) && !string.IsNullOrEmpty(val))
+                        {
+                            sb.AppendFormat("{0}.value('{1}','text') = @{2}", sqlColumnName, xpath, sqlParmName);
+                            command.Parameters.AddWithValue("@" + sqlParmName, val);
+                        }
+                    }
+                    else
+                    {
+                        sb.AppendFormat("{0} = @{1}", sqlColumnName, sqlParmName);
+                        command.Parameters.AddWithValue("@" + sqlParmName, values[0]);
+                    }
                     break;
                 case SearchConditionTest.NotEqual:
                     sb.AppendFormat("{0} <> @{1}", sqlColumnName, sqlParmName);
                     command.Parameters.AddWithValue("@" + sqlParmName, values[0]);
                     break;
                 case SearchConditionTest.Like:
-                    // +'' in this statement was a total hack job to fix a performance issue with SQL.  See this:
-                    // http://stackoverflow.com/questions/3495355/sql-server-performance-of-parameterized-queries-with-leading-wildcards
-                    sb.AppendFormat("{0}+'' like @{1}", sqlColumnName, sqlParmName);
-                    command.Parameters.AddWithValue("@" + sqlParmName, values[0]);
+                    doc = values[0] as XmlDocument;
+                    if (doc != null)
+                    {
+                        var node = doc.SelectSingleNode("/Select/XPath/@path");
+                        string xpath = node == null ? string.Empty : node.Value;
+
+                        node = doc.SelectSingleNode("/Select/XPath/@value");
+                        string val = node == null ? string.Empty : node.Value;
+
+                        if (!string.IsNullOrEmpty(xpath) && !string.IsNullOrEmpty(val))
+                        {
+                            sb.AppendFormat("{0}.value('{1}','text') like @{2}", sqlColumnName, xpath, sqlParmName);
+                            command.Parameters.AddWithValue("@" + sqlParmName, val);
+                        }
+                    }
+                    else
+                    {
+                        // +'' in this statement was a total hack job to fix a performance issue with SQL.  See this:
+                        // http://stackoverflow.com/questions/3495355/sql-server-performance-of-parameterized-queries-with-leading-wildcards
+                        sb.AppendFormat("{0}+'' like @{1}", sqlColumnName, sqlParmName);
+                        command.Parameters.AddWithValue("@" + sqlParmName, values[0]);
+                    }
                     break;
                 case SearchConditionTest.NotLike:
                     sb.AppendFormat("{0}+'' not like @{1}", sqlColumnName, sqlParmName);
@@ -226,9 +262,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                     break;
                 case SearchConditionTest.NotExists:
                     {
-                        RelatedEntityCondition<EntitySelectCriteria> rec = sc as RelatedEntityCondition<EntitySelectCriteria>;
+                        var rec = sc as RelatedEntityCondition<EntitySelectCriteria>;
                         if (rec == null) throw new PersistenceException("Casting error with RelatedEntityCondition", null);
-                        EntitySelectCriteria notExistsSubCriteria = (EntitySelectCriteria)values[0];
+                        var notExistsSubCriteria = (EntitySelectCriteria)values[0];
 
                         string baseTableColumn = rec.BaseTableColumn;
                         if (baseTableColumn.EndsWith("Key"))
@@ -251,9 +287,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                     
                 case SearchConditionTest.Exists:
                     {
-                        RelatedEntityCondition<EntitySelectCriteria> rec = sc as RelatedEntityCondition<EntitySelectCriteria>;
+                        var rec = sc as RelatedEntityCondition<EntitySelectCriteria>;
                         if (rec == null) throw new PersistenceException("Casting error with RelatedEntityCondition", null);
-                        EntitySelectCriteria existsSubCriteria = (EntitySelectCriteria)values[0];
+                        var existsSubCriteria = (EntitySelectCriteria)values[0];
 
                         string baseTableColumn = rec.BaseTableColumn;
                         if (baseTableColumn.EndsWith("Key"))
@@ -291,11 +327,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
         /// <returns>An array of WHERE clauses.</returns>
         private static String[] GetWhereSearchCriteria(string qualifier, SearchCriteria criteria, SqlCommand command)
         {
-            List<string> list = new List<string>();
+            var list = new List<string>();
 
             if (criteria is SearchConditionBase)
             {
-                SearchConditionBase sc = (SearchConditionBase) criteria;
+                var sc = (SearchConditionBase) criteria;
                 if (sc.Test != SearchConditionTest.None)
                 {
                     String text = GetSelectWhereText(qualifier, sc, command);
@@ -351,7 +387,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
 			 */
             string orderBy = GetSelectOrderBy(entityName, criteria);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             if (maxRows == null || startIndex == null)
                 sb.AppendFormat("SELECT * FROM {0}", entityName);
                 // had a bug at the tail end of the 1.5 release where Web GUI queries w/ paging did not work properly
@@ -428,7 +464,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
         private static string GetSelectCountSql(string entityName, SqlCommand command, SearchCriteria criteria,
                                                 String subWhere)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendFormat("SELECT COUNT(*) FROM {0}", entityName);
 
             // Generate an array of the WHERE clauses to be used.
@@ -466,7 +502,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
         /// <returns>The SQL string.</returns>
         private static string GetDeleteWhereClause(string entityName, SqlCommand command, SearchCriteria criteria, String subWhere)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             // Generate an array of the WHERE clauses to be used.
             String[] where = GetWhereSearchCriteria(entityName, criteria, command);
@@ -547,7 +583,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
         {
             Dictionary<string, string> columnMap = GetColumnMap(parameters.GetType());
 
-            StringBuilder setClause = new StringBuilder();
+            var setClause = new StringBuilder();
             bool first = true;
             foreach (EntityColumnBase parm in parameters.SubParameters.Values)
             {
@@ -555,19 +591,19 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 String sqlParmName = columnMap[parm.FieldName];
                 if (parm is EntityUpdateColumn<XmlDocument>)
                 {
-                    EntityUpdateColumn<XmlDocument> p = parm as EntityUpdateColumn<XmlDocument>;
+                    var p = parm as EntityUpdateColumn<XmlDocument>;
 
                     XmlDocument xml = p.Value;
-                    StringWriter sw = new StringWriter();
-                    XmlWriterSettings xmlSettings = new XmlWriterSettings
-                                                        {
-                                                            Encoding = Encoding.UTF8,
-                                                            ConformanceLevel = ConformanceLevel.Fragment,
-                                                            Indent = false,
-                                                            NewLineOnAttributes = false,
-                                                            CheckCharacters = true,
-                                                            IndentChars = ""
-                                                        };
+                    var sw = new StringWriter();
+                    var xmlSettings = new XmlWriterSettings
+                                          {
+                                              Encoding = Encoding.UTF8,
+                                              ConformanceLevel = ConformanceLevel.Fragment,
+                                              Indent = false,
+                                              NewLineOnAttributes = false,
+                                              CheckCharacters = true,
+                                              IndentChars = ""
+                                          };
 
                     XmlWriter xmlWriter = XmlWriter.Create(sw, xmlSettings);
                     xml.WriteTo(xmlWriter);
@@ -577,19 +613,19 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 }
                 else if (parm is EntityUpdateColumn<ServerEnum>)
                 {
-                    EntityUpdateColumn<ServerEnum> p = parm as EntityUpdateColumn<ServerEnum>;
+                    var p = parm as EntityUpdateColumn<ServerEnum>;
                     ServerEnum v = p.Value;
                     command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
                 }
                 else if (parm is EntityUpdateColumn<ServerEntity>)
                 {
-                    EntityUpdateColumn<ServerEntity> p = parm as EntityUpdateColumn<ServerEntity>;
+                    var p = parm as EntityUpdateColumn<ServerEntity>;
                     ServerEntity v = p.Value;
                     command.Parameters.AddWithValue("@" + sqlParmName, v.GetKey().Key);
                 }
                 else if (parm is EntityUpdateColumn<ServerEntityKey>)
                 {
-                    EntityUpdateColumn<ServerEntityKey> p = parm as EntityUpdateColumn<ServerEntityKey>;
+                    var p = parm as EntityUpdateColumn<ServerEntityKey>;
                     ServerEntityKey key = p.Value;
                     command.Parameters.AddWithValue("@" + sqlParmName, key.Key);
                 }
@@ -597,7 +633,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 {
                     if (parm.Value is ServerEnum)
                     {
-                        ServerEnum v = (ServerEnum)parm.Value;
+                        var v = (ServerEnum)parm.Value;
                         command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
                     }
                     else
@@ -649,7 +685,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
         {
             Dictionary<string, string> columnMap = GetColumnMap(entity.GetType());
 
-            StringBuilder set = new StringBuilder();
+            var set = new StringBuilder();
             int fieldUpdated = 0;
 			
             PropertyInfo[] props = entity.GetType().GetProperties();
@@ -673,9 +709,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                     }
                     else if (value is XmlDocument)
                     {
-                        XmlDocument xml = (XmlDocument) value;
-                        StringWriter sw = new StringWriter();
-                        XmlWriterSettings xmlSettings = new XmlWriterSettings
+                        var xml = (XmlDocument) value;
+                        var sw = new StringWriter();
+                        var xmlSettings = new XmlWriterSettings
                                                             {
                                                                 Encoding = Encoding.UTF8,
                                                                 ConformanceLevel = ConformanceLevel.Fragment,
@@ -712,12 +748,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
             if (fieldUpdated == 0)
                 return null;
 
-            StringBuilder where = new StringBuilder();
+            var where = new StringBuilder();
             where.AppendFormat("GUID=@{0}", "KEY");
             command.Parameters.AddWithValue("@KEY", entity.GetKey().Key);
             
             
-            StringBuilder sql = new StringBuilder();
+            var sql = new StringBuilder();
             sql.AppendFormat("UPDATE {0} SET {1} WHERE {2}", entity.Name, set, where);
 
             return sql.ToString();
@@ -733,7 +769,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
         private static string GetUpdateSql(string entityName, SqlCommand command, TSelectCriteria criteria,
                                            EntityUpdateColumns parameters)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             // SET clause
             String setClause = GetUpdateSetClause(command, parameters);
 
@@ -769,12 +805,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
             Guid guid = Guid.NewGuid();
 
             // Build the text after the INSERT INTO clause
-            StringBuilder intoText = new StringBuilder();
+            var intoText = new StringBuilder();
             intoText.Append("(");
             intoText.Append("[GUID]");
 
             // Build the text after the VALUES clause
-            StringBuilder valuesText = new StringBuilder();
+            var valuesText = new StringBuilder();
             valuesText.Append("(");
             valuesText.AppendFormat("@PrimaryKey");
             command.Parameters.AddWithValue("@PrimaryKey", guid);
@@ -786,19 +822,19 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
 
                 if (parm.Value is ServerEnum)
                 {
-                    ServerEnum v = (ServerEnum) parm.Value;
+                    var v = (ServerEnum) parm.Value;
                     valuesText.AppendFormat(", @{0}", sqlParmName);
                     command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
                 }
                 else if (parm is EntityUpdateColumn<ServerEntity>)
                 {
-                    ServerEntity v = (ServerEntity) parm.Value;
+                    var v = (ServerEntity) parm.Value;
                     valuesText.AppendFormat(", @{0}", sqlParmName);
                     command.Parameters.AddWithValue("@" + sqlParmName, v.GetKey().Key);
                 }
                 else if (parm is EntityUpdateColumn<ServerEntityKey>)
                 {
-                    ServerEntityKey key = (ServerEntityKey) parm.Value;
+                    var key = (ServerEntityKey) parm.Value;
                     valuesText.AppendFormat(", @{0}", sqlParmName);
                     if (key != null)
                     {
@@ -811,13 +847,15 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 }
                 else if (parm is EntityUpdateColumn<XmlDocument>)
                 {
-                    XmlDocument xml = (XmlDocument) parm.Value;
+                    var xml = (XmlDocument) parm.Value;
 
                     if (xml!=null)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        XmlWriterSettings settings = new XmlWriterSettings();
-                        settings.Indent = false;
+                        var sb = new StringBuilder();
+                        var settings = new XmlWriterSettings
+                                           {
+                                               Indent = false
+                                           };
 
                         using (XmlWriter writer = XmlWriter.Create(sb, settings))
                         {
@@ -839,17 +877,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 {
                     valuesText.AppendFormat(", @{0}", sqlParmName);
 
-                    if (parm.Value==null)
-                        command.Parameters.AddWithValue("@" + sqlParmName, DBNull.Value);
-                    else
-                        command.Parameters.AddWithValue("@" + sqlParmName, parm.Value);
+                    command.Parameters.AddWithValue("@" + sqlParmName, parm.Value ?? DBNull.Value);
                 }
             }
             intoText.Append(")");
             valuesText.Append(")");
 
             // Generate the INSERT statement
-            StringBuilder sql = new StringBuilder();
+            var sql = new StringBuilder();
             sql.AppendFormat("INSERT INTO [{0}] {1} VALUES {2}\n", entityName, intoText, valuesText);
 
             // Add the SELECT statement. This allows us to popuplate the entity with the inserted values 
@@ -883,7 +918,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                                   CommandType = CommandType.Text,
                                   CommandTimeout = SqlServerSettings.Default.CommandTimeout
                               };
-                UpdateContext update = Context as UpdateContext;
+                var update = Context as UpdateContext;
                 if (update != null)
                     command.Transaction = update.Transaction;
 
@@ -977,7 +1012,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
 
                 object result = command.ExecuteScalar();
 
-                int count = (int) result;
+                var count = (int) result;
                 return count;
             }
             catch (Exception e)
@@ -1291,7 +1326,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                                   CommandTimeout = SqlServerSettings.Default.CommandTimeout
                               };
 
-                UpdateContext update = Context as UpdateContext;
+                var update = Context as UpdateContext;
                 if (update != null)
                     command.Transaction = update.Transaction;
 
@@ -1317,7 +1352,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
 
                         while (myReader.Read())
                         {
-                            TServerEntity row = new TServerEntity();
+                            var row = new TServerEntity();
 
                             PopulateEntity(myReader, row, propMap);
 
@@ -1367,7 +1402,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                                   CommandTimeout = SqlServerSettings.Default.CommandTimeout
                               };
 
-                UpdateContext update = Context as UpdateContext;
+                var update = Context as UpdateContext;
                 if (update != null)
                     command.Transaction = update.Transaction;
 

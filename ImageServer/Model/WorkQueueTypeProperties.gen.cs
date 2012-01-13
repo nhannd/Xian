@@ -112,20 +112,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public WorkQueueTypeProperties Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public WorkQueueTypeProperties Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IWorkQueueTypePropertiesEntityBroker broker = read.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
+            var broker = read.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
             WorkQueueTypeProperties theObject = broker.Load(key);
             return theObject;
         }
         static public WorkQueueTypeProperties Insert(WorkQueueTypeProperties entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 WorkQueueTypeProperties newEntity = Insert(update, entity);
                 update.Commit();
@@ -134,8 +134,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public WorkQueueTypeProperties Insert(IUpdateContext update, WorkQueueTypeProperties entity)
         {
-            IWorkQueueTypePropertiesEntityBroker broker = update.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
-            WorkQueueTypePropertiesUpdateColumns updateColumns = new WorkQueueTypePropertiesUpdateColumns();
+            var broker = update.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
+            var updateColumns = new WorkQueueTypePropertiesUpdateColumns();
             updateColumns.WorkQueueTypeEnum = entity.WorkQueueTypeEnum;
             updateColumns.WorkQueuePriorityEnum = entity.WorkQueuePriorityEnum;
             updateColumns.MemoryLimited = entity.MemoryLimited;

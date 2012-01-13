@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
@@ -21,6 +22,7 @@ namespace ClearCanvas.Web.Enterprise.Admin
     /// <summary>
     /// Wrapper for <see cref="IAuthorityGroupAdminService"/> service.
     /// </summary>
+    [Obfuscation(Exclude = true, ApplyToMembers = true)]
     public sealed class AuthorityManagement : IDisposable
     {
         private IAuthorityGroupAdminService _service;
@@ -43,32 +45,46 @@ namespace ClearCanvas.Web.Enterprise.Admin
 
         #endregion
 
-
-
         public IList<AuthorityGroupSummary> ListAllAuthorityGroups()
         {
             return _service.ListAuthorityGroups(new ListAuthorityGroupsRequest()).AuthorityGroups;
         }
 
+        public IList<AuthorityGroupDetail> ListAllAuthorityGroupDetails()
+        {
+            return _service.ListAuthorityGroups(new ListAuthorityGroupsRequest {Details = true}).AuthorityGroupDetails;
+        }
+
         public IList<AuthorityGroupSummary> ListDataAccessAuthorityGroups()
         {
-            ListAuthorityGroupsRequest rq = new ListAuthorityGroupsRequest
-                                                {
-                                                    DataGroup = true
-                                                };
+            var rq = new ListAuthorityGroupsRequest
+                         {
+                             DataGroup = true
+                         };
 
             return _service.ListAuthorityGroups(rq).AuthorityGroups;
         }
 
+        public IList<AuthorityGroupDetail> ListDataAccessAuthorityGroupDetails()
+        {
+            var rq = new ListAuthorityGroupsRequest
+            {
+                DataGroup = true,
+                Details = true
+            };
+
+            return _service.ListAuthorityGroups(rq).AuthorityGroupDetails;
+        }
+
         public void AddAuthorityGroup(string name, string description, bool dataGroup, List<AuthorityTokenSummary> tokens)
         {
-            AuthorityGroupDetail details = new AuthorityGroupDetail
-                                               {
-                                                   Name = name,
-                                                   Description = description,
-                                                   DataGroup = dataGroup,
-                                                   AuthorityTokens = tokens
-                                               };
+            var details = new AuthorityGroupDetail
+                              {
+                                  Name = name,
+                                  Description = description,
+                                  DataGroup = dataGroup,
+                                  AuthorityTokens = tokens
+                              };
             _service.AddAuthorityGroup(new AddAuthorityGroupRequest(details));
         }
 
@@ -114,7 +130,7 @@ namespace ClearCanvas.Web.Enterprise.Admin
 
         public bool ImportAuthorityGroups(List<AuthorityGroupDetail> groups)
         {
-            ImportAuthorityGroupsRequest request = new ImportAuthorityGroupsRequest(groups);
+            var request = new ImportAuthorityGroupsRequest(groups);
             return _service.ImportAuthorityGroups(request)!=null;
         }
     }

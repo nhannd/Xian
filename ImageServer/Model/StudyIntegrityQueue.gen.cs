@@ -59,7 +59,9 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyData")]
         public XmlDocument StudyData
-        { get; set; }
+        { get { return _StudyData; } set { _StudyData = value; } }
+        [NonSerialized]
+        private XmlDocument _StudyData;
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyIntegrityReasonEnum")]
         public StudyIntegrityReasonEnum StudyIntegrityReasonEnum
         { get; set; }
@@ -68,7 +70,9 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Details")]
         public XmlDocument Details
-        { get; set; }
+        { get { return _Details; } set { _Details = value; } }
+        [NonSerialized]
+        private XmlDocument _Details;
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
         public String Description
         { get; set; }
@@ -77,20 +81,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public StudyIntegrityQueue Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public StudyIntegrityQueue Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IStudyIntegrityQueueEntityBroker broker = read.GetBroker<IStudyIntegrityQueueEntityBroker>();
+            var broker = read.GetBroker<IStudyIntegrityQueueEntityBroker>();
             StudyIntegrityQueue theObject = broker.Load(key);
             return theObject;
         }
         static public StudyIntegrityQueue Insert(StudyIntegrityQueue entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 StudyIntegrityQueue newEntity = Insert(update, entity);
                 update.Commit();
@@ -99,8 +103,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public StudyIntegrityQueue Insert(IUpdateContext update, StudyIntegrityQueue entity)
         {
-            IStudyIntegrityQueueEntityBroker broker = update.GetBroker<IStudyIntegrityQueueEntityBroker>();
-            StudyIntegrityQueueUpdateColumns updateColumns = new StudyIntegrityQueueUpdateColumns();
+            var broker = update.GetBroker<IStudyIntegrityQueueEntityBroker>();
+            var updateColumns = new StudyIntegrityQueueUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.InsertTime = entity.InsertTime;

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
@@ -335,11 +336,8 @@ namespace ClearCanvas.ImageViewer.Web
 		                   Identifier = Identifier,
 		                   Viewer = (Viewer) _viewerHandler.GetEntity(),
 
-                           VersionString = String.Format("{0} [{1}]", 
-                                ProductInformation.GetNameAndVersion(false, true),
-                                String.Format("{0}.{1}.{2}.{3}", 
-                                    ProductInformation.Version.Major, ProductInformation.Version.Minor, 
-                                    ProductInformation.Version.Build, ProductInformation.Version.Revision))
+                           VersionString = GetProductVersionString()
+                                
 			           };
             
 
@@ -354,6 +352,35 @@ namespace ClearCanvas.ImageViewer.Web
 
             ApplicationContext.Current.FireEvent(@event);
 		}
+
+        private static string GetProductVersionString()
+        {
+            if (ProductInformation.Name.Equals(ProductInformation.Component))
+                return ProductInformation.GetNameAndVersion(false, false);
+
+            return string.Format("{0}\n{1}\n{2}", ProductInformation.Name,
+                            Concatenate(ProductInformation.Component, String.Format("v{0}", ProductInformation.GetVersion(false, true))),
+                            Concatenate(ProductInformation.Edition, ProductInformation.Release));
+        }
+
+        private static string Concatenate(params string[] strings)
+        {
+            if (strings == null || strings.Length == 0)
+                return string.Empty;
+
+            var sb = new StringBuilder();
+            foreach (var s in strings)
+            {
+                if (string.IsNullOrEmpty(s))
+                    continue;
+
+                if (sb.Length > 0)
+                    sb.Append(' ');
+                sb.Append(s);
+            }
+            return sb.ToString();
+        }
+
 
 
 	    public static LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)

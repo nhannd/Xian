@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
 	[MenuAction("Open", "explorerlocal-contextmenu/MenuFilterStudy", "Open")]
 	[Tooltip("Open", "TooltipFilterStudy")]
-	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[IconSet("Open", "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
 	[EnabledStateObserver("Open", "Enabled", "EnabledChanged")]
 	[ViewerActionPermission("Open", AuthorityTokens.StudyFilters)]
 	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]

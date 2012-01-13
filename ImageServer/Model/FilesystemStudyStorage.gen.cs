@@ -57,20 +57,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public FilesystemStudyStorage Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public FilesystemStudyStorage Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IFilesystemStudyStorageEntityBroker broker = read.GetBroker<IFilesystemStudyStorageEntityBroker>();
+            var broker = read.GetBroker<IFilesystemStudyStorageEntityBroker>();
             FilesystemStudyStorage theObject = broker.Load(key);
             return theObject;
         }
         static public FilesystemStudyStorage Insert(FilesystemStudyStorage entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 FilesystemStudyStorage newEntity = Insert(update, entity);
                 update.Commit();
@@ -79,8 +79,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public FilesystemStudyStorage Insert(IUpdateContext update, FilesystemStudyStorage entity)
         {
-            IFilesystemStudyStorageEntityBroker broker = update.GetBroker<IFilesystemStudyStorageEntityBroker>();
-            FilesystemStudyStorageUpdateColumns updateColumns = new FilesystemStudyStorageUpdateColumns();
+            var broker = update.GetBroker<IFilesystemStudyStorageEntityBroker>();
+            var updateColumns = new FilesystemStudyStorageUpdateColumns();
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.FilesystemKey = entity.FilesystemKey;
             updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;

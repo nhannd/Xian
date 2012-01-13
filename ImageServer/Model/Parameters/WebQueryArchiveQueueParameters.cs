@@ -53,6 +53,16 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 			set { SubCriteria["ArchiveQueueStatusEnum"] = new ProcedureParameter<ServerEnum>("ArchiveQueueStatusEnum", value); }
         }
 
+        public bool CheckDataAccess
+        {
+            set { SubCriteria["CheckDataAccess"] = new ProcedureParameter<bool>("CheckDataAccess", value); }
+        }
+
+        public string UserAuthorityGroupGUIDs
+        {
+            set { SubCriteria["UserAuthorityGroupGUIDs"] = new ProcedureParameter<string>("UserAuthorityGroupGUIDs", value); }
+        }
+
 		public int StartIndex
         {
 			set { SubCriteria["StartIndex"] = new ProcedureParameter<int>("StartIndex", value); }

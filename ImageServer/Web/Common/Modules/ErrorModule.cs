@@ -88,7 +88,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
                 Platform.Log(LogLevel.Error, "Unhandled exception: {0}", theException);
             }
 
-            ExceptionHandler.ThrowException(theException);
+            if (theException != null)
+                ExceptionHandler.ThrowException(theException);
         }
     }
 }

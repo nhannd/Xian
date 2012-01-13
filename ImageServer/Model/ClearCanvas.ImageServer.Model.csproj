@@ -53,10 +53,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -141,6 +137,7 @@
     <Compile Include="EntityBrokers\CannedTextUpdateColumns.gen.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EntityBrokers\DataAccessGroupSelectCriteria.cs" />
     <Compile Include="EntityBrokers\DataAccessGroupSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\DataAccessGroupUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DatabaseVersionSelectCriteria.gen.cs" />
@@ -188,6 +185,7 @@
     <Compile Include="EntityBrokers\IRestoreQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRestoreQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ISeriesEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IServerPartitionDataAccessEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerPartitionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerRuleApplyTimeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerRuleEntityBroker.gen.cs" />
@@ -229,6 +227,8 @@
     <Compile Include="EntityBrokers\RestoreQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\SeriesSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\SeriesUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\ServerPartitionDataAccessSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\ServerPartitionDataAccessUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ServerPartitionSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\ServerPartitionUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ServerRuleSelectCriteria.gen.cs" />
@@ -322,6 +322,7 @@
     <Compile Include="ServerEnumDescription.cs" />
     <Compile Include="ServerPartition.cs" />
     <Compile Include="ServerPartition.gen.cs" />
+    <Compile Include="ServerPartitionDataAccess.gen.cs" />
     <Compile Include="ServerRule.gen.cs" />
     <Compile Include="ServerRuleApplyTimeEnum.gen.cs" />
     <Compile Include="ServerRuleTypeEnum.gen.cs" />

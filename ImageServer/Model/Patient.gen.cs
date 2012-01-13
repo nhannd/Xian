@@ -85,20 +85,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Patient Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public Patient Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IPatientEntityBroker broker = read.GetBroker<IPatientEntityBroker>();
+            var broker = read.GetBroker<IPatientEntityBroker>();
             Patient theObject = broker.Load(key);
             return theObject;
         }
         static public Patient Insert(Patient entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 Patient newEntity = Insert(update, entity);
                 update.Commit();
@@ -107,8 +107,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public Patient Insert(IUpdateContext update, Patient entity)
         {
-            IPatientEntityBroker broker = update.GetBroker<IPatientEntityBroker>();
-            PatientUpdateColumns updateColumns = new PatientUpdateColumns();
+            var broker = update.GetBroker<IPatientEntityBroker>();
+            var updateColumns = new PatientUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.NumberOfPatientRelatedStudies = entity.NumberOfPatientRelatedStudies;
             updateColumns.NumberOfPatientRelatedSeries = entity.NumberOfPatientRelatedSeries;

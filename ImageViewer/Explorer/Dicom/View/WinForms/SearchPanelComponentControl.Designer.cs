@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._searchLastWeekButton = new System.Windows.Forms.Button();
 			this._clearButton = new System.Windows.Forms.Button();
 			this._searchTodayButton = new System.Windows.Forms.Button();
-			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._titleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
 			this._referringPhysiciansName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._modalityPicker = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker();
 			this._progressBar = new System.Windows.Forms.ProgressBar();
@@ -158,10 +158,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _titleBar
 			// 
 			resources.ApplyResources(this._titleBar, "_titleBar");
-			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+			this._titleBar.TextAlignment = System.Drawing.StringAlignment.Near;
 			// 
 			// _referringPhysiciansName
 			// 
@@ -187,6 +185,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// SearchPanelComponentControl
 			// 
+			this.AcceptButton = this._searchButton;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -213,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         #endregion
 
-		private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
+		private ClearCanvas.Desktop.View.WinForms.TitleBar _titleBar;
 		private ClearCanvas.Desktop.View.WinForms.DateTimeField _studyDateTo;
 		private System.Windows.Forms.Button _searchButton;
 		private System.Windows.Forms.Button _searchLastWeekButton;

@@ -55,10 +55,14 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
         public XmlDocument StudyData
-        { get; set; }
+        { get { return _StudyData; } set { _StudyData = value; } }
+        [NonSerialized]
+        private XmlDocument _StudyData;
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
         public XmlDocument ChangeDescription
-        { get; set; }
+        { get { return _ChangeDescription; } set { _ChangeDescription = value; } }
+        [NonSerialized]
+        private XmlDocument _ChangeDescription;
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="DestStudyStorageGUID")]
         public ServerEntityKey DestStudyStorageKey
         { get; set; }
@@ -67,20 +71,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public StudyHistory Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public StudyHistory Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IStudyHistoryEntityBroker broker = read.GetBroker<IStudyHistoryEntityBroker>();
+            var broker = read.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistory theObject = broker.Load(key);
             return theObject;
         }
         static public StudyHistory Insert(StudyHistory entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 StudyHistory newEntity = Insert(update, entity);
                 update.Commit();
@@ -89,8 +93,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public StudyHistory Insert(IUpdateContext update, StudyHistory entity)
         {
-            IStudyHistoryEntityBroker broker = update.GetBroker<IStudyHistoryEntityBroker>();
-            StudyHistoryUpdateColumns updateColumns = new StudyHistoryUpdateColumns();
+            var broker = update.GetBroker<IStudyHistoryEntityBroker>();
+            var updateColumns = new StudyHistoryUpdateColumns();
             updateColumns.InsertTime = entity.InsertTime;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.StudyHistoryTypeEnum = entity.StudyHistoryTypeEnum;

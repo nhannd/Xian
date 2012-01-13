@@ -131,6 +131,7 @@
     <Compile Include="EntityBrokers\RestoreQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\RestoreQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\SeriesEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\ServerPartitionDataAccessEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServerPartitionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServerRuleApplyTimeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServerRuleEntityBroker.gen.cs" />
@@ -178,6 +179,7 @@
     <Compile Include="UpgradeScripts\UpgradeFrom_2_2_13745_40623.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_2_2_14734_44343.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_3_5_16130_48592.cs" />
+    <Compile Include="UpgradeScripts\UpgradeFrom_5_0_5655_9770.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -210,6 +212,7 @@
     <None Include="Scripts\ImageServerDefaultData.sql" />
     <EmbeddedResource Include="Scripts\ImageServerStoredProcedures.sql" />
     <None Include="Scripts\ImageServerTables.sql" />
+    <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_5_0_5655_9770.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_4_0_5014_9549.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_2_2_13745_40623.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_2_2_14734_44343.sql" />

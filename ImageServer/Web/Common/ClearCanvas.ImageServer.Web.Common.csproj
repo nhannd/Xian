@@ -62,9 +62,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache.cs" />
     <Compile Include="Data\ApplicationLogAdaptor.cs" />
     <Compile Include="Data\AlertAdaptor.cs" />
     <Compile Include="Data\AlertController.cs" />
+    <Compile Include="Data\DataSource\IStudySummaryAssembler.cs" />
     <Compile Include="Data\StudyDataAccessAdaptor.cs" />
     <Compile Include="Data\StudyDataAccessController.cs" />
     <Compile Include="Data\StudyEditReasonAdaptor.cs" />
@@ -157,14 +159,17 @@
     <Compile Include="Security\CustomFormAuthenticationModule.cs" />
     <Compile Include="Security\SessionManager.cs" />
     <Compile Include="CustomExpressionBuilder.cs" />
+    <Compile Include="ServerPartitionTabsExtensionPoint.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="ThemeManager.cs" />
     <Compile Include="UICommonSettings.cs" />
     <Compile Include="UISettings.cs" />
     <Compile Include="UserProfile.cs" />
+    <Compile Include="Utilities\DataAccessHelper.cs" />
     <Compile Include="Utilities\HtmlUtility.cs" />
     <Compile Include="Utilities\NameFormatter.cs" />
     <Compile Include="Utilities\ServerUtility.cs" />

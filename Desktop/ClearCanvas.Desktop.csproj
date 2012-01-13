@@ -113,7 +113,11 @@
     <Compile Include="Actions\ObservablePropertyCoupler.cs" />
     <Compile Include="Actions\TextBoxAction.cs" />
     <Compile Include="ApplicationSettingsRegistry.cs" />
+    <Compile Include="ApplicationTheme.cs" />
+    <Compile Include="ApplicationThemeManager.cs" />
     <Compile Include="Actions\AbstractAction.cs" />
+    <Compile Include="ApplicationThemeResourceProviderBase.cs" />
+    <Compile Include="ApplicationThemeResourceResolver.cs" />
     <Compile Include="Async.cs" />
     <Compile Include="AsyncTask.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
@@ -189,6 +193,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>FormatSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="IApplicationThemeResourceProvider.cs" />
     <Compile Include="IconSize.cs" />
     <Compile Include="IWorkspaceDialogBox.cs" />
     <Compile Include="IWorkspaceDialogBoxHost.cs" />

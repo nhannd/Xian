@@ -96,20 +96,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Series Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public Series Load(IPersistenceContext read, ServerEntityKey key)
         {
-            ISeriesEntityBroker broker = read.GetBroker<ISeriesEntityBroker>();
+            var broker = read.GetBroker<ISeriesEntityBroker>();
             Series theObject = broker.Load(key);
             return theObject;
         }
         static public Series Insert(Series entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 Series newEntity = Insert(update, entity);
                 update.Commit();
@@ -118,8 +118,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public Series Insert(IUpdateContext update, Series entity)
         {
-            ISeriesEntityBroker broker = update.GetBroker<ISeriesEntityBroker>();
-            SeriesUpdateColumns updateColumns = new SeriesUpdateColumns();
+            var broker = update.GetBroker<ISeriesEntityBroker>();
+            var updateColumns = new SeriesUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.StudyKey = entity.StudyKey;
             updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;

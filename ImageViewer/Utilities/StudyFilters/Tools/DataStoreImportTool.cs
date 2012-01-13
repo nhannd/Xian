@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("import", DefaultContextMenuActionSite + "/MenuImportToLocalDataStore", "Import")]
 	[EnabledStateObserver("import", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	[Tooltip("import", "TooltipImportToLocalDataStore")]
-	[IconSet("import", IconScheme.Colour, "Icons.DataStoreImportToolSmall.png", "Icons.DataStoreImportToolMedium.png", "Icons.DataStoreImportToolLarge.png")]
+	[IconSet("import", "Icons.DataStoreImportToolSmall.png", "Icons.DataStoreImportToolMedium.png", "Icons.DataStoreImportToolLarge.png")]
 	[ViewerActionPermission("import", Services.AuthorityTokens.Study.Import)]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class DataStoreImportTool : LocalExplorerStudyFilterToolProxy<DicomFileImportTool>

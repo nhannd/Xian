@@ -153,7 +153,7 @@ namespace ClearCanvas.Desktop
 			Platform.CheckForEmptyString(resourceName, "resourceName");
 
 			_resourceName = resourceName;
-			_resolver = new ResourceResolver(Assembly.GetCallingAssembly());
+			_resolver = new ApplicationThemeResourceResolver(Assembly.GetCallingAssembly());
 		}
 
 		/// <summary>
@@ -167,7 +167,7 @@ namespace ClearCanvas.Desktop
 			Platform.CheckForNullReference(resourceAssembly, "resourceAssembly");
 
 			_resourceName = resourceName;
-			_resolver = new ResourceResolver(resourceAssembly);
+			_resolver = new ApplicationThemeResourceResolver(resourceAssembly);
 		}
 
 		/// <summary>

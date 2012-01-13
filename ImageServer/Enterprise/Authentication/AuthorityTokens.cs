@@ -9,9 +9,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageServer.Enterprise.Authentication
@@ -45,6 +42,10 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
                 [AuthorityToken(Description = "Allow configuration of partition archives.")]
                 public const string PartitionArchive = "PACS/Configure/PartitionArchive";
+
+                [AuthorityToken(Description = "Allow configuration of data access rules.")]
+                public const string DataAccessRules = "PACS/Configure/Data Access Rules";
+
             }
 
             /// <summary>
@@ -99,9 +100,11 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
         /// </summary>
         public static class DataAccess
         {
-            [AuthorityToken(Description = "Allow Access to all Studies.")]
+            [AuthorityToken(Description = "Allow access to all studies.")]
             public const string AllStudies = "PACS/Data Access/Access to all Studies";
 
+            [AuthorityToken(Description = "Allow access to all ImageServer partitions.")]
+            public const string AllPartitions = "PACS/Data Access/Access to all Partitions";
         }
 
         /// <summary>
@@ -132,6 +135,11 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
             [AuthorityToken(Description = "Allow saving of reasons for study edit/delete.")]
             public const string SaveReason = "PACS/Study/SaveReason";
+
+            [AuthorityToken(Description = "Allow editing of data access permissions for studies.")]
+            public const string EditDataAccess = "PACS/Study/Edit Data Access";
+
+            public const string VetTags = "PACS/Study/Veterinary Tags";
         }
 
         /// <summary>

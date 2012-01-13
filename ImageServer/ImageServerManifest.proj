@@ -50,6 +50,7 @@
   <ItemGroup>
     <ManifestFiles Include="$(TrunkDirectory)\ImageServer\ManifestInputShredHost.xml" />
     <ManifestFiles Include="$(TrunkDirectory)\ImageServer\ManifestInputWeb.xml" />
+    <ManifestFiles Include="$(TrunkDirectory)\ImageServer\ManifestInputWebDefaultTheme.xml" />
     <ManifestFiles Include="$(TrunkDirectory)\ImageServer\ManifestInputCommunity.xml" />
   </ItemGroup>
   

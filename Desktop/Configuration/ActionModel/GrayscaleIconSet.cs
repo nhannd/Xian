@@ -14,46 +14,33 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Configuration.ActionModel
 {
-	//TODO: might be useful in core, but not right now.
-	internal class GrayscaleIconSet : IconSet
+	//TODO: might be useful in core code some day
+	internal sealed class GrayscaleIconSet : IconSet
 	{
-		private readonly IconSet _source;
-
 		public GrayscaleIconSet(IconSet source)
-			: base(IconScheme.Monochrome, source.SmallIcon, source.MediumIcon, source.LargeIcon)
-		{
-			_source = source;
-		}
+			: base(source.SmallIcon, source.MediumIcon, source.LargeIcon) {}
 
 		public override Image CreateIcon(IconSize iconSize, IResourceResolver resourceResolver)
 		{
-			//Already gray.
-			if (_source.Scheme == IconScheme.Monochrome)
-				return _source.CreateIcon(iconSize, resourceResolver);
-			
 			//TODO: make unsafe. Not enabling unsafe code just for this, though.
-			var colorImage = (Bitmap)base.CreateIcon(iconSize, resourceResolver);
-			for (int x = 0; x < colorImage.Width; ++x)
+			var bitmap = (Bitmap) base.CreateIcon(iconSize, resourceResolver);
+			for (int x = 0; x < bitmap.Width; ++x)
 			{
-				for (int y = 0; y < colorImage.Height; ++y)
+				for (int y = 0; y < bitmap.Height; ++y)
 				{
-					var pixel = colorImage.GetPixel(x, y);
-					int gray = (int)(pixel.R * 0.3f + pixel.G * 0.59F + pixel.B * 0.11f);
+					var pixel = bitmap.GetPixel(x, y);
+					int gray = (int) (pixel.R*0.3f + pixel.G*0.59F + pixel.B*0.11f);
 					if (gray > 255)
 						gray = 255;
 
-					colorImage.SetPixel(x, y, Color.FromArgb(pixel.A, gray, gray, gray));
+					bitmap.SetPixel(x, y, Color.FromArgb(pixel.A, gray, gray, gray));
 				}
 			}
-
-			return colorImage;
+			return bitmap;
 		}
 
 		public override string GetIconKey(IconSize iconSize, IResourceResolver resourceResolver)
 		{
-			if (_source.Scheme == IconScheme.Monochrome)
-				return base.GetIconKey(iconSize, resourceResolver);
-
 			return base.GetIconKey(iconSize, resourceResolver) + "_ConvertedToGrayscale";
 		}
 	}

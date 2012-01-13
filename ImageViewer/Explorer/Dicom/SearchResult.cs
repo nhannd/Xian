@@ -254,16 +254,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				delegate(StudyItem item) { return item.PatientsName.Ideographic; },
 				0.5f);
 
-			column.Visible = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
-
 			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingPhoneticName,
 				delegate(StudyItem item) { return item.PatientsName.Phonetic; },
 				0.5f);
-
-			column.Visible = DicomExplorerConfigurationSettings.Default.ShowPhoneticName;
 
 			columns.Add(column);
 
@@ -311,7 +307,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				GetAttachmentsIcon,
 				0.25f)
 								{
-									ResourceResolver = new ResourceResolver(typeof(SearchResult).Assembly),
+									ResourceResolver = new ApplicationThemeResourceResolver(typeof(SearchResult).Assembly),
 									Comparison = (x, y) => x.HasAttachments().CompareTo(y.HasAttachments())
 								};
 
@@ -365,8 +361,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						return -instances1.Value.CompareTo(instances2.Value);
 					});
 
-			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
-
 			return new TableColumnBase<StudyItem>[] { column };
 		}
 
@@ -395,19 +389,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		internal void UpdateColumnVisibility()
 		{
-			foreach (TableColumnBase<StudyItem> column in _studyTable.Columns)
-			{
-				if (column.Name == SR.ColumnHeadingPhoneticName ||
-					column.Name == SR.ColumnHeadingIdeographicName)
-				{
-					column.Visible = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
-				}
-				else if (column.Name == SR.ColumnHeadingNumberOfInstances)
-				{
-					column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
-				}
-			}
-
 			UpdateServerColumnsVisibility();
 		}
 
@@ -496,6 +477,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return prModality;
 				default:
 					return StandardModalities.Modalities.Contains(modality) ? imageModality : unknownModality;
+			}
+		}
+
+		public static SearchResultColumnOptionCollection ColumnOptions
+		{
+			get
+			{
+				try
+				{
+					return new SearchResultColumnOptionCollection(DicomExplorerConfigurationSettings.Default.ResultColumns);
+				}
+				catch (Exception)
+				{
+					return new SearchResultColumnOptionCollection();
+				}
+			}
+			set
+			{
+				DicomExplorerConfigurationSettings.Default.ResultColumns = value;
+				DicomExplorerConfigurationSettings.Default.Save();
 			}
 		}
 	}

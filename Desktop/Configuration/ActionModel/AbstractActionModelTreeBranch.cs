@@ -30,8 +30,8 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		{
 			_subtree.Items.ItemsChanged += OnSubtreeItemsChanged;
 
-			base.IconSet = new IconSet(IconScheme.Colour, "Icons.ActionModelGroupSmall.png", "Icons.ActionModelGroupMedium.png", "Icons.ActionModelGroupLarge.png");
-			base.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+			base.IconSet = new IconSet("Icons.ActionModelGroupSmall.png", "Icons.ActionModelGroupMedium.png", "Icons.ActionModelGroupLarge.png");
+			base.ResourceResolver = new ApplicationThemeResourceResolver(this.GetType().Assembly);
 		}
 
 		public IList<AbstractActionModelTreeNode> Children

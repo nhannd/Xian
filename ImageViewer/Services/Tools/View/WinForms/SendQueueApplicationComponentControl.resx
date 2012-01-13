@@ -166,7 +166,7 @@
     <value>_titleBar</value>
   </data>
   <data name="&gt;&gt;_titleBar.Type" xml:space="preserve">
-    <value>Crownwood.DotNetMagic.Controls.TitleBar, DotNetMagic2005, Version=5.2.2.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec</value>
+    <value>ClearCanvas.Desktop.View.WinForms.TitleBar, ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_titleBar.Parent" xml:space="preserve">
     <value>$this</value>

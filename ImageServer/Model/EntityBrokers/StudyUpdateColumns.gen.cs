@@ -56,6 +56,23 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["StudySizeInKB"] = new EntityUpdateColumn<Decimal>("StudySizeInKB", value); }
         }
+       [DicomField(DicomTags.ResponsiblePerson, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsiblePerson")]
+        public String ResponsiblePerson
+        {
+            set { SubParameters["ResponsiblePerson"] = new EntityUpdateColumn<String>("ResponsiblePerson", value); }
+        }
+       [DicomField(DicomTags.ResponsibleOrganization, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsibleOrganization")]
+        public String ResponsibleOrganization
+        {
+            set { SubParameters["ResponsibleOrganization"] = new EntityUpdateColumn<String>("ResponsibleOrganization", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="QueryXml")]
+        public XmlDocument QueryXml
+        {
+            set { SubParameters["QueryXml"] = new EntityUpdateColumn<XmlDocument>("QueryXml", value); }
+        }
        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
         public String SpecificCharacterSet

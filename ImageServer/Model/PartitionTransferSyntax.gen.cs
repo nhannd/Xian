@@ -52,20 +52,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public PartitionTransferSyntax Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public PartitionTransferSyntax Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IPartitionTransferSyntaxEntityBroker broker = read.GetBroker<IPartitionTransferSyntaxEntityBroker>();
+            var broker = read.GetBroker<IPartitionTransferSyntaxEntityBroker>();
             PartitionTransferSyntax theObject = broker.Load(key);
             return theObject;
         }
         static public PartitionTransferSyntax Insert(PartitionTransferSyntax entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 PartitionTransferSyntax newEntity = Insert(update, entity);
                 update.Commit();
@@ -74,8 +74,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public PartitionTransferSyntax Insert(IUpdateContext update, PartitionTransferSyntax entity)
         {
-            IPartitionTransferSyntaxEntityBroker broker = update.GetBroker<IPartitionTransferSyntaxEntityBroker>();
-            PartitionTransferSyntaxUpdateColumns updateColumns = new PartitionTransferSyntaxUpdateColumns();
+            var broker = update.GetBroker<IPartitionTransferSyntaxEntityBroker>();
+            var updateColumns = new PartitionTransferSyntaxUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
             updateColumns.Enabled = entity.Enabled;

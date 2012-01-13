@@ -9,12 +9,24 @@
 
 #endregion
 
+using System.Threading;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     public class StudyAdaptor : BaseAdaptor<Study, IStudyEntityBroker, StudySelectCriteria, StudyUpdateColumns>
     {
+        protected override void OnQuerying(IPersistenceContext context, StudySelectCriteria criteria)
+        {
+            StudyDataAccessSelectCriteria subCriteria = DataAccessHelper.GetDataAccessSubCriteriaForUser(context, Thread.CurrentPrincipal);
+            if (subCriteria != null)
+                criteria.StudyDataAccessRelatedEntityCondition.Exists(subCriteria);
+        }
+        
     }
+
+    
 }

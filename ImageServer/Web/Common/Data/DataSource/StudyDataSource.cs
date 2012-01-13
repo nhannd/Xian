@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
@@ -49,6 +48,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		public string AccessionNumber { get; set; }
 
 		public string StudyDescription { get; set; }
+
+        public string ResponsiblePerson { get; set; }
+
+        public string ResponsiblePersonRole { get; set; }
+
+        public string ResponsibleOrganization { get; set; }
+
+        public string Species { get; set; }
+
+        public string Breed { get; set; }
 
 		public int NumberOfStudyRelatedSeries { get; set; }
 
@@ -125,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 if (_requiresWorkQueueAttention==null)
                 {
                     _requiresWorkQueueAttention = false;
-                    StudyController controller = new StudyController();
+                    var controller = new StudyController();
                     IList<WorkQueue> workqueueItems = controller.GetWorkQueueItems(TheStudy);
                     foreach (WorkQueue item in workqueueItems)
                     {
@@ -393,6 +402,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public string FromStudyDate { get; set; }
 
+        public string ResponsiblePerson { get; set; }
+
+        public string ResponsibleOrganization { get; set; }
+
 		public ServerPartition Partition { get; set; }
 
 		public string DateFormats { get; set; }
@@ -415,7 +428,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#region Private Methods
 		private StudySelectCriteria GetSelectCriteria()
 		{
-			StudySelectCriteria criteria = new StudySelectCriteria();
+			var criteria = new StudySelectCriteria();
 
 			// only query for device in this partition
 			criteria.ServerPartitionKey.EqualTo(Partition.Key);
@@ -473,9 +486,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 criteria.ReferringPhysiciansName.Like(key);
             }
 
+            if (!String.IsNullOrEmpty(ResponsiblePerson))
+            {
+                string key = ResponsiblePerson.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.ResponsiblePerson.Like(key);
+            }
+
+            if (!String.IsNullOrEmpty(ResponsibleOrganization))
+            {
+                string key = ResponsibleOrganization.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.ResponsibleOrganization.Like(key);
+            }
+
 			if(Modalities != null && Modalities.Length > 0)
 			{
-				SeriesSelectCriteria seriesCriteria = new SeriesSelectCriteria();
+				var seriesCriteria = new SeriesSelectCriteria();
 				if (Modalities.Length == 1)
 					seriesCriteria.Modality.EqualTo(Modalities[0]);
 				else
@@ -486,12 +513,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
             if (Statuses != null && Statuses.Length > 0)
             {
-                StudyStorageSelectCriteria storageCriteria = new StudyStorageSelectCriteria();
+                var storageCriteria = new StudyStorageSelectCriteria();
                 if (Statuses.Length == 1)
                     storageCriteria.StudyStatusEnum.EqualTo(StudyStatusEnum.GetEnum(Statuses[0]));
                 else
                 {
-                    List<StudyStatusEnum> statusList = new List<StudyStatusEnum>();
+                    var statusList = new List<StudyStatusEnum>();
                     foreach(string status in Statuses)
                     {
                         statusList.Add(StudyStatusEnum.GetEnum(status));
@@ -563,8 +590,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			    return null;
 			}
 
-			StudySummary studySummary = new StudySummary();
-			StudyController controller = new StudyController();
+			var studySummary = new StudySummary();
+			var controller = new StudyController();
 
 			studySummary.Key = study.GetKey();
 			studySummary.AccessionNumber = study.AccessionNumber;
@@ -577,15 +604,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			studySummary.StudyDescription = study.StudyDescription;
 			studySummary.ModalitiesInStudy = controller.GetModalitiesInStudy(read, study);
 		    studySummary.ReferringPhysiciansName = study.ReferringPhysiciansName;
+		    studySummary.ResponsibleOrganization = study.ResponsibleOrganization;
+		    studySummary.ResponsiblePerson = study.ResponsiblePerson;
 			studySummary.StudyTime = study.StudyTime;
 			studySummary.StudyId = study.StudyId;
 			studySummary.TheStudy = study;
 
-			studySummary.ThePartition = ServerPartitionMonitor.Instance.FindPartition(study.ServerPartitionKey);
-			if (studySummary.ThePartition == null)
-				studySummary.ThePartition = ServerPartition.Load(read, study.ServerPartitionKey);
+			studySummary.ThePartition = ServerPartitionMonitor.Instance.FindPartition(study.ServerPartitionKey) ??
+			                            ServerPartition.Load(read, study.ServerPartitionKey);
 
-			studySummary.ReferringPhysiciansName = study.ReferringPhysiciansName;
+		    studySummary.ReferringPhysiciansName = study.ReferringPhysiciansName;
 			studySummary.TheStudyStorage = StudyStorage.Load(read, study.StudyStorageKey);
 			studySummary.StudyStatusEnum = studySummary.TheStudyStorage.StudyStatusEnum;
 			studySummary.QueueStudyStateEnum = studySummary.TheStudyStorage.QueueStudyStateEnum;
@@ -608,6 +636,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		    studySummary.HasPendingWorkQueueItems = controller.GetCountPendingWorkQueueItems(study) > 0;
             
+            var ep = new StudySummaryAssemblerExtensionPoint();
+            foreach (IStudySummaryAssembler assemblerPlugin in ep.CreateExtensions())
+            {
+                assemblerPlugin.PopulateStudy(studySummary, study);
+            }
+
 			return studySummary;
 		}
 	}

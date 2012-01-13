@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarStack", "Select", "SortMenuModel", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.S)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.StackToolSmall.png", "Icons.StackToolMedium.png", "Icons.StackToolLarge.png")]
+	[MouseButtonIconSet("activate", "Icons.StackToolSmall.png", "Icons.StackToolMedium.png", "Icons.StackToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Standard")]
 
 	[MouseWheelHandler(ModifierFlags.None)]
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			get
 			{
-				var actionModel = new SimpleActionModel(new ResourceResolver(GetType().Assembly));
+				var actionModel = new SimpleActionModel(new ApplicationThemeResourceResolver(GetType().Assembly));
 				foreach (var item in ImageComparerList.Items)
 				{
 					var itemVar = item;

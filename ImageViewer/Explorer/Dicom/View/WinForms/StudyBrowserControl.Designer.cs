@@ -60,17 +60,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StudyBrowserControl));
-			this._resultsTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._resultsTitleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
 			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.SuspendLayout();
 			// 
 			// _resultsTitleBar
 			// 
 			resources.ApplyResources(this._resultsTitleBar, "_resultsTitleBar");
-			this._resultsTitleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._resultsTitleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._resultsTitleBar.Name = "_resultsTitleBar";
-			this._resultsTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			// 
 			// _studyTableView
 			// 
@@ -97,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		#endregion
 
 		private ClearCanvas.Desktop.View.WinForms.TableView _studyTableView;
-		private Crownwood.DotNetMagic.Controls.TitleBar _resultsTitleBar;
+		private ClearCanvas.Desktop.View.WinForms.TitleBar _resultsTitleBar;
 
 
 	}

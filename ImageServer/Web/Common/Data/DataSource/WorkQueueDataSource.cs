@@ -11,11 +11,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Principal;
+using System.Threading;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -142,93 +148,108 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#region Private Methods
 		private IList<WorkQueue> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
 		{
-			resultCount = 0;
+		    resultCount = 0;
 
-			if (maximumRows == 0) return new List<WorkQueue>();
+		    if (maximumRows == 0) return new List<WorkQueue>();
 
-			if (SearchKeys != null)
-			{
-				IList<WorkQueue> workQueueList = new List<WorkQueue>();
-				foreach (ServerEntityKey key in SearchKeys)
-					workQueueList.Add(WorkQueue.Load(key));
+		    if (SearchKeys != null)
+		    {
+		        IList<WorkQueue> workQueueList = new List<WorkQueue>();
+		        foreach (ServerEntityKey key in SearchKeys)
+		            workQueueList.Add(WorkQueue.Load(key));
 
-				resultCount = workQueueList.Count;
+		        resultCount = workQueueList.Count;
 
-				return workQueueList;
-			}
+		        return workQueueList;
+		    }
 
-			WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters
-			                                         	{
-			                                         		StartIndex = startRowIndex,
-			                                         		MaxRowCount = maximumRows
-			                                         	};
+		    WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters
+		                                                 {
+		                                                     StartIndex = startRowIndex,
+		                                                     MaxRowCount = maximumRows
+		                                                 };
 
-			if (Partition != null)
-				parameters.ServerPartitionKey = Partition.Key;
+		    if (Partition != null)
+		        parameters.ServerPartitionKey = Partition.Key;
 
-			if (!string.IsNullOrEmpty(PatientsName))
-			{
-				string key = PatientsName.Replace("*", "%");
-				key = key.Replace("?", "_");
-				parameters.PatientsName = key;
-			}
-			if (!string.IsNullOrEmpty(PatientId))
-			{
-				string key = PatientId.Replace("*", "%");
-				key = key.Replace("?", "_");
-				parameters.PatientID = key;
-			}
-            if (!string.IsNullOrEmpty(ProcessingServer))
-            {
-                string key = ProcessingServer.Replace("*", "%");
-                key = key.Replace("?", "_");
-                parameters.ProcessorID = key;
-            }
+		    if (!string.IsNullOrEmpty(PatientsName))
+		    {
+		        string key = PatientsName.Replace("*", "%");
+		        key = key.Replace("?", "_");
+		        parameters.PatientsName = key;
+		    }
+		    if (!string.IsNullOrEmpty(PatientId))
+		    {
+		        string key = PatientId.Replace("*", "%");
+		        key = key.Replace("?", "_");
+		        parameters.PatientID = key;
+		    }
+		    if (!string.IsNullOrEmpty(ProcessingServer))
+		    {
+		        string key = ProcessingServer.Replace("*", "%");
+		        key = key.Replace("?", "_");
+		        parameters.ProcessorID = key;
+		    }
 
-			if (String.IsNullOrEmpty(ScheduledDate))
-				parameters.ScheduledTime = null;
-			else
-				parameters.ScheduledTime = DateTime.ParseExact(ScheduledDate, DateFormats, null);
+		    if (String.IsNullOrEmpty(ScheduledDate))
+		        parameters.ScheduledTime = null;
+		    else
+		        parameters.ScheduledTime = DateTime.ParseExact(ScheduledDate, DateFormats, null);
 
-			if (TypeEnums != null && TypeEnums.Length > 0)
-			{
-				string types = "(";
-				if (TypeEnums.Length == 1)
-					types += TypeEnums[0].Enum;
-				else {
-					string separator = "";
-					foreach (WorkQueueTypeEnum typeEnum in TypeEnums)
-					{
-						types += separator + typeEnum.Enum;
-						separator = ",";
-					}
-				}
-                
-				parameters.Type = types + ")";
-			}
+		    if (TypeEnums != null && TypeEnums.Length > 0)
+		    {
+		        string types = "(";
+		        if (TypeEnums.Length == 1)
+		            types += TypeEnums[0].Enum;
+		        else
+		        {
+		            string separator = "";
+		            foreach (WorkQueueTypeEnum typeEnum in TypeEnums)
+		            {
+		                types += separator + typeEnum.Enum;
+		                separator = ",";
+		            }
+		        }
 
-			if (StatusEnums != null && StatusEnums.Length > 0)
-			{
-				string statuses = "(";
-				if (StatusEnums.Length == 1)
-					statuses += StatusEnums[0].Enum;
-				else
-				{
-					string separator = "";
-					foreach (WorkQueueStatusEnum statusEnum in StatusEnums)
-					{
-						statuses += separator + statusEnum.Enum;
-						separator = ",";
-					}
-				}
+		        parameters.Type = types + ")";
+		    }
 
-				parameters.Status = statuses + ")";
-			}
+		    if (StatusEnums != null && StatusEnums.Length > 0)
+		    {
+		        string statuses = "(";
+		        if (StatusEnums.Length == 1)
+		            statuses += StatusEnums[0].Enum;
+		        else
+		        {
+		            string separator = "";
+		            foreach (WorkQueueStatusEnum statusEnum in StatusEnums)
+		            {
+		                statuses += separator + statusEnum.Enum;
+		                separator = ",";
+		            }
+		        }
 
-			if (PriorityEnum != null)
-				parameters.Priority = PriorityEnum;
+		        parameters.Status = statuses + ")";
+		    }
 
-			IList<WorkQueue> list = _searchController.FindWorkQueue(parameters);
+		    if (PriorityEnum != null)
+		        parameters.Priority = PriorityEnum;
+
+		    List<string> groupOIDs = new List<string>();
+		    CustomPrincipal user = Thread.CurrentPrincipal as CustomPrincipal;
+		    if (user != null)
+		    {
+                if (!user.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
+		        {
+		            foreach (var oid in user.Credentials.DataAccessAuthorityGroups)
+		                groupOIDs.Add(oid.ToString());
+
+		            parameters.CheckDataAccess = true;
+		            parameters.UserAuthorityGroupGUIDs = StringUtilities.Combine(groupOIDs, ",");
+		        }
+		    }
+
+	        IList<WorkQueue> list = _searchController.FindWorkQueue(parameters);
 
 			resultCount = parameters.ResultCount;
 

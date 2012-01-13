@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReceiveQueueApplicationComponentControl));
 			this._receiveTable = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._titleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
 			this.SuspendLayout();
 			// 
 			// _receiveTable
@@ -75,10 +75,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// _titleBar
 			// 
 			resources.ApplyResources(this._titleBar, "_titleBar");
-			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			// 
 			// ReceiveQueueApplicationComponentControl
 			// 
@@ -94,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         #endregion
 
 		private ClearCanvas.Desktop.View.WinForms.TableView _receiveTable;
-		private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
+		private ClearCanvas.Desktop.View.WinForms.TitleBar _titleBar;
 
 	}
 }

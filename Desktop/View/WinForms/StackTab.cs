@@ -28,7 +28,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private EventHandler _titleDoubleClicked;
 
 		// Designer generated
-        private TitleBar _titleBar;
+        private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
         private Panel _panel;
         private TableLayoutPanel tableLayoutPanel1;
 
@@ -172,7 +172,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		#endregion
 
 		// Allow direct access to the titlebar
-		public TitleBar TitleBar
+		public Crownwood.DotNetMagic.Controls.TitleBar TitleBar
 		{
 			get { return _titleBar; }
 		}

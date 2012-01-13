@@ -44,17 +44,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	#region Drop-down
 
 	[ButtonAction("selectDrawCircleShutter", "drawshutter-toolbar-dropdown/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
-	[MouseButtonIconSet("selectDrawCircleShutter", IconScheme.Colour, "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png")]
+	[MouseButtonIconSet("selectDrawCircleShutter", "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawCircleShutter", "DrawCircleShutterChecked", "SelectedShutterTypeChanged")]
 	[GroupHint("selectDrawCircleShutter", "Tools.Image.Manipulation.Overlays.Shutter")]
 
 	[ButtonAction("selectDrawPolygonShutter", "drawshutter-toolbar-dropdown/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
-	[MouseButtonIconSet("selectDrawPolygonShutter", IconScheme.Colour, "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png")]
+	[MouseButtonIconSet("selectDrawPolygonShutter", "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawPolygonShutter", "DrawPolygonShutterChecked", "SelectedShutterTypeChanged")]
     [GroupHint("selectDrawPolygonShutter", "Tools.Image.Manipulation.Overlays.Shutter")]
 
 	[ButtonAction("selectDrawRectangleShutter", "drawshutter-toolbar-dropdown/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
-	[MouseButtonIconSet("selectDrawRectangleShutter", IconScheme.Colour, "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png")]
+	[MouseButtonIconSet("selectDrawRectangleShutter", "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawRectangleShutter", "DrawRectangleShutterChecked", "SelectedShutterTypeChanged")]
     [GroupHint("selectDrawRectangleShutter", "Tools.Image.Manipulation.Overlays.Shutter")]
 
@@ -65,19 +65,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 	[MenuAction("activateDrawCircleShutter", "imageviewer-contextmenu/MenuDrawCircleShutter", "SelectDrawCircleShutter", InitiallyAvailable = false)]
 	[MenuAction("activateDrawCircleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
-	[MouseButtonIconSet("activateDrawCircleShutter", IconScheme.Colour, "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png")]
+	[MouseButtonIconSet("activateDrawCircleShutter", "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png")]
 	[CheckedStateObserver("activateDrawCircleShutter", "DrawCircleShutterCheckedAndActive", "SelectedShutterTypeChanged")]
 	[GroupHint("activateDrawCircleShutter", "Tools.Image.Manipulation.Overlays.Shutter")]
 
 	[MenuAction("activateDrawPolygonShutter", "imageviewer-contextmenu/MenuDrawPolygonShutter", "SelectDrawPolygonShutter", InitiallyAvailable = false)]
 	[MenuAction("activateDrawPolygonShutter", "global-menus/MenuTools/MenuStandard/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
-	[MouseButtonIconSet("activateDrawPolygonShutter", IconScheme.Colour, "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png")]
+	[MouseButtonIconSet("activateDrawPolygonShutter", "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png")]
 	[CheckedStateObserver("activateDrawPolygonShutter", "DrawPolygonShutterCheckedAndActive", "SelectedShutterTypeChanged")]
 	[GroupHint("activateDrawPolygonShutter", "Tools.Image.Manipulation.Overlays.Shutter")]
 
 	[MenuAction("activateDrawRectangleShutter", "imageviewer-contextmenu/MenuDrawRectangleShutter", "SelectDrawRectangleShutter", InitiallyAvailable = false)]
 	[MenuAction("activateDrawRectangleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
-	[MouseButtonIconSet("activateDrawRectangleShutter", IconScheme.Colour, "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png")]
+	[MouseButtonIconSet("activateDrawRectangleShutter", "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png")]
 	[CheckedStateObserver("activateDrawRectangleShutter", "DrawRectangleShutterCheckedAndActive", "SelectedShutterTypeChanged")]
     [GroupHint("activateDrawRectangleShutter", "Tools.Image.Manipulation.Overlays.Shutter")]
 
@@ -154,11 +154,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get
 			{
 				if (_selectedShutterType == ShutterType.Rectangle)
-					return new MouseButtonIconSet(IconScheme.Colour, "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png", this.MouseButton);
+					return new MouseButtonIconSet("Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png", this.MouseButton);
 				else if (_selectedShutterType == ShutterType.Polygon)
-					return new MouseButtonIconSet(IconScheme.Colour, "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png", this.MouseButton);
+					return new MouseButtonIconSet("Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png", this.MouseButton);
 				else
-					return new MouseButtonIconSet(IconScheme.Colour, "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png", this.MouseButton);
+					return new MouseButtonIconSet("Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png", this.MouseButton);
 			}	
 		}
 

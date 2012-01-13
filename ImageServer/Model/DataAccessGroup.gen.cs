@@ -47,20 +47,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public DataAccessGroup Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public DataAccessGroup Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IDataAccessGroupEntityBroker broker = read.GetBroker<IDataAccessGroupEntityBroker>();
+            var broker = read.GetBroker<IDataAccessGroupEntityBroker>();
             DataAccessGroup theObject = broker.Load(key);
             return theObject;
         }
         static public DataAccessGroup Insert(DataAccessGroup entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 DataAccessGroup newEntity = Insert(update, entity);
                 update.Commit();
@@ -69,8 +69,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public DataAccessGroup Insert(IUpdateContext update, DataAccessGroup entity)
         {
-            IDataAccessGroupEntityBroker broker = update.GetBroker<IDataAccessGroupEntityBroker>();
-            DataAccessGroupUpdateColumns updateColumns = new DataAccessGroupUpdateColumns();
+            var broker = update.GetBroker<IDataAccessGroupEntityBroker>();
+            var updateColumns = new DataAccessGroupUpdateColumns();
             updateColumns.AuthorityGroupOID = entity.AuthorityGroupOID;
             updateColumns.Deleted = entity.Deleted;
             DataAccessGroup newEntity = broker.Insert(updateColumns);

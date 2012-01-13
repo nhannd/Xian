@@ -21,7 +21,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 	[MenuAction("activate", "dicomeditor-contextmenu/MenuCreate", "Create")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipCreate")]
-	[IconSet("activate", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
+	[IconSet("activate", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
 	[ExtensionOf(typeof (DicomEditorToolExtensionPoint))]
 	public class CreateTool : DicomEditorTool
 	{

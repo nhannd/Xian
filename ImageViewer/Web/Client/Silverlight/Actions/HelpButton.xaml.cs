@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
+using System.Windows.Media;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
@@ -69,35 +70,22 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         public void SetIconSize(AppServiceReference.WebIconSize iconSize)
         {
             _iconSize = iconSize;
-            string assemblyName =  Assembly.GetExecutingAssembly().FullName;
-            assemblyName = assemblyName.Substring(0, assemblyName.IndexOf(','));
-
             switch (_iconSize)
             {
                 case AppServiceReference.WebIconSize.Large:
 
-                    HelpIcon.Source =
-                        new BitmapImage(
-                            new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpLarge.png"),
-                                    UriKind.RelativeOrAbsolute));
+                    HelpIcon.Source = Application.Current.Resources["HelpButtonImageLarge"] as ImageSource;
                     break;
 
                 case AppServiceReference.WebIconSize.Medium:
 
-                    HelpIcon.Source =
-                        new BitmapImage(
-                            new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpMedium.png"),
-                                    UriKind.RelativeOrAbsolute));
+                    HelpIcon.Source = Application.Current.Resources["HelpButtonImageMedium"] as ImageSource;
                     break;
 
                 case AppServiceReference.WebIconSize.Small:
 
-                    var bmp =
-                        new BitmapImage(
-                            new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpSmall.png"),
-                                    UriKind.RelativeOrAbsolute));
-                    HelpIcon.Source = bmp;
-                    break;
+                    HelpIcon.Source = Application.Current.Resources["HelpButtonImageSmall"] as ImageSource;
+                   break;
             }
 
         }

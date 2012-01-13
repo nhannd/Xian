@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuShowAngles", "ToggleShowAngles")]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarShowAngles", "ToggleShowAngles")]
 	[CheckedStateObserver("activate", "ShowAngles", "ShowAnglesChanged")]
-	[IconSet("activate", IconScheme.Colour, "Icons.ShowAnglesToolSmall.png", "Icons.ShowAnglesToolMedium.png", "Icons.ShowAnglesToolLarge.png")]
+	[IconSet("activate", "Icons.ShowAnglesToolSmall.png", "Icons.ShowAnglesToolMedium.png", "Icons.ShowAnglesToolLarge.png")]
 	[Tooltip("activate", "TooltipShowAngles")]
     [GroupHint("activate", "Tools.Image.Annotations.Measurement.Angle")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]

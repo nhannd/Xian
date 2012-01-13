@@ -460,4 +460,13 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="MenuAdmin" xml:space="preserve">
     <value>Admin</value>
   </data>
+  <data name="DescriptionDefaultTheme" xml:space="preserve">
+    <value>Default Theme</value>
+  </data>
+  <data name="LabelDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="LabelNotForHumanDiagnosis" xml:space="preserve">
+    <value>Not for Human Diagnosis</value>
+  </data>
 </root>

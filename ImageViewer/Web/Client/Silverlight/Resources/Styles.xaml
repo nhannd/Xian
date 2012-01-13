@@ -10,7 +10,14 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ClearCanvas.Web.Client.Silverlight;component/Views/BusyIndicator.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    
+
+
+    <ImageSource x:Key="HelpButtonImageSmall">/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/HelpSmall.png</ImageSource>
+    <ImageSource x:Key="HelpButtonImageMedium">/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/HelpMedium.png</ImageSource>
+    <ImageSource x:Key="HelpButtonImageLarge">/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/HelpLarge.png</ImageSource>
+    <ImageSource x:Key="DropDownButtonIcon">/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Images/DropDownArrow.png</ImageSource>
+
+
     <!-- BusyIndicatorControl Styles -->
     <Style TargetType="SilverlightView:BusyIndicator" BasedOn="{StaticResource busyIndicatorDefaultStyle}">
         <Setter Property="DisplayAfter" Value="00:00:00.00"/>

@@ -33,6 +33,9 @@ namespace ClearCanvas.ImageServer.Model
             ,Int32 _numberOfStudyRelatedSeries_
             ,Int32 _numberOfStudyRelatedInstances_
             ,Decimal _studySizeInKB_
+            ,String _responsiblePerson_
+            ,String _responsibleOrganization_
+            ,XmlDocument _queryXml_
             ,String _specificCharacterSet_
             ,ServerEntityKey _studyStorageKey_
             ,String _patientsName_
@@ -55,6 +58,9 @@ namespace ClearCanvas.ImageServer.Model
             NumberOfStudyRelatedSeries = _numberOfStudyRelatedSeries_;
             NumberOfStudyRelatedInstances = _numberOfStudyRelatedInstances_;
             StudySizeInKB = _studySizeInKB_;
+            ResponsiblePerson = _responsiblePerson_;
+            ResponsibleOrganization = _responsibleOrganization_;
+            QueryXml = _queryXml_;
             SpecificCharacterSet = _specificCharacterSet_;
             StudyStorageKey = _studyStorageKey_;
             PatientsName = _patientsName_;
@@ -94,6 +100,19 @@ namespace ClearCanvas.ImageServer.Model
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudySizeInKB")]
         public Decimal StudySizeInKB
         { get; set; }
+        [DicomField(DicomTags.ResponsiblePerson, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsiblePerson")]
+        public String ResponsiblePerson
+        { get; set; }
+        [DicomField(DicomTags.ResponsibleOrganization, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsibleOrganization")]
+        public String ResponsibleOrganization
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="QueryXml")]
+        public XmlDocument QueryXml
+        { get { return _QueryXml; } set { _QueryXml = value; } }
+        [NonSerialized]
+        private XmlDocument _QueryXml;
         [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
         public String SpecificCharacterSet
@@ -154,20 +173,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Study Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public Study Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IStudyEntityBroker broker = read.GetBroker<IStudyEntityBroker>();
+            var broker = read.GetBroker<IStudyEntityBroker>();
             Study theObject = broker.Load(key);
             return theObject;
         }
         static public Study Insert(Study entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 Study newEntity = Insert(update, entity);
                 update.Commit();
@@ -176,14 +195,17 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public Study Insert(IUpdateContext update, Study entity)
         {
-            IStudyEntityBroker broker = update.GetBroker<IStudyEntityBroker>();
-            StudyUpdateColumns updateColumns = new StudyUpdateColumns();
+            var broker = update.GetBroker<IStudyEntityBroker>();
+            var updateColumns = new StudyUpdateColumns();
             updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.PatientKey = entity.PatientKey;
             updateColumns.NumberOfStudyRelatedSeries = entity.NumberOfStudyRelatedSeries;
             updateColumns.NumberOfStudyRelatedInstances = entity.NumberOfStudyRelatedInstances;
             updateColumns.StudySizeInKB = entity.StudySizeInKB;
+            updateColumns.ResponsiblePerson = entity.ResponsiblePerson;
+            updateColumns.ResponsibleOrganization = entity.ResponsibleOrganization;
+            updateColumns.QueryXml = entity.QueryXml;
             updateColumns.SpecificCharacterSet = entity.SpecificCharacterSet;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.PatientsName = entity.PatientsName;

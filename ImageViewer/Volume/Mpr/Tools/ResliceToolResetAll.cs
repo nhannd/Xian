@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	[MenuAction("resetAll", "global-menus/MenuTools/MenuMpr/MenuResetAll", "ResetAll")]
 	[EnabledStateObserver("resetAll", "CanReset", "CanResetChanged")]
 	[VisibleStateObserver("resetAll", "Visible", "VisibleChanged")]
-	[IconSet("resetAll", IconScheme.Colour, "Icons.ResetAllToolSmall.png", "Icons.ResetAllToolMedium.png", "Icons.ResetAllToolLarge.png")]
+	[IconSet("resetAll", "Icons.ResetAllToolSmall.png", "Icons.ResetAllToolMedium.png", "Icons.ResetAllToolLarge.png")]
 	[Tooltip("resetAll", "TooltipResetAll")]
 	[GroupHint("resetAll", "Tools.Volume.MPR.ResetSlicing")]
 	partial class ResliceToolGroup

@@ -66,26 +66,28 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
         public XmlDocument ConfigurationXml
-        { get; set; }
+        { get { return _ConfigurationXml; } set { _ConfigurationXml = value; } }
+        [NonSerialized]
+        private XmlDocument _ConfigurationXml;
         #endregion
 
         #region Static Methods
         static public PartitionArchive Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public PartitionArchive Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IPartitionArchiveEntityBroker broker = read.GetBroker<IPartitionArchiveEntityBroker>();
+            var broker = read.GetBroker<IPartitionArchiveEntityBroker>();
             PartitionArchive theObject = broker.Load(key);
             return theObject;
         }
         static public PartitionArchive Insert(PartitionArchive entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 PartitionArchive newEntity = Insert(update, entity);
                 update.Commit();
@@ -94,8 +96,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public PartitionArchive Insert(IUpdateContext update, PartitionArchive entity)
         {
-            IPartitionArchiveEntityBroker broker = update.GetBroker<IPartitionArchiveEntityBroker>();
-            PartitionArchiveUpdateColumns updateColumns = new PartitionArchiveUpdateColumns();
+            var broker = update.GetBroker<IPartitionArchiveEntityBroker>();
+            var updateColumns = new PartitionArchiveUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.ArchiveTypeEnum = entity.ArchiveTypeEnum;
             updateColumns.Description = entity.Description;

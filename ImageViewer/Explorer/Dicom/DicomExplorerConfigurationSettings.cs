@@ -9,15 +9,14 @@
 
 #endregion
 
-using System;
 using System.Configuration;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	[SettingsGroupDescription("Allows users to configure certain characteristics of the Dicom Explorer.")]
-	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	[SettingsGroupDescription("Allows users to configure certain characteristics of the DICOM Explorer.")]
+	[SettingsProvider(typeof (StandardSettingsProvider))]
 	internal sealed partial class DicomExplorerConfigurationSettings
 	{
 		private DicomExplorerConfigurationSettings()

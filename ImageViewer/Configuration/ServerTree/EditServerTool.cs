@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 	[MenuAction("activate", "servertree-contextmenu/MenuEdit", "EditServer")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipEdit")]
-	[IconSet("activate", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolMedium.png", "Icons.EditToolLarge.png")]
+	[IconSet("activate", "Icons.EditToolSmall.png", "Icons.EditToolMedium.png", "Icons.EditToolLarge.png")]
 	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
 	public class EditServerTool : ServerTreeTool
 	{

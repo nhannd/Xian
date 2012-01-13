@@ -12,6 +12,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Authentication.Brokers;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Core;
 
@@ -32,10 +33,20 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
                 criteria.DataGroup.EqualTo(request.DataGroup.Value);
 
             var assembler = new AuthorityGroupAssembler();
-            var authorityGroups = CollectionUtils.Map(
-                PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
-                (AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupSummary(authorityGroup));
-            return new ListAuthorityGroupsResponse(authorityGroups);
+            if (request.Details.HasValue && request.Details.Value)
+            {
+                var authorityGroups = CollectionUtils.Map(
+                 PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
+                 (AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupDetail(authorityGroup));
+                return new ListAuthorityGroupsResponse(authorityGroups);
+            }
+            else
+            {
+                var authorityGroups = CollectionUtils.Map(
+                    PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
+                    (AuthorityGroup authorityGroup) => assembler.CreateAuthorityGroupSummary(authorityGroup));
+                return new ListAuthorityGroupsResponse(authorityGroups);
+            }
         }
 
         #endregion

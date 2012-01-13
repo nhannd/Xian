@@ -52,20 +52,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public PartitionSopClass Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public PartitionSopClass Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IPartitionSopClassEntityBroker broker = read.GetBroker<IPartitionSopClassEntityBroker>();
+            var broker = read.GetBroker<IPartitionSopClassEntityBroker>();
             PartitionSopClass theObject = broker.Load(key);
             return theObject;
         }
         static public PartitionSopClass Insert(PartitionSopClass entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 PartitionSopClass newEntity = Insert(update, entity);
                 update.Commit();
@@ -74,8 +74,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public PartitionSopClass Insert(IUpdateContext update, PartitionSopClass entity)
         {
-            IPartitionSopClassEntityBroker broker = update.GetBroker<IPartitionSopClassEntityBroker>();
-            PartitionSopClassUpdateColumns updateColumns = new PartitionSopClassUpdateColumns();
+            var broker = update.GetBroker<IPartitionSopClassEntityBroker>();
+            var updateColumns = new PartitionSopClassUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.ServerSopClassKey = entity.ServerSopClassKey;
             updateColumns.Enabled = entity.Enabled;

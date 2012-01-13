@@ -41,8 +41,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			_component = component;
 			_component.SelectionUpdated += OnComponentSelectionUpdated;
 
-			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
-
 			_sendTable.Table = _component.SendTable;
 
 			_sendTable.ToolbarModel = _component.ToolbarModel;

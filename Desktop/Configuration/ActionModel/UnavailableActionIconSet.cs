@@ -38,31 +38,14 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 	/// <summary>
 	/// Represents a set of icon resources that specify the same logical icon in different sizes with an overlay to indicate that the action is unavailable.
 	/// </summary>
-	internal class UnavailableActionIconSet : IconSet
+	internal sealed class UnavailableActionIconSet : IconSet
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="baseIconSet">A template <see cref="IconSet"/> from which to copy resource names.</param>
 		public UnavailableActionIconSet(IconSet baseIconSet)
-			: base(baseIconSet.Scheme, baseIconSet.SmallIcon, baseIconSet.MediumIcon, baseIconSet.LargeIcon) {}
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="scheme">The scheme of this icon set.</param>
-		/// <param name="smallIcon">The resource name of the small icon.</param>
-		/// <param name="mediumIcon">The resource name of the medium icon.</param>
-		/// <param name="largeIcon">The resource name of the large icon.</param>
-		public UnavailableActionIconSet(IconScheme scheme, string smallIcon, string mediumIcon, string largeIcon)
-			: base(scheme, smallIcon, mediumIcon, largeIcon) {}
-
-		/// <summary>
-		/// Constructor that assumes all the icons are colour and have the same size.
-		/// </summary>
-		/// <param name="icon">The resource name of the icon.</param>
-		public UnavailableActionIconSet(string icon)
-			: base(icon) {}
+			: base(baseIconSet.SmallIcon, baseIconSet.MediumIcon, baseIconSet.LargeIcon) {}
 
 		/// <summary>
 		/// Gets the appropriate icon overlay resource name to indicate an unavailable action.
@@ -71,7 +54,7 @@ namespace ClearCanvas.Desktop.Configuration.ActionModel
 		/// <returns>The requested icon overlay as an <see cref="Image"/>.</returns>
 		private Image GetOverlayIcon(IconSize iconSize)
 		{
-			var resourceResolver = new ResourceResolver(GetType().Assembly);
+			var resourceResolver = new ApplicationThemeResourceResolver(GetType().Assembly);
 			switch (iconSize)
 			{
 				case IconSize.Small:

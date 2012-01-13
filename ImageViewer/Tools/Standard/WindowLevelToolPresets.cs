@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		private readonly IResourceResolver _resolver = new ResourceResolver(typeof(WindowLevelTool).Assembly);
+		private readonly IResourceResolver _resolver = new ApplicationThemeResourceResolver(typeof(WindowLevelTool).Assembly);
 
 		public ActionModelNode PresetDropDownMenuModel
 		{

@@ -19,7 +19,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.TestTools
 {
 	[ButtonAction("apply", "global-toolbars/Performance Analysis", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "PerformanceAnalysisToolSmall.png", "PerformanceAnalysisToolMedium.png", "PerformanceAnalysisToolLarge.png")]
+	[IconSet("apply", "PerformanceAnalysisToolSmall.png", "PerformanceAnalysisToolMedium.png", "PerformanceAnalysisToolLarge.png")]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class PerformanceAnalysisTool : Tool<IDesktopToolContext>

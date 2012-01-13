@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -37,30 +35,9 @@ namespace ClearCanvas.ImageServer.Model
             {
                 if (_partition==null)
                 {
-                    _partition = ServerPartition.Load(this.ServerPartitionKey);
+                    _partition = ServerPartition.Load(ServerPartitionKey);
                 }
                 return _partition;
-            }
-        }
-
-        public Study Study
-        {
-            get
-            {
-                if (_study==null)
-                {
-                    lock (SyncRoot)
-                    {
-                        // TODO: Use ExecutionContext to re-use db connection if possible
-                        // This however requires breaking the Common --> Model dependency.
-                        using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-                        {
-                            _study = LoadStudy(readContext);
-                        }
-                    }
-                }
-
-                return _study;
             }
         }
 
@@ -68,15 +45,35 @@ namespace ClearCanvas.ImageServer.Model
 		
 		public Study LoadStudy(IPersistenceContext context)
         {
-            return Study.Find(context, this.StudyInstanceUid, this.ServerPartition);
+            return Study.Find(context, StudyInstanceUid, ServerPartition);
+        }
+
+        public Study GetStudy()
+        {
+            if (_study == null)
+            {
+                lock (SyncRoot)
+                {
+                    // TODO: Use ExecutionContext to re-use db connection if possible
+                    // This however requires breaking the Common --> Model dependency.
+                    using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    {
+                        _study = LoadStudy(readContext);
+                    }
+                }
+            }
+
+            return _study;
         }
 		
         public void Archive(IUpdateContext context)
         {
-            IInsertArchiveQueue insertArchiveQueueBroker = context.GetBroker<IInsertArchiveQueue>();
-            InsertArchiveQueueParameters parms = new InsertArchiveQueueParameters();
-            parms.ServerPartitionKey = this.ServerPartitionKey;
-            parms.StudyStorageKey = this.GetKey();
+            var insertArchiveQueueBroker = context.GetBroker<IInsertArchiveQueue>();
+            var parms = new InsertArchiveQueueParameters
+                            {
+                                ServerPartitionKey = ServerPartitionKey, 
+                                StudyStorageKey = Key
+                            };
             if (!insertArchiveQueueBroker.Execute(parms))
             {
                 throw new ApplicationException("Unable to schedule study archive");
@@ -94,9 +91,8 @@ namespace ClearCanvas.ImageServer.Model
 
 			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
-
-				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters { StudyStorageKey = Key };
+				var broker = updateContext.GetBroker<IInsertRestoreQueue>();
+				var parms = new InsertRestoreQueueParameters { StudyStorageKey = Key };
 
 				RestoreQueue queue = broker.FindOne(parms);
 
@@ -114,8 +110,8 @@ namespace ClearCanvas.ImageServer.Model
 
 		public static StudyStorage Load(IPersistenceContext read, ServerEntityKey partitionKey, string studyInstanceUid)
 		{
-	        IStudyStorageEntityBroker broker = read.GetBroker<IStudyStorageEntityBroker>();
-			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+	        var broker = read.GetBroker<IStudyStorageEntityBroker>();
+			var criteria = new StudyStorageSelectCriteria();
 			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
 			criteria.ServerPartitionKey.EqualTo(partitionKey);
             StudyStorage theObject = broker.FindOne(criteria);

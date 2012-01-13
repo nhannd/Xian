@@ -550,6 +550,9 @@ CREATE TABLE [dbo].[Study](
 	[NumberOfStudyRelatedSeries] [int] NOT NULL,
 	[NumberOfStudyRelatedInstances] [int] NOT NULL,
 	[StudySizeInKB] [decimal](18, 0) NULL,
+	ResponsiblePerson nvarchar(64) NULL,
+	ResponsibleOrganization nvarchar(64) NULL,
+	QueryXml xml NULL,
  CONSTRAINT [PK_Study] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
@@ -1746,6 +1749,41 @@ END
 End
 GO
 
+/****** Object:  Table [dbo].[ServerPartitionDataAccess]    Script Date: 01/01/2012 23:25:52 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ServerPartitionDataAccess]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ServerPartitionDataAccess](
+	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_ServerPartitionDataAccess_GUID]  DEFAULT (newid()),
+	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
+	[DataAccessGroupGUID] [uniqueidentifier] NOT NULL,
+ CONSTRAINT [PK_ServerPartitionDataAccess] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+/****** Object:  Index [IX_ServerPartitionDataAccess_DataAccessGroupGUID]    Script Date: 01/01/2012 23:34:21 ******/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[ServerPartitionDataAccess]') AND name = N'IX_ServerPartitionDataAccess_DataAccessGroupGUID')
+CREATE NONCLUSTERED INDEX [IX_ServerPartitionDataAccess_DataAccessGroupGUID] ON [dbo].[ServerPartitionDataAccess] 
+(
+	[DataAccessGroupGUID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+/****** Object:  Index [IX_ServerPartitionDataAccess_ServerPartitionGUID]    Script Date: 01/01/2012 23:35:24 ******/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[ServerPartitionDataAccess]') AND name = N'IX_ServerPartitionDataAccess_ServerPartitionGUID')
+CREATE NONCLUSTERED INDEX [IX_ServerPartitionDataAccess_ServerPartitionGUID] ON [dbo].[ServerPartitionDataAccess] 
+(
+	[ServerPartitionGUID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
@@ -2203,3 +2241,13 @@ GO
 IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyDataAccess_StudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyDataAccess]'))
 ALTER TABLE [dbo].[StudyDataAccess] CHECK CONSTRAINT [FK_StudyDataAccess_StudyStorage]
 GO
+
+/****** Object:  ForeignKey [FK_StudyDataAccess_StudyStorage]    Script Date: 06/22/2011 14:11:47 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ServerPartitionDataAccess_DataAccessGroup]') AND parent_object_id = OBJECT_ID(N'[dbo].[ServerPartitionDataAccess]'))
+ALTER TABLE [dbo].[ServerPartitionDataAccess]  WITH CHECK ADD  CONSTRAINT [FK_ServerPartitionDataAccess_DataAccessGroup] FOREIGN KEY([DataAccessGroupGUID])
+REFERENCES [dbo].[DataAccessGroup] ([GUID])
+GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ServerPartitionDataAccess_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[ServerPartitionDataAccess]'))
+ALTER TABLE [dbo].[ServerPartitionDataAccess]  WITH CHECK ADD  CONSTRAINT [FK_ServerPartitionDataAccess_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
+REFERENCES [dbo].[ServerPartition] ([GUID])
+

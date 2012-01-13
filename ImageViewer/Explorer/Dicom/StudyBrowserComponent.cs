@@ -160,6 +160,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private readonly Dictionary<string, string> _setStudiesArrived;
 		private readonly Dictionary<string, string> _setStudiesDeleted;
 
+		private SearchResultColumnOptionCollection _searchResultColumnOptions;
+
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 		private DelayedEventPublisher _processStudiesEventPublisher;
 
@@ -195,6 +197,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
 				}
 
+				if (_searchResultColumnOptions != null) _searchResultColumnOptions.ApplyColumnSettings(CurrentSearchResult);
 				ProcessReceivedAndRemovedStudies();
 				OnSelectedServerChanged();
 			}
@@ -221,7 +224,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get
 			{
-				if (_selectedServerGroup == null || !_searchResults.ContainsKey(_selectedServerGroup.GroupID))
+				if (_selectedServerGroup == null || _selectedServerGroup.GroupID == null || !_searchResults.ContainsKey(_selectedServerGroup.GroupID))
 					return null;
 
 				return _searchResults[_selectedServerGroup.GroupID];
@@ -436,6 +439,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_localDataStoreEventBroker.SopInstanceImported += OnSopInstanceImported;
 			_localDataStoreEventBroker.InstanceDeleted += OnInstanceDeleted;
 			_localDataStoreEventBroker.LocalDataStoreCleared += OnLocalDataStoreCleared;
+
+			_searchResultColumnOptions = SearchResult.ColumnOptions;
 
 			DicomExplorerConfigurationSettings.Default.PropertyChanged += OnConfigurationSettingsChanged;
 		}
@@ -715,6 +720,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
+			_searchResultColumnOptions = SearchResult.ColumnOptions;
+			_searchResultColumnOptions.ApplyColumnSettings(CurrentSearchResult);
+
 			if (CurrentSearchResult != null)
 				CurrentSearchResult.UpdateColumnVisibility();
 		}

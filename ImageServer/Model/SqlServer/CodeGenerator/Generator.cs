@@ -516,10 +516,22 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
                     writer.WriteLine("        [EntityFieldDatabaseMappingAttribute(TableName=\"{0}\", ColumnName=\"{1}\")]",table.DatabaseTableName, col.DatabaseColumnName.Replace("Key", "GUID"));
 
                     if (col.ColumnName.EndsWith("Enum"))
+                    {
                         writer.WriteLine("        public {0} {1}", col.ColumnName, col.ColumnName);
-                    else
+                        writer.WriteLine("        { get; set; }");
+                    }
+                    else if (col.ColumnType == typeof(XmlDocument))
+                    {
                         writer.WriteLine("        public {0} {1}", col.ColumnType.Name, col.ColumnName);
-                    writer.WriteLine("        { get; set; }");
+                        writer.WriteLine("        {{ get {{ return _{0}; }} set {{ _{0} = value; }} }}", col.ColumnName);
+                        writer.WriteLine("        [NonSerialized]");
+                        writer.WriteLine("        private XmlDocument _{0};", col.ColumnName);
+                    }
+                    else
+                    {
+                        writer.WriteLine("        public {0} {1}", col.ColumnType.Name, col.ColumnName);
+                        writer.WriteLine("        { get; set; }");
+                    }
                 }
             }
             writer.WriteLine("        #endregion");
@@ -527,20 +539,20 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
             writer.WriteLine("        #region Static Methods");
             writer.WriteLine("        static public {0} Load(ServerEntityKey key)", table.TableName);
             writer.WriteLine("        {");
-            writer.WriteLine("            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())");
+            writer.WriteLine("            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())");
             writer.WriteLine("            {");
             writer.WriteLine("                return Load(read, key);");
             writer.WriteLine("            }");
             writer.WriteLine("        }");
             writer.WriteLine("        static public {0} Load(IPersistenceContext read, ServerEntityKey key)", table.TableName);
             writer.WriteLine("        {");
-            writer.WriteLine("            I{0}EntityBroker broker = read.GetBroker<I{0}EntityBroker>();", table.TableName);
+            writer.WriteLine("            var broker = read.GetBroker<I{0}EntityBroker>();", table.TableName);
             writer.WriteLine("            {0} theObject = broker.Load(key);", table.TableName);
             writer.WriteLine("            return theObject;");
             writer.WriteLine("        }");
             writer.WriteLine("        static public {0} Insert({0} entity)", table.TableName);
             writer.WriteLine("        {");
-            writer.WriteLine("            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))");
+            writer.WriteLine("            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))");
             writer.WriteLine("            {");
             writer.WriteLine("                {0} newEntity = Insert(update, entity);", table.TableName);
             writer.WriteLine("                update.Commit();");
@@ -549,8 +561,8 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator
             writer.WriteLine("        }");
             writer.WriteLine("        static public {0} Insert(IUpdateContext update, {0} entity)", table.TableName);
             writer.WriteLine("        {");
-            writer.WriteLine("            I{0}EntityBroker broker = update.GetBroker<I{0}EntityBroker>();", table.TableName);
-            writer.WriteLine("            {0}UpdateColumns updateColumns = new {0}UpdateColumns();", table.TableName);
+            writer.WriteLine("            var broker = update.GetBroker<I{0}EntityBroker>();", table.TableName);
+            writer.WriteLine("            var updateColumns = new {0}UpdateColumns();", table.TableName);
             foreach (Column col in table.Columns)
             {
                 if (!col.ColumnName.Equals("Key"))

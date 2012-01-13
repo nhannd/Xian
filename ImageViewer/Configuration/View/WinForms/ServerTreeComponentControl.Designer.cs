@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerTreeComponentControl));
-			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._titleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
 			this._aeTreeView = new System.Windows.Forms.TreeView();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._imageList = new System.Windows.Forms.ImageList(this.components);
@@ -80,10 +80,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			// _titleBar
 			// 
 			resources.ApplyResources(this._titleBar, "_titleBar");
-			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			// 
 			// _aeTreeView
 			// 
@@ -141,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 		#endregion
 
-        private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
+        private ClearCanvas.Desktop.View.WinForms.TitleBar _titleBar;
         private System.Windows.Forms.TreeView _aeTreeView;
 		private System.Windows.Forms.ImageList _imageList;
         private System.Windows.Forms.ToolStrip _serverTools;

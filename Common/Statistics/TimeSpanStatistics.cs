@@ -225,7 +225,7 @@ namespace ClearCanvas.Common.Statistics
         public void End()
         {
             _stopWatch.Stop();
-            Debug.Assert(_stopWatch.ElapsedTicks > 0);
+            Debug.Assert(_stopWatch.ElapsedTicks >= 0);
             Value = _stopWatch.Elapsed;
         }
 

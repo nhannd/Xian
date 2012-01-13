@@ -166,6 +166,9 @@
     <Compile Include="TextBoxToolbarItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TitleBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WinFormsApplicationComponentView.cs" />
     <Compile Include="LocalizableUserControl.cs">
       <SubType>UserControl</SubType>

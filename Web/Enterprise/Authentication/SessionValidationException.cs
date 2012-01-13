@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Reflection;
 
 namespace ClearCanvas.Web.Enterprise.Authentication
 {
@@ -17,6 +18,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
     /// Represents an exception thrown when a <see cref="SessionInfo"/> cannot be 
     /// validated.
     /// </summary>
+    [Obfuscation(Exclude=true, ApplyToMembers=true)]
     public class SessionValidationException : Exception
     {
         public SessionValidationException()

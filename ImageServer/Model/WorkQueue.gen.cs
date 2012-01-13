@@ -93,7 +93,9 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="Data")]
         public XmlDocument Data
-        { get; set; }
+        { get { return _Data; } set { _Data = value; } }
+        [NonSerialized]
+        private XmlDocument _Data;
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="LastUpdatedTime")]
         public DateTime LastUpdatedTime
         { get; set; }
@@ -117,20 +119,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public WorkQueue Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public WorkQueue Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IWorkQueueEntityBroker broker = read.GetBroker<IWorkQueueEntityBroker>();
+            var broker = read.GetBroker<IWorkQueueEntityBroker>();
             WorkQueue theObject = broker.Load(key);
             return theObject;
         }
         static public WorkQueue Insert(WorkQueue entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 WorkQueue newEntity = Insert(update, entity);
                 update.Commit();
@@ -139,8 +141,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public WorkQueue Insert(IUpdateContext update, WorkQueue entity)
         {
-            IWorkQueueEntityBroker broker = update.GetBroker<IWorkQueueEntityBroker>();
-            WorkQueueUpdateColumns updateColumns = new WorkQueueUpdateColumns();
+            var broker = update.GetBroker<IWorkQueueEntityBroker>();
+            var updateColumns = new WorkQueueUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.WorkQueueTypeEnum = entity.WorkQueueTypeEnum;

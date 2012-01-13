@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("activate", DefaultContextMenuActionSite + "/MenuDumpFiles", "Dump")]
 	[EnabledStateObserver("activate", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
 	[Tooltip("activate", "TooltipDumpFiles")]
-	[IconSet("activate", IconScheme.Colour, "Icons.DicomEditorToolSmall.png", "Icons.DicomEditorToolMedium.png", "Icons.DicomEditorToolLarge.png")]
+	[IconSet("activate", "Icons.DicomEditorToolSmall.png", "Icons.DicomEditorToolMedium.png", "Icons.DicomEditorToolLarge.png")]
 	[ViewerActionPermission("activate", ClearCanvas.Utilities.DicomEditor.AuthorityTokens.DicomEditor)]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class DicomEditorTool : LocalExplorerStudyFilterToolProxy<ShowDicomEditorTool>

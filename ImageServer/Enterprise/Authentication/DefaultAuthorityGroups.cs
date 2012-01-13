@@ -93,6 +93,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                         AuthorityTokens.WorkQueue.View,
 
                         AuthorityTokens.DataAccess.AllStudies,
+                        AuthorityTokens.DataAccess.AllPartitions,
                         #endregion
                     });
 

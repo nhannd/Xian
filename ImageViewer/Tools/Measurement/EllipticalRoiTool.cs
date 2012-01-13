@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarEllipticalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.EllipticalRoiToolSmall.png", "Icons.EllipticalRoiToolMedium.png", "Icons.EllipticalRoiToolLarge.png")]
+	[MouseButtonIconSet("activate", "Icons.EllipticalRoiToolSmall.png", "Icons.EllipticalRoiToolMedium.png", "Icons.EllipticalRoiToolLarge.png")]
     [GroupHint("activate", "Tools.Image.Annotations.Measurement.Roi.Elliptical")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]

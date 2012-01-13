@@ -19,7 +19,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 	//[MenuAction("activate", "global-menus/MenuTools/MenuToolsMyTools/SaveTool")]
 	[ButtonAction("activate", "dicomeditor-toolbar/ToolbarSave", "Save")]
 	[Tooltip("activate", "TooltipSave")]
-	[IconSet("activate", IconScheme.Colour, "Icons.SaveToolSmall.png", "Icons.SaveToolSmall.png", "Icons.SaveToolSmall.png")]
+	[IconSet("activate", "Icons.SaveToolSmall.png", "Icons.SaveToolSmall.png", "Icons.SaveToolSmall.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof (DicomEditorToolExtensionPoint))]
 	public class SaveTool : DicomEditorTool

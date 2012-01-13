@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Enterprise.Desktop.View.WinForms
@@ -45,7 +46,23 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
             _okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
             _cancelButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
+
+			UpdateIcons();
         }
+
+		protected override void OnCurrentUIThemeChanged()
+		{
+			base.OnCurrentUIThemeChanged();
+
+			UpdateIcons();
+		}
+
+		private void UpdateIcons()
+		{
+			var resourceResolver = new ApplicationThemeResourceResolver(GetType(), false);
+			_searchButton.Image = resourceResolver.OpenImage(@"Resources.SearchToolSmall.png");
+			_clearButton.Image = resourceResolver.OpenImage(@"Resources.ClearFilterSmall.png");
+		}
 
         private void _searchButton_Click(object sender, EventArgs e)
         {

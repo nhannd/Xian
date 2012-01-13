@@ -14,7 +14,7 @@ using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using Action = ClearCanvas.Desktop.Actions.Action;
+using Action=ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
@@ -37,19 +37,33 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			/// <summary>
 			/// Attribute constructor.
 			/// </summary>
+			/// <remarks>
+			/// The use of icon schemes has been deprecated in favour of extensible application GUI themes.
+			/// </remarks>
 			/// <param name="actionId">The logical action identifier to which this attribute applies.</param>
 			/// <param name="scheme">The scheme of this icon set.</param>
-			/// <param name="smallIcon">The resource name of the small icon.</param>
-			/// <param name="mediumIcon">The resource name of the medium icon.</param>
-			/// <param name="largeIcon">The resource name of the large icon.</param>
+			/// <param name="smallIcon">The resource name of the icon to be used at small resolutions (around 24 x 24).</param>
+			/// <param name="mediumIcon">The resource name of the icon to be used at medium resolutions (around 48 x 48).</param>
+			/// <param name="largeIcon">The resource name of the icon to be used at large resolutions (around 64 x 64).</param>
+			[Obsolete("The use of icon schemes has been deprecated in favour of extensible application GUI themes")]
 			public MouseButtonIconSetAttribute(string actionId, IconScheme scheme, string smallIcon, string mediumIcon, string largeIcon)
 				: base(actionId, scheme, smallIcon, mediumIcon, largeIcon) {}
 
-			///<summary>
+			/// <summary>
 			/// Attribute constructor.
-			///</summary>
+			/// </summary>
 			/// <param name="actionId">The logical action identifier to which this attribute applies.</param>
-			///<param name="icon">The resource name of the icon.</param>
+			/// <param name="smallIcon">The resource name of the icon to be used at small resolutions (around 24 x 24).</param>
+			/// <param name="mediumIcon">The resource name of the icon to be used at medium resolutions (around 48 x 48).</param>
+			/// <param name="largeIcon">The resource name of the icon to be used at large resolutions (around 64 x 64).</param>
+			public MouseButtonIconSetAttribute(string actionId, string smallIcon, string mediumIcon, string largeIcon)
+				: base(actionId, smallIcon, mediumIcon, largeIcon) {}
+
+			/// <summary>
+			/// Attribute constructor.
+			/// </summary>
+			/// <param name="actionId">The logical action identifier to which this attribute applies.</param>
+			/// <param name="icon">The resource name of the icon to be used at all resolutions.</param>
 			public MouseButtonIconSetAttribute(string actionId, string icon)
 				: base(actionId, icon) {}
 
@@ -69,41 +83,55 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		//TODO (Web Viewer): make protected again and find a solution that works in the client (e.g. pixel shader).
 
 		/// <summary>
-		/// Represents a set of icon resources that specify the same logical icon in different sizes with an overlay to indicate mapped mouse button.
+		/// Represents a set of icon resources with an overlay to indicate mapped mouse button.
 		/// </summary>
 		public class MouseButtonIconSet : IconSet
 		{
 			private XMouseButtons _assignedButton;
 
 			/// <summary>
-			/// Constructor.
+			/// Initializes a new instance of <see cref="MouseButtonIconSet"/>.
 			/// </summary>
 			/// <param name="baseIconSet">A template <see cref="IconSet"/> from which to copy resource names.</param>
 			/// <param name="assignedButton">The mouse button that is assigned to the associated tool.</param>
 			public MouseButtonIconSet(IconSet baseIconSet, XMouseButtons assignedButton)
-				: base(baseIconSet.Scheme, baseIconSet.SmallIcon, baseIconSet.MediumIcon, baseIconSet.LargeIcon)
+				: base(baseIconSet.SmallIcon, baseIconSet.MediumIcon, baseIconSet.LargeIcon)
 			{
 				_assignedButton = assignedButton;
 			}
 
 			/// <summary>
-			/// Constructor.
+			/// Initializes a new instance of <see cref="MouseButtonIconSet"/>.
 			/// </summary>
+			/// <remarks>
+			/// The use of icon schemes has been deprecated in favour of extensible application GUI themes.
+			/// </remarks>
 			/// <param name="scheme">The scheme of this icon set.</param>
-			/// <param name="smallIcon">The resource name of the small icon.</param>
-			/// <param name="mediumIcon">The resource name of the medium icon.</param>
-			/// <param name="largeIcon">The resource name of the large icon.</param>
+			/// <param name="smallIcon">The resource name of the icon to be used at small resolutions (around 24 x 24).</param>
+			/// <param name="mediumIcon">The resource name of the icon to be used at medium resolutions (around 48 x 48).</param>
+			/// <param name="largeIcon">The resource name of the icon to be used at large resolutions (around 64 x 64).</param>
 			/// <param name="assignedButton">The mouse button that is assigned to the associated tool.</param>
+			[Obsolete("The use of icon schemes has been deprecated in favour of extensible application GUI themes")]
 			public MouseButtonIconSet(IconScheme scheme, string smallIcon, string mediumIcon, string largeIcon, XMouseButtons assignedButton)
-				: base(scheme, smallIcon, mediumIcon, largeIcon)
+				: base(scheme, smallIcon, mediumIcon, largeIcon) {}
+
+			/// <summary>
+			/// Initializes a new instance of <see cref="MouseButtonIconSet"/>.
+			/// </summary>
+			/// <param name="smallIcon">The resource name of the icon to be used at small resolutions (around 24 x 24).</param>
+			/// <param name="mediumIcon">The resource name of the icon to be used at medium resolutions (around 48 x 48).</param>
+			/// <param name="largeIcon">The resource name of the icon to be used at large resolutions (around 64 x 64).</param>
+			/// <param name="assignedButton">The mouse button that is assigned to the associated tool.</param>
+			public MouseButtonIconSet(string smallIcon, string mediumIcon, string largeIcon, XMouseButtons assignedButton)
+				: base(smallIcon, mediumIcon, largeIcon)
 			{
 				_assignedButton = assignedButton;
 			}
 
 			/// <summary>
-			/// Constructor that assumes all the icons are colour and have the same size.
+			/// Initializes a new instance of <see cref="MouseButtonIconSet"/>.
 			/// </summary>
-			/// <param name="icon">The resource name of the icon.</param>
+			/// <param name="icon">The resource name of the icon to be used at all resolutions.</param>
 			/// <param name="assignedButton">The mouse button that is assigned to the associated tool.</param>
 			public MouseButtonIconSet(string icon, XMouseButtons assignedButton)
 				: base(icon)
@@ -155,7 +183,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 						return null;
 				}
 
-				IResourceResolver resourceResolver = new ResourceResolver(this.GetType().Assembly);
+				IResourceResolver resourceResolver = new ActionResourceResolver(GetType());
 				switch (iconSize)
 				{
 					case IconSize.Small:

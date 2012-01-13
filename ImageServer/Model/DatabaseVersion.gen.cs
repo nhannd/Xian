@@ -57,20 +57,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public DatabaseVersion Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public DatabaseVersion Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IDatabaseVersionEntityBroker broker = read.GetBroker<IDatabaseVersionEntityBroker>();
+            var broker = read.GetBroker<IDatabaseVersionEntityBroker>();
             DatabaseVersion theObject = broker.Load(key);
             return theObject;
         }
         static public DatabaseVersion Insert(DatabaseVersion entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 DatabaseVersion newEntity = Insert(update, entity);
                 update.Commit();
@@ -79,8 +79,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public DatabaseVersion Insert(IUpdateContext update, DatabaseVersion entity)
         {
-            IDatabaseVersionEntityBroker broker = update.GetBroker<IDatabaseVersionEntityBroker>();
-            DatabaseVersionUpdateColumns updateColumns = new DatabaseVersionUpdateColumns();
+            var broker = update.GetBroker<IDatabaseVersionEntityBroker>();
+            var updateColumns = new DatabaseVersionUpdateColumns();
             updateColumns.Major = entity.Major;
             updateColumns.Minor = entity.Minor;
             updateColumns.Build = entity.Build;

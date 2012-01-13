@@ -224,12 +224,22 @@ namespace ClearCanvas.Desktop
         /// of the <see cref="Quitting"/> event.
         /// </remarks>
         /// <returns>True if the application successfully quits, or false if it does not.</returns>
+        /// <seealso cref="Shutdown"/>
         public static bool Quit()
         {
 			_instance.Quit(false);
         	return _instance._guiToolkit == null;
         }
 
+		/// <summary>
+		/// Forcibly closes all open desktop windows and terminates the application.
+		/// </summary>
+		/// <remarks>
+		/// The call will forcibly terminate the application without allowing desktop components
+		/// to cancel the operation. To allow desktop components an opportunity to cancel the operation,
+		/// consider calling <see cref="Quit"/> instead.
+		/// </remarks>
+		/// <seealso cref="Quit"/>
 		public static void Shutdown()
 		{
 			_instance.Quit(true);
@@ -249,7 +259,7 @@ namespace ClearCanvas.Desktop
         }
 
     	/// <summary>
-    	/// Gets or sets the current application UI culture.
+    	/// Gets or sets the current application UI <see cref="CultureInfo">culture</see>.
     	/// </summary>
     	public static CultureInfo CurrentUICulture
     	{
@@ -262,8 +272,26 @@ namespace ClearCanvas.Desktop
     	/// </summary>
     	public static event EventHandler CurrentUICultureChanged
     	{
-    		add { if (_instance != null) _instance._currentUiCultureChanged += value; }
-    		remove { if (_instance != null) _instance._currentUiCultureChanged -= value; }
+    		add { if (_instance != null) _instance._currentUICultureChanged += value; }
+    		remove { if (_instance != null) _instance._currentUICultureChanged -= value; }
+    	}
+
+    	/// <summary>
+    	/// Gets or sets the current application UI <see cref="ApplicationTheme">theme</see>.
+    	/// </summary>
+		public static ApplicationTheme CurrentUITheme
+    	{
+    		get { return _instance != null ? _instance.CurrentUIThemeCore : ApplicationTheme.DefaultApplicationTheme; }
+			set { if (_instance != null) _instance.CurrentUIThemeCore = value; }
+    	}
+
+    	/// <summary>
+		/// Fired when the value of <see cref="CurrentUITheme"/> changes.
+    	/// </summary>
+    	public static event EventHandler CurrentUIThemeChanged
+    	{
+			add { if (_instance != null) _instance._currentUIThemeChanged += value; }
+			remove { if (_instance != null) _instance._currentUIThemeChanged -= value; }
     	}
 
         #endregion
@@ -301,8 +329,13 @@ namespace ClearCanvas.Desktop
 
 		// i18n support
 		private readonly object _currentUICultureSyncLock = new object();
-		private event EventHandler _currentUiCultureChanged;
+		private event EventHandler _currentUICultureChanged;
 		private CultureInfo _currentUICulture;
+
+		// apptheme support
+		private readonly object _currentUIThemeSyncLock = new object();
+    	private event EventHandler _currentUIThemeChanged;
+		private ApplicationTheme _currentUITheme;
 
 		/// <summary>
         /// Default constructor, for internal framework use only.
@@ -407,7 +440,15 @@ namespace ClearCanvas.Desktop
     	/// </summary>
     	protected virtual void OnCurrentUICultureCoreChanged(EventArgs e)
     	{
-    		EventsHelper.Fire(_currentUiCultureChanged, this, e);
+    		EventsHelper.Fire(_currentUICultureChanged, this, e);
+    	}
+
+    	/// <summary>
+    	/// Raises the <see cref="CurrentUIThemeChanged"/> event.
+    	/// </summary>
+    	protected virtual void OnCurrentUIThemeCoreChanged(EventArgs e)
+    	{
+    		EventsHelper.Fire(_currentUIThemeChanged, this, e);
     	}
 
     	/// <summary>
@@ -500,6 +541,34 @@ namespace ClearCanvas.Desktop
     					{
     						_currentUICulture = value;
     						OnCurrentUICultureCoreChanged(EventArgs.Empty);
+    					}
+    				}
+    			}
+    		}
+    	}
+
+    	/// <summary>
+    	/// Gets or sets the current application UI theme.
+    	/// </summary>
+		protected ApplicationTheme CurrentUIThemeCore
+    	{
+    		get
+    		{
+    			lock (_currentUIThemeSyncLock)
+    			{
+    				return _currentUITheme ?? ApplicationTheme.DefaultApplicationTheme;
+    			}
+    		}
+    		set
+    		{
+				if (_currentUITheme != value)
+    			{
+					lock (_currentUIThemeSyncLock)
+    				{
+						if (_currentUITheme != value)
+    					{
+							_currentUITheme = value;
+    						OnCurrentUIThemeCoreChanged(EventArgs.Empty);
     					}
     				}
     			}

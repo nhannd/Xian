@@ -47,20 +47,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public StudyDataAccess Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public StudyDataAccess Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IStudyDataAccessEntityBroker broker = read.GetBroker<IStudyDataAccessEntityBroker>();
+            var broker = read.GetBroker<IStudyDataAccessEntityBroker>();
             StudyDataAccess theObject = broker.Load(key);
             return theObject;
         }
         static public StudyDataAccess Insert(StudyDataAccess entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 StudyDataAccess newEntity = Insert(update, entity);
                 update.Commit();
@@ -69,8 +69,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public StudyDataAccess Insert(IUpdateContext update, StudyDataAccess entity)
         {
-            IStudyDataAccessEntityBroker broker = update.GetBroker<IStudyDataAccessEntityBroker>();
-            StudyDataAccessUpdateColumns updateColumns = new StudyDataAccessUpdateColumns();
+            var broker = update.GetBroker<IStudyDataAccessEntityBroker>();
+            var updateColumns = new StudyDataAccessUpdateColumns();
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.DataAccessGroupKey = entity.DataAccessGroupKey;
             StudyDataAccess newEntity = broker.Insert(updateColumns);

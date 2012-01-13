@@ -29,26 +29,26 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("activateTextCallout", "global-menus/MenuTools/MenuStandard/MenuTextCallout", "SelectTextCallout")]
 	[CheckedStateObserver("activateTextCallout", "IsTextCalloutModeActive", "ModeOrActiveChanged")]
 	[Tooltip("activateTextCallout", "TooltipTextCallout")]
-	[MouseButtonIconSet("activateTextCallout", IconScheme.Colour, SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon)]
+	[MouseButtonIconSet("activateTextCallout", SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon)]
 	[GroupHint("activateTextCallout", "Tools.Image.Annotations.Text.Callout")]
 	//
 	[ButtonAction("selectTextCallout", "textcallouttool-dropdown/ToolbarTextCallout", "SelectTextCallout", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("selectTextCallout", "IsTextCalloutModeSelected", "ModeChanged")]
 	[Tooltip("selectTextCallout", "TooltipTextCallout")]
-	[MouseButtonIconSet("selectTextCallout", IconScheme.Colour, SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon)]
+	[MouseButtonIconSet("selectTextCallout", SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon)]
 	[GroupHint("selectTextCallout", "Tools.Image.Annotations.Text.Callout")]
 	//
 	[MenuAction("activateTextArea", "imageviewer-contextmenu/MenuTextArea", "SelectTextArea", InitiallyAvailable = false)]
 	[MenuAction("activateTextArea", "global-menus/MenuTools/MenuStandard/MenuTextArea", "SelectTextArea")]
 	[CheckedStateObserver("activateTextArea", "IsTextAreaModeActive", "ModeOrActiveChanged")]
 	[Tooltip("activateTextArea", "TooltipTextArea")]
-	[MouseButtonIconSet("activateTextArea", IconScheme.Colour, SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon)]
+	[MouseButtonIconSet("activateTextArea", SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon)]
 	[GroupHint("activateTextArea", "Tools.Image.Annotations.Text.Area")]
 	//
 	[ButtonAction("selectTextArea", "textcallouttool-dropdown/ToolbarTextArea", "SelectTextArea", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("selectTextArea", "IsTextAreaModeSelected", "ModeChanged")]
 	[Tooltip("selectTextArea", "TooltipTextArea")]
-	[MouseButtonIconSet("selectTextArea", IconScheme.Colour, SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon)]
+	[MouseButtonIconSet("selectTextArea", SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon)]
     [GroupHint("selectTextArea", "Tools.Image.Annotations.Text.Area")]
 	//
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarAnnotation/ToolbarTextCallout", "Select", "DropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
@@ -70,8 +70,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public const string MediumTextAreaIcon = "Icons.TextAreaToolMedium.png";
 		public const string LargeTextAreaIcon = "Icons.TextAreaToolLarge.png";
 
-		private readonly IconSet _textCalloutIconSet = new MouseButtonIconSet(IconScheme.Colour, SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon, XMouseButtons.Left);
-		private readonly IconSet _textAreaIconSet = new MouseButtonIconSet(IconScheme.Colour, SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon, XMouseButtons.Left);
+		private readonly IconSet _textCalloutIconSet = new MouseButtonIconSet(SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon, XMouseButtons.Left);
+		private readonly IconSet _textAreaIconSet = new MouseButtonIconSet(SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon, XMouseButtons.Left);
 
 		#endregion
 

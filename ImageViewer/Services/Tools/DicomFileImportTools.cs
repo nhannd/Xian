@@ -30,12 +30,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 	[ButtonAction("clearInactive", "dicom-file-import-toolbar/ClearInactive", "ClearInactive")]
 	[Tooltip("clearInactive", "TooltipClearInactive")]
-	[IconSet("clearInactive", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+	[IconSet("clearInactive", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[EnabledStateObserver("clearInactive", "ClearInactiveEnabled", "ClearInactiveEnabledChanged")]
 
 	[ButtonAction("showBackground", "dicom-file-import-toolbar/ShowBackgroundImports", "ToggleShowBackground", Flags = ClickActionFlags.CheckAction)]
 	[Tooltip("showBackground", "TooltipShowBackgroundImports")]
-	[IconSet("showBackground", IconScheme.Colour, "Icons.ShowBackgroundImportsToolSmall.png", "Icons.ShowBackgroundImportsToolSmall.png", "Icons.ShowBackgroundImportsToolSmall.png")]
+	[IconSet("showBackground", "Icons.ShowBackgroundImportsToolSmall.png", "Icons.ShowBackgroundImportsToolSmall.png", "Icons.ShowBackgroundImportsToolSmall.png")]
 	[CheckedStateObserver("showBackground", "ShowBackground", "ShowBackgroundChanged")]
 
 	[ExtensionOf(typeof(DicomFileImportComponentToolExtensionPoint))]

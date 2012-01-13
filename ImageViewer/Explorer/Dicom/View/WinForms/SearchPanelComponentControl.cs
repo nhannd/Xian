@@ -12,8 +12,9 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
-using ProgressBarStyle = System.Windows.Forms.ProgressBarStyle;
+using ProgressBarStyle=System.Windows.Forms.ProgressBarStyle;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
@@ -32,10 +33,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		{
 			InitializeComponent();
 
-			this.AcceptButton = _searchButton;
 			_component = component;
 
-			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 			_titleBar.DataBindings.Add("Text", component, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_modalityPicker.SetAvailableModalities(_component.AvailableSearchModalities);
@@ -73,6 +72,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_component.PropertyChanged += OnComponentPropertyChanged;
 
 			UpdateState();
+			UpdateIcons();
+		}
+
+		protected override void OnCurrentUIThemeChanged()
+		{
+			base.OnCurrentUIThemeChanged();
+
+			UpdateIcons();
 		}
 
 		private void OnComponentPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -90,14 +97,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_progressBar.Visible = _searchingLabel.Visible = !_component.IsSearchEnabled;
 		}
 
+		private void UpdateIcons()
+		{
+			var resourceResolver = new ApplicationThemeResourceResolver(GetType(), false);
+			_searchButton.Image = resourceResolver.OpenImage(@"Icons.Search.png");
+			_searchTodayButton.Image = resourceResolver.OpenImage(@"Icons.Today.png");
+			_searchLastWeekButton.Image = resourceResolver.OpenImage(@"Icons.Last7Days.png");
+			_clearButton.Image = resourceResolver.OpenImage(@"Icons.Clear.png");
+		}
+
 		private void OnSearchButtonClicked(object sender, EventArgs e)
 		{
 			if (_component.IsSearchEnabled)
 				_component.Search();
 			else
-			{
 				_component.CancelSearch();
-			}
 		}
 
 		private void OnSearchLastWeekButtonClick(object sender, EventArgs e)

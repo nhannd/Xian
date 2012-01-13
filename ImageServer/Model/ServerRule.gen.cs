@@ -71,26 +71,28 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
         public XmlDocument RuleXml
-        { get; set; }
+        { get { return _RuleXml; } set { _RuleXml = value; } }
+        [NonSerialized]
+        private XmlDocument _RuleXml;
         #endregion
 
         #region Static Methods
         static public ServerRule Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public ServerRule Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IServerRuleEntityBroker broker = read.GetBroker<IServerRuleEntityBroker>();
+            var broker = read.GetBroker<IServerRuleEntityBroker>();
             ServerRule theObject = broker.Load(key);
             return theObject;
         }
         static public ServerRule Insert(ServerRule entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ServerRule newEntity = Insert(update, entity);
                 update.Commit();
@@ -99,8 +101,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public ServerRule Insert(IUpdateContext update, ServerRule entity)
         {
-            IServerRuleEntityBroker broker = update.GetBroker<IServerRuleEntityBroker>();
-            ServerRuleUpdateColumns updateColumns = new ServerRuleUpdateColumns();
+            var broker = update.GetBroker<IServerRuleEntityBroker>();
+            var updateColumns = new ServerRuleUpdateColumns();
             updateColumns.RuleName = entity.RuleName;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.ServerRuleTypeEnum = entity.ServerRuleTypeEnum;

@@ -102,6 +102,42 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<Decimal>)SubCriteria["StudySizeInKB"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsiblePerson")]
+        public ISearchCondition<String> ResponsiblePerson
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ResponsiblePerson"))
+              {
+                 SubCriteria["ResponsiblePerson"] = new SearchCondition<String>("ResponsiblePerson");
+              }
+              return (ISearchCondition<String>)SubCriteria["ResponsiblePerson"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ResponsibleOrganization")]
+        public ISearchCondition<String> ResponsibleOrganization
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ResponsibleOrganization"))
+              {
+                 SubCriteria["ResponsibleOrganization"] = new SearchCondition<String>("ResponsibleOrganization");
+              }
+              return (ISearchCondition<String>)SubCriteria["ResponsibleOrganization"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="QueryXml")]
+        public ISearchCondition<XmlDocument> QueryXml
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("QueryXml"))
+              {
+                 SubCriteria["QueryXml"] = new SearchCondition<XmlDocument>("QueryXml");
+              }
+              return (ISearchCondition<XmlDocument>)SubCriteria["QueryXml"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
         public ISearchCondition<String> SpecificCharacterSet
         {

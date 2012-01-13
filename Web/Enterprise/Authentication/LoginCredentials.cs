@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Reflection;
 using System.Threading;
 using ClearCanvas.Enterprise.Common;
 
@@ -18,6 +19,7 @@ namespace ClearCanvas.Web.Enterprise.Authentication
     /// <summary>
     /// User credentials
     /// </summary>
+    [Obfuscation(Exclude=true, ApplyToMembers=true)]
     public class LoginCredentials
     {
         public string UserName;

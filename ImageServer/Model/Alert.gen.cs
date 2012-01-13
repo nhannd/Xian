@@ -66,26 +66,28 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
         public XmlDocument Content
-        { get; set; }
+        { get { return _Content; } set { _Content = value; } }
+        [NonSerialized]
+        private XmlDocument _Content;
         #endregion
 
         #region Static Methods
         static public Alert Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public Alert Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IAlertEntityBroker broker = read.GetBroker<IAlertEntityBroker>();
+            var broker = read.GetBroker<IAlertEntityBroker>();
             Alert theObject = broker.Load(key);
             return theObject;
         }
         static public Alert Insert(Alert entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 Alert newEntity = Insert(update, entity);
                 update.Commit();
@@ -94,8 +96,8 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public Alert Insert(IUpdateContext update, Alert entity)
         {
-            IAlertEntityBroker broker = update.GetBroker<IAlertEntityBroker>();
-            AlertUpdateColumns updateColumns = new AlertUpdateColumns();
+            var broker = update.GetBroker<IAlertEntityBroker>();
+            var updateColumns = new AlertUpdateColumns();
             updateColumns.InsertTime = entity.InsertTime;
             updateColumns.Component = entity.Component;
             updateColumns.TypeCode = entity.TypeCode;
