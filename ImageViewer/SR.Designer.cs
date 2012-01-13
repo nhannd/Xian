@@ -1078,6 +1078,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to mm².
+        /// </summary>
+        public static string LabelUnitsMm2 {
+            get {
+                return ResourceManager.GetString("LabelUnitsMm2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 1/1000 OD.
         /// </summary>
         public static string LabelUnitsOD {
@@ -1092,6 +1101,15 @@ namespace ClearCanvas.ImageViewer {
         public static string LabelUnitsPcnt {
             get {
                 return ResourceManager.GetString("LabelUnitsPcnt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to pixels.
+        /// </summary>
+        public static string LabelUnitsPixels {
+            get {
+                return ResourceManager.GetString("LabelUnitsPixels", resourceCulture);
             }
         }
         

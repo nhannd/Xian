@@ -11,6 +11,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Desktop;
@@ -27,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[Tooltip("calibrate", "TooltipCalibrationTool")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
-	public class CalibrationTool : GraphicTool
+	public partial class CalibrationTool : GraphicTool
 	{
 		public CalibrationTool()
 		{
@@ -199,4 +200,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			pixelSpacingHeight = pixelAspectRatio*pixelSpacingWidth;
 		}
 	}
+
+	#region Oto
+
+	partial class CalibrationTool : ICalibration
+	{
+		public void Calibrate(double lengthInCm)
+		{
+			if (this.LineGraphic == null)
+				throw new InvalidOperationException("The selected graphic is not a ruler.  Calibration cannot continue");
+
+			if (!Visible)
+				throw new InvalidOperationException("The calibration tool is not visible");
+
+			var lengthInMm = lengthInCm * 10;
+			ApplyCalibration(lengthInMm);
+		}
+	}
+
+	#endregion
 }

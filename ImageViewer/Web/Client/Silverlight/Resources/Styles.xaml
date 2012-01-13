@@ -1283,8 +1283,8 @@
         </Setter>
     </Style>
 
-    <!-- ContextMenuStyle2, Don't think this is used -->
-    <Style TargetType="my:ContextMenu" x:Key="ContextMenuStyle2">
+    <!-- ContextMenuStyle -->
+    <Style TargetType="my:ContextMenu">
         <Setter Property="MenuPositioningStrategy">
             <Setter.Value>
                 <my:DefaultMenuPositioningStrategy>
@@ -1296,9 +1296,24 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="my:ContextMenu">
-                    <my:MenuScrollViewer x:Name="DependentContainerElement" Style="{StaticResource CustomScrollViewerStyle}">
+                    <Border CornerRadius="4" BorderBrush="#529CB7" BorderThickness="1">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#B0000000" Offset="0.0"/>
+                                <GradientStop Color="#C0000000" Offset="1.0"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect/>
+                        </Border.Effect>
+                        <my:MenuScrollViewer x:Name="DependentContainerElement">
+                            <ItemsPresenter/>
+                        </my:MenuScrollViewer>
+                    </Border>
+                    
+                    <!--<my:MenuScrollViewer x:Name="DependentContainerElement" Style="{StaticResource CustomScrollViewerStyle}">
                         <ItemsPresenter/>
-                    </my:MenuScrollViewer>
+                    </my:MenuScrollViewer>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

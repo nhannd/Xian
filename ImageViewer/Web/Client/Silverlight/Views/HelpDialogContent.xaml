@@ -13,14 +13,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
     d:DesignHeight="300" d:DesignWidth="400" Foreground="Gray">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/Styles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    
     <Border Padding="10">
         <StackPanel>
             <TextBlock x:Name="ProductInfoTextBlock" Padding="0,5,0,5"/>

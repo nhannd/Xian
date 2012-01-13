@@ -11,12 +11,15 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Layout;
 using ClearCanvas.ImageViewer.Tools.Standard;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
@@ -50,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public WindowLevelTool()
 			: base(SR.TooltipWindowLevel)
 		{
-			this.CursorToken = new CursorToken("Icons.WindowLevelToolSmall.png", this.GetType().Assembly);
+			CursorToken = new CursorToken("Icons.WindowLevelToolSmall.png", GetType().Assembly);
 			_operation = new VoiLutImageOperation(Apply);
 		}
 
@@ -69,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private IVoiLutManager GetSelectedImageVoiLutManager()
 		{
-			return _operation.GetOriginator(this.SelectedPresentationImage) as IVoiLutManager;
+			return _operation.GetOriginator(SelectedPresentationImage) as IVoiLutManager;
 		}
 
 		private bool CanWindowLevel()
@@ -84,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			IVoiLutManager originator = GetSelectedImageVoiLutManager();
-			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
+			_applicator = new ImageOperationApplicator(SelectedPresentationImage, _operation);
 			_memorableCommand = new MemorableUndoableCommand(originator);
 			_memorableCommand.BeginState = originator.CreateMemento();
 		}
@@ -94,11 +97,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!CanWindowLevel() || _memorableCommand == null)
 				return;
 
-			if (this.SelectedVoiLutProvider.VoiLutManager.VoiLut is IBasicVoiLutLinear)
+			if (SelectedVoiLutProvider.VoiLutManager.VoiLut is IBasicVoiLutLinear)
 			{
 				_memorableCommand.EndState = GetSelectedImageVoiLutManager().CreateMemento();
 				UndoableCommand applicatorCommand = _toolBehavior.Behavior.SelectedImageWindowLevelTool ? null : _applicator.ApplyToLinkedImages();
-				DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
+				DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(SelectedPresentationImage);
 
 				if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))
 					historyCommand.Enqueue(_memorableCommand);
@@ -108,29 +111,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				if (historyCommand.Count > 0)
 				{
 					historyCommand.Name = SR.CommandWindowLevel;
-					this.Context.Viewer.CommandHistory.AddCommand(historyCommand);
+                    Context.Viewer.CommandHistory.AddCommand(historyCommand);
 				}
 			}
 		}
 
 		private void IncrementWindowWidth()
 		{
-			IncrementWindowWithUndo(this.CurrentSensitivity, 0);
+			IncrementWindowWithUndo(CurrentSensitivity, 0);
 		}
 
 		private void DecrementWindowWidth()
 		{
-			IncrementWindowWithUndo(-this.CurrentSensitivity, 0);
+			IncrementWindowWithUndo(-CurrentSensitivity, 0);
 		}
 
 		private void IncrementWindowCenter()
 		{
-			IncrementWindowWithUndo(0, this.CurrentSensitivity);
+			IncrementWindowWithUndo(0, CurrentSensitivity);
 		}
 
 		private void DecrementWindowCenter()
 		{
-			IncrementWindowWithUndo(0, -this.CurrentSensitivity);
+			IncrementWindowWithUndo(0, -CurrentSensitivity);
 		}
 
 		private void IncrementWindow(double windowIncrement, double levelIncrement)
@@ -138,10 +141,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!CanWindowLevel())
 				return;
 
-			CodeClock counter = new CodeClock();
-			counter.Start();
-
-			IVoiLutManager manager = this.SelectedVoiLutProvider.VoiLutManager;
+			IVoiLutManager manager = SelectedVoiLutProvider.VoiLutManager;
 
 			IVoiLutLinear linearLut = manager.VoiLut as IVoiLutLinear;
 			IBasicVoiLutLinear standardLut = linearLut as IBasicVoiLutLinear;
@@ -154,24 +154,50 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			standardLut = manager.VoiLut as IBasicVoiLutLinear; 
 			standardLut.WindowWidth += windowIncrement;
 			standardLut.WindowCenter += levelIncrement;
-			this.SelectedVoiLutProvider.Draw();
-
-			counter.Stop();
-
-			string str = String.Format("WindowLevel: {0}\n", counter.ToString());
-			Trace.Write(str);
+			SelectedVoiLutProvider.Draw();
 		}
 
-		private void IncrementWindowWithUndo(double windowIncrement, double levelIncrement)
+        private void SetWindow(double windowWidth, double windowCenter, out IBasicVoiLutLinear voiLut)
+        {
+            voiLut = null;
+            if (!CanWindowLevel())
+                return;
+
+            IVoiLutManager manager = SelectedVoiLutProvider.VoiLutManager;
+            var linearLut = manager.VoiLut as IVoiLutLinear;
+            var standardLut = linearLut as IBasicVoiLutLinear;
+            if (standardLut == null)
+            {
+                standardLut = new BasicVoiLutLinear(windowWidth, windowCenter);
+                manager.InstallVoiLut(standardLut);
+            }
+            else
+            {
+                standardLut.WindowWidth = windowWidth;
+                standardLut.WindowCenter = windowCenter;
+            }
+
+            voiLut = standardLut;
+            SelectedVoiLutProvider.Draw();
+        }
+
+	    private void IncrementWindowWithUndo(double windowIncrement, double levelIncrement)
 		{
-			this.CaptureBeginState();
-			this.IncrementWindow(windowIncrement, levelIncrement);
-			this.CaptureEndState();
+			CaptureBeginState();
+			IncrementWindow(windowIncrement, levelIncrement);
+			CaptureEndState();
 		}
+
+        private void SetWindowWithUndo(double windowWidth, double windowCenter, out IBasicVoiLutLinear voiLut)
+        {
+            CaptureBeginState();
+            SetWindow(windowWidth, windowCenter, out voiLut);
+            CaptureEndState();
+        }
 
 		private void Apply(IPresentationImage image)
 		{
-			IVoiLutLinear selectedLut = (IVoiLutLinear)this.SelectedVoiLutProvider.VoiLutManager.VoiLut;
+			IVoiLutLinear selectedLut = (IVoiLutLinear)SelectedVoiLutProvider.VoiLutManager.VoiLut;
 
 			IVoiLutProvider provider = ((IVoiLutProvider)image);
 			if (!(provider.VoiLutManager.VoiLut is IBasicVoiLutLinear))
@@ -198,8 +224,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			double sensitivity = this.CurrentSensitivity;
-			IncrementWindow(this.DeltaX * sensitivity, this.DeltaY * sensitivity);
+			double sensitivity = CurrentSensitivity;
+			IncrementWindow(DeltaX * sensitivity, DeltaY * sensitivity);
 
 			return true;
 		}
@@ -208,14 +234,47 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Stop(mouseInformation);
 
-			this.CaptureEndState();
+			CaptureEndState();
 
 			return false;
 		}
 
 		public override void Cancel()
 		{
-			this.CaptureEndState();
+			CaptureEndState();
 		}
-	}
+    }
+
+    #region Oto
+    partial class WindowLevelTool : ILookupTable
+    {
+        #region IViewerLookupTableService Members
+
+        IVoiLut ILookupTable.SetWindowLevel(double windowWidth, double windowCentre)
+        {
+            IBasicVoiLutLinear voiLut;
+            SetWindowWithUndo(windowWidth, windowCentre, out voiLut);
+            return voiLut;
+        }
+
+        IVoiLut ILookupTable.ApplyPreset(string name)
+        {
+            //Use the exact same path the user would take to execute it.
+            var preset = GetApplicablePresets().First(p => p.Operation.Name == name);
+            new PresetVoiLutActionContainer(this, "imageviewer-contextmenu", preset, 0).Action.Click();
+            return GetSelectedImageVoiLutManager().VoiLut;
+        }
+
+        IVoiLut ILookupTable.GetLookupTableAt(RectangularGrid.Location tileLocation)
+        {
+            var voiLutManager = GetSelectedImageVoiLutManager();
+            if (voiLutManager == null)
+                throw new InvalidOperationException("Selected image can't have a voi lut");
+
+            return voiLutManager.VoiLut;
+        }
+
+        #endregion
+    }
+    #endregion
 }

@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel;
 
@@ -20,12 +21,21 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	[ServiceContract(SessionMode = SessionMode.Allowed, ConfigurationName="IViewerAutomation", Namespace = AutomationNamespace.Value)]
 	public interface IViewerAutomation
 	{
-		/// <summary>
+        [OperationContract(IsOneWay = false)]
+        [FaultContract(typeof(OpenFilesFault))]
+        OpenFilesResult OpenFiles(OpenFilesRequest request);
+
+        [OperationContract(IsOneWay = false)]
+        [FaultContract(typeof(NoViewersFault))]
+        GetViewersResult GetViewers(GetViewersRequest request);
+        
+        /// <summary>
 		/// Gets all active <see cref="Viewer"/>s.
 		/// </summary>
 		/// <exception cref="FaultException{NoActiveViewersFault}">Thrown if there are no active <see cref="Viewer"/>s.</exception>
 		[OperationContract(IsOneWay = false)]
 		[FaultContract(typeof(NoActiveViewersFault))]
+        [Obsolete("Use GetViewers instead.")]
 		GetActiveViewersResult GetActiveViewers();
 
 		/// <summary>

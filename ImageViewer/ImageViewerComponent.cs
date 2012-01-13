@@ -11,13 +11,14 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.Generic;
@@ -500,7 +501,79 @@ namespace ClearCanvas.ImageViewer
 			remove { _closingEvent -= value; }
 		}
 
-		#endregion
+        /// <summary>
+        /// Allows a one-time call of one of the viewer's automation services, which is usually
+        /// a <see cref="Tool{TContextInterface}<IImageViewerToolContext>"/>, but can also be
+        /// an extension of <see cref="AutomationExtensionPoint{T}"/>.
+        /// </summary>
+        /// <remarks>
+        /// If the service is itself a tool, it can access the viewer via it's own <see cref="IImageViewerToolContext">tool context</see>.
+        /// Otherwise, this method sets the value of <see cref="AutomationContext.Current"/> for the duration of the call.
+        /// </remarks>
+        /// <typeparam name="TService">The type of automation service to be used; this must be an interface and not a tool class.</typeparam>
+        /// <param name="withService">The delegate this method will call, passing in the service object.</param>
+        public void Automate<TService>(Action<TService> withService) where TService : class
+        {
+            if (!typeof(TService).IsInterface)
+                throw new ArgumentException("Automation Service must be an interface, not a class.");
+
+
+            Automation.AutomationContext.Current = new Automation.AutomationContext(this);
+            try
+            {
+                withService(GetAutomationService<TService>());
+            }
+            finally
+            {
+                Automation.AutomationContext.Current = null;
+            }
+        }
+
+        /// <summary>
+        /// Allows a one-time call of one of the viewer's automation services, which is usually
+        /// a <see cref="Tool{TContextInterface}<IImageViewerToolContext>"/>, but can also be
+        /// an extension of <see cref="AutomationExtensionPoint{T}"/>.
+        /// </summary>
+        /// <remarks>
+        /// If the service is itself a tool, it can access the viewer via it's own <see cref="IImageViewerToolContext">tool context</see>.
+        /// Otherwise, this method sets the value of <see cref="AutomationContext.Current"/> for the duration of the call.
+        /// </remarks>
+        /// <typeparam name="TService">The type of automation service to be used; this must be an interface and not a tool class.</typeparam>
+        /// <param name="withService">The delegate this method will call, passing in the service object.</param>
+        public TResult Automate<TService, TResult>(Func<TService, TResult> withService) where TService : class
+        {
+            if (!typeof(TService).IsInterface)
+                throw new ArgumentException("Automation Service must be an interface, not a class.");
+
+            Automation.AutomationContext.Current = new Automation.AutomationContext(this);
+            try
+            {
+                return withService(GetAutomationService<TService>());
+            }
+            finally
+            {
+                Automation.AutomationContext.Current = null;
+            }
+        }
+
+        internal TService GetAutomationService<TService>() where TService : class 
+        {
+            try
+            {
+                //Try looking for an extension first.
+                return (TService) new AutomationExtensionPoint<TService>().CreateExtension();
+            }
+            catch (NotSupportedException)
+            {
+            }
+
+            var tool = _toolSet.Tools.OfType<TService>().FirstOrDefault();
+            if (tool == null)
+                throw new NotSupportedException(String.Format("Component service '{0}' does not exist.", typeof(TService).Name));
+            return tool;
+        }
+
+	    #endregion
 
 		#region Protected properties
 

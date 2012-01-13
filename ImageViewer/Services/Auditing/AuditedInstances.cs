@@ -248,7 +248,8 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 
 			public override int GetHashCode()
 			{
-				return this.InstanceUid.GetHashCode() ^ 0x471A0695;
+				return 0x471A0695
+				       ^ (InstanceUid != null ? InstanceUid.GetHashCode() : 0);
 			}
 
 			public static implicit operator AuditStudyParticipantObject(Study study)
@@ -281,7 +282,9 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 
 			public override int GetHashCode()
 			{
-				return this.PatientId.GetHashCode() ^ this.PatientName.GetHashCode() ^ 0x517F0000;
+				return 0x517F0000
+				       ^ (PatientId != null ? PatientId.GetHashCode() : 0)
+				       ^ (PatientName != null ? PatientName.GetHashCode() : 0);
 			}
 
 			public static implicit operator AuditPatientParticipantObject(Patient patient)

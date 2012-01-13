@@ -305,9 +305,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 					{
 						if (analyzer.SupportsRoi(roi))
 						{
-							string analysis = analyzer.Analyze(roi, mode);
-							if (!string.IsNullOrEmpty(analysis))
-								builder.AppendLine(analysis);
+						    var analysis = analyzer.Analyze(roi, mode);
+						    if (analysis != null)
+						    {
+						        builder.AppendLine(analysis.SerializedAsString());
+						    }
 						}
 					}
 				}

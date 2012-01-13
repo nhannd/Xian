@@ -31,6 +31,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public OpenFilesHelper()
 		{
 			WindowBehaviour = WindowBehaviour.Auto;
+		    HandleErrors = true;
 		}
 
 		/// <summary>
@@ -60,6 +61,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets or sets whether or not to allow an empty viewer to be opened (e.g. with no images loaded).
 		/// </summary>
 		public bool AllowEmptyViewer { get; set; }
+
+        /// <summary>
+        /// Specifies whether or not errors should be handled automatically (e.g. error shown to the user).
+        /// </summary>
+        public bool HandleErrors { get; set; }
+
+        /// <summary>
+        /// Gets whether or not the user cancelled the opening of the images.
+        /// </summary>
+        public bool UserCancelled { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the owner <see cref="IDesktopWindow"/>.
@@ -144,19 +155,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			var viewer = CreateViewer(false); // don't find priors for files loaded off the local disk.
 			var desktopWindow = DesktopWindow ?? Application.ActiveDesktopWindow;
-			var cancelled = false;
 
 			try
 			{
-				viewer.LoadImages(_filenames.ToArray(), desktopWindow, out cancelled);
+			    UserCancelled = false;
+			    bool cancelled;
+                viewer.LoadImages(_filenames.ToArray(), desktopWindow, out cancelled);
+                UserCancelled = cancelled;
 			}
 			catch (Exception e)
 			{
-				if (!cancelled) // silence any exceptions if the operation was cancelled
-					ExceptionHandler.Report(e, SR.MessageFailedToOpenImages, desktopWindow);
+                if (!HandleErrors)
+                    throw;
+            
+                ExceptionHandler.Report(e, SR.MessageFailedToOpenImages, desktopWindow);
 			}
 
-			if (cancelled || (!AnySopsLoaded(viewer) && !AllowEmptyViewer))
+            if (UserCancelled || (!AnySopsLoaded(viewer) && !AllowEmptyViewer))
 			{
 				viewer.Dispose();
 				return null;

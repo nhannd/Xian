@@ -15,6 +15,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using System;
+using ClearCanvas.ImageViewer.Automation;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -30,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	/// that can directly change the layout in the active imageviewer.
 	/// </summary>
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class LayoutTool : Tool<IImageViewerToolContext>
+    public partial class LayoutTool : Tool<IImageViewerToolContext>
 	{
 		private ActionModelRoot _actionModel;
 		private bool _enabled;
@@ -120,5 +121,133 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			Enabled = !base.Context.Viewer.PhysicalWorkspace.Locked;
 		}
+
+    }
+
+    #region Oto
+    partial class LayoutTool : IWorkspaceLayout
+    {
+        RectangularGrid IWorkspaceLayout.GetLayout()
+        {
+            var workspace = Context.Viewer.PhysicalWorkspace;
+            if (workspace.Rows <= 0 || workspace.Columns <= 0)
+                throw new NotSupportedException("Non-rectangular layouts not supported.");
+
+            return new RectangularGrid { Rows = workspace.Rows, Columns = workspace.Columns };
+        }
+
+        void IWorkspaceLayout.SetLayout(RectangularGrid layout)
+        {
+            LayoutComponent.SetImageBoxLayout(Context.Viewer, layout.Rows, layout.Columns);
+        }
+
+        RectangularGrid IWorkspaceLayout.GetImageBoxLayoutAt(RectangularGrid.Location imageBoxLocation)
+        {
+            var imageBox = Context.Viewer.PhysicalWorkspace[imageBoxLocation.Row, imageBoxLocation.Column];
+            if (imageBox == null)
+                throw new InvalidOperationException("No image box is selected.");
+
+            if (imageBox.Rows <= 0 || imageBox.Columns <= 0)
+                throw new NotSupportedException("Non-rectangular layouts not supported.");
+
+            return new RectangularGrid { Rows = imageBox.Rows, Columns = imageBox.Columns };
+        }
+
+        void IWorkspaceLayout.SetSelectedImageBoxLayout(RectangularGrid layout)
+        {
+            LayoutComponent.SetTileLayout(Context.Viewer, layout.Rows, layout.Columns);
+        }
+
+        void IWorkspaceLayout.SelectImageBoxAt(RectangularGrid.Location imageBoxLocation)
+        {
+            var workspace = Context.Viewer.PhysicalWorkspace;
+            if (workspace.Rows <= 0 || workspace.Columns <= 0)
+                throw new NotSupportedException("Non-rectangular layouts not supported.");
+
+            workspace[imageBoxLocation.Row, imageBoxLocation.Column].SelectDefaultTile();
+        }
+
+        void IWorkspaceLayout.SelectTileAt(RectangularGrid.Location tileLocation)
+        {
+            var imageBoxLocation = tileLocation.ParentGridLocation;
+            Platform.CheckForNullReference(imageBoxLocation, "tileLocation.ParentGridLocation");
+            var imageBox = Context.Viewer.PhysicalWorkspace[imageBoxLocation.Row, imageBoxLocation.Column];
+            if (imageBox == null)
+                throw new InvalidOperationException("No image box is selected.");
+
+            if (imageBox.Rows <= 0 || imageBox.Columns <= 0)
+                throw new NotSupportedException("Non-rectangular layouts not supported.");
+
+            imageBox[tileLocation.Row, tileLocation.Column].Select();
+        }
+
+        IImageBox IWorkspaceLayout.GetSelectedImageBox(out RectangularGrid.Location imageBoxLocation)
+        {
+            var workspace = Context.Viewer.PhysicalWorkspace;
+            if (workspace.Rows <= 0 || workspace.Columns <= 0)
+                throw new NotSupportedException("Non-rectangular layouts not supported.");
+
+            var selectedImageBox = workspace.SelectedImageBox;
+            for (int row = 0; row < workspace.Rows; ++row)
+            {
+                for (int column = 0; column < workspace.Columns; ++column)
+                {
+                    if (workspace[row, column] == selectedImageBox)
+                    {
+                        imageBoxLocation = new RectangularGrid.Location {Row = row, Column = column};
+                        return selectedImageBox;
+                    }
+                }
+            }
+
+            throw new NotSupportedException("There's no image box selected, or something really bad is happening.");
+        }
+
+        ITile IWorkspaceLayout.GetSelectedTile(out RectangularGrid.Location tileLocation)
+        {
+            RectangularGrid.Location imageBoxLocation;
+            var selectedImageBox = ((IWorkspaceLayout) this).GetSelectedImageBox(out imageBoxLocation);
+            var selectedTile = selectedImageBox.SelectedTile;
+            for (int row = 0; row < selectedImageBox.Rows; ++row)
+            {
+                for (int column = 0; column < selectedImageBox.Columns; ++column)
+                {
+                    if (selectedImageBox[row, column] == selectedTile)
+                    {
+                        tileLocation = new RectangularGrid.Location
+                                           {
+                                               Row = row, Column = column, ParentGridLocation = imageBoxLocation
+                                           };
+                        return selectedTile;
+                    }
+                }
+            }
+
+            throw new NotSupportedException("There's no image box selected, or something really bad is happening.");
+        }
+
+        IImageBox IWorkspaceLayout.GetImageBoxAt(RectangularGrid.Location imageBoxLocation)
+        {
+            var workspace = Context.Viewer.PhysicalWorkspace;
+            if (workspace.Rows <= 0 || workspace.Columns <= 0)
+                throw new NotSupportedException("Non-rectangular layouts not supported.");
+
+            return workspace[imageBoxLocation.Row, imageBoxLocation.Column];
+        }
+
+        ITile IWorkspaceLayout.GetTileAt(RectangularGrid.Location tileLocation)
+        {
+            var imageBox = ((IWorkspaceLayout)this).GetImageBoxAt(new RectangularGrid.Location
+                                {
+                                    Row = tileLocation.ParentGridLocation.Row,
+                                    Column = tileLocation.ParentGridLocation.Column
+                                });
+        
+            if (imageBox.Rows <= 0 || imageBox.Columns <= 0)
+                throw new NotSupportedException("Non-rectangular layouts not supported.");
+
+            return imageBox[tileLocation.Row, tileLocation.Column];
+        }
 	}
+    #endregion
 }

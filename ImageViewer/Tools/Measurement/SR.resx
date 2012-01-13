@@ -228,4 +228,7 @@
   <data name="TooltipShowAngles" xml:space="preserve">
     <value>Show Angles</value>
   </data>
+  <data name="ToolsMeasurementUnitDegree" xml:space="preserve">
+    <value>°</value>
+  </data>
 </root>

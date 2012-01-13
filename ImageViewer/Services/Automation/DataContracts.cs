@@ -34,7 +34,8 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	/// Data contract for fault when there are no active viewers.
 	/// </summary>
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class NoActiveViewersFault
+    [Obsolete("Use GetViewers instead.")]
+    public class NoActiveViewersFault
 	{
 		/// <summary>
 		/// Constructor.
@@ -42,6 +43,19 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		public NoActiveViewersFault()
 		{}
 	}
+
+    /// <summary>
+    /// Data contract for fault when there are no active viewers.
+    /// </summary>
+    [DataContract(Namespace = AutomationNamespace.Value)]
+    public class NoViewersFault
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public NoViewersFault()
+        { }
+    }
 
 	/// <summary>
 	/// Data contract for fault when the supplied <see cref="Viewer"/> no longer exists.
@@ -111,6 +125,19 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			set { _failureDescription = value; }
 		}
 	}
+
+    /// <summary>
+    /// Data contract for when a failure occurs opening the requested study (or studies).
+    /// </summary>
+    [DataContract(Namespace = AutomationNamespace.Value)]
+    public class OpenFilesFault
+    {
+        /// <summary>
+        /// Textual description of the failure.
+        /// </summary>
+        [DataMember(IsRequired = false)]
+        public string FailureDescription { get; set; }
+    }
 
 	/// <summary>
 	/// Data contract representing a viewer component or workspace.
@@ -198,7 +225,8 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	/// Data contract for results returned from <see cref="IViewerAutomation.GetActiveViewers"/>.
 	/// </summary>
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class GetActiveViewersResult
+    [Obsolete("Use GetViewers method.")]
+    public class GetActiveViewersResult
 	{
 		private List<Viewer> _activeViewers;
 
@@ -220,6 +248,31 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			set { _activeViewers = value; }
 		}
 	}
+
+    [DataContract(Namespace = AutomationNamespace.Value)]
+    public class GetViewersRequest
+    {}
+
+    /// <summary>
+    /// Data contract for results returned from <see cref="IViewerAutomation.GetActiveViewers"/>.
+    /// </summary>
+    [DataContract(Namespace = AutomationNamespace.Value)]
+    public class GetViewersResult
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public GetViewersResult()
+        {
+            Viewers = new List<Viewer>();
+        }
+
+        /// <summary>
+        /// The currently open <see cref="Viewer"/>s.
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public List<Viewer> Viewers { get; set; }
+    }
 
 	/// <summary>
 	/// Data contract for requests via <see cref="IViewerAutomation.GetViewerInfo"/>.
@@ -373,6 +426,45 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		}
 	}
 
+    /// <summary>
+    /// Data contract for defining files/directories to be opened via <see cref="IViewerAutomation.OpenFiles"/>.
+    /// </summary>
+    [DataContract(Namespace = AutomationNamespace.Value)]
+    public class OpenFilesRequest
+    {
+        /// <summary>
+        /// A list of files and/or directories that will be loaded recursively into a single viewer.
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public List<string> Files { get; set; }
+
+        /// <summary>
+        /// Specifies whether or not the call should block waiting for the files to load into a viewer;
+        /// if unspecified, the service will block waiting for the files to open before returning.
+        /// </summary>
+        [DataMember(IsRequired = false)]
+        public bool? WaitForFilesToOpen { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public bool? ReportFaultToUser { get; set; }
+    }
+
+    /// <summary>
+    /// Data contracts for results returned from <see cref="IViewerAutomation.OpenFiles"/>.
+    /// </summary>
+    [DataContract(Namespace = AutomationNamespace.Value)]
+    public class OpenFilesResult
+    {
+        /// <summary>
+        /// Identifier for the viewer in which the files were opened.
+        /// </summary>
+        /// <remarks>
+        /// If <see cref="OpenFilesRequest.WaitForFilesToOpen"/> is false, this value will be null.
+        /// </remarks>
+        [DataMember]
+        public Viewer Viewer { get; set; }
+    }
+
 	/// <summary>
 	/// Data contract for open studies requests via <see cref="IViewerAutomation.OpenStudies"/>.
 	/// </summary>
@@ -415,6 +507,16 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			get { return _activateIfAlreadyOpen; }
 			set { _activateIfAlreadyOpen = value; }
 		}
+
+        /// <summary>
+        /// Specifies whether or not prior studies should be automatically searched for
+        /// and loaded into the viewer along with the requested studies.
+        /// </summary>
+        /// <remarks>
+        /// If not specified, the default value is true.
+        /// </remarks>
+        [DataMember(IsRequired = false)]
+        public bool? LoadPriors { get; set; }
 
 		/// <summary>
 		/// When the primary study cannot be opened, a fault exception will be thrown.

@@ -10,12 +10,15 @@
 #endregion
 
 using System;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -113,13 +116,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_initialPresentationImageIndex = imageBox.SelectedTile.PresentationImageIndex;
 		}
 
-		private void CaptureEndState()
+		private bool CaptureEndState()
 		{
 			if (_memorableCommand == null || _currentImageBox == null)
 			{
 				_currentImageBox = null;
-				return;
+                return false;
 			}
+
+            bool commandAdded = false;
 
 			// If nothing's changed then just return
 			if (_initialPresentationImageIndex != _currentImageBox.SelectedTile.PresentationImageIndex)
@@ -130,75 +135,80 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				{
 					var historyCommand = new DrawableUndoableCommand(_currentImageBox) {Name = SR.CommandStack};
 				    historyCommand.Enqueue(_memorableCommand);
-					Context.Viewer.CommandHistory.AddCommand(historyCommand);
+                    Context.Viewer.CommandHistory.AddCommand(historyCommand);
+				    commandAdded = true;
 				}
 			}
 
 			_memorableCommand = null;
 			_currentImageBox = null;
+
+		    return commandAdded;
 		}
 
 		private void JumpToBeginning()
 		{
-			if (Context.Viewer.SelectedTile == null)
+            if (Context.Viewer.SelectedTile == null)
 				return;
 
 			if (this.SelectedPresentationImage == null)
 				return;
 
-			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
+            IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
 
 			CaptureBeginState(imageBox);
 			imageBox.TopLeftPresentationImageIndex = 0;
-			imageBox.Draw();
-			CaptureEndState();
+			if (CaptureEndState())
+                imageBox.Draw();
 		}
 
 		private void JumpToEnd()
 		{
-			if (Context.Viewer.SelectedTile == null)
+            if (Context.Viewer.SelectedTile == null)
 				return;
 
 			if (this.SelectedPresentationImage == null)
 				return;
 
-			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
+            IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
 
 			if (imageBox.DisplaySet == null)
 				return;
 
 			CaptureBeginState(imageBox);
 			imageBox.TopLeftPresentationImageIndex = imageBox.DisplaySet.PresentationImages.Count - 1;
-			imageBox.Draw();
-			CaptureEndState();
-		}
+            if (CaptureEndState())
+                imageBox.Draw();
+        }
 
 		private void StackUp()
 		{
-			if (Context.Viewer.SelectedTile == null)
+            if (Context.Viewer.SelectedTile == null)
 				return;
 
 			if (this.SelectedPresentationImage == null)
 				return;
 
-			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
+            IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
 			CaptureBeginState(imageBox);
 			AdvanceImage(-imageBox.Tiles.Count, imageBox);
-			CaptureEndState();
-		}
+		    CaptureEndState();
+            //No draw - AdvanceImage has already done it.
+        }
 
 		private void StackDown()
 		{
-			if (Context.Viewer.SelectedTile == null)
+            if (Context.Viewer.SelectedTile == null)
 				return;
 
 			if (this.SelectedPresentationImage == null)
 				return;
 
-			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
+            IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
 			CaptureBeginState(imageBox);
 			AdvanceImage(+imageBox.Tiles.Count, imageBox);
-			CaptureEndState();
+		    CaptureEndState();
+            //No draw - AdvanceImage has already done it.
 		}
 
 		private static void AdvanceImage(int increment, IImageBox selectedImageBox)
@@ -272,13 +282,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override void StartWheel()
 		{
-			if (Context.Viewer.SelectedTile == null)
+            if (Context.Viewer.SelectedTile == null)
 				return;
 
 			if (this.SelectedPresentationImage == null)
 				return;
 
-			IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
+            IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
 			if (imageBox == null)
 				return;
 
@@ -290,7 +300,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (this.SelectedPresentationImage == null)
 				return;
 
-			AdvanceImage(1, Context.Viewer.SelectedTile.ParentImageBox);
+            AdvanceImage(1, Context.Viewer.SelectedTile.ParentImageBox);
 		}
 
 		protected override void WheelForward()
@@ -298,7 +308,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (this.SelectedPresentationImage == null)
 				return;
 
-			AdvanceImage(-1, Context.Viewer.SelectedTile.ParentImageBox);
+            AdvanceImage(-1, Context.Viewer.SelectedTile.ParentImageBox);
 		}
 
 		public override void StopWheel()
@@ -308,5 +318,54 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			CaptureEndState();
 		}
-	}
+    }
+
+    #region Oto
+    partial class StackTool : IStack
+    {
+        #region IViewerStackService Members
+
+        void IStack.StackBy(int delta)
+        {
+            if (Context.Viewer.SelectedTile == null)
+                throw new InvalidOperationException("No tile selected.");
+
+            if (this.SelectedPresentationImage == null)
+                throw new InvalidOperationException("No image selected.");
+
+            IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
+            CaptureBeginState(imageBox);
+            AdvanceImage(delta, imageBox);
+            //No draw - AdvanceImage has already done it.
+            CaptureEndState();
+        }
+
+        void IStack.StackTo(int instanceNumber, int? frameNumber)
+        {
+            if (Context.Viewer.SelectedTile == null)
+                throw new InvalidOperationException("No tile selected.");
+
+            if (this.SelectedPresentationImage == null)
+                throw new InvalidOperationException("No image selected.");
+
+            var displaySet = Context.Viewer.SelectedPresentationImage.ParentDisplaySet;
+            
+            //First will throw if no such image exists.
+            var image = (IPresentationImage)displaySet.PresentationImages.OfType<IImageSopProvider>().First(
+                i => i.ImageSop.InstanceNumber == instanceNumber 
+                        && (!frameNumber.HasValue || (i.ImageSop.NumberOfFrames > 1 && frameNumber.Value == i.Frame.FrameNumber)));
+
+            IImageBox imageBox = Context.Viewer.SelectedTile.ParentImageBox;
+            CaptureBeginState(imageBox);
+            imageBox.TopLeftPresentationImage = image;
+            if (!CaptureEndState())
+                return; /// TODO (CR Dec 2011): Should we still select the top-left??
+
+            imageBox.Draw();
+            imageBox.Tiles[0].Select();
+        }
+
+        #endregion
+    }
+    #endregion
 }

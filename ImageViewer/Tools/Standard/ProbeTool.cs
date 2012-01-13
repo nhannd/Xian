@@ -17,11 +17,13 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.ComponentModel;
+using Point=System.Drawing.Point;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -51,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	#endregion
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ProbeTool : MouseImageViewerTool
+	public partial class ProbeTool : MouseImageViewerTool
 	{
 		private Tile _selectedTile;
 		private ImageGraphic _selectedImageGraphic;
@@ -150,6 +152,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			bool showPixelValue = settings.ShowRawPixelValue;
 			bool showVoiValue = settings.ShowVOIPixelValue;
 
+			Probe(sourcePointRounded, showPixelValue, showVoiValue);
+		}
+
+		private void Probe(Point sourcePointRounded, bool showPixelValue, bool showVoiValue)
+		{
 			string probeString;
 			string coordinateString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, SR.LabelNotApplicable, SR.LabelNotApplicable));
 			string pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelRawPixel, SR.LabelNotApplicable);
@@ -159,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			try
 			{
 				var displayString = new StringBuilder();
-				if (_selectedImageGraphic.HitTest(destinationPoint))
+				if (_selectedImageGraphic.BoundingBox.Contains(sourcePointRounded))
 				{
 					coordinateString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, sourcePointRounded.X, sourcePointRounded.Y));
 
@@ -200,6 +207,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				probeString = SR.MessageProbeToolError;
 			}
 
+			var destinationPoint = Point.Round(_selectedImageGraphic.SpatialTransform.ConvertToDestination(sourcePointRounded));
 			_selectedTile.InformationBox.Update(probeString, destinationPoint);
 		}
 
@@ -344,5 +352,35 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		#endregion
+	}
+
+	partial class ProbeTool : IProbe
+	{
+		void IProbe.Probe(PointF coordinate, CoordinateSystem coordinateSystem)
+		{
+			if (Context.Viewer.SelectedTile == null)
+				throw new InvalidOperationException("No tile selected.");
+
+			if (SelectedPresentationImage == null)
+				throw new InvalidOperationException("No image selected.");
+
+			if (SelectedImageGraphicProvider == null)
+				throw new InvalidOperationException("Unsupported image type selected.");
+
+			if (coordinateSystem == CoordinateSystem.Destination)
+				coordinate = SelectedImageGraphicProvider.ImageGraphic.SpatialTransform.ConvertToSource(coordinate);
+
+			_selectedTile = (Tile) Context.Viewer.SelectedTile;
+			_selectedTile.InformationBox = new InformationBox();
+			_selectedImageGraphic = SelectedImageGraphicProvider.ImageGraphic;
+			_selectedFrame = ((IImageSopProvider) SelectedPresentationImage).Frame;
+
+			Probe(Point.Truncate(coordinate), true, true);
+		}
+
+		void IProbe.ResetProbe()
+		{
+			Cancel();
+		}
 	}
 }

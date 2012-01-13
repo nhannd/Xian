@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 	/// For internal use only.
 	/// </summary>
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ViewerAutomationTool : ImageViewerTool
+	internal class ViewerAutomationTool : ImageViewerTool
 	{
 		private static readonly object _syncLock = new object();
 		private static readonly List<ViewerAutomationTool> _tools;

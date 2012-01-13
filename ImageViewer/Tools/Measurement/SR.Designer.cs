@@ -331,6 +331,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to °.
+        /// </summary>
+        public static string ToolsMeasurementUnitDegree {
+            get {
+                return ResourceManager.GetString("ToolsMeasurementUnitDegree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calibrate.
         /// </summary>
         public static string TooltipCalibrationTool {

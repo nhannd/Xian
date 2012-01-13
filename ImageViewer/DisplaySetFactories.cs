@@ -486,13 +486,15 @@ namespace ClearCanvas.ImageViewer
 	[Cloneable(false)]
 	public class MultiframeDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
-		private readonly string _sopInstanceUid;
+	    private readonly string _sopInstanceUid;
 		private readonly string _suffix;
 
 		public MultiframeDisplaySetDescriptor(ISeriesIdentifier sourceSeries, string sopInstanceUid, int instanceNumber)
 			: base(sourceSeries)
 		{
-            Platform.CheckForNullReference(sourceSeries, "sourceSeries");
+		    SopInstanceUid = sopInstanceUid;
+		    InstanceNumber = instanceNumber;
+		    Platform.CheckForNullReference(sourceSeries, "sourceSeries");
             Platform.CheckForEmptyString(sopInstanceUid, "sopInstanceUid");
             
             _sopInstanceUid = sopInstanceUid;
@@ -505,7 +507,10 @@ namespace ClearCanvas.ImageViewer
 			context.CloneFields(source, this);
 		}
 
-		protected override string GetName()
+        public string SopInstanceUid { get; private set; }
+        public int InstanceNumber { get; private set; }
+        
+        protected override string GetName()
 		{
 			if (String.IsNullOrEmpty(base.SourceSeries.SeriesDescription))
 				return String.Format("{0}: {1}", SourceSeries.SeriesNumber, _suffix);

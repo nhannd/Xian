@@ -12,6 +12,15 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:my="clr-namespace:ClearCanvas.Web.Client.Silverlight;assembly=ClearCanvas.Web.Client.Silverlight">
 
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Toolbar.xaml" x:Name="Styles"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
     <my:MenuManager.AttachedContextMenu>
         <my:ContextMenu x:Name="DummyMenu"/>
     </my:MenuManager.AttachedContextMenu>

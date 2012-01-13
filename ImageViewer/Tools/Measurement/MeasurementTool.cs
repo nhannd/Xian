@@ -49,10 +49,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_graphicBuilder != null)
 				return _graphicBuilder.Start(mouseInformation);
 
-			IPresentationImage image = mouseInformation.Tile.PresentationImage;
-			IOverlayGraphicsProvider provider = image as IOverlayGraphicsProvider;
-			if (provider == null)
-				return false;
+            if (!CanStart(mouseInformation.Tile.PresentationImage))
+                return false;
 
 			RoiGraphic roiGraphic = CreateRoiGraphic();
 
@@ -60,12 +58,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_graphicBuilder.GraphicComplete += OnGraphicBuilderComplete;
 			_graphicBuilder.GraphicCancelled += OnGraphicBuilderCancelled;
 
-			_undoableCommand = new DrawableUndoableCommand(image);
-			_undoableCommand.Enqueue(new AddGraphicUndoableCommand(roiGraphic, provider.OverlayGraphics));
-			_undoableCommand.Name = CreationCommandName;
-			_undoableCommand.Execute();
-
-			OnRoiCreation(roiGraphic);
+		    AddRoiGraphic(  mouseInformation.Tile.PresentationImage, 
+                            roiGraphic, 
+                            (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage);
 
 			roiGraphic.Suspend();
 			try
@@ -119,7 +114,17 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return base.GetCursorToken(point);
 		}
 
-		protected RoiGraphic CreateRoiGraphic()
+        protected virtual bool CanStart(IPresentationImage image)
+        {
+            return image != null && image is IOverlayGraphicsProvider;
+        }
+
+	    protected RoiGraphic CreateRoiGraphic()
+	    {
+	        return CreateRoiGraphic(true);
+	    }
+
+        protected RoiGraphic CreateRoiGraphic(bool initiallySelected)
 		{
 			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
 			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
@@ -138,12 +143,22 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			else
 				roiGraphic.Name = string.Empty;
 
-			roiGraphic.State = roiGraphic.CreateSelectedState();
+			roiGraphic.State = initiallySelected ? roiGraphic.CreateSelectedState() : roiGraphic.CreateInactiveState();
 
 			return roiGraphic;
 		}
 
-		protected abstract InteractiveGraphicBuilder CreateGraphicBuilder(IGraphic subjectGraphic);
+	    protected void AddRoiGraphic(IPresentationImage image, RoiGraphic roiGraphic, IOverlayGraphicsProvider provider)
+        {
+            _undoableCommand = new DrawableUndoableCommand(image);
+            _undoableCommand.Enqueue(new AddGraphicUndoableCommand(roiGraphic, provider.OverlayGraphics));
+            _undoableCommand.Name = CreationCommandName;
+            _undoableCommand.Execute();
+
+            OnRoiCreation(roiGraphic);
+        }
+
+	    protected abstract InteractiveGraphicBuilder CreateGraphicBuilder(IGraphic subjectGraphic);
 
 		protected abstract IGraphic CreateGraphic();
 
