@@ -25,6 +25,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 {
     public partial class TileView : IMouseElement, IDisposable
     {
+        const string NormalTileBorderStyle = "NormalTileBorderStyle";
+        const string SelectedTileBorderStyle = "SelectedTileBorderStyle";
+
         #region Private Members
 
         private ServerEventMediator _eventMediator;
@@ -863,10 +866,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
         private void UpdateBorder()
         {
-            // TODO: Maybe we should only change the border when the "Selected" property is updated
-            TileImageBorder.BorderBrush = ServerEntity.Selected
-                                              ? new SolidColorBrush(Color.FromArgb(255, 0xCC, 0xFF, 0x66))
-                                              : new SolidColorBrush(Color.FromArgb(128, 0x66, 0x66, 0x66));
+            TileImageBorder.Style= ServerEntity.Selected
+                                        ? System.Windows.Application.Current.Resources[SelectedTileBorderStyle] as Style
+                                        : System.Windows.Application.Current.Resources[NormalTileBorderStyle] as Style;
 
         }
 

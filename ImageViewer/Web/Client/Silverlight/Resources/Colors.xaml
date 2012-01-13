@@ -15,7 +15,11 @@
     <!-- Tooltip Colors -->
     <Color x:Key="TT_BorderColor">#FF7CB1DD</Color>
     <Color x:Key="TT_TextColor">Black</Color>
-    
+
+    <!-- Tile Colors -->
+    <Color x:Key="Tile_NormalBorderColor">#88666666</Color>
+    <Color x:Key="Tile_SelectedBorderColor">#FFCCFF66</Color>
+
     <!-- Semitransparent Background colors -->
     <Color x:Key="SemiTransparentBG_1">#FF3F3F3F</Color>
     <Color x:Key="SemiTransparentBG_2">#FF000001</Color>
