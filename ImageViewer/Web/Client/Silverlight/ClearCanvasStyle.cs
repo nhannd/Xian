@@ -22,6 +22,7 @@ using System.Windows.Shapes;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
+    // TODO: Get rid of this. It makes it harder to change. Use resource dictionary instead
 	public static class ClearCanvasStyle
 	{
 		public static Color ClearCanvasDarkBlue
