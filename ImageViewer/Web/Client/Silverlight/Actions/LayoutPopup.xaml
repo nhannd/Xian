@@ -13,16 +13,9 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/Styles.xaml" x:Name="Styles"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
 
     <Border Padding="2" d:DesignHeight="175" d:DesignWidth="183">
-        <Popup x:Name="Popup" IsOpen="False">
+        <Popup x:Name="Popup" IsOpen="True">
             <!--Simulate drop-shadow effect in the same way as MenuItem-->
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -39,45 +32,18 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                     </Rectangle.Effect>
                 </Rectangle>
                 <Border Style="{StaticResource ToolLayout_PopupBorderStyle}" Grid.Column="0" Grid.Row="0" x:Name="HostRoot" >
-                    <Border.Background>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" Opacity="0.7">
-                            <LinearGradientBrush.RelativeTransform>
-                                <TransformGroup>
-                                    <ScaleTransform CenterX="0.5" CenterY="0.5"/>
-                                    <SkewTransform CenterX="0.5" CenterY="0.5"/>
-                                    <RotateTransform Angle="636.193" CenterX="0.5" CenterY="0.5"/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </LinearGradientBrush.RelativeTransform>
-                            <GradientStop Color="#FF3F3F3F"/>
-                            <GradientStop Color="#FF000001" Offset="1"/>
-                            <LinearGradientBrush.Transform>
-                                <TransformGroup>
-                                    <ScaleTransform/>
-                                    <SkewTransform/>
-                                    <RotateTransform Angle="45"/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </LinearGradientBrush.Transform>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <!--<Border.Effect>
-                    <DropShadowEffect Color="White" BlurRadius="8" Opacity="1" ShadowDepth="10"/>
-                </Border.Effect>-->
-                    <Border BorderBrush="Transparent" BorderThickness="5">
-                        <StackPanel x:Name="LayoutRoot" Orientation="Vertical" HorizontalAlignment="Stretch" >
-                            <Border BorderThickness="4" BorderBrush="Transparent" Background="Transparent">
-                                <TextBlock x:Name="ImageBoxLayoutText" Text="Image Box Layout" HorizontalAlignment="Center" Foreground="White"></TextBlock>
-                            </Border>
-                            <Grid x:Name="ImageBoxGrid" Background="Transparent" HorizontalAlignment="Stretch"  >
-                            </Grid>
-                            <Border BorderThickness="4" BorderBrush="Transparent" Background="Transparent">
-                                <TextBlock x:Name="TileLayoutText" Text="Tile Layout" HorizontalAlignment="Center" Foreground="White"></TextBlock>
-                            </Border>
-                            <Grid x:Name="TileGrid" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Stretch" >
-                            </Grid>
-                        </StackPanel>
-                    </Border>
+                    <StackPanel x:Name="LayoutRoot" Orientation="Vertical" HorizontalAlignment="Stretch" Margin="5" >
+                        <Border BorderThickness="4" BorderBrush="Transparent" Background="Transparent">
+                            <TextBlock x:Name="ImageBoxLayoutText" Text="Image Box Layout" HorizontalAlignment="Center" Foreground="White"></TextBlock>
+                        </Border>
+                        <Grid x:Name="ImageBoxGrid" Background="Transparent" HorizontalAlignment="Stretch"  >
+                        </Grid>
+                        <Border BorderThickness="4" BorderBrush="Transparent" Background="Transparent">
+                            <TextBlock x:Name="TileLayoutText" Text="Tile Layout" HorizontalAlignment="Center" Foreground="White"></TextBlock>
+                        </Border>
+                        <Grid x:Name="TileGrid" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Stretch" >
+                        </Grid>
+                    </StackPanel>
                 </Border>
             </Grid>
         </Popup>

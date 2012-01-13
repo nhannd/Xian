@@ -133,6 +133,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         {
             InitializeComponent();
 
+
+            Popup.IsOpen = false;
+
             IsTabStop = true; // allow focus
 
             _actionDispatcher = dispatcher;
