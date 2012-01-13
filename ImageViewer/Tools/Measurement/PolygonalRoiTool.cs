@@ -9,9 +9,14 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
@@ -27,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [GroupHint("activate", "Tools.Image.Annotations.Measurement.Roi.Polygonal")]
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class PolygonalRoiTool : MeasurementTool
+	public partial class PolygonalRoiTool : MeasurementTool
 	{
 		public PolygonalRoiTool() : base(SR.TooltipPolygonalRoi) {}
 
@@ -55,5 +60,36 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			return new PolygonalRoiCalloutLocationStrategy();
 		}
-	}
+    }
+
+    #region Oto
+    partial class PolygonalRoiTool : IDrawPolygon
+    {
+        AnnotationGraphic IDrawPolygon.Draw(CoordinateSystem coordinateSystem, string name, IList<PointF> vertices)
+        {
+            var image = Context.Viewer.SelectedPresentationImage;
+            if (!CanStart(image))
+                throw new InvalidOperationException("Can't draw a polygonal ROI at this time.");
+
+            var imageGraphic = ((IImageGraphicProvider) image).ImageGraphic;
+            if (coordinateSystem == CoordinateSystem.Destination)
+                vertices = vertices.Select(v => imageGraphic.SpatialTransform.ConvertToSource(v)).ToList();
+
+            var overlayProvider = (IOverlayGraphicsProvider) image;
+            var roiGraphic = CreateRoiGraphic(false);
+            roiGraphic.Name = name;
+            AddRoiGraphic(image, roiGraphic, overlayProvider);
+
+            var subject = (IPointsGraphic)roiGraphic.Subject;
+
+            foreach (var vertex in vertices)
+                subject.Points.Add(vertex);
+
+            roiGraphic.Callout.Update();
+            roiGraphic.State = roiGraphic.CreateSelectedState();
+            //roiGraphic.Draw();
+            return roiGraphic;
+        }
+    }
+    #endregion
 }

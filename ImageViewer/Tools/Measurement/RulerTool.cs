@@ -9,9 +9,12 @@
 
 #endregion
 
+using System;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
@@ -28,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class RulerTool : MeasurementTool
+	public partial class RulerTool : MeasurementTool
 	{
 		public RulerTool()
 			: base(SR.TooltipRuler)
@@ -59,5 +62,40 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			return new RulerCalloutLocationStrategy();
 		}
-	}
+    }
+
+    #region Oto
+    partial class RulerTool : IDrawRuler
+    {
+        AnnotationGraphic IDrawRuler.Draw(CoordinateSystem coordinateSystem, string name, PointF point1, PointF point2)
+        {
+            var image = Context.Viewer.SelectedPresentationImage;
+            if (!CanStart(image))
+                throw new InvalidOperationException("Can't draw an elliptical ROI at this time.");
+
+            var imageGraphic = ((IImageGraphicProvider) image).ImageGraphic;
+            if (coordinateSystem == CoordinateSystem.Destination)
+            {
+                //Use the image graphic to get the "source" coordinates because it's already in the scene.
+                point1 = imageGraphic.SpatialTransform.ConvertToSource(point1);
+                point2 = imageGraphic.SpatialTransform.ConvertToSource(point2);
+            }
+
+            var overlayProvider = (IOverlayGraphicsProvider) image;
+            var roiGraphic = CreateRoiGraphic(false);
+            roiGraphic.Name = name;
+            AddRoiGraphic(image, roiGraphic, overlayProvider);
+
+            var subject = (IPointsGraphic)roiGraphic.Subject;
+
+            subject.Points.Add(point1);
+            subject.Points.Add(point2);
+
+            roiGraphic.Callout.Update();
+            roiGraphic.State = roiGraphic.CreateSelectedState();
+            //roiGraphic.Draw();
+            return roiGraphic;
+        }
+    }
+    #endregion
 }

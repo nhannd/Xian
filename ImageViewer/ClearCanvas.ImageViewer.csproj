@@ -143,6 +143,15 @@
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutFactory.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
     <Compile Include="Annotations\MammogramAnnotationLayoutProxy.cs" />
+    <Compile Include="Automation\Annotations.cs" />
+    <Compile Include="Automation\Calibration.cs" />
+    <Compile Include="Automation\DisplaySetLayout.cs" />
+    <Compile Include="Automation\AutomationContext.cs" />
+    <Compile Include="Automation\Probe.cs" />
+    <Compile Include="Automation\Zoom.cs" />
+    <Compile Include="Automation\Stack.cs" />
+    <Compile Include="Automation\LookupTable.cs" />
+    <Compile Include="Automation\WorkspaceLayout.cs" />
     <Compile Include="BaseTools\GraphicTool.cs" />
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="BaseTools\MouseButtonIconSet.cs" />
@@ -208,6 +217,7 @@
     <Compile Include="Layout\IHpLayoutHook.cs" />
     <Compile Include="Layout\IHpProperty.cs" />
     <Compile Include="Layout\IHpSerializableElement.cs" />
+    <Compile Include="Layout\RectangularGrid.cs" />
     <Compile Include="Layout\Tests\HpApplicabilityResultTests.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />

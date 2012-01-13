@@ -14,9 +14,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Layout;
 using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
@@ -36,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MouseToolButton(XMouseButtons.Right, false)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ZoomTool : MouseImageViewerTool
+	public partial class ZoomTool : MouseImageViewerTool
 	{
 		internal static readonly float DefaultMinimumZoom = 0.25F;
 		internal static readonly float DefaultMaximumZoom = 64F;
@@ -309,5 +311,44 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			transform.Scale = referenceTransform.Scale;
 			transform.ScaleToFit = referenceTransform.ScaleToFit;
 		}
-	}
+    }
+
+    #region Oto
+    public partial class ZoomTool : IZoom
+    {
+        #region IViewerZoomService Members
+
+        void IZoom.SetZoom(double zoom)
+        {
+            SetScale((float)zoom);
+        }
+
+        double IZoom.GetZoomAt(RectangularGrid.Location tileLocation)
+        {
+            var imageBoxLocation = tileLocation.ParentGridLocation;
+            IImageBox imageBox;
+            if (imageBoxLocation == null)
+                imageBox = Context.Viewer.PhysicalWorkspace.SelectedImageBox;
+            else
+                imageBox = Context.Viewer.PhysicalWorkspace[imageBoxLocation.Row, imageBoxLocation.Column];
+
+            var tile = imageBox[tileLocation.Row, tileLocation.Column];
+
+            //Rather than change the class, we'll just select temporarily.
+            var oldSelectedTile = Context.Viewer.SelectedTile;
+            tile.Select();
+
+            var transform = GetSelectedImageTransform();
+            if (transform == null)
+                throw new InvalidOperationException("The tile must contain a valid image.");
+            
+            if (oldSelectedTile != null)
+                oldSelectedTile.Select();
+
+            return transform.Scale;
+        }
+
+        #endregion
+    }
+    #endregion
 }

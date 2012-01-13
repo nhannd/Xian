@@ -46,21 +46,15 @@ namespace ClearCanvas.ImageViewer.Configuration
 					throw new FaultException(message);
 				}
 
-				Dictionary<string, T> combinedResults = new Dictionary<string, T>();
-
+			    var results = new List<T>();
 				try
 				{
 					foreach (IStudyRootQuery query in DefaultServers.GetQueryInterfaces(true))
 					{
 						try
 						{
-							IList<T> results = _query(queryCriteria, query);
-							foreach (T result in results)
-							{
-								string uid = _getUid(result);
-								if (!combinedResults.ContainsKey(uid))
-									combinedResults[uid] = result;
-							}
+							IList<T> r = _query(queryCriteria, query);
+                            results.AddRange(r);
 						}
 						catch (Exception e)
 						{
@@ -88,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 					throw new FaultException<QueryFailedFault>(fault, fault.Description);
 				}
 
-				return new List<T>(combinedResults.Values);
+			    return results;
 			}
 		}
 

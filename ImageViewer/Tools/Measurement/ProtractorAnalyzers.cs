@@ -30,19 +30,42 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			set { }
 		}
 
-		//TODO (cr Feb 2010): All the analysis should really be done in the ProtractorRoiInfo.
-		public string Analyze(ProtractorRoiInfo roiInfo, RoiAnalysisMode mode)
-		{
-			// Don't show the callout until the second ray is drawn
-			if (roiInfo.Points.Count < 3)
-				return SR.ToolsMeasurementSetVertex;
+        ////TODO (cr Feb 2010): All the analysis should really be done in the ProtractorRoiInfo.
+        //public string Analyze(ProtractorRoiInfo roiInfo, RoiAnalysisMode mode)
+        //{
+        //    // Don't show the callout until the second ray is drawn
+        //    if (roiInfo.Points.Count < 3)
+        //        return SR.ToolsMeasurementSetVertex;
 
-			List<PointF> normalizedPoints = NormalizePoints(roiInfo);
+        //    List<PointF> normalizedPoints = NormalizePoints(roiInfo);
 
-			double angle = Vector.SubtendedAngle(normalizedPoints[0], normalizedPoints[1], normalizedPoints[2]);
+        //    double angle = Vector.SubtendedAngle(normalizedPoints[0], normalizedPoints[1], normalizedPoints[2]);
 
-			return String.Format(SR.ToolsMeasurementFormatDegrees, Math.Abs(angle));
-		}
+        //    return String.Format(SR.ToolsMeasurementFormatDegrees, Math.Abs(angle));
+        //}
+
+        //TODO (cr Feb 2010): All the analysis should really be done in the ProtractorRoiInfo.
+        public IRoiAnalyzerResult Analyze(Roi roi, RoiAnalysisMode mode)
+        {
+            return Analyze((ProtractorRoiInfo) roi, mode);
+        }
+
+        private IRoiAnalyzerResult Analyze(ProtractorRoiInfo roiInfo, RoiAnalysisMode mode)
+        {
+            // Don't show the callout until the second ray is drawn
+            if (roiInfo.Points.Count < 3)
+            {
+                //return SR.ToolsMeasurementSetVertex;
+                return new RoiAnalyzerResultNoValue("Protactor", SR.ToolsMeasurementSetVertex);
+            }
+
+            List<PointF> normalizedPoints = NormalizePoints(roiInfo);
+
+            double angle = Vector.SubtendedAngle(normalizedPoints[0], normalizedPoints[1], normalizedPoints[2]);
+
+            //return String.Format(SR.ToolsMeasurementFormatDegrees, Math.Abs(angle));
+            return new SingleValueRoiAnalyzerResult("Protactor", SR.ToolsMeasurementFormatDegrees, Math.Abs(angle),String.Format(SR.ToolsMeasurementFormatDegrees, Math.Abs(angle)));
+        }
 
 		private List<PointF> NormalizePoints(ProtractorRoiInfo roiInfo)
 		{
@@ -65,12 +88,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return normalized;
 		}
 
-		public string Analyze(Roi roi, RoiAnalysisMode mode)
-		{
-			return Analyze((ProtractorRoiInfo) roi, mode);
-		}
-
-	    public void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback)
+	    
+        public void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback)
 	    {
 	        _updateCallback = callback;
 	    }

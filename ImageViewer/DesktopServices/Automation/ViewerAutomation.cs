@@ -44,26 +44,35 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			return Platform.GetService<IStudyRootQuery>();
 		}
 
-		#region IViewerAutomation Members
+	    /// TODO (CR Dec 2011): Build this functionality right into ImageViewerComponent?
+        public static IImageViewer GetViewer(Viewer viewer)
+        {
+            return ViewerAutomationTool.GetViewer(viewer.Identifier);
+        }
 
-		public GetActiveViewersResult GetActiveViewers()
+	    #region IViewerAutomation Members
+
+        public GetViewersResult GetViewers(GetViewersRequest request)
+        {
+            List<Viewer> viewers = new List<Viewer>();
+
+            //The tool stores the viewer ids in order of activation, most recent first
+            foreach (Guid viewerId in ViewerAutomationTool.GetViewerIds())
+            {
+                IImageViewer viewer = ViewerAutomationTool.GetViewer(viewerId);
+                if (viewer != null && GetViewerWorkspace(viewer) != null)
+                    viewers.Add(new Viewer(viewerId, GetPrimaryStudyInstanceUid(viewer)));
+            }
+
+            if (viewers.Count == 0)
+                throw new FaultException<NoActiveViewersFault>(new NoActiveViewersFault(), "No active viewers were found.");
+
+            return new GetViewersResult {Viewers = viewers};
+        }
+        
+        public GetActiveViewersResult GetActiveViewers()
 		{
-			List<Viewer> viewers = new List<Viewer>();
-
-			//The tool stores the viewer ids in order of activation, most recent first
-			foreach (Guid viewerId in ViewerAutomationTool.GetViewerIds())
-			{
-				IImageViewer viewer = ViewerAutomationTool.GetViewer(viewerId);
-				if (viewer != null && GetViewerWorkspace(viewer) != null)
-					viewers.Add(new Viewer(viewerId, GetPrimaryStudyInstanceUid(viewer)));
-			}
-
-			if (viewers.Count == 0)
-				throw new FaultException<NoActiveViewersFault>(new NoActiveViewersFault(), "No active viewers were found.");
-
-			GetActiveViewersResult result = new GetActiveViewersResult();
-			result.ActiveViewers = viewers;
-			return result;
+            return new GetActiveViewersResult {ActiveViewers = GetViewers(new GetViewersRequest()).Viewers};
 		}
 
 		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)
@@ -97,7 +106,63 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			return result;
 		}
 
-		public OpenStudiesResult OpenStudies(OpenStudiesRequest request)
+        public OpenFilesResult OpenFiles(OpenFilesRequest request)
+        {
+            if (request == null)
+            {
+                const string message = "The open files request cannot be null.";
+                Platform.Log(LogLevel.Debug, message);
+                throw new FaultException(message);
+            }
+            
+            if (request.Files == null || request.Files.Count == 0)
+            {
+                const string message = "At least one file or directory must be specified.";
+                Platform.Log(LogLevel.Debug, message);
+                throw new FaultException(message);
+            }
+
+            var helper = new OpenFilesHelper();
+            try
+            {
+                foreach (var file in request.Files)
+                    FileProcessor.Process(file, null, helper.AddFile, true);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+                const string message = "There was a problem with the files/directories specified.";
+                throw new FaultException<OpenFilesFault>(new OpenFilesFault { FailureDescription = message }, message);
+            }
+
+            if (request.WaitForFilesToOpen.HasValue && !request.WaitForFilesToOpen.Value)
+            {
+                SynchronizationContext.Current.Post(ignore => helper.OpenFiles(), null);
+                return new OpenFilesResult();
+            }
+
+            try
+            {
+                helper.HandleErrors = false;
+                var viewer = helper.OpenFiles();
+                var viewerId = ViewerAutomationTool.GetViewerId(viewer);
+                return new OpenFilesResult { Viewer = new Viewer(viewerId.Value, GetPrimaryStudyInstanceUid(viewer)) };
+
+            }
+            catch (Exception e)
+            {
+                if (!request.ReportFaultToUser.HasValue || request.ReportFaultToUser.Value)
+                {
+                    SynchronizationContext.Current.Post(
+                        ignore => ExceptionHandler.Report(e, ImageViewer.SR.MessageFailedToOpenImages, Application.ActiveDesktopWindow), null);
+                }
+
+                const string message = "There was a problem opening the files/directories specified in the viewer.";
+                throw new FaultException<OpenFilesFault>(new OpenFilesFault { FailureDescription = message }, message);
+            }
+        }
+
+	    public OpenStudiesResult OpenStudies(OpenStudiesRequest request)
 		{
 			if (request == null)
 			{
@@ -286,8 +351,13 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			CompleteOpenStudyInfo(request.StudiesToOpen);
 			IDictionary<string, ApplicationEntity> serverMap = GetServerMap(request.StudiesToOpen);
 
-			ImageViewerComponent viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
-			List<LoadStudyArgs> loadStudyArgs = new List<LoadStudyArgs>();
+		    ImageViewerComponent viewer;
+            if (!request.LoadPriors.HasValue || request.LoadPriors.Value)
+                viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+            else
+                viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended, PriorStudyFinder.Null);
+
+			var loadStudyArgs = new List<LoadStudyArgs>();
 
 			foreach (OpenStudyInfo info in request.StudiesToOpen)
 			{

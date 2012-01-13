@@ -127,8 +127,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 					foreach (Angle shapeData in shapes)
 					{
 						Roi roi = CreateRoiFromGraphic((IOverlayGraphicsProvider) image, shapeData);
-						string actualResult = analyzer.Analyze(roi, RoiAnalysisMode.Normal);
-						float actualAngle = float.Parse(RegexAngleMeasurement.Match(actualResult).Groups[1].Value, CultureInfo.InvariantCulture);
+						var actualResult = analyzer.Analyze(roi, RoiAnalysisMode.Normal);
+
+						float actualAngle = float.Parse(RegexAngleMeasurement.Match(actualResult.SerializedAsString()).Groups[1].Value, CultureInfo.InvariantCulture);
 						Trace.WriteLine(String.Format("Actual: {0} degrees, Expected: {1} degrees", actualAngle, expectedAngle));
 						Assert.AreEqual(expectedAngle, actualAngle, 0.5f, "Testing Angle {0}", shapeData); // allow half degree tolerance
 					}

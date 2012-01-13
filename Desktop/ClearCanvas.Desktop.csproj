@@ -139,6 +139,7 @@
     <Compile Include="Configuration\IConfigurationApplicationComponent.cs" />
     <Compile Include="Configuration\IConfigurationPage.cs" />
     <Compile Include="Configuration\IConfigurationPageProvider.cs" />
+    <Compile Include="Configuration\IConfigurationProvider.cs" />
     <Compile Include="Configuration\LocalSettingsStore.cs" />
     <Compile Include="Configuration\SettingEditorComponent.cs" />
     <Compile Include="Configuration\ConfigurationDialogSettings.cs" />

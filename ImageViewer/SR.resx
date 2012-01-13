@@ -691,4 +691,10 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="LabelUnitsUnspecified" xml:space="preserve">
     <value />
   </data>
+  <data name="LabelUnitsMm2" xml:space="preserve">
+    <value>mm²</value>
+  </data>
+  <data name="LabelUnitsPixels" xml:space="preserve">
+    <value>pixels</value>
+  </data>
 </root>

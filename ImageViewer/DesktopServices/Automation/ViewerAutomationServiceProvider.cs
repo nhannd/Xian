@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.Automation;
@@ -54,6 +53,23 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			} 
 		}
 
+        public GetViewersResult GetViewers(GetViewersRequest request)
+        {
+            // Done for reasons of speed, as well as the fact that a call to the service from the same thread
+            // that the service is hosted on (the main UI thread) will cause a deadlock.
+            if (SynchronizationContext.Current == ViewerAutomationServiceHostTool.HostSynchronizationContext)
+            {
+                return new ViewerAutomation().GetViewers(request);
+            }
+            else
+            {
+                using (ViewerAutomationServiceClient client = new ViewerAutomationServiceClient())
+                {
+                    return client.GetViewers(request);
+                }
+            }
+        }
+
 		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
@@ -87,6 +103,23 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 				}
 			} 
 		}
+
+        public OpenFilesResult OpenFiles(OpenFilesRequest request)
+        {
+            // Done for reasons of speed, as well as the fact that a call to the service from the same thread
+            // that the service is hosted on (the main UI thread) will cause a deadlock.
+            if (SynchronizationContext.Current == ViewerAutomationServiceHostTool.HostSynchronizationContext)
+            {
+                return new ViewerAutomation().OpenFiles(request);
+            }
+            else
+            {
+                using (ViewerAutomationServiceClient client = new ViewerAutomationServiceClient())
+                {
+                    return client.OpenFiles(request);
+                }
+            }
+        }
 
 		public void ActivateViewer(ActivateViewerRequest request)
 		{

@@ -15,6 +15,12 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+    //public interface IAdjustableDataLut : IDataLut, IBasicVoiLutLinear
+    //{
+    //    double BrightnessPercent { get; }
+    //    double ContrastPercent { get; }
+    //}
+
 	/// <summary>
 	/// A class that wraps a <see cref="DataLut"/> inside an <see cref="IBasicVoiLutLinear"/>, in
 	/// order to allow 'window/levelling' of the <see cref="DataLut"/>.  
@@ -25,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// the full window, since the true values won't necessarily have any real meaning.
 	/// </remarks>
 	[Cloneable]
-	public class AdjustableDataLut : ComposableVoiLut, IBasicVoiLutLinear, IDataLut
+    public class AdjustableDataLut : ComposableVoiLut, IDataLut, IBasicVoiLutLinear
 	{
 		private class Memento
 		{
@@ -121,16 +127,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _linearLut.MaxInputValue - _linearLut.MinInputValue + 1; }
 		}
 
-		private double BrightnessPercent
-		{
-			get { return 100 - (WindowCenter - _linearLut.MinInputValue) / FullWindow * 100; }
-		}
-
-		private double ContrastPercent
-		{
-			get { return WindowWidth / FullWindow * 100; }
-		}
-
 		#endregion
 
 		#region Private Methods
@@ -154,7 +150,49 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
-		#region Public Properties
+        #region IBasicVoiLutLinear Members
+
+        /// <summary>
+        /// Gets or sets the Window Width.
+        /// </summary>
+        double IBasicVoiLutLinear.WindowWidth
+        {
+            get { return _linearLut.WindowWidth; }
+            set { _linearLut.WindowWidth = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the Window Center.
+        /// </summary>
+        double IBasicVoiLutLinear.WindowCenter
+        {
+            get { return _linearLut.WindowCenter; }
+            set { _linearLut.WindowCenter = value; }
+        }
+
+        #endregion
+
+        #region IBasicVoiLutLinear Members
+
+        /// <summary>
+        /// Gets or sets the Window Width.
+        /// </summary>
+        double IVoiLutLinear.WindowWidth
+        {
+            get { return _linearLut.WindowWidth; }
+        }
+
+        /// <summary>
+        /// Gets or sets the Window Center.
+        /// </summary>
+        double IVoiLutLinear.WindowCenter
+        {
+            get { return _linearLut.WindowCenter; }
+        }
+
+        #endregion
+
+        #region Public Properties
 
 		/// <summary>
 		/// Gets the underlying data lut.
@@ -206,29 +244,29 @@ namespace ClearCanvas.ImageViewer.Imaging
 			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
 
-		//TODO: later, add IContrastBrightnessLut and allow the properties to be set.
+        //TODO: later, add IContrastBrightnessLut and allow the properties to be set.
 
-		#region IBasicVoiLutLinear Members
+        /// <summary>
+        /// The brightness as a percentage.
+        /// </summary>
+        /// <remarks>
+        /// This property is currently only settable by casting to <see cref="IBasicVoiLutLinear"/>.
+        /// </remarks>
+        public double BrightnessPercent
+        {
+            get { return 100 - (_linearLut.WindowCenter - _linearLut.MinInputValue) / FullWindow * 100; }
+        }
 
-		/// <summary>
-		/// Gets or sets the Window Width.
-		/// </summary>
-		public double WindowWidth
-		{
-			get { return _linearLut.WindowWidth; }
-			set { _linearLut.WindowWidth = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets the Window Center.
-		/// </summary>
-		public double WindowCenter
-		{
-			get { return _linearLut.WindowCenter; }
-			set { _linearLut.WindowCenter = value; }
-		}
-
-		#endregion
+        /// <summary>
+        /// The contrast as a percentage.
+        /// </summary>
+        /// <remarks>
+        /// This property is currently only settable by casting to <see cref="IBasicVoiLutLinear"/>.
+        /// </remarks>
+        public double ContrastPercent
+        {
+            get { return _linearLut.WindowWidth / FullWindow * 100; }
+        }
 
 		#endregion
 

@@ -9,9 +9,12 @@
 
 #endregion
 
+using System;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Automation;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
@@ -28,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class RectangularRoiTool : MeasurementTool
+	public partial class RectangularRoiTool : MeasurementTool
 	{
 		public RectangularRoiTool() 
 			: base(SR.TooltipRectangularRoi)
@@ -59,5 +62,40 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			return new BoundableResizeControlGraphic(new BoundableStretchControlGraphic(new MoveControlGraphic(new RectanglePrimitive())));
 		}
-	}
+    }
+
+    #region Oto
+    partial class RectangularRoiTool : IDrawRectangle
+    {
+        AnnotationGraphic IDrawRectangle.Draw(CoordinateSystem coordinateSystem, string name, PointF topLeft, PointF bottomRight)
+        {
+            var image = Context.Viewer.SelectedPresentationImage;
+            if (!CanStart(image))
+                throw new InvalidOperationException("Can't draw a rectangular ROI at this time.");
+
+            var imageGraphic = ((IImageGraphicProvider) image).ImageGraphic;
+            if (coordinateSystem == CoordinateSystem.Destination)
+            {
+                //Use the image graphic to get the "source" coordinates because it's already in the scene.
+                topLeft = imageGraphic.SpatialTransform.ConvertToSource(topLeft);
+                bottomRight = imageGraphic.SpatialTransform.ConvertToSource(bottomRight);
+            }
+
+            var overlayProvider = (IOverlayGraphicsProvider) image;
+            var roiGraphic = CreateRoiGraphic(false);
+            roiGraphic.Name = name;
+            AddRoiGraphic(image, roiGraphic, overlayProvider);
+
+            var subject = (RectanglePrimitive)roiGraphic.Subject;
+
+            subject.TopLeft = topLeft;
+            subject.BottomRight = bottomRight;
+
+            roiGraphic.Callout.Update();
+            roiGraphic.State = roiGraphic.CreateSelectedState();
+            //roiGraphic.Draw();
+            return roiGraphic;
+        }
+    }
+    #endregion
 }

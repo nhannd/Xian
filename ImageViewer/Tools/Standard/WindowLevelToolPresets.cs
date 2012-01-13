@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
@@ -50,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				get { return _action; }
 			}
 
-			private void Apply()
+		    private void Apply()
 			{
 				ImageOperationApplicator applicator = new ImageOperationApplicator(_ownerTool.SelectedPresentationImage, _preset.Operation);
 				UndoableCommand historyCommand = _ownerTool._toolBehavior.Behavior.SelectedImageWindowLevelPresetsTool ? applicator.ApplyToReferenceImage() : applicator.ApplyToAllImages();
@@ -88,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get
 			{
 				IActionSet baseActions = base.Actions;
-				return baseActions.Union(new ActionSet(CreateActions("imageviewer-contextmenu")));
+				return baseActions.Union(new ActionSet(CreateContextMenuActions()));
 			}
 		}
 
@@ -98,42 +97,52 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return ActionPlaceholder.GetPlaceholderAction(actionSite, base.Actions, "auto");
 		}
 
-		private List<IAction> CreateActions(string actionSite)
+        private IEnumerable<IAction> CreateContextMenuActions()
+        {
+            return CreateActions("imageviewer-contextmenu");
+        }
+
+        private List<PresetVoiLut> GetApplicablePresets()
+        {
+            List<PresetVoiLut> presets = new List<PresetVoiLut>();
+
+            if (this.SelectedPresentationImage is IImageSopProvider)
+            {
+                //Only temporary until we enable the full functionality in the presets.
+                PresetVoiLut autoPreset = new PresetVoiLut(new AutoPresetVoiLutOperationComponent());
+                autoPreset.KeyStroke = XKeys.F2;
+                presets.Add(autoPreset);
+
+                ImageSop sop = ((IImageSopProvider) this.SelectedPresentationImage).ImageSop;
+
+                PresetVoiLutGroupCollection groups = PresetVoiLutSettings.Default.GetPresetGroups();
+                PresetVoiLutGroup group = CollectionUtils.SelectFirst(groups,
+                                                                      delegate(PresetVoiLutGroup testGroup)
+                                                                          {
+                                                                              return testGroup.AppliesTo(sop);
+                                                                          });
+                if (group != null)
+                {
+                    foreach (PresetVoiLut preset in group.Clone().Presets)
+                    {
+                        if (preset.Operation.AppliesTo(this.SelectedPresentationImage))
+                            presets.Add(preset);
+                    }
+                }
+
+                presets.Sort(new PresetVoiLutComparer());
+            }
+
+            return presets;
+        }
+
+	    private List<IAction> CreateActions(string actionSite)
 		{
 			List<IAction> actions = new List<IAction>();
 
-			if (this.SelectedPresentationImage is IImageSopProvider)
-			{
-				List<PresetVoiLut> presets = new List<PresetVoiLut>();
-
-				//Only temporary until we enable the full functionality in the presets.
-				PresetVoiLut autoPreset = new PresetVoiLut(new AutoPresetVoiLutOperationComponent());
-				autoPreset.KeyStroke = XKeys.F2;
-				presets.Add(autoPreset);
-
-				ImageSop sop = ((IImageSopProvider) this.SelectedPresentationImage).ImageSop;
-
-				PresetVoiLutGroupCollection groups = PresetVoiLutSettings.Default.GetPresetGroups();
-				PresetVoiLutGroup group = CollectionUtils.SelectFirst(groups,
-															delegate(PresetVoiLutGroup testGroup)
-																{
-																	return testGroup.AppliesTo(sop);
-																});
-				if (group != null)
-				{
-					foreach (PresetVoiLut preset in group.Clone().Presets)
-					{
-						if (preset.Operation.AppliesTo(this.SelectedPresentationImage))
-							presets.Add(preset);
-					}
-				}
-
-				int i = 0;
-				presets.Sort(new PresetVoiLutComparer());
-
-				foreach (PresetVoiLut preset in presets)
-					actions.Add(new PresetVoiLutActionContainer(this, actionSite, preset, ++i).Action);
-			}
+            int i = 0;
+			foreach (PresetVoiLut preset in GetApplicablePresets())
+				actions.Add(new PresetVoiLutActionContainer(this, actionSite, preset, ++i).Action);
 
 			return actions;
 		}
