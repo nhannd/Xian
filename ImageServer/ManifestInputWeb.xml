@@ -87,7 +87,7 @@
     <File name="Web\bin\zh-CHS\AjaxControlToolkit.resources.dll" checksum="true" />
     <File name="Web\bin\zh-CHT\AjaxControlToolkit.resources.dll" checksum="true" />
     <File name="Web\ClientBin\Silverlight.xap" checksum="true" />
-    <File name="Web\ClientBin\SplashScreen\ClearCanvasWebViewerLogo.png" checksum="true" />
+    <File name="Web\ClientBin\SplashScreen\ClearCanvasWebViewerLogo.png" checksum="false" />
     <File name="Web\Controls\AlertIndicator.ascx" />
     <File name="Web\Controls\ApplicationAlertPanel.ascx" />
     <File name="Web\Controls\CheckJavascript.ascx" />
@@ -312,7 +312,7 @@
     <File name="Web\Pages\WebViewer\StudyList.aspx" />
     <File name="Web\Pages\WebViewer\StudyListGridView.ascx" />
     <File name="Web\Pages\WebViewer\Images\Searching.gif" checksum="true" />
-    <File name="Web\Pages\WebViewer\Images\StudiesPageLogo.png" checksum="true" />
+    <File name="Web\Pages\WebViewer\Images\StudiesPageLogo.png" checksum="false" />
     <File name="Web\Pages\WebViewer\Images\WebViewerPagerBackground.png" checksum="true" />
     <File name="Web\Pages\WebViewer\Images\WebViewerPagerFirstDisabled.png" checksum="true" />
     <File name="Web\Pages\WebViewer\Images\WebViewerPagerFirstEnabled.png" checksum="true" />
