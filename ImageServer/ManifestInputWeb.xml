@@ -14,6 +14,7 @@
     <File name="Web\logs" ignore="true"/>
     <File name="Web\Pages\Help\UsersGuide" ignore="true"/>
     <File name="Web\bin\AjaxControlToolkit.dll" checksum="true" />
+    <File name="Web\bin\App_Code.compiled" ignore="true"/>
     <File name="Web\bin\App_global.asax.compiled" ignore="true"/>
     <File name="Web\bin\App_GlobalResources.compiled" ignore="true"/>
     <File name="Web\bin\BilinearInterpolation.dll" checksum="true" />
