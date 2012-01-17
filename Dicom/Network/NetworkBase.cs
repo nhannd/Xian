@@ -24,6 +24,7 @@ namespace ClearCanvas.Dicom.Network
     /// </summary>
     internal enum DicomAssociationState
     {
+        // ReSharper disable InconsistentNaming
         Sta1_Idle,
         Sta2_TransportConnectionOpen,
         Sta3_AwaitingLocalAAssociationResponsePrimative,
@@ -37,6 +38,7 @@ namespace ClearCanvas.Dicom.Network
         Sta11_ReleaseCollisionRequestorSide,
         Sta12_ReleaseCollisionAcceptorSide,
         Sta13_AwaitingTransportConnectionClose
+        // ReSharper restore InconsistentNaming
     }
 
     /// <summary>
@@ -127,9 +129,9 @@ namespace ClearCanvas.Dicom.Network
         private bool _stop;
         internal DicomAssociationState State = DicomAssociationState.Sta1_Idle;
 		private bool _logInformation = true;
-
-        internal Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
-
+        private DateTime _dimseTimeout;
+        private readonly Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
+        private readonly object _syncLock = new object();
         #endregion
 
         #region Public members
@@ -163,7 +165,7 @@ namespace ClearCanvas.Dicom.Network
 
         #region Public Constructors
 
-        public NetworkBase()
+        protected NetworkBase()
         {
             _messageId = 1;
         }
@@ -199,6 +201,31 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
+        /// Method called after network activity to reset the time when a DIMSE timeout will occur.
+        /// </summary>
+        protected void ResetDimseTimeout()
+        {
+            lock (_syncLock)
+            {
+                //TODO (Time Review): use Environment.TickCount.  It probably won't have much of
+                //a performance impact here, but it is pretty inefficient when called in a tight loop.
+                _dimseTimeout = _assoc != null
+                                    ? DateTime.Now.AddMilliseconds(_assoc.ReadTimeout)
+                                    : DateTime.Now.AddSeconds(Timeout);
+            }
+        }
+
+        /// <summary>
+        /// Return a synchronized version of time for the Dimse Timeout
+        /// </summary>
+        /// <returns></returns>
+        protected DateTime GetDimseTimeout()
+        {
+            lock (_syncLock)
+                return _dimseTimeout;
+        }
+
+        /// <summary>
         /// Method for closing the network connection.
         /// </summary>
         /// <param name="millisecondsTimeout">The timeout in milliseconds to wait for the closure
@@ -213,8 +240,10 @@ namespace ClearCanvas.Dicom.Network
         {
             lock (_pduQueue)
             {
+                ResetDimseTimeout();
                 SendRawPDU(pdu);
                 //_pduQueue.Enqueue(pdu);
+                ResetDimseTimeout();
             }
         }
 
@@ -342,7 +371,7 @@ namespace ClearCanvas.Dicom.Network
 
         private bool OnReceiveDimse(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
-            DicomMessage msg = new DicomMessage(command, dataset);
+            var msg = new DicomMessage(command, dataset);
             DicomCommandField commandField = msg.CommandField;
 
             if ((commandField == DicomCommandField.CStoreRequest)
@@ -400,7 +429,7 @@ namespace ClearCanvas.Dicom.Network
 
         protected virtual void OnDimseSent(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
-            DicomMessage msg = new DicomMessage(command, dataset);
+            var msg = new DicomMessage(command, dataset);
             DicomCommandField commandField = msg.CommandField;
 
             if ((commandField == DicomCommandField.CStoreRequest)
@@ -661,7 +690,7 @@ namespace ClearCanvas.Dicom.Network
         public void SendAssociateRequest(AssociationParameters associate)
         {
             _assoc = associate;
-            AAssociateRQ pdu = new AAssociateRQ(_assoc);
+            var pdu = new AAssociateRQ(_assoc);
 
         	State = DicomAssociationState.Sta5_AwaitingAAssociationACOrReject;
 
@@ -678,7 +707,7 @@ namespace ClearCanvas.Dicom.Network
         {
             if (State != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
             {
-                AAbort pdu = new AAbort(source, reason);
+                var pdu = new AAbort(source, reason);
 
                 EnqueuePdu(pdu.Write());
                 State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
@@ -712,7 +741,7 @@ namespace ClearCanvas.Dicom.Network
                 throw new DicomNetworkException(
                     "Attempting to send association accept at invalid time in association, aborting");
             }
-            AAssociateAC pdu = new AAssociateAC(_assoc);
+            var pdu = new AAssociateAC(_assoc);
 
             EnqueuePdu(pdu.Write());
 
@@ -738,7 +767,7 @@ namespace ClearCanvas.Dicom.Network
                 throw new DicomNetworkException(
                     "Attempting to send association reject at invalid time in association, aborting");
             }
-            AAssociateRJ pdu = new AAssociateRJ(result, source, reason);
+            var pdu = new AAssociateRJ(result, source, reason);
 
             EnqueuePdu(pdu.Write());
 
@@ -759,7 +788,7 @@ namespace ClearCanvas.Dicom.Network
                 return;
             }
 
-            AReleaseRQ pdu = new AReleaseRQ();
+            var pdu = new AReleaseRQ();
 
             EnqueuePdu(pdu.Write());
 
@@ -779,7 +808,7 @@ namespace ClearCanvas.Dicom.Network
             {
             }
 
-            AReleaseRP pdu = new AReleaseRP();
+            var pdu = new AReleaseRP();
 
             EnqueuePdu(pdu.Write());
             State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
@@ -796,7 +825,7 @@ namespace ClearCanvas.Dicom.Network
         public void SendCEchoRequest(byte presentationID, ushort messageID)
         {
             Platform.Log(LogLevel.Info, "Sending C Echo request, pres ID: {0}, messageID = {1}", presentationID, messageID);
-            DicomMessage msg = new DicomMessage
+            var msg = new DicomMessage
                                	{
                                		MessageId = messageID,
                                		CommandField = DicomCommandField.CEchoRequest,
@@ -816,7 +845,7 @@ namespace ClearCanvas.Dicom.Network
         public void SendCEchoResponse(byte presentationID, ushort messageID, DicomStatus status)
         {
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
-            DicomMessage msg = new DicomMessage
+            var msg = new DicomMessage
                                	{
                                		MessageIdBeingRespondedTo = messageID,
                                		CommandField = DicomCommandField.CEchoResponse,
@@ -938,15 +967,15 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="status"></param>
         public void SendCStoreResponse(byte presentationID, ushort messageID, string affectedInstance, DicomStatus status)
         {
-            DicomMessage msg = new DicomMessage
-                               	{
-                               		MessageIdBeingRespondedTo = messageID,
-                               		CommandField = DicomCommandField.CStoreResponse,
-                               		AffectedSopClassUid = _assoc.GetAbstractSyntax(presentationID).UID,
-                               		AffectedSopInstanceUid = affectedInstance,
-                               		DataSetType = 0x0101,
-                               		Status = status
-                               	};
+            var msg = new DicomMessage
+                          {
+                              MessageIdBeingRespondedTo = messageID,
+                              CommandField = DicomCommandField.CStoreResponse,
+                              AffectedSopClassUid = _assoc.GetAbstractSyntax(presentationID).UID,
+                              AffectedSopInstanceUid = affectedInstance,
+                              DataSetType = 0x0101,
+                              Status = status
+                          };
 
         	SendDimse(presentationID, msg.CommandSet, null);
         }
@@ -981,12 +1010,12 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="presentationId"></param>
         public void SendCFindCancelRequest(byte presentationId, ushort messageId)
         {
-            DicomMessage message = new DicomMessage
-                                   	{
-                                   		CommandField = DicomCommandField.CCancelRequest,
-                                   		DataSetType = 0x0101,
-                                   		MessageIdBeingRespondedTo = messageId
-                                   	};
+            var message = new DicomMessage
+                              {
+                                  CommandField = DicomCommandField.CCancelRequest,
+                                  DataSetType = 0x0101,
+                                  MessageIdBeingRespondedTo = messageId
+                              };
 
         	SendDimse(presentationId, message.CommandSet, null);
         }
@@ -1041,12 +1070,12 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="presentationID"></param>
         public void SendCMoveCancelRequest(byte presentationID, ushort messageID)
         {
-            DicomMessage message = new DicomMessage
-                                   	{
-                                   		CommandField = DicomCommandField.CCancelRequest,
-                                   		DataSetType = 0x0101,
-                                   		MessageIdBeingRespondedTo = messageID
-                                   	};
+            var message = new DicomMessage
+                              {
+                                  CommandField = DicomCommandField.CCancelRequest,
+                                  DataSetType = 0x0101,
+                                  MessageIdBeingRespondedTo = messageID
+                              };
         	SendDimse(presentationID, message.CommandSet, null);
         }
 
@@ -1276,19 +1305,13 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-				//TODO (Time Review): use Environment.TickCount.  It probably won't have much of
-				//a performance impact here, but it is pretty inefficient when called in a tight loop.
-            	DateTime timeout = _assoc != null
-            	                   	? DateTime.Now.AddMilliseconds(_assoc.ReadTimeout)
-            	                   	: DateTime.Now.AddSeconds(Timeout);
+				ResetDimseTimeout();
 
 				while (!_stop)
                 {
                     if (NetworkHasData())
                     {
-                        timeout = _assoc != null 
-							? DateTime.Now.AddMilliseconds(_assoc.ReadTimeout) 
-							: DateTime.Now.AddSeconds(Timeout);
+                        ResetDimseTimeout();
 
                         bool success = ProcessNextPDU();
                         if (!success)
@@ -1307,14 +1330,14 @@ namespace ClearCanvas.Dicom.Network
 						// So that the timeout is really based on the last data read or written to the network, instead of 
 						// from the last time data was read from the network.
                     }
-                    else if (DateTime.Now > timeout)
+                    else if (DateTime.Now > GetDimseTimeout())
                     {
                     	string errorMessage;
                     	switch (State)
                         {
                         	case DicomAssociationState.Sta6_AssociationEstablished:
                         		OnDimseTimeout();
-								timeout = DateTime.Now.AddMilliseconds(_assoc.ReadTimeout);
+								ResetDimseTimeout();
                         		break;
                         	case DicomAssociationState.Sta2_TransportConnectionOpen:
                         		errorMessage = "ARTIM timeout when waiting for AAssociate Request PDU, closing connection.";
@@ -1344,7 +1367,7 @@ namespace ClearCanvas.Dicom.Network
                         	default:
                         		Platform.Log(LogLevel.Error, "DIMSE timeout in unexpected state: {0}", State.ToString());
                         		OnDimseTimeout();
-								timeout = _assoc != null ? DateTime.Now.AddMilliseconds(_assoc.ReadTimeout) : DateTime.Now.AddSeconds(Timeout);
+								ResetDimseTimeout();
                         		break;
                         }
                     }
@@ -1368,7 +1391,7 @@ namespace ClearCanvas.Dicom.Network
 
         private bool ProcessNextPDU()
         {
-            RawPDU raw = new RawPDU(_network);
+            var raw = new RawPDU(_network);
 
             if (raw.Type == 0x04)
             {
@@ -1388,7 +1411,7 @@ namespace ClearCanvas.Dicom.Network
                     case 0x01:
                         {
                             _assoc = new ServerAssociationParameters();
-                            AAssociateRQ pdu = new AAssociateRQ(_assoc);
+                            var pdu = new AAssociateRQ(_assoc);
                             pdu.Read(raw);
                             State = DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative;
                             OnReceiveAssociateRequest(_assoc as ServerAssociationParameters);
@@ -1408,7 +1431,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                     case 0x02:
                         {
-                            AAssociateAC pdu = new AAssociateAC(_assoc);
+                            var pdu = new AAssociateAC(_assoc);
                             pdu.Read(raw);
                             State = DicomAssociationState.Sta6_AssociationEstablished;
 
@@ -1421,7 +1444,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                     case 0x03:
                         {
-                            AAssociateRJ pdu = new AAssociateRJ();
+                            var pdu = new AAssociateRJ();
                             pdu.Read(raw);
                             State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 
@@ -1434,13 +1457,13 @@ namespace ClearCanvas.Dicom.Network
                         }
                     case 0x04:
                         {
-                            PDataTF pdu = new PDataTF();
+                            var pdu = new PDataTF();
                             pdu.Read(raw);
                             return ProcessPDataTF(pdu);
                         }
                     case 0x05:
                         {
-                            AReleaseRQ pdu = new AReleaseRQ();
+                            var pdu = new AReleaseRQ();
                             pdu.Read(raw);
                             State = DicomAssociationState.Sta8_AwaitingAReleaseRPLocalUser;
 
@@ -1450,7 +1473,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                     case 0x06:
                         {
-                            AReleaseRP pdu = new AReleaseRP();
+                            var pdu = new AReleaseRP();
                             pdu.Read(raw);
                             State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 
@@ -1464,7 +1487,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                     case 0x07:
                         {
-                            AAbort pdu = new AAbort();
+                            var pdu = new AAbort();
                             pdu.Read(raw);
                             State = DicomAssociationState.Sta1_Idle;
 
@@ -1711,7 +1734,7 @@ namespace ClearCanvas.Dicom.Network
                 OnSendDimseBegin(pcid, command, dataset);
 
 
-                DicomStreamWriter dsw = new DicomStreamWriter(pdustream);
+                var dsw = new DicomStreamWriter(pdustream);
                 dsw.Write(TransferSyntax.ImplicitVrLittleEndian,
                           command, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
 

@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Codec;
 
@@ -448,19 +449,25 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="association">Association Parameters</param>
 		private void SendCStoreUntilSuccess(DicomClient client, ClientAssociationParameters association)
 		{
-			bool ok = SendCStore(client, association);
-			while (ok == false)
-			{
-				_fileListIndex++;
-				if (_fileListIndex >= _storageInstanceList.Count)
-				{
-					Platform.Log(LogLevel.Info, "Completed sending C-STORE-RQ messages, releasing association.");
-					client.SendReleaseRequest();
-					StopRunningOperation();
-					return;
-				}
-				ok = SendCStore(client, association);
-			}
+            // Added the background thread as part of ticket #9568.  Note that we probably should have some threading 
+            // built into NetworkBase as opposed to here.
+		    ThreadPool.QueueUserWorkItem(delegate
+		                                     {
+		                                         bool ok = SendCStore(client, association);
+		                                         while (ok == false)
+		                                         {
+		                                             _fileListIndex++;
+		                                             if (_fileListIndex >= _storageInstanceList.Count)
+		                                             {
+		                                                 Platform.Log(LogLevel.Info,
+		                                                              "Completed sending C-STORE-RQ messages, releasing association.");
+		                                                 client.SendReleaseRequest();
+		                                                 StopRunningOperation();
+		                                                 return;
+		                                             }
+		                                             ok = SendCStore(client, association);
+		                                         }
+		                                     }, null);
 		}
 
 		/// <summary>
@@ -683,7 +690,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="message">The message.</param>
 		public override void OnReceiveResponseMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
 		{
-			_storageInstanceList[_fileListIndex].SendStatus = message.Status;
+            if (_storageInstanceList.Count > 0)
+			    _storageInstanceList[_fileListIndex].SendStatus = message.Status;
 
 			if (message.Status.Status != DicomState.Success)
 			{

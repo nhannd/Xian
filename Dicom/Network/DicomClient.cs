@@ -354,10 +354,9 @@ namespace ClearCanvas.Dicom.Network
             {
                 OnUserException(e, "Unexpected exception on OnReceiveAssociateAccept");
             }
-
         }
 
-		protected override void OnReceiveAssociateReject(DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason) {
+        protected override void OnReceiveAssociateReject(DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason) {
 
             _handler.OnReceiveAssociateReject(this, _assoc as ClientAssociationParameters, result, source, reason);
 
@@ -401,12 +400,10 @@ namespace ClearCanvas.Dicom.Network
             {
                 OnUserException(e, "Unexpected exception on OnReceiveRequestMessage");
             }
-            return ;
         }
 
         protected override void OnReceiveDimseResponse(byte pcid, DicomMessage msg)
         {
-
             try
             {
                 _handler.OnReceiveResponseMessage(this, _assoc as ClientAssociationParameters, pcid, msg);
@@ -415,10 +412,9 @@ namespace ClearCanvas.Dicom.Network
             {
                 OnUserException(e, "Unexpected exception on OnReceiveResponseMessage");
             }
-            return;
-
         }
-		#endregion
+
+        #endregion
 
         #region IDisposable Members
         ///
