@@ -179,6 +179,15 @@ namespace ClearCanvas.Dicom.Network
 
         public override void Write(byte[] buffer, int offset, int count)
         {
+            // This is in need of a serious refactoring.  The Total length of the 
+            // message shouldn't be needed for this object, first of all.  Secondly,
+            // We should rewrite this mechanism so that we append directly to a RawPDU object
+            // as we receive data so we don't have to make multiple copies of the data.  THis
+            // should be accomplished by using a MemoryStream and seeking to rewrite PDV lengths
+            // as data is appended. Thirdly, we should add a Write override that allows a 
+            // stream to be passed to us or as we read from disk, we shoudl read the pixel data 
+            // in smaller chunks when its cached on disk so it doesn't all have to be loaded 
+            // into memory for a large image.
             AppendBuffer(buffer, offset, count);
             while ((CurrentPduSize() + 6 + GetBufferLength()) > _max)
             {
