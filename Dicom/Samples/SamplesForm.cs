@@ -41,7 +41,7 @@ namespace ClearCanvas.Dicom.Samples
         private readonly Timer _timer;
         private readonly MemoryAppender _appender = new MemoryAppender();
 
-
+        
         public SamplesForm()
         {
 			InitializeComponent();
@@ -103,6 +103,11 @@ namespace ClearCanvas.Dicom.Samples
         {
             // Gotta stop our logging thread  
             _timer.Stop();
+
+            if (StorageScp.Started)
+            {
+                StorageScp.StopListening(int.Parse(_textBoxStorageScpPort.Text));
+            }
         }
         private void AppendText(string text)
         {
