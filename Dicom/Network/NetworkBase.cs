@@ -1651,7 +1651,7 @@ namespace ClearCanvas.Dicom.Network
 							Platform.Log(LogLevel.Error, "Unexpected parsing error when reading command group elements.");
                             return false;
                         }
-                        _assoc.TotalBytesRead += (UInt64) pdv.Value.Length;
+                        _assoc.TotalBytesRead += (UInt64) pdv.PDVLength - 6;
                         if (DimseMessageReceiving != null)
                             DimseMessageReceiving(_assoc, pcid);
 
@@ -1722,7 +1722,7 @@ namespace ClearCanvas.Dicom.Network
                             return false;
                         }
 
-                        _assoc.TotalBytesRead += (UInt64) pdv.Value.Length;
+                        _assoc.TotalBytesRead += (UInt64) pdv.PDVLength - 6;
                         if (DimseMessageReceiving != null)
                             DimseMessageReceiving(_assoc, pcid);
 

@@ -26,7 +26,7 @@ namespace ClearCanvas.Dicom.Network
         private byte[] _bytes;
         private MemoryStream _buffer;
         private readonly NetworkBase _networkBase;
-    	private bool _combineCommandData;
+    	private readonly bool _combineCommandData;
         #endregion
 
         #region Public Constructors
