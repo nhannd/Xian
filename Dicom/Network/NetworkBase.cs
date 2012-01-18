@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.IO;
 
@@ -118,6 +119,7 @@ namespace ClearCanvas.Dicom.Network
     /// </remarks>
     public abstract class NetworkBase
     {
+
         #region Protected Members
 
 		private const int Timeout = 60; // Default timeout when none set
@@ -125,13 +127,16 @@ namespace ClearCanvas.Dicom.Network
         private Stream _network;
         protected AssociationParameters _assoc;
         private DcmDimseInfo _dimse;
-        private Thread _thread;
+        private Thread _processThread;
+        private Thread _readThread;
+        private Thread _writeThread;
         private bool _stop;
         internal DicomAssociationState State = DicomAssociationState.Sta1_Idle;
-		private bool _logInformation = true;
         private DateTime _dimseTimeout;
-        private readonly Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
+        private readonly BlockingQueue<RawPDU> _pduQueue = new BlockingQueue<RawPDU>();
+        private readonly BlockingQueue<NetworkProcessor> _processingQueue = new BlockingQueue<NetworkProcessor>(); 
         private readonly object _syncLock = new object();
+        private bool _multiThreaded ;
         #endregion
 
         #region Public members
@@ -141,16 +146,12 @@ namespace ClearCanvas.Dicom.Network
             get { return _assoc; }
         }
 
-		/// <summary>
-		/// Flag telling if informational level logging should be done.
-		/// </summary>
-		public bool LogInformation
-		{
-			get { return _logInformation; }
-			set { _logInformation = value; }
-		}
+        /// <summary>
+        /// Flag telling if informational level logging should be done.
+        /// </summary>
+        public bool LogInformation { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// Flag telling if the network 
 		/// </summary>
     	public bool NetworkActive
@@ -161,12 +162,18 @@ namespace ClearCanvas.Dicom.Network
     		}
     	}
 
+        /// <summary>
+        /// The number of outstanding operations.  Used when asynchronous operations are negotiated.
+        /// </summary>
+        public ushort OutstandingOperations { get; set; }
+
         #endregion
 
         #region Public Constructors
 
         protected NetworkBase()
         {
+            LogInformation = true;
             _messageId = 1;
         }
 
@@ -174,14 +181,31 @@ namespace ClearCanvas.Dicom.Network
 
         #region Protected Methods
 
-        protected void InitializeNetwork(Stream network, String name)
+        protected void InitializeNetwork(Stream network, String name)        
+        {
+            InitializeNetwork(network,name,false);
+        }
+
+        protected void InitializeNetwork(Stream network, String name, bool multiThreaded)
         {
             _network = network;
             _stop = false;
-            _thread = new Thread(Process);
-        	_thread.Name = String.Format("{0} [{1}]", name, _thread.ManagedThreadId);
+            _readThread = new Thread(RunRead);
+            _readThread.Name = String.Format("{0} Read [{1}]", name, _readThread.ManagedThreadId);
+            _readThread.Start();
 
-            _thread.Start();
+            _multiThreaded = multiThreaded;
+
+            if (multiThreaded)
+            {
+                _writeThread = new Thread(RunWrite);
+                _writeThread.Name = String.Format("{0} Write [{1}]", name, _writeThread.ManagedThreadId);
+                _writeThread.Start();
+
+                _processThread = new Thread(RunProcess);
+                _processThread.Name = String.Format("{0} Process [{1}]", name, _processThread.ManagedThreadId);
+                _processThread.Start();    
+            }
         }
 
         /// <summary>
@@ -190,12 +214,34 @@ namespace ClearCanvas.Dicom.Network
         protected void ShutdownNetworkThread(int millisecondsTimeout)
         {
             _stop = true;
-            if (_thread != null)
+            if (_readThread != null)
             {
-                if (!Thread.CurrentThread.Equals(_thread))
+                if (!Thread.CurrentThread.Equals(_readThread))
                 {
-                    _thread.Join(millisecondsTimeout);
-                    _thread = null;
+                    _readThread.Join(millisecondsTimeout);
+                    _readThread = null;
+                }
+            }
+
+            if (_writeThread != null)
+            {
+                _pduQueue.ContinueBlocking = false;
+
+                if (!Thread.CurrentThread.Equals(_writeThread))
+                {
+                    _writeThread.Join(millisecondsTimeout);
+                    _writeThread = null;
+                }
+            }
+
+            if (_processThread!=null)
+            {
+                _processingQueue.ContinueBlocking = false;
+
+                if (!Thread.CurrentThread.Equals(_processThread))
+                {
+                    _processThread.Join(millisecondsTimeout);
+                    _processThread = null;
                 }
             }
         }
@@ -238,26 +284,10 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="pdu"></param>
         internal void EnqueuePdu(RawPDU pdu)
         {
-            lock (_pduQueue)
-            {
-                ResetDimseTimeout();
+            if (_multiThreaded)
+                _pduQueue.Enqueue(pdu);
+            else
                 SendRawPDU(pdu);
-                //_pduQueue.Enqueue(pdu);
-                ResetDimseTimeout();
-            }
-        }
-
-        /// <summary>
-        /// Internal routine for dequeueing a PDU that needs to be transfered.
-        /// </summary>
-        /// <returns></returns>
-        internal RawPDU DequeuePdu()
-        {
-            lock (_pduQueue)
-            {
-                return null;
-                //return _pduQueue.Dequeue();
-            }
         }
 
         protected abstract bool NetworkHasData();
@@ -544,6 +574,11 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="assoc"></param>
         /// <param name="data"></param>
         public delegate void NetworkClosedEventHandler(object data);
+
+        /// <summary>
+        /// Delegate for processing events that occur on the network.
+        /// </summary>
+        public delegate void NetworkProcessor();
 
         /// <summary>
         /// Defines an event handler  when a network error occurs
@@ -1301,7 +1336,7 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Main processing routine for processing a network connection.
         /// </summary>
-        private void Process()
+        private void RunRead()
         {
             try
             {
@@ -1322,13 +1357,6 @@ namespace ClearCanvas.Dicom.Network
                                 _assoc.CallingAE, _assoc.CalledAE);
                             SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.InvalidPDUParameter);
                         }
-                    }
-                    else if (_pduQueue.Count > 0)
-                    {
-                        //SendRawPDU(DequeuePdu());
-						// Note, if this is ever enabled, it would make sense to reset the timeout at this point.
-						// So that the timeout is really based on the last data read or written to the network, instead of 
-						// from the last time data was read from the network.
                     }
                     else if (DateTime.Now > GetDimseTimeout())
                     {
@@ -1389,21 +1417,63 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
-        private bool ProcessNextPDU()
-        {
-            var raw = new RawPDU(_network);
 
-            if (raw.Type == 0x04)
-            {
-                if (_dimse == null)
+        /// <summary>
+        /// Main processing routine for processing a network connection.
+        /// </summary>
+        private void RunWrite()
+        {
+            try
+            {                
+                while (!_stop)
                 {
-                    _dimse = new DcmDimseInfo();
-                    _assoc.TotalDimseReceived++;
+                    RawPDU rawPdu;
+                    if (_pduQueue.Dequeue(out rawPdu))
+                    {
+                        SendRawPDU(rawPdu);
+                    }                    
                 }
             }
+            catch (Exception e)
+            {
+                OnNetworkError(e, true);
 
-            raw.ReadPDU();
+                if (NetworkError != null)
+                    NetworkError(e);
+                
+                CloseNetwork(0);
+            }
+        }
 
+        /// <summary>
+        /// Main processing routine for processing a network connection.
+        /// </summary>
+        private void RunProcess()
+        {
+            try
+            {
+                while (!_stop)
+                {
+                    NetworkProcessor processDelegate;
+                    if (_processingQueue.Dequeue(out processDelegate))
+                    {
+                        processDelegate();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                OnNetworkError(e, true);
+
+                if (NetworkError != null)
+                    NetworkError(e);
+
+                CloseNetwork(0);
+            }
+        }
+
+        private bool ProcessRawPDU(RawPDU raw)
+        {
             try
             {
                 switch (raw.Type)
@@ -1419,7 +1489,7 @@ namespace ClearCanvas.Dicom.Network
                             if (State != DicomAssociationState.Sta13_AwaitingTransportConnectionClose &&
                                 State != DicomAssociationState.Sta6_AssociationEstablished)
                             {
-								Platform.Log(LogLevel.Error, "Association incorrectly not accepted or rejected, aborting.");
+                                Platform.Log(LogLevel.Error, "Association incorrectly not accepted or rejected, aborting.");
                                 return false;
                             }
 
@@ -1500,7 +1570,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                     case 0xFF:
                         {
-							Platform.Log(LogLevel.Error, "Unexpected PDU type: 0xFF.  Potential parsing error.");
+                            Platform.Log(LogLevel.Error, "Unexpected PDU type: 0xFF.  Potential parsing error.");
                             return false;
                         }
                     default:
@@ -1514,9 +1584,35 @@ namespace ClearCanvas.Dicom.Network
                 if (NetworkError != null)
                     NetworkError(e);
 
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when processing PDU.");
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when processing PDU.");
                 return false;
             }
+        }
+
+        private bool ProcessNextPDU()
+        {
+            var raw = new RawPDU(_network);
+
+            if (raw.Type == 0x04)
+            {
+                if (_dimse == null)
+                {
+                    _dimse = new DcmDimseInfo();
+                    _assoc.TotalDimseReceived++;
+                }
+            }
+
+            raw.ReadPDU();
+
+            if (_multiThreaded)
+            {
+                _processingQueue.Enqueue(delegate
+                                             {
+                                                 ProcessRawPDU(raw);
+                                             });
+                return true;
+            }
+            return ProcessRawPDU(raw);
         }
 
         private bool ProcessPDataTF(PDataTF pdu)
@@ -1681,6 +1777,8 @@ namespace ClearCanvas.Dicom.Network
 
     	private void SendRawPDU(RawPDU pdu)
         {
+            ResetDimseTimeout();
+
             // If the try/catch is reintroduced here, it must
             // throw an exception, if the exception is just eaten, 
             // you can get into a case where there's repetetive errors
@@ -1695,6 +1793,8 @@ namespace ClearCanvas.Dicom.Network
             //    OnNetworkError(e);
             //    throw new DicomException("Unexpected exception when writing PDU",e);
             //}
+
+            ResetDimseTimeout();
         }
 
         /// <summary>

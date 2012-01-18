@@ -546,11 +546,13 @@ namespace ClearCanvas.Dicom.Network.Scu
 			}
 
 			try
-			{
+			{			    
+                fileToSend.SentMessageId = client.NextMessageID();
+
 				if (_moveOriginatorAe == null)
-					client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, msg);
+                    client.SendCStoreRequest(pcid, fileToSend.SentMessageId, DicomPriority.Medium, msg);
 				else
-					client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, _moveOriginatorAe,
+                    client.SendCStoreRequest(pcid, fileToSend.SentMessageId, DicomPriority.Medium, _moveOriginatorAe,
 					                         _moveOriginatorMessageId, msg);
 			}
 			catch(DicomNetworkException)

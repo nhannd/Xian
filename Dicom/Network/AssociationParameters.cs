@@ -186,71 +186,68 @@ namespace ClearCanvas.Dicom.Network
         // increase performance.  The PDU header is 6 bytes, and should 
         // be subtracted from the multiple of 1460 to get the PDU size.
         // For instance (1460 * 80) - 6 = 116,794 bytes
-        private uint _localMaxPduLength = NetworkSettings.Default.LocalMaxPduLength;
-        private uint _remoteMaxPduLength = NetworkSettings.Default.RemoteMaxPduLength;
-        private String _calledAe;
-        private String _callingAe;
-        private DicomUid _appCtxNm;
-        private DicomUid _implClass;
-        private string _implVersion;
         private SortedList<byte, DicomPresContext> _presContexts;
-        private IPEndPoint _localEndPoint;
-        private IPEndPoint _remoteEndPoint;
-        private string _remoteHostname;
-        private int _remotePort;
-		private bool _disableNagle = NetworkSettings.Default.DisableNagle;
 
         // Sizes that result in PDUs that are multiples of the MTU work better.
         // Setting these values to an even multiple of the TCP/IP maximum
         // segement size of 1460 can help increase performance.  81 * 1460 is the default
-        private int _sendBufferSize = NetworkSettings.Default.SendBufferSize;
-        private int _receiveBufferSize = NetworkSettings.Default.ReceiveBufferSize;
-        private int _readTimeout = NetworkSettings.Default.ReadTimeout; // 30 seconds
-        private int _writeTimeout = NetworkSettings.Default.WriteTimeout; // 30 seconds
-        private int _connectTimeout = NetworkSettings.Default.ConnectTimeout; // 10 seconds
-        private ushort _maxOperationsInvoked = 1;
-        private ushort _maxOperationsPerformed = 1;
 
         // Performance stuff
-        ulong _totalBytesRead = 0;
-        ulong _totalBytesSent = 0;
-        int _totalDimseReceived = 0;
-        
+
         #endregion
 
 		#region Constructors
 		protected AssociationParameters(String callingAE, String calledAE, IPEndPoint localEndPoint, IPEndPoint remoteEndPoint) {
-			_appCtxNm = DicomUids.DICOMApplicationContextName;
-			_implClass = DicomImplementation.ClassUID;
-			_implVersion = DicomImplementation.Version;
+		    DisableNagle = NetworkSettings.Default.DisableNagle;
+		    ConnectTimeout = NetworkSettings.Default.ConnectTimeout;
+		    WriteTimeout = NetworkSettings.Default.WriteTimeout;
+		    ReadTimeout = NetworkSettings.Default.ReadTimeout;
+		    ReceiveBufferSize = NetworkSettings.Default.ReceiveBufferSize;
+		    SendBufferSize = NetworkSettings.Default.SendBufferSize;
+		    RemoteMaximumPduLength = NetworkSettings.Default.RemoteMaxPduLength;
+		    LocalMaximumPduLength = NetworkSettings.Default.LocalMaxPduLength;
+		    RemoteMaxOperationsPerformed = 1;
+		    RemoteMaxOperationsInvoked = 1;
+		    LocalMaxOperationsInvoked = 1;
+		    LocalMaxOperationsPerformed = 1;
+		    TotalBytesSent = 0;
+		    ApplicationContextName = DicomUids.DICOMApplicationContextName;
+			ImplementationClass = DicomImplementation.ClassUID;
+			ImplementationVersion = DicomImplementation.Version;
 			_presContexts = new SortedList<byte, DicomPresContext>();
 
-            _calledAe = calledAE;
-            _callingAe = callingAE;
+            CalledAE = calledAE;
+            CallingAE = callingAE;
 
-            _localEndPoint = localEndPoint;
-            _remoteEndPoint = remoteEndPoint;
+            LocalEndPoint = localEndPoint;
+            RemoteEndPoint = remoteEndPoint;
 
-            _totalBytesRead = 0;
-            _totalDimseReceived = 0;
+            TotalBytesRead = 0;
+            TotalDimseReceived = 0;
 		}
 
         protected AssociationParameters(AssociationParameters parameters)
         {
-            _appCtxNm = parameters._appCtxNm;
-            _calledAe = parameters._calledAe;
-            _callingAe = parameters._callingAe;
-            _implClass = parameters._implClass;
-            _implVersion = parameters._implVersion;
-            _localEndPoint = parameters._localEndPoint;
-            _localMaxPduLength = parameters._localMaxPduLength;
-            _remoteMaxPduLength = parameters._remoteMaxPduLength;
-            _readTimeout = parameters._readTimeout;
-            _receiveBufferSize = parameters._receiveBufferSize;
-            _remoteEndPoint = parameters._remoteEndPoint;
-            _sendBufferSize = parameters._sendBufferSize;
-            _writeTimeout = parameters._writeTimeout;
-            _connectTimeout = parameters._connectTimeout;
+            DisableNagle = NetworkSettings.Default.DisableNagle;
+            RemoteMaxOperationsPerformed = 1;
+            RemoteMaxOperationsInvoked = 1;
+            TotalDimseReceived = 0;
+            TotalBytesSent = 0;
+            TotalBytesRead = 0;
+            ApplicationContextName = parameters.ApplicationContextName;
+            CalledAE = parameters.CalledAE;
+            CallingAE = parameters.CallingAE;
+            ImplementationClass = parameters.ImplementationClass;
+            ImplementationVersion = parameters.ImplementationVersion;
+            LocalEndPoint = parameters.LocalEndPoint;
+            LocalMaximumPduLength = parameters.LocalMaximumPduLength;
+            RemoteMaximumPduLength = parameters.RemoteMaximumPduLength;
+            ReadTimeout = parameters.ReadTimeout;
+            ReceiveBufferSize = parameters.ReceiveBufferSize;
+            RemoteEndPoint = parameters.RemoteEndPoint;
+            SendBufferSize = parameters.SendBufferSize;
+            WriteTimeout = parameters.WriteTimeout;
+            ConnectTimeout = parameters.ConnectTimeout;
 
             foreach (byte id in parameters._presContexts.Keys)
             {
@@ -269,191 +266,120 @@ namespace ClearCanvas.Dicom.Network
 
 		#region Public Properties
 
-        public ulong TotalBytesRead
-        {
-            set { _totalBytesRead = value; }
-            get { return _totalBytesRead; }
-        }
+        public ulong TotalBytesRead { get; set; }
 
-        public ulong TotalBytesSent
-        {
-            set { _totalBytesSent = value; }
-            get { return _totalBytesSent; }
-        }
-        public int TotalDimseReceived
-        {
-            get { return _totalDimseReceived; }
-            set { _totalDimseReceived = value; }
-        }
+        public ulong TotalBytesSent { get; set; }
+
+        public int TotalDimseReceived { get; set; }
 
         /// <summary>
         /// The Maximum operations invoked negotiated for the association.
         /// </summary>
-        public ushort MaxOperationsInvoked
-        {
-            get { return _maxOperationsInvoked; }
-            set { _maxOperationsInvoked = value; }
-        }
+        public ushort RemoteMaxOperationsInvoked { get; set; }
 
         /// <summary>
         /// The Maximum operations performed negotiated for the association.
         /// </summary>
-        public ushort MaxOperationsPerformed
-        {
-            get { return _maxOperationsPerformed; }
-            set { _maxOperationsPerformed = value; }
-        }
+        public ushort RemoteMaxOperationsPerformed { get; set; }
+
+        /// <summary>
+        /// The Maximum operations invoked negotiated for the association.
+        /// </summary>
+        public ushort LocalMaxOperationsInvoked { get; set; }
+
+        /// <summary>
+        /// The Maximum operations performed negotiated for the association.
+        /// </summary>
+        public ushort LocalMaxOperationsPerformed { get; set; }
 
         /// <summary>
         /// The Maximum PDU Length negotiated for the association
         /// </summary>
-        public uint LocalMaximumPduLength
-        {
-            get { return _localMaxPduLength; }
-            set { _localMaxPduLength = value; }
-        }
+        public uint LocalMaximumPduLength { get; set; }
+
         /// <summary>
         /// The Remote Maximum PDU Length negotiated for the association
         /// </summary>
-        public uint RemoteMaximumPduLength
-        {
-            get { return _remoteMaxPduLength; }
-            set { _remoteMaxPduLength = value; }
-        }
+        public uint RemoteMaximumPduLength { get; set; }
+
         /// <summary>
         /// The network Send Buffer size utilized by this application.
         /// </summary>
-        public int SendBufferSize
-        {
-            get { return _sendBufferSize; }
-            set { _sendBufferSize = value; }
-        }
+        public int SendBufferSize { get; set; }
 
         /// <summary>
         /// The network Receive Buffer size utilized by this application.
         /// </summary>
-        public int ReceiveBufferSize
-        {
-            get { return _receiveBufferSize; }
-            set { _receiveBufferSize = value; }
-        }
+        public int ReceiveBufferSize { get; set; }
 
         /// <summary>
         /// The timeout for any network Read operations in milliseconds.
         /// </summary>
-        public int ReadTimeout
-        {
-            get { return _readTimeout; }
-            set { _readTimeout = value; }
-        }
+        public int ReadTimeout { get; set; }
 
         /// <summary>
         /// The timeout for any network write operations in milliseconds.
         /// </summary>
-        public int WriteTimeout
-        {
-            get { return _writeTimeout; }
-            set { _writeTimeout = value; }
-        }
+        public int WriteTimeout { get; set; }
 
         /// <summary>
         /// The timeout when connecting to a remote server in milliseconds.
         /// </summary>
-        public int ConnectTimeout
-        {
-            get { return _connectTimeout; }
-            set { _connectTimeout = value; }
-        }
+        public int ConnectTimeout { get; set; }
 
-		/// <summary>
-		/// Flag to set if the Nagle algorithm is disabled for connections
-		/// </summary>
-    	public bool DisableNagle
-    	{
-			get { return _disableNagle; }
-			set { _disableNagle = value; }
-    	}
+        /// <summary>
+        /// Flag to set if the Nagle algorithm is disabled for connections
+        /// </summary>
+        public bool DisableNagle { get; set; }
 
         /// <summary>
         /// Called AE (association acceptor AE) for the association
         /// </summary>
-        public String CalledAE
-        {
-            get { return _calledAe; }
-            set { _calledAe = value; }
-        }
+        public string CalledAE { get; set; }
 
         /// <summary>
         /// Calling AE (association requestor AE) for the association
         /// </summary>
-        public String CallingAE
-        {
-            get { return _callingAe; }
-            set { _callingAe = value; }
-        }
+        public string CallingAE { get; set; }
 
-		/// <summary>
-		/// Gets or sets the Application Context Name.
-		/// </summary>
-		/// <seealso cref="DicomUid"/>
-        public DicomUid ApplicationContextName {
-			get { return _appCtxNm; }
-			set { _appCtxNm = value; }
-		}
+        /// <summary>
+        /// Gets or sets the Application Context Name.
+        /// </summary>
+        /// <seealso cref="DicomUid"/>
+        public DicomUid ApplicationContextName { get; set; }
 
-		/// <summary>
-		/// Gets or sets the Implementation Class UID.
-		/// </summary>
-        public DicomUid ImplementationClass {
-			get { return _implClass; }
-			set { _implClass = value; }
-		}
+        /// <summary>
+        /// Gets or sets the Implementation Class UID.
+        /// </summary>
+        public DicomUid ImplementationClass { get; set; }
 
-		/// <summary>
-		/// Gets or sets the Implementation Version Name.
-		/// </summary>
-		public string ImplementationVersion {
-			get { return _implVersion; }
-			set { _implVersion = value; }
-		}
+        /// <summary>
+        /// Gets or sets the Implementation Version Name.
+        /// </summary>
+        public string ImplementationVersion { get; set; }
 
         /// <summary>
         /// The remote end point for the association.
         /// </summary>
-        public IPEndPoint RemoteEndPoint
-        {
-            get { return _remoteEndPoint; }
-            internal set { _remoteEndPoint = value; }
-        }
+        public IPEndPoint RemoteEndPoint { get; internal set; }
 
         /// <summary>
         /// The local end point of the association.
         /// </summary>
         /// 
-        public IPEndPoint LocalEndPoint
-        {
-            get { return _localEndPoint; }
-            internal set { _localEndPoint = value; }
-        }
+        public IPEndPoint LocalEndPoint { get; internal set; }
 
         /// <summary>
         /// Remote hostname or IP addresses.
         /// </summary>
-        public string RemoteHostname
-        {
-            get { return _remoteHostname; }
-            internal set { _remoteHostname = value; }
-        }
+        public string RemoteHostname { get; internal set; }
 
         /// <summary>
         /// Remote port.
         /// </summary>
-        public int RemotePort
-        {
-            get { return _remotePort; }
-            internal set { _remotePort = value; }
-        }
-		#endregion
+        public int RemotePort { get; internal set; }
+
+        #endregion
 
         #region Events
 
@@ -716,19 +642,19 @@ namespace ClearCanvas.Dicom.Network
 
         public override string ToString() {
 			StringBuilder sb = new StringBuilder();
-			sb.AppendFormat("Application Context:     {0}", _appCtxNm);
+			sb.AppendFormat("Application Context:     {0}", ApplicationContextName);
             sb.AppendLine();
-			sb.AppendFormat("Implementation Class:    {0}", _implClass);
+			sb.AppendFormat("Implementation Class:    {0}", ImplementationClass);
             sb.AppendLine(); 
-            sb.AppendFormat("Implementation Version:  {0}", _implVersion);
+            sb.AppendFormat("Implementation Version:  {0}", ImplementationVersion);
             sb.AppendLine(); 
-            sb.AppendFormat("Local Maximum PDU Size:  {0}", _localMaxPduLength);
+            sb.AppendFormat("Local Maximum PDU Size:  {0}", LocalMaximumPduLength);
             sb.AppendLine();
-            sb.AppendFormat("Remote Maximum PDU Size: {0}", _remoteMaxPduLength);
+            sb.AppendFormat("Remote Maximum PDU Size: {0}", RemoteMaximumPduLength);
             sb.AppendLine();
-            sb.AppendFormat("Called AE Title:         {0}", _calledAe);
+            sb.AppendFormat("Called AE Title:         {0}", CalledAE);
             sb.AppendLine(); 
-            sb.AppendFormat("Calling AE Title:        {0}", _callingAe);
+            sb.AppendFormat("Calling AE Title:        {0}", CallingAE);
             sb.AppendLine(); 
             sb.AppendFormat("Presentation Contexts:   {0}", _presContexts.Count);
             sb.AppendLine(); 

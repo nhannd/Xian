@@ -101,9 +101,14 @@ namespace ClearCanvas.Dicom.Network.Scu
 		}
 
 		/// <summary>
-		/// The <see cref="DicomStatus"/> returned from the remote SCP when the storage instance was trasferred.
+		/// The <see cref="DicomStatus"/> returned from the remote SCP when the storage instance was transferred.
 		/// </summary>
 		public DicomStatus SendStatus { get; set; }
+
+        /// <summary>
+        /// The Message ID assigned to the instance when transferred.  Used to identify the response.
+        /// </summary>
+        public ushort SentMessageId { get; set; }
 
 		/// <summary>
 		/// An extended failure description if <see cref="SendStatus"/> is a failure status.

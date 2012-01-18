@@ -85,7 +85,7 @@ namespace ClearCanvas.Dicom.Network
 
         internal DicomServer(Socket socket, Dictionary<string,ListenerInfo> appList)
         {
-            IPEndPoint remote = (IPEndPoint)socket.RemoteEndPoint;
+            var remote = (IPEndPoint)socket.RemoteEndPoint;
 
             _host = remote.Address.ToString();
 
@@ -96,7 +96,7 @@ namespace ClearCanvas.Dicom.Network
             _appList = appList;
 
             // Start background thread for incoming associations
-            InitializeNetwork(_network, "DicomServer: " + _host);
+            InitializeNetwork(_network, "DicomServer: " + _host, false);
         }
 		#endregion
 
@@ -144,10 +144,9 @@ namespace ClearCanvas.Dicom.Network
                 else
                 {
                     // No contexts accepted, set if abstract or transfer syntax reject
-                    if (0 == sp.FindAbstractSyntax(clientContext.AbstractSyntax))
-                        clientContext.SetResult(DicomPresContextResult.RejectAbstractSyntaxNotSupported);
-                    else
-                        clientContext.SetResult(DicomPresContextResult.RejectTransferSyntaxesNotSupported);
+                    clientContext.SetResult(0 == sp.FindAbstractSyntax(clientContext.AbstractSyntax)
+                                                ? DicomPresContextResult.RejectAbstractSyntaxNotSupported
+                                                : DicomPresContextResult.RejectTransferSyntaxesNotSupported);
                 }
             }
             bool anyValidContexts = false;
@@ -227,9 +226,11 @@ namespace ClearCanvas.Dicom.Network
             // MSDN documentation  Only do the check when we know there's no data available
             try
             {
-				List<Socket> readSockets = new List<Socket>();
-				readSockets.Add(_socket);
-            	Socket.Select(readSockets, null, null, 100000);
+				var readSockets = new List<Socket>
+				                      {
+				                          _socket
+				                      };
+                Socket.Select(readSockets, null, null, 100000);
 				if (readSockets.Count == 1)
 				{
 					if (_socket.Available > 0)
@@ -373,12 +374,10 @@ namespace ClearCanvas.Dicom.Network
             {
                 OnUserException(e, "Unexpected exception on OnReceiveRequestMessage");
             }
-            return ;
         }
 
         protected override void OnReceiveDimseResponse(byte pcid, DicomMessage msg)
         {
-
             try
             {
                 _handler.OnReceiveResponseMessage(this, _assoc as ServerAssociationParameters, pcid, msg);
@@ -387,8 +386,6 @@ namespace ClearCanvas.Dicom.Network
             {
                 OnUserException(e, "Unexpected exception on OnReceiveResponseMessage");
             }
-            return;
-
         }
 
         #endregion

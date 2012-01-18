@@ -350,13 +350,14 @@ namespace ClearCanvas.Dicom.Network
             pdu.Write("Max PDU Length", _assoc.LocalMaximumPduLength);
 
             // Asychronous Window
-            /*
-            pdu.Write("Item-Type", (byte)0x53);
-            pdu.Write("Reserved", (byte)0x00);
-            pdu.Write("Item-Length", (ushort)0x0004);
-            pdu.Write("Max Operations Invoked", (ushort)_assoc.MaximumOperationsInvoked);
-            pdu.Write("Max Operations Invoked", (ushort)_assoc.MaximumOperationsPerformed);
-             */
+            if (_assoc.LocalMaxOperationsInvoked != 1 || _assoc.LocalMaxOperationsPerformed != 1)
+            {
+                pdu.Write("Item-Type", (byte) 0x53);
+                pdu.Write("Reserved", (byte) 0x00);
+                pdu.Write("Item-Length", (ushort) 0x0004);
+                pdu.Write("Max Operations Invoked", (ushort)_assoc.LocalMaxOperationsInvoked);
+                pdu.Write("Max Operations Invoked", (ushort)_assoc.LocalMaxOperationsPerformed);
+            }
 
             // SCU / SCP Role Selection
 
@@ -459,8 +460,8 @@ namespace ClearCanvas.Dicom.Network
                                 }
                                 else if (ut == 0x53)
                                 {
-                                    _assoc.MaxOperationsInvoked = raw.ReadUInt16("Max Operations Invoked");
-                                    _assoc.MaxOperationsPerformed = raw.ReadUInt16("Max Operations Performed");
+                                    _assoc.RemoteMaxOperationsInvoked = raw.ReadUInt16("Max Operations Invoked");
+                                    _assoc.RemoteMaxOperationsPerformed = raw.ReadUInt16("Max Operations Performed");
                                 }
                                 else if (ut == 0x55)
                                 {
