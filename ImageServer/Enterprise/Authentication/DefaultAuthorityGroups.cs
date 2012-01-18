@@ -92,8 +92,8 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                         AuthorityTokens.WorkQueue.Search,
                         AuthorityTokens.WorkQueue.View,
 
-                        AuthorityTokens.DataAccess.AllStudies,
-                        AuthorityTokens.DataAccess.AllPartitions,
+                        ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllStudies,
+                        ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllPartitions,
                         #endregion
                     });
 
@@ -135,7 +135,8 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                         AuthorityTokens.WorkQueue.Search,
                         AuthorityTokens.WorkQueue.View,
 
-                        AuthorityTokens.DataAccess.AllStudies,
+                        ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllStudies,
+                        ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllPartitions,
                         #endregion
                     });
 
@@ -176,7 +177,8 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                         AuthorityTokens.WorkQueue.Search,
                         AuthorityTokens.WorkQueue.View,
 
-                        AuthorityTokens.DataAccess.AllStudies,
+                        ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllStudies,
+                        ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllPartitions,
                         #endregion
                     });
 

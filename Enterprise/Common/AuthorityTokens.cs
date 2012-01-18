@@ -9,9 +9,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.Enterprise.Common
@@ -38,5 +35,20 @@ namespace ClearCanvas.Enterprise.Common
                 public const string AuthorityGroup = "Enterprise/Admin/Security/Authority Group";
 			}
 		}
+
+        /// <summary>
+        /// Tokens that specify data access
+        /// </summary>
+        /// <remarks>
+        /// The tokens are intended to be system wide and used across products.
+        /// </remarks>
+        public static class DataAccess
+        {
+            [AuthorityToken(Description = "Allow the user access to all studies.", Formerly = "Web Portal/Data Access/Access to all Studies")]
+            public const string AllStudies = "Data Access/Access to all Studies";
+
+            [AuthorityToken(Description = "Allow the user access to all Server Partitions on the ImageServer.")]
+            public const string AllPartitions = "Data Access/Access to all Server Partitions";
+        }
 	}
 }

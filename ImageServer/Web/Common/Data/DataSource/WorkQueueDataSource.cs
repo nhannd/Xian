@@ -239,7 +239,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		    CustomPrincipal user = Thread.CurrentPrincipal as CustomPrincipal;
 		    if (user != null)
 		    {
-                if (!user.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
+                if (!user.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllStudies))
 		        {
 		            foreach (var oid in user.Credentials.DataAccessAuthorityGroups)
 		                groupOIDs.Add(oid.ToString());

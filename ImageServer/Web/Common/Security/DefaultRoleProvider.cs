@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                     AuthorityTokens.WorkQueue.Reset,
                     AuthorityTokens.WorkQueue.Search,
                     AuthorityTokens.WorkQueue.View,
-                    AuthorityTokens.DataAccess.AllPartitions,
+                    ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllPartitions,
                     ImageServerConstants.WebViewerAuthorityToken,
 
                 };

@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 if (Partition !=null)
                     criteria.ServerPartitionKey.EqualTo(Partition.Key);
 
-                if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
+                if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllStudies))
                 {
                     var principal = Thread.CurrentPrincipal as CustomPrincipal;
                     if (principal != null)

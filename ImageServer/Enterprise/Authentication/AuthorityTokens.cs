@@ -94,19 +94,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             }
 
         }
-
-        /// <summary>
-        /// Tokens that specify data access
-        /// </summary>
-        public static class DataAccess
-        {
-            [AuthorityToken(Description = "Allow access to all studies.")]
-            public const string AllStudies = "PACS/Data Access/Access to all Studies";
-
-            [AuthorityToken(Description = "Allow access to all ImageServer partitions.")]
-            public const string AllPartitions = "PACS/Data Access/Access to all Partitions";
-        }
-
+        
         /// <summary>
         /// Tokens that allow access to study functionalities.
         /// </summary>

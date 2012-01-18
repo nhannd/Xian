@@ -261,11 +261,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         bool allStudies = false;
                         foreach (var token in group.AuthorityTokens)
                         {
-                            if (token.Name.Equals(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllPartitions))
+                            if (token.Name.Equals(ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllPartitions))
                             {
                                 allPartitions = true;                                
                             }
-                            else if (token.Name.Equals(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
+                            else if (token.Name.Equals(ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllStudies))
                             {
                                 allStudies = true;
                             }

@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
 
         public static StudyDataAccessSelectCriteria GetDataAccessSubCriteriaForUser(IPersistenceContext context, IPrincipal user)
         {
-            if (user.IsInRole(AuthorityTokens.DataAccess.AllStudies))
+            if (user.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllStudies))
             {
                 return null;
             }
