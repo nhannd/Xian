@@ -15,6 +15,7 @@ using System.Net;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.Utilities.Statistics;
 
 namespace ClearCanvas.Dicom.Samples
 {
@@ -26,13 +27,13 @@ namespace ClearCanvas.Dicom.Samples
         #region Private Members
         private static bool _started;
         private static ServerAssociationParameters _staticAssocParameters;
-        private ServerAssociationParameters _assocParameters;
+        private AssociationStatisticsRecorder _statsRecorder;
         #endregion
 
         #region Constructors
-        private StorageScp(ServerAssociationParameters assoc)
+        private StorageScp(DicomServer server, ServerAssociationParameters assoc)
         {
-            _assocParameters = assoc;
+            _statsRecorder = new AssociationStatisticsRecorder(server); 
         }
         #endregion
 
@@ -47,6 +48,7 @@ namespace ClearCanvas.Dicom.Samples
         /// </summary>
         public static string StorageLocation { get; set; }
 
+        public static bool Bitbucket { get; set; }
         #endregion
 
         #region Private Methods
@@ -209,7 +211,7 @@ namespace ClearCanvas.Dicom.Samples
             AddPresentationContexts(_staticAssocParameters);
 
             DicomServer.StartListening(_staticAssocParameters,
-                                       (server, assoc) => new StorageScp(assoc));
+                                       (server, assoc) => new StorageScp(server, assoc));
 
             _started = true;
         }
@@ -245,17 +247,29 @@ namespace ClearCanvas.Dicom.Samples
             String studyInstanceUid = null;
             String seriesInstanceUid = null;
             DicomUid sopInstanceUid;
-            
+            String patientName = null;
+
             bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
             if (ok) ok = message.DataSet[DicomTags.SeriesInstanceUid].TryGetString(0, out seriesInstanceUid);
             if (ok) ok = message.DataSet[DicomTags.StudyInstanceUid].TryGetString(0, out studyInstanceUid);
-
+            if (ok) ok = message.DataSet[DicomTags.PatientsName].TryGetString(0, out patientName);
+		
             if (!ok)
             {
                 Platform.Log(LogLevel.Error, "Unable to retrieve UIDs from request message, sending failure status.");
 
                 server.SendCStoreResponse(presentationID, message.MessageId, sopInstanceUid.UID,
                     DicomStatuses.ProcessingFailure);
+                return;
+            }
+
+            if (Bitbucket)
+            {
+                Platform.Log(LogLevel.Info, "Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
+
+                server.SendCStoreResponse(presentationID, message.MessageId,
+                    sopInstanceUid.UID,
+                    DicomStatuses.Success);
                 return;
             }
 
@@ -283,8 +297,7 @@ namespace ClearCanvas.Dicom.Samples
 
             dicomFile.Save(DicomWriteOptions.None);
 
-            String patientName = dicomFile.DataSet[DicomTags.PatientsName].GetString(0, "");
-			Platform.Log(LogLevel.Info, "Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
+        	Platform.Log(LogLevel.Info, "Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
 
             server.SendCStoreResponse(presentationID, message.MessageId,
                 sopInstanceUid.UID, 

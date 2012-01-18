@@ -165,6 +165,7 @@ namespace ClearCanvas.Dicom.Samples
             {
                 _buttonStorageScpStartStop.Text = "Stop";
                 StorageScp.StorageLocation = _textBoxStorageScpStorageLocation.Text;
+                StorageScp.Bitbucket = _checkBoxStorageScpBitbucket.Checked;
                 StorageScp.StartListening(_textBoxStorageScpAeTitle.Text,
                     int.Parse(_textBoxStorageScpPort.Text));
 
