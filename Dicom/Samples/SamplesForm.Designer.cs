@@ -257,7 +257,7 @@ namespace ClearCanvas.Dicom.Samples
 			this._buttonStorageScuConnect.TabIndex = 7;
 			this._buttonStorageScuConnect.Text = "Connect";
 			this._buttonStorageScuConnect.UseVisualStyleBackColor = true;
-			this._buttonStorageScuConnect.Click += new System.EventHandler(this.buttonStorageScuConnect_Click);
+			this._buttonStorageScuConnect.Click += new System.EventHandler(this.ButtonStorageScuConnectClick);
 			// 
 			// buttonStorageScuSelectFiles
 			// 
@@ -267,7 +267,7 @@ namespace ClearCanvas.Dicom.Samples
 			this.buttonStorageScuSelectFiles.TabIndex = 6;
 			this.buttonStorageScuSelectFiles.Text = "Select Files";
 			this.buttonStorageScuSelectFiles.UseVisualStyleBackColor = true;
-			this.buttonStorageScuSelectFiles.Click += new System.EventHandler(this.buttonStorageScuSelectFiles_Click);
+			this.buttonStorageScuSelectFiles.Click += new System.EventHandler(this.ButtonStorageScuSelectFilesClick);
 			// 
 			// _textBoxStorageScuRemotePort
 			// 
@@ -395,7 +395,7 @@ namespace ClearCanvas.Dicom.Samples
 			this._buttonStorageScpStartStop.TabIndex = 2;
 			this._buttonStorageScpStartStop.Text = "Start";
 			this._buttonStorageScpStartStop.UseVisualStyleBackColor = true;
-			this._buttonStorageScpStartStop.Click += new System.EventHandler(this.buttonStorageScpStartStop_Click);
+			this._buttonStorageScpStartStop.Click += new System.EventHandler(this.ButtonStorageScpStartStopClick);
 			// 
 			// _textBoxStorageScpPort
 			// 
@@ -444,7 +444,7 @@ namespace ClearCanvas.Dicom.Samples
 			this._savePixelsButton.TabIndex = 10;
 			this._savePixelsButton.Text = "Save Pixels";
 			this._savePixelsButton.UseVisualStyleBackColor = true;
-			this._savePixelsButton.Click += new System.EventHandler(this._savePixelsButton_Click);
+			this._savePixelsButton.Click += new System.EventHandler(this.SavePixelsButtonClick);
 			// 
 			// label11
 			// 
@@ -522,7 +522,7 @@ namespace ClearCanvas.Dicom.Samples
 			this._saveFileButton.TabIndex = 1;
 			this._saveFileButton.Text = "Save File";
 			this._saveFileButton.UseVisualStyleBackColor = true;
-			this._saveFileButton.Click += new System.EventHandler(this._saveFileButton_Click);
+			this._saveFileButton.Click += new System.EventHandler(this.SaveFileButtonClick);
 			// 
 			// _openFileButton
 			// 
@@ -532,7 +532,7 @@ namespace ClearCanvas.Dicom.Samples
 			this._openFileButton.TabIndex = 0;
 			this._openFileButton.Text = "Open File";
 			this._openFileButton.UseVisualStyleBackColor = true;
-			this._openFileButton.Click += new System.EventHandler(this._openFileButton_Click);
+			this._openFileButton.Click += new System.EventHandler(this.OpenFileButtonClick);
 			// 
 			// queryScuTab
 			// 
@@ -582,7 +582,7 @@ namespace ClearCanvas.Dicom.Samples
 			this.comboBoxQueryScuQueryLevel.Size = new System.Drawing.Size(100, 21);
 			this.comboBoxQueryScuQueryLevel.TabIndex = 24;
 			this.comboBoxQueryScuQueryLevel.Text = "STUDY";
-			this.comboBoxQueryScuQueryLevel.SelectedIndexChanged += new System.EventHandler(this.comboBoxQueryScuQueryLevel_SelectedIndexChanged);
+			this.comboBoxQueryScuQueryLevel.SelectedIndexChanged += new System.EventHandler(this.ComboBoxQueryScuQueryLevelSelectedIndexChanged);
 			// 
 			// textBoxQueryScuMaxResults
 			// 
@@ -621,7 +621,7 @@ namespace ClearCanvas.Dicom.Samples
 			this.comboBoxQueryScuQueryType.Size = new System.Drawing.Size(121, 21);
 			this.comboBoxQueryScuQueryType.TabIndex = 20;
 			this.comboBoxQueryScuQueryType.Text = "Study Root";
-			this.comboBoxQueryScuQueryType.SelectedIndexChanged += new System.EventHandler(this.comboBoxQueryScuQueryType_SelectedIndexChanged);
+			this.comboBoxQueryScuQueryType.SelectedIndexChanged += new System.EventHandler(this.ComboBoxQueryScuQueryTypeSelectedIndexChanged);
 			// 
 			// label12
 			// 
@@ -741,7 +741,7 @@ namespace ClearCanvas.Dicom.Samples
 			this.buttonSendDicomdir.TabIndex = 12;
 			this.buttonSendDicomdir.Text = "Send DICOMDIR Files";
 			this.buttonSendDicomdir.UseVisualStyleBackColor = true;
-			this.buttonSendDicomdir.Click += new System.EventHandler(this.buttonSendDicomdir_Click);
+			this.buttonSendDicomdir.Click += new System.EventHandler(this.ButtonSendDicomdirClick);
 			// 
 			// _textBoxDicomdirRemotePort
 			// 
@@ -805,7 +805,7 @@ namespace ClearCanvas.Dicom.Samples
 			this._buttonOpenDicomdir.TabIndex = 2;
 			this._buttonOpenDicomdir.Text = "Open DICOMDIR";
 			this._buttonOpenDicomdir.UseVisualStyleBackColor = true;
-			this._buttonOpenDicomdir.Click += new System.EventHandler(this._buttonOpenDicomdir_Click);
+			this._buttonOpenDicomdir.Click += new System.EventHandler(this.ButtonOpenDicomdirClick);
 			// 
 			// label19
 			// 

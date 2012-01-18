@@ -11,6 +11,8 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network.Scu;
 
 namespace ClearCanvas.Dicom.Samples
 {
@@ -21,46 +23,30 @@ namespace ClearCanvas.Dicom.Samples
 	{
 		private readonly string _aeTitle;
 		private DicomDirectory _dir;
-		private int _patientRecords = 0;
-		private int _studyRecords = 0;
-		private int _seriesRecords = 0;
-		private int _instanceRecords = 0;
 
-		public DicomdirReader(string aeTitle)
+	    public DicomdirReader(string aeTitle)
 		{
-			_aeTitle = aeTitle;
+		    InstanceRecords = 0;
+		    SeriesRecords = 0;
+		    StudyRecords = 0;
+		    PatientRecords = 0;
+		    _aeTitle = aeTitle;
 		}
 
-		public DicomDirectory Dicomdir
+	    public DicomDirectory Dicomdir
 		{
 			get { return _dir;}
 		}
 
-		public int PatientRecords
-		{
-			get { return _patientRecords; }
-			set { _patientRecords = value; }
-		}
+	    public int PatientRecords { get; set; }
 
-		public int StudyRecords
-		{
-			get { return _studyRecords; }
-			set { _studyRecords = value; }
-		}
+	    public int StudyRecords { get; set; }
 
-		public int SeriesRecords
-		{
-			get { return _seriesRecords; }
-			set { _seriesRecords = value; }
-		}
+	    public int SeriesRecords { get; set; }
 
-		public int InstanceRecords
-		{
-			get { return _instanceRecords; }
-			set { _instanceRecords = value; }
-		}
+	    public int InstanceRecords { get; set; }
 
-		/// <summary>
+	    /// <summary>
 		/// Load a DICOMDIR
 		/// </summary>
 		/// <param name="filename"></param>
@@ -91,13 +77,13 @@ namespace ClearCanvas.Dicom.Samples
 					}
 				}
 
-				Logger.LogInfo("Loaded DICOMDIR with {0} Patient Records, {1} Study Records, {2} Series Records, and {3} Image Records",
+				Platform.Log(LogLevel.Info, "Loaded DICOMDIR with {0} Patient Records, {1} Study Records, {2} Series Records, and {3} Image Records",
 					PatientRecords,StudyRecords,SeriesRecords,InstanceRecords);
 
 			}
 			catch (Exception e)
 			{
-				Logger.LogErrorException(e, "Unexpected exception reading DICOMDIR: {0}", filename);
+				Platform.Log(LogLevel.Error, e, "Unexpected exception reading DICOMDIR: {0}", filename);
 			}
 		}
 
@@ -112,7 +98,7 @@ namespace ClearCanvas.Dicom.Samples
 		{
 			if (_dir == null) return;
 
-			StorageScu scu = new StorageScu();
+            var scu = new StorageScu("DICOMDIR", aeTitle, host, port);
 
 			foreach (DirectoryRecordSequenceItem patientRecord in _dir.RootDirectoryRecordCollection)
 			{
@@ -127,15 +113,14 @@ namespace ClearCanvas.Dicom.Samples
 							foreach (string subpath in instanceRecord[DicomTags.ReferencedFileId].Values as string[])
 								path = Path.Combine(path, subpath);
 
-							scu.AddFileToSend(path);
+							scu.AddStorageInstance(new StorageInstance(path));
 						}
 					}
 				}
 			}
 
 			// Do the send
-			scu.Send("DICOMDIR", aeTitle, host, port);
-
+			scu.Send();
 		}
 	}
 }

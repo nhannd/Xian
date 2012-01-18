@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -50,7 +54,6 @@
       <DependentUpon>DicomdirDisplay.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomdirReader.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="SamplesForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,8 +87,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="StorageScp.cs" />
-    <Compile Include="StorageScu.cs" />
-    <Compile Include="VerificationScu.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

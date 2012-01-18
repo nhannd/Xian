@@ -11,13 +11,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
+using log4net.Appender;
+using log4net.Config;
+using log4net.Core;
+using Timer = ClearCanvas.Common.Utilities.Timer;
 
 namespace ClearCanvas.Dicom.Samples
 {
@@ -28,17 +34,19 @@ namespace ClearCanvas.Dicom.Samples
         private const string STR_Verify = "Verify";
         #endregion
 
-		private readonly StorageScu _storageScu = new StorageScu();
+        private StorageScu _storageScu;
         private readonly VerificationScu _verificationScu = new VerificationScu();
 		private DicomdirReader _reader = new DicomdirReader("DICOMDIR_READER");
+        private readonly List<StorageInstance> _storageList = new List<StorageInstance>();
+        private readonly Timer _timer;
+        private readonly MemoryAppender _appender = new MemoryAppender();
+
 
         public SamplesForm()
         {
 			InitializeComponent();
             _buttonStorageScuVerify.Text = STR_Verify;
-
-            Logger.RegisterLogHandler(OutputTextBox);
-
+         
             if (String.IsNullOrEmpty(Properties.Settings.Default.ScpStorageFolder))
             {
                 Properties.Settings.Default.ScpStorageFolder = Path.Combine(Path.GetTempPath(), "DicomImages");
@@ -49,11 +57,61 @@ namespace ClearCanvas.Dicom.Samples
 			foreach (TransferSyntax syntax in DicomCodecRegistry.GetCodecTransferSyntaxes())
 				_destinationSyntaxCombo.Items.Add(syntax);
 
-        	comboBoxQueryScuQueryType_SelectedIndexChanged(null, null);
+        	ComboBoxQueryScuQueryTypeSelectedIndexChanged(null, null);
+
+            // Logging stuff
+            Closing += SamplesFormClosing;
+            BasicConfigurator.Configure(_appender);
+            _timer = new Timer(delegate
+            {
+                try
+                {
+                    LoggingEvent[] events = _appender.GetEvents();
+                    if (events != null && events.Length > 0)
+                    {
+                        // if there are events, we clear them from the logger,  
+                        // since we're done with them  
+                        _appender.Clear();
+                        foreach (LoggingEvent ev in events)
+                        {
+                            // the line we want to log  
+                            string line = String.Format("({0}) {1} {2} [{3}]: {4}\r\n",
+                                                        ev.ThreadName,
+                                                        ev.TimeStamp.ToShortDateString(),
+                                                        ev.TimeStamp.ToLongTimeString(), ev.Level,
+                                                        ev.RenderedMessage);
+
+                            AppendText(line);
+
+                            if (ev.ExceptionObject != null)
+                            {
+                                AppendText(string.Format("{0}: {1}\r\n", ev.ExceptionObject, ev.ExceptionObject.Message));
+                                AppendText("Stack Trace:\r\n" + ev.ExceptionObject.StackTrace + "\r\n");
+                            }
+                        }
+                    }
+                }
+                catch (Exception x)
+                {
+                    Platform.Log(LogLevel.Error,x,"Unexpected exception with logging event");
+                }
+            }, null, 500);
+            _timer.Start();
+        }
+
+        private void SamplesFormClosing(object sender, CancelEventArgs e)
+        {
+            // Gotta stop our logging thread  
+            _timer.Stop();
+        }
+        private void AppendText(string text)
+        {
+            Invoke(new Action<string>(logLine => OutputTextBox.AppendText(logLine)),
+                                     new object[] { text });
         }
 
         #region Button Click Handlers
-        private void buttonStorageScuSelectFiles_Click(object sender, EventArgs e)
+        private void ButtonStorageScuSelectFilesClick(object sender, EventArgs e)
         {
 			openFileDialogStorageScu.Multiselect = true;
 
@@ -65,30 +123,38 @@ namespace ClearCanvas.Dicom.Samples
 					if (file != null)
 						try
 						{
-							_storageScu.AddFileToSend(file);
+						    _storageList.Add(new StorageInstance(file));
 						}
 						catch (FileNotFoundException ex)
 						{
-							Logger.LogErrorException(ex, "Unexpectedly cannot find file: {0}", file);
+							Platform.Log(LogLevel.Error, ex, "Unexpectedly cannot find file: {0}", file);
 						}
 				}
 			}
         }
 
-        private void buttonStorageScuConnect_Click(object sender, EventArgs e)
+        private void InstanceSent(IAsyncResult ar)
+        {
+        }
+
+        private void ButtonStorageScuConnectClick(object sender, EventArgs e)
         {
             int port;
             if (!int.TryParse(_textBoxStorageScuRemotePort.Text,out port))
             {
-                Logger.LogError("Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
+                Platform.Log(LogLevel.Error, "Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
                 return;
             }
 
+            _storageScu = new StorageScu(_textBoxStorageScuLocalAe.Text,
+                                                _textBoxStorageScuRemoteAe.Text,
+                                                _textBoxStorageScuRemoteHost.Text, port);
 
-            _storageScu.Send(_textBoxStorageScuLocalAe.Text, _textBoxStorageScuRemoteAe.Text, _textBoxStorageScuRemoteHost.Text, port);
+            _storageScu.AddStorageInstanceList(_storageList);
+            _storageScu.BeginSend(InstanceSent, _storageScu);
         }
 
-        private void buttonStorageScpStartStop_Click(object sender, EventArgs e)
+        private void ButtonStorageScpStartStopClick(object sender, EventArgs e)
         {
             if (StorageScp.Started)
             {
@@ -106,15 +172,31 @@ namespace ClearCanvas.Dicom.Samples
 
         }
 
+        private void LoadDirectory(DirectoryInfo dir)
+        {
+            FileInfo[] files = dir.GetFiles();
+
+            foreach (FileInfo file in files)
+            {
+                _storageList.Add(new StorageInstance(file.FullName));
+            }
+
+            String[] subdirectories = Directory.GetDirectories(dir.FullName);
+            foreach (String subPath in subdirectories)
+            {
+                var subDir = new DirectoryInfo(subPath);
+                LoadDirectory(subDir);
+            }
+        }
+
         private void buttonStorageScuSelectDirectory_Click(object sender, EventArgs e)
         {
-			if (DialogResult.OK == folderBrowserDialogStorageScu.ShowDialog())
-			{
-				if (folderBrowserDialogStorageScu.SelectedPath == null)
-					return;
+            if (DialogResult.OK != folderBrowserDialogStorageScu.ShowDialog()) return;
 
-				_storageScu.AddDirectoryToSend(folderBrowserDialogStorageScu.SelectedPath);
-			}
+            if (folderBrowserDialogStorageScu.SelectedPath == null)
+                return;
+			
+            LoadDirectory(new DirectoryInfo(folderBrowserDialogStorageScu.SelectedPath));
         }
 
         private void _buttonStorageScuSelectStorageLocation_Click(object sender, EventArgs e)
@@ -134,12 +216,12 @@ namespace ClearCanvas.Dicom.Samples
 
         private void _buttonOutputClearLog_Click(object sender, EventArgs e)
         {
-            OutputTextBox.Text = "";
+            OutputTextBox.Text = string.Empty;
         }
 
         private void _buttonStorageScuClearFiles_Click(object sender, EventArgs e)
         {
-            _storageScu.ClearFiles();
+            _storageList.Clear();
         }
         #endregion
 
@@ -148,7 +230,7 @@ namespace ClearCanvas.Dicom.Samples
             int port;
             if (!int.TryParse(_textBoxStorageScuRemotePort.Text, out port))
             {
-                Logger.LogError("Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
+                Platform.Log(LogLevel.Error, "Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
                 return;
             }
             _verificationScu.BeginVerify(_textBoxStorageScuLocalAe.Text, _textBoxStorageScuRemoteAe.Text, _textBoxStorageScuRemoteHost.Text, port, new AsyncCallback(VerifyComplete), null);
@@ -158,10 +240,9 @@ namespace ClearCanvas.Dicom.Samples
         private void VerifyComplete(IAsyncResult ar)
         {
             VerificationResult verificationResult = _verificationScu.EndVerify(ar);
-            Logger.LogInfo("Verify result: " + verificationResult);
+            Platform.Log(LogLevel.Info, "Verify result: " + verificationResult);
             SetVerifyButton(false);
         }
-
 
         private void SetVerifyButton(bool running)
         {
@@ -182,7 +263,7 @@ namespace ClearCanvas.Dicom.Samples
 
     	private Compression _compression;
 
-		private void _openFileButton_Click(object sender, EventArgs e)
+		private void OpenFileButtonClick(object sender, EventArgs e)
 		{
 			openFileDialogStorageScu.Multiselect = false;
 			openFileDialogStorageScu.Filter = "DICOM files|*.dcm|All files|*.*";
@@ -200,19 +281,19 @@ namespace ClearCanvas.Dicom.Samples
 			}
 		}
 
-		private void _saveFileButton_Click(object sender, EventArgs e)
+		private void SaveFileButtonClick(object sender, EventArgs e)
 		{
 			if (_compression != null)
 			{
-				TransferSyntax destinationSyntax = _destinationSyntaxCombo.SelectedItem as TransferSyntax;
+				var destinationSyntax = _destinationSyntaxCombo.SelectedItem as TransferSyntax;
 
 				string dump = _compression.DicomFile.Dump();
-				Logger.LogInfo(dump);
+				Platform.Log(LogLevel.Info, dump);
 
 				_compression.ChangeSyntax(destinationSyntax);
 
 				dump = _compression.DicomFile.Dump();
-				Logger.LogInfo(dump);
+				Platform.Log(LogLevel.Info, dump);
 
 				saveFileDialog.Filter = "DICOM|*.dcm";
 				if (DialogResult.OK == saveFileDialog.ShowDialog())
@@ -223,7 +304,7 @@ namespace ClearCanvas.Dicom.Samples
 			}
 		}
 
-		private void _savePixelsButton_Click(object sender, EventArgs e)
+		private void SavePixelsButtonClick(object sender, EventArgs e)
 		{
 			if (_compression != null)
 			{
@@ -242,9 +323,9 @@ namespace ClearCanvas.Dicom.Samples
 			}
 		}
 
-		private void comboBoxQueryScuQueryType_SelectedIndexChanged(object sender, EventArgs e)
+		private void ComboBoxQueryScuQueryTypeSelectedIndexChanged(object sender, EventArgs e)
 		{
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 
 			if (comboBoxQueryScuQueryType.SelectedIndex == 0)
 			{
@@ -261,7 +342,7 @@ namespace ClearCanvas.Dicom.Samples
 			}
 			else
 			{
-				Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "PatientRootPatient.xml");
+				var stream = GetType().Assembly.GetManifestResourceStream(GetType(), "PatientRootPatient.xml");
 				if (stream != null)
 				{
 					doc.Load(stream);
@@ -274,18 +355,20 @@ namespace ClearCanvas.Dicom.Samples
 				comboBoxQueryScuQueryLevel.Items.Add("IMAGE");
 			}
 
-			StringWriter sw = new StringWriter();
+			var sw = new StringWriter();
 
-			XmlWriterSettings xmlSettings = new XmlWriterSettings();
+		    var xmlSettings = new XmlWriterSettings
+		                          {
+		                              Encoding = Encoding.UTF8,
+		                              ConformanceLevel = ConformanceLevel.Fragment,
+		                              Indent = true,
+		                              NewLineOnAttributes = false,
+		                              CheckCharacters = true,
+		                              IndentChars = "  "
+		                          };
 
-			xmlSettings.Encoding = Encoding.UTF8;
-			xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
-			xmlSettings.Indent = true;
-			xmlSettings.NewLineOnAttributes = false;
-			xmlSettings.CheckCharacters = true;
-			xmlSettings.IndentChars = "  ";
 
-			XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+		    XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
 			if (tw != null)
 			{
 				doc.WriteTo(tw);
@@ -296,17 +379,17 @@ namespace ClearCanvas.Dicom.Samples
 
 		private void buttonQueryScuSearch_Click(object sender, EventArgs e)
 		{
-			XmlDocument theDoc = new XmlDocument();
+			var theDoc = new XmlDocument();
 
 			try
 			{
 				theDoc.LoadXml(textBoxQueryMessage.Text);
-				InstanceXml instanceXml = new InstanceXml(theDoc.DocumentElement, null);
+				var instanceXml = new InstanceXml(theDoc.DocumentElement, null);
 				DicomAttributeCollection queryMessage = instanceXml.Collection;
 
 				if (queryMessage == null)
 				{
-					Logger.LogError("Unexpected error parsing query message");
+					Platform.Log(LogLevel.Error, "Unexpected error parsing query message");
 				}
 
 				int maxResults;
@@ -316,44 +399,47 @@ namespace ClearCanvas.Dicom.Samples
 				IList<DicomAttributeCollection> resultsList;
 				if (comboBoxQueryScuQueryType.SelectedIndex == 0)
 				{
-					StudyRootFindScu findScu = new StudyRootFindScu();
-					findScu.MaxResults = maxResults;
-					resultsList = findScu.Find(textBoxQueryScuLocalAe.Text,
+				    var findScu = new StudyRootFindScu
+				                      {
+				                          MaxResults = maxResults
+				                      };
+				    resultsList = findScu.Find(textBoxQueryScuLocalAe.Text,
 								 textBoxQueryScuRemoteAe.Text,
 								 textBoxQueryScuRemoteHost.Text,
 								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage);
                     if (findScu.Status != ScuOperationStatus.NotRunning)
-                        Logger.LogError("Unexpected error from Find SCU: {0}",findScu.FailureDescription);
+                        Platform.Log(LogLevel.Error, "Unexpected error from Find SCU: {0}",findScu.FailureDescription);
 					findScu.Dispose();
 				}
 				else
 				{
-					PatientRootFindScu findScu = new PatientRootFindScu();
-					findScu.MaxResults = maxResults;
-					resultsList = findScu.Find(textBoxQueryScuLocalAe.Text,
+				    var findScu = new PatientRootFindScu
+				                      {
+				                          MaxResults = maxResults
+				                      };
+				    resultsList = findScu.Find(textBoxQueryScuLocalAe.Text,
 								 textBoxQueryScuRemoteAe.Text,
 								 textBoxQueryScuRemoteHost.Text,
 								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage);
                     if (findScu.Status != ScuOperationStatus.NotRunning)
-                        Logger.LogError("Unexpected error from Find SCU: {0}", findScu.FailureDescription);
+                        Platform.Log(LogLevel.Error, "Unexpected error from Find SCU: {0}", findScu.FailureDescription);
                     findScu.Dispose();
 				}
 
 				foreach (DicomAttributeCollection msg in resultsList)
 				{
-					Logger.LogInfo(msg.DumpString);
+					Platform.Log(LogLevel.Info, msg.DumpString);
 				}
 			}
 			catch (Exception x)
 			{
-				Logger.LogErrorException(x, "Unable to perform query");
-				return;
+				Platform.Log(LogLevel.Error, x, "Unable to perform query");
 			}		
 		}
 
-		private void comboBoxQueryScuQueryLevel_SelectedIndexChanged(object sender, EventArgs e)
+		private void ComboBoxQueryScuQueryLevelSelectedIndexChanged(object sender, EventArgs e)
 		{
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 
 			string xmlFile;
 			if (comboBoxQueryScuQueryType.SelectedIndex == 0)
@@ -384,18 +470,20 @@ namespace ClearCanvas.Dicom.Samples
 				stream.Close();
 			}
 
-			StringWriter sw = new StringWriter();
+			var sw = new StringWriter();
 
-			XmlWriterSettings xmlSettings = new XmlWriterSettings();
+		    var xmlSettings = new XmlWriterSettings
+		                          {
+		                              Encoding = Encoding.UTF8,
+		                              ConformanceLevel = ConformanceLevel.Fragment,
+		                              Indent = true,
+		                              NewLineOnAttributes = false,
+		                              CheckCharacters = true,
+		                              IndentChars = "  "
+		                          };
 
-			xmlSettings.Encoding = Encoding.UTF8;
-			xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
-			xmlSettings.Indent = true;
-			xmlSettings.NewLineOnAttributes = false;
-			xmlSettings.CheckCharacters = true;
-			xmlSettings.IndentChars = "  ";
 
-			XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+		    XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
 
 			if (tw != null)
 			{
@@ -406,7 +494,7 @@ namespace ClearCanvas.Dicom.Samples
 			textBoxQueryMessage.Text = sw.ToString();
 		}
 
-		private void _buttonOpenDicomdir_Click(object sender, EventArgs e)
+		private void ButtonOpenDicomdirClick(object sender, EventArgs e)
 		{
 			openFileDialogStorageScu.Filter = "DICOMDIR|*.*|DICOM files|*.dcm";
 			openFileDialogStorageScu.FileName = String.Empty;
@@ -418,15 +506,14 @@ namespace ClearCanvas.Dicom.Samples
 				_reader = new DicomdirReader("DICOMDIR_READER");
 				_reader.Load(openFileDialogStorageScu.FileName);
 
-				DicomdirDisplay display = new DicomdirDisplay();
+				var display = new DicomdirDisplay();
 				display.Add(_reader.Dicomdir);
 
 				display.Show(this);
-				
 			}
 		}
 
-		private void buttonSendDicomdir_Click(object sender, EventArgs e)
+		private void ButtonSendDicomdirClick(object sender, EventArgs e)
 		{
 			string rootDirectory = Path.GetDirectoryName(_textBoxDicomdir.Text);
 

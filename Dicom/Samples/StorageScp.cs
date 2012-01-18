@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.Dicom.Samples
@@ -23,8 +24,7 @@ namespace ClearCanvas.Dicom.Samples
     class StorageScp : IDicomServerHandler
     {
         #region Private Members
-        private static bool _started = false;
-        private static String _staticStorageLocation;
+        private static bool _started;
         private static ServerAssociationParameters _staticAssocParameters;
         private ServerAssociationParameters _assocParameters;
         #endregion
@@ -45,11 +45,7 @@ namespace ClearCanvas.Dicom.Samples
         /// <summary>
         /// The path (directory) to store incoming images.
         /// </summary>
-        public static String StorageLocation
-        {
-            get { return _staticStorageLocation; }
-            set { _staticStorageLocation = value; }
-        }
+        public static string StorageLocation { get; set; }
 
         #endregion
 
@@ -213,10 +209,7 @@ namespace ClearCanvas.Dicom.Samples
             AddPresentationContexts(_staticAssocParameters);
 
             DicomServer.StartListening(_staticAssocParameters,
-                delegate(DicomServer server, ServerAssociationParameters assoc) 
-                {
-                    return new StorageScp(assoc);
-                } );
+                                       (server, assoc) => new StorageScp(assoc));
 
             _started = true;
         }
@@ -259,37 +252,39 @@ namespace ClearCanvas.Dicom.Samples
 
             if (!ok)
             {
-                Logger.LogError("Unable to retrieve UIDs from request message, sending failure status.");
+                Platform.Log(LogLevel.Error, "Unable to retrieve UIDs from request message, sending failure status.");
 
                 server.SendCStoreResponse(presentationID, message.MessageId, sopInstanceUid.UID,
                     DicomStatuses.ProcessingFailure);
                 return;
             }
 
-            if (!Directory.Exists(StorageScp.StorageLocation))
-                Directory.CreateDirectory(StorageScp.StorageLocation);
+            if (!Directory.Exists(StorageLocation))
+                Directory.CreateDirectory(StorageLocation);
 
-            StringBuilder path = new StringBuilder();
-            path.AppendFormat("{0}{1}{2}{3}{4}", StorageScp.StorageLocation,  Path.DirectorySeparatorChar,
+            var path = new StringBuilder();
+            path.AppendFormat("{0}{1}{2}{3}{4}", StorageLocation,  Path.DirectorySeparatorChar,
                 studyInstanceUid, Path.DirectorySeparatorChar,seriesInstanceUid);
 
             Directory.CreateDirectory(path.ToString());
 
             path.AppendFormat("{0}{1}.dcm", Path.DirectorySeparatorChar, sopInstanceUid.UID);
 
-            DicomFile dicomFile = new DicomFile(message, path.ToString());
+            var dicomFile = new DicomFile(message, path.ToString())
+                                {
+                                    TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid,
+                                    MediaStorageSopInstanceUid = sopInstanceUid.UID,
+                                    ImplementationClassUid = DicomImplementation.ClassUID.UID,
+                                    ImplementationVersionName = DicomImplementation.Version,
+                                    SourceApplicationEntityTitle = association.CallingAE,
+                                    MediaStorageSopClassUid = message.SopClass.Uid
+                                };
 
-            dicomFile.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-            dicomFile.MediaStorageSopInstanceUid = sopInstanceUid.UID;
-            dicomFile.ImplementationClassUid = DicomImplementation.ClassUID.UID;
-            dicomFile.ImplementationVersionName = DicomImplementation.Version;
-            dicomFile.SourceApplicationEntityTitle = association.CallingAE;
-            dicomFile.MediaStorageSopClassUid = message.SopClass.Uid;
-            
+
             dicomFile.Save(DicomWriteOptions.None);
 
             String patientName = dicomFile.DataSet[DicomTags.PatientsName].GetString(0, "");
-			Logger.LogInfo("Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
+			Platform.Log(LogLevel.Info, "Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
 
             server.SendCStoreResponse(presentationID, message.MessageId,
                 sopInstanceUid.UID, 
@@ -298,7 +293,7 @@ namespace ClearCanvas.Dicom.Samples
 
         void IDicomServerHandler.OnReceiveResponseMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
-			Logger.LogError("Unexpectedly received response mess on server.");
+			Platform.Log(LogLevel.Error, "Unexpectedly received response mess on server.");
 
             server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.UnrecognizedPDU);
         }
@@ -307,22 +302,22 @@ namespace ClearCanvas.Dicom.Samples
 
         void IDicomServerHandler.OnReceiveReleaseRequest(DicomServer server, ServerAssociationParameters association)
         {
-			Logger.LogInfo("Received association release request from  {0}.", association.CallingAE);
+			Platform.Log(LogLevel.Info, "Received association release request from  {0}.", association.CallingAE);
         }
 
         void IDicomServerHandler.OnReceiveAbort(DicomServer server, ServerAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
         {
-			Logger.LogError("Unexpected association abort received.");
+			Platform.Log(LogLevel.Error, "Unexpected association abort received.");
         }
 
         void IDicomServerHandler.OnNetworkError(DicomServer server, ServerAssociationParameters association, Exception e)
         {
-            Logger.LogErrorException(e, "Unexpected network error over association from {0}.", association.CallingAE);
+            Platform.Log(LogLevel.Error, e, "Unexpected network error over association from {0}.", association.CallingAE);
         }
 
         void IDicomServerHandler.OnDimseTimeout(DicomServer server, ServerAssociationParameters association)
         {
-            Logger.LogInfo("Received DIMSE Timeout, continuing listening for messages");
+            Platform.Log(LogLevel.Info, "Received DIMSE Timeout, continuing listening for messages");
         }
         
 

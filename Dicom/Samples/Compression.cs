@@ -11,6 +11,7 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod.Modules;
 
 namespace ClearCanvas.Dicom.Samples
@@ -39,7 +40,7 @@ namespace ClearCanvas.Dicom.Samples
 			}
 			catch (Exception e)
 			{
-				Logger.LogErrorException(e, "Unexpected exception loading DICOM file: {0}", _sourceFilename);
+				Platform.Log(LogLevel.Error, e, "Unexpected exception loading DICOM file: {0}", _sourceFilename);
 			}
 		}
 
@@ -74,7 +75,7 @@ namespace ClearCanvas.Dicom.Samples
 			}
 			catch (Exception e)
 			{
-				Logger.LogErrorException(e, "Unexpected exception compressing/decompressing DICOM file");
+				Platform.Log(LogLevel.Error, e, "Unexpected exception compressing/decompressing DICOM file");
 			}
 		}
 
@@ -86,7 +87,7 @@ namespace ClearCanvas.Dicom.Samples
 			}
 			catch (Exception e)
 			{
-				Logger.LogErrorException(e, "Unexpected exception saving dicom file: {0}", filename);
+				Platform.Log(LogLevel.Error, e, "Unexpected exception saving dicom file: {0}", filename);
 			}
 		}
 
