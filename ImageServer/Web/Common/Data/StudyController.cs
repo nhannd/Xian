@@ -146,6 +146,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			}
         }
 
+        //TODO: Consolidate this and DeleteStudy?
         public void DeleteSeries(Study study, IList<Series> series, string reason)
         {
             // Load the Partition
