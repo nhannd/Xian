@@ -265,7 +265,7 @@
     <value>Web Delete Scheduled</value>
   </data>
   <data name="QueueStudyStateEnum_WebDeleteScheduled_LongDescription" xml:space="preserve">
-    <value>The study is scheduled for deletion.</value>
+    <value>The study or a series is scheduled for deletion.</value>
   </data>
   <data name="QueueStudyStateEnum_EditScheduled_Description" xml:space="preserve">
     <value>Edit Scheduled</value>

@@ -1008,7 +1008,7 @@ INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[De
      VALUES(newid(),102,'DeleteScheduled','Delete Scheduled','The study is scheduled for deletion')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES(newid(),103,'WebDeleteScheduled','Web Delete Scheduled','The study is scheduled for deletion.')
+     VALUES(newid(),103,'WebDeleteScheduled','Web Delete Scheduled','The study or a series is scheduled for deletion.')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES(newid(),104,'EditScheduled','Edit Scheduled','The study is scheduled for editing')

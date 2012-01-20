@@ -71,6 +71,15 @@ GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
 
+PRINT N'Updating  [QueueStudyStateEnum] WebDeleteScheduled description'
+UPDATE [dbo].[QueueStudyStateEnum] SET [LongDescription]='The study or a series is scheduled for deletion.' 
+WHERE [Lookup] = 'WebDeleteScheduled'
+
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
 
 
 IF EXISTS (SELECT * FROM #tmpErrors) ROLLBACK TRANSACTION
