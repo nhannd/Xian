@@ -165,6 +165,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="StudySearchPanelExtensionPoint.cs" />
     <Compile Include="ThemeManager.cs" />
     <Compile Include="UICommonSettings.cs" />
     <Compile Include="UISettings.cs" />
