@@ -294,7 +294,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
             StudyReprocessor reprocessor = new StudyReprocessor();
             String reprocessReason = String.Format("Restore Validation Error: {0}", reason);
             reprocessor.ReprocessStudy(reprocessReason, restoredLocation, Platform.Time);
-            string message = string.Format("Study {0} has been restored but failed the validation. Reprocess Study has been triggerred. Reason for validation failure: {1}", restoredLocation.StudyInstanceUid, reason);
+            string message = string.Format("Study {0} has been restored but failed the validation. Reprocess Study has been triggered. Reason for validation failure: {1}", restoredLocation.StudyInstanceUid, reason);
             Platform.Log(LogLevel.Warn, message);
 
             ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Informational, "Restore", 0, null, TimeSpan.Zero, message);
