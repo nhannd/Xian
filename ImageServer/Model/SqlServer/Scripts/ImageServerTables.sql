@@ -2250,4 +2250,4 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ServerPartitionDataAccess_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[ServerPartitionDataAccess]'))
 ALTER TABLE [dbo].[ServerPartitionDataAccess]  WITH CHECK ADD  CONSTRAINT [FK_ServerPartitionDataAccess_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
 REFERENCES [dbo].[ServerPartition] ([GUID])
-
+GO
