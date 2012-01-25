@@ -44,7 +44,7 @@ namespace ClearCanvas.Enterprise.Common
         /// </remarks>
         public static class DataAccess
         {
-            [AuthorityToken(Description = "Allow the user access to all studies.", Formerly = "Web Portal/Data Access/Access to all Studies;PACS/Data Access/Access to all Studies")]
+            [AuthorityToken(Description = "Allow the user access to all studies.", Formerly = "Web Portal/Data Access/Access to all Studies")]
             public const string AllStudies = "Data Access/Access to all Studies";
 
             [AuthorityToken(Description = "Allow the user access to all Server Partitions on the ImageServer.")]
