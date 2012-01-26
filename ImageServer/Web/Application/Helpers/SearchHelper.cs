@@ -19,7 +19,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
         {
             if(ConfigurationManager.AppSettings["UseWildcards"].ToLower().Equals("true"))
             {
-                if(!searchText.Contains("*")) searchText = searchText + "*";
+                if (searchText.IndexOfAny(new[]{'*','%','?','_'} ) == -1)
+                    return searchText + "%";
             }
             return searchText;
         }
@@ -28,7 +29,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
         {
             if (ConfigurationManager.AppSettings["UseWildcards"].ToLower().Equals("true"))
             {
-                if(!searchText.Contains("*")) searchText = "*" + searchText;
+                if (searchText.IndexOfAny(new[] { '*', '%', '?', '_' }) == -1)
+                    return "%" + searchText;
             }
             return searchText;
         }
@@ -37,7 +39,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
         {
             if (ConfigurationManager.AppSettings["UseWildcards"].ToLower().Equals("true"))
             {
-                if(!searchText.Contains("*"))searchText = "*" + searchText + "*";
+                if (searchText.IndexOfAny(new[] { '*', '%', '?', '_' }) == -1) 
+                    return "%" + searchText + "%";
             }
             return searchText;
         }
@@ -46,17 +49,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
         {
             if (ConfigurationManager.AppSettings["UseWildcards"].ToLower().Equals("true"))
             {
-                if (!searchText.Contains("*"))
+                if (searchText.IndexOfAny(new[] { '*', '%', '?', '_' }) == -1)
                 {
                     string[] names = searchText.Split(',');
                     if (names.Length == 2)
                     {
-                        searchText = names[0].Trim() + "*" + names[1].Trim() + "*";
+                        return names[0].Trim() + "%" + names[1].Trim() + "%";
                     }
-                    else
-                    {
-                        searchText = "*" + searchText + "*";
-                    }
+                    return "%" + searchText + "%";
                 }
             }
             return searchText;

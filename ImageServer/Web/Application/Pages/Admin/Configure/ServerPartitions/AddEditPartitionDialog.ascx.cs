@@ -10,10 +10,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Security;
 using Resources;
+using AjaxControlToolkit;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions
 {
@@ -52,6 +55,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                 _partition = value;
                 // put into viewstate to retrieve later
                 ViewState[ "EditedPartition"] = _partition;
+
+                dataAccessPanel.Partition = _partition;
+                
 				if (value != null && !Page.IsPostBack)
 				{
 					ServerPartitionValidator.OriginalAeTitle = value.AeTitle;
@@ -69,7 +75,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
         /// <param name="partition">The partition being added.</param>
-        public delegate void OnOKClickedEventHandler(ServerPartition partition);
+        public delegate void OnOKClickedEventHandler(ServerPartitionInfo partition);
 
         /// <summary>
         /// Occurs when users click on "OK".
@@ -84,6 +90,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             base.OnInit(e);
 
+
+            //TODO: rewrite this. It's not pretty. 
+            if (!SessionManager.Current.User.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup))
+            {
+                for(int i=-0; i<ServerPartitionTabContainer.Tabs.Count;i++)
+                {
+                    if (ServerPartitionTabContainer.Tabs[i].ID == "DataAccessTab")
+                    {
+                        ServerPartitionTabContainer.Tabs.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
             ServerPartitionTabContainer.ActiveTabIndex = 0;
 
             AutoInsertDeviceCheckBox.InputAttributes.Add("onclick", "EnableDisable();");
@@ -134,7 +153,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                 SaveData();
 
                 if (OKClicked != null)
-                    OKClicked(Partition);
+                {
+                    OKClicked(new ServerPartitionInfo()
+                                  {
+                                      Partition = Partition, 
+                                      GroupsWithAccess = new List<String>(dataAccessPanel.SelectedGroupRefs)
+                                  });
+                }
 
                 Close();
             }
@@ -300,5 +325,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         }
 
         #endregion Public methods
+    }
+
+    public class ServerPartitionInfo
+    {
+        public ServerPartition Partition { get; set; }
+        public List<string> GroupsWithAccess { get; set; }
     }
 }

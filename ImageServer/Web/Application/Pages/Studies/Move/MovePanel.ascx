@@ -30,6 +30,8 @@
             });
         }
     </script>
+	
+	<asp:Panel runat="server"  DefaultButton="SearchButton">
     
     <table cellpadding="0" cellspacing="0" width="100%">
   
@@ -46,17 +48,17 @@
             </td>
         </tr>
         <tr><td colspan="2">
-            <asp:Panel ID="Panel1" runat="server" style="border: solid 1px #3d98d1;">
+            <asp:Panel ID="Panel1" runat="server" style="border: solid 1px #66aa65;">
                 <localAsp:StudyGridView ID="StudyGridPanel" runat="server" />
             </asp:Panel>
         </td></tr>
     </table>
   </tr>
 
-  <tr><td style="background-color: #3D98D1"><asp:Image ID="Image2" runat="server" SkinID="Spacer" Height="4" /></td></tr>  
+  <tr><td style="background-color: #66aa65"><asp:Image ID="Image2" runat="server" SkinID="Spacer" Height="4" /></td></tr>  
 
   <tr>
-  <td class="ToolbarButtonPanel" style="width: 100%; color: #205F87; font-family: Sans-serif; font-weight: bold; font-size: 18px; padding-left: 5px; border-bottom: solid 1px #3d98d1;">
+  <td class="ToolbarButtonPanel" style="width: 100%; color: #2A4C29; font-family: Sans-serif; font-weight: bold; font-size: 18px; padding-left: 5px; border-bottom: solid 1px #66aa65;">
   <%=Labels.DestinationDevices %></td>
   </tr>
 
@@ -88,9 +90,9 @@
         </tr>
 
         <tr><td colspan="7">
-            <asp:Panel runat="server" style="border: solid 1px #3d98d1;">
+            <asp:Panel runat="server" style="border: solid 1px #66aa65;">
             <table width="100%" style="background-color: #E1EFF8;" cellpadding="0" cellspacing="0">
-                <tr><td style="border-bottom: solid 1px #3d98d1;"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>
+                <tr><td ><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>
                 <tr><td style="background-color: White;"><localAsp:DeviceGridView ID="DeviceGridPanel" runat="server" Height="500px" /></td></tr>
             </table>
             </asp:Panel>
@@ -100,7 +102,8 @@
   </tr>
   
   </table>
-   
+  
+   </asp:Panel>
     </ContentTemplate>
 </asp:UpdatePanel>
 

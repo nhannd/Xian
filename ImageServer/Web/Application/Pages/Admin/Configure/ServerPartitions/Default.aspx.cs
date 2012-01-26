@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
@@ -74,12 +75,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
         #region Private Methods
 
-        private void AddEditPartitionDialog_OKClicked(ServerPartition partition)
+        private void AddEditPartitionDialog_OKClicked(ServerPartitionInfo info)
         {
             if (AddEditPartitionDialog.EditMode)
             {
                 // Add partition into db and refresh the list
-                if (_controller.UpdatePartition(partition))
+                if (_controller.UpdatePartition(info.Partition, info.GroupsWithAccess))
                 {
                     UpdateUI();
                 }
@@ -87,7 +88,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             else
             {
                 // Add partition into db and refresh the list
-                if (_controller.AddPartition(partition))
+                if (_controller.AddPartition(info.Partition, info.GroupsWithAccess))
                 {
                     UpdateUI();
                 }

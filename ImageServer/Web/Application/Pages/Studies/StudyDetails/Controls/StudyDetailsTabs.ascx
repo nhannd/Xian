@@ -22,14 +22,14 @@
 <%@ Register Src="UpdateAuthorityGroupDialog.ascx" TagName="UpdateAuthorityGroupDialog" TagPrefix="localAsp" %>
 
 <aspAjax:TabContainer ID="StudyDetailsTabContainer" runat="server" ActiveTabIndex="0"
-    CssClass="TabControl" Width="100%" Style="border-bottom: #618FAD 1px solid;">
+    CssClass="TabControl" Width="100%">
     <aspAjax:TabPanel ID="StudyDetailsTab" HeaderText="<%$Resources: Titles, StudyDetails %>"
         runat="server">
         <ContentTemplate>
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                        <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+                        <table width="100%" cellpadding="8" cellspacing="0" class="StudyDetailsTabContent">
                             <tr>
                                 <td>
                                     <localAsp:StudyDetailsView ID="StudyDetailsView" runat="server" />
@@ -47,7 +47,7 @@
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                        <table width="100%" cellpadding="4" cellspacing="0" style="background-color: #B8D8EE;">
+                        <table width="100%" cellpadding="4" cellspacing="0"  class="StudyDetailsTabContent">
                             <tr>
                                 <td>
                                     <div style="padding-top: 5px; padding-left: 1px;" />
@@ -60,9 +60,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <div style="border: solid 1px #3d98d1;">
-                                        <localAsp:SeriesGridView ID="SeriesGridView" runat="server" />
-                                    </div>
+                                    <localAsp:SeriesGridView ID="SeriesGridView" runat="server" />
                                 </td>
                             </tr>
                         </table>
@@ -79,12 +77,10 @@
                 ID="StuckIcon" SkinID="WarningSmall" />
         </HeaderTemplate>
         <ContentTemplate>
-            <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+            <table width="100%" cellpadding="8" cellspacing="0"  class="StudyDetailsTabContent">
                 <tr>
                     <td>
-                        <div style="border: solid 1px #3d98d1;">
-                            <localAsp:WorkQueueGridView ID="WorkQueueGridView" runat="server" />
-                        </div>
+                        <localAsp:WorkQueueGridView ID="WorkQueueGridView" runat="server" />
                     </td>
                 </tr>
             </table>
@@ -93,12 +89,10 @@
     <aspAjax:TabPanel ID="TabPanel4" HeaderText="<%$Resources: Titles, StudyIntegrityQueue %>"
         runat="server">
         <ContentTemplate>
-            <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+            <table width="100%" cellpadding="8" cellspacing="0"  class="StudyDetailsTabContent">
                 <tr>
                     <td>
-                        <div style="border: solid 1px #3d98d1;">
-                            <localAsp:StudyIntegrityQueueGridView ID="StudyIntegrityQueueGridView" runat="server" />
-                        </div>
+                        <localAsp:StudyIntegrityQueueGridView ID="StudyIntegrityQueueGridView" runat="server" />
                     </td>
                 </tr>
             </table>
@@ -107,12 +101,10 @@
     <aspAjax:TabPanel ID="FileSystemQueueTab" HeaderText="<%$Resources: Titles, FileSystemQueue %>"
         runat="server">
         <ContentTemplate>
-            <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+            <table width="100%" cellpadding="8" cellspacing="0"  class="StudyDetailsTabContent">
                 <tr>
                     <td>
-                        <div style="border: solid 1px #3d98d1;">
-                            <localAsp:FileSystemQueueGridView ID="FSQueueGridView" runat="server" />
-                        </div>
+                        <localAsp:FileSystemQueueGridView ID="FSQueueGridView" runat="server" />
                     </td>
                 </tr>
             </table>
@@ -121,7 +113,7 @@
     <aspAjax:TabPanel ID="TabPanel1" HeaderText="<%$Resources: Titles, StudyStorage %>"
         runat="server">
         <ContentTemplate>
-            <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+            <table width="100%" cellpadding="8" cellspacing="0" class="StudyDetailsTabContent">
                 <tr>
                     <td>
                         <localAsp:StudyStorageView ID="StudyStorageView" runat="server" />
@@ -132,7 +124,7 @@
     </aspAjax:TabPanel>
     <aspAjax:TabPanel ID="TabPanel2" HeaderText="<%$Resources: Titles, Archive %>" runat="server">
         <ContentTemplate>
-            <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+            <table width="100%" cellpadding="8" cellspacing="0"  class="StudyDetailsTabContent">
                 <tr>
                     <td>
                         <localAsp:ArchivePanel ID="ArchivePanel" runat="server" />
@@ -144,12 +136,10 @@
     <aspAjax:TabPanel ID="TabPanel3" HeaderText="<%$Resources: Titles, StudyHistory %>"
         runat="server">
         <ContentTemplate>
-            <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+            <table width="100%" cellpadding="8" cellspacing="0"  class="StudyDetailsTabContent">
                 <tr>
                     <td>
-                        <div style="border: solid 1px #3d98d1;">
-                            <localAsp:HistoryPanel ID="HistoryPanel" runat="server" />
-                        </div>
+                        <localAsp:HistoryPanel ID="HistoryPanel" runat="server" />
                     </td>
                 </tr>
             </table>
@@ -157,7 +147,7 @@
     </aspAjax:TabPanel>
     <aspAjax:TabPanel ID="DataAccessTabPanel" HeaderText="<%$Resources: Titles, DataAccess %>" runat="server">
         <ContentTemplate>
-            <table width="100%" cellpadding="4" cellspacing="0" style="background-color: #B8D8EE;">
+            <table width="100%" cellpadding="4" cellspacing="0"  class="StudyDetailsTabContent">
                 <tr>
                     <td>
                         <div style="padding-top: 5px; padding-left: 1px;" />
@@ -167,9 +157,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <div style="border: solid 1px #3d98d1;">
-                            <localAsp:DataAccessPanel runat="server" ID="DataAccessPanel" />
-                        </div>
+                        <localAsp:DataAccessPanel runat="server" ID="DataAccessPanel" />
                     </td>
                 </tr>
             </table>

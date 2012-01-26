@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.UI;
+using ClearCanvas.ImageServer.Web.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application
 {
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Application
         {
             get
             {
-                return (Url.Length > 0) ? HttpContext.Current.Server.MapPath("~/App_Themes/" + ImageServerConstants.Theme + "/" + Url) : "";
+                return (Url.Length > 0) ? HttpContext.Current.Server.MapPath("~/App_Themes/" + ThemeManager.CurrentTheme + "/" + Url) : "";
             }
         }
 

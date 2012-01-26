@@ -2,6 +2,8 @@
 <%@ Register src="~/Controls/InvalidInputIndicator.ascx" tagPrefix="ccASP" tagName="InvalidInputIndicator" %>
 
 
+<%-- Error Pages --%>
+<asp:Image runat="server" SkinID="ImageServerLogo" ImageUrl="images/ImageServerLogo.png" />
 
 <%-- Splash screen --%>
 <asp:Panel runat="server" SkinID="LoginSplash" BackImageUrl="images/LoginSplash.png"/>
@@ -40,7 +42,7 @@
 <ccUI:ToolbarButton runat="server" SkinID="EditButton" EnabledImageURL="images/Buttons/EditEnabled.png" DisabledImageURL="images/Buttons/EditDisabled.png" HoverImageURL="images/Buttons/EditHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="EditStudyButton" EnabledImageURL="images/Buttons/EditStudyEnabled.png" DisabledImageURL="images/Buttons/EditStudyDisabled.png" HoverImageURL="images/Buttons/EditStudyHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ResetButton" EnabledImageURL="images/Buttons/ResetEnabled.png" DisabledImageURL="images/Buttons/ResetDisabled.png" HoverImageURL="images/Buttons/ResetHover.png"/>
-<ccUI:ToolbarButton runat="server" SkinID="RescheduleButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleEnabled.png" DisabledImageURL="images/Buttons/RescheduleDisabled.png" HoverImageURL="images/Buttons/RescheduleHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="RescheduleButton" EnabledImageURL="images/Buttons/RescheduleEnabled.png" DisabledImageURL="images/Buttons/RescheduleDisabled.png" HoverImageURL="images/Buttons/RescheduleHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="AddButton" EnabledImageURL="images/Buttons/AddEnabled.png" DisabledImageURL="images/Buttons/AddDisabled.png" HoverImageURL="images/Buttons/AddHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="DoneButton" EnabledImageURL="images/Buttons/DoneEnabled.png" DisabledImageURL="images/Buttons/DoneDisabled.png" HoverImageURL="images/Buttons/DoneHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="SearchButton" EnabledImageURL="images/Buttons/SearchEnabled.png" DisabledImageURL="images/Buttons/SearchDisabled.png" HoverImageURL="images/Buttons/SearchHover.png"/>
@@ -82,8 +84,14 @@
 <asp:Image runat="server" SkinID="Warning" ImageUrl="images/Indicators/Warning.png" />
 <asp:Image runat="server" SkinID="WarningSmall" ImageUrl="images/Indicators/WarningSmall.png" />
 
+<asp:Image runat="server" SkinID="GridViewPagerTotalStudiesLeft" ImageUrl="images/Controls/GridView/GridViewPagerTotalStudiesLeft.png" />
+<asp:Image runat="server" SkinID="GridViewPagerTotalStudiesRight" ImageUrl="images/Controls/GridView/GridViewPagerTotalStudiesRight.png" />
+
+
 <%-- GridView --%>
 <asp:GridView runat="server" SkinID="GlobalGridView" AutoGenerateColumns="False" CssClass="GlobalGridView" Width="100%" EmptyDataText="" CellPadding="0" PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px" BackColor="White" BorderColor="Transparent" GridLines="Horizontal"/>
+
+
 
 <%-- Custom Controls --%>
 <ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="~/App_Themes/Default/images/Indicators/HelpSmall.png" Visible="true" />

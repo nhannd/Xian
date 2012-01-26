@@ -15,6 +15,8 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>
+
+
 <table border="0" cellspacing="0" width="100%">
 	<tr>
 		<td>
@@ -22,11 +24,10 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 				<ContentTemplate>
 					<div class="StudyDetailsSubTitle"><%= Labels.StudyDetails_ArchivePanel_ArchiveQueue%></div>
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
-	Width="100%" style="border: solid 1px #3D98D1;">
+	Width="100%">
 	<asp:TableRow VerticalAlign="top">
-		<asp:TableCell VerticalAlign="top">     
-
-					<ccUI:GridView ID="ArchiveQueueGridView" runat="server" 
+		<asp:TableCell VerticalAlign="top" CssClass="GridViewBorder">     
+                    <ccUI:GridView ID="ArchiveQueueGridView" runat="server" 
 						OnPageIndexChanged="ArchiveQueueGridView_PageIndexChanged"
 						OnPageIndexChanging="ArchiveQueueGridView_PageIndexChanging" SelectionMode="Disabled"
 						MouseHoverRowHighlightEnabled="false" GridLines="Horizontal" BackColor="White">
@@ -74,10 +75,10 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 		<td>
 			<div class="StudyDetailsSubTitle" style="margin-top: 9px;"><%= Labels.StudyDetails_ArchivePanel_ArchiveStudyStorage%></div>
 			<asp:Table runat="server" ID="Table2" Height="100%" CellPadding="0" CellSpacing="0"
-	Width="100%" style="border: solid 1px #3D98D1;">
+	Width="100%" >
 	<asp:TableRow VerticalAlign="top">
-		<asp:TableCell VerticalAlign="top">
-			<ccUI:GridView ID="ArchiveStudyStorageGridView" runat="server" 
+		<asp:TableCell VerticalAlign="top"  CssClass="GridViewBorder">
+		    <ccUI:GridView ID="ArchiveStudyStorageGridView" runat="server" 
 				SelectionMode="Disabled"
 				MouseHoverRowHighlightEnabled="false" GridLines="Horizontal" BackColor="White"
 				OnRowDataBound="ArchiveStudyStorageGridView_RowDataBound">
@@ -118,7 +119,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 				<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 				<SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
 			</ccUI:GridView>
-                    		</asp:TableCell>
+			</asp:TableCell>
 	</asp:TableRow>
 </asp:Table>
 		</td>

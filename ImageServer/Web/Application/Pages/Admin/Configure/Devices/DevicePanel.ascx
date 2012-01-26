@@ -94,10 +94,10 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <asp:Panel ID="Panel2" runat="server" Style="border: solid 1px #3d98d1;">
+                                    <asp:Panel ID="Panel2" runat="server"  CssClass="SearchPanelResultContainer">
                                         <table width="100%" cellpadding="0" cellspacing="0">
                                             <tr>
-                                                <td style="border-bottom: solid 1px #3d98d1">
+                                                <td>
                                                     <ccAsp:GridPager ID="GridPagerTop" runat="server" />
                                                 </td>
                                             </tr>

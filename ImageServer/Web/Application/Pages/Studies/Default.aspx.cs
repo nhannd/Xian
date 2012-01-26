@@ -98,16 +98,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 studyList,
                 delegate(StudySummary study)
                 {
-                    DeleteStudyInfo info = new DeleteStudyInfo();
-                    info.StudyKey = study.TheStudy.GetKey();
-                    info.ServerPartitionAE = study.ThePartition.AeTitle;
-                    info.AccessionNumber = study.AccessionNumber;
-                    info.Modalities = study.ModalitiesInStudy;
-                    info.PatientId = study.PatientId;
-                    info.PatientsName = study.PatientsName;
-                    info.StudyDate = study.StudyDate;
-                    info.StudyDescription = study.StudyDescription;
-                    info.StudyInstanceUid = study.StudyInstanceUid;
+                    var info = new DeleteStudyInfo
+                                   {
+                                       StudyKey = study.Key,
+                                       ServerPartitionAE = study.ThePartition.AeTitle,
+                                       AccessionNumber = study.AccessionNumber,
+                                       Modalities = study.ModalitiesInStudy,
+                                       PatientId = study.PatientId,
+                                       PatientsName = study.PatientsName,
+                                       StudyDate = study.StudyDate,
+                                       StudyDescription = study.StudyDescription,
+                                       StudyInstanceUid = study.StudyInstanceUid
+                                   };
                     return info;
                 }
                 ));

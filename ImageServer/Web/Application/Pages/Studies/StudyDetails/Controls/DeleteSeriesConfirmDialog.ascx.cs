@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
@@ -272,12 +273,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected void DeleteSeriesButton_Clicked(object sender, ImageClickEventArgs e)
         {
 
+            if (DeletingSeries==null || DeletingSeries.Count==0)
+                return;
+                    
+            Study study = DeletingSeries[0].Study;
+
+            string serverPartitionAE = DeletingSeries[0].ServerPartitionAE;
+
             if (Page.IsValid)
             {
                 try
                 {
+                    var reason = ReasonListBox.SelectedItem.Text;
+
                     if (!String.IsNullOrEmpty(SaveReasonAsName.Text))
                     {
+                        reason = SaveReasonAsName.Text;
                         SaveCustomReason();
                     }
 
@@ -288,30 +299,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     {
                         try
                         {
-                            Study study = DeletingSeries[0].Study;
-
-                            controller.DeleteStudy(DeletingSeries[0].StudyKey, ReasonListBox.SelectedItem.Text + ImageServerConstants.ReasonCommentSeparator[0] + Comment.Text);
-
-                            // Audit log
-                            DicomStudyDeletedAuditHelper helper =
-                                new DicomStudyDeletedAuditHelper(
-                                    ServerPlatform.AuditSource,
-                                    EventIdentificationContentsEventOutcomeIndicator.Success);
-                            helper.AddUserParticipant(new AuditPersonActiveParticipant(
-                                                          SessionManager.Current.Credentials.
-                                                              UserName,
-                                                          null,
-                                                          SessionManager.Current.Credentials.
-                                                              DisplayName));
-                            helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
-                                                                 study.StudyInstanceUid,
-                                                                 study.AccessionNumber ??
-                                                                 string.Empty));
-                            ServerPlatform.LogAuditMessage(helper);
+                            
+                            controller.DeleteStudy(DeletingSeries[0].StudyKey, reason + ImageServerConstants.ReasonCommentSeparator[0] + Comment.Text);
                         }
                         catch (Exception ex)
                         {
-                            Platform.Log(LogLevel.Error, ex, "DeletSerieseClicked failed: Unable to delete studies");
+                            Platform.Log(LogLevel.Error, ex);
+                            StringBuilder log = new StringBuilder();
+                            log.AppendLine(string.Format("Unable to delete all series in study {0} on partition {1}", study.StudyInstanceUid, serverPartitionAE));
+                            log.AppendLine(ex.Message);
+                            Platform.Log(LogLevel.Error, log.ToString());
+
                             throw;
                         }
 
@@ -325,16 +323,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                             {
                                 series.Add((seriesInfo.Series));
                             }
-                            controller.DeleteSeries(DeletingSeries[0].Study, series, ReasonListBox.SelectedItem.Text + ImageServerConstants.ReasonCommentSeparator[0] + Comment.Text);
+                            controller.DeleteSeries(DeletingSeries[0].Study, series, reason + ImageServerConstants.ReasonCommentSeparator[0] + Comment.Text);
                         }
                         catch (Exception ex)
                         {
-                            Platform.Log(LogLevel.Error, ex, "DeletSerieseClicked failed: Unable to delete studies");
+                            Platform.Log(LogLevel.Error, ex);
+                            StringBuilder log = new StringBuilder();
+                            log.AppendLine(string.Format("Unable to delete the following series in study {0} on partition {1}", study.StudyInstanceUid, serverPartitionAE));
+                            foreach (var series in DeletingSeries)
+                            {
+                                log.AppendLine(string.Format("\tSeries #{0}  {1}  {2}", series.SeriesNumber, series.Description, series.Modality));
+                            }
+
+                            log.AppendLine(ex.Message);
+                            Platform.Log(LogLevel.Error, log.ToString());
                             throw;
                         }
                     }
 
-                    OnSeriesDeleted();
+                    OnSeriesDeleted(study);
                 }
                 finally
                 {
@@ -383,8 +390,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             Close();
         }
 
-        private void OnSeriesDeleted()
+        private void AuditLog(Study affectedStudy)
         {
+            // Audit log
+            DicomStudyDeletedAuditHelper helper =
+                new DicomStudyDeletedAuditHelper(
+                    ServerPlatform.AuditSource,
+                    EventIdentificationContentsEventOutcomeIndicator.Success);
+            helper.AddUserParticipant(new AuditPersonActiveParticipant(
+                                          SessionManager.Current.Credentials.
+                                              UserName,
+                                          null,
+                                          SessionManager.Current.Credentials.
+                                              DisplayName));
+            helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
+                                                 affectedStudy.StudyInstanceUid,
+                                                 affectedStudy.AccessionNumber ??
+                                                 string.Empty));
+            ServerPlatform.LogAuditMessage(helper);
+        }
+
+        private void OnSeriesDeleted(Study affectedStudy)
+        {
+            AuditLog(affectedStudy);
+
             DeleteSeriesConfirmDialogSeriesDeletedEventArgs args = new DeleteSeriesConfirmDialogSeriesDeletedEventArgs();
             args.DeletedSeries = DeletingSeries;
             args.ReasonForDeletion = Comment.Text;

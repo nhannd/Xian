@@ -15,7 +15,7 @@ using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
@@ -30,10 +30,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         #region Private members
 
         // Map between the server partition and the panel
-        private readonly IDictionary<ServerEntityKey, Control> _mapPanel =
-            new Dictionary<ServerEntityKey, Control>();
+        private readonly IDictionary<ServerEntityKey, Control> _mapPanel = new Dictionary<ServerEntityKey, Control>();
 
-        private readonly ServerPartitionConfigController _controller = new ServerPartitionConfigController();
         private IList<ServerPartition> _partitionList;
 
         #endregion
@@ -45,11 +43,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             get
             {
                 if (_partitionList == null)
-                    _partitionList = _controller.GetAllPartitions();
+                {
+                    _partitionList = LoadPartitions();
+                }
 
                 return _partitionList;
             }
             set { _partitionList = value; }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private IList<ServerPartition> LoadPartitions()
+        {
+            try
+            {
+                var xp = new ServerPartitionTabsExtensionPoint();
+                var extension = xp.CreateExtension() as IServerPartitionTabsExtension;
+
+                if( extension!=null)
+                {
+                    return new List<ServerPartition>(extension.LoadServerPartitions());
+                }
+            }
+            catch(Exception ex)
+            {
+                
+            }
+
+            var defaultImpl = new DefaultServerPartitionTabsExtension();
+            return new List<ServerPartition>(defaultImpl.LoadServerPartitions());
         }
 
         #endregion
@@ -95,13 +120,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             if(ServerPartitionList == null || ServerPartitionList.Count == 0)
             {
+                NoPartitionPanel.Visible = true;
+                PartitionPanel.Visible = false;
                 return;
             }
-            
+
+            NoPartitionPanel.Visible = false;
+            PartitionPanel.Visible = true;
+
             int n = 0;
 
             this.PartitionTabContainer.Tabs.Clear();
-
+            
             foreach (ServerPartition part in ServerPartitionList)
             {
                 n++;

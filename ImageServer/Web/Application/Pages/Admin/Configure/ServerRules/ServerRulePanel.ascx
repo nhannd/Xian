@@ -73,9 +73,9 @@
                         </td></tr>
                         <tr><td>
 
-                         <asp:Panel ID="Panel1" runat="server" style="border: solid 1px #3d98d1; ">
+                         <asp:Panel ID="Panel1" runat="server"  CssClass="SearchPanelResultContainer">
                             <table width="100%" cellpadding="0" cellspacing="0">
-                                 <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
+                                 <tr><td><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
                                 <tr><td style="background-color: white;"><localAsp:ServerRuleGridView ID="ServerRuleGridViewControl" runat="server"  Height="500px"/></td></tr>
                             </table>                        
                         </asp:Panel>

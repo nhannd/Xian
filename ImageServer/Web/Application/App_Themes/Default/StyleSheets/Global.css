@@ -13,6 +13,7 @@ Global.css - Defines the global styles for the entire web application relating
 	margin: 0px;
 }
 
+
 /* Panel containing the contents of entire page */
 .GlobalContentPanel
 {
@@ -83,7 +84,7 @@ Global.css - Defines the global styles for the entire web application relating
 
 .DynamicMenu
 {
-    padding: 0px 1px 0px 0px;
+    padding: 2px;
     border-left: solid 1px #2371a1;
     border-right: solid 1px #2371a1;
     border-top: solid 1px #2371a1;
@@ -273,7 +274,7 @@ Global.css - Defines the global styles for the entire web application relating
 
 .ToolbarButtonPanel
 {
-    background: #B8D9EE url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
+    background: #dddddd url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
     height: 28px;
     border-top: solid 1px white;
 }
@@ -470,6 +471,13 @@ pre
     word-wrap: break-word;
 }
 
+
+.MarketingName
+{
+	font-weight: bold; 
+	font-size:x-large;
+	margin-bottom:10px;
+}
 /*=============================
 
 ==============================*/

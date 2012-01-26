@@ -21,7 +21,7 @@ using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRules
 {
-    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup)]
+    [PrincipalPermission(SecurityAction.Demand, Role = ImageServer.Enterprise.Authentication.AuthorityTokens.Admin.Configuration.DataAccessRules)]
     public partial class Default : BasePage
     {
         private readonly ServerRuleController _controller = new ServerRuleController();

@@ -19,7 +19,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -34,33 +33,51 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             set { ViewState["AuthorityGroupStudies"] = value; }
         }
         
-        protected void Page_Load(object sender, EventArgs e)
+        public override void DataBind()
         {
-            if (Page.IsPostBack) return;
+            StudyListing.DataSource = AuthorityGroupStudies;
 
-            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup))
+            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.EditDataAccess))
             {
-                using (AuthorityManagement service = new AuthorityManagement())
+                if (AuthorityGroupStudies != null)
                 {
-                    IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
+                    AuthorityGroupCheckBoxList.Items.Clear();
+
+                    var study = CollectionUtils.FirstElement(AuthorityGroupStudies);
+                    var adapter = new ServerPartitionDataAdapter();
+                    IList<AuthorityGroupDetail> accessAllStudiesList;
+                    IList<AuthorityGroupDetail> groups = adapter.GetAuthorityGroupsForPartition(study.ThePartition.Key, out accessAllStudiesList);
+
+
                     IList<ListItem> items = CollectionUtils.Map(
-                        tokens,
-                        delegate(AuthorityGroupSummary group)
+                        accessAllStudiesList,
+                        delegate(AuthorityGroupDetail group)
                             {
-                                ListItem item = new ListItem(group.Name, group.AuthorityGroupRef.ToString(false, false));
-                                item.Attributes["title"] = group.Description;
-                                item.Selected = false;
+
+                                var item = new ListItem(@group.Name,
+                                                        @group.AuthorityGroupRef.ToString(false, false))
+                                               {
+                                                   Enabled = false,
+                                                   Selected = true
+                                               };
+                                item.Attributes["title"] = @group.Description;
                                 return item;
                             });
+
+                    foreach (var group in groups)
+                    {
+                        var item = new ListItem(@group.Name,
+                                                @group.AuthorityGroupRef.ToString(false, false))
+                                       {
+                                           Selected = false
+                                       };
+                        item.Attributes["title"] = @group.Description;
+                        items.Add(item);
+                    }
 
                     AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
                 }
             }
-        }
-
-        public override void DataBind()
-        {
-            StudyListing.DataSource = AuthorityGroupStudies;
 
             base.DataBind();
         }       
@@ -72,10 +89,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 try
                 {
-                    List<string> assignedGroups = new List<string>();
+                    var assignedGroups = new List<string>();
                     foreach (ListItem item in AuthorityGroupCheckBoxList.Items)
                     {
-                        if (item.Selected)
+                        if (item.Selected && item.Enabled)
                             assignedGroups.Add(item.Value);
                         item.Selected = false;
                     }

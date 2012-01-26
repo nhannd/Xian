@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
@@ -147,8 +148,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             return StudyListControl.DataSource != null;
         }
 
+        public bool DisplayVetTags()
+        {
+            return Thread.CurrentPrincipal.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.VetTags);
+        }
+
         #endregion
-        
+  
+  
         #region protected methods
      
         protected override void OnInit(EventArgs e)
@@ -161,6 +168,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
+            if (DisplayVetTags())
+            {
+                foreach (DataControlField o in StudyListControl.Columns)
+                {
+                    var t = o as TemplateField;
+                    if (t != null)
+                    {
+                        // TODO: This is a bit of a Hack, need something better for this in the future.
+                        if (t.Visible == false)
+                            t.Visible = true;
+                        continue;
+                    }
+
+                    var f = o as BoundField;
+                    if (f == null) continue;
+
+                    if (f.DataField.Equals("ResponsiblePerson"))
+                        f.Visible = true;
+                    else if (f.DataField.Equals("ResponsibleOrganization"))
+                        f.Visible = true;
+                    else if (f.DataField.Equals("Species"))
+                        f.Visible = true;
+                    else if (f.DataField.Equals("Breed"))
+                        f.Visible = true;
+                }
+            } 
+
+
             if(IsPostBack || Page.IsAsync)
             {
                 StudyListControl.DataSource = StudyDataSourceObject;    
@@ -170,6 +205,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+
+        
 
             if (Studies == null)
             {
@@ -184,7 +221,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
                     if (study != null)
                     {
-                        row.Attributes.Add("instanceuid", study.TheStudy.StudyInstanceUid);
+                        row.Attributes.Add("instanceuid", study.StudyInstanceUid);
                         row.Attributes.Add("serverae", study.ThePartition.AeTitle);
 
                         string reason;

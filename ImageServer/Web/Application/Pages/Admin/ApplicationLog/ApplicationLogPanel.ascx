@@ -121,7 +121,7 @@
 								<asp:Panel ID="Panel2" runat="server" >
 									<table width="100%" cellpadding="0" cellspacing="0">
 										<tr>
-											<td style="border-bottom: solid 1px #3d98d1">
+											<td style="border-bottom: solid 1px #66aa65">
 												<ccAsp:GridPager ID="GridPagerTop" runat="server" />
 											</td>
 										</tr>

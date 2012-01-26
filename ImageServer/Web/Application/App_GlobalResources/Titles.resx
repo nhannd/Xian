@@ -432,4 +432,7 @@
   <data name="DicomTagsTitle" xml:space="preserve">
     <value>DICOM Tags</value>
   </data>
+  <data name="AdminPartition_AddEditDialog_DataAccessTabTitle" xml:space="preserve">
+    <value>Data Access</value>
+  </data>
 </root>

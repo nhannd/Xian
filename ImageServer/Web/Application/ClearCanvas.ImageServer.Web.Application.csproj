@@ -312,6 +312,13 @@
     <Compile Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx.designer.cs">
       <DependentUpon>ThrottleSettingsTab.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\DataAccessGroupPanel.ascx.cs">
+      <DependentUpon>DataAccessGroupPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\DataAccessGroupPanel.ascx.designer.cs">
+      <DependentUpon>DataAccessGroupPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Dashboard\AlertHoverPopupDetails.ascx.cs">
       <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1512,6 +1519,7 @@
     <Compile Include="Pages\Studies\View\WebViewerServerConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="App_Themes\Default\images\AboutBackground.png" />
     <Content Include="App_Themes\Default\images\Background.png" />
     <Content Include="App_Themes\Default\images\blank.gif" />
@@ -1581,6 +1589,7 @@
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyHover.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
+    <Content Include="App_Themes\Default\WebStation\WebstationLogo.png" />
     <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
     <Content Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <Content Include="Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx" />
@@ -1589,6 +1598,7 @@
     <EmbeddedResource Include="Pages\Admin\Configure\DataRules\DataRulePanel.js" />
     <Content Include="Pages\Admin\Configure\DataRules\DataRuleSamples.asmx" />
     <Content Include="Pages\Admin\Configure\DataRules\Default.aspx" />
+    <Content Include="Pages\Admin\Configure\ServerPartitions\DataAccessGroupPanel.ascx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\PasswordConfirmDialog.ascx" />
     <Content Include="Pages\Error\SoftwareExpiredErrorPage.aspx" />
     <Content Include="Pages\Error\LicenseErrorPage.aspx" />
@@ -1842,6 +1852,10 @@
     <Content Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyIntegrityQueueGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
+    <Content Include="App_Themes\Default\WebStation\SplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
     <Page Include="Pages\Studies\View\SplashScreen\SplashScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2048,7 +2062,6 @@
     <Content Include="Scripts\jquery\jquery.multiselect.js" />
     <Content Include="Scripts\NumberFormat154.js" />
     <Content Include="GlobalMasterPage.master" />
-    <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
     <Content Include="Pages\Error\WebViewerErrorPageMaster.Master" />

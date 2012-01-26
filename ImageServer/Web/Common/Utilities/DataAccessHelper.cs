@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.Web.Enterprise.Authentication;

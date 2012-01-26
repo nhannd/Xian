@@ -18,7 +18,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -40,37 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             get; set;
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (Page.IsPostBack || Study == null) return;
-            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup))
-            {
-
-                StudyDataAccessController controller = new StudyDataAccessController();
-                IList<StudyDataAccessSummary> list = controller.LoadStudyDataAccess(Study.TheStudyStorage.Key);
-
-                using (AuthorityManagement service = new AuthorityManagement())
-                {
-                    IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
-                    IList<ListItem> items = CollectionUtils.Map(
-                        tokens,
-                        delegate(AuthorityGroupSummary group)
-                            {
-                                ListItem item = new ListItem(group.Name, group.AuthorityGroupRef.ToString(false, false));
-                                item.Attributes["title"] = group.Description;
-
-                                foreach (StudyDataAccessSummary s in list)
-                                {
-                                    if (s.AuthorityGroupOID.Equals(group.AuthorityGroupRef.ToString(false, false)))
-                                        item.Selected = true;
-                                }
-                                return item;
-                            });
-
-                    AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
-                }
-            }
-        }
+ 
 
         /// <summary>
         /// Displays the add/edit device dialog box.
@@ -85,11 +54,55 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 return;
             }
 
+            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.EditDataAccess) && Study != null)
+            {
+                AuthorityGroupCheckBoxList.Items.Clear();
+
+                var controller = new StudyDataAccessController();
+                var list = controller.LoadStudyDataAccess(Study.TheStudyStorage.Key);
+
+                var adapter = new ServerPartitionDataAdapter();
+                IList<AuthorityGroupDetail> accessAllStudiesList;
+                var groups = adapter.GetAuthorityGroupsForPartition(Study.ThePartition.Key, out accessAllStudiesList);
+
+
+                IList<ListItem> items = CollectionUtils.Map(
+                    accessAllStudiesList,
+                    delegate(AuthorityGroupDetail group)
+                        {
+
+                            var item = new ListItem(@group.Name,
+                                                    @group.AuthorityGroupRef.ToString(false, false))
+                                           {
+                                               Enabled = false,
+                                               Selected = true
+                                           };
+                            item.Attributes["title"] = @group.Description;
+                            return item;
+                        });
+
+                foreach (var group in groups)
+                {
+                    var item = new ListItem(@group.Name,
+                                              @group.AuthorityGroupRef.ToString(false, false));
+                    item.Attributes["title"] = @group.Description;
+
+                    foreach (StudyDataAccessSummary s in list)
+                    {
+                        if (s.AuthorityGroupOID.Equals(group.AuthorityGroupRef.ToString(false, false)))
+                            item.Selected = true;
+                    }
+
+                    items.Add(item);
+                }
+
+                AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
+            }
+
             CancelButton.Visible = true;
             UpdateButton.Visible = true;
 
             ModalDialog.Show();
-            return;
         }
 
         public void Close()
@@ -101,14 +114,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (Page.IsValid)
             {
-                List<string> assignedGroups = new List<string>();
+                var assignedGroups = new List<string>();
                 foreach (ListItem item in AuthorityGroupCheckBoxList.Items)
                 {
-                    if (item.Selected)
+                    if (item.Selected && item.Enabled)
                         assignedGroups.Add(item.Value);
                 }
 
-                StudyDataAccessController controller = new StudyDataAccessController();
+                var controller = new StudyDataAccessController();
                 controller.UpdateStudyAuthorityGroups(Study.StudyInstanceUid, Study.AccessionNumber, Study.TheStudyStorage.Key, assignedGroups);
                 
                 OnAuthorityGroupsUpdated();
@@ -128,7 +141,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         private void OnAuthorityGroupsUpdated()
         {
-            EventArgs args = new EventArgs();
+            var args = new EventArgs();
             EventsHelper.Fire(_authorityGroupEditedHandler, this, args);
         }
     }

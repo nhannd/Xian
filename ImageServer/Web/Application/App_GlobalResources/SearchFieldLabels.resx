@@ -292,4 +292,10 @@
   <data name="SIQReason" xml:space="preserve">
     <value>Reason</value>
   </data>
+  <data name="ResponsibleOrganization" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="ResponsiblePerson" xml:space="preserve">
+    <value>Owner</value>
+  </data>
 </root>

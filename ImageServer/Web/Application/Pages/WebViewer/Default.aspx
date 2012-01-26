@@ -117,8 +117,9 @@
 	<div id="silverlightControlHost">
 		<object data="data:application/x-silverlight-2," type="application/x-silverlight-2"
 			width="100%" height="100%"  id="SilverlightObject">
-			<param name="source" value="../../ClientBin/Silverlight.xap" />
-	        <param name="SplashScreenSource" value="SplashScreen/SplashScreen.xaml" />
+			<!-- add random string to the end to force the browser not to cache so that the splash screen always shows up-->
+			<param name="source" value="../../ClientBin/Silverlight.xap?<%= Guid.NewGuid().ToString() %>" />
+	        <param name="SplashScreenSource" value="<%= EmbeddedWebStationHelper.GetSplashScreenXamlAbsolutePath() %>?<%= Guid.NewGuid().ToString() %>" />
             <param name="onSourceDownloadProgressChanged" value="DownloadProgress" />
 			<param name="onLoad" value="OnSilverlightAppLoaded" />
 			<param name="onError" value="onSilverlightError" />

@@ -13,6 +13,9 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.DataSource"%>
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyIntegrityQueueGridView"
 	Codebehind="StudyIntegrityQueueGridView.ascx.cs" %>
+	
+	
+<div class="GridViewBorder">
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
 	Width="100%">
 	<asp:TableRow VerticalAlign="top">
@@ -100,3 +103,4 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 		</asp:TableCell>
 	</asp:TableRow>
 </asp:Table>
+</div>

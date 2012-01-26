@@ -141,6 +141,9 @@
   <data name="AdminDeletedStudies_ReasonForDeletion" xml:space="preserve">
     <value>Reason For Deletion:</value>
   </data>
+  <data name="Breed" xml:space="preserve">
+    <value>Breed:</value>
+  </data>
   <data name="Instances" xml:space="preserve">
     <value>Instances:</value>
   </data>
@@ -165,6 +168,15 @@
   <data name="ReferringPhysician" xml:space="preserve">
     <value>Ref. Physician:</value>
   </data>
+  <data name="ResponsibleOrganization" xml:space="preserve">
+    <value>Responsible Organization:</value>
+  </data>
+  <data name="ResponsiblePerson" xml:space="preserve">
+    <value>Owner (Responsible Person):</value>
+  </data>
+  <data name="ResponsiblePersonRole" xml:space="preserve">
+    <value>Responsible Person Role:</value>
+  </data>
   <data name="SeriesCount" xml:space="preserve">
     <value>Series:</value>
   </data>
@@ -179,6 +191,9 @@
   </data>
   <data name="SourceAE" xml:space="preserve">
     <value>Source AE</value>
+  </data>
+  <data name="Species" xml:space="preserve">
+    <value>Species:</value>
   </data>
   <data name="StudyDate" xml:space="preserve">
     <value>Study Date:</value>

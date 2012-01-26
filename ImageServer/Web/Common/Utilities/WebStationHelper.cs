@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
 
         public static string GetDefaultSplashScreenXamlAbsolutePath()
         {
-            string path = ImageServerConstants.PageURLs.ViewImagesPage + "/SplashScreen/SplashScreen.xaml";
+            string path = string.Format("~/App_Themes/{0}/WebStation/SplashScreen.xaml", ThemeManager.CurrentTheme);
             return VirtualPathUtility.ToAbsolute(path);
         }
     }

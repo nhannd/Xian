@@ -22,23 +22,23 @@
 
    <script type="text/javascript">
        $(document).ready(function() {
-            $("#mDCMLicense").hide();
-            $("#ajaxLicense").hide();
-            $("#nUnitLicense").hide();
-            $("#jpegLicense").hide();
-            $("#log4NetLicense").hide();
-            $("#nhibernateLicense").hide();
-            $("#codeMirrorLicense").hide();
-            $("#aspectLicense").hide();
-            $("#nUnitLicense").hide();
-            $("#jQueryPlugins").hide();
-            $("#offis").hide();
-            $("#msdn").hide();
-        });
+           $("#mDCMLicense").hide();
+           $("#ajaxLicense").hide();
+           $("#nUnitLicense").hide();
+           $("#jpegLicense").hide();
+           $("#log4NetLicense").hide();
+           $("#nhibernateLicense").hide();
+           $("#codeMirrorLicense").hide();
+           $("#aspectLicense").hide();
+           $("#nUnitLicense").hide();
+           $("#jQueryPlugins").hide();
+           $("#offis").hide();
+           $("#msdn").hide();
+       });
 
-        function showLicense(divName) {
-            $("#" + divName).toggle();
-        }
+       function showLicense(divName) {
+           $("#" + divName).toggle();
+       }
    
    </script>
   
@@ -66,11 +66,11 @@
   </style>
   
   <div class="AboutBackground">
-  <table>
+  <table width="100%">
   <tr><td>
   <table cellpadding="0" cellspacing="0" width="100%">
   <tr><td style="padding-top: 1px;">
-    <asp:Panel runat="server" ScrollBars="Vertical" Height="700" CssClass="AboutPanel" style="padding-top: 5px;">
+    <asp:Panel ID="Panel1" runat="server" ScrollBars="Vertical" Height="700" CssClass="AboutPanel" style="padding-top: 5px;">
 <pre>
 <b>ClearCanvas Inc.</b>
 <%= ProductInformation.License %>
@@ -1125,12 +1125,18 @@ its contribution.
   </asp:Panel>
   </td></tr>
   </table>
-  </td><td valign="top" width="32%">
+  </td><td valign="top" width="40%">
   
-  <div style="margin-left: 20px; margin-top: 20px; font-size: 20px; color: #205F87">
-  <span style="font-weight: bold; font-size: 16px; "><%=ProductInformation.GetNameAndVersion(false, true, true, true)%> [<%=String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>]</span><br />
-  <div style="font-weight: bold; font-size: 16px; ">Part of the ClearCanvas RIS/PACS</div>
-  <div style="font-weight:bold; font-size:12pt; color:Red"><%=ServerPlatform.IsManifestVerified ? "" : Resources.SR.NonStandardInstallation%></div>
+  <div style="margin-left: 20px; margin-top: 20px; font-size: 16px; color: #205F87;">
+  <% if (!ProductInformation.Name.Equals(ProductInformation.Component))
+     { %>
+  <div class="MarketingName"><%= ProductInformation.Name%></div>
+  <%}    %>
+  <span style="font-weight: bold; "><%=ProductInformation.Component %> v<%=String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown Version" : ServerPlatform.VersionString %><span><br /> 
+  <span style="font-weight: bold; "><%=ProductInformation.Edition %> <%=ProductInformation.Release %></span><br /> 
+  
+  <div style="font-weight: bold; ">Part of the ClearCanvas RIS/PACS</div>
+  <div style="font-weight:bold; font-size:small; color:Red"><%=ServerPlatform.IsManifestVerified ? "" : Resources.SR.NonStandardInstallation%></div>
 
 <p><b>ClearCanvas Inc.</b><br />
 1920-439 University Ave.<br />
@@ -1145,22 +1151,9 @@ Canada
 </p>
 <p>
     <%
-        string licenseKey = null;
-        try
-        {
-            LicenseInformation.Reset();
-            licenseKey = LicenseInformation.LicenseKey;
-
-        }
-        catch (Exception ex)
-        {
-        }
-%>
-   
-   <%
-        if (!string.IsNullOrEmpty(licenseKey)) { %>   
+        if (!string.IsNullOrEmpty(LicenseKey)) { %>   
               <span style="color: #999999; font-size: 12px; font-weight: bold;">
-                License Key: <%=licenseKey%>
+                License Key: <%=LicenseKey%>
               </span>
       <%}%>
 </p>

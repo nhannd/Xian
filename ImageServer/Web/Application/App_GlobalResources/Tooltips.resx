@@ -230,4 +230,10 @@ Low Watermark  : {2}%</value>
   <data name="SearchByIpAddress" xml:space="preserve">
     <value>Search the list by IP Address</value>
   </data>
+  <data name="SearchByResponsibleOrganization" xml:space="preserve">
+    <value>Search the list by organization (Responsible Organization)</value>
+  </data>
+  <data name="SearchByResponsiblePerson" xml:space="preserve">
+    <value>Search the list by owner (Responsible Person)</value>
+  </data>
 </root>

@@ -18,8 +18,10 @@ using System.Web.UI.WebControls;
 using System.Xml;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.Web.Enterprise.Admin;
@@ -271,25 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Page.IsPostBack == false)
-            {
-
-                using (AuthorityManagement service = new AuthorityManagement())
-                {
-                    IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
-                    IList<ListItem> items = CollectionUtils.Map(
-                                            tokens,
-                                            delegate(AuthorityGroupSummary group)
-                                            {
-                                                ListItem item =  new ListItem(group.Name, group.AuthorityGroupRef.ToString(false,false));
-                                                item.Attributes["title"] = group.Description;
-                                                return item;
-                                            });
-
-                    AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
-                }
-            }
-            else
+            if (Page.IsPostBack)
             {
                 if (ViewState["_Mode"] != null)
                     _mode = (AddEditDataRuleDialogMode)ViewState["_Mode"];
@@ -395,6 +379,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 return;
             }
 
+            if (_partition != null)
+            {
+                AuthorityGroupCheckBoxList.Items.Clear();
+
+                var adapter = new ServerPartitionDataAdapter();
+                IList<AuthorityGroupDetail> accessAllStudiesList;
+                IList<AuthorityGroupDetail> groups = adapter.GetAuthorityGroupsForPartition(_partition.Key, out accessAllStudiesList);
+
+                IList<ListItem> items = CollectionUtils.Map(
+                    groups,
+                    delegate(AuthorityGroupDetail group)
+                    {
+                        var item = new ListItem(@group.Name,
+                                                   @group.AuthorityGroupRef.ToString(false, false));
+                        item.Attributes["title"] = @group.Description;
+                        return item;
+                    });   
+
+                AuthorityGroupCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
+            }
 
             var ep = new SampleRuleExtensionPoint();
             object[] extensions = ep.CreateExtensions();

@@ -42,13 +42,13 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
              <tr><td align="right" ><%= Thread.CurrentThread.CurrentUICulture.NativeName %></td></tr>
             </table>
         </div>
+        
+        <div id="WarningLabel">
+            <asp:Label runat="server" ID="ManifestWarningTextLabel" CssClass="ManifestWarningTextLabel"></asp:Label>
+        </div>
     
         <div id="LoginCredentials">
         <table>
-            <tr>
-            <td align="right" colspan="2"><asp:Label runat="server" ID="ManifestWarningTextLabel" CssClass="ManifestWarningTextLabel"
-            ></asp:Label></td>
-            </tr>
             <tr>
             <td align="right"><asp:Label runat="server" Text="<%$Resources: Labels,UserID %>"></asp:Label></td>
             <td align="right"><asp:TextBox runat="server" ID="UserName" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>

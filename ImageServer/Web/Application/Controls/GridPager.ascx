@@ -11,17 +11,17 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="GridPager.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.GridPager" %>
 <%@ Import Namespace="Resources" %>
-<table width="100%" cellpadding="0" cellspacing="0" class="GlobalGridPager">
+<table width="100%" cellpadding="0" cellspacing="0" class="GlobalGridPager" border="0">
     <tr>
-        <td align="left" style="padding-left: 6px;">
+        <td align="left" valign="top" style="padding-left: 6px; padding-bottom: 2px; padding-top: 0px;">
                                             <% if (PagerPosition == ImageServerConstants.GridViewPagerPosition.Top)
                                    { %>
-            <table cellspacing="0" cellpadding="0">
+            <table cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                    <td>
-                        <asp:Image runat="server" ImageUrl="~/App_Themes/Default/images/Controls/GridView/GridViewPagerTotalStudiesLeft.png" />
+                    <td valign="top">
+                        <asp:Image runat="server" SkinID="<%$ Image : GridViewPagerTotalStudiesLeft%>"/>
                     </td>
-                    <td nowrap="nowrap">
+                    <td valign="top" nowrap="nowrap">
                         <%
                             if (Request.UserAgent.Contains("Chrome"))
                             {%>
@@ -35,8 +35,8 @@
                             <asp:Label ID="ItemCountLabel" runat="server" Text="Label" CssClass="GlobalGridPagerLabel" />
                         </div>
                     </td>
-                    <td>
-                        <asp:Image ID="Image1" runat="server" ImageUrl="~/App_Themes/Default/images/Controls/GridView/GridViewPagerTotalStudiesRight.png" />
+                    <td valign="top">
+                        <asp:Image ID="Image1" runat="server" SkinID="<%$ Image : GridViewPagerTotalStudiesRight%>" />
                     </td>
                 </tr>
             </table>
@@ -57,12 +57,11 @@
         <td align="right" style="padding-right: 6px; padding-bottom: 2px; padding-top: 0px;">
             <table cellspacing="0" cellpadding="0">
                 <tr>
-
-                    <td valign="top" style="padding-top: 1px;">
+                    <td valign="top" style="padding-top: 0px;">
                         <asp:ImageButton ID="FirstPageButton" runat="server" CommandArgument="First" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
                     </td>                
-                    <td valign="top" style="padding-top: 1px;">
+                    <td valign="top" style="padding-top: 0px;">
                         <asp:ImageButton ID="PrevPageButton" runat="server" CommandArgument="Prev" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
                     </td>
@@ -75,11 +74,11 @@
                             <aspAjax:FilteredTextBoxExtender runat="server" ID="CurrentPageFilter" FilterType="Numbers" TargetControlID="CurrentPage"  />
                         </asp:panel>
                     </td>
-                    <td valign="top" style="padding-top: 1px;">
+                    <td valign="top" style="padding-top: 0px;">
                         <asp:ImageButton ID="NextPageButton" runat="server" CommandArgument="Next" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
                     </td>
-                    <td valign="top" style="padding-right: 1px; padding-top: 1px;">
+                    <td valign="top" style="padding-right: 1px; padding-top: 0px;">
                         <asp:ImageButton ID="LastPageButton" runat="server" CommandArgument="Last" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
                     </td>     

@@ -11,9 +11,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI.WebControls;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
@@ -51,6 +50,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
         }
 
+        public bool DisplayVetTags()
+        {
+            return Thread.CurrentPrincipal.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.VetTags);            
+        }
+
 
         #endregion Public Properties
 
@@ -58,8 +62,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (DisplayVetTags())
+            {
+                foreach (DataControlField o in StudyDetailView.Fields)
+                {
+                    // TODO: This is a bit of a Hack, need something better for this in the future.
+                    var t = o as TemplateField;
+                    if (t!=null)
+                    {
+                        if (t.Visible == false)
+                            t.Visible = true;
+                        continue;
+                    }
+
+                    var f = o as BoundField;
+                    if (f == null) continue;
+
+                    if (f.DataField.Equals("ResponsiblePerson"))
+                        f.Visible = true;
+                    else if (f.DataField.Equals("ResponsiblePersonRole"))
+                        f.Visible = true;
+                    else if (f.DataField.Equals("ResponsibleOrganization"))
+                        f.Visible = true;
+                    else if (f.DataField.Equals("Species"))
+                        f.Visible = true;
+                    else if (f.DataField.Equals("Breed"))
+                        f.Visible = true;
+                }
+            }
+
             StudyDetailView.DataSource = Studies;
-            StudyDetailView.DataBind();
+            StudyDetailView.DataBind();            
         }
 
         #endregion Protected Methods

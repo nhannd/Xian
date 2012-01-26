@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 StudyDataAccessController controller = new StudyDataAccessController();
 
-                DataAccessGroups = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup) 
+                DataAccessGroups = Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.EditDataAccess) 
                     ? controller.LoadStudyDataAccess(Study.TheStudyStorage.Key) 
                     : new List<StudyDataAccessSummary>();
 
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             var serverAE = Request.QueryString[ImageServerConstants.QueryStrings.ServerAE];
 
             if (!String.IsNullOrEmpty(studyInstanceUID) && !String.IsNullOrEmpty(serverAE)
-              && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup))
+              && Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.EditDataAccess))
             {
                 var adaptor = new ServerPartitionDataAdapter();
                 var partitionCriteria = new ServerPartitionSelectCriteria();

@@ -214,6 +214,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select authority groups that will be granted access to this partition..
+        /// </summary>
+        internal static string AdminPartition_DataAccess_PleaseSelect {
+            get {
+                return ResourceManager.GetString("AdminPartition_DataAccess_PleaseSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to authority group with access to all studies on accessible partitions.
+        /// </summary>
+        internal static string AdminPartition_DataAccess_WarningAllStudiesAccess {
+            get {
+                return ResourceManager.GetString("AdminPartition_DataAccess_WarningAllStudiesAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to It&apos;s recommended that you disable the partition instead of deleting it.
         ///
         ///Are you sure you still want to delete partition {0} and all related settings permanently?.
@@ -430,6 +448,15 @@ namespace Resources {
         internal static string ConfirmDialogError {
             get {
                 return ResourceManager.GetString("ConfirmDialogError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please contact the administrators..
+        /// </summary>
+        internal static string ContactAdmin {
+            get {
+                return ResourceManager.GetString("ContactAdmin", resourceCulture);
             }
         }
         
@@ -1190,11 +1217,20 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No server partition has been set up..
+        ///   Looks up a localized string similar to No server partition has been set up or you do not have the permission to access any partitions..
         /// </summary>
-        internal static string NoPartitionSetup {
+        internal static string NoPartitionAvailable {
             get {
-                return ResourceManager.GetString("NoPartitionSetup", resourceCulture);
+                return ResourceManager.GetString("NoPartitionAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No server partition has been created..
+        /// </summary>
+        internal static string NoPartitionCreated {
+            get {
+                return ResourceManager.GetString("NoPartitionCreated", resourceCulture);
             }
         }
         
