@@ -131,10 +131,46 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				(
 				new DicomAnnotationItem<string>
 					(
-					// this isn't even a DX module, but other X-Ray related modules
+					// legacy item (new layouts should use Exposure) so that current annotation layouts don't break - can be removed in a future release
 					"Dicom.DXImage.ExposureInMas",
 					resolver,
-					f => FormatFloat64(f, DicomTags.ExposureInMas, SR.FormatMilliampSeconds),
+					f => GetExposureInMas(f, SR.FormatMilliampSeconds),
+					DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+				new DicomAnnotationItem<string>
+					(
+					// this isn't defined in a DX module, but rather in other X-Ray related modules
+					"Dicom.DXImage.Exposure",
+					resolver,
+					f => GetExposureInMas(f, SR.FormatMilliampSeconds),
+					DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+				new DicomAnnotationItem<string>
+					(
+					// this isn't defined in a DX module, but rather in other X-Ray related modules
+					"Dicom.DXImage.ExposureTime",
+					resolver,
+					f => GetExposureTimeInMs(f, SR.FormatMilliseconds),
+					DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+				new DicomAnnotationItem<string>
+					(
+					// this isn't defined in a DX module, but rather in other X-Ray related modules
+					"Dicom.DXImage.XRayTubeCurrent",
+					resolver,
+					f => GetXRayTubeCurrentInMa(f, SR.FormatMilliamps),
 					DicomDataFormatHelper.RawStringFormat
 					)
 				);
@@ -167,6 +203,45 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
 			return _annotationItems;
+		}
+
+		internal static string GetExposureInMas(Frame frame, string formatString)
+		{
+			double dValue;
+			if (frame.ParentImageSop[DicomTags.ExposureInMas].TryGetFloat64(0, out dValue))
+				return string.Format(formatString, dValue.ToString(@"F2"));
+
+			int iValue;
+			if (frame.ParentImageSop[DicomTags.ExposureInUas].TryGetInt32(0, out iValue))
+				return string.Format(formatString, (iValue/1000f).ToString(@"F2"));
+
+			return frame.ParentImageSop[DicomTags.Exposure].TryGetInt32(0, out iValue) ? string.Format(formatString, iValue) : string.Empty;
+		}
+
+		internal static string GetExposureTimeInMs(Frame frame, string formatString)
+		{
+			double dValue;
+			if (frame.ParentImageSop[DicomTags.ExposureTimeInMs].TryGetFloat64(0, out dValue))
+				return string.Format(formatString, dValue.ToString(@"F2"));
+
+			int iValue;
+			if (frame.ParentImageSop[DicomTags.ExposureTimeInUs].TryGetInt32(0, out iValue))
+				return string.Format(formatString, (iValue/1000f).ToString(@"F2"));
+
+			return frame.ParentImageSop[DicomTags.ExposureTime].TryGetInt32(0, out iValue) ? string.Format(formatString, iValue) : string.Empty;
+		}
+
+		internal static string GetXRayTubeCurrentInMa(Frame frame, string formatString)
+		{
+			double dValue;
+			if (frame.ParentImageSop[DicomTags.XRayTubeCurrentInMa].TryGetFloat64(0, out dValue))
+				return string.Format(formatString, dValue.ToString(@"F2"));
+
+			int iValue;
+			if (frame.ParentImageSop[DicomTags.XRayTubeCurrentInUa].TryGetInt32(0, out iValue))
+				return string.Format(formatString, (iValue/1000f).ToString(@"F2"));
+
+			return frame.ParentImageSop[DicomTags.XRayTubeCurrent].TryGetInt32(0, out iValue) ? string.Format(formatString, iValue) : string.Empty;
 		}
 
 		private static string FormatInt32(Frame frame, uint dicomTag, string formatString)
