@@ -10,6 +10,7 @@
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Help.About" %>
 <%@ Import Namespace="ClearCanvas.Common"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Common"%>
+<%@ Register Src="Contact.ascx" TagName="Contact" TagPrefix="localAsp" %>
 
 <asp:Content ID="MainMenuContent" ContentPlaceHolderID="MainMenuPlaceHolder" runat="server">
     <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
@@ -1128,6 +1129,9 @@ its contribution.
   </td><td valign="top" width="40%">
   
   <div style="margin-left: 20px; margin-top: 20px; font-size: 16px; color: #205F87;">
+  
+  <localAsp:Contact runat="server"/>
+  
   <% if (!ProductInformation.Name.Equals(ProductInformation.Component))
      { %>
   <div class="MarketingName"><%= ProductInformation.Name%></div>
