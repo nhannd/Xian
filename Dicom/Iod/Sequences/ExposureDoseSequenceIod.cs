@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -60,13 +60,27 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         }
 
         /// <summary>
-        /// X-ray Tube Current in uA. An average in the case of fluoroscopy (continuous radiation mode).
+        /// X-ray Tube Current in μA. An average in the case of fluoroscopy (continuous radiation mode).
         /// </summary>
-        /// <value>The X ray tube current in A.</value>
+        /// <remarks>
+        /// The name of this property is misleading as the value is actually in units of microamperes. Use <see cref="XRayTubeCurrentInUa"/> instead.
+        /// </remarks>
+        /// <value>The X ray tube current in μA.</value>
+        [Obsolete("The name of this property is misleading as the value is actually in units of microamperes. Use XRayTubeCurrentInUa instead.")]
         public float XRayTubeCurrentInA
         {
-            get { return base.DicomAttributeProvider[DicomTags.XRayTubeCurrentInA].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeProvider[DicomTags.XRayTubeCurrentInA].SetFloat32(0, value); }
+            get { return XRayTubeCurrentInUa; }
+            set { XRayTubeCurrentInUa = value; }
+        }
+
+        /// <summary>
+        /// X-ray Tube Current in μA. An average in the case of fluoroscopy (continuous radiation mode).
+        /// </summary>
+        /// <value>The X ray tube current in μA.</value>
+        public float XRayTubeCurrentInUa
+        {
+            get { return base.DicomAttributeProvider[DicomTags.XRayTubeCurrentInUa].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.XRayTubeCurrentInUa].SetFloat32(0, value); }
         }
 
         /// <summary>

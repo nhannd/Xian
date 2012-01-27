@@ -569,7 +569,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.000000\0.820000\0.400000\0.835000" annotation-item-id="Dicom.DXImage.ExposureInMas">
+            <annotation-box normalized-rectangle="0.000000\0.820000\0.400000\0.835000" annotation-item-id="Dicom.DXImage.Exposure">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -680,7 +680,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.600000\0.820000\1.000000\0.835000" annotation-item-id="Dicom.DXImage.ExposureInMas">
+            <annotation-box normalized-rectangle="0.600000\0.820000\1.000000\0.835000" annotation-item-id="Dicom.DXImage.Exposure">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -820,7 +820,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.600000\0.165000\1.000000\0.180000" annotation-item-id="Dicom.DXImage.ExposureInMas">
+            <annotation-box normalized-rectangle="0.600000\0.165000\1.000000\0.180000" annotation-item-id="Dicom.DXImage.Exposure">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -905,7 +905,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.600000\0.820000\1.000000\0.835000" annotation-item-id="Dicom.DXImage.ExposureInMas">
+            <annotation-box normalized-rectangle="0.600000\0.820000\1.000000\0.835000" annotation-item-id="Dicom.DXImage.Exposure">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>

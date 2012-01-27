@@ -56,15 +56,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 					(
 						"Dicom.CTImage.XRayTubeCurrent",
 						resolver,
-						delegate(Frame frame)
-						{
-							int value;
-							bool tagExists = frame.ParentImageSop[DicomTags.XRayTubeCurrent].TryGetInt32(0, out value);
-							if (tagExists)
-								return String.Format(SR.FormatMilliamps, value);
-
-							return "";
-						},
+						f => DXImageAnnotationItemProvider.GetXRayTubeCurrentInMa(f, SR.FormatMilliamps),
 						DicomDataFormatHelper.RawStringFormat
 					)
 				);
@@ -92,17 +84,20 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				(
 					new DicomAnnotationItem<string>
 					(
+						"Dicom.CTImage.Exposure",
+						resolver,
+						f => DXImageAnnotationItemProvider.GetExposureInMas(f, SR.FormatMilliampSeconds),
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
 						"Dicom.CTImage.ExposureTime",
 						resolver,
-						delegate(Frame frame)
-						{
-							int value;
-							bool tagExists = frame.ParentImageSop[DicomTags.ExposureTime].TryGetInt32(0, out value);
-							if (tagExists)
-								return String.Format(SR.FormatMilliseconds, value.ToString("F2"));
-
-							return "";
-						},
+						f => DXImageAnnotationItemProvider.GetExposureTimeInMs(f, SR.FormatMilliseconds),
 						DicomDataFormatHelper.RawStringFormat
 					)
 				);
