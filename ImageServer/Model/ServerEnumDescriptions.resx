@@ -429,6 +429,12 @@
   <data name="WorkQueueTypeEnum_CleanupDuplicate_LongDescription" xml:space="preserve">
     <value>Cleanup failed ProcessDuplicate entry.</value>
   </data>
+  <data name="WorkQueueTypeEnum_ExternalEdit_Description" xml:space="preserve">
+    <value>External Edit</value>
+  </data>
+  <data name="WorkQueueTypeEnum_ExternalEdit_LongDescription" xml:space="preserve">
+    <value>Edit request trigger by an external application.</value>
+  </data>
   <data name="StudyHistoryTypeEnum_StudyReconciled_Description" xml:space="preserve">
     <value>Study was reconciled</value>
   </data>

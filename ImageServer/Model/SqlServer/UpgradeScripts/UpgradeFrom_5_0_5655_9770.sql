@@ -64,6 +64,28 @@ ALTER TABLE [dbo].[ServerPartitionDataAccess]  WITH CHECK ADD  CONSTRAINT [FK_Se
 REFERENCES [dbo].[ServerPartition] ([GUID])
 GO
 
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+PRINT N'Adding ExternalEdit WorkQueueTypeEnum'
+
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),116,'ExternalEdit','External Edit','Edit request trigger by an external application.')
+GO
+  -- ExternalEdit
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
+           ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
+           [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder],
+           [ReadLock],[WriteLock])
+     VALUES
+           (116,200,0,1,3,30,180,60,120,240,-1,101,3,0,1)
+GO
 
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
