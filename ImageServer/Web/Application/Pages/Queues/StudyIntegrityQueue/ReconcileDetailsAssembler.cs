@@ -34,11 +34,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             //Set the demographic details of the Existing Patient
             details.ExistingStudy = new ReconcileDetails.StudyInfo();
-            details.ExistingStudy.StudyInstanceUid = study.StudyInstanceUid;
-            details.ExistingStudy.AccessionNumber = study.AccessionNumber;
-            details.ExistingStudy.StudyDate = study.StudyDate;
-            details.ExistingStudy.Patient.PatientID = study.PatientId;
-            details.ExistingStudy.Patient.Name = study.PatientsName;
+            details.ExistingStudy.StudyInstanceUid = item.StudySummary.StudyInstanceUid;
+            details.ExistingStudy.AccessionNumber = item.StudySummary.AccessionNumber;
+            details.ExistingStudy.StudyDate = item.StudySummary.StudyDate;
+            details.ExistingStudy.Patient.PatientID = item.StudySummary.PatientId;
+            details.ExistingStudy.Patient.Name = item.StudySummary.PatientsName;
             details.ExistingStudy.Patient.Sex = study.PatientsSex;
             details.ExistingStudy.Patient.IssuerOfPatientID = study.IssuerOfPatientId;
             details.ExistingStudy.Patient.BirthDate = study.PatientsBirthDate;

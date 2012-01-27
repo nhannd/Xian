@@ -15,6 +15,8 @@
 
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>
+
+<div class="GridViewBorder">
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
@@ -58,3 +60,4 @@
         </asp:Table>
     </ContentTemplate>
 </asp:UpdatePanel>
+</div>

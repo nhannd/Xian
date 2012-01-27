@@ -453,8 +453,8 @@
   <data name="NonStandardInstallation" xml:space="preserve">
     <value>The installation has been modified.</value>
   </data>
-  <data name="NoPartitionSetup" xml:space="preserve">
-    <value>No server partition has been set up.</value>
+  <data name="NoPartitionAvailable" xml:space="preserve">
+    <value>No server partition has been set up or you do not have the permission to access any partitions.</value>
   </data>
   <data name="NoStudiesFound" xml:space="preserve">
     <value>No studies found matching the provided criteria.</value>
@@ -787,5 +787,18 @@ At least one server partition is required. Please add a new server partition.</v
   </data>
   <data name="AddEditUserGroups_DataAccessChangedDelayWarning" xml:space="preserve">
     <value>Note: This change may not take effect immediately.</value>
+  </data>
+  <data name="AdminPartition_DataAccess_PleaseSelect" xml:space="preserve">
+    <value>Select authority groups that will be granted access to this partition.</value>
+  </data>
+  <data name="NoPartitionCreated" xml:space="preserve">
+    <value>No server partition has been created.</value>
+  </data>
+  <data name="ContactAdmin" xml:space="preserve">
+    <value>Please contact the administrators.</value>
+  </data>
+  <data name="AdminPartition_DataAccess_WarningAllStudiesAccess" xml:space="preserve">
+    <value>authority group with access to all studies on accessible partitions</value>
+    <comment>Legend that explains what the "*" beside the group means</comment>
   </data>
 </root>

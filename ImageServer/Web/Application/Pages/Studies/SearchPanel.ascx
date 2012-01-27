@@ -48,51 +48,62 @@ function MultiSelect() {
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >                    
-                       <table cellpadding="0" cellspacing="0"  width="100%">
-                            <tr>
-                                <td align="left">
-                                <asp:Panel ID="Panel6" runat="server" style="border-bottom: solid 1px #3D98D1; padding: 6px 4px 6px 4px;" DefaultButton="SearchButton">
-                                    <table width="100%" cellpadding="0" cellspacing="0">
-                                        <tr>
-                                        <td>
-                                            <table cellpadding="0" cellspacing="0" border="0">
-                                            <tr>   
-                                            <td align="left" valign="bottom">
+                       <asp:Table runat="server" CellPadding="0" CellSpacing="0" >
+                            <asp:TableRow>
+                                <asp:TableCell  runat="server" HorizontalAlign="Left">
+                                <asp:Panel runat="server" ID="SearchFieldsContainer" CssClass="SearchPanelContent" DefaultButton="SearchButton">
+                                    <table cellpadding="0" cellspacing="0" border="0"> <%-- dummy table used to "clear" the default width for inner table tags--%><tr><td>
+                                            <asp:Table ID="Table1" runat="server" CellPadding="0" CellSpacing="0" Width="0%">
+                                        <asp:TableRow>
+                                        <asp:TableCell>
+                                            <asp:Table ID="Table2" runat="server" CellPadding="0" CellSpacing="0" BorderWidth="0">
+                                            <asp:TableRow>   
+                                            <asp:TableCell runat="server" ID="OrganizationFilter" HorizontalAlign="left" Visible="False" VerticalAlign="bottom">
+                                                <asp:Label ID="ResponsibleOrganizationLabel" runat="server" Text="<%$Resources: SearchFieldLabels,ResponsibleOrganization%>" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:TextBox ID="ResponsibleOrganization" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips,SearchByResponsibleOrganization%>" style="width: 95px"/>
+                                            </asp:TableCell>                                                                                                  
+                                            <asp:TableCell runat="server" ID="ResponsiblePersonFilter" HorizontalAlign="left" Visible="False" VerticalAlign="bottom">
+                                                <asp:Label ID="ResponsiblePersonLabel" runat="server" Text="<%$Resources: SearchFieldLabels,ResponsiblePerson%>" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:TextBox ID="ResponsiblePerson" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips,SearchByResponsiblePerson%>" style="width: 95px"/>
+                                            </asp:TableCell>                                                                                                  
+                                            <asp:TableCell HorizontalAlign="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="<%$Resources: SearchFieldLabels,PatientName %>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips,SearchByPatientName %>" style="width: 95px"/>
-                                            </td>
-                                            <td align="left" valign="bottom">
+                                            </asp:TableCell>
+                                            <asp:TableCell HorizontalAlign="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels, PatientID%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips,SearchByPatientID%>" style="width: 95px"/>
-                                            </td>
-                                            <td align="left" valign="bottom">
+                                            </asp:TableCell>
+                                            <asp:TableCell HorizontalAlign="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, AccessionNumber%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips,SearchByAccessionNumber%>" style="width: 95px"/>
-                                            </td>
-                                            <td align="left" valign="bottom">
+                                            </asp:TableCell>
+                                            <asp:TableCell HorizontalAlign="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="<%$Resources: SearchFieldLabels,FromDate %>" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
                                                 <asp:LinkButton ID="ClearFromStudyDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 0px;"/><br />
                                                 <ccUI:TextBox ID="FromStudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips,SearchByStudyDate%>" style="width: 95px" />
-                                            </td>
-                                            <td align="left" valign="bottom">
+                                            </asp:TableCell>
+                                            <asp:TableCell HorizontalAlign="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label7" runat="server" Text="<%$Resources: SearchFieldLabels,ToDate %>" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
                                                 <asp:LinkButton ID="ClearToStudyDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 0px;"/><br />
                                                 <ccUI:TextBox ID="ToStudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips,SearchByStudyDate%>" style="width: 95px" />                                                
-                                            </td>                                                                                     
-                                            <td align="left" valign="bottom">
+                                            </asp:TableCell>                                                                                     
+                                            <asp:TableCell HorizontalAlign="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels,Description%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips,SearchByDescription%>" style="width: 95px"/>
-                                            </td>
-                                            <td align="left" valign="bottom">
+                                            </asp:TableCell>
+                                            <asp:TableCell HorizontalAlign="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label9" runat="server" Text="<%$Resources: SearchFieldLabels,ReferringPhysician%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="ReferringPhysiciansName" runat="server"  CssClass="SearchTextBox" ToolTip="<%$Resources: Tooltips,SearchByRefPhysician%>" style="width: 95px"/>
-                                            </td>                                                                                                  
-                                            <td align="left" valign="bottom">
+                                            </asp:TableCell>                                                                                                  
+                                            <asp:TableCell HorizontalAlign="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label6" runat="server" Text="<%$Resources: SearchFieldLabels,Modality%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:ListBox runat="server" id="ModalityListBox" SelectionMode="Multiple">
@@ -112,25 +123,27 @@ function MultiSelect() {
                                                     <asp:ListItem Value="US">US</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="XA">XA</asp:ListItem>                                                                                                                                                            
                                                 </asp:ListBox>
-                                            </td>
-                                            <td align="left" valign="bottom">
+                                            </asp:TableCell>
+                                            <asp:TableCell ID="TableCell1"  runat="server" Ho="left" VerticalAlign="bottom">
                                                 <asp:Label ID="Label8" runat="server" Text="<%$Resources: SearchFieldLabels,StudyStatus%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:ListBox runat="server" id="StatusListBox" SelectionMode="Multiple">                                       
                                                 </asp:ListBox>
-                                            </td>
-                                            <td valign="bottom">
+                                            </asp:TableCell>
+                                            <asp:TableCell VerticalAlign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="<%$Image:SearchIcon%>" OnClick="SearchButton_Click" /></asp:Panel>
-                                            </td>
-                                            </tr>                                          
-                                            </table>
-                                        </td>
-                                     </tr>
-                                    </table>
+                                            </asp:TableCell>
+                                            </asp:TableRow>                                          
+                                            </asp:Table>
+                                        </asp:TableCell>
+                                     </asp:TableRow>
+                                    </asp:Table>
+                                    </td></tr></table>
+                                    
                                 </asp:Panel>
-                                </td>
-                            </tr>
-                        </table>
+                                </asp:TableCell>
+                            </asp:TableRow>
+                        </asp:Table>
 
                         <ccUI:CalendarExtender ID="FromStudyDateCalendarExtender" runat="server" TargetControlID="FromStudyDate"
                             CssClass="Calendar">
@@ -159,9 +172,9 @@ function MultiSelect() {
                         </td></tr>
                         <tr><td>
 
-                         <asp:Panel ID="Panel2" runat="server" style="border: solid 1px #3d98d1; ">
+                         <asp:Panel ID="Panel2" runat="server" CssClass="SearchPanelResultContainer">
                             <table width="100%" cellpadding="0" cellspacing="0">
-                                 <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
+                                 <tr><td><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
                                 <tr><td style="background-color: white;">
                                 <localAsp:StudyListGridView id="StudyListGridView" runat="server" Height="500px"></localAsp:StudyListGridView></td></tr>
                             </table>                        

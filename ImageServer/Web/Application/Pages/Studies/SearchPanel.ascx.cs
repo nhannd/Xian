@@ -17,18 +17,21 @@ using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 using Resources;
+using SR=Resources.SR;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js", "application/x-javascript")]
 
@@ -44,14 +47,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         }
     }
     [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js")]
-    public partial class SearchPanel : AJAXScriptControl
+    public partial class SearchPanel : AJAXScriptControl, IStudySearchPage
     {
         #region Private members
         private ServerPartition _serverPartition;
         private StudyController _controller = new StudyController();
         private EventHandler<SearchPanelButtonClickedEventArgs> _deleteButtonClickedHandler;
         private EventHandler<SearchPanelButtonClickedEventArgs> _assignAuthorityGroupsButtonClickedHandler;
-    	#endregion Private members
+        private static IStudySearchPageExtension _customizer;
+        #endregion Private members
+
+        #region Class Constructor
+
+        static SearchPanel()
+        {
+            LoadCustomzier();
+        }
+
+        #endregion
 
         #region Events
         public event EventHandler<SearchPanelButtonClickedEventArgs> DeleteButtonClicked
@@ -80,6 +93,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                        String.IsNullOrEmpty(FromStudyDate.Text) &&
                        String.IsNullOrEmpty(StudyDescription.Text) &&
                        String.IsNullOrEmpty(ReferringPhysiciansName.Text) &&
+                       String.IsNullOrEmpty(ResponsibleOrganization.Text) &&
+                       String.IsNullOrEmpty(ResponsiblePerson.Text) &&
                        ModalityListBox.SelectedIndex < 0 &&
                        StatusListBox.SelectedIndex < 0 &&
                        ConfigurationManager.AppSettings["DisplaySearchWarning"].ToLower().Equals("true");
@@ -173,9 +188,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             set { _serverPartition = value; }
         }
 
+        Control IStudySearchPage.SearchFieldsContainer
+        {
+            get { return SearchFieldsContainer; }
+        }
+
         #endregion Public Properties  
 
         #region Private Methods
+
+        private static void LoadCustomzier()
+        {
+            try
+            {
+                _customizer = new StudySearchPageExtensionPoint().CreateExtension() as IStudySearchPageExtension;
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Debug, ex);
+            }
+        }
 
         private void SetupChildControls()
         {
@@ -216,7 +248,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 									IList<StudySummary> studies = data as IList<StudySummary>;
 									foreach (StudySummary study in studies)
 									{
-										_controller.RestoreStudy(study.TheStudy);
+                                        _controller.RestoreStudy(study.TheStudy);
 									}
 								}
                                 else if (data is Study)
@@ -248,7 +280,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                                 source.StudyDescription = SearchHelper.LeadingAndTrailingWildCard(StudyDescription.Text);
                                             if (!String.IsNullOrEmpty(ReferringPhysiciansName.Text))
                                                 source.ReferringPhysiciansName = SearchHelper.NameWildCard(ReferringPhysiciansName.Text);
-
+                                            if (!String.IsNullOrEmpty(ResponsiblePerson.Text))
+                                                source.ResponsiblePerson = SearchHelper.NameWildCard(ResponsiblePerson.Text);
+                                            if (!String.IsNullOrEmpty(ResponsibleOrganization.Text))
+                                                source.ResponsibleOrganization = SearchHelper.NameWildCard(ResponsibleOrganization.Text);
+                                            
                                             if (ModalityListBox.SelectedIndex > -1)
                                             {
                                                 List<string> modalities = new List<string>();
@@ -282,7 +318,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             MoveStudyButton.Roles = AuthorityTokens.Study.Move;
             DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
             RestoreStudyButton.Roles = AuthorityTokens.Study.Restore;
-            AssignAuthorityGroupsButton.Roles = ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup;
+            AssignAuthorityGroupsButton.Roles = ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.EditDataAccess;
         }
 
     	#endregion Private Methods
@@ -318,7 +354,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             base.OnInit(e);
             SetupChildControls();
         }
-        
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (_customizer!=null)
+            {
+                _customizer.OnPageLoad(this);
+            }
+        }
+
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {   
             if(DisplaySearchWarning) {
@@ -386,7 +430,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 RestoreMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
 				IList<Study> studyList = new List<Study>();
 				foreach (StudySummary summary in studies)
-					studyList.Add(summary.TheStudy);
+                    studyList.Add(summary.TheStudy);
 				RestoreMessageBox.Data = studyList;
 				RestoreMessageBox.Show();
 			}
@@ -395,7 +439,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected void DeleteStudyButton_Click(object sender, ImageClickEventArgs e)
         {
             StudyListGridView.RefreshCurrentPage();
-            SearchPanelButtonClickedEventArgs args = new SearchPanelButtonClickedEventArgs
+            var args = new SearchPanelButtonClickedEventArgs
                                                          {
                                                              SelectedStudies = StudyListGridView.SelectedStudies
                                                          };
@@ -405,7 +449,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected void AssignAuthorityGroupsButton_Click(object sender, ImageClickEventArgs e)
         {
             StudyListGridView.RefreshCurrentPage();
-            SearchPanelButtonClickedEventArgs args = new SearchPanelButtonClickedEventArgs
+            var args = new SearchPanelButtonClickedEventArgs
                                                          {
                                                              SelectedStudies = StudyListGridView.SelectedStudies
                                                          };
@@ -416,7 +460,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             foreach(StudySummary study in StudyListGridView.SelectedStudies)
             {
-                String url = String.Format("{0}?study={1}", ImageServerConstants.PageURLs.StudyDetailsPage, study.StudyInstanceUid);
+                var url = String.Format("{0}?study={1}", ImageServerConstants.PageURLs.StudyDetailsPage, study.StudyInstanceUid);
 
                 string script = String.Format("window.open(\"{0}\", \"{1}\");", Page.ResolveClientUrl(url), "_blank");
 
@@ -426,5 +470,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         #endregion Protected Methods
 
+        
     }
+
 }

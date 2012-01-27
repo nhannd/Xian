@@ -23,13 +23,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         protected global::System.Web.UI.UpdatePanel SearchUpdatePanel;
         
         /// <summary>
-        /// Panel6 control.
+        /// SearchFieldsContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel6;
+        protected global::System.Web.UI.WebControls.Panel SearchFieldsContainer;
         
         /// <summary>
         /// Label1 control.
@@ -174,7 +174,43 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox ReferringPhysiciansName;
-        
+
+        /// <summary>
+        /// ResponsiblePersonLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ResponsiblePersonLabel;
+
+        /// <summary>
+        /// ResponsiblePerson control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ResponsiblePerson;
+
+        /// <summary>
+        /// ResponsibleOrganizationLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ResponsibleOrganizationLabel;
+
+        /// <summary>
+        /// ResponsibleOrganization control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ResponsibleOrganization;
+
         /// <summary>
         /// Label6 control.
         /// </summary>
@@ -372,5 +408,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox ConfirmStudySearchMessageBox;
+
+        /// <summary>
+        /// OrganizationFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TableCell OrganizationFilter;
+
+         /// <summary>
+        /// ResponsiblePersonFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TableCell ResponsiblePersonFilter;
+
+
     }
 }

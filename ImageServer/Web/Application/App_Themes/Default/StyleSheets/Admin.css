@@ -170,7 +170,7 @@ div.DeleteAlertTableContainer {
 .DashboardItemContainer
 {
     margin: 10px 10px 10px 10px; 
-    background: #B8D9EE url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x top;
+    background: #cccccc url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x top;
     padding: 3px;
     border: solid 1px #3D98D1
 }

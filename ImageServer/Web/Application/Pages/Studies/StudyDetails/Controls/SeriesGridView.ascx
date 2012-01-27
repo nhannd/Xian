@@ -17,8 +17,12 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>
+
+<div class="GridViewBorder>
+
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
+    <div class="GridViewBorder">
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
 	Width="100%">
 	<asp:TableRow VerticalAlign="top">
@@ -82,5 +86,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 		</asp:TableCell>
 	</asp:TableRow>
 </asp:Table>
+</div>
     </ContentTemplate>
 </asp:UpdatePanel>
+</div>

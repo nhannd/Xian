@@ -5,7 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Resources/Styles.xaml"/>
+                <ResourceDictionary Source="/ClearCanvas.ImageViewer.Web.Client.Silverlight;component/Resources/MergedStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

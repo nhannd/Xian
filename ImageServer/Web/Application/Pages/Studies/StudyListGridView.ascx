@@ -22,11 +22,22 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 					OnRowDataBound="GridView_RowDataBound"
 					SelectionMode="Multiple" DataKeyNames="Key" SelectUsingDataKeys="true" >
 					<Columns>
-						<asp:TemplateField HeaderText="<%$ Resources: ColumnHeaders, PatientName %>" HeaderStyle-HorizontalAlign="Left">
+						<asp:BoundField DataField="ResponsibleOrganization" HeaderText="<%$ Resources: ColumnHeaders, ResponsibleOrganization%>" HeaderStyle-HorizontalAlign="Center"
+							ItemStyle-HorizontalAlign="Center" Visible="False" />
+					    <asp:TemplateField HeaderText="<%$ Resources: ColumnHeaders, ResponsiblePerson %>" HeaderStyle-HorizontalAlign="Left" Visible="False">
+							<itemtemplate>
+                            <ccUI:PersonNameLabel ID="ResponsiblePerson" runat="server" PersonName='<%# Eval("ResponsiblePerson") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
+                            </itemtemplate>
+						</asp:TemplateField>
+					    <asp:TemplateField HeaderText="<%$ Resources: ColumnHeaders, PatientName %>" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
-                        </itemtemplate>
+                            </itemtemplate>
 						</asp:TemplateField>
+						<asp:BoundField DataField="Species" HeaderText="<%$ Resources: ColumnHeaders, Species%>" HeaderStyle-HorizontalAlign="Center"
+							ItemStyle-HorizontalAlign="Center" Visible="False" />
+						<asp:BoundField DataField="Breed" HeaderText="<%$ Resources: ColumnHeaders, Breed%>" HeaderStyle-HorizontalAlign="Center"
+							ItemStyle-HorizontalAlign="Center" Visible="False" />
 						<asp:BoundField DataField="PatientId" HeaderText="<%$ Resources: ColumnHeaders, PatientID%>" HeaderStyle-HorizontalAlign="Left">
 						</asp:BoundField>
 						<asp:BoundField DataField="AccessionNumber" HeaderText="<%$ Resources: ColumnHeaders, AccessionNumber%>" HeaderStyle-HorizontalAlign="Center"
@@ -43,7 +54,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 						<asp:BoundField DataField="NumberOfStudyRelatedInstances" HeaderText="<%$ Resources: ColumnHeaders, Instances %>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
 						<asp:BoundField DataField="ModalitiesInStudy" HeaderText="<%$ Resources: ColumnHeaders, Modality%>" HeaderStyle-HorizontalAlign="Center"
-							ItemStyle-HorizontalAlign="Center" />
+							ItemStyle-HorizontalAlign="Center"  />
 						<asp:BoundField DataField="ReferringPhysiciansName" HeaderText="<%$ Resources: ColumnHeaders, ReferringPhysician%>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />							
 						<asp:TemplateField HeaderText="<%$ Resources: ColumnHeaders, StudyStatus %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">

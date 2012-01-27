@@ -251,19 +251,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
                 DeleteStudyConfirmDialog.DeletingStudies = CollectionUtils.Map(
                     studyList,
                     delegate(StudySummary study)
-                    {
-                        DeleteStudyInfo info = new DeleteStudyInfo
-                                                   {
-                                                       StudyKey = study.TheStudy.Key,
-                                                       AccessionNumber = study.AccessionNumber,
-                                                       Modalities = study.ModalitiesInStudy,
-                                                       PatientId = study.PatientId,
-                                                       PatientsName = study.PatientsName,
-                                                       StudyDate = study.StudyDate,
-                                                       StudyDescription = study.StudyDescription,
-                                                       StudyInstanceUid = study.StudyInstanceUid,
-                                                       ServerPartitionAE = study.ThePartition.AeTitle
-                                                   };
+                        {
+                            var info = new DeleteStudyInfo
+                                           {
+                                               StudyKey = study.Key,
+                                               AccessionNumber = study.AccessionNumber,
+                                               Modalities = study.ModalitiesInStudy,
+                                               PatientId = study.PatientId,
+                                               PatientsName = study.PatientsName,
+                                               StudyDate = study.StudyDate,
+                                               StudyDescription = study.StudyDescription,
+                                               StudyInstanceUid = study.StudyInstanceUid,
+                                               ServerPartitionAE = study.ThePartition.AeTitle
+                                           };
                         return info;
                     }
                 );
@@ -286,26 +286,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             {
                 IList<Series> selectedSeries = StudyDetailsPanel.StudyDetailsTabsControl.SelectedSeries;
 
-                DeleteSeriesConfirmDialog.DeleteEntireStudy = _study.TheStudy.Series.Count == selectedSeries.Count;
+                Study theStudy = _study.TheStudy;
+
+                DeleteSeriesConfirmDialog.DeleteEntireStudy = theStudy.Series.Count == selectedSeries.Count;
 
                 DeleteSeriesConfirmDialog.DeletingSeries = CollectionUtils.Map(
                     selectedSeries,
                     delegate(Series series)
-                    {
-                        DeleteSeriesInfo info = new DeleteSeriesInfo
-                                                    {
-                                                        StudyKey = _study.TheStudy.Key,
-                                                        Study = _study.TheStudy,
-                                                        Series = series,
-                                                        ServerPartitionAE = _study.ThePartition.AeTitle,
-                                                        Description = series.SeriesDescription,
-                                                        Modality = series.Modality,
-                                                        SeriesNumber = series.SeriesNumber,
-                                                        NumberOfSeriesRelatedInstances = series.NumberOfSeriesRelatedInstances,
-                                                        PerformedProcedureStepStartDate = series.PerformedProcedureStepStartDate,
-                                                        PerformedProcedureStepStartTime = series.PerformedProcedureStepStartTime,
-                                                        SeriesInstanceUid = series.SeriesInstanceUid
-                                                    };
+                        {
+                            var info = new DeleteSeriesInfo
+                                           {
+                                               StudyKey = _study.Key,
+                                               Study = theStudy,
+                                               Series = series,
+                                               ServerPartitionAE = _study.ThePartition.AeTitle,
+                                               Description = series.SeriesDescription,
+                                               Modality = series.Modality,
+                                               SeriesNumber = series.SeriesNumber,
+                                               NumberOfSeriesRelatedInstances = series.NumberOfSeriesRelatedInstances,
+                                               PerformedProcedureStepStartDate = series.PerformedProcedureStepStartDate,
+                                               PerformedProcedureStepStartTime = series.PerformedProcedureStepStartTime,
+                                               SeriesInstanceUid = series.SeriesInstanceUid
+                                           };
 
                         return info;
                     }

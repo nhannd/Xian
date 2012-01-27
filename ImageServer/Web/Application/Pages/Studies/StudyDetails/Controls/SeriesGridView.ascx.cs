@@ -133,8 +133,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 var seriesAdaptor = new SeriesSearchAdaptor();
                 var criteria = new SeriesSelectCriteria();
-                criteria.StudyKey.EqualTo(Study.TheStudy.GetKey());
-                criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+                criteria.StudyKey.EqualTo(Study.Key);
+                criteria.ServerPartitionKey.EqualTo(Partition.Key);
 
                 Series = seriesAdaptor.Get(criteria);
 
@@ -170,8 +170,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     row.Attributes["studyuid"] = _study.StudyInstanceUid;
                     row.Attributes["seriesuid"] = series.SeriesInstanceUid;
 
-                    StudyController controller = new StudyController();
-                    if (controller.CanManipulateSeries(Study.TheStudy))
+                    var controller = new StudyController();
+                    if (controller.CanManipulateSeries(Study.TheStudyStorage.Key))
                     {
                         
 						if (siqCount==0 && seriesDelete)

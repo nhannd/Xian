@@ -470,4 +470,16 @@
   <data name="AdminDeletedStudies_DeletedBy" xml:space="preserve">
     <value>Deleted By</value>
   </data>
+  <data name="Breed" xml:space="preserve">
+    <value>Breed</value>
+  </data>
+  <data name="ResponsibleOrganization" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="ResponsiblePerson" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+  <data name="Species" xml:space="preserve">
+    <value>Species</value>
+  </data>
 </root>

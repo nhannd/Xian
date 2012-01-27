@@ -34,6 +34,7 @@
 	padding-bottom: 0px;
 	margin-left: 4px;
 	margin-right: 4px;
+	white-space: normal!important;
 }
 .PartitionTabControl .ajax__tab_outer
 {
@@ -41,6 +42,7 @@
 .PartitionTabControl .ajax__tab_inner
 {
     padding-left: 2px;
+	padding-bottom: 5px;
 }
 .PartitionTabControl .ajax__tab_tab
 {

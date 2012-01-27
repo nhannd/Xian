@@ -12,20 +12,26 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.AddEditPartitionDialog"
     Codebehind="AddEditPartitionDialog.ascx.cs" %>
-    
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
+
+<%@ Reference Control="~/Pages/Admin/Configure/ServerPartitions/DataAccessGroupPanel.ascx" %>
+<%@ Register 
+            Src="~/Pages/Admin/Configure/ServerPartitions/DataAccessGroupPanel.ascx" TagName="DataAccessGroupPanel" TagPrefix="cc" %>
     
 <script type="text/javascript">
 
 </script>
 
-<ccAsp:ModalDialog ID="ModalDialog" runat="server">
+<ccAsp:ModalDialog runat="server" ID="ModalDialog">
     <ContentTemplate>
-            <asp:ValidationSummary ID="EditPartitionValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
+        <asp:Panel ID="Panel1"  runat="server" CssClass="EditPartitionDialog">
+    <asp:ValidationSummary ID="EditPartitionValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
                 EnableClientScript="true" runat="server" ValidationGroup="AddEditServerPartitionValidationGroup" CssClass="EditStudyDialogErrorMessage" />   			
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
             <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
                 <aspAjax:TabPanel ID="GeneralTabPanel" runat="server"  CssClass="DialogTabControl">
                     <ContentTemplate>
+                        <asp:Panel ID="Panel2" runat="server" CssClass="DialogTabPanelContent EditPartitionDialogTab">
                             <table id="GeneralTabTable" runat="server">
                                 <tr id="Tr1" runat="server" align="left">
                                     <td id="Td1" runat="server">
@@ -131,12 +137,13 @@
                                     </td>
                                 </tr>
                             </table>
+                        </asp:Panel>
                     </ContentTemplate>
                     <HeaderTemplate><%= Titles.AdminPartition_AddEditDialog_GeneralTabTitle %></HeaderTemplate>
                 </aspAjax:TabPanel>
                 <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                     <ContentTemplate>
-                        <asp:Panel ID="Panel2" runat="server" CssClass="DialogTabPanelContent" >
+                        <asp:Panel runat="server" CssClass="DialogTabPanelContent EditPartitionDialogTab" >
                             <table width="100%">
                                 <tr>
                                     <td align="left">
@@ -190,8 +197,8 @@
                 </aspAjax:TabPanel>
                  <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="GeneralTabPanel" CssClass="DialogTabControl">
                     <ContentTemplate>
-                        <asp:Panel ID="Panel4" runat="server" CssClass="DialogTabPanelContent" >
-                            <div class="DialogMessagePanel"  style="width: 460px;">
+                        <asp:Panel ID="Panel4" runat="server" CssClass="DialogTabPanelContent EditPartitionDialogTab" >
+                            <div class="ServerPartitionDialogTabDescription">
                                 <%= SR.AdminPartition_AddEditDialog_StudyMatchingInfo %>
                             </div>
                             
@@ -221,7 +228,7 @@
                 </aspAjax:TabPanel>
                 <aspAjax:TabPanel ID="TabPanel3" runat="server" CssClass="DialogTabControl">
                     <ContentTemplate>
-                        <asp:Panel ID="Panel5" runat="server" CssClass="DialogTabPanelContent" >
+                        <asp:Panel ID="Panel5" runat="server" CssClass="DialogTabPanelContent EditPartitionDialogTab" >
                             <table width="100%">
                             <tr>
                                 <td>
@@ -235,18 +242,31 @@
                     </ContentTemplate>
                     <HeaderTemplate><%= Titles.AdminPartition_AddEditDialog_DeleteManagementTabTitle%></HeaderTemplate>                    
                 </aspAjax:TabPanel>
+                <aspAjax:TabPanel ID="DataAccessTab" runat="server" CssClass="DialogTabControl">
+                    <HeaderTemplate>
+                        <%= Titles.AdminPartition_AddEditDialog_DataAccessTabTitle%>
+                    </HeaderTemplate>  
+                    
+                    <ContentTemplate> 
+                        <asp:Panel ID="Panel6" runat="server" CssClass="DialogTabPanelContent EditPartitionDialogTab" >
+                            <cc:DataAccessGroupPanel runat="server" ID="dataAccessPanel"></cc:DataAccessGroupPanel>
+                        </asp:Panel>
+                    </ContentTemplate>
+                </aspAjax:TabPanel>
             </aspAjax:TabContainer>
         </asp:Panel>
             <table cellpadding="0" cellspacing="0" width="100%">
                 <tr align="right">
                     <td>
-                        <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
+                        <asp:Panel ID="ButtonPanel" runat="server" CssClass="DefaultModalDialogButtonPanel">
                             <ccUI:ToolbarButton ID="UpdateButton" runat="server" SkinID="<%$Image:UpdateButton%>" OnClick="OKButton_Click" ValidationGroup="AddEditServerPartitionValidationGroup" />
                             <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="<%$Image:AddButton%>" OnClick="OKButton_Click" ValidationGroup="AddEditServerPartitionValidationGroup" />
                             <ccUI:ToolbarButton ID="Cancel" runat="server" SkinID="<%$Image:CancelButton%>" OnClick="CancelButton_Click" />
                         </asp:Panel>
                     </td>
                 </tr>
-            </table>                                                        
+            </table>    
+    </asp:Panel>
+                                                                
     </ContentTemplate>
 </ccAsp:ModalDialog>

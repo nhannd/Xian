@@ -30,7 +30,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
   <td class="PatientInfo"><localAsp:PatientSummaryPanel ID="PatientSummary" runat="server" /></td>
   </tr>
   
-  <tr><td style="background-color: #3D98D1"><asp:Image runat="server" SkinID="Spacer" Height="4" /></td></tr>
+  <tr><td><asp:Image runat="server" SkinID="Spacer" Height="4" /></td></tr>
   
   <tr>
   <td>
@@ -43,7 +43,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
   </td>
   </tr>
   
-  <tr><td style="background-color: #3D98D1"><asp:Image ID="Image1" runat="server" SkinID="Spacer" Height="4" /></td></tr>
+  <tr><td><asp:Image ID="Image1" runat="server" SkinID="Spacer" Height="4" /></td></tr>
   
   <tr>
   <td>

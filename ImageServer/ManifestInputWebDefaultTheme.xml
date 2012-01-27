@@ -5,7 +5,6 @@
     <File name="Web\App_Themes\Default\images\AboutBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Background.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\blank.gif" checksum="true" />
-    <File name="Web\App_Themes\Default\images\LoginSplash.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessDisabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessEnabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessHover.png" checksum="true" />
@@ -157,7 +156,6 @@
     <File name="Web\App_Themes\Default\images\Error\ErrorDescriptionBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Error\ErrorMessageBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Error\UserEscapeLinkBackground.png" checksum="true" />
-    <File name="Web\App_Themes\Default\images\Header\ClearCanvasLogo.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Header\LocationBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Header\LocationEdge.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Header\MenuBackground.png" checksum="true" />
@@ -218,6 +216,9 @@
     <File name="Web\App_Themes\Default\StyleSheets\Controls\jqueryMultiSelect.css" />
     <File name="Web\App_Themes\Default\StyleSheets\Controls\PartitionTabs.css" />
     <File name="Web\App_Themes\Default\StyleSheets\Controls\ReconcileDialog.css" />
-    <File name="Web\App_Themes\Default\StyleSheets\Controls\Tabs.css" />    
+    <File name="Web\App_Themes\Default\StyleSheets\Controls\Tabs.css" />
+	  <File name="Web\App_Themes\Default\WebStation\SplashScreen.xaml" checksum="true"/>
+	  <File name="Web\App_Themes\Default\WebStation\WebstationLogo.png" checksum="true"/>
+
   </Files>
 </ManifestInput>

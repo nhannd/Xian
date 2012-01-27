@@ -289,7 +289,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\DataRules\DataRulePanel.ascx.cs">
       <DependentUpon>DataRulePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\DataRules\DataRulePanel.ascx.designer.cs">
       <DependentUpon>DataRulePanel.ascx</DependentUpon>
@@ -311,6 +310,13 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx.designer.cs">
       <DependentUpon>ThrottleSettingsTab.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\DataAccessGroupPanel.ascx.cs">
+      <DependentUpon>DataAccessGroupPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\DataAccessGroupPanel.ascx.designer.cs">
+      <DependentUpon>DataAccessGroupPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Admin\Dashboard\AlertHoverPopupDetails.ascx.cs">
       <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
@@ -405,7 +411,6 @@
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx.cs">
       <DependentUpon>UserGroupsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx.designer.cs">
       <DependentUpon>UserGroupsPanel.ascx</DependentUpon>
@@ -433,7 +438,6 @@
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.designer.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
@@ -494,6 +498,13 @@
     </Compile>
     <Compile Include="Pages\Error\WebViewerTimeoutErrorPage.aspx.designer.cs">
       <DependentUpon>WebViewerTimeoutErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Help\Contact.ascx.cs">
+      <DependentUpon>Contact.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Help\Contact.ascx.designer.cs">
+      <DependentUpon>Contact.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
@@ -577,7 +588,6 @@
     </Compile>
     <Compile Include="Pages\Studies\MoveSeries\MovePanel.ascx.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\MoveSeries\MovePanel.ascx.designer.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
@@ -725,7 +735,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertsPanel.ascx.cs">
       <DependentUpon>AlertsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertsPanel.ascx.designer.cs">
       <DependentUpon>AlertsPanel.ascx</DependentUpon>
@@ -767,7 +776,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx.designer.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
@@ -872,7 +880,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.ascx.cs">
       <DependentUpon>PartitionArchivePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.ascx.designer.cs">
       <DependentUpon>PartitionArchivePanel.ascx</DependentUpon>
@@ -907,7 +914,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\Devices\DevicePanel.ascx.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\Devices\DevicePanel.ascx.designer.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
@@ -935,7 +941,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\FileSystems\FileSystemsPanel.ascx.cs">
       <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\FileSystems\FileSystemsPanel.ascx.designer.cs">
       <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
@@ -963,7 +968,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.ascx.cs">
       <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
@@ -991,7 +995,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServerRules\ServerRulePanel.ascx.cs">
       <DependentUpon>ServerRulePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServerRules\ServerRulePanel.ascx.designer.cs">
       <DependentUpon>ServerRulePanel.ascx</DependentUpon>
@@ -1024,7 +1027,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockPanel.ascx.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
@@ -1087,7 +1089,6 @@
     </Compile>
     <Compile Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1123,7 +1124,6 @@
     </Compile>
     <Compile Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1144,7 +1144,6 @@
     </Compile>
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1200,7 +1199,6 @@
     </Compile>
     <Compile Include="Pages\Studies\Move\MovePanel.ascx.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\Move\MovePanel.ascx.designer.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
@@ -1214,7 +1212,6 @@
     </Compile>
     <Compile Include="Pages\Studies\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1393,7 +1390,6 @@
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.cs">
       <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.designer.cs">
       <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
@@ -1414,7 +1410,6 @@
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1455,7 +1450,6 @@
     </Compile>
     <Compile Include="Pages\WebViewer\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\WebViewer\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1512,6 +1506,7 @@
     <Compile Include="Pages\Studies\View\WebViewerServerConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="App_Themes\Default\images\AboutBackground.png" />
     <Content Include="App_Themes\Default\images\Background.png" />
     <Content Include="App_Themes\Default\images\blank.gif" />
@@ -1581,6 +1576,7 @@
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyHover.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
+    <Content Include="App_Themes\Default\WebStation\WebstationLogo.png" />
     <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
     <Content Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <Content Include="Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx" />
@@ -1589,9 +1585,11 @@
     <EmbeddedResource Include="Pages\Admin\Configure\DataRules\DataRulePanel.js" />
     <Content Include="Pages\Admin\Configure\DataRules\DataRuleSamples.asmx" />
     <Content Include="Pages\Admin\Configure\DataRules\Default.aspx" />
+    <Content Include="Pages\Admin\Configure\ServerPartitions\DataAccessGroupPanel.ascx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\PasswordConfirmDialog.ascx" />
     <Content Include="Pages\Error\SoftwareExpiredErrorPage.aspx" />
     <Content Include="Pages\Error\LicenseErrorPage.aspx" />
+    <Content Include="Pages\Help\Contact.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\AddAuthorityGroupsDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\UpdateAuthorityGroupDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DataAccessPanel.ascx" />
@@ -1842,6 +1840,10 @@
     <Content Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyIntegrityQueueGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
+    <Content Include="App_Themes\Default\WebStation\SplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
     <Page Include="Pages\Studies\View\SplashScreen\SplashScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2048,7 +2050,6 @@
     <Content Include="Scripts\jquery\jquery.multiselect.js" />
     <Content Include="Scripts\NumberFormat154.js" />
     <Content Include="GlobalMasterPage.master" />
-    <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
     <Content Include="Pages\Error\WebViewerErrorPageMaster.Master" />

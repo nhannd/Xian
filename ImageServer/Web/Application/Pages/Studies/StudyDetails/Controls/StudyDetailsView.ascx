@@ -10,8 +10,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsView" %>
 
-<asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
-	Width="100%" style="border-left: solid 1px #3D98D1; border-right: solid 1px #3D98D1;">
+<div class="GridViewBorder">
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">
 <asp:DetailsView ID="StudyDetailView" runat="server" AutoGenerateRows="False" GridLines="Horizontal" CellPadding="4" 
@@ -46,6 +45,27 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
         <asp:BoundField DataField="StudyID" HeaderText="<%$Resources: DetailedViewFieldLabels, StudyID%>">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:BoundField>
+        <asp:TemplateField Visible="False" HeaderText="<%$Resources: DetailedViewFieldLabels, ResponsiblePerson%>" >
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+            <ItemTemplate>
+                <ccUI:PersonNameLabel ID="ResponsiblePersonName" runat="server" PersonName='<%# Eval("ResponsiblePerson") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:BoundField DataField="ResponsiblePersonRole" Visible="false" HeaderText="<%$Resources: DetailedViewFieldLabels, ResponsiblePersonRole%>">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+        </asp:BoundField>
+        <asp:BoundField DataField="ResponsibleOrganization" Visible="false" HeaderText="<%$Resources: DetailedViewFieldLabels, ResponsibleOrganization%>">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+        </asp:BoundField>
+        <asp:BoundField DataField="Species" Visible="false" HeaderText="<%$Resources: DetailedViewFieldLabels, Species%>">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+        </asp:BoundField>
+        <asp:BoundField DataField="Breed" Visible="false" HeaderText="<%$Resources: DetailedViewFieldLabels, Breed%>">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+        </asp:BoundField>
+        <asp:BoundField DataField="StudyID" HeaderText="<%$Resources: DetailedViewFieldLabels, StudyID%>">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+        </asp:BoundField>
         <asp:BoundField DataField="NumberOfStudyRelatedSeries" HeaderText="<%$Resources: DetailedViewFieldLabels, SeriesCount%>">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:BoundField>
@@ -59,4 +79,4 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 </asp:DetailsView>
                     		</asp:TableCell>
 	</asp:TableRow>
-</asp:Table>
+</div>

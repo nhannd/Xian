@@ -17,6 +17,7 @@ using ClearCanvas.Common;
 using System.Threading;
 using System.Globalization;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Web.Common;
 using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
@@ -29,21 +30,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
     /// </remarks>
     public partial class BasePage : System.Web.UI.Page
     {
-        protected void Page_PreInit(object sender, EventArgs e)
+        protected override void OnPreInit(EventArgs e)
         {
-            //Set the Page Theme, then set the Page object on the ImageServerConstants
-            Page.Theme = ImageServerConstants.Default;
-            
-            // TODO: review this. It should be per session.
-            ImageServerConstants.Theme = Page.Theme;
+            base.OnPreInit(e);
 
-            HttpContext.Current.Items["Theme"] = Page.Theme;
+            ThemeManager.ApplyTheme(this);
 
             // This is necessary because Safari and Chrome browsers don't display the Menu control correctly.
             if (Request.ServerVariables["http_user_agent"].IndexOf("Safari", StringComparison.CurrentCultureIgnoreCase) != -1)
-              Page.ClientTarget = "uplevel";
+                Page.ClientTarget = "uplevel";
+        
         }
 
+        
         protected void SetPageTitle(string title)
         {
             SetPageTitle(title, true);

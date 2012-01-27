@@ -17,7 +17,7 @@
         <siteMapNode url="~/Pages/Admin/Configure/ServerPartitions/Default.aspx" title="$Resources: Titles, ServerPartitions" roles="PACS/Configure/ServerPartitions" />
         <siteMapNode url="~/Pages/Admin/Configure/FileSystems/Default.aspx" title="$Resources: Titles, FileSystems" roles="PACS/Configure/FileSystems" />
         <siteMapNode url="~/Pages/Admin/Configure/ServerRules/Default.aspx" title="$Resources: Titles, ServerRules" roles="PACS/Configure/ServerRules" />
-        <siteMapNode url="~/Pages/Admin/Configure/DataRules/Default.aspx" title="$Resources: Titles, DataRules" roles="Enterprise/Admin/Security/Authority Group" />
+        <siteMapNode url="~/Pages/Admin/Configure/DataRules/Default.aspx" title="$Resources: Titles, DataRules" roles="PACS/Configure/Data Access Rules" />
         <siteMapNode url="~/Pages/Admin/Configure/PartitionArchive/Default.aspx" title="$Resources: Titles, PartitionArchive" roles="PACS/Configure/PartitionArchive" />
       </siteMapNode>
 

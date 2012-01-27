@@ -103,8 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
                 return;
             }
 
-            var partitionAdapter = new ServerPartitionDataAdapter();
-            ServerPartition partition;
+            new ServerPartitionDataAdapter();
 
             foreach (GridViewRow row in StudyListControl.Rows)
             {
@@ -113,11 +112,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
                     StudySummary study = Studies[row.RowIndex];
 
                     if (study != null)
-                    {
-                        partition = partitionAdapter.GetServerPartition(study.TheStudy.ServerPartitionKey);
-
+                    {                    
                         row.Attributes.Add("instanceuid", study.StudyInstanceUid);
-                        row.Attributes.Add("serverae", partition.AeTitle);
+                        row.Attributes.Add("serverae", study.ThePartition.AeTitle);
                         row.Attributes.Add("canviewimages", "true");
                     }  
                 }
