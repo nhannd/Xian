@@ -438,7 +438,7 @@
 1577296;Exposure Time;ExposureTime;IS;False;1;1;False
 1577297;X-Ray Tube Current;XRayTubeCurrent;IS;False;1;1;False
 1577298;Exposure ;Exposure;IS;False;1;1;False
-1577299;Exposure in μAs;ExposureInΜas;IS;False;1;1;False
+1577299;Exposure in μAs;ExposureInUas;IS;False;1;1;False
 1577300;Average Pulse Width;AveragePulseWidth;DS;False;1;1;False
 1577301;Radiation Setting;RadiationSetting;CS;False;1;1;False
 1577302;Rectification Type;RectificationType;CS;False;1;1;False
@@ -646,8 +646,8 @@
 1601634;Exposure Control Mode Description;ExposureControlModeDescription;LT;False;1;1;False
 1601636;Exposure Status;ExposureStatus;CS;False;1;1;False
 1601637;Phototimer Setting;PhototimerSetting;DS;False;1;1;False
-1605968;Exposure Time in S;ExposureTimeInS;DS;False;1;1;False
-1605969;X-Ray Tube Current in A;XRayTubeCurrentInA;DS;False;1;1;False
+1605968;Exposure Time in μS;ExposureTimeInUs;DS;False;1;1;False
+1605969;X-Ray Tube Current in μA;XRayTubeCurrentInUa;DS;False;1;1;False
 1609732;Content Qualification;ContentQualification;CS;False;1;1;False
 1609733;Pulse Sequence Name;PulseSequenceName;SH;False;1;1;False
 1609734;MR Imaging Modifier Sequence;MrImagingModifierSequence;SQ;False;1;1;False
