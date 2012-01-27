@@ -154,10 +154,10 @@
     <value />
   </data>
   <data name="Dicom_CTImage_ExposureTime_DisplayName" xml:space="preserve">
-    <value>Exposure</value>
+    <value>Exposure Time</value>
   </data>
   <data name="Dicom_CTImage_ExposureTime_Label" xml:space="preserve">
-    <value>Exp</value>
+    <value>Exp Time</value>
   </data>
   <data name="Dicom_CTImage_GantryDetectorTilt_DisplayName" xml:space="preserve">
     <value>Gantry Tilt</value>
@@ -718,11 +718,11 @@
   <data name="Dicom_DXImage_DetectorPrimaryAngle_Label" xml:space="preserve">
     <value>Detector Primary Angle</value>
   </data>
-  <data name="Dicom_DXImage_ExposureInMas_DisplayName" xml:space="preserve">
-    <value>Exposure in mAs</value>
+  <data name="Dicom_DXImage_Exposure_DisplayName" xml:space="preserve">
+    <value>Exposure (DX)</value>
   </data>
-  <data name="Dicom_DXImage_ExposureInMas_Label" xml:space="preserve">
-    <value>Exposure in mAs</value>
+  <data name="Dicom_DXImage_Exposure_Label" xml:space="preserve">
+    <value>Exp</value>
   </data>
   <data name="Dicom_DXImage_FilterMaterial_DisplayName" xml:space="preserve">
     <value>Filter Material</value>
@@ -731,7 +731,7 @@
     <value>Filter</value>
   </data>
   <data name="Dicom_DXImage_KVP_DisplayName" xml:space="preserve">
-    <value>DX_KVP</value>
+    <value>KVP (DX)</value>
   </data>
   <data name="Dicom_DXImage_KVP_Label" xml:space="preserve">
     <value>KVP</value>
@@ -968,5 +968,29 @@
   </data>
   <data name="SeparatorAgeSexBirthDate" xml:space="preserve">
     <value>/</value>
+  </data>
+  <data name="Dicom_CTImage_Exposure_DisplayName" xml:space="preserve">
+    <value>Exposure (CT)</value>
+  </data>
+  <data name="Dicom_CTImage_Exposure_Label" xml:space="preserve">
+    <value>Exp</value>
+  </data>
+  <data name="Dicom_DXImage_ExposureInMas_DisplayName" xml:space="preserve">
+    <value>Exposure in mAs</value>
+  </data>
+  <data name="Dicom_DXImage_ExposureInMas_Label" xml:space="preserve">
+    <value>Exp</value>
+  </data>
+  <data name="Dicom_DXImage_ExposureTime_DisplayName" xml:space="preserve">
+    <value>Exposure Time (DX)</value>
+  </data>
+  <data name="Dicom_DXImage_ExposureTime_Label" xml:space="preserve">
+    <value>Exp Time</value>
+  </data>
+  <data name="Dicom_DXImage_XRayTubeCurrent_DisplayName" xml:space="preserve">
+    <value>Tube Current (DX)</value>
+  </data>
+  <data name="Dicom_DXImage_XRayTubeCurrent_Label" xml:space="preserve">
+    <value>Tube Current</value>
   </data>
 </root>

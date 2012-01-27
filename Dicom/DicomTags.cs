@@ -2245,7 +2245,7 @@ namespace ClearCanvas.Dicom
         /// <para>(0018,1153) Exposure in μAs</para>
         /// <para> VR: IS VM:1</para>
         /// </summary>
-        public const uint ExposureInΜas = 1577299;
+        public const uint ExposureInUas = 1577299;
         /// <summary>
         /// <para>(0018,1154) Average Pulse Width</para>
         /// <para> VR: DS VM:1</para>
@@ -3295,15 +3295,15 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public const uint PhototimerSetting = 1601637;
         /// <summary>
-        /// <para>(0018,8150) Exposure Time in S</para>
+        /// <para>(0018,8150) Exposure Time in μS</para>
         /// <para> VR: DS VM:1</para>
         /// </summary>
-        public const uint ExposureTimeInS = 1605968;
+        public const uint ExposureTimeInUs = 1605968;
         /// <summary>
-        /// <para>(0018,8151) X-Ray Tube Current in A</para>
+        /// <para>(0018,8151) X-Ray Tube Current in μA</para>
         /// <para> VR: DS VM:1</para>
         /// </summary>
-        public const uint XRayTubeCurrentInA = 1605969;
+        public const uint XRayTubeCurrentInUa = 1605969;
         /// <summary>
         /// <para>(0018,9004) Content Qualification</para>
         /// <para> VR: CS VM:1</para>
