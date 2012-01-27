@@ -204,7 +204,6 @@
     <File name="Web\Pages\Error\WebViewerErrorPageMaster.Master" />
     <File name="Web\Pages\Error\WebViewerMultipleStudiesTimeoutErrorPage.aspx" />
     <File name="Web\Pages\Error\WebViewerTimeoutErrorPage.aspx" />
-    <File name="Web\Pages\Help\About.aspx" checksum="false" />
     <File name="Web\Pages\Help\Default.aspx" />
     <File name="Web\Pages\Help\Documentation.aspx" />
     <File name="Web\Pages\Login\ChangePasswordDialog.ascx" />

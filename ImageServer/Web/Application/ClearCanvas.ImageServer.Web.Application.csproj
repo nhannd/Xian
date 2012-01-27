@@ -501,6 +501,7 @@
     </Compile>
     <Compile Include="Pages\Help\Contact.ascx.cs">
       <DependentUpon>Contact.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Help\Contact.ascx.designer.cs">
       <DependentUpon>Contact.ascx</DependentUpon>
