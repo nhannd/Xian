@@ -10,6 +10,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -132,15 +133,6 @@ namespace ClearCanvas.ImageServer.Model
                 return false;
 
             return CollectionUtils.Contains(existingGroups, g => g.DataAccessGroupKey.Equals(dataAccessGroup.Key)); 
-        }
-
-        public bool IsAccessAllowed(DataAccessGroup group)
-        {
-            var existingGroups = DataAccessGroups;
-            if (existingGroups == null)
-                return false;
-
-            return CollectionUtils.Contains(existingGroups, g => g.DataAccessGroupKey.Equals(group.Key));
         }
 
         public void LoadDataAcessInformation(IPersistenceContext context)

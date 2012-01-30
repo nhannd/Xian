@@ -68,11 +68,21 @@ namespace ClearCanvas.ImageViewer.Web
 				return SR.MessageAccessionStudiesNotFound;
 			if (e.GetType().Equals(typeof(InvalidRequestException)))
 				return e.Message;
+            if (e.GetType().Equals(typeof(PermissionDeniedException)))
+                return e.Message;
 			return null;
 		}
 
 		#endregion
 	}
+
+    public class PermissionDeniedException : Exception
+    {
+        public PermissionDeniedException(string detail)
+            : base(detail)
+		{
+		}
+    }
 
 	internal class PatientStudiesNotFoundException : Exception
 	{

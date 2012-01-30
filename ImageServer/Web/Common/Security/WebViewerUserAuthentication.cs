@@ -10,7 +10,6 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Web.Enterprise.Authentication;
 using ClearCanvas.Web.Services;
 

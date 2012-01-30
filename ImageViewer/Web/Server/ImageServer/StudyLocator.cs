@@ -12,11 +12,13 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 {
@@ -44,14 +46,40 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         {
             foreach (ServerPartition partition in ServerPartitionMonitor.Instance)
             {
-                _partitionQueryList.Add(new ImageServerQuery(partition));
+                var accessAllowed = false;
+                var webUser = Thread.CurrentPrincipal as CustomPrincipal;
+                if (webUser != null)
+                {
+                    if (Thread.CurrentPrincipal.IsInRole(Enterprise.Common.AuthorityTokens.DataAccess.AllPartitions))
+                        accessAllowed = true;
+                    else
+                    {
+                        foreach (var oid in webUser.Credentials.DataAccessAuthorityGroups)
+                        {
+                            if (partition.IsAccessAllowed(oid.ToString()))
+                                accessAllowed = true;
+                        }
+                    }
+                }
+
+                if (webUser==null || accessAllowed)
+                    _partitionQueryList.Add(new ImageServerQuery(partition));
             }
         }
 
         #region IStudyRootQuery Members
 
+
         public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
         {
+            CheckMinimumPermission();
+
+            if (!string.IsNullOrEmpty(queryCriteria.RetrieveAeTitle))
+            {
+                // AE Title is specificed but is the user allowed?
+                CheckPartitionPermission(queryCriteria.RetrieveAeTitle);
+            }
+
             Dictionary<string, StudyRootStudyIdentifier> combinedResults = new Dictionary<string, StudyRootStudyIdentifier>();
 
             //TODO (CR May 2010): Should change so that the Partition AE Title is passed in the RetrieveAeTitle tag in the query message.
@@ -62,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 foreach (StudyRootStudyIdentifier i in list)
                 {
                 	//TODO (CR May 2010): is it ok to include the same study multiple times in a study query response?
-
+                    
                     // Note: Include entries from different partitions if they have the same Study Instance Uid.
                     // The caller will filter the list again using the AE title.
                     string key = string.Format("{0}/{1}", i.RetrieveAeTitle, i.StudyInstanceUid);
@@ -80,6 +108,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
         public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
         {
+            CheckMinimumPermission();
+
+
             Dictionary<string, SeriesIdentifier> combinedResults = new Dictionary<string, SeriesIdentifier>();
 
             foreach (ImageServerQuery query in _partitionQueryList)
@@ -103,6 +134,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
         public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
         {
+            CheckMinimumPermission();
+
             Dictionary<string, ImageIdentifier> combinedResults = new Dictionary<string, ImageIdentifier>();
 
             foreach (ImageServerQuery query in _partitionQueryList)
@@ -123,6 +156,37 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
             }
 
             return new List<ImageIdentifier>(combinedResults.Values);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void CheckMinimumPermission()
+        {
+            if (_partitionQueryList == null || _partitionQueryList.Count == 0)
+                throw new PermissionDeniedException(SR.ExceptionPermissionDenied);
+        }
+
+        private void CheckPartitionPermission(string aeTitle)
+        {
+            var webUser = Thread.CurrentPrincipal as CustomPrincipal;
+            if (webUser == null)
+                return;
+
+            foreach(var partition in ServerPartitionMonitor.Instance)
+            {
+                if (partition.AeTitle.Equals(aeTitle, StringComparison.InvariantCulture))
+                {
+                    foreach (var oid in webUser.Credentials.DataAccessAuthorityGroups)
+                    {
+                        if (partition.IsAccessAllowed(oid.ToString()))
+                        {
+                            throw new PermissionDeniedException("");
+                        }   
+                    }
+                }
+            }
         }
 
         #endregion

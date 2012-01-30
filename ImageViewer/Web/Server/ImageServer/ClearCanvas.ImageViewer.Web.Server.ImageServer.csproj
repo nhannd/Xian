@@ -81,6 +81,11 @@
     <Compile Include="PriorStudyFinder.cs" />
     <Compile Include="SeriesServerQuery.cs" />
     <Compile Include="ServerQuery.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="StreamingStudyLoaderConfiguration.cs" />
     <Compile Include="StudyLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -136,6 +141,10 @@
       <Project>{22444EF5-740E-41C2-B6DD-0029BD616338}</Project>
       <Name>ClearCanvas.Web.Enterprise</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Web\Services\ClearCanvas.Web.Services.csproj">
+      <Project>{8EAC6A5A-ADC1-49E4-B1A3-9A87812EE661}</Project>
+      <Name>ClearCanvas.Web.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
@@ -173,6 +182,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

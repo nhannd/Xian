@@ -35,6 +35,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         #region Public methods
 
         /// <summary>
+        /// Gets a server partition entity with the specified AE Title
+        /// </summary>
+        /// <returns></returns>
+        public ServerPartition GetServerPartition(string AETitle)
+        {
+            var criteria = new ServerPartitionSelectCriteria();
+            criteria.AeTitle.EqualTo(AETitle);
+            return GetFirst(criteria);
+        }
+
+        /// <summary>
         /// Gets a list of all server partitions.
         /// </summary>
         /// <returns></returns>
