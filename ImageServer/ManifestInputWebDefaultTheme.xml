@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ManifestInput xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.clearcanvas.ca">
   <Files>
-    <File name="Web\App_Themes\Default\Global.skin" />
+	<File name="Web\App_Themes\Default\Global.skin" />
     <File name="Web\App_Themes\Default\images\AboutBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Background.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\blank.gif" checksum="true" />
@@ -197,7 +197,8 @@
     <File name="Web\App_Themes\Default\images\MainContent\SearchDropDownListBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\MainContent\SearchPanelBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\MainContent\SearchTextBoxBackground.png" checksum="true" />
-    <File name="Web\App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" checksum="true" />
+	<File name="Web\App_Themes\Default\images\MainContent\SelectedPartitionTabBackground.png" checksum="true" />
+	<File name="Web\App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\MainContent\WebViewerToolbarBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Pages\Dashboard\SidebarItemBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Pages\Dashboard\StudiesSummaryTotalBackground.png" checksum="true" />
