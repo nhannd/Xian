@@ -95,6 +95,11 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),115,'CleanupDuplicate','Cleanup Duplicate','Cleanup failed ProcessDuplicate entry.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),116,'ExternalEdit','External Edit','Edit request trigger by an external application.')
+GO
 
 --  WorkQueuePriorityEnum inserts
 INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum
@@ -267,7 +272,15 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
      VALUES
            (115,200,1,0,3,60,180,60,120,120,300,105,4,0,1)
 GO
-
+  -- ExternalEdit
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
+           ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
+           [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder],
+           [ReadLock],[WriteLock])
+     VALUES
+           (116,200,0,1,3,30,180,60,120,240,-1,101,3,0,1)
+GO
 
 
 -- WorkQueueStatusEnum inserts

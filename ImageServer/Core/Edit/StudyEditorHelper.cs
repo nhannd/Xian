@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
@@ -130,8 +131,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                 {
                     if (location.IsLatestArchiveLossless)
                     {
-                        throw new InvalidStudyStateOperationException("Study is lossy but was archived as lossless. It must be restored first.");
-                
+                        throw new InvalidStudyStateOperationException("Study is lossy but was archived as lossless. It must be restored first.");                
                     }
                 }
 
@@ -141,8 +141,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                     if (ServerHelper.LockStudy(location.Key, QueueStudyStateEnum.EditScheduled, out failureReason))
                     {
                         // insert an edit request
-                        WorkQueue request = InsertEditStudyRequest(context, location, updateItems, reason);
-                        Debug.Assert(request.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.WebEditStudy));
+                        WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.WebEditStudy, updateItems, reason, ServerHelper.CurrentUserName);
                         entries.Add(request);
                     }
                     else
@@ -161,10 +160,39 @@ namespace ClearCanvas.ImageServer.Core.Edit
             return entries;
         }
 
-        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, List<UpdateItem> updateItems, string reason)
+        /// <summary>
+        /// Inserts an External edit request(s) to update a study.
+        /// </summary>
+        /// <remarks>
+        /// The External Edit request can be for a study in any state.  The study could be offline/nearline/etc.
+        /// </remarks>
+        /// <param name="context">The persistence context used for database connection.</param>
+        /// <param name="partition">The <see cref="ServerPartition"/> where the study resides</param>
+        /// <param name="studyInstanceUid">The Study Instance Uid of the study</param>
+        /// <param name="reason">The reason the study is being editted</param>
+        /// <param name="user">A string identifying the user that triggered the edit and is stored with the history for the edit.</param>
+        /// <exception cref="InvalidStudyStateOperationException"></exception>
+        /// <param name="updateItems"></param>
+        public static IList<WorkQueue> ExternalEditStudy(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<UpdateItem> updateItems, string reason, string user)
         {
-        	IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, updateItems, reason);
+            // Find all location of the study in the system and insert series delete request
+            IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(partition.Key, studyInstanceUid);
+            IList<WorkQueue> entries = new List<WorkQueue>();
+
+            foreach (StudyStorageLocation location in storageLocations)
+            {
+                // insert an edit request
+                WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.ExternalEdit, updateItems, reason, user);
+                entries.Add(request);
+            }
+
+            return entries;
+        }
+
+        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user)
+        {
+        	var broker = context.GetBroker<IInsertWorkQueue>();
+            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, type, updateItems, reason, user);
             WorkQueue editEntry = broker.FindOne(criteria);
             if (editEntry == null)
             {
@@ -183,14 +211,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <param name="seriesInstanceUids"></param>
         /// <param name="reason"></param>
         /// <exception cref="ApplicationException">If the "DeleteSeries" Work Queue entry cannot be inserted.</exception>
-        private static WorkQueue InsertDeleteSeriesRequest(IUpdateContext context, StudyStorageLocation location, List<string> seriesInstanceUids, string reason)
+        private static WorkQueue InsertDeleteSeriesRequest(IUpdateContext context, StudyStorageLocation location, IEnumerable<string> seriesInstanceUids, string reason)
         {
             // Create a work queue entry and append the series instance uid into the WorkQueueUid table
 
             WorkQueue deleteSeriesEntry = null;
             foreach(string uid in seriesInstanceUids)
             {
-                IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
+                var broker = context.GetBroker<IInsertWorkQueue>();
                 InsertWorkQueueParameters criteria = new DeleteSeriesWorkQueueParameters(location, uid, reason);
                 deleteSeriesEntry = broker.FindOne(criteria);
                 if (deleteSeriesEntry == null)
@@ -212,12 +240,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <param name="seriesInstanceUids"></param>
         /// <param name="deviceKey"></param>
         /// <exception cref="ApplicationException">If the "DeleteSeries" Work Queue entry cannot be inserted.</exception>
-        private static WorkQueue InsertMoveSeriesRequest(IUpdateContext context, StudyStorageLocation location, List<string> seriesInstanceUids, ServerEntityKey deviceKey)
+        private static WorkQueue InsertMoveSeriesRequest(IUpdateContext context, StudyStorageLocation location, IEnumerable<string> seriesInstanceUids, ServerEntityKey deviceKey)
         {
             // Create a work queue entry and append the series instance uid into the WorkQueueUid table
 
             WorkQueue moveSeriesEntry = null;
-            IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
+            var broker = context.GetBroker<IInsertWorkQueue>();
 			foreach (string series in seriesInstanceUids)
 			{
 				InsertWorkQueueParameters criteria = new MoveSeriesWorkQueueParameters(location, series, deviceKey);
@@ -235,21 +263,21 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
     internal class EditStudyWorkQueueParameters : InsertWorkQueueParameters
     {
-        public EditStudyWorkQueueParameters(StudyStorageLocation location, List<UpdateItem> updateItems, string reason)
+        public EditStudyWorkQueueParameters(StudyStorageLocation location, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user)
         {
             DateTime now = Platform.Time;
-            EditStudyWorkQueueData data = new EditStudyWorkQueueData
-                                          	{
-                                          		EditRequest =
-                                          			{
-                                          				TimeStamp = now,
-                                          				UserId = ServerHelper.CurrentUserName,
-                                          				UpdateEntries = updateItems,
-                                          				Reason = reason
-                                          			}
-                                          	};
+            var data = new EditStudyWorkQueueData
+                           {
+                               EditRequest =
+                                   {
+                                       TimeStamp = now,
+                                       UserId = user,
+                                       UpdateEntries = updateItems,
+                                       Reason = reason
+                                   }
+                           };
 
-        	WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
+            WorkQueueTypeEnum = type;
             StudyStorageKey = location.Key;
             ServerPartitionKey = location.ServerPartitionKey;
             ScheduledTime = now;
@@ -262,12 +290,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public DeleteSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, string seriesInstanceUid, string reason)
         {
             DateTime now = Platform.Time;
-            WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData
-                                                 	{
-                                                 		Reason = reason,
-                                                 		Timestamp = now,
-                                                 		UserId = ServerHelper.CurrentUserName
-                                                 	};
+            var data = new WebDeleteSeriesLevelQueueData
+                           {
+                               Reason = reason,
+                               Timestamp = now,
+                               UserId = ServerHelper.CurrentUserName
+                           };
 
         	WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
             StudyStorageKey = studyStorageLocation.Key;
@@ -283,11 +311,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public MoveSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, string seriesInstanceUid, ServerEntityKey deviceKey)
         {
             DateTime now = Platform.Time;
-			WebMoveSeriesLevelQueueData data = new WebMoveSeriesLevelQueueData
-                                                 	{
-                                                 		Timestamp = now,
-                                                 		UserId = ServerHelper.CurrentUserName
-                                                 	};
+            var data = new WebMoveSeriesLevelQueueData
+                           {
+                               Timestamp = now,
+                               UserId = ServerHelper.CurrentUserName
+                           };
 			//data.SeriesInstanceUids = new List<string> {seriesInstanceUid};
 
         	WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;

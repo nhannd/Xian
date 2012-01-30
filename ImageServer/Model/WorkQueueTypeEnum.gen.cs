@@ -39,6 +39,7 @@ public partial class WorkQueueTypeEnum : ServerEnum
       private static readonly WorkQueueTypeEnum _ReconcilePostProcess = GetEnum("ReconcilePostProcess");
       private static readonly WorkQueueTypeEnum _ProcessDuplicate = GetEnum("ProcessDuplicate");
       private static readonly WorkQueueTypeEnum _CleanupDuplicate = GetEnum("CleanupDuplicate");
+      private static readonly WorkQueueTypeEnum _ExternalEdit = GetEnum("ExternalEdit");
       #endregion
 
       #region Public Static Properties
@@ -153,6 +154,13 @@ public partial class WorkQueueTypeEnum : ServerEnum
       public static WorkQueueTypeEnum CleanupDuplicate
       {
           get { return _CleanupDuplicate; }
+      }
+      /// <summary>
+      /// Edit request trigger by an external application.
+      /// </summary>
+      public static WorkQueueTypeEnum ExternalEdit
+      {
+          get { return _ExternalEdit; }
       }
 
       #endregion
