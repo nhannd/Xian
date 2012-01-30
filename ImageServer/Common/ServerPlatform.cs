@@ -43,6 +43,8 @@ namespace ClearCanvas.ImageServer.Common
     	private static string _processorId;
 
         private static bool? _manifestVerified;
+        private static readonly TimeSpan ManifestRecheckTimeSpan = TimeSpan.FromMinutes(15);
+        private static DateTime? _lastManifestCheckTimestamp;
     	#endregion
 
         /// <summary>
@@ -361,12 +363,17 @@ namespace ClearCanvas.ImageServer.Common
 	    {
 	        get
 	        {
-                if (_manifestVerified == null)
+                // Because this code is used in ASP.NET, we need to recheck the manifest every now.
+                // Otherwise, the manifest will remain valid until IIS is restarted.
+                if (_manifestVerified == null || _lastManifestCheckTimestamp == null || DateTime.Now - _lastManifestCheckTimestamp.Value > ManifestRecheckTimeSpan)
                 {
                     lock (_syncLock)
                     {
-                        if (_manifestVerified == null)
+                        if (_manifestVerified == null || _lastManifestCheckTimestamp == null || DateTime.Now - _lastManifestCheckTimestamp.Value > ManifestRecheckTimeSpan)
                         {
+                            _lastManifestCheckTimestamp = DateTime.Now;
+                            _manifestVerified = null;
+
                             try
                             {
                                 Platform.GetService(delegate(IProductVerificationService service)

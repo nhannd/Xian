@@ -355,5 +355,20 @@ namespace ClearCanvas.Utilities.Manifest
         }
 
         #endregion Private Members
+
+        #region Public Methods
+
+        /// <summary>
+        /// Cause the manifest to be verified all over again when Valid is called
+        /// </summary>
+        public static void Invalidate()
+        {
+            lock (SyncLock)
+            {
+                _verificationRun = false;
+            }
+        }
+
+        #endregion
     }
 }

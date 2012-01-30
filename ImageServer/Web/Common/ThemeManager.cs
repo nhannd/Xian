@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Common
             }
             catch(Exception ex)
             {
-                Platform.Log(LogLevel.Error, "Unable to find theme manager. {0}", ex.Message);
+                Platform.Log(LogLevel.Debug, "Unable to find theme manager. {0}", ex.Message);
             }
         }
 

@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.ServiceModel;
@@ -21,9 +22,18 @@ namespace ClearCanvas.ImageServer.Services.Common.Misc
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint),Enabled=true)]
     public class ProductVerificationService : IApplicationServiceLayer, IProductVerificationService
     {
+        private readonly TimeSpan ManifestRecheckTimeSpan = TimeSpan.FromMinutes(15);
+        private DateTime? _lastCheckTimestamp;
+
         public ProductVerificationResponse Verify(ProductVerificationRequest request)
         {
-            
+            if (_lastCheckTimestamp == null || (DateTime.Now - _lastCheckTimestamp.Value) > ManifestRecheckTimeSpan)
+            {
+                ManifestVerification.Invalidate();
+            }
+
+            _lastCheckTimestamp = DateTime.Now;
+
             return new ProductVerificationResponse
                        {
                             IsManifestValid = ManifestVerification.Valid,
