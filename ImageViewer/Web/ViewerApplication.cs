@@ -496,7 +496,7 @@ namespace ClearCanvas.ImageViewer.Web
         private static string GetClientAddress(OperationContext context)
         {
             if (context == null)
-                return "Unknonw";
+                return "Unknown";
 
             MessageProperties prop = context.IncomingMessageProperties;
             RemoteEndpointMessageProperty endpoint =

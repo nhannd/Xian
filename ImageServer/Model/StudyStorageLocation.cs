@@ -592,6 +592,16 @@ namespace ClearCanvas.ImageServer.Model
 			}
 		}
 
+        static public IList<StudyStorageLocation> FindStorageLocations(ServerEntityKey studyStorageKey)
+		{
+			using (var readContext = _store.OpenReadContext())
+			{
+                var parms = new StudyStorageLocationQueryParameters { StudyStorageKey = studyStorageKey };
+                var broker = readContext.GetBroker<IQueryStudyStorageLocation>();
+                return broker.Find(parms);
+			}
+		}        
+
         static public IList<StudyStorageLocation> FindStorageLocations(
                     IPersistenceContext context, StudyStorage storage)
         {

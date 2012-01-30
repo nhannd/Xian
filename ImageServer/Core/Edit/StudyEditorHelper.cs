@@ -114,15 +114,15 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// Inserts edit request(s) to update a study.
         /// </summary>
         /// <param name="context">The persistence context used for database connection.</param>
-        /// <param name="partition">The <see cref="ServerPartition"/> where the study resides</param>
-        /// <param name="studyInstanceUid">The Study Instance Uid of the study</param>
-        /// <param name="reason">The reason the study is being editted</param>/// 
+        /// <param name="studyStorageKey">The StudyStorage record key</param>
+        /// <param name="reason">The reason the study is being editted</param>
+        /// <param name="userId">The ID of the user requesting the study edit</param> 
         /// <exception cref="InvalidStudyStateOperationException"></exception>
         /// <param name="updateItems"></param>
-        public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<UpdateItem> updateItems, string reason)
+        public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerEntityKey studyStorageKey, List<UpdateItem> updateItems, string reason, string userId)
         {
             // Find all location of the study in the system and insert series delete request
-			IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(partition.Key, studyInstanceUid);
+			IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(studyStorageKey);
 			IList<WorkQueue> entries = new List<WorkQueue>();
 
             foreach (StudyStorageLocation location in storageLocations)
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                     if (ServerHelper.LockStudy(location.Key, QueueStudyStateEnum.EditScheduled, out failureReason))
                     {
                         // insert an edit request
-                        WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.WebEditStudy, updateItems, reason, ServerHelper.CurrentUserName);
+                        WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.WebEditStudy, updateItems, reason, userId);
                         entries.Add(request);
                     }
                     else
@@ -167,16 +167,15 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// The External Edit request can be for a study in any state.  The study could be offline/nearline/etc.
         /// </remarks>
         /// <param name="context">The persistence context used for database connection.</param>
-        /// <param name="partition">The <see cref="ServerPartition"/> where the study resides</param>
-        /// <param name="studyInstanceUid">The Study Instance Uid of the study</param>
+        /// <param name="studyStorageKey">The StudyStorage record key</param>
         /// <param name="reason">The reason the study is being editted</param>
         /// <param name="user">A string identifying the user that triggered the edit and is stored with the history for the edit.</param>
         /// <exception cref="InvalidStudyStateOperationException"></exception>
         /// <param name="updateItems"></param>
-        public static IList<WorkQueue> ExternalEditStudy(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<UpdateItem> updateItems, string reason, string user)
+        public static IList<WorkQueue> ExternalEditStudy(IUpdateContext context, ServerEntityKey studyStorageKey, List<UpdateItem> updateItems, string reason, string user)
         {
             // Find all location of the study in the system and insert series delete request
-            IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(partition.Key, studyInstanceUid);
+            IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(studyStorageKey);
             IList<WorkQueue> entries = new List<WorkQueue>();
 
             foreach (StudyStorageLocation location in storageLocations)
