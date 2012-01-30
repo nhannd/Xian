@@ -225,11 +225,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             Platform.Log(LogLevel.Info, String.Format("Editing study {0}", study.StudyInstanceUid));
 
-            ServerPartition partition = ServerPartition.Load(study.ServerPartitionKey);
-			    
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-                IList<WorkQueue> entries = StudyEditorHelper.EditStudy(ctx, partition, study.StudyInstanceUid, updateItems, reason);
+                IList<WorkQueue> entries = StudyEditorHelper.EditStudy(ctx, study.StudyStorageKey, updateItems, reason, ServerHelper.CurrentUserName);
                 if (entries!=null)
 			        ctx.Commit();
 			}
