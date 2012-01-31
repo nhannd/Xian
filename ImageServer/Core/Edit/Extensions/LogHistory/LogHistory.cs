@@ -51,7 +51,8 @@ namespace ClearCanvas.ImageServer.Core.Edit.Extensions.LogHistory
 			              		UpdateCommands = context.EditCommands,
 			              		TimeStamp = Platform.Time,
 			              		UserId = context.UserId,
-			              		Reason = context.Reason
+			              		Reason = context.Reason,
+                                EditType = context.EditType
 			              	};
 		}
 
@@ -81,16 +82,20 @@ namespace ClearCanvas.ImageServer.Core.Edit.Extensions.LogHistory
 			Platform.CheckForNullReference(context.OriginalStudyStorageLocation, "context.OriginalStudyStorageLocation");
 			Platform.CheckForNullReference(context.NewStudystorageLocation, "context.NewStudystorageLocation");
 
-			StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns
-			                                    	{
-			                                    		InsertTime = Platform.Time,
-			                                    		StudyHistoryTypeEnum = StudyHistoryTypeEnum.WebEdited,
-			                                    		StudyStorageKey = context.OriginalStudyStorageLocation.GetKey(),
-			                                    		DestStudyStorageKey = context.NewStudystorageLocation.GetKey(),
-			                                    		StudyData = XmlUtils.SerializeAsXmlDoc(_studyInfo)
-			                                    	};
+		    var columns = new StudyHistoryUpdateColumns
+		                      {
+		                          InsertTime = Platform.Time,
+		                          StudyStorageKey = context.OriginalStudyStorageLocation.GetKey(),
+		                          DestStudyStorageKey = context.NewStudystorageLocation.GetKey(),
+		                          StudyData = XmlUtils.SerializeAsXmlDoc(_studyInfo),
+		                          StudyHistoryTypeEnum =
+		                              context.EditType == EditType.WebEdit
+		                                  ? StudyHistoryTypeEnum.WebEdited
+		                                  : StudyHistoryTypeEnum.ExternalEdit
+		                      };
 
-			XmlDocument doc = XmlUtils.SerializeAsXmlDoc(_changeDesc);
+
+		    XmlDocument doc = XmlUtils.SerializeAsXmlDoc(_changeDesc);
 			columns.ChangeDescription = doc;
 			return columns;
 		}

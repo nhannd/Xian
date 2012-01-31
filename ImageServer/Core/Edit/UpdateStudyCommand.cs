@@ -236,7 +236,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			log.AppendLine(String.Format("\tAccession #: {0}", _study.AccessionNumber));
 			log.AppendLine(String.Format("\tStudy ID : {0}", _study.StudyId));
 			log.AppendLine(String.Format("\tStudy Date : {0}", _study.StudyDate));
-			log.AppendLine(String.Format("\tStudy Instance Uid: {0}", _study.StudyInstanceUid));
+            log.AppendLine(String.Format("\tPatient's Birth Date : {0}", _study.PatientsBirthDate));
+            log.AppendLine(String.Format("\tStudy Instance Uid: {0}", _study.StudyInstanceUid));
 			log.AppendLine(String.Format("\tInstance Count: {0}", _study.NumberOfStudyRelatedInstances));
 			log.AppendLine(String.Format("\tCurrent location: {0}", _oldStudyPath));
 			log.AppendLine();

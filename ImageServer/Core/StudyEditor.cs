@@ -212,17 +212,17 @@ namespace ClearCanvas.ImageServer.Core
 				// Note, this command will only insert the ArchiveQueue command if a delete doesn't exist
 				processor.AddCommand(new InsertArchiveQueueCommand(ServerPartition.Key, StorageLocation.Key));
 
-				WebEditStudyContext context = new WebEditStudyContext
-				                              	{
-				                              		CommandProcessor = processor,
-				                              		EditType = EditType.WebEdit,
-				                              		OriginalStudyStorageLocation = StorageLocation,
-				                              		EditCommands = updateCommands,
-				                              		OriginalStudy = Study,
-				                              		OrginalPatient = Patient,
-				                              		UserId = data.EditRequest.UserId,
-				                              		Reason = data.EditRequest.Reason
-				                              	};
+			    var context = new WebEditStudyContext
+			                      {
+			                          CommandProcessor = processor,
+			                          EditType = data.EditRequest.EditType,
+			                          OriginalStudyStorageLocation = StorageLocation,
+			                          EditCommands = updateCommands,
+			                          OriginalStudy = Study,
+			                          OrginalPatient = Patient,
+			                          UserId = data.EditRequest.UserId,
+			                          Reason = data.EditRequest.Reason
+			                      };
 
 				OnStudyUpdating(context);
 

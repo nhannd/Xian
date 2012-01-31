@@ -25,7 +25,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// User edited the study via the Web GUI
 		/// </summary>
 		[EnumInfo(ShortDescription="Web Edit", LongDescription="Edited using the Web GUI")]
-		WebEdit  
+		WebEdit,
+
+        /// <summary>
+        /// User edited the study via the Web GUI
+        /// </summary>
+        [EnumInfo(ShortDescription = "Web Service Edit", LongDescription = "Automatic edit caused by web service call")]
+        WebServiceEdit  
+
 	}
 
 	/// <summary>

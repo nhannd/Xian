@@ -94,6 +94,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
     	public string Reason { get; set; }
 
     	public DateTime? TimeStamp { get; set; }
+
+        public EditType EditType { get; set; }
     }
 
     public class EditStudyWorkQueueData

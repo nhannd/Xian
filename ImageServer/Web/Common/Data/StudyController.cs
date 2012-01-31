@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-                IList<WorkQueue> entries = StudyEditorHelper.EditStudy(ctx, study.StudyStorageKey, updateItems, reason, ServerHelper.CurrentUserName);
+                IList<WorkQueue> entries = StudyEditorHelper.EditStudy(ctx, study.StudyStorageKey, updateItems, reason, ServerHelper.CurrentUserName, EditType.WebEdit);
                 if (entries!=null)
 			        ctx.Commit();
 			}

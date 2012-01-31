@@ -117,9 +117,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <param name="studyStorageKey">The StudyStorage record key</param>
         /// <param name="reason">The reason the study is being editted</param>
         /// <param name="userId">The ID of the user requesting the study edit</param> 
+        /// <param name="editType">The request is a web edit request</param>
         /// <exception cref="InvalidStudyStateOperationException"></exception>
         /// <param name="updateItems"></param>
-        public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerEntityKey studyStorageKey, List<UpdateItem> updateItems, string reason, string userId)
+        public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerEntityKey studyStorageKey, List<UpdateItem> updateItems, string reason, string userId, EditType editType)
         {
             // Find all location of the study in the system and insert series delete request
 			IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(studyStorageKey);
@@ -141,7 +142,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                     if (ServerHelper.LockStudy(location.Key, QueueStudyStateEnum.EditScheduled, out failureReason))
                     {
                         // insert an edit request
-                        WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.WebEditStudy, updateItems, reason, userId);
+                        WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.WebEditStudy, updateItems, reason, userId, editType);
                         entries.Add(request);
                     }
                     else
@@ -172,7 +173,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <param name="user">A string identifying the user that triggered the edit and is stored with the history for the edit.</param>
         /// <exception cref="InvalidStudyStateOperationException"></exception>
         /// <param name="updateItems"></param>
-        public static IList<WorkQueue> ExternalEditStudy(IUpdateContext context, ServerEntityKey studyStorageKey, List<UpdateItem> updateItems, string reason, string user)
+        /// <param name="editType">The request is a web edit request </param>
+        public static IList<WorkQueue> ExternalEditStudy(IUpdateContext context, ServerEntityKey studyStorageKey, List<UpdateItem> updateItems, string reason, string user, EditType editType)
         {
             // Find all location of the study in the system and insert series delete request
             IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(studyStorageKey);
@@ -181,17 +183,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
             foreach (StudyStorageLocation location in storageLocations)
             {
                 // insert an edit request
-                WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.ExternalEdit, updateItems, reason, user);
+                WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.ExternalEdit, updateItems, reason, user, editType);
                 entries.Add(request);
             }
 
             return entries;
         }
 
-        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user)
+        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user, EditType editType)
         {
         	var broker = context.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, type, updateItems, reason, user);
+            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, type, updateItems, reason, user, editType);
             WorkQueue editEntry = broker.FindOne(criteria);
             if (editEntry == null)
             {
@@ -262,7 +264,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
     internal class EditStudyWorkQueueParameters : InsertWorkQueueParameters
     {
-        public EditStudyWorkQueueParameters(StudyStorageLocation location, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user)
+        public EditStudyWorkQueueParameters(StudyStorageLocation location, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user, EditType editType)
         {
             DateTime now = Platform.Time;
             var data = new EditStudyWorkQueueData
@@ -272,7 +274,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
                                        TimeStamp = now,
                                        UserId = user,
                                        UpdateEntries = updateItems,
-                                       Reason = reason
+                                       Reason = reason,
+                                       EditType = editType
                                    }
                            };
 
