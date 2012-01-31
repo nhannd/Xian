@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
@@ -132,7 +131,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                 {
                     if (location.IsLatestArchiveLossless)
                     {
-                        throw new InvalidStudyStateOperationException("Study is lossy but was archived as lossless. It must be restored first.");                
+                        throw new InvalidStudyStateOperationException("Study is lossy but was archived as lossless. It must be restored before editing.");                
                     }
                 }
 
@@ -142,7 +141,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                     if (ServerHelper.LockStudy(location.Key, QueueStudyStateEnum.EditScheduled, out failureReason))
                     {
                         // insert an edit request
-                        WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.WebEditStudy, updateItems, reason, userId, editType);
+                        WorkQueue request = InsertEditStudyRequest(context, location.Key, location.ServerPartitionKey, WorkQueueTypeEnum.WebEditStudy, updateItems, reason, userId, editType);
                         entries.Add(request);
                     }
                     else
@@ -152,7 +151,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                 }
                 catch (Exception ex)
                 {
-                    Platform.Log(LogLevel.Error, ex, "Errors occurred when trying to insert edit request");
+                    Platform.Log(LogLevel.Error, ex, "Errors occured when trying to insert edit request");
                     if (!ServerHelper.UnlockStudy(location.Key))
                         throw new ApplicationException("Unable to unlock the study");
                 }
@@ -177,28 +176,38 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public static IList<WorkQueue> ExternalEditStudy(IUpdateContext context, ServerEntityKey studyStorageKey, List<UpdateItem> updateItems, string reason, string user, EditType editType)
         {
             // Find all location of the study in the system and insert series delete request
-            IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(studyStorageKey);
+            StudyStorage s = StudyStorage.Load(studyStorageKey);
             IList<WorkQueue> entries = new List<WorkQueue>();
 
-            foreach (StudyStorageLocation location in storageLocations)
-            {
-                // insert an edit request
-                WorkQueue request = InsertEditStudyRequest(context, location, WorkQueueTypeEnum.ExternalEdit, updateItems, reason, user, editType);
-                entries.Add(request);
-            }
+            // insert an edit request
+            WorkQueue request = InsertEditStudyRequest(context, s.Key, s.ServerPartitionKey,
+                                                       WorkQueueTypeEnum.ExternalEdit, updateItems, reason, user,
+                                                       editType);
+            entries.Add(request);
 
             return entries;
         }
 
-        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user, EditType editType)
+        /// <summary>
+        /// Insert an EditStudy request.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="studyStorageKey"></param>
+        /// <param name="serverPartitionKey"></param>
+        /// <param name="type"></param>
+        /// <param name="updateItems"></param>
+        /// <param name="reason"></param>
+        /// <param name="user"></param>
+        /// <param name="editType"></param>
+        /// <returns></returns>
+        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, ServerEntityKey studyStorageKey, ServerEntityKey serverPartitionKey, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user, EditType editType)
         {
         	var broker = context.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, type, updateItems, reason, user, editType);
+            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(studyStorageKey, serverPartitionKey, type, updateItems, reason, user, editType);
             WorkQueue editEntry = broker.FindOne(criteria);
             if (editEntry == null)
             {
-                throw new ApplicationException(
-                    String.Format("Unable to insert an Edit request for study {0}", location.StudyInstanceUid));
+                throw new ApplicationException(string.Format("Unable to insert an Edit request of type {0} for study for user {1}",type.Description, user));
             }
             return editEntry;
         }
@@ -264,7 +273,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
     internal class EditStudyWorkQueueParameters : InsertWorkQueueParameters
     {
-        public EditStudyWorkQueueParameters(StudyStorageLocation location, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user, EditType editType)
+        public EditStudyWorkQueueParameters(ServerEntityKey studyStorageKey, ServerEntityKey serverPartitionKey, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user, EditType editType)
         {
             DateTime now = Platform.Time;
             var data = new EditStudyWorkQueueData
@@ -280,8 +289,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
                            };
 
             WorkQueueTypeEnum = type;
-            StudyStorageKey = location.Key;
-            ServerPartitionKey = location.ServerPartitionKey;
+            StudyStorageKey = studyStorageKey;
+            ServerPartitionKey = serverPartitionKey;
             ScheduledTime = now;
             WorkQueueData = XmlUtils.SerializeAsXmlDoc(data); 
         }
