@@ -72,13 +72,13 @@ GO
 
 PRINT N'Adding ExternalEdit WorkQueueTypeEnum'
 
-INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+INSERT INTO [dbo].[WorkQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),116,'ExternalEdit','External Edit','Edit request trigger by an external application.')
 GO
   -- ExternalEdit
-INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
+INSERT INTO [dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
            [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder],
@@ -87,6 +87,12 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            (116,200,0,1,1,30,180,60,120,240,-1,101,3,0,1)
 GO
 
+PRINT N'Adding ExternalEdit [StudyHistoryTypeEnum]'
+INSERT INTO [dbo].[StudyHistoryTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),204,'ExternalEdit','External Edit','Study was edited via an external request.')
+GO
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO

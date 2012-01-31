@@ -1101,6 +1101,11 @@ INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
      VALUES
            (newid(),203,'SeriesDeleted','One or more series was deleted','One or more series was deleted manually.')
 GO
+INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),204,'ExternalEdit','External Edit','Study was edited via an external request.')
+GO
 
 -- Canned Text
 INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])

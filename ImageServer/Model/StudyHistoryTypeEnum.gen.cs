@@ -28,6 +28,7 @@ public partial class StudyHistoryTypeEnum : ServerEnum
       private static readonly StudyHistoryTypeEnum _Duplicate = GetEnum("Duplicate");
       private static readonly StudyHistoryTypeEnum _Reprocessed = GetEnum("Reprocessed");
       private static readonly StudyHistoryTypeEnum _SeriesDeleted = GetEnum("SeriesDeleted");
+      private static readonly StudyHistoryTypeEnum _ExternalEdit = GetEnum("ExternalEdit");
       #endregion
 
       #region Public Static Properties
@@ -65,6 +66,13 @@ public partial class StudyHistoryTypeEnum : ServerEnum
       public static StudyHistoryTypeEnum SeriesDeleted
       {
           get { return _SeriesDeleted; }
+      }
+      /// <summary>
+      /// Study was edited via an external request.
+      /// </summary>
+      public static StudyHistoryTypeEnum ExternalEdit
+      {
+          get { return _ExternalEdit; }
       }
 
       #endregion
