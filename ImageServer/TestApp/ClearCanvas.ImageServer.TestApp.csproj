@@ -296,6 +296,7 @@
     <ProjectReference Include="..\Services\Common\ClearCanvas.ImageServer.Services.Common.csproj">
       <Project>{6863F5CE-F1D3-46A7-915C-DE02D1452EED}</Project>
       <Name>ClearCanvas.ImageServer.Services.Common</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
