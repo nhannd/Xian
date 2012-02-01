@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Core.Edit
@@ -180,7 +181,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             IList<WorkQueue> entries = new List<WorkQueue>();
 
             // insert an edit request
-            WorkQueue request = InsertEditStudyRequest(context, s.Key, s.ServerPartitionKey,
+            WorkQueue request = InsertExternalEditStudyRequest(context, s.Key, s.ServerPartitionKey,
                                                        WorkQueueTypeEnum.ExternalEdit, updateItems, reason, user,
                                                        editType);
             entries.Add(request);
@@ -208,6 +209,55 @@ namespace ClearCanvas.ImageServer.Core.Edit
             if (editEntry == null)
             {
                 throw new ApplicationException(string.Format("Unable to insert an Edit request of type {0} for study for user {1}",type.Description, user));
+            }
+            return editEntry;
+        }
+
+        /// <summary>
+        /// Insert an EditStudy request.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="studyStorageKey"></param>
+        /// <param name="serverPartitionKey"></param>
+        /// <param name="type"></param>
+        /// <param name="updateItems"></param>
+        /// <param name="reason"></param>
+        /// <param name="user"></param>
+        /// <param name="editType"></param>
+        /// <returns></returns>
+        private static WorkQueue InsertExternalEditStudyRequest(IUpdateContext context, ServerEntityKey studyStorageKey, ServerEntityKey serverPartitionKey, WorkQueueTypeEnum type, List<UpdateItem> updateItems, string reason, string user, EditType editType)
+        {
+            var propertiesBroker = context.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
+            var criteria = new WorkQueueTypePropertiesSelectCriteria();
+            criteria.WorkQueueTypeEnum.EqualTo(type);
+            WorkQueueTypeProperties properties = propertiesBroker.FindOne(criteria);
+
+            var broker = context.GetBroker<IWorkQueueEntityBroker>();
+            var insert = new WorkQueueUpdateColumns();
+            DateTime now = Platform.Time;
+            var data = new EditStudyWorkQueueData
+            {
+                EditRequest =
+                {
+                    TimeStamp = now,
+                    UserId = user,
+                    UpdateEntries = updateItems,
+                    Reason = reason,
+                    EditType = editType
+                }
+            };
+            insert.WorkQueueTypeEnum = type;
+            insert.StudyStorageKey = studyStorageKey;
+            insert.ServerPartitionKey = serverPartitionKey;
+            insert.ScheduledTime = now;
+            insert.ExpirationTime = now.AddSeconds(properties.ExpireDelaySeconds);
+            insert.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+            insert.WorkQueuePriorityEnum = properties.WorkQueuePriorityEnum;
+            insert.Data = XmlUtils.SerializeAsXmlDoc(data); 
+            WorkQueue editEntry = broker.Insert(insert);
+            if (editEntry == null)
+            {
+                throw new ApplicationException(string.Format("Unable to insert an Edit request of type {0} for study for user {1}", type.Description, user));
             }
             return editEntry;
         }
