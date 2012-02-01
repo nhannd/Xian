@@ -234,6 +234,7 @@
     <File name="Web\Pages\Queues\WorkQueue\Edit\Default.aspx" />
     <File name="Web\Pages\Queues\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
+    <File name="Web\Pages\Queues\WorkQueue\Edit\EditWorkQueueDetailsView.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\Edit\ProcessDuplicateWorkQueueDetailsView.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
