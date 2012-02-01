@@ -224,10 +224,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (frame.ParentImageSop[DicomTags.ExposureTimeInMs].TryGetFloat64(0, out dValue))
 				return string.Format(formatString, dValue.ToString(@"F2"));
 
-			int iValue;
-			if (frame.ParentImageSop[DicomTags.ExposureTimeInUs].TryGetInt32(0, out iValue))
-				return string.Format(formatString, (iValue/1000f).ToString(@"F2"));
+			if (frame.ParentImageSop[DicomTags.ExposureTimeInUs].TryGetFloat64(0, out dValue))
+				return string.Format(formatString, (dValue/1000.0).ToString(@"F2"));
 
+			int iValue;
 			return frame.ParentImageSop[DicomTags.ExposureTime].TryGetInt32(0, out iValue) ? string.Format(formatString, iValue) : string.Empty;
 		}
 
@@ -237,10 +237,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (frame.ParentImageSop[DicomTags.XRayTubeCurrentInMa].TryGetFloat64(0, out dValue))
 				return string.Format(formatString, dValue.ToString(@"F2"));
 
-			int iValue;
-			if (frame.ParentImageSop[DicomTags.XRayTubeCurrentInUa].TryGetInt32(0, out iValue))
-				return string.Format(formatString, (iValue/1000f).ToString(@"F2"));
+			if (frame.ParentImageSop[DicomTags.XRayTubeCurrentInUa].TryGetFloat64(0, out dValue))
+				return string.Format(formatString, (dValue/1000.0).ToString(@"F2"));
 
+			int iValue;
 			return frame.ParentImageSop[DicomTags.XRayTubeCurrent].TryGetInt32(0, out iValue) ? string.Format(formatString, iValue) : string.Empty;
 		}
 

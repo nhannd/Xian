@@ -77,6 +77,8 @@
     <Compile Include="Dicom\PatientStudyAnnotationItemProvider.cs" />
     <Compile Include="Dicom\PatientAnnotationItemProvider.cs" />
     <Compile Include="Dicom\SliceLocationAnnotationItem.cs" />
+    <Compile Include="Dicom\Tests\DXParameterTests.cs" />
+    <Compile Include="Dicom\Tests\MockImageSop.cs" />
     <Compile Include="Presentation\AppliedLutAnnotationItem.cs">
       <SubType>Code</SubType>
     </Compile>
