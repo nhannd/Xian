@@ -40,8 +40,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         ResourcePath =
             "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel.js")]
     /// <summary>
-        /// The <see cref="WorkQueue"/> details panel
-        /// </summary>
+    /// The <see cref="WorkQueue"/> details panel
+    /// </summary>
     public partial class WorkQueueItemDetailsPanel : AJAXScriptControl
     {
         #region Private members
@@ -251,32 +251,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
                 {
                     _detailsView = LoadControl("AutoRouteWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
-                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                    if (_detailsView != null) WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
                 else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
                 {
                     _detailsView = LoadControl("WebMoveStudyWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
-                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                    if (_detailsView != null) WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
                 else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebEditStudy)
                 {
                     _detailsView = LoadControl("WebEditStudyWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
-                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                    if (_detailsView != null) WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
                 else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.MigrateStudy)
                 {
                     _detailsView = LoadControl("TierMigrationWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
-                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                    if (_detailsView != null) WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
                 else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.ProcessDuplicate)
                 {
                     _detailsView = LoadControl("ProcessDuplicateWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
-                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                    if (_detailsView != null) WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                }
+                else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.ExternalEdit || WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebEditStudy)
+                {
+                    _detailsView = LoadControl("EditWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
+                    if (_detailsView != null) WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
                 else
                 {
                     _detailsView = LoadControl("GeneralWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
-                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                    if (_detailsView != null) WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
 
                 // If the entry isn't failed but hasn't been updated for some time, display the alert message

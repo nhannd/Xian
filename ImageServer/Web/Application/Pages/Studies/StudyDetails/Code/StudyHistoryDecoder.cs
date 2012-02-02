@@ -38,13 +38,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
 
         public static WebEditStudyHistoryRecord ReadEditRecord(StudyHistory historyRecord)
         {
-            Platform.CheckTrue(historyRecord.StudyHistoryTypeEnum == StudyHistoryTypeEnum.WebEdited,
+            Platform.CheckTrue(historyRecord.StudyHistoryTypeEnum == StudyHistoryTypeEnum.WebEdited
+                               || historyRecord.StudyHistoryTypeEnum == StudyHistoryTypeEnum.ExternalEdit,
                                "History record has invalid history record type");
 
-            WebEditStudyHistoryRecord record = new WebEditStudyHistoryRecord();
-            record.InsertTime = historyRecord.InsertTime;
-            record.StudyStorageLocation = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(historyRecord.StudyStorageKey))[0];
-            record.UpdateDescription = XmlUtils.Deserialize<WebEditStudyHistoryChangeDescription>(historyRecord.ChangeDescription);
+            WebEditStudyHistoryRecord record = new WebEditStudyHistoryRecord
+                                                   {
+                                                       InsertTime = historyRecord.InsertTime,
+                                                       StudyStorageLocation =
+                                                           StudyStorageLocation.FindStorageLocations(
+                                                               StudyStorage.Load(historyRecord.StudyStorageKey))[0],
+                                                       UpdateDescription =
+                                                           XmlUtils.Deserialize<WebEditStudyHistoryChangeDescription>(
+                                                               historyRecord.ChangeDescription)
+                                                   };
             return record;
         }
     }

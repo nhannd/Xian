@@ -257,6 +257,9 @@
   <data name="WorkQueue_DuplicateStorageLocation" xml:space="preserve">
     <value>Duplicate Storage Location:</value>
   </data>
+  <data name="WorkQueue_EditTags" xml:space="preserve">
+    <value>Edit Tags:</value>
+  </data>
   <data name="WorkQueue_ExpirationDateTIme" xml:space="preserve">
     <value>Expiration Date/Time:</value>
   </data>

@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
@@ -55,6 +56,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public string StorageLocationPath { get; set; }
 
         public string DuplicateStorageLocationPath { get; set; }
+
+        public UpdateItem[] EditUpdateItems { get; set; }
 
         #endregion Public Properties
     }

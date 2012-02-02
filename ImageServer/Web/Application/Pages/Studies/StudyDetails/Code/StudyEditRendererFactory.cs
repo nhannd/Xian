@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Trigger: {0}", UpdateDescription.EditType == EditType.WebEdit ? "Manual (Web UI)" : "Unknown");
+            sb.AppendFormat("Trigger: {0}", UpdateDescription.EditType == EditType.WebEdit ? "Manual (Web UI)" : "External Edit");
             sb.AppendLine();
             sb.AppendFormat("Updates:");
             sb.AppendLine();

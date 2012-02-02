@@ -801,4 +801,7 @@ At least one server partition is required. Please add a new server partition.</v
     <value>authority group with access to all studies on accessible partitions</value>
     <comment>Legend that explains what the "*" beside the group means</comment>
   </data>
+  <data name="StudyDetails_WebServiceEdit_Description" xml:space="preserve">
+    <value>Edited by external web service</value>
+  </data>
 </root>

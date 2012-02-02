@@ -75,6 +75,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 case EditType.WebEdit:
                     return HtmlUtility.Encode(SR.StudyDetails_WebEdit_Description);
+                case EditType.WebServiceEdit:
+                    return HtmlUtility.Encode(SR.StudyDetails_WebServiceEdit_Description);
             }
 
             return HtmlUtility.Encode(HtmlUtility.GetEnumInfo(type).LongDescription);

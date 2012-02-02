@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.StudyReconciled)
                 return new ReconcileStudyRendererFactory();
-            else if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.WebEdited)
+            else if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.WebEdited || record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.ExternalEdit)
                 return new StudyEditRendererFactory();
             else if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.Duplicate)
                 return new ProcessDuplicateChangeLogRendererFactory();

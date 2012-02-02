@@ -26,6 +26,17 @@
     right: 20px;
 }
 
+#WarningLabel
+{
+    position: absolute;
+    right: 20px;
+    top: 55px;
+    font-size:smaller;
+	color:Red;
+	font-weight:bold;
+	font-family: Sans-Serif;
+}
+
 #LoginCredentials .ManifestWarningTextLabel
 {
 	font-size:smaller;

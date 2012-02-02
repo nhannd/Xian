@@ -475,6 +475,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Tags:.
+        /// </summary>
+        internal static string WorkQueue_EditTags {
+            get {
+                return ResourceManager.GetString("WorkQueue_EditTags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expiration Date/Time:.
         /// </summary>
         internal static string WorkQueue_ExpirationDateTIme {

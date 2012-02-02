@@ -12,6 +12,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -44,9 +45,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 return CreateProcessDuplicateWorkQueueItemDetails(workqueue);
             }
-            
-            return CreateGeneralWorkQueueItemDetails(workqueue);
-            
+
+            if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebEditStudy
+             || workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.ExternalEdit)
+                return CreateEditWorkQueueItemDetails(workqueue);
+
+            return CreateGeneralWorkQueueItemDetails(workqueue);            
         }
 
         #region Private Static Methods
@@ -287,6 +291,68 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             return detail;
         }
 
+        private static WorkQueueDetails CreateEditWorkQueueItemDetails(Model.WorkQueue item)
+        {
+            StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+
+            var detail = new WorkQueueDetails
+                             {
+                                 Key = item.Key,
+                                 ScheduledDateTime = item.ScheduledTime,
+                                 ExpirationTime = item.ExpirationTime,
+                                 InsertTime = item.InsertTime,
+                                 FailureCount = item.FailureCount,
+                                 Type = item.WorkQueueTypeEnum,
+                                 Status = item.WorkQueueStatusEnum,
+                                 Priority = item.WorkQueuePriorityEnum,
+                                 FailureDescription = item.FailureDescription,
+                                 ServerDescription = item.ProcessorID,
+                                 StorageLocationPath = storage.GetStudyPath()
+                             };
+
+
+
+            // Fetch UIDs
+            var wqUidsAdaptor = new WorkQueueUidAdaptor();
+            var uidCriteria = new WorkQueueUidSelectCriteria();
+            uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
+            IList<WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
+
+            var mapSeries = new Hashtable();
+            foreach (WorkQueueUid uid in uids)
+            {
+                if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
+                    mapSeries.Add(uid.SeriesInstanceUid, uid.SopInstanceUid);
+            }
+
+            detail.NumInstancesPending = uids.Count;
+            detail.NumSeriesPending = mapSeries.Count;
+
+
+            // Fetch the study and patient info
+            var ssAdaptor = new StudyStorageAdaptor();
+            StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
+
+            var studyAdaptor = new StudyAdaptor();
+            var studycriteria = new StudySelectCriteria();
+            studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
+            studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
+            Study study = studyAdaptor.GetFirst(studycriteria);
+
+            // Study may not be available until the images are processed.
+            if (study != null)
+            {
+                var studyAssembler = new StudyDetailsAssembler();
+                detail.Study = studyAssembler.CreateStudyDetail(study);
+            }
+
+            var parser = new EditStudyWorkQueueDataParser();
+            EditStudyWorkQueueData data = parser.Parse(item.Data.DocumentElement);
+
+            detail.EditUpdateItems = data.EditRequest.UpdateEntries.ToArray();
+
+            return detail;
+        }
         #endregion Private Static Methods
     }
 }
