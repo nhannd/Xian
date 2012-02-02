@@ -8,9 +8,9 @@ This software is licensed under the Open Software License v3.0.
 For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Edit" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditWorkQueueDetailsView.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.EditWorkQueueDetailsView" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <asp:DetailsView ID="EditInfoDetailsView" runat="server" AutoGenerateRows="False"
     CellPadding="2" GridLines="Horizontal" CssClass="GlobalGridView" Width="100%"
     OnDataBound="GeneralInfoDetailsView_DataBound">

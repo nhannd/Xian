@@ -50,14 +50,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (string.IsNullOrEmpty(reasonString)) return SR.NoneSpecified;
             string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
-            return reason[0];
+            return reason.Length > 0 ? reason[0] : string.Empty;
         }
 
         public string GetComment(string reasonString)
         {
             if (string.IsNullOrEmpty(reasonString)) return SR.NoneSpecified;
             string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
-            return reason[1];
+            return reason.Length > 1 ? reason[1] : string.Empty;
         }
 
         protected string ChangeSummaryText
