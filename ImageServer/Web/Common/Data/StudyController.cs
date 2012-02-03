@@ -338,11 +338,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             Platform.CheckForNullReference(study, "Study");
 
-            WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            var adaptor = new WorkQueueAdaptor();
+            var workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(study.StudyStorageKey);
-            workQueueCriteria.ScheduledTime.SortAsc(0);
             workQueueCriteria.WorkQueueStatusEnum.In(new [] {WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending});
+            return adaptor.GetCount(workQueueCriteria);
+        }
+
+        public int GetCountPendingExternalEditWorkQueueItems(Study study)
+        {
+            Platform.CheckForNullReference(study, "Study");
+
+            var adaptor = new WorkQueueAdaptor();
+            var workQueueCriteria = new WorkQueueSelectCriteria();
+            workQueueCriteria.StudyStorageKey.EqualTo(study.StudyStorageKey);
+            workQueueCriteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.ExternalEdit);
             return adaptor.GetCount(workQueueCriteria);
         }
 

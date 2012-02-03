@@ -124,6 +124,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public bool HasPendingWorkQueueItems { get; set; }
 
+        public bool HasPendingExternalEdit { get; set; }
+
 		#endregion Public Properties
 
 
@@ -634,7 +636,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				studySummary.IsReconcileRequired = true;
 			}
 
-		    studySummary.HasPendingWorkQueueItems = controller.GetCountPendingWorkQueueItems(study) > 0;
+		    studySummary.HasPendingExternalEdit = controller.GetCountPendingExternalEditWorkQueueItems(study) > 0;
+            if (studySummary.HasPendingExternalEdit)            
+                studySummary.HasPendingWorkQueueItems = true;            
+            else
+		        studySummary.HasPendingWorkQueueItems = controller.GetCountPendingWorkQueueItems(study) > 0;
             
             var ep = new StudySummaryAssemblerExtensionPoint();
             foreach (IStudySummaryAssembler assemblerPlugin in ep.CreateExtensions())
