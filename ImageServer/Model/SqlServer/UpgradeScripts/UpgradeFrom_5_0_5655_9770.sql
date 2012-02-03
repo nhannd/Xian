@@ -84,7 +84,11 @@ INSERT INTO [dbo].[WorkQueueTypeProperties]
            [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder],
            [ReadLock],[WriteLock])
      VALUES
-           (116,200,0,1,1,30,180,60,120,240,-1,101,3,0,1)
+           (116,300,0,1,1,30,180,60,120,240,-1,101,3,0,1)
+GO
+
+PRINT N'Updating WebEditStudy priority to HIGH'
+UPDATE [dbo].[WorkQueueTypeProperties] set WorkQueuePriorityEnum = 300 WHERE WorkQueueTypeEnum = 105
 GO
 
 PRINT N'Adding ExternalEdit [StudyHistoryTypeEnum]'

@@ -168,7 +168,7 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder],
            [ReadLock],[WriteLock])
      VALUES
-           (105,200,1,1,3,30,180,60,120,15,-1,104,3,0,1)
+           (105,300,1,1,3,30,180,60,120,15,-1,104,3,0,1)
 GO
 
   -- WebMoveStudy
@@ -279,7 +279,7 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder],
            [ReadLock],[WriteLock])
      VALUES
-           (116,200,0,1,1,30,180,60,120,240,-1,101,3,0,1)
+           (116,300,0,1,1,30,180,60,120,240,-1,101,3,0,1)
 GO
 
 
