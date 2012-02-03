@@ -523,11 +523,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		protected override IEnumerable<TransferSyntax> GetAllowableTransferSyntaxes()
 		{
-			foreach (var syntax in base.GetAllowableTransferSyntaxes())
-				yield return syntax;
-
-			foreach (var syntax in DicomCodecRegistry.GetCodecTransferSyntaxes())
-				yield return syntax;
+			var list = new List<TransferSyntax>(base.GetAllowableTransferSyntaxes());
+			list.AddRange(DicomCodecRegistry.GetCodecTransferSyntaxes());
+			return list;
 		}
 
 		/// <summary>
