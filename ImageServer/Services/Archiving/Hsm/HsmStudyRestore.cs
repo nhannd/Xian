@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <param name="queueItem">The queue item to restore.</param>
 		public void Run(RestoreQueue queueItem)
 		{
-            using (RestoreProcessorContext context = new RestoreProcessorContext(queueItem))
+            using (var context = new RestoreProcessorContext(queueItem))
             {
                 try
                 {
@@ -72,9 +72,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         _serverSyntax = ServerTransferSyntax.Load(readContext, _archiveStudyStorage.ServerTransferSyntaxKey);
                         _syntax = TransferSyntax.GetTransferSyntax(_serverSyntax.Uid);
 
-                        StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+                        var parms = new StudyStorageLocationQueryParameters
                                                                     	{StudyStorageKey = queueItem.StudyStorageKey};
-                    	IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
+                    	var broker = readContext.GetBroker<IQueryStudyStorageLocation>();
                         _location = broker.FindOne(parms);
                         if (_location == null)
                         {
@@ -91,93 +91,39 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         }
                     }
 
-					if (_location == null)
-						Platform.Log(LogLevel.Info, "Starting restore of nearline study: {0}", _studyStorage.StudyInstanceUid);
-					else
+                    if (_location == null)
+                    {
+                        Platform.Log(LogLevel.Info, "Starting restore of nearline study: {0}",
+                                     _studyStorage.StudyInstanceUid);
+
+                        // Get the zip file path from the xml data in the ArchiveStudyStorage entry
+                        // Also store the "StudyFolder" for use below
+                        string studyFolder;
+                        string zipFile = GetZipFileName(out studyFolder);
+
+                        // Do a test read of the zip file.  If it succeeds, the file is available, if it 
+                        // fails, we just set back to pending and recheck.
+                        if (!CanReadZip(zipFile, queueItem))
+                            return;
+
+                        RestoreNearlineStudy(queueItem, zipFile, studyFolder);
+                    }
+                    else
+                    {
                         Platform.Log(LogLevel.Info, "Starting restore of online study: {0}", _location.StudyInstanceUid);
 
-                    // If restoring a Nearline study, select a filesystem
-                    string destinationFolder;
-                    if (_location == null)
-                    {
-                        ServerFilesystemInfo fs = _hsmArchive.Selector.SelectFilesystem();
-                        if (fs == null)
-                        {
-                            DateTime scheduleTime = Platform.Time.AddMinutes(5);
-                            Platform.Log(LogLevel.Error, "No writeable filesystem for restore, rescheduling restore request to {0}",
-                                         scheduleTime);
-                            queueItem.FailureDescription = "No writeable filesystem for restore, rescheduling request.";
-                            _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending, scheduleTime);
-                            return;
-                        }
-                        destinationFolder = Path.Combine(fs.Filesystem.FilesystemPath, _hsmArchive.ServerPartition.PartitionFolder);
-                    }
-                    else
-                        destinationFolder = _location.GetStudyPath();
+                         // Get the zip file path from the xml data in the ArchiveStudyStorage entry
+                         // Also store the "StudyFolder" for use below
+                         string studyFolder;
+                         string zipFile = GetZipFileName(out studyFolder);
 
+                         // Do a test read of the zip file.  If it succeeds, the file is available, if it 
+                         // fails, we just set back to pending and recheck.
+                         if (!CanReadZip(zipFile, queueItem))
+                             return;
 
-                    // Get the zip file path from the xml data in the ArchiveStudyStorage entry
-                    // Also store the "StudyFolder" for use below
-                    string studyFolder = String.Empty;
-                    string filename = String.Empty;
-                    string studyInstanceUid = String.Empty;
-                    XmlElement element = _archiveStudyStorage.ArchiveXml.DocumentElement;
-					if (element!=null)
-						foreach (XmlElement node in element.ChildNodes)
-							if (node.Name.Equals("StudyFolder"))
-								studyFolder = node.InnerText;
-							else if (node.Name.Equals("Filename"))
-								filename = node.InnerText;
-							else if (node.Name.Equals("Uid"))
-								studyInstanceUid = node.InnerText;
-
-                    string zipFile = Path.Combine(_hsmArchive.HsmPath, studyFolder);
-                    zipFile = Path.Combine(zipFile, studyInstanceUid);
-                    zipFile = Path.Combine(zipFile, filename);
-
-
-                    // Do a test read of the zip file.  If it succeeds, the file is available, if it 
-                    // fails, we just set back to pending and recheck.
-                    try
-                    {
-                        using (FileStream stream = File.OpenRead(zipFile))
-                        {
-                            // Read a byte, just in case that makes a difference.
-                            stream.ReadByte();
-                            stream.Close();                         
-                        }
-                    }
-                    catch (DirectoryNotFoundException ex)
-                    {
-                       Platform.Log(LogLevel.Error, ex, "Archive {0} for Study  {1} cannot be found, failing",
-                                     zipFile, _studyStorage == null 
-                                     ? (_location == null 
-                                        ? string.Empty : _location.StudyInstanceUid) 
-                                        : _studyStorage.StudyInstanceUid);
-                        // Just "Fail", the directory is not found.
-                        queueItem.FailureDescription = string.Format("Directory not found for file, cannot restore: {0}", zipFile);
-                        _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed,
-                                                       Platform.Time);
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        DateTime scheduledTime = Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds);
-                        Platform.Log(LogLevel.Error, ex, "Archive {0} for Study  {1} is unreadable, rescheduling restore to {2}",
-                                     zipFile, _studyStorage == null 
-                                     ? (_location == null ? string.Empty : _location.StudyInstanceUid) 
-                                     : _studyStorage.StudyInstanceUid,
-                                     scheduledTime);
-                        // Just reschedule in "Restoring" state, the file is unreadable.
-                        _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Restoring,
-                                                       scheduledTime);
-                        return;
-                    }
-
-                    if (_location == null)
-                        RestoreNearlineStudy(queueItem, zipFile, destinationFolder, studyFolder);
-                    else
-                        RestoreOnlineStudy(queueItem, zipFile, destinationFolder);
+                        RestoreOnlineStudy(queueItem, zipFile, _location.GetStudyPath());
+                    }       
                 }
                 catch (Exception e)
                 {
@@ -191,7 +137,73 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			
 		}
 
-		public void RestoreNearlineStudy(RestoreQueue queueItem, string zipFile, string destinationFolder, string studyFolder)
+        private string GetZipFileName(out string studyFolder)
+        {
+            // Get the zip file path from the xml data in the ArchiveStudyStorage entry
+            // Also store the "StudyFolder" for use below
+            studyFolder = String.Empty;
+            string filename = String.Empty;
+            string studyInstanceUid = String.Empty;
+            XmlElement element = _archiveStudyStorage.ArchiveXml.DocumentElement;
+            if (element != null)
+                foreach (XmlElement node in element.ChildNodes)
+                    if (node.Name.Equals("StudyFolder"))
+                        studyFolder = node.InnerText;
+                    else if (node.Name.Equals("Filename"))
+                        filename = node.InnerText;
+                    else if (node.Name.Equals("Uid"))
+                        studyInstanceUid = node.InnerText;
+
+            string zipFile = Path.Combine(_hsmArchive.HsmPath, studyFolder);
+            zipFile = Path.Combine(zipFile, studyInstanceUid);
+            zipFile = Path.Combine(zipFile, filename);
+            return zipFile;
+        }
+
+        private bool CanReadZip(string zipFile, RestoreQueue queueItem)
+        {
+            // Do a test read of the zip file.  If it succeeds, the file is available, if it 
+            // fails, we just set back to pending and recheck.
+            try
+            {
+                FileStream stream = File.OpenRead(zipFile);
+                // Read a byte, just in case that makes a difference.
+                stream.ReadByte();
+                stream.Close();
+                stream.Dispose();
+
+                return true;
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Platform.Log(LogLevel.Error, ex, "Archive {0} for Study  {1} cannot be found, failing",
+                              zipFile, _studyStorage == null
+                              ? (_location == null
+                                 ? string.Empty : _location.StudyInstanceUid)
+                                 : _studyStorage.StudyInstanceUid);
+                // Just "Fail", the directory is not found.
+                queueItem.FailureDescription = string.Format("Directory not found for file, cannot restore: {0}", zipFile);
+                _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed,
+                                               Platform.Time);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                DateTime scheduledTime = Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds);
+                Platform.Log(LogLevel.Error, ex, "Archive {0} for Study  {1} is unreadable, rescheduling restore to {2}",
+                             zipFile,
+                             _studyStorage == null
+                                 ? (_location == null ? string.Empty : _location.StudyInstanceUid)
+                                 : _studyStorage.StudyInstanceUid,
+                             scheduledTime);
+                // Just reschedule in "Restoring" state, the file is unreadable.
+                _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Restoring,
+                                               scheduledTime);
+                return false;
+            }
+        }
+
+		public void RestoreNearlineStudy(RestoreQueue queueItem, string zipFile, string studyFolder)
 		{
             ServerFilesystemInfo fs = _hsmArchive.Selector.SelectFilesystem();
 			if (fs == null)
@@ -203,11 +215,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				return;
 			}
 
+            string destinationFolder = Path.Combine(fs.Filesystem.FilesystemPath, _hsmArchive.ServerPartition.PartitionFolder);
+
 		    StudyStorageLocation restoredLocation = null;
 			try
 			{
-				using (ServerCommandProcessor processor = 
-                    new ServerCommandProcessor("HSM Restore Offline Study"))
+				using (var processor = new ServerCommandProcessor("HSM Restore Offline Study"))
 				{
 					processor.AddCommand(new CreateDirectoryCommand(destinationFolder));
 					destinationFolder = Path.Combine(destinationFolder, studyFolder);
@@ -220,14 +233,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					processor.AddCommand(new RebuildStudyXmlCommand(_studyStorage.StudyInstanceUid, destinationFolder));
 
                     // Apply the rules engine.
-					ServerActionContext context =
+					var context =
 						new ServerActionContext(null, fs.Filesystem.GetKey(), _hsmArchive.ServerPartition,
 						                        queueItem.StudyStorageKey) {CommandProcessor = processor};
 					processor.AddCommand(
 						new ApplyRulesCommand(destinationFolder, _studyStorage.StudyInstanceUid, context));
 
 					// Do the actual insert into the DB
-					InsertFilesystemStudyStorageCommand insertStorageCommand = new InsertFilesystemStudyStorageCommand(
+					var insertStorageCommand = new InsertFilesystemStudyStorageCommand(
 													_hsmArchive.PartitionArchive.ServerPartitionKey,
 						                            _studyStorage.StudyInstanceUid,
 						                            studyFolder,
@@ -250,12 +263,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 							IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 						{
 							bool retVal = _hsmArchive.UpdateRestoreQueue(update, queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
-							ILockStudy studyLock = update.GetBroker<ILockStudy>();
-							LockStudyParameters parms = new LockStudyParameters
-							                            	{
-							                            		StudyStorageKey = queueItem.StudyStorageKey,
-							                            		QueueStudyStateEnum = QueueStudyStateEnum.Idle
-							                            	};
+							var studyLock = update.GetBroker<ILockStudy>();
+						    var parms = new LockStudyParameters
+						                    {
+						                        StudyStorageKey = queueItem.StudyStorageKey,
+						                        QueueStudyStateEnum = QueueStudyStateEnum.Idle
+						                    };
 							retVal = retVal && studyLock.Execute(parms);
 							if (!parms.Successful || !retVal)
 							{
@@ -291,7 +304,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
         private void ReprocessStudy(StudyStorageLocation restoredLocation, string reason)
         {
-            StudyReprocessor reprocessor = new StudyReprocessor();
+            var reprocessor = new StudyReprocessor();
             String reprocessReason = String.Format("Restore Validation Error: {0}", reason);
             reprocessor.ReprocessStudy(reprocessReason, restoredLocation, Platform.Time);
             string message = string.Format("Study {0} has been restored but failed the validation. Reprocess Study has been triggered. Reason for validation failure: {1}", restoredLocation.StudyInstanceUid, reason);
@@ -304,7 +317,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
         {
             ValidateStudy(location);
 
-            using(ServerCommandProcessor processor = new ServerCommandProcessor("Update Study Size In DB"))
+            using(var processor = new ServerCommandProcessor("Update Study Size In DB"))
             {
                 processor.AddCommand(new UpdateStudySizeInDBCommand(location));
                 if (!processor.Execute())
@@ -316,7 +329,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
         private static void ValidateStudy(StudyStorageLocation location)
         {
-            StudyStorageValidator validator = new StudyStorageValidator();
+            var validator = new StudyStorageValidator();
             validator.Validate(location, ValidationLevels.Study | ValidationLevels.Series);
         }
 
@@ -324,9 +337,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		{
 			try
 			{
-				using (ServerCommandProcessor processor = new ServerCommandProcessor("HSM Restore Online Study"))
+				using (var processor = new ServerCommandProcessor("HSM Restore Online Study"))
 				{
-					using (ZipFile zip = new ZipFile(zipFile))
+					using (var zip = new ZipFile(zipFile))
 					{
 						foreach (string file in zip.EntryFileNames)
 						{
@@ -349,7 +362,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					processor.AddCommand(new UpdateStudyStateCommand(_location, status, _serverSyntax));
 
 					// Apply the rules engine.
-					ServerActionContext context =
+					var context =
 						new ServerActionContext(null, _location.FilesystemKey, _hsmArchive.ServerPartition,
 												queueItem.StudyStorageKey) {CommandProcessor = processor};
 					processor.AddCommand(
@@ -368,8 +381,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 						{
 							_hsmArchive.UpdateRestoreQueue(update, queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
-							ILockStudy studyLock = update.GetBroker<ILockStudy>();
-							LockStudyParameters parms = new LockStudyParameters
+							var studyLock = update.GetBroker<ILockStudy>();
+							var parms = new LockStudyParameters
 							                            	{
 							                            		StudyStorageKey = queueItem.StudyStorageKey,
 							                            		QueueStudyStateEnum = QueueStudyStateEnum.Idle
@@ -410,9 +423,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
         {
             using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
-                                                                {StudyStorageKey = _location.Key};
-                IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
+                var parms = new StudyStorageLocationQueryParameters {StudyStorageKey = _location.Key};
+                var broker = readContext.GetBroker<IQueryStudyStorageLocation>();
                 _location = broker.FindOne(parms);
             }
 
