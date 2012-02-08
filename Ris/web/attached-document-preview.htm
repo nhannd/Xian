@@ -20,30 +20,17 @@
 						return;
 
 					var document = Ris.getHealthcareContext();
-					var faxUrl = document ? Ris.getAttachedDocumentUrl(document) : "about:blank";
-
-					var urlExtension = faxUrl.substring(faxUrl.length - 3, faxUrl.length).toLowerCase();;
-					if (urlExtension == "pdf")
-					{
-						// show PDF in the embedded object.  Use exposed methods to hide toolbar
-						var pdfObject = PdfObject("PdfObject", faxUrl);
-						pdfObject.createToolbar("PdfButtons");
-
-						if(document.DocumentTypeName == "Fax")
-						{
-							Field.show($("faxPreviewInfo"), true);
-							Field.setValue($("senderName"), document.DocumentHeaders.SenderName);
-							Field.setValue($("senderNumber"), Ris.formatStringTelephone(document.DocumentHeaders.SenderNumber));
-							Field.setValue($("receivedAt"), document.DocumentHeaders.ReceivingFaxMachineName);
-							Field.setValue($("receivedAtNumber"), Ris.formatStringTelephone(document.DocumentHeaders.ReceivingFaxMachineNumber));
-						}
-
+					if(!document) {
+						window.location = "about:blank";
 					}
-					else
-					{
-						// redirect all other documents
-						window.location = faxUrl;
+					
+					var url = Ris.getAttachedDocumentUrl(document);
+					if (document.FileExtension === "pdf") {
+						viewPdf(url);
+					} else {
+						window.location = url;
 					}
+					
 				}
 				catch(e)
 				{
@@ -51,6 +38,26 @@
 					Field.setValue($("errorMsg"), message);
 				}
 		}
+		
+		function viewPdf(url) {
+			try {
+				var pdfObject = PdfObject("pdfObject", url);
+				pdfObject.createToolbar("pdfButtons");
+				Field.show($("pdfButtons"), true);
+				Field.show($("pdfObject"), true);
+
+				if(document.DocumentTypeName !== "Fax") {
+					Field.setValue($("senderName"), document.DocumentHeaders.SenderName);
+					Field.setValue($("senderNumber"), Ris.formatStringTelephone(document.DocumentHeaders.SenderNumber));
+					Field.setValue($("receivedAt"), document.DocumentHeaders.ReceivingFaxMachineName);
+					Field.setValue($("receivedAtNumber"), Ris.formatStringTelephone(document.DocumentHeaders.ReceivingFaxMachineNumber));
+					Field.show($("faxPreviewInfo"), true);
+				}
+			} catch(e) {
+				Field.show($("pdfPluginError"), true);
+			}
+		}
+		
 		</script>
 		<style>
 			html, body {
@@ -58,21 +65,29 @@
 				margin: 0;
 				padding: 0;
 			}
+			#pdfPluginError {
+			}
 			#faxPreviewInfo {
 				height: 5em;
+				display: none;
 			}
-			#PdfButtons {
+			#pdfButtons {
 				height:32px; 
 				margin: 2px;
+				display: none;
 			}
-			#PdfObject {
+			#pdfObject {
 				border: 1px solid #BBBBBB; 
 				height:80%; 
 				width:99%;
+				display: none;
 			}
 		</style>
 	</head>
 	<body onload="onBodyLoad()">
+		<div id="pdfPluginError">
+		Embedded PDF viewer is not available on this computer.  Double-click on the selected item to open it in an external application.
+		</div>
 		<div id="faxPreviewInfo">
 			<table border="0" cellspacing="0" cellpadding="0" class="PatientDemographicsTable">
 				<tr>
@@ -85,8 +100,8 @@
 				</tr>
 			</table>
 		</div>
-		<div id="PdfButtons"></div>
-		<object id="PdfObject" type="application/pdf"></object>
+		<div id="pdfButtons"></div>
+		<object id="pdfObject" type="application/pdf"></object>
 		<div id="errorMsg" />
 	</body>
 </html>

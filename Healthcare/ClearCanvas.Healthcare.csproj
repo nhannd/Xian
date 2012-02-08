@@ -78,6 +78,7 @@
     <Compile Include="Alerts\ReconciliationAlert.cs" />
     <Compile Include="Allergy.cs" />
     <Compile Include="AttachedDocument.cs" />
+    <Compile Include="Brokers\IMrnBroker.cs" />
     <Compile Include="Brokers\IPerformedProcedureStepBroker.cs" />
     <Compile Include="Brokers\IProcedureNumberBroker.cs" />
     <Compile Include="Brokers\IProtocolWorklistItemBroker.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Brokers\IProcedureTypeGroupBroker.cs" />
     <Compile Include="Brokers\IProtocolGroupBroker.cs" />
     <Compile Include="Brokers\IPublicationStepBroker.cs" />
+    <Compile Include="Brokers\ISequenceBroker.cs" />
     <Compile Include="Brokers\IStaffBroker.cs" />
     <Compile Include="Brokers\ITranscriptionReviewStepBroker.cs" />
     <Compile Include="Brokers\IVisitBroker.cs" />

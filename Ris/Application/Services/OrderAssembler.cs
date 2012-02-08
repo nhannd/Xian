@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Application.Services
 				var orderAttachmentAssembler = new OrderAttachmentAssembler();
 				var attachments = new List<OrderAttachment>(order.Attachments);
 
-				orderDetail.Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(
+				orderDetail.Attachments = CollectionUtils.Map<OrderAttachment, AttachmentSummary>(
 					attachments,
 					a => orderAttachmentAssembler.CreateOrderAttachmentSummary(a, context));
 			}

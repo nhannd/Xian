@@ -20,6 +20,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
+using System.Diagnostics;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -38,14 +39,23 @@ namespace ClearCanvas.Ris.Client
 
 	public interface IAttachedDocumentToolContext : IToolContext
 	{
-		event EventHandler SelectedDocumentChanged;
-		EntityRef SelectedDocumentRef { get; }
+		AttachmentSite Site { get; }
+		event EventHandler SelectedAttachmentChanged;
+		AttachmentSummary SelectedAttachment { get; }
+		AttachedDocumentSummary SelectedDocument { get; }
 
-		void RemoveSelectedDocument();
+		void AddAttachment(AttachedDocumentSummary document, EnumValueInfo category);
+		void RemoveSelectedAttachment();
 		event EventHandler ChangeCommitted;
 		bool IsReadonly { get; }
 
 		IDesktopWindow DesktopWindow { get; }
+	}
+
+	public enum AttachmentSite
+	{
+		Patient,
+		Order
 	}
 
 	/// <summary>
@@ -54,11 +64,6 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(AttachedDocumentPreviewComponentViewExtensionPoint))]
 	public class AttachedDocumentPreviewComponent : ApplicationComponent
 	{
-		public enum AttachmentMode
-		{
-			Patient,
-			Order
-		}
 
 		class AttachedDocumentToolContext : ToolContext, IAttachedDocumentToolContext
 		{
@@ -71,20 +76,35 @@ namespace ClearCanvas.Ris.Client
 
 			#region IAttachedDocumentToolContext Members
 
-			public event EventHandler SelectedDocumentChanged
+			public AttachmentSite Site
+			{
+				get { return _component._site; }
+			}
+
+			public event EventHandler SelectedAttachmentChanged
 			{
 				add { _component.SelectedDocumentChanged += value; }
 				remove { _component.SelectedDocumentChanged -= value; }
 			}
 
-			public EntityRef SelectedDocumentRef
+			public AttachmentSummary SelectedAttachment
 			{
-				get { return _component.SelectedDocument == null ? null : _component.SelectedDocument.DocumentRef; }
+				get { return _component.SelectedAttachment; }
 			}
 
-			public void RemoveSelectedDocument()
+			public AttachedDocumentSummary SelectedDocument
 			{
-				_component.RemoveSelectedDocument();
+				get { return _component.SelectedDocument; }
+			}
+
+			public void AddAttachment(AttachedDocumentSummary document, EnumValueInfo category)
+			{
+				_component.AddAttachment(document, category);
+			}
+
+			public void RemoveSelectedAttachment()
+			{
+				_component.RemoveSelectedAttachment();
 			}
 
 			public event EventHandler ChangeCommitted
@@ -133,20 +153,19 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		// Summary component members
-		private AttachmentMode _mode;
+		private AttachmentSite _site;
 		private AttachmentSummary _selectedAttachment;
 		private AttachmentSummary _initialSelection;
 		private event EventHandler _changeCommitted;
 		private event EventHandler _selectedDocumentChanged;
 
-		private readonly PatientAttachmentTable _patientAttachmentTable;
-		private readonly OrderAttachmentTable _orderAttachmentTable;
+		private readonly AttachmentSummaryTable _patientAttachmentTable;
 
 		private AttachedDocumentDHtmlPreviewComponent _previewComponent;
 		private ChildComponentHost _previewComponentHost;
 
 		private ToolSet _toolSet;
-		private bool _readonly;
+		private readonly bool _readonly;
 
 		private EntityRef _patientProfileRef;
 		private EntityRef _orderRef;
@@ -155,14 +174,13 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor to show/hide the summary section
 		/// </summary>
 		/// <param name="readonly">True to show the summary toolbar, false to hide it</param>
-		/// <param name="mode">Set the component attachment mode</param>
-		public AttachedDocumentPreviewComponent(bool @readonly, AttachmentMode mode)
+		/// <param name="site">Set the component attachment mode</param>
+		public AttachedDocumentPreviewComponent(bool @readonly, AttachmentSite site)
 		{
 			_readonly = @readonly;
-			_mode = mode;
+			_site = site;
 
-			_patientAttachmentTable = new PatientAttachmentTable();
-			_orderAttachmentTable = new OrderAttachmentTable();
+			_patientAttachmentTable = new AttachmentSummaryTable();
 		}
 
 		public override void Start()
@@ -173,7 +191,7 @@ namespace ClearCanvas.Ris.Client
 			_previewComponentHost = new ChildComponentHost(this.Host, _previewComponent);
 			_previewComponentHost.StartComponent();
 
-			if (_mode == AttachmentMode.Patient)
+			if (_site == AttachmentSite.Patient)
 				LoadPatientAttachments();
 			else
 				LoadOrderAttachments();
@@ -225,7 +243,6 @@ namespace ClearCanvas.Ris.Client
 		public bool Readonly
 		{
 			get { return _readonly; }
-			set { _readonly = value; }
 		}
 
 		/// <summary>
@@ -239,7 +256,7 @@ namespace ClearCanvas.Ris.Client
 				if (_patientProfileRef == value)
 					return;
 
-				_mode = AttachmentMode.Patient;
+				_site = AttachmentSite.Patient;
 				_patientProfileRef = value;
 
 				if (this.IsStarted)
@@ -258,43 +275,25 @@ namespace ClearCanvas.Ris.Client
 				if (_orderRef == value)
 					return;
 
-				_mode = AttachmentMode.Order;
+				_site = AttachmentSite.Order;
 				_orderRef = value;
 				LoadOrderAttachments();
 			}
 		}
 
-		public IList<PatientAttachmentSummary> PatientAttachments
+		public IList<AttachmentSummary> Attachments
 		{
-			get { return _mode != AttachmentMode.Patient ? null : _patientAttachmentTable.Items; }
+			get { return _patientAttachmentTable.Items; }
 			set
 			{
-				_mode = AttachmentMode.Patient;
 				_patientAttachmentTable.Items.Clear();
 				_patientAttachmentTable.Items.AddRange(value);
 			}
 		}
 
-		public IList<OrderAttachmentSummary> OrderAttachments
-		{
-			get { return _mode != AttachmentMode.Order ? null : _orderAttachmentTable.Items; }
-			set
-			{
-				_mode = AttachmentMode.Order;
-				_orderAttachmentTable.Items.Clear();
-				_orderAttachmentTable.Items.AddRange(value);
-			}
-		}
-
 		public ITable AttachmentTable
 		{
-			get
-			{
-				if (_mode == AttachmentMode.Patient)
-					return _patientAttachmentTable;
-
-				return _orderAttachmentTable;
-			}
+			get { return _patientAttachmentTable; }
 		}
 
 		public ActionModelRoot AttachmentActionModel
@@ -323,6 +322,21 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public void DoubleClickedSelectedAttachment()
+		{
+			var document = this.SelectedDocument;
+			if (document == null)
+				return;
+
+			// open the document in external viewer
+			BlockingOperation.Run(delegate
+				{
+					var localUri = AttachedDocument.DownloadFile(document);
+					Process.Start(localUri);
+				});
+
+		}
+
 		public void OnControlLoad()
 		{
 			if (_initialSelection != null)
@@ -336,19 +350,24 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		private AttachedDocumentSummary SelectedDocument
+		private AttachmentSummary SelectedAttachment
 		{
-			get
-			{
-				if (_selectedAttachment == null)
-					return null;
-
-				var attachment = _selectedAttachment;
-				return attachment == null ? null : attachment.Document;
-			}
+			get { return _selectedAttachment; }
 		}
 
-		private void RemoveSelectedDocument()
+		private AttachedDocumentSummary SelectedDocument
+		{
+			get { return SelectedAttachment == null ? null : SelectedAttachment.Document; }
+		}
+
+		public void AddAttachment(AttachedDocumentSummary document, EnumValueInfo category)
+		{
+			var attachment = new AttachmentSummary(category, null, Platform.Time, document);
+			this.AttachmentTable.Items.Add(attachment);
+			this.Modified = true;
+		}
+
+		private void RemoveSelectedAttachment()
 		{
 			if (_selectedAttachment == null)
 				return;
@@ -378,9 +397,9 @@ namespace ClearCanvas.Ris.Client
 				},
 				response =>
 				{
-					this.PatientAttachments = response.GetPatientProfileDetailResponse.PatientProfile.Attachments;
-					if (this.PatientAttachments.Count > 0)
-						this.SetInitialSelection(this.PatientAttachments[0]);
+					this.Attachments = response.GetPatientProfileDetailResponse.PatientProfile.Attachments;
+					if (this.Attachments.Count > 0)
+						this.SetInitialSelection(this.Attachments[0]);
 				});
 		}
 
@@ -405,10 +424,11 @@ namespace ClearCanvas.Ris.Client
 				},
 				response =>
 				{
-					this.OrderAttachments = response.GetOrderDetailResponse.Order.Attachments;
-					if (this.OrderAttachments.Count > 0)
-						this.SetInitialSelection(this.OrderAttachments[0]);
+					this.Attachments = response.GetOrderDetailResponse.Order.Attachments;
+					if (this.Attachments.Count > 0)
+						this.SetInitialSelection(this.Attachments[0]);
 				});
 		}
+
 	}
 }

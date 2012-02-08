@@ -52,6 +52,12 @@
     <Compile Include="AddressEditorControl.designer.cs">
       <DependentUpon>AddressEditorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="AttachDocumentComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AttachDocumentComponentControl.Designer.cs">
+      <DependentUpon>AttachDocumentComponentControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="BiographyDemographicComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -136,6 +142,7 @@
       <DependentUpon>ChangePasswordForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ChangePasswordDialog.cs" />
+    <Compile Include="AttachDocumentComponentView.cs" />
     <Compile Include="DateTimeEntryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -736,6 +743,9 @@
     <None Include="Resources\searchtoolsmall.png" />
     <None Include="Resources\UserText.png" />
     <None Include="Resources\PasswordText.png" />
+    <EmbeddedResource Include="AttachDocumentComponentControl.resx">
+      <DependentUpon>AttachDocumentComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CannedTextCategoryEditorComponentControl.resx">
       <DependentUpon>CannedTextCategoryEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>

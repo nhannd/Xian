@@ -66,9 +66,12 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="AttachmentSummaryTableBase.cs" />
+    <Compile Include="AttachmentSummaryTable.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
+    <Compile Include="AttachDocumentComponent.cs" />
+    <Compile Include="DocumentAttachTool.cs" />
+    <Compile Include="DocumentDetachTool.cs" />
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponent.cs" />
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsTableItem.cs" />
     <Compile Include="MergeOutcomeReportComponent.cs" />
@@ -277,8 +280,6 @@
     <Compile Include="Formatting\VisitNumberFormat.cs" />
     <Compile Include="IWorkflowFolderToolContext.cs" />
     <Compile Include="IWorkflowItemToolContext.cs" />
-    <Compile Include="OrderAttachmentTable.cs" />
-    <Compile Include="PatientAttachmentTable.cs" />
     <Compile Include="BiographyNoteComponent.cs" />
     <Compile Include="BiographyNoteTable.cs" />
     <Compile Include="BiographyOrderHistoryComponent.cs" />

@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_orderAdditionalInfoComponent.HealthcareContext = _worklistItem;
 			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _orderAdditionalInfoComponent));
 
-			_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+			_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Order);
 			_orderAttachmentsComponent.OrderRef = _context.OrderRef;
 			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
 

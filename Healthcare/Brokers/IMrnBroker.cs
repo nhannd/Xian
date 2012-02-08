@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -9,11 +9,9 @@
 
 #endregion
 
-using ClearCanvas.Ris.Application.Common;
-
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Healthcare.Brokers
 {
-	public class PatientAttachmentTable : AttachmentSummaryTableBase<PatientAttachmentSummary>
+	public interface IMrnBroker : ISequenceBroker
 	{
 	}
 }

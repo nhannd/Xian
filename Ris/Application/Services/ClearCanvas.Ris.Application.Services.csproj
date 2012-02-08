@@ -70,6 +70,12 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\DepartmentAdmin\DepartmentAdminService.cs" />
+    <Compile Include="Admin\PatientAdmin\PatientAdminSettings.cs" />
+    <Compile Include="Admin\PatientAdmin\PatientAdminSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PatientAdminSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="AttachmentStore.cs" />
     <Compile Include="PatientAllergyAssembler.cs" />
     <Compile Include="DepartmentAssembler.cs" />
@@ -85,6 +91,12 @@
       <DependentUpon>LogicalHL7EventSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="PersistentWorkflow.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntrySettings.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntrySettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderEntrySettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ReportingWorklistItemKey.cs" />
     <Compile Include="TranscriptionWorkflow\TranscriptionWorkflowService.cs" />
     <Compile Include="ModalityWorklistItemKey.cs" />
@@ -104,7 +116,7 @@
     <Compile Include="PatientAttachmentAssembler.cs" />
     <Compile Include="ProtocolAssembler.cs" />
     <Compile Include="ReportAssembler.cs" />
-    <Compile Include="AttachedDocumentService\AttachedDocumentService.cs" />
+    <Compile Include="Documents\DocumentsService.cs" />
     <Compile Include="ExternalPractitionerAssembler.cs" />
     <Compile Include="Admin\EnumerationAdmin\EnumerationAdminService.cs" />
     <Compile Include="Admin\Import\ImportService.cs" />
@@ -222,10 +234,18 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Admin\PatientAdmin\PatientAdminSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PatientAdminSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="app.config" />
     <None Include="LogicalHL7EventSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>LogicalHL7EventSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="RegistrationWorkflow\OrderEntrySettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderEntrySettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="WorklistSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

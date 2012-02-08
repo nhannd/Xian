@@ -1185,4 +1185,13 @@
   <data name="MessageInvalidVisitAssigningAuthority" xml:space="preserve">
     <value>The selected visit should have the same assigning authority as one of the performing facilities.</value>
   </data>
+  <data name="MessageVisitRequired" xml:space="preserve">
+    <value>A visit is required.</value>
+  </data>
+  <data name="ConfirmDetachDocument" xml:space="preserve">
+    <value>Are you sure you want to remove the selected attachment?</value>
+  </data>
+  <data name="MessageAttachmentMustBePdf" xml:space="preserve">
+    <value>Attachment must be a PDF file.</value>
+  </data>
 </root>

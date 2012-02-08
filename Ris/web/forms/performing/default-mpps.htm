@@ -9,24 +9,16 @@
 	<script type="text/javascript" src="../../js/ris.js"></script>
 	<script type="text/javascript" >
 		var data = {};
-		var errorProvider = new ErrorProvider();
 
 		function onBodyLoad()
 		{		   
 			try
 			{
-				var startTime;
-				var stopTime;
-				var facility;
-				var modality;
-
 				if(Ris)
 				{
 					data = JSML.parse(Ris.getTag("Documentation")) || {};
 				}
-
-				data.comments = data.comments || [];
-				initCommentsTable();
+				$("comments").value = data.comments || "";
 			}
 			catch(e)
 			{
@@ -35,71 +27,12 @@
 			}
 		}
 		
-		function initCommentsTable()
-		{
-			var commentsTable = Table.createTable($("commentsTable"), 
-				{editInPlace: true, flow: true, checkBoxes: true },
-				[
-					{  label: "Comment",
-						cellType: "textarea",
-						getValue: function(item) { return item.comment; },
-						setValue: function(item, value) { item.comment = value; },
-						getError: function(item) { return null; }
-					},
-					{  label: "Author",
-						cellType: "lookup",
-						lookup: function(query) { return Ris.resolveStaffName(query); },
-						getValue: function(item) { return item.staff; },
-						setValue: function(item, value) { item.staff = value; },
-						getError: function(item) { return null; }
-					}
-				]);
-			
-			commentsTable.errorProvider = errorProvider;
-			commentsTable.bindItems(data.comments);               
-		}
-		
-		function onAddComment()
-		{
-			data.comments.add( {} );
-		}
-
-		function onDeleteComment()
-		{
-			var checkedItems = $("commentsTable").getCheckedItems();
-			if(checkedItems.length > 0)
-			{
-				if(confirm("Delete selected comments?"))
-				{
-						checkedItems.each(function(item) { data.comments.remove(item); });
-						$("commentsCheckAllNone").checked = false;
-				}
-			}
-			else
-			{
-				alert("Nothing selected");
-			}
-		}
-
-		function onCommentCheckAllNone()
-		{
-			data.comments.each(function(item) { $("commentsTable").setItemCheckState(item, $("commentsCheckAllNone").checked); });
-		}         
 
 		//////////////////////////////////////////////////////////////////////////
 		// RIS integration API
-		function hasValidationErrors()
-		{
-			return errorProvider.hasErrors();
-		}
-
-		function showValidation(show)
-		{
-			errorProvider.setVisible(show);
-		}
-
 		function saveData()
 		{
+			data.comments =	$("comments").value;
 			Ris.setTag("Documentation", JSML.create(data, "data"));
 		}
 		//////////////////////////////////////////////////////////////////////////
@@ -108,15 +41,7 @@
 <body onload="javascript: onBodyLoad()">
 	<form id="myForm">
 		<p class="sectionheading">Comments</p>
-		<div class="addDeleteButtons">
-			<input type="button" value="Add" onclick="javascript: onAddComment()" />
-			<input type="button" value="Delete" onclick="javascript: onDeleteComment()" />
-		</div>
-		<table id="commentsTable" border="1" width="100%">
-			<tr>
-				<td colspan="2"><input id="commentsCheckAllNone" type="checkbox" onclick="javascript:onCommentCheckAllNone()">Select All/None</input></td>
-			</tr>
-		</table>
+		<textarea id="comments"  rows="10" cols="100"></textarea>
 	</form>
 </body>
 </html>

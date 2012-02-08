@@ -1636,7 +1636,7 @@ Preview.PatientDemographicsSection = function () {
 		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Address:</td>'+
 		'		<td colspan="3" class="ContactInfoDemographicsCell" nowrap="nowrap"><div id="currentHomeAddress"/></td>'+
 		'	</tr>'+
-		'	<tr><td colspan="4"><img src="../images/blank.gif" height="10" /></td></tr>'
+		'	<tr><td colspan="4"><img src="../images/blank.gif"/></td></tr>'+
 		'</table>';
 
 	return {
@@ -2101,9 +2101,9 @@ Preview.VisitDetailsSection = function () {
 			Field.setValue($("VisitStatus"), visitDetail.Status.Value);
 			Field.setValue($("AdmitTime"), Ris.formatDateTime(visitDetail.AdmitTime));
 			Field.setValue($("DischargeTime"), Ris.formatDateTime(visitDetail.DischargeTime));
-			Field.setValue($("PatientClass"), visitDetail.PatientClass.Value);
-			Field.setValue($("PatientType"), visitDetail.PatientType.Value);
-			Field.setValue($("AdmissionType"), visitDetail.AdmissionType.Value);
+			Field.setValue($("PatientClass"), visitDetail.PatientClass ? visitDetail.PatientClass.Value : "");
+			Field.setValue($("PatientType"), visitDetail.PatientType ? visitDetail.PatientType.Value : "");
+			Field.setValue($("AdmissionType"), visitDetail.AdmissionType ? visitDetail.AdmissionType.Value : "");
 			Field.setValue($("DischargeDisposition"), visitDetail.DischargeDisposition);
 			Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation ? visitDetail.CurrentLocation.Name : null);
 			Field.setValue($("CurrentRoom"), visitDetail.CurrentRoom ? visitDetail.CurrentRoom : null);

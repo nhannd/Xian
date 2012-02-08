@@ -42,21 +42,5 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public string DocumentTypeName;
-
-		public AttachedDocumentSummary As<T>()
-			where T : AttachedDocumentSummary
-		{
-			return new AttachedDocumentSummary
-			{
-				DocumentRef = this.DocumentRef,
-				CreationTime = this.CreationTime,
-				ReceivedTime = this.ReceivedTime,
-				MimeType = this.MimeType,
-				FileExtension = this.FileExtension,
-				ContentUrl = this.ContentUrl,
-				DocumentHeaders = this.DocumentHeaders,
-				DocumentTypeName = this.DocumentTypeName
-			};
-		}
 	}
 }

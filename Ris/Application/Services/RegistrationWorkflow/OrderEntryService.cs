@@ -106,7 +106,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				this.PersistenceContext.GetBroker<IDepartmentBroker>().Find(departmentSearchCriteria),
 				(Department d) => departmentAssembler.CreateSummary(d, this.PersistenceContext));
 
+			var settings = new OrderEntrySettings();
 			return new GetOrderEntryFormDataResponse(
+				settings.AutoGenerateVisit,
 				facilities,
 				departments,
 				EnumUtils.GetEnumValueList<OrderPriorityEnum>(this.PersistenceContext),
@@ -286,7 +288,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 					MergeOrderHelper(destinationOrder, sourceOrders, mergeInfo, request.ValidationOnly);
 
-					if(request.DryRun)
+					if (request.DryRun)
 					{
 						var orderAssembler = new OrderAssembler();
 						var orderDetail = orderAssembler.CreateOrderDetail(destinationOrder,
@@ -306,7 +308,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
 
 			// reason is not required for dry run, but otherwise it is
-			if(!request.DryRun && request.UnmergeReason == null)
+			if (!request.DryRun && request.UnmergeReason == null)
 				throw new ArgumentNullException("UnmergeReason");
 
 			DryRunHelper(request.DryRun,
@@ -513,13 +515,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 		private Order PlaceOrderHelper(OrderRequisition requisition)
 		{
+			// get appropriate A# for this order
+			var accNum = GetAccessionNumberForOrder(requisition);
+
 			var patient = this.PersistenceContext.Load<Patient>(requisition.Patient, EntityLoadFlags.Proxy);
-			var visit = this.PersistenceContext.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
+			var orderingFacility = this.PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
+			var visit = FindOrCreateVisit(requisition, patient, orderingFacility, accNum);
 			var orderingPhysician = this.PersistenceContext.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
 			var diagnosticService = this.PersistenceContext.Load<DiagnosticService>(requisition.DiagnosticService.DiagnosticServiceRef);
 			var priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
 
-			var orderingFacility = this.PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
 
 			var resultRecipients = CollectionUtils.Map(
 				requisition.ResultRecipients,
@@ -546,8 +551,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					return rp;
 				});
 
-			// get appropriate A# for this order
-			var accNum = GetAccessionNumberForOrder(requisition);
 
 			// generate a new order with the default set of procedures
 			var order = Order.NewOrder(
@@ -612,7 +615,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if (!sourceOrder.CanMerge(mergeInfo, out failureReason))
 					throw new RequestValidationException(failureReason);
 
-				if(validateOnly)
+				if (validateOnly)
 					continue;
 
 				// Merge the source order into the destination order.
@@ -801,5 +804,41 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 		}
 
+		/// <summary>
+		/// Finds the visit specified in the requisition, or if no visit is specified, auto-generates a visit.
+		/// </summary>
+		/// <param name="requisition"></param>
+		/// <param name="patient"></param>
+		/// <param name="orderingFacility"></param>
+		/// <returns></returns>
+		private Visit FindOrCreateVisit(OrderRequisition requisition, Patient patient, Facility orderingFacility, string accessionNumber)
+		{
+			if (requisition.Visit != null && requisition.Visit.VisitRef != null)
+			{
+				return this.PersistenceContext.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
+			}
+
+			var settings = new OrderEntrySettings();
+			if (settings.AutoGenerateVisit)
+			{
+				var patientClasses = PersistenceContext.GetBroker<IEnumBroker>().Load<PatientClassEnum>(false);
+
+				// create a visit using the minimum possible amount of information
+				var visit = new Visit
+								{
+									Patient = patient,
+									VisitNumber = new VisitNumber(accessionNumber, orderingFacility.InformationAuthority),
+									Status = VisitStatus.AA,
+									AdmitTime = Platform.Time,
+									Facility = orderingFacility,
+									PatientClass = CollectionUtils.FirstElement(patientClasses)
+								};
+
+				this.PersistenceContext.Lock(visit, DirtyState.New);
+				return visit;
+			}
+
+			throw new RequestValidationException("A visit is required.");
+		}
 	}
 }

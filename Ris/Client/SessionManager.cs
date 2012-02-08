@@ -71,7 +71,11 @@ namespace ClearCanvas.Ris.Client
 
 		public SessionStatus SessionStatus
 		{
-			get { throw new NotImplementedException(); }
+			get
+			{
+				// the RIS can only be used online, so the session status will always be online
+				return SessionStatus.Online;
+			}
 		}
 
 		public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;

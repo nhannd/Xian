@@ -29,22 +29,9 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Core;
-
 namespace ClearCanvas.Healthcare.Brokers
 {
-	public interface IProcedureNumberBroker : IPersistenceBroker
+	public interface IProcedureNumberBroker : ISequenceBroker
 	{
-		/// <summary>
-		/// Peeks at the next number in the sequence, but does not advance the sequence.
-		/// </summary>
-		/// <returns></returns>
-		string PeekNext();
-
-		/// <summary>
-		/// Gets the next number in the sequence, advancing the sequence by 1.
-		/// </summary>
-		/// <returns></returns>
-		string GetNext();
 	}
 }

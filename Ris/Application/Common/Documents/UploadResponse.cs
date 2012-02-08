@@ -9,17 +9,20 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common
+namespace ClearCanvas.Ris.Application.Common.Documents
 {
 	[DataContract]
-	public class PatientAttachmentSummary : AttachmentSummary
+	public class UploadResponse : DataContractBase
 	{
-		public PatientAttachmentSummary(EnumValueInfo category, StaffSummary attachedBy, DateTime attachedTime, AttachedDocumentSummary document)
-			: base(category, attachedBy, attachedTime, document)
+		public UploadResponse(AttachedDocumentSummary document)
 		{
+			Document = document;
 		}
+
+		[DataMember]
+		public AttachedDocumentSummary Document;
 	}
 }

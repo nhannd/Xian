@@ -153,6 +153,11 @@ namespace ClearCanvas.Ris.Client
 			{
 				_owner.UnregisterWorkflowService(serviceContract);
 			}
+
+			public void ExecuteSearch(SearchParams searchParams)
+			{
+				_owner.ExecuteSearch(searchParams);
+			}
 		}
 
 		#endregion

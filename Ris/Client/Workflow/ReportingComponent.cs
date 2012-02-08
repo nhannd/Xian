@@ -431,7 +431,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderComponent));
 
-				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Order);
 				_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
 

@@ -15,25 +15,24 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-	public abstract class AttachmentSummaryTableBase<TAttachmentSummary> : Table<TAttachmentSummary>
-		where TAttachmentSummary : AttachmentSummary
+	public class AttachmentSummaryTable : Table<AttachmentSummary>
 	{
-		protected AttachmentSummaryTableBase()
+		public AttachmentSummaryTable()
 		{
-			var receivedDateColumn = new DateTableColumn<TAttachmentSummary>(
+			var receivedDateColumn = new DateTableColumn<AttachmentSummary>(
 				SR.ColumnReceivedDate,
 				summary => summary.Document.ReceivedTime,
 				0.2f);
 			this.Columns.Add(receivedDateColumn);
-			this.Columns.Add(new TableColumn<TAttachmentSummary, string>(
+			this.Columns.Add(new TableColumn<AttachmentSummary, string>(
 								SR.ColumnCategory,
 								summary => summary.Category.Value,
 								0.2f));
-			this.Columns.Add(new TableColumn<TAttachmentSummary, string>(
+			this.Columns.Add(new TableColumn<AttachmentSummary, string>(
 								SR.ColumnAttachedBy,
 								summary => summary.AttachedBy == null ? "me" : PersonNameFormat.Format(summary.AttachedBy.Name),
 								0.2f));
-			this.Columns.Add(new TableColumn<TAttachmentSummary, string>(
+			this.Columns.Add(new TableColumn<AttachmentSummary, string>(
 								SR.ColumnAttachmentType,
 								summary => summary.Document.DocumentTypeName,
 								0.2f));

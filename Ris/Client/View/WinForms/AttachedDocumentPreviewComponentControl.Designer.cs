@@ -58,6 +58,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _attachments
 			// 
+			this._attachments.ColumnHeaderTooltip = null;
 			this._attachments.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._attachments.Location = new System.Drawing.Point(0, 0);
 			this._attachments.MinimumSize = new System.Drawing.Size(0, 100);
@@ -65,7 +66,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._attachments.Name = "_attachments";
 			this._attachments.ReadOnly = false;
 			this._attachments.Size = new System.Drawing.Size(409, 100);
+			this._attachments.SortButtonTooltip = null;
 			this._attachments.TabIndex = 0;
+			this._attachments.ItemDoubleClicked += new System.EventHandler(this._attachments_ItemDoubleClicked);
 			// 
 			// AttachedDocumentPreviewComponentControl
 			// 
