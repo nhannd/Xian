@@ -12,12 +12,16 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
+using ClearCanvas.Common;
+
+[assembly: ClearCanvas.Common.Plugin()]
+
 //
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("ClearCanvas Framework Core Library")]
+[assembly: AssemblyTitle("Standard Tools Plugin")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
