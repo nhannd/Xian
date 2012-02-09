@@ -90,6 +90,7 @@ namespace ClearCanvas.Desktop.Help
                 this._manifest.TextAlign = AboutSettings.Default.ManifestTextAlign;
 
 				this._closeButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+				this._closeButton.Location = AboutSettings.Default.CloseButtonLocation;
 				this._closeButton.LinkColor = AboutSettings.Default.CloseButtonLinkColor;
 			}
 
