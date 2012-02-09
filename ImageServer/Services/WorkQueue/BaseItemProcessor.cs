@@ -1480,21 +1480,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
 					if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.MigrateStudy))
 						StorageLocation = CollectionUtils.FirstElement<StudyStorageLocation>( StudyStorageLocation.FindStorageLocations(item.ServerPartitionKey,theStudy.StudyInstanceUid),null);
-
-                    StudyXml studyXml = StorageLocation.LoadStudyXml(true /* reload, in case it's changed */);
-                    decimal size = (decimal)(studyXml.GetStudySize()/KB);
-                    
-                    // only update if it's out-of-date
-                    if (theStudy.StudySizeInKB!=size)
+                    if (File.Exists(StorageLocation.GetStudyXmlPath()))
                     {
-                        using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                        StudyXml studyXml = StorageLocation.LoadStudyXml(true /* reload, in case it's changed */);
+                        var size = (decimal) (studyXml.GetStudySize()/KB);
+
+                        // only update if it's out-of-date
+                        if (theStudy.StudySizeInKB != size)
                         {
-                            IStudyEntityBroker broker = ctx.GetBroker<IStudyEntityBroker>();
-                            StudyUpdateColumns parameters = new StudyUpdateColumns {StudySizeInKB = size};
-                            if (broker.Update(theStudy.Key, parameters))
-                                ctx.Commit();
-                        }    
-    
+                            using (
+                                IUpdateContext ctx =
+                                    PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(
+                                        UpdateContextSyncMode.Flush))
+                            {
+                                var broker = ctx.GetBroker<IStudyEntityBroker>();
+                                var parameters = new StudyUpdateColumns {StudySizeInKB = size};
+                                if (broker.Update(theStudy.Key, parameters))
+                                    ctx.Commit();
+                            }
+
+                        }
                     }
                 }
                 

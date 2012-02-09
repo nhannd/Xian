@@ -58,89 +58,163 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 						|| dateDir.FullName.EndsWith(ServerPlatform.ReconcileStorageFolder))
 						continue;
 
-					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
-					{
-						// Check for Cancel message
-						if (CancelPending) return;
+                    foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
+                    {
+                        // Check for Cancel message
+                        if (CancelPending) return;
 
-						String studyInstanceUid = studyDir.Name;
-						
-						StudyStorageLocation location;
-						try
-						{
-							FilesystemMonitor.Instance.GetWritableStudyStorageLocation(partition.Key, studyInstanceUid,
-							                                                           StudyRestore.False, StudyCache.False, out location);
-						}
-						catch (StudyNotFoundException)
-						{
-							List<FileInfo> fileList = LoadSopFiles(studyDir, true);
-							if (fileList.Count == 0)
-							{
-								Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name, studyDir.Name);
-								continue;
-							}
+                        String studyInstanceUid = studyDir.Name;
 
-							DicomFile file = LoadFileFromList(fileList);
-							if (file == null)
-							{
-								Platform.Log(LogLevel.Warn, "Found directory with no readable files: {0}\\{1}", dateDir.Name, studyDir.Name);
-								continue;
-							}
+                        StudyStorageLocation location;
+                        try
+                        {
+                            FilesystemMonitor.Instance.GetWritableStudyStorageLocation(partition.Key, studyInstanceUid,
+                                                                                       StudyRestore.False,
+                                                                                       StudyCache.False, out location);
+                        }
+                        catch (StudyNotFoundException)
+                        {
+                            List<FileInfo> fileList = LoadSopFiles(studyDir, true);
+                            if (fileList.Count == 0)
+                            {
+                                Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name,
+                                             studyDir.Name);
+                                continue;
+                            }
 
-							// Do a second check, using the study instance uid from a file in the directory.
-							// had an issue with trailing periods on uids causing us to not find the 
-							// study storage, and insert a new record into the database.
-							studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-							if (!studyInstanceUid.Equals(studyDir.Name))
-								try
-								{
-									FilesystemMonitor.Instance.GetWritableStudyStorageLocation(partition.Key, studyInstanceUid,
-									                                                           StudyRestore.False, StudyCache.False, out location);
-								}
-								catch (Exception e)
-								{
-									Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} not found {2}: {3}", studyInstanceUid,
-									             partition.Description, studyDir.ToString(), e.Message);
-									continue;
-								}
-							else
-							{
-								Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} not found {2}", studyInstanceUid,
-											 partition.Description, studyDir.ToString());
-								continue;
-							}
-						}
-						catch (Exception e)
-						{
-							Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} not found {2}: {3}", studyInstanceUid,
-										 partition.Description, studyDir.ToString(), e.Message);
-							continue;
-						}
+                            DicomFile file = LoadFileFromList(fileList);
+                            if (file == null)
+                            {
+                                Platform.Log(LogLevel.Warn, "Found directory with no readable files: {0}\\{1}",
+                                             dateDir.Name, studyDir.Name);
+                                continue;
+                            }
 
-						try
-						{
-							if (!location.AcquireWriteLock())
-							{
-								Platform.Log(LogLevel.Warn, "Unable to lock study: {0}, delaying rebuild", location.StudyInstanceUid);
-								lockFailures.Add(location);
-								continue;
-							}
+                            // Do a second check, using the study instance uid from a file in the directory.
+                            // had an issue with trailing periods on uids causing us to not find the 
+                            // study storage, and insert a new record into the database.
+                            studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+                            if (!studyInstanceUid.Equals(studyDir.Name))
+                                try
+                                {
+                                    FilesystemMonitor.Instance.GetWritableStudyStorageLocation(partition.Key,
+                                                                                               studyInstanceUid,
+                                                                                               StudyRestore.False,
+                                                                                               StudyCache.False,
+                                                                                               out location);
+                                }
+                                catch (Exception e)
+                                {
+                                    Platform.Log(LogLevel.Warn,
+                                                 "Study {0} on filesystem partition {1} not found {2}: {3}",
+                                                 studyInstanceUid,
+                                                 partition.Description, studyDir.ToString(), e.Message);
+                                    continue;
+                                }
+                            else
+                            {
+                                Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} not found {2}",
+                                             studyInstanceUid,
+                                             partition.Description, studyDir.ToString());
+                                continue;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} not found {2}: {3}",
+                                         studyInstanceUid,
+                                         partition.Description, studyDir.ToString(), e.Message);
+                            continue;
+                        }
 
-							StudyXmlRebuilder rebuilder = new StudyXmlRebuilder(location);
-							rebuilder.RebuildXml();
+                        // Location has been loaded, make sure its on the same filesystem
+                        if (!location.FilesystemKey.Equals(filesystem.Key))
+                        {
+                            Platform.Log(LogLevel.Warn,
+                                         "Study {0} on filesystem in directory: {1} is stored in different directory in the database: {2}",
+                                         studyInstanceUid,
+                                         studyDir.ToString(), location.GetStudyPath());
+                            try
+                            {
+                                // Here due to defect #9673, attempting to cleanup errors from this ticket.                                    
+                                if (Directory.Exists(location.GetStudyPath()))
+                                {
+                                    if (File.Exists(location.GetStudyXmlPath()))
+                                    {
+                                        Platform.Log(LogLevel.Warn,
+                                                     "Deleting study {0}'s local directory.  The database location has valid study: {1}",
+                                                     studyInstanceUid, studyDir.FullName);
+                                        Directory.Delete(studyDir.FullName,true);
+                                        continue;
+                                    }
 
-							location.ReleaseWriteLock();
-						}
-						catch (Exception e)
-						{
-							Platform.Log(LogLevel.Error, e, "Unexpected exception when rebuilding study xml for study: {0}",
-							             location.StudyInstanceUid);
-							lockFailures.Add(location);
-						}
-					}
+                                    Platform.Log(LogLevel.Warn,
+                                                 "Deleting study {0} directory stored in database, it does not have a study xml file: {1}",
+                                                 studyInstanceUid, location.GetStudyPath());
+                                    // Delete the Database's location, and we'll just adjust the database to point to the current directory
+                                    Directory.Delete(location.GetStudyPath(),true);
+                                }
+
+                                using (
+                                    var readContext =
+                                        PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(
+                                            UpdateContextSyncMode.Flush))
+                                {
+                                    var update = new FilesystemStudyStorageUpdateColumns
+                                                     {
+                                                         FilesystemKey = filesystem.Key
+                                                     };
+
+                                    var broker = readContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
+                                    broker.Update(location.FilesystemStudyStorageKey, update);
+                                    readContext.Commit();
+                                }
+
+                                Platform.Log(LogLevel.Warn,
+                                             "Updated Study {0} FilesystemStudyStorage to point to the current filesystem.",
+                                             studyInstanceUid);
+                                FilesystemMonitor.Instance.GetWritableStudyStorageLocation(partition.Key,
+                                                                                           studyInstanceUid,
+                                                                                           StudyRestore.False,
+                                                                                           StudyCache.False,
+                                                                                           out location);
+
+                            }
+                            catch (Exception x)
+                            {
+                                Platform.Log(LogLevel.Error, x,
+                                             "Unexpected error attempting to update storage location for study: {0}",
+                                             studyInstanceUid);
+
+                            }
+                        }
+
+                        try
+                        {
+                            if (!location.AcquireWriteLock())
+                            {
+                                Platform.Log(LogLevel.Warn, "Unable to lock study: {0}, delaying rebuild",
+                                             location.StudyInstanceUid);
+                                lockFailures.Add(location);
+                                continue;
+                            }
+
+                            var rebuilder = new StudyXmlRebuilder(location);
+                            rebuilder.RebuildXml();
+
+                            location.ReleaseWriteLock();
+                        }
+                        catch (Exception e)
+                        {
+                            Platform.Log(LogLevel.Error, e,
+                                         "Unexpected exception when rebuilding study xml for study: {0}",
+                                         location.StudyInstanceUid);
+                            lockFailures.Add(location);
+                        }
+                    }
 
 
-					// Cleanup the parent date directory, if its empty
+				    // Cleanup the parent date directory, if its empty
 					DirectoryUtility.DeleteIfEmpty(dateDir.FullName);
 				}
 			}

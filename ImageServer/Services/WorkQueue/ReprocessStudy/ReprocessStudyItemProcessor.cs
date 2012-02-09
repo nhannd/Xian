@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
     class StudyInfo
     {
         #region Private Members
-        private string _studyInstanceUid;
+
         private readonly Dictionary<string, SeriesInfo> _series = new Dictionary<string, SeriesInfo>();
         #endregion
 
@@ -47,18 +47,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         
         public StudyInfo(string studyInstanceUid)
         {
-            _studyInstanceUid = studyInstanceUid;
+            StudyInstanceUid = studyInstanceUid;
         }
 
         #endregion
 
         #region Public Properties
 
-        public string StudyInstanceUid
-        {
-            get { return _studyInstanceUid; }
-            set { _studyInstanceUid = value; }
-        }
+        public string StudyInstanceUid { get; set; }
 
         public SeriesInfo this[string seriesUid]
         {
@@ -95,7 +91,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         /// <returns></returns>
         public SeriesInfo AddSeries(string seriesUid)
         {
-            SeriesInfo series = new SeriesInfo(seriesUid);
+            var series = new SeriesInfo(seriesUid);
             _series.Add(seriesUid, series);
 
             return series;
@@ -110,23 +106,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
     class SeriesInfo
 	{
 		#region Private Members
-		private string _seriesUid;
+
         private readonly Dictionary<string, SopInfo> _sopInstances = new Dictionary<string, SopInfo>();
 		#endregion
 
 		#region Constructors
 		public SeriesInfo(string seriesUid)
         {
-            _seriesUid = seriesUid;
+            SeriesUid = seriesUid;
 		}
 		#endregion
 
 		#region Public Properties
-		public string SeriesUid
-        {
-            get { return _seriesUid; }
-            set { _seriesUid = value; }
-        }
+
+        public string SeriesUid { get; set; }
 
         public SopInfo this[string sopUid]
         {
@@ -154,7 +147,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 		#region Public Methods
 		public SopInfo AddInstance(string instanceUid)
         {
-            SopInfo sop = new SopInfo(instanceUid);
+            var sop = new SopInfo(instanceUid);
             _sopInstances.Add(instanceUid, sop);
 
             return sop;
@@ -168,23 +161,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
     class SopInfo
     {
         #region Private Members
-        private string _sopInstanceUid;
+
         #endregion
 
         #region Constructors
         public SopInfo(string instanceUid)
         {
-            _sopInstanceUid = instanceUid;
+            SopInstanceUid = instanceUid;
         }
         #endregion
 
         #region Public Properties
 
-        public string SopInstanceUid
-        {
-            get { return _sopInstanceUid; }
-            set { _sopInstanceUid = value; }
-        }
+        public string SopInstanceUid { get; set; }
 
         #endregion
     }
@@ -196,7 +185,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
     {
         #region Private Members
 
-        private bool _completed = false;
+        private bool _completed;
         private ReprocessStudyQueueData _queueData; 
         
         #endregion
@@ -207,15 +196,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(item.StudyStorageKey, "item.StudyStorageKey");
 
-            StudyProcessorContext context = new StudyProcessorContext(StorageLocation);
+            var context = new StudyProcessorContext(StorageLocation);
             
             // TODO: Should we enforce the patient's name rule?
             // If we do, the Study record will have the new patient's name 
             // but how should we handle the name in the Patient record?
             bool enforceNameRules = false;
-            SopInstanceProcessor processor = new SopInstanceProcessor(context) { EnforceNameRules = enforceNameRules};
+            var processor = new SopInstanceProcessor(context) { EnforceNameRules = enforceNameRules};
 
-            Dictionary<string, List<string>> seriesMap = new Dictionary<string, List<string>>();
+            var seriesMap = new Dictionary<string, List<string>>();
 
             bool successful = true;
             string failureDescription = null;
@@ -223,10 +212,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             // The processor stores its state in the Data column
             LoadState(item);
             
-            StudyXml studyXml = LoadStudyXml();
-
             if (_queueData.State == null || !_queueData.State.ExecuteAtLeastOnce)
             {
+                if (!Directory.Exists(StorageLocation.GetStudyPath()))
+                {
+                    if (StorageLocation.ArchiveLocations.Count > 0)
+                    {
+                        // Added for ticket #9673
+                        Platform.Log(LogLevel.Info,
+                                     "Reprocessing archived study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4} without study data on the filesystem.  Inserting Restore Request.",
+                                     Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+                                     Study.AccessionNumber, ServerPartition.Description);
+
+                        PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+
+                        // Post process had to be done first so the study is unlocked so the RestoreRequest can be inserted.
+                        ServerHelper.InsertRestoreRequest(StorageLocation);
+
+                        RaiseAlert(WorkQueueItem, AlertLevel.Warning,
+                                   string.Format(
+                                       "Found study {0} for Patient {1} (A#:{2})on Partition {3} without storage folder, restoring study.",
+                                       Study.StudyInstanceUid, Study.PatientsName, Study.AccessionNumber, ServerPartition.Description));                        
+                        return;
+                    }
+                }
+
 				if (Study == null)
 					Platform.Log(LogLevel.Info,
 					             "Reprocessing study {0} on Partition {1}", StorageLocation.StudyInstanceUid,
@@ -287,8 +297,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 
             }
 
+            StudyXml studyXml = LoadStudyXml();
+
             int reprocessedCounter = 0;
-            List<FileInfo> removedFiles = new List<FileInfo>();
+            var removedFiles = new List<FileInfo>();
             try
             {
                 // Traverse the directories, process 500 files at a time
@@ -297,7 +309,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                           {
                                               #region Reprocess File
 
-                                              FileInfo file = new FileInfo(path);
+                                              var file = new FileInfo(path);
                                               
                                               // ignore all files except those ending ".dcm"
                                               // ignore "bad(0).dcm" files too
@@ -305,7 +317,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                               {
                                                   try
                                                   {
-                                                      DicomFile dicomFile = new DicomFile(path);
+                                                      var dicomFile = new DicomFile(path);
                                                       dicomFile.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
                                                       
                                                       string seriesUid = dicomFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
@@ -416,7 +428,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                         LogHistory();
 
                         // Run Study / Series Rules Engine.
-                        StudyRulesEngine engine = new StudyRulesEngine(StorageLocation, ServerPartition);
+                        var engine = new StudyRulesEngine(StorageLocation, ServerPartition);
                         engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
 
                         // Log the FilesystemQueue related entries
@@ -434,7 +446,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         {
             if (removedFiles.Count>0)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.AppendLine("The following files have been deleted because they are not readable or have bad extensions:");
                 for(int i=0; i< removedFiles.Count; i++)
                 {
@@ -454,9 +466,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 queueData.State.ExecuteAtLeastOnce = true;
-                IWorkQueueEntityBroker broker = updateContext.GetBroker<IWorkQueueEntityBroker>();
-                WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
-                parms.Data = XmlUtils.SerializeAsXmlDoc(_queueData);
+                var broker = updateContext.GetBroker<IWorkQueueEntityBroker>();
+                var parms = new WorkQueueUpdateColumns {Data = XmlUtils.SerializeAsXmlDoc(_queueData)};
                 broker.Update(item.GetKey(), parms);
                 updateContext.Commit();
             }
@@ -469,9 +480,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             // records will be recreated when the file is reprocessed.
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IResetStudyStorage broker = updateContext.GetBroker<IResetStudyStorage>();
-                ResetStudyStorageParameters criteria = new ResetStudyStorageParameters();
-                criteria.StudyStorageKey = StorageLocation.GetKey();
+                var broker = updateContext.GetBroker<IResetStudyStorage>();
+                var criteria = new ResetStudyStorageParameters {StudyStorageKey = StorageLocation.GetKey()};
                 if (!broker.Execute(criteria))
                 {
                     throw new ApplicationException("Could not reset study storage");
@@ -489,12 +499,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 // create the change log based on info stored in the queue entry
-                ReprocessStudyChangeLog changeLog = new ReprocessStudyChangeLog();
-                changeLog.TimeStamp = Platform.Time;
-                changeLog.StudyInstanceUid = StorageLocation.StudyInstanceUid;
-                changeLog.Reason = _queueData.ChangeLog != null ? _queueData.ChangeLog.Reason : "N/A";
-                changeLog.User = _queueData.ChangeLog != null ? _queueData.ChangeLog.User : "Unknown";
-                
+                var changeLog = new ReprocessStudyChangeLog
+                                    {
+                                        TimeStamp = Platform.Time,
+                                        StudyInstanceUid = StorageLocation.StudyInstanceUid,
+                                        Reason = _queueData.ChangeLog != null ? _queueData.ChangeLog.Reason : "N/A",
+                                        User = _queueData.ChangeLog != null ? _queueData.ChangeLog.User : "Unknown"
+                                    };
+
                 StudyHistory history = ServerPlatform.CreateStudyHistoryRecord(ctx, StorageLocation, null, StudyHistoryTypeEnum.Reprocessed, null, changeLog);
                 if (history != null)
                     ctx.Commit();
@@ -531,11 +543,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             }
 
             // If for some reason, the xml does not exist, recreate it
-            if (studyXml == null)
-            {
-                studyXml = new StudyXml(StorageLocation.StudyInstanceUid);
-            }
-            return studyXml;
+            return studyXml ?? new StudyXml(StorageLocation.StudyInstanceUid);
         }
 
         private void LoadState(Model.WorkQueue item)
@@ -547,9 +555,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
             if (_queueData == null)
             {
-                _queueData = new ReprocessStudyQueueData();
-                _queueData.State = new ReprocessStudyState();
-                _queueData.State.ExecuteAtLeastOnce = false;
+                _queueData = new ReprocessStudyQueueData
+                                 {
+                                     State = new ReprocessStudyState
+                                                 {
+                                                     ExecuteAtLeastOnce = false
+                                                 }
+                                 };
             }
         }
 
@@ -571,7 +583,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             // Used to keep track of the series to be removed.
             // We can't remove the item from the study xml while we are 
             // interating through it
-            List<string> seriesToRemove = new List<string>();
+            var seriesToRemove = new List<string>();
             foreach(SeriesXml seriesXml in studyXml)
             {
                 if (!processedSeriesMap.ContainsKey(seriesXml.SeriesInstanceUid))
@@ -582,7 +594,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 {
                     //check all instance in the series
                     List<string> foundInstances = processedSeriesMap[seriesXml.SeriesInstanceUid];
-                    List<string> instanceToRemove = new List<string>();
+                    var instanceToRemove = new List<string>();
                     foreach (InstanceXml instanceXml in seriesXml)
                     {
                         if (!foundInstances.Contains(instanceXml.SopInstanceUid))
@@ -622,10 +634,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 // update the instance count in the db
                 using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
-                    IStudyEntityBroker broker = updateContext.GetBroker<IStudyEntityBroker>();
-                    StudyUpdateColumns columns = new StudyUpdateColumns();
-                    columns.NumberOfStudyRelatedInstances = studyXml.NumberOfStudyRelatedInstances;
-                    columns.NumberOfStudyRelatedSeries = studyXml.NumberOfStudyRelatedSeries;
+                    var broker = updateContext.GetBroker<IStudyEntityBroker>();
+                    var columns = new StudyUpdateColumns
+                                      {
+                                          NumberOfStudyRelatedInstances = studyXml.NumberOfStudyRelatedInstances,
+                                          NumberOfStudyRelatedSeries = studyXml.NumberOfStudyRelatedSeries
+                                      };
                     broker.Update(StorageLocation.Study.GetKey(), columns);
                     updateContext.Commit();
                 }

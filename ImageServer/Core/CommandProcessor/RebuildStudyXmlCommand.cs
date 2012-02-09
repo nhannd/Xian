@@ -19,7 +19,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Core.Rebuild
+namespace ClearCanvas.ImageServer.Core.CommandProcessor
 {
 	public class RebuildStudyXmlCommand : ServerCommand, IAggregateServerCommand
 	{

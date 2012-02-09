@@ -14,9 +14,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Exceptions;
+using ClearCanvas.ImageServer.Core.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
+using UpdateStudySizeInDBCommand = ClearCanvas.ImageServer.Core.CommandProcessor.UpdateStudySizeInDBCommand;
 
 namespace ClearCanvas.ImageServer.Core.Rebuild
 {
@@ -55,8 +57,11 @@ namespace ClearCanvas.ImageServer.Core.Rebuild
 			{
 				using (ServerCommandProcessor processor = new ServerCommandProcessor("Rebuild XML"))
 				{
-				    RebuildStudyXmlCommand command = new RebuildStudyXmlCommand(_location.StudyInstanceUid, rootStudyPath);
+				    var command = new RebuildStudyXmlCommand(_location.StudyInstanceUid, rootStudyPath);
 					processor.AddCommand(command);
+
+                    var updateCommand = new UpdateStudySizeInDBCommand(_location, command);
+                    processor.AddCommand(updateCommand);
 
 					if (!processor.Execute())
 					{
