@@ -118,6 +118,7 @@
     background: #e1eff7; 
     border-bottom: solid 1px #b8d9ee; 
     padding-top: 1px;
+	padding-bottom: 3px;
     width: 175px; 
     text-align: center;
 }

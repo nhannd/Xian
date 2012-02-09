@@ -22,8 +22,18 @@
     font-weight: bold;
     font-family: Sans-Serif;
     font-size: 12px;
-    bottom: 12px;
+    bottom: 18px;
     right: 20px;
+}
+
+#Copyright
+{
+	position:absolute;
+	right:20px;
+	bottom:5px;	
+	color:#24402E;
+	font-size:x-small;
+	font-family: Sans-Serif;
 }
 
 #WarningLabel

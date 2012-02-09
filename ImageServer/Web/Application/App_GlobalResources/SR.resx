@@ -286,7 +286,7 @@
     <value>This study has been scheduled for deletion.</value>
   </data>
   <data name="StudyScheduledForEdit" xml:space="preserve">
-    <value>This study has been scheduled for update.</value>
+    <value>This study has been scheduled for editing.</value>
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>

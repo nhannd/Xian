@@ -20,7 +20,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 				OnObjectDisposing="DisposeDataSource"/>
 				<ccUI:GridView ID="StudyListControl" runat="server" 
 					OnRowDataBound="GridView_RowDataBound"
-					SelectionMode="Multiple" DataKeyNames="Key" SelectUsingDataKeys="true" >
+					SelectionMode="Multiple" DataKeyNames="Key" SelectUsingDataKeys="true" HeaderStyle-Wrap="false" >
 					<Columns>
 						<asp:BoundField DataField="ResponsibleOrganization" HeaderText="<%$ Resources: ColumnHeaders, ResponsibleOrganization%>" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" Visible="False" />
@@ -59,11 +59,13 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 							ItemStyle-HorizontalAlign="Center" />							
 						<asp:TemplateField HeaderText="<%$ Resources: ColumnHeaders, StudyStatus %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
-								<asp:Label ID="StudyStatusEnum" runat="server"></asp:Label>
-								<asp:Label ID="QueueSeparatorLabel" runat="server" Text="- " />
-								<asp:LinkButton runat="server" ID="QueueLinkButton" CssClass="ReconcileLink" />
-								<asp:Label ID="SeparatorLabel" runat="server" Text="- " />
-								<asp:LinkButton runat="server" ID="ReconcileLinkButton" Text="<%$Resources: Labels, ReconcileLink %>" CssClass="ReconcileLink" />
+							    <div style="padding-right:4px">
+								    <asp:Label ID="StudyStatusEnum" runat="server"></asp:Label>
+								    <asp:Label ID="QueueSeparatorLabel" runat="server" Text="- " />
+								    <asp:LinkButton runat="server" ID="QueueLinkButton" CssClass="ReconcileLink" />
+								    <asp:Label ID="SeparatorLabel" runat="server" Text="- " />
+								    <asp:LinkButton runat="server" ID="ReconcileLinkButton" Text="<%$Resources: Labels, ReconcileLink %>" CssClass="ReconcileLink" />
+							    </div>
 							</itemtemplate>
 						</asp:TemplateField>
 					</Columns>

@@ -10,6 +10,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 
 <%@ Page Language="C#" AutoEventWireup="True" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login._Default" %>
+<%@ Import Namespace="ClearCanvas.Common"%>
 <%@ Import Namespace="System.Threading"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Common"%> 
 
@@ -38,13 +39,20 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
             <table cellpadding="1">
             <tr><td align="right">
                         <asp:Label runat="server" Text="<%$Resources: Labels,Version %>"></asp:Label>:
-                        <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? SR.Unknown : ServerPlatform.VersionString%></td></tr>
+                        <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? Resources.SR.Unknown : ServerPlatform.VersionString%></td></tr>
              <tr><td align="right" ><%= Thread.CurrentThread.CurrentUICulture.NativeName %></td></tr>
             </table>
         </div>
         
         <div id="WarningLabel">
             <asp:Label runat="server" ID="ManifestWarningTextLabel" CssClass="ManifestWarningTextLabel"></asp:Label>
+        </div>
+        
+        <div id="Copyright">
+           <asp:Label runat="server" ID="CopyrightLabel">
+            <%= ProductInformation.Copyright %>
+           </asp:Label>
+        
         </div>
     
         <div id="LoginCredentials">
@@ -67,9 +75,9 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
           
         </div>  
         
-                        <asp:Panel CssClass="LoginErrorMessagePanel" runat="server" ID="ErrorMessagePanel" 
-                        Visible='<%# !String.IsNullOrEmpty(Page.Request.QueryString["error"]) %>'>
-                        <asp:Label runat="server" ID="ErrorMessage" ForeColor="red" Text='<%# Page.Request.QueryString["error"] %>' />
+        <asp:Panel CssClass="LoginErrorMessagePanel" runat="server" ID="ErrorMessagePanel" 
+            Visible='<%# !String.IsNullOrEmpty(Page.Request.QueryString["error"]) %>'>
+            <asp:Label runat="server" ID="ErrorMessage" ForeColor="red" Text='<%# Page.Request.QueryString["error"] %>' />
         </asp:Panel>  
                         
             
