@@ -59,6 +59,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 {
                     ShowAlert(SR.StudyRequiresReconcilie);
                 }
+                else if (_studySummary.HasPendingExternalEdit)
+                {
+                    ShowAlert(SR.StudyScheduledForEdit);
+                }
             }
 
             base.DataBind();

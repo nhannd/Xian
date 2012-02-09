@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -293,8 +294,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         private static WorkQueueDetails CreateEditWorkQueueItemDetails(Model.WorkQueue item)
         {
-            StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
-
+            string studyPath;
+            try
+            {
+                StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+                studyPath = storage.GetStudyPath();
+            }
+            catch(Exception x)
+            {
+                studyPath = string.Empty;
+            }
             var detail = new WorkQueueDetails
                              {
                                  Key = item.Key,
@@ -307,7 +316,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                                  Priority = item.WorkQueuePriorityEnum,
                                  FailureDescription = item.FailureDescription,
                                  ServerDescription = item.ProcessorID,
-                                 StorageLocationPath = storage.GetStudyPath()
+                                 StorageLocationPath = studyPath
                              };
 
 

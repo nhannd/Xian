@@ -1856,7 +1856,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This study has been scheduled for update..
+        ///   Looks up a localized string similar to This study has been scheduled for editing..
         /// </summary>
         internal static string StudyScheduledForEdit {
             get {
