@@ -30,6 +30,25 @@
 	padding: 5px;
 }
 
+.DataAccessGroupContainer
+{
+	height:300px;
+	overflow:auto;
+	border-top: dashed 1px lightgray;
+}
+
+.DataAccessGroupCheckBoxList
+{
+	margin-top:10px;
+	margin-bottom:10px;
+	margin-left: 30px;
+}
+
+.DataAccessGroupCheckBoxList input
+{
+	margin-right:20px;
+}
+
 /*==========================
     Alerts
 ============================*/
