@@ -45,6 +45,7 @@
 
   <ItemGroup>
     <ViewerIntegrationFiles Include="$(TrunkDirectory)\Ris\Client\ViewerIntegration\bin\$(Configuration)\ClearCanvas.Ris.Client.ViewerIntegration.dll" />
+    <ViewerIntegrationFiles Include="$(TrunkDirectory)\..\Ris\Client\Demo\bin\$(Configuration)\ClearCanvas.Ris.Client.Demo.dll" />
   </ItemGroup>
 
   <ItemGroup>

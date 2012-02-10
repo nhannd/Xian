@@ -20,6 +20,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using System.Runtime.Serialization;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -486,11 +487,42 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				// notify pages that selection has been updated
 				EventsHelper.Fire(_selectedMppsChanged, this, EventArgs.Empty);
+
+				NotifyPerformedProcedureStepComplete();
 			}
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, this.Host.DesktopWindow);
 			}
+		}
+
+		private void NotifyPerformedProcedureStepComplete()
+		{
+			var args = new WorkflowEventListener.PerformedProcedureStepCompletedArgs
+						{
+							AccessionNumber = _worklistItem.AccessionNumber,
+							CompletedTime = (DateTime)_selectedMpps.EndTime,
+							ProcedureType = _worklistItem.ProcedureName,
+							PatientProfile = new WorkflowEventListener.PatientProfileInfo
+												{
+													FamilyName = _worklistItem.PatientName.FamilyName,
+													GivenName = _worklistItem.PatientName.GivenName,
+													Id = _worklistItem.Mrn.Id,
+												}
+						};
+
+			// need to contact the server to populate the DateOfBirth and Sex fields
+			Platform.GetService<IBrowsePatientDataService>(service =>
+			{
+				var profileRequest = new GetPatientProfileDetailRequest { PatientProfileRef = _worklistItem.PatientProfileRef };
+				var profile = service.GetData(new GetDataRequest { GetPatientProfileDetailRequest = profileRequest })
+					.GetPatientProfileDetailResponse.PatientProfile;
+
+				args.PatientProfile.Sex = profile.Sex.Value;
+				args.PatientProfile.BirthDate = profile.DateOfBirth;
+			});
+
+			WorkflowEventPublisher.Instance.PerformedProcedureStepCompleted(args);
 		}
 
 		private void DiscontinuePerformedProcedureStep()

@@ -74,6 +74,7 @@
     <Compile Include="DocumentDetachTool.cs" />
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponent.cs" />
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsTableItem.cs" />
+    <Compile Include="WorkflowEventPublisher.cs" />
     <Compile Include="MergeOutcomeReportComponent.cs" />
     <Compile Include="PatientAllergiesComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
