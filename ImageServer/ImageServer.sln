@@ -4,10 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build-Configs", "Build-Configs", "{8CBB6D60-FA3F-4DF8-A1F1-47C00311ACF2}"
 	ProjectSection(SolutionItems) = preProject
 		ImageServer_ConnectionString_dist.config = ImageServer_ConnectionString_dist.config
+		ImageServer_ProductSettings_dist.config = ImageServer_ProductSettings_dist.config
 		ImageServer_Shreds_dist.config = ImageServer_Shreds_dist.config
-		ImageServer_Shreds_dist.critical.config = ImageServer_Shreds_dist.critical.config
 		ImageServer_Web.config = ImageServer_Web.config
-		ImageServer_web_critical.config = ImageServer_web_critical.config
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.TestApp", "TestApp\ClearCanvas.ImageServer.TestApp.csproj", "{7462F6BA-5634-4ED5-A4E1-707F3F43D113}"
