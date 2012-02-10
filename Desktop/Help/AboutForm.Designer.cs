@@ -159,6 +159,6 @@ namespace ClearCanvas.Desktop.Help
 		private System.Windows.Forms.Label _version;
 		private System.Windows.Forms.Label _copyright;
 		private System.Windows.Forms.Label _license;
-        private System.Windows.Forms.Label _manifest;
+		private System.Windows.Forms.Label _manifest;
 	}
 }
