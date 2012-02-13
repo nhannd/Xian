@@ -30,6 +30,21 @@
 	padding: 5px;
 }
 
+/******************************
+	Styles for add/edit dialog
+******************************/
+.EditPartitionDialogTab
+{
+	background: white;
+}
+
+.ServerPartitionDialogTabDescription
+{
+	width:500px;
+	margin:10px;
+	text-align:justify;
+}
+
 .DataAccessGroupContainer
 {
 	height:300px;
@@ -48,6 +63,8 @@
 {
 	margin-right:20px;
 }
+
+
 
 /*==========================
     Alerts
