@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Enterprise.Admin;
+using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -23,8 +23,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         #region Private Members
 
     	private int _resultCount;
-        private string _displayName;
-        private string _userName;
+
         #endregion Private Members
 
         #region Public Members
@@ -39,17 +38,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             set { _resultCount = value; }
         }
 
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { _displayName = value; }
-        }
+        public string DisplayName { get; set; }
 
-        public string UserName
-        {
-            get { return _userName; }
-            set { _userName = value; }
-        }
+        public string UserName { get; set; }
+
         #endregion
 
         #region Private Methods
@@ -63,20 +55,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             }
 
             List<UserRowData> users;
-            using (UserManagement service = new UserManagement())
+            using (var service = new UserManagement())
             {
-                ListUsersRequest filter = new ListUsersRequest();
-                filter.UserName = "%" + UserName.Replace("*","%").Replace("?","_");
-				filter.DisplayName = "%" + DisplayName.Replace("*", "%").Replace("?", "_");
-                filter.Page.FirstRow = startRowIndex;
+                var filter = new ListUsersRequest
+                                 {
+                                     UserName = UserName.Replace("*", "%").Replace("?", "_"),
+                                     DisplayName = DisplayName.Replace("*", "%").Replace("?", "_"),
+                                     Page = {FirstRow = startRowIndex},
+                                     ExactMatchOnly = false
+                                 };
 
-                users = CollectionUtils.Map<UserSummary, UserRowData>(
+                users = CollectionUtils.Map(
                     service.FindUsers(filter),
-                    delegate(UserSummary summary)
-                        {
-                            UserRowData user = new UserRowData(summary, service.GetUserDetail(summary.UserName));
-                            return user;
-                        });
+                    (UserSummary summary) => new UserRowData(summary, service.GetUserDetail(summary.UserName)));
             }
             resultCount = users.Count;
 
@@ -89,12 +80,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         
         public IEnumerable<UserRowData> Select(int startRowIndex, int maximumRows)
         {
-            IList<UserRowData> _list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
+            IList<UserRowData> list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
 
             if (UserFoundSet != null)
-                UserFoundSet(_list);
+                UserFoundSet(list);
 
-            return _list;
+            return list;
 
         }
 
@@ -112,48 +103,29 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
     [Serializable]
     public class UserRowData
     {
-        private string _userName;
-        private string _displayName;
-        private bool _enabled;
-        private DateTime? _lastLoginTime;
-        private List<UserGroup> _userGroups = new List<UserGroup>();
+        public List<UserGroup> UserGroups { get; set; }
 
-        public List<UserGroup> UserGroups
+        public string UserName { get; set; }
+
+        public string DisplayName { get; set; }
+
+        public string EmailAddress
         {
-            get { return _userGroups; }
-            set { _userGroups = value; }
+            get; set;
         }
 
-        public string UserName
-        {
-            get { return _userName; }
-            set { _userName = value; }
-        }
+        public bool Enabled { get; set; }
 
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { _displayName = value; }
-        }
-
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
-
-        public DateTime? LastLoginTime
-        {
-            get { return _lastLoginTime; }
-            set { _lastLoginTime = value; }
-        }
+        public DateTime? LastLoginTime { get; set; }
 
         public UserRowData(UserSummary summary, UserDetail details)
         {
+            UserGroups = new List<UserGroup>();
             UserName = summary.UserName;
             DisplayName = summary.DisplayName;
             Enabled = summary.Enabled;
             LastLoginTime = summary.LastLoginTime;
+            EmailAddress = summary.EmailAddress;
 
             if (details!=null)
             {
@@ -162,12 +134,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                     UserGroups.Add(new UserGroup(
                             authorityGroup.AuthorityGroupRef.Serialize(), authorityGroup.Name));
                 }
-            }
-            
+            }            
         }
 
         public UserRowData()
         {
+            UserGroups = new List<UserGroup>();
         }
     }
 

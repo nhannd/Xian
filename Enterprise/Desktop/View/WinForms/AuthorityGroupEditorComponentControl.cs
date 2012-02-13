@@ -64,6 +64,9 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
             _component = component;
 
             _authorityGroupName.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+            _authorityGroupDescription.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
+            _authorityGroupDataGroup.DataBindings.Add("Checked", _component, "DataGroup", true,
+                                                      DataSourceUpdateMode.OnPropertyChanged);
 
 			// build the authority token tree
 

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -149,5 +150,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="IDisplaySet"/>s may not return null from this method.
 		/// </remarks>
 		IDisplaySet Clone();
+
+        ExtensionData ExtensionData { get; }
 	}
 }

@@ -38,18 +38,11 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="val">The value.</param>
         public delegate void SetColumnValueDelegate<TObject, TValue>(TObject obj, TValue val);
 
-        /// <summary>
-        /// Delegate that is used to set the link action action of a column to an object.
-        /// </summary>
-        /// <typeparam name="TObject">The type of the object.</typeparam>
-        /// <param name="obj">The object to which the value is pushed.</param>
-        public delegate void SetColumnClickLinkDelegate<TObject>(TObject obj);
-
         private readonly GetColumnValueDelegate<TItem, TColumn> _valueGetter;
 
         private readonly SetColumnValueDelegate<TItem, TColumn> _valueSetter;
 
-        private SetColumnClickLinkDelegate<TItem> _linkActionDelegate;
+        private Action<TItem> _linkActionDelegate;
 
 		private Converter<TItem, string> _tooltipTextProvider;
 
@@ -207,7 +200,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Gets and sets the delegate that executes when the link is clicked.
         /// </summary>
-        public SetColumnClickLinkDelegate<TItem> ClickLinkDelegate
+        public Action<TItem> ClickLinkDelegate
         {
             get { return _linkActionDelegate; }
             set { _linkActionDelegate = value; }

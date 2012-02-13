@@ -120,14 +120,14 @@ namespace ClearCanvas.ImageViewer
 		private IPhysicalWorkspace _physicalWorkspace;
 		private EventBroker _eventBroker;
 		
-		private ViewerShortcutManager _shortcutManager;
+		private readonly ViewerShortcutManager _shortcutManager;
 
 		private readonly IViewerSetupHelper _setupHelper;
 		private ToolSet _toolSet;
 		private IViewerActionFilter _contextMenuFilter;
 		private ILayoutManager _layoutManager;
 
-		private AsynchronousPriorStudyLoader _priorStudyLoader;
+        private readonly AsynchronousPriorStudyLoader _priorStudyLoader;
 		private SynchronizationContext _uiThreadSynchronizationContext;
 
 		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
@@ -216,6 +216,7 @@ namespace ClearCanvas.ImageViewer
 			_setupHelper = setupHelper;
 			_setupHelper.SetImageViewer(this);
 
+            _shortcutManager = new ViewerShortcutManager(this);
 			_priorStudyLoader = new AsynchronousPriorStudyLoader(this, _setupHelper.GetPriorStudyFinder());
 		}
 
@@ -238,8 +239,6 @@ namespace ClearCanvas.ImageViewer
 
 			// since the keyboard action model is otherwise never used, we explicitly invoke it here to apply the persisted action model values to the actions
 			ActionModelRoot.CreateModel(ActionsNamespace, KeyboardSite, _toolSet.Actions);
-
-			_shortcutManager = new ViewerShortcutManager(this);
 
 			foreach (ITool tool in _toolSet.Tools)
 				_shortcutManager.RegisterImageViewerTool(tool);
@@ -428,10 +427,7 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public IViewerShortcutManager ShortcutManager
 		{
-			get
-			{
-				return _shortcutManager;
-			}
+			get { return _shortcutManager; }
 		}
 
 		/// <summary>
@@ -839,7 +835,6 @@ namespace ClearCanvas.ImageViewer
             try
             {
                 imageViewer.Layout();
-                imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
             }
             catch (Exception)
             {

@@ -208,8 +208,19 @@ namespace ClearCanvas.Desktop
 			}
 
 			_currentCommandIndex--;
-
 			EventsHelper.Fire(_currentCommandChangedEvent, this, EventArgs.Empty);
 		}
-	}
+
+        /// <summary>
+        /// Clears the command history.
+        /// </summary>
+        public void Clear()
+        {
+            EventsHelper.Fire(_currentCommandChangingEvent, this, EventArgs.Empty);
+            _history.Clear();
+            _currentCommandIndex = -1;
+            _lastCommandIndex = -1;
+            EventsHelper.Fire(_currentCommandChangedEvent, this, EventArgs.Empty);
+        }
+    }
 }

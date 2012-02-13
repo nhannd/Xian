@@ -126,6 +126,10 @@
   <data name="MessagePatientStudiesNotFound" xml:space="preserve">
     <value>No studies could be found for the specified patient.</value>
   </data>
+  <data name="MessagePriorsIncomplete" xml:space="preserve">
+    <value>The search for prior studies did not complete successfully because at least one of your priors servers was unreachable.
+Although some priors may be available, please be aware that you may be working with an incomplete patient history.</value>
+  </data>
   <data name="MessageStudyCouldNotBeLoaded" xml:space="preserve">
     <value>The study could not be loaded.</value>
   </data>

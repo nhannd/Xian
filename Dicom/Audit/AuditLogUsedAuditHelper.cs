@@ -29,13 +29,13 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="auditSource">The source of the audit</param>
 		/// <param name="outcome">The outcome</param>
 		/// <param name="uriOfAuditLog">Add the Identity of the Audit Log.  </param>
-		public AuditLogUsedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
+        public AuditLogUsedAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome,
 			string uriOfAuditLog)
 			: base("AuditLogUsed")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.AuditLogUsed;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.R;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.AuditLogUsed;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.R;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;

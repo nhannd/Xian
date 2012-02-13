@@ -651,5 +651,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator SaveReasonAsNameValidator;
+
+        /// <summary>
+        /// StructureReportExistWarning control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel AttachmentExistWarning;
     }
 }

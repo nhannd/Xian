@@ -51,6 +51,22 @@ namespace ClearCanvas.Dicom.DataStore
 		private string _specificCharacterSet;
     	private string _procedureCodeSequenceCodeValue;
     	private string _procedureCodeSequenceCodingSchemeDesignator;
+
+		private string _patientSpeciesDescription;
+		private string _patientSpeciesCodeSequenceCodingSchemeDesignator;
+		private string _patientSpeciesCodeSequenceCodeValue;
+		private string _patientSpeciesCodeSequenceCodeMeaning;
+
+		private string _patientBreedDescription;
+		private string _patientBreedCodeSequenceCodingSchemeDesignator;
+		private string _patientBreedCodeSequenceCodeValue;
+		private string _patientBreedCodeSequenceCodeMeaning;
+
+		private PersonName _responsiblePerson;
+		private string _responsiblePersonRaw;
+		private string _responsiblePersonRole;
+		private string _responsibleOrganization;
+
         private DateTime? _storeTime;
 		private DicomUri _studyXmlUri;
 
@@ -267,6 +283,106 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _procedureCodeSequenceCodingSchemeDesignator, value); }
 		}
 
+		#region Patient Species
+
+		[QueryableProperty(DicomTags.PatientSpeciesDescription)]
+		public virtual string PatientSpeciesDescription
+		{
+			get { return _patientSpeciesDescription; }
+			set { SetClassMember(ref _patientSpeciesDescription, value); }
+		}
+
+		[QueryableProperty(DicomTags.PatientSpeciesCodeSequence, DicomTags.CodingSchemeDesignator)]
+		public virtual string PatientSpeciesCodeSequenceCodingSchemeDesignator
+		{
+			get { return _patientSpeciesCodeSequenceCodingSchemeDesignator; }
+			set { SetClassMember(ref _patientSpeciesCodeSequenceCodingSchemeDesignator, value); }
+		}
+
+		[QueryableProperty(DicomTags.PatientSpeciesCodeSequence, DicomTags.CodeValue)]
+		public virtual string PatientSpeciesCodeSequenceCodeValue
+		{
+			get { return _patientSpeciesCodeSequenceCodeValue; }
+			set { SetClassMember(ref _patientSpeciesCodeSequenceCodeValue, value); }
+		}
+
+		[QueryableProperty(DicomTags.PatientSpeciesCodeSequence, DicomTags.CodeMeaning)]
+		public virtual string PatientSpeciesCodeSequenceCodeMeaning
+		{
+			get { return _patientSpeciesCodeSequenceCodeMeaning; }
+			set { SetClassMember(ref _patientSpeciesCodeSequenceCodeMeaning, value); }
+		}
+
+		#endregion
+
+		#region Patient Breed
+
+		[QueryableProperty(DicomTags.PatientBreedDescription)]
+		public virtual string PatientBreedDescription
+		{
+			get { return _patientBreedDescription; }
+			set { SetClassMember(ref _patientBreedDescription, value); }
+		}
+
+		[QueryableProperty(DicomTags.PatientBreedCodeSequence, DicomTags.CodingSchemeDesignator)]
+		public virtual string PatientBreedCodeSequenceCodingSchemeDesignator
+		{
+			get { return _patientBreedCodeSequenceCodingSchemeDesignator; }
+			set { SetClassMember(ref _patientBreedCodeSequenceCodingSchemeDesignator, value); }
+		}
+
+		[QueryableProperty(DicomTags.PatientBreedCodeSequence, DicomTags.CodeValue)]
+		public virtual string PatientBreedCodeSequenceCodeValue
+		{
+			get { return _patientBreedCodeSequenceCodeValue; }
+			set { SetClassMember(ref _patientBreedCodeSequenceCodeValue, value); }
+		}
+
+		[QueryableProperty(DicomTags.PatientBreedCodeSequence, DicomTags.CodeMeaning)]
+		public virtual string PatientBreedCodeSequenceCodeMeaning
+		{
+			get { return _patientBreedCodeSequenceCodeMeaning; }
+			set { SetClassMember(ref _patientBreedCodeSequenceCodeMeaning, value); }
+		}
+
+		#endregion
+
+		#region Responsible Person/Organization
+
+		[QueryableProperty(DicomTags.ResponsiblePerson)]
+		public virtual PersonName ResponsiblePerson
+		{
+			get { return _responsiblePerson; }
+			set { SetClassMember(ref _responsiblePerson, value); }
+		}
+
+		string IPatientData.ResponsiblePerson
+		{
+			get { return _responsiblePerson; }
+		}
+
+		public virtual string ResponsiblePersonRaw
+		{
+			get { return _responsiblePersonRaw; }
+			set { SetClassMember(ref _responsiblePersonRaw, value); }
+		}
+
+		[QueryableProperty(DicomTags.ResponsiblePersonRole)]
+		public virtual string ResponsiblePersonRole
+		{
+			get { return _responsiblePersonRole; }
+			set { SetClassMember(ref _responsiblePersonRole, value); }
+		}
+
+		[QueryableProperty(DicomTags.ResponsibleOrganization)]
+		public virtual string ResponsibleOrganization
+		{
+			get { return _responsibleOrganization; }
+			set { SetClassMember(ref _responsibleOrganization, value); }
+		}
+
+		#endregion
+
 		public virtual DateTime? StoreTime
         {
             get { return _storeTime; }
@@ -457,7 +573,47 @@ namespace ClearCanvas.Dicom.DataStore
 					ProcedureCodeSequenceCodeValue = sequence[DicomTags.CodeValue].ToString();
 					ProcedureCodeSequenceCodingSchemeDesignator = sequence[DicomTags.CodingSchemeDesignator].ToString();
 				}
-			}	
+			}
+
+			attribute = sopInstanceDataset[DicomTags.PatientSpeciesDescription];
+			PatientSpeciesDescription = attribute.ToString();
+
+			if (sopInstanceDataset.Contains(DicomTags.PatientSpeciesCodeSequence))
+			{
+				attribute = sopInstanceDataset[DicomTags.PatientSpeciesCodeSequence];
+				if (!attribute.IsEmpty && !attribute.IsNull)
+				{
+					DicomSequenceItem sequence = ((DicomSequenceItem[])attribute.Values)[0];
+					PatientSpeciesCodeSequenceCodingSchemeDesignator = sequence[DicomTags.CodingSchemeDesignator].ToString();
+					PatientSpeciesCodeSequenceCodeValue = sequence[DicomTags.CodeValue].ToString();
+					PatientSpeciesCodeSequenceCodeMeaning = sequence[DicomTags.CodeMeaning].ToString();
+				}
+			}
+
+			attribute = sopInstanceDataset[DicomTags.PatientBreedDescription];
+			PatientBreedDescription = attribute.ToString();
+
+			if (sopInstanceDataset.Contains(DicomTags.PatientBreedCodeSequence))
+			{
+				attribute = sopInstanceDataset[DicomTags.PatientBreedCodeSequence];
+				if (!attribute.IsEmpty && !attribute.IsNull)
+				{
+					DicomSequenceItem sequence = ((DicomSequenceItem[])attribute.Values)[0];
+					PatientBreedCodeSequenceCodingSchemeDesignator = sequence[DicomTags.CodingSchemeDesignator].ToString();
+					PatientBreedCodeSequenceCodeValue = sequence[DicomTags.CodeValue].ToString();
+					PatientBreedCodeSequenceCodeMeaning = sequence[DicomTags.CodeMeaning].ToString();
+				}
+			}
+
+			attribute = sopInstanceDataset[DicomTags.ResponsiblePerson];
+			ResponsiblePerson = new PersonName(attribute.ToString());
+			ResponsiblePersonRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(ResponsiblePerson, sopInstanceDataset.SpecificCharacterSet);
+
+			attribute = sopInstanceDataset[DicomTags.ResponsiblePersonRole];
+			_responsiblePersonRole = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.ResponsibleOrganization];
+			ResponsibleOrganization = attribute.ToString();
 
 			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
 			SpecificCharacterSet = attribute.ToString();

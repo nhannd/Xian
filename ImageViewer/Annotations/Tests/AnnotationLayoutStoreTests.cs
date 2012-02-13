@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 			layout = CopyLayout(layout, "testLayout3");
 			AnnotationLayoutStore.Instance.Update(layout);
 			layout = AnnotationLayoutStore.Instance.GetLayout("testLayout3", annotationItems);
-			Assert.AreEqual(4, layout.AnnotationBoxGroups.Count);
+			Assert.AreEqual(5, layout.AnnotationBoxGroups.Count);
 		}
 
 		StoredAnnotationLayout CopyLayout(StoredAnnotationLayout layout, string newIdentifier)

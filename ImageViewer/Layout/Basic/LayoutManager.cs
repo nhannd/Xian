@@ -11,123 +11,62 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Comparers;
-using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
+
 	[ExtensionOf(typeof(LayoutManagerExtensionPoint))]
-	public class LayoutManager : ImageViewer.LayoutManager
+	public partial class LayoutManager : ImageViewer.LayoutManager
 	{
-		private class DisplaySetFactory : ImageViewer.DisplaySetFactory
+		#region LayoutHookContext
+
+		class LayoutHookContext : IHpLayoutHookContext
 		{
-			private readonly StoredDisplaySetCreationSetting _creationSetting;
+		    private readonly LayoutManager _layoutManager;
 
-			private readonly MREchoDisplaySetFactory _echoFactory;
-			private readonly MixedMultiFrameDisplaySetFactory _mixedMultiFrameFactory;
-			private readonly BasicDisplaySetFactory _basicFactory;
-
-			private readonly IList<IDisplaySetFactory> _externalFactories;
-
-			public DisplaySetFactory(StoredDisplaySetCreationSetting creationSetting)
+		    public LayoutHookContext(IImageViewer viewer, LayoutManager layoutManager)
 			{
-				_creationSetting = creationSetting;
-
-				PresentationState defaultPresentationState = new BasicDicomPresentationState 
-																{ ShowGrayscaleInverted = creationSetting.ShowGrayscaleInverted };
-
-				var imageFactory = (PresentationImageFactory)PresentationImageFactory;
-				imageFactory.DefaultPresentationState = defaultPresentationState;
-
-				_basicFactory = new BasicDisplaySetFactory(imageFactory) 
-										{ CreateSingleImageDisplaySets = _creationSetting.CreateSingleImageDisplaySets };
-
-				if (creationSetting.SplitMultiEchoSeries)
-					_echoFactory = new MREchoDisplaySetFactory(imageFactory);
-
-				if (_creationSetting.SplitMixedMultiframes)
-					_mixedMultiFrameFactory = new MixedMultiFrameDisplaySetFactory(imageFactory);
-
-				var externalFactories = new List<IDisplaySetFactory>();
-				foreach (IDisplaySetFactoryProvider provider in new DisplaySetFactoryProviderExtensionPoint().CreateExtensions())
-					externalFactories.AddRange(provider.CreateDisplaySetFactories(imageFactory));
-				_externalFactories = externalFactories.AsReadOnly();
+				this.ImageViewer = viewer;
+		        this._layoutManager = layoutManager;
 			}
 
-			private bool SplitMultiEchoSeries { get { return _creationSetting.SplitMultiEchoSeries; } }
-			private bool ShowOriginalMREchoSeries { get { return _creationSetting.ShowOriginalMultiEchoSeries; } }
+			public IImageViewer ImageViewer { get; private set; }
 
-			private bool SplitMixedMultiframeSeries { get { return _creationSetting.SplitMixedMultiframes; } }
-			private bool ShowOriginalMixedMultiframeSeries { get { return _creationSetting.ShowOriginalMixedMultiframeSeries; } }
+		    public void PerformDefaultPhysicalWorkspaceLayout()
+		    {
+		        if (_layoutManager!=null)
+		        {
+		            _layoutManager.LayoutPhysicalWorkspace();
+		        }
+		    }
 
-			public override void  SetStudyTree(StudyTree studyTree)
-			{
-				base.SetStudyTree(studyTree);
+            public void PerformDefaultFillPhysicalWorkspace()
+            {
+                if (_layoutManager != null)
+                {
+                    _layoutManager.FillPhysicalWorkspace();
+                }
+            }
 
-				_basicFactory.SetStudyTree(studyTree);
-				
-				if (_echoFactory != null)
-					_echoFactory.SetStudyTree(studyTree);
+        }
 
-				if (_mixedMultiFrameFactory != null)
-					_mixedMultiFrameFactory.SetStudyTree(studyTree);
+		#endregion
 
-				foreach (var factory in _externalFactories)
-					factory.SetStudyTree(studyTree);
-			}
+	    private readonly IPatientReconciliationStrategy _reconciliationStrategy = new DefaultPatientReconciliationStrategy();
+	    private ImageSetFiller _imageSetFiller;
+	    private IHpLayoutHook _layoutHook;
+	    private IDisplaySetCreationOptions _displaySetCreationOptions;
 
-			public override List<IDisplaySet> CreateDisplaySets(Series series)
-			{
-				var displaySets = new List<IDisplaySet>();
-
-				bool showOriginal = true;
-
-				if (SplitMultiEchoSeries)
-				{
-					List<IDisplaySet> echoDisplaySets = _echoFactory.CreateDisplaySets(series);
-					if (echoDisplaySets.Count > 0 && !ShowOriginalMREchoSeries)
-						showOriginal = false;
-
-					displaySets.AddRange(echoDisplaySets);
-				}
-
-				if (SplitMixedMultiframeSeries)
-				{
-					List<IDisplaySet> multiFrameDisplaySets = _mixedMultiFrameFactory.CreateDisplaySets(series);
-					if (multiFrameDisplaySets.Count > 0 && showOriginal && !ShowOriginalMixedMultiframeSeries)
-						showOriginal = false;
-
-					displaySets.AddRange(multiFrameDisplaySets);
-				}
-
-				if (showOriginal)
-				{
-					foreach (IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
-						displaySets.Add(displaySet);
-				}
-
-				foreach (var factory in _externalFactories)
-					displaySets.AddRange(factory.CreateDisplaySets(series));
-
-				return displaySets;
-			}
-		}
-
-		private readonly IPatientReconciliationStrategy _reconciliationStrategy = new DefaultPatientReconciliationStrategy();
-		private readonly Dictionary<string, IDisplaySetFactory> _modalityDisplaySetFactories = new Dictionary<string, IDisplaySetFactory>();
-		private const string _defaultModality = "";
-
-		public LayoutManager()
+	    public LayoutManager()
 		{
-			foreach (StoredDisplaySetCreationSetting setting in DisplaySetCreationSettings.Default.GetStoredSettings())
-				_modalityDisplaySetFactories[setting.Modality] = new DisplaySetFactory(setting);
-
 			AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
 		}
 
@@ -141,22 +80,54 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			_reconciliationStrategy.SetStudyTree(studyTree);
 
-			foreach (IDisplaySetFactory displaySetFactory in _modalityDisplaySetFactories.Values)
-				displaySetFactory.SetStudyTree(studyTree);
-
-			_modalityDisplaySetFactories[_defaultModality] = new BasicDisplaySetFactory {ShouldCreatePlaceholderImageDisplaySets = true};
+            _imageSetFiller = new ImageSetFiller(studyTree, DisplaySetCreationOptions);
 		}
 
-		private IDisplaySetFactory GetDisplaySetFactory(string modality)
-		{
-			modality = modality ?? _defaultModality;
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
 
-			IDisplaySetFactory factory;
-			if (_modalityDisplaySetFactories.TryGetValue(modality, out factory))
-				return factory;
+            if (!disposing || !(_layoutHook is IDisposable))
+                return;
+            
+            ((IDisposable)_layoutHook).Dispose();
+            _layoutHook = null;
+        }
 
-			return _modalityDisplaySetFactories[_defaultModality];
-		}
+	    public IHpLayoutHook LayoutHook
+	    {
+	        get
+	        {
+	            if (_layoutHook == null)
+	            {
+	                try
+	                {
+	                    _layoutHook = (IHpLayoutHook)new HpLayoutHookExtensionPoint().CreateExtension();
+	                }
+	                catch (NotSupportedException)
+	                {
+	                    _layoutHook = HpLayoutHook.Default;
+	                }
+	            }
+
+                return _layoutHook;
+	        }
+            set
+            {
+                _layoutHook = value;
+            }
+	    }
+
+	    public IDisplaySetCreationOptions DisplaySetCreationOptions
+	    {
+	        get
+	        {
+                if (_displaySetCreationOptions == null)
+                    _displaySetCreationOptions = new DisplaySetCreationOptions();
+
+                return _displaySetCreationOptions;
+	        }    
+	    }
 
 		#region Logical Workspace building 
 
@@ -165,23 +136,37 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			return new CompositeComparer<Series>(new DXSeriesPresentationIntentComparer(), base.GetSeriesComparer());
 		}
 
-		protected override IPatientData ReconcilePatient(Study study)
+        protected override IPatientData ReconcilePatient(IStudyRootData studyData)
 		{
-			var reconciled = _reconciliationStrategy.ReconcilePatientInformation(study.ParentPatient);
+            var reconciled = _reconciliationStrategy.ReconcilePatientInformation(studyData);
 			if (reconciled != null)
-				return new StudyRootStudyIdentifier(reconciled, study.GetIdentifier());
+				return new StudyRootStudyIdentifier(reconciled, new StudyIdentifier());
 
-			return base.ReconcilePatient(study);
+            return base.ReconcilePatient(studyData);
 		}
 
-		protected override void UpdateImageSet(IImageSet imageSet, Series series)
+		protected override void FillImageSet(IImageSet imageSet, Study study)
 		{
-			List<IDisplaySet> displaySets = GetDisplaySetFactory(series.Modality).CreateDisplaySets(series);
-			foreach (IDisplaySet displaySet in displaySets)
-				imageSet.DisplaySets.Add(displaySet);
+            _imageSetFiller.AddMultiSeriesDisplaySets(imageSet, study);
+
+            base.FillImageSet(imageSet, study);
+		}
+
+	    protected override void UpdateImageSet(IImageSet imageSet, Series series)
+		{
+            _imageSetFiller.AddSeriesDisplaySets(imageSet, series);
 		}
 
 		#endregion
+
+		protected override void LayoutAndFillPhysicalWorkspace()
+		{
+            if (LayoutHook.HandleLayout(new LayoutHookContext(ImageViewer, this)))
+                    return;
+
+		    // hooks did not handle it, so call base class
+			base.LayoutAndFillPhysicalWorkspace();
+		}
 
 		protected override void LayoutPhysicalWorkspace()
 		{
@@ -217,15 +202,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		#region Comparers
 
-		private class DXSeriesPresentationIntentComparer : DicomSeriesComparer
+        /// TODO (CR Nov 2011): I think we can actually remove this now, as the other comparers also do it.
+        private class DXSeriesPresentationIntentComparer : DicomSeriesComparer
 		{
 			public override int Compare(Sop x, Sop y)
 			{
-				// this sorts FOR PROCESSING series to the end.
-				// FOR PRESENTATION and unspecified series are considered equal for the purposes of sorting by intent.
-				const string forProcessing = "FOR PROCESSING";
-				int presentationIntentX = GetPresentationIntent(x) == forProcessing ? 1 : 0;
-				int presentationIntentY = GetPresentationIntent(y) == forProcessing ? 1 : 0;
+				// this sorts FOR PRESENTATION series to the beginning.
+				// FOR PROCESSING and unspecified series are considered equal for the purposes of sorting by intent.
+				const string forPresentation = "FOR PRESENTATION";
+				int presentationIntentX = GetPresentationIntent(x) == forPresentation ? 0 : 1;
+				int presentationIntentY = GetPresentationIntent(y) == forPresentation ? 0 : 1;
 				int result = presentationIntentX - presentationIntentY;
 				if (Reverse)
 					return -result;
@@ -241,6 +227,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
+	    /// TODO (CR Sep 2011): Move to ImageViewer.Comparers.
 		private class CompositeComparer<T> : IComparer<T>
 		{
 			private readonly IList<IComparer<T>> _comparers;

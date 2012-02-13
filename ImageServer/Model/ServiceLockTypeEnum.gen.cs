@@ -32,6 +32,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
       private static readonly ServiceLockTypeEnum _ArchiveApplicationLog = GetEnum("ArchiveApplicationLog");
       private static readonly ServiceLockTypeEnum _PurgeAlerts = GetEnum("PurgeAlerts");
       private static readonly ServiceLockTypeEnum _ImportFiles = GetEnum("ImportFiles");
+      private static readonly ServiceLockTypeEnum _SyncDataAccess = GetEnum("SyncDataAccess");
       #endregion
 
       #region Public Static Properties
@@ -97,6 +98,13 @@ public partial class ServiceLockTypeEnum : ServerEnum
       public static ServiceLockTypeEnum ImportFiles
       {
           get { return _ImportFiles; }
+      }
+      /// <summary>
+      /// This service periodically synchronizes the deletion status of Authority Groups on the Administrative Services with Data Access granted to studies on the ImageServer.
+      /// </summary>
+      public static ServiceLockTypeEnum SyncDataAccess
+      {
+          get { return _SyncDataAccess; }
       }
 
       #endregion

@@ -30,12 +30,30 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+    public enum DuplicateProcessResultAction
+    {
+        /// <summary>
+        /// Duplicate is identical and has been deleted from the filesystem
+        /// </summary>
+        Delete,
+
+        /// <summary>
+        /// Duplicate is different from the existing copy and a SIQ entry has been created.
+        /// </summary>
+        Reconcile
+    }
+
     /// <summary>
     /// Processor for 'StudyProcess' <see cref="WorkQueue"/> entries.
     /// </summary>
     [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery= RecoveryModes.Automatic)]
     public class StudyProcessItemProcessor : BaseItemProcessor, ICancelable
     {
+        public class ProcessDuplicateResult
+        {
+            public DuplicateProcessResultAction ActionTaken { get; set; }
+        }
+
         #region Private Members
         private ServerRulesEngine _sopProcessedRulesEngine;
 
@@ -56,9 +74,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #endregion Constructors
 
         #region Private Methods
-	
-        private void ProcessDuplicate(DicomFile dupFile, WorkQueueUid uid)
+
+        private ProcessDuplicateResult ProcessDuplicate(DicomFile dupFile, WorkQueueUid uid)
         {
+            ProcessDuplicateResult result = new ProcessDuplicateResult();
+
             string duplicateSopPath = ServerPlatform.GetDuplicateUidPath(StorageLocation, uid);
             string basePath = StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
 			if (!File.Exists(basePath))
@@ -67,6 +87,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				// no longer exists in the study folder. Perhaps it has been moved to another folder during auto reconciliation.
 				// We have nothing to compare against so let's just throw it into the SIQ queue.
 				CreateDuplicateSIQEntry(uid, dupFile, null);
+			    result.ActionTaken = DuplicateProcessResultAction.Reconcile;
 			}
 			else
 			{
@@ -96,16 +117,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 						                               baseFile.TransferSyntax, dupFile.TransferSyntax);
 
 						List<DicomAttributeComparisonResult> list = new List<DicomAttributeComparisonResult>();
-						DicomAttributeComparisonResult result = new DicomAttributeComparisonResult
+						DicomAttributeComparisonResult compareResult = new DicomAttributeComparisonResult
 						                                        	{
 						                                        		ResultType = ComparisonResultType.DifferentValues,
 						                                        		TagName =
 						                                        			DicomTagDictionary.GetDicomTag(DicomTags.TransferSyntaxUid).Name,
 						                                        		Details = failure
 						                                        	};
-						list.Add(result);
+                        list.Add(compareResult);
                         CreateDuplicateSIQEntry(uid, dupFile, list);
-						return;
+                        result.ActionTaken = DuplicateProcessResultAction.Reconcile; 
+                        return result;
 					}
 				}
 
@@ -117,12 +139,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 					             baseFile.MediaStorageSopInstanceUid);
 
                     RemoveWorkQueueUid(uid, duplicateSopPath);
+                    result.ActionTaken = DuplicateProcessResultAction.Delete;
                 }
 				else
 				{
 					CreateDuplicateSIQEntry(uid, dupFile, failureReason);
+                    result.ActionTaken = DuplicateProcessResultAction.Reconcile;
 				}
 			}
+
+            return result;
         }
 
         void CreateDuplicateSIQEntry(WorkQueueUid uid, DicomFile file, List<DicomAttributeComparisonResult> differences)
@@ -254,7 +280,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         RemoveWorkQueueUid(sop, null);
                     }
                     else {
-                    	ProcessDuplicate(file, sop);
+                    	var duplicateResult = ProcessDuplicate(file, sop);
+                        if (duplicateResult.ActionTaken == DuplicateProcessResultAction.Delete)
+                        {
+                            // make sure the folder is also deleted if it's empty
+                            string folder = Path.GetDirectoryName(path);
+
+                            String reconcileRootFolder = ServerPlatform.GetDuplicateFolderRootPath(this.StorageLocation);
+                            DirectoryUtility.DeleteIfEmpty(folder, reconcileRootFolder);
+                        }
                     }
                 }
                 else

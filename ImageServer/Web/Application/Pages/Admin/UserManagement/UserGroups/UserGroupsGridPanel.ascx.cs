@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -148,12 +149,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (UserGroupGrid.EditIndex != e.Row.RowIndex)
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
-                {
-                    
+                {                    
                     CustomizeTokensColumn(e);
+                    CustomizeDataGroupColumn(e);
                 }
             }
-
         }
 
         private static void CustomizeTokensColumn(GridViewRowEventArgs e)
@@ -169,6 +169,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                     tokenList += token.Description + "\n";
                 }
                 textBox.Text = tokenList;
+            }
+        }
+
+        protected void CustomizeDataGroupColumn(GridViewRowEventArgs e)
+        {
+            var img = ((Image)e.Row.FindControl("DataGroupImage"));
+            if (img != null)
+            {
+                bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DataGroup"));
+                if (active)
+                {
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
+                }
+                else
+                {
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
+                }
             }
         }
 

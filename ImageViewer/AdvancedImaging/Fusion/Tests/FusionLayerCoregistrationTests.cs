@@ -25,12 +25,12 @@ using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
-	//TODO (CR Sept 2010): these tests create somewhat "ideal" data sets that are completely coincident in the patient space.
-	//Ideally, I'd like to see some tests where the volumes are slightly offset from each other in the patient space.
-
-	//TODO (CR Sept 2010): In general, I'm not sure diffing the images is the right approach for the coregistration tests.  Might
-	//be more appropriate to inspect values at certain known locations.
-
+	/// <remarks>
+	/// Tests fused image pixel data alignment and orientation (including MPR of overlay data).
+	/// The various individual tests assert different orientations for source data at different pixel spacings,
+	/// resulting in varied non-ideal conditions under which slices depicting the same volume must perfectly coincide.
+	/// This is meant to test the actual expected composited value of the base and overlay pixels; see <see cref="FusionColorCompositingTest"/> for that.
+	/// </remarks>
 	[TestFixture(Description = "Tests for validating fused image pixel data alignment and orientation (including MPR of overlay data)")]
 	public class FusionLayerCoregistrationTests
 	{
@@ -356,10 +356,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 			using (var log = File.CreateText(Path.Combine(outputPath.FullName, "data.csv")))
 			{
-				//TODO (CR Sept 2010): this is testing that the fused image is essentially unchanged from the "base" image
-				//by applying a grayscale color map to the overlay image?  If there were a bug that caused the overlay image
-				//to not be rendered at all, this test would pass.
-
+				// if the overlay image is not rendered at all, this coregistration test would pass, but then the color compositing test would fail
 				using (var referenceDisplaySet = data.CreateBaseDisplaySet())
 				{
 					using (var testDisplaySet = data.CreateFusionDisplaySet())
@@ -374,7 +371,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 
 							Bitmap diff;
 							double result = ImageDiff.Compare(ImageDiffAlgorithm.Euclidian, referenceImage, testImage, out diff);
-							diff.Save(Path.Combine(outputPath.FullName, string.Format("diff{0}.png", index)));
+							diff.Save(Path.Combine(outputPath.FullName, string.Format("diff{0:000}.png", index)));
 							diff.Dispose();
 							log.WriteLine("{0}, {1:f6}", index, result);
 							list.Add(result);

@@ -9,24 +9,33 @@
 
 #endregion
 
-using ClearCanvas.Desktop;
 using System;
+using ClearCanvas.Common;
+
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	internal class VoiLutMemento : IEquatable<VoiLutMemento>
 	{
-		private readonly ComposableLutMemento _composableLutMemento;
+		private readonly IVoiLut _originatingLut;
+		private readonly object _innerMemento;
 		private readonly bool _invert;
 
-		public VoiLutMemento(IComposableLut originatingLut, bool invert)
+		public VoiLutMemento(IVoiLut originatingLut, bool invert)
 		{
-			_composableLutMemento = new ComposableLutMemento(originatingLut);
+			Platform.CheckForNullReference(originatingLut, "originatingLut");
+			_originatingLut = originatingLut;
+			_innerMemento = originatingLut.CreateMemento();
 			_invert = invert;
 		}
 
-		public ComposableLutMemento ComposableLutMemento
+		public IVoiLut OriginatingLut
 		{
-			get { return _composableLutMemento; }	
+			get { return _originatingLut; }
+		}
+
+		public object InnerMemento
+		{
+			get { return _innerMemento; }
 		}
 
 		public bool Invert
@@ -36,30 +45,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return 0x76E013EC ^ _originatingLut.GetHashCode() ^ _invert.GetHashCode() ^ (_innerMemento != null ? _innerMemento.GetHashCode() : 0);
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (obj == this)
-				return true;
-
-			if (obj is VoiLutMemento)
-				return this.Equals((VoiLutMemento) obj);
-
-			return false;
+			return ReferenceEquals(obj, this) || obj is VoiLutMemento && Equals((VoiLutMemento) obj);
 		}
-
-		#region IEquatable<VoiLutMemento> Members
 
 		public bool Equals(VoiLutMemento other)
 		{
-			if (other == null)
-				return false;
-
-			return this._invert == other._invert && this._composableLutMemento.Equals(other._composableLutMemento);
+			return other != null && _originatingLut.Equals(other._originatingLut) && Equals(_innerMemento, other._innerMemento) && _invert == other._invert;
 		}
-
-		#endregion
 	}
 }

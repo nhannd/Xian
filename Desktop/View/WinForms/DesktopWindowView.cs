@@ -590,17 +590,23 @@ namespace ClearCanvas.Desktop.View.WinForms
     	/// <returns></returns>
     	public virtual FileDialogResult ShowSaveFileDialogBox(FileDialogCreationArgs args)
     	{
-			SaveFileDialog dialog = new SaveFileDialog();
+			var dialog = new SaveFileDialog();
 			PrepareFileDialog(dialog, args);
 			dialog.OverwritePrompt = true;
+    		dialog.FileOk += (sender, e) =>
+    		                 	{
+									if(!ValidateFileSavePath(dialog.FileName, args))
+									{
+										e.Cancel = true;
+									}
+    		                 	};
 
-			DialogResult dr = dialog.ShowDialog(_form);
+			var dr = dialog.ShowDialog(_form);
 			if(dr == DialogResult.OK)
 			{
 				return new FileDialogResult(DialogBoxAction.Ok, dialog.FileName);
 			}
-			else 
-				return new FileDialogResult(DialogBoxAction.Cancel, null);
+    		return new FileDialogResult(DialogBoxAction.Cancel, (string)null);
     	}
 
     	/// <summary>
@@ -610,20 +616,19 @@ namespace ClearCanvas.Desktop.View.WinForms
     	/// <returns></returns>
     	public virtual FileDialogResult ShowOpenFileDialogBox(FileDialogCreationArgs args)
     	{
-			OpenFileDialog dialog = new OpenFileDialog();
+			var dialog = new OpenFileDialog();
 			PrepareFileDialog(dialog, args);
     		dialog.CheckFileExists = true;
     		dialog.ShowReadOnly = false;
-    		dialog.Multiselect = false; //could add support in future if necessary
+    		dialog.Multiselect = args.MultiSelect;
 
-			DialogResult dr = dialog.ShowDialog(_form);
+			var dr = dialog.ShowDialog(_form);
 			if (dr == DialogResult.OK)
 			{
-				return new FileDialogResult(DialogBoxAction.Ok, dialog.FileName);
+				return new FileDialogResult(DialogBoxAction.Ok, dialog.FileNames);
 			}
-			else
-				return new FileDialogResult(DialogBoxAction.Cancel, null);
-		}
+			return new FileDialogResult(DialogBoxAction.Cancel, (string)null);
+    	}
 
     	/// <summary>
     	/// Shows a 'Select folder' dialog in front of this window.
@@ -632,18 +637,17 @@ namespace ClearCanvas.Desktop.View.WinForms
     	/// <returns></returns>
     	public FileDialogResult ShowSelectFolderDialogBox(SelectFolderDialogCreationArgs args)
     	{
-    		FolderBrowserDialog dialog = new FolderBrowserDialog();
+    		var dialog = new FolderBrowserDialog();
     		dialog.SelectedPath = args.Path ?? "";
     		dialog.Description = args.Prompt ?? "";
     		dialog.ShowNewFolderButton = args.AllowCreateNewFolder;
 
-    		DialogResult dr = dialog.ShowDialog(_form);
+    		var dr = dialog.ShowDialog(_form);
     		if (dr == DialogResult.OK)
     		{
     			return new FileDialogResult(DialogBoxAction.Ok, dialog.SelectedPath);
     		}
-    		else
-    			return new FileDialogResult(DialogBoxAction.Cancel, null);
+    		return new FileDialogResult(DialogBoxAction.Cancel, (string)null);
     	}
 
     	#endregion
@@ -839,5 +843,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			dialog.Filter = StringUtilities.Combine(args.Filters, "|",
 				delegate(FileExtensionFilter f) { return f.Description + "|" + f.Filter; });
 		}
+
+		private bool ValidateFileSavePath(string filePath, FileDialogCreationArgs args)
+		{
+			if (args.PreventSaveToInstallPath && filePath.StartsWith(Platform.InstallDirectory))
+			{
+				ShowMessageBox(SR.ErrorSaveFileToInstallPath, null, MessageBoxActions.Ok);
+				return false;
+			}
+			return true;
+		}
+
 	}
 }

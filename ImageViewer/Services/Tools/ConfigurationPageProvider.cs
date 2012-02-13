@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
 			if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DicomServer))
-				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomServerConfiguration"));
+				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomConfiguration/ServerConfiguration"));
 
 			if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DiskspaceManager))
 				listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));

@@ -106,12 +106,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						resolver,
 						delegate(Frame frame)
 						{
-							var nil = SR.ValueNil;
-							var age = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsAge) ? frame.ParentImageSop.PatientsAge : nil;
-							var sex = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsSex) ? frame.ParentImageSop.PatientsSex : nil;
-							if (age == nil && sex == nil)
-								return string.Empty;
-							return string.Format(SR.FormatPatientsAgeSex, age, sex);
+						    var components = new List<string>();
+						    if (!string.IsNullOrEmpty(frame.ParentImageSop.PatientsAge)) components.Add(frame.ParentImageSop.PatientsAge);
+						    if (!string.IsNullOrEmpty(frame.ParentImageSop.PatientsSex)) components.Add(frame.ParentImageSop.PatientsSex);
+						    return string.Join(SR.SeparatorAgeSexBirthDate, components.ToArray());
 						},
 						DicomDataFormatHelper.RawStringFormat
 					)
@@ -125,13 +123,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						resolver,
 						delegate(Frame frame)
 						{
-							var nil = SR.ValueNil;
-							var age = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsAge) ? frame.ParentImageSop.PatientsAge : nil;
-							var sex = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsSex) ? frame.ParentImageSop.PatientsSex : nil;
-							var dob = !string.IsNullOrEmpty(frame.ParentImageSop.PatientsBirthDate) ? DicomDataFormatHelper.DateFormat(frame.ParentImageSop.PatientsBirthDate) : nil;
-							if (age == nil && sex == nil && dob == nil)
-								return string.Empty;
-							return string.Format(SR.FormatPatientsAgeSexBirthDate, age, sex, dob);
+						    var components = new List<string>();
+						    if (!string.IsNullOrEmpty(frame.ParentImageSop.PatientsAge)) components.Add(frame.ParentImageSop.PatientsAge);
+						    if (!string.IsNullOrEmpty(frame.ParentImageSop.PatientsSex)) components.Add(frame.ParentImageSop.PatientsSex);
+						    if (!string.IsNullOrEmpty(frame.ParentImageSop.PatientsBirthDate)) components.Add(DicomDataFormatHelper.DateFormat(frame.ParentImageSop.PatientsBirthDate));
+						    return string.Join(SR.SeparatorAgeSexBirthDate, components.ToArray());
 						},
 						DicomDataFormatHelper.RawStringFormat
 					)

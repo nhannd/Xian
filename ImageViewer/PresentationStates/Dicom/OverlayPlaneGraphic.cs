@@ -416,11 +416,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		#region Voi Lut
 
 		[Cloneable(true)]
-		private class OverlayVoiLut : ComposableLut
+		private class OverlayVoiLut : ComposableVoiLut
 		{
 			private readonly int _presentationValue;
-			private int _minInputValue = 0;
-			private int _maxInputValue = 0;
+			private double _minInputValue = 0;
+			private double _maxInputValue = 0;
 			private readonly int _maxOutputValue;
 
 			public OverlayVoiLut(int presentationValue, int maxOutputValue)
@@ -432,13 +432,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			//for cloning.
 			private OverlayVoiLut() {}
 
-			public override int MinInputValue
+			public override double MinInputValue
 			{
 				get { return _minInputValue; }
 				set { _minInputValue = value; }
 			}
 
-			public override int MaxInputValue
+			public override double MaxInputValue
 			{
 				get { return _maxInputValue; }
 				set { _maxInputValue = value; }
@@ -456,10 +456,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				protected set { }
 			}
 
-			public override int this[int index]
+			public override int this[double index]
 			{
-				get { return (int) ((index/(float) _maxInputValue)*_presentationValue); }
-				protected set { throw new InvalidOperationException("This lut is not editable."); }
+				get { return (int) Math.Round((index/_maxInputValue)*_presentationValue); }
 			}
 
 			public override string GetKey()

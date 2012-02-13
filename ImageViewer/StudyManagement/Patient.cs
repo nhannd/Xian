@@ -87,6 +87,111 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _sop.PatientsSex; }
 		}
 
+		#region Species
+
+		/// <summary>
+		/// Gets the patient species description.
+		/// </summary>
+		public string PatientSpeciesDescription
+		{
+			get { return _sop.PatientSpeciesDescription; }
+		}
+
+		/// <summary>
+		/// Gets the coding scheme designator of the patient species code sequence.
+		/// </summary>
+		public string PatientSpeciesCodeSequenceCodingSchemeDesignator
+		{
+			get { return _sop.PatientSpeciesCodeSequenceCodingSchemeDesignator; }
+		}
+
+		/// <summary>
+		/// Gets the code value of the patient species code sequence.
+		/// </summary>
+		public string PatientSpeciesCodeSequenceCodeValue
+		{
+			get { return _sop.PatientSpeciesCodeSequenceCodeValue; }
+		}
+
+		/// <summary>
+		/// Gets the code meaning of the patient species code sequence.
+		/// </summary>
+		public string PatientSpeciesCodeSequenceCodeMeaning
+		{
+			get { return _sop.PatientSpeciesCodeSequenceCodeMeaning; }
+		}
+
+		#endregion
+
+		#region Breed
+
+		/// <summary>
+		/// Gets the patient breed description.
+		/// </summary>
+		public string PatientBreedDescription
+		{
+			get { return _sop.PatientBreedDescription; }
+		}
+
+		/// <summary>
+		/// Gets the coding scheme designator of the patient breed code sequence.
+		/// </summary>
+		public string PatientBreedCodeSequenceCodingSchemeDesignator
+		{
+			get { return _sop.PatientBreedCodeSequenceCodingSchemeDesignator; }
+		}
+
+		/// <summary>
+		/// Gets the code value of the patient breed code sequence.
+		/// </summary>
+		public string PatientBreedCodeSequenceCodeValue
+		{
+			get { return _sop.PatientBreedCodeSequenceCodeValue; }
+		}
+
+		/// <summary>
+		/// Gets the code meaning of the patient breed code sequence.
+		/// </summary>
+		public string PatientBreedCodeSequenceCodeMeaning
+		{
+			get { return _sop.PatientBreedCodeSequenceCodeMeaning; }
+		}
+
+		#endregion
+
+		#region Responsible Person/Organization
+
+		/// <summary>
+		/// Gets the responsible person for the patient.
+		/// </summary>
+		public PersonName ResponsiblePerson
+		{
+			get { return _sop.ResponsiblePerson; }
+		}
+
+		string IPatientData.ResponsiblePerson
+		{
+			get { return _sop.ResponsiblePerson; }
+		}
+
+		/// <summary>
+		/// Gets the role of the responsible person for the patient.
+		/// </summary>
+		public string ResponsiblePersonRole
+		{
+			get { return _sop.ResponsiblePersonRole; }
+		}
+
+		/// <summary>
+		/// Gets the organization responsible for the patient.
+		/// </summary>
+		public string ResponsibleOrganization
+		{
+			get { return _sop.ResponsibleOrganization; }
+		}
+
+		#endregion
+
 		#endregion
 
 		/// <summary>

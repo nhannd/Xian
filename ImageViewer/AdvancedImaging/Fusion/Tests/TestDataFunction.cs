@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 {
 	public class TestDataFunction
 	{
-		/// <summary>
+        /// <summary>
 		/// The Threed function.
 		/// </summary>
 		/// <remarks>
@@ -52,14 +52,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		/// </remarks>
 		public static TestDataFunction GradientY = new TestDataFunction("Gradient", (x, y, z) => y).Normalize(100);
 
-		private delegate float TestDataFunctionDelegate(float x, float y, float z);
+        internal delegate float TestDataFunctionDelegate(float x, float y, float z);
 
 		private readonly TestDataFunctionDelegate _function;
 		private readonly string _name;
 		private readonly string _studyInstanceUid;
 		private readonly string _frameOfReferenceUid;
 
-		private TestDataFunction(string name, TestDataFunctionDelegate function)
+		internal TestDataFunction(string name, TestDataFunctionDelegate function)
 		{
 			var uidBase = HashUid(name);
 			_function = function;

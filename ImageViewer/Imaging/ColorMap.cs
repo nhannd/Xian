@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// by an <see cref="ClearCanvas.ImageViewer.Rendering.IRenderer"/> to display the image.
 	/// </remarks>
 	/// <seealso cref="GeneratedDataLut"/>
-	public abstract class ColorMap : GeneratedDataLut
+	public abstract class ColorMap : GeneratedDataLut, IColorMap
 	{
 		/// <summary>
 		/// Default constructor.
@@ -76,6 +76,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.MinInputValue,
 				this.MaxInputValue,
 				this.GetType().ToString());
+		}
+
+		/// <summary>
+		/// Creates a deep-copy of the <see cref="IColorMap"/>.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IColorMap"/> implementations may return NULL from this method when appropriate.
+		/// </remarks>
+		public new IColorMap Clone()
+		{
+			return base.Clone() as IColorMap;
 		}
 	}
 }

@@ -334,4 +334,21 @@
 				  lossless="true"
 				  lossy="false"/>
 
+  <TransferSyntax uid="1.2.840.10008.1.2.4.103"
+				  description="MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1"
+				  littleEndian="true"
+				  explicitVR="true"
+				  encapsulated="true"
+				  deflated="false"
+				  lossless="true"
+				  lossy="false"/>
+
+  <TransferSyntax uid="1.2.840.10008.1.2.4.102"
+				  description="MPEG-4 AVC/H.264 High Profile / Level 4.1"
+				  littleEndian="true"
+				  explicitVR="true"
+				  encapsulated="true"
+				  deflated="false"
+				  lossless="true"
+				  lossy="false"/>
 </TransferSyntaxList>

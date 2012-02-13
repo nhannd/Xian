@@ -11,13 +11,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Services.Common;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.Web.Enterprise.Admin;
 using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups
@@ -30,13 +33,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         #region private variables
 
         private bool _editMode;
+        private bool _saveDataGroup;
+
         // user being editted/added
         private UserGroupRowData _userGroup;
-
+     
         #endregion
 
         #region public members
-
+        public bool SaveDataGroup
+        {
+            get { return _saveDataGroup; }
+            set
+            {
+                _saveDataGroup = value;
+                ViewState["SaveDataGroup"] = value;
+            }
+        }
+        
         /// <summary>
         /// Sets or gets the value which indicates whether the dialog is in edit mode.
         /// </summary>
@@ -58,6 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             set
             {
                 _userGroup = value;
+                SaveDataGroup = value.DataGroup;
                 // put into viewstate to retrieve later
                 ViewState[ "EditedUserGroup"] = _userGroup;
             }
@@ -83,7 +98,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
 
             UserGroup.Name = GroupName.Text;
-
+            UserGroup.Description = GroupDescription.Text;
+            UserGroup.DataGroup = DataGroupCheckBox.Checked;
             UserGroup.Tokens.Clear();
             foreach (ListItem item in TokenCheckBoxList.Items)
             {
@@ -92,7 +108,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                     UserGroup.Tokens.Add(new TokenSummary(item.Value, item.Text));
                 }
             }
-
         }
 
         #endregion
@@ -101,6 +116,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            PasswordConfirmDialog.OKClicked += PasswordConfirmDialog_OKClicked;
+
             if (Page.IsPostBack == false)
             {
 
@@ -119,11 +136,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
             else
             {
-                if (ViewState[ "EditMode"] != null)
+                if (ViewState["SaveDataGroup"] != null)
+                    _saveDataGroup = (bool)ViewState["SaveDataGroup"];
+
+                if (ViewState["EditMode"] != null)
                     _editMode = (bool) ViewState[ "EditMode"];
 
                 if (ViewState[ "EditedUserGroup"] != null)
                     _userGroup = ViewState[ "EditedUserGroup"] as UserGroupRowData;
+            }
+        }
+
+        private void PasswordConfirmDialog_OKClicked()
+        {
+            bool success = false;
+
+            UserGroup.Password = PasswordConfirmDialog.PasswordString;
+            if (OKClicked != null)
+            {
+                try
+                {
+                    success = OKClicked(UserGroup);
+                }
+                catch (FaultException<UserAccessDeniedException>)
+                {
+                    PasswordFailErrorMessage.Message = SR.AddEditUserGroupsDialog_InvalidPassword;
+                    PasswordFailErrorMessage.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                    PasswordFailErrorMessage.Show();
+                }
+            }
+            if (!success)
+            {
+                Show(false);
+            }
+            else
+            {
+                Close();
             }
         }
 
@@ -134,22 +182,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         /// <param name="sender"></param>
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
-        {
-            if (Page.IsValid){
+        {            
+            if (Page.IsValid)
+            {                 
                 SaveData();
 
-                bool success = false;
-
-                if (OKClicked != null)
-                    success = OKClicked(UserGroup);
-
-                if (!success)
+                // Only ask for the password if updating 
+                if (EditMode && SaveDataGroup && !UserGroup.DataGroup)
                 {
-                    Show(false);
+                    PasswordConfirmDialog.Show();
                 }
                 else
-                {
-                    Close();
+                {                    
+                    bool success = false;
+
+                    if (OKClicked != null)
+                        success = OKClicked(UserGroup);
+
+                    if (!success)
+                    {
+                        Show(false);
+                    }
+                    else
+                    {
+                        Close();
+                    }
                 }
             }
             else
@@ -180,6 +237,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 UpdateButton.Visible = true;
                 OKButton.Visible = false;
                 GroupName.Text = UserGroup.Name;
+                GroupDescription.Text = UserGroup.Description;
+                DataGroupCheckBox.Checked = UserGroup.DataGroup;
                 OriginalGroupName.Value = UserGroup.Name;
                 TokenCheckBoxList.ClearSelection();
                 foreach (TokenSummary token in UserGroup.Tokens)
@@ -191,6 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             {
                 TokenCheckBoxList.ClearSelection();
                 ModalDialog1.Title = SR.DialogAddUserGroupTitle;
+                DataGroupCheckBox.Checked = false;
                 UpdateButton.Visible = false;
                 OKButton.Visible = true;
             }
@@ -199,6 +259,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (UserGroup == null || EditMode == false) 
             {
                 GroupName.Text = string.Empty;
+                GroupDescription.Text = string.Empty;
                 TokenCheckBoxList.SelectedIndex = -1;
             }
         }

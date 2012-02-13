@@ -29,6 +29,7 @@ public partial class ServerRuleTypeEnum : ServerEnum
       private static readonly ServerRuleTypeEnum _OnlineRetention = GetEnum("OnlineRetention");
       private static readonly ServerRuleTypeEnum _StudyCompress = GetEnum("StudyCompress");
       private static readonly ServerRuleTypeEnum _SopCompress = GetEnum("SopCompress");
+      private static readonly ServerRuleTypeEnum _DataAccess = GetEnum("DataAccess");
       #endregion
 
       #region Public Static Properties
@@ -73,6 +74,13 @@ public partial class ServerRuleTypeEnum : ServerEnum
       public static ServerRuleTypeEnum SopCompress
       {
           get { return _SopCompress; }
+      }
+      /// <summary>
+      /// A rule to specify the Authority Groups that have access to a study
+      /// </summary>
+      public static ServerRuleTypeEnum DataAccess
+      {
+          get { return _DataAccess; }
       }
 
       #endregion

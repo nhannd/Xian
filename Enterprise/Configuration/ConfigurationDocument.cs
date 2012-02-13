@@ -18,6 +18,7 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Enterprise.Configuration {
@@ -42,7 +43,8 @@ namespace ClearCanvas.Enterprise.Configuration {
             _documentVersionString = versionString;
             _user = user;
             _instanceKey = instanceKey;
-            _body = new ConfigurationDocumentBody(this, null);
+        	_creationTime = Platform.Time;
+			_body = new ConfigurationDocumentBody(this, null, _creationTime);
         }
 
 

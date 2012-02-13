@@ -29,6 +29,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,6 +55,9 @@
       <HintPath>..\..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -119,6 +123,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="ToolConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ToolConfigurationComponentControl.Designer.cs">
+      <DependentUpon>ToolConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToolConfigurationComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +191,9 @@
     <EmbeddedResource Include="SR.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolConfigurationComponentControl.resx">
+      <DependentUpon>ToolConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

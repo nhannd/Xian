@@ -9,7 +9,7 @@
             </customBinding>
         </bindings>
         <client>
-            <endpoint address="http://localhost:3243/Services/ApplicationService.svc/basicHttp"
+            <endpoint address="http://localhost/WebPortal/Services/ApplicationService.svc/basicHttp"
                 binding="customBinding" bindingConfiguration="CustomBinding_IApplicationService"
                 contract="AppServiceReference.IApplicationService" name="CustomBinding_IApplicationService" />
         </client>

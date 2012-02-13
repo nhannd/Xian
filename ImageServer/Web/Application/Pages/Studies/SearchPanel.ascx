@@ -152,6 +152,7 @@ function MultiSelect() {
                                         <ccUI:ToolbarButton ID="MoveStudyButton" runat="server" SkinID="<%$Image:MoveButton%>" />
                                         <ccUI:ToolbarButton ID="DeleteStudyButton" runat="server" SkinID="<%$Image:DeleteButton%>" OnClick="DeleteStudyButton_Click" />
                                         <ccUI:ToolbarButton ID="RestoreStudyButton" runat="server" SkinID="<%$Image:RestoreButton%>" OnClick="RestoreStudyButton_Click" />
+                                        <ccUI:ToolbarButton ID="AssignAuthorityGroupsButton" runat="server" SkinID="<%$Image:AddDataAccessButton%>" OnClick="AssignAuthorityGroupsButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

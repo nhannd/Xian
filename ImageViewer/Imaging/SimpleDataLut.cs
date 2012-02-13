@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Abstract base class for <see cref="IDataLut"/>s whose size and data
 	/// do not change.
 	/// </summary>
-	[Cloneable(true)]
+	[Cloneable]
 	public class SimpleDataLut : DataLut
 	{
 		[CloneIgnore]

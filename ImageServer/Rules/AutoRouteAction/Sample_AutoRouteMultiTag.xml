@@ -2,15 +2,10 @@
 This rule instructs the server to auto-route MR and CT studies to CLEARCANVAS 
 -->
 <rule>
-	<condition
-	  expressionLanguage="dicom">
+	<condition expressionLanguage="dicom">
 		<or>
-			<equal
-			  test="$Modality"
-			  refValue="MR" />
-			<equal
-			  test="$Modality"
-			  refValue="CT" />
+			<equal test="$Modality" refValue="MR" />
+			<equal test="$Modality" refValue="CT" />
 		</or>
 	</condition>
 	<action>

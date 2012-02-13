@@ -18,6 +18,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 
@@ -31,7 +32,7 @@ namespace ClearCanvas.Dicom.Audit
 		#region Static Members
 		private static string _processId;
 		private static string _processIpAddress;
-		private static readonly object _syncLock = new object();
+		private static readonly object SyncLock = new object();
 		private static string _application;
 		private static string _processName;
 		private static string _operation;
@@ -39,8 +40,8 @@ namespace ClearCanvas.Dicom.Audit
 
 		#region Members
 		private readonly AuditMessage _message = new AuditMessage();
-		protected readonly List<AuditMessageActiveParticipant> _participantList = new List<AuditMessageActiveParticipant>(3);
-		protected readonly List<AuditSourceIdentificationType> _auditSourceList = new List<AuditSourceIdentificationType>(1);
+        protected readonly List<ActiveParticipantContents> _participantList = new List<ActiveParticipantContents>(3);
+        protected readonly List<AuditSourceIdentificationContents> _auditSourceList = new List<AuditSourceIdentificationContents>(1);
 		protected readonly Dictionary<string, AuditParticipantObject> _participantObjectList = new Dictionary<string, AuditParticipantObject>();
 		#endregion
 
@@ -56,7 +57,7 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			get
 			{
-				lock (_syncLock)
+				lock (SyncLock)
 				{
 					if (_processIpAddress == null)
 					{
@@ -66,9 +67,11 @@ namespace ClearCanvas.Dicom.Audit
 						{
 							if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 							{
+                                // Force IPv4 address if its available, its more human readable
 								_processIpAddress = ip.ToString();
+							    break;
 							}
-							else if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+							if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
 							{
 								_processIpAddress = ip.ToString();
 							}
@@ -83,7 +86,7 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			get
 			{
-				lock (_syncLock)
+				lock (SyncLock)
 				{
 					if (_processName == null) _processName = Process.GetCurrentProcess().ProcessName;
 					return _processName;
@@ -96,7 +99,7 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			get
 			{
-				lock (_syncLock)
+				lock (SyncLock)
 				{
 					if (_processId == null) _processId = Process.GetCurrentProcess().Id.ToString();
 					return _processId;
@@ -108,12 +111,12 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			get
 			{
-				lock (_syncLock)
+				lock (SyncLock)
 					return _application;
 			}
 			set
 			{
-				lock (_syncLock)
+				lock (SyncLock)
 				{
 					_application = value;
 				}
@@ -133,20 +136,31 @@ namespace ClearCanvas.Dicom.Audit
 		}
 		#endregion
 
-
 		#region Public Methods
+
 		public bool Verify(out string failureMessage)
+		{
+			Exception ex;
+			if (!Verify(out ex))
+			{
+				failureMessage = ex.Message;
+				return false;
+			}
+			failureMessage = string.Empty;
+			return true;
+		}
+
+		public bool Verify(out Exception exception)
 		{
 			XmlSchema schema;
 
 			using (Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "DicomAuditMessageSchema.xsd"))
 			{
 				if (stream == null)
-					throw new DicomException("Unable to load script resource (is the script an embedded resource?): " + "DicomAuditMessageSchema.xsd");
-
+					throw new DicomException("Unable to load XSD resource (is the XSD an embedded resource?): " + "DicomAuditMessageSchema.xsd");
 				schema = XmlSchema.Read(stream, null);
 			}
-	
+
 			try
 			{
 				XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
@@ -161,11 +175,11 @@ namespace ClearCanvas.Dicom.Audit
 			}
 			catch (Exception e)
 			{
-				failureMessage = e.Message;
+				exception = e;
 				return false;
 			}
 
-			failureMessage = string.Empty;
+			exception = null;
 			return true;
 		}
 
@@ -177,12 +191,12 @@ namespace ClearCanvas.Dicom.Audit
 		public string Serialize(bool format)
 		{
 			AuditMessage.ActiveParticipant = _participantList.ToArray();
-			AuditMessage.AuditSourceIdentification = _auditSourceList.ToArray();
+			AuditMessage.AuditSourceIdentification = CollectionUtils.FirstElement(_auditSourceList);
 
-			List<ParticipantObjectIdentificationType> list = new List<ParticipantObjectIdentificationType>(_participantObjectList.Values.Count);
+            List<ParticipantObjectIdentificationContents> list = new List<ParticipantObjectIdentificationContents>(_participantObjectList.Values.Count);
 			foreach (AuditParticipantObject o in _participantObjectList.Values)
 			{
-				list.Add(new ParticipantObjectIdentificationType(o));
+                list.Add(new ParticipantObjectIdentificationContents(o));
 			}
 			AuditMessage.ParticipantObjectIdentification = list.ToArray();
 
@@ -218,19 +232,19 @@ namespace ClearCanvas.Dicom.Audit
 			if (parms is ClientAssociationParameters)
 			{
 				_participantList.Add(
-					new AuditMessageActiveParticipant(CodedValueType.Source, "AETITLE=" + parms.CallingAE, null, null,
+                    new ActiveParticipantContents(RoleIDCode.Source, "AETITLE=" + parms.CallingAE, null, null,
 													  parms.LocalEndPoint.Address.ToString(), NetworkAccessPointTypeEnum.IpAddress, null));
 				_participantList.Add(
-					new AuditMessageActiveParticipant(CodedValueType.Destination, "AETITLE=" + parms.CalledAE, null, null,
+                    new ActiveParticipantContents(RoleIDCode.Destination, "AETITLE=" + parms.CalledAE, null, null,
 													  parms.RemoteEndPoint.Address.ToString(), NetworkAccessPointTypeEnum.IpAddress, null));
 			}
 			else
 			{
 				_participantList.Add(
-					new AuditMessageActiveParticipant(CodedValueType.Source, "AETITLE=" + parms.CallingAE, null, null,
+                    new ActiveParticipantContents(RoleIDCode.Source, "AETITLE=" + parms.CallingAE, null, null,
 													  parms.RemoteEndPoint.Address.ToString(), NetworkAccessPointTypeEnum.IpAddress, null));
 				_participantList.Add(
-					new AuditMessageActiveParticipant(CodedValueType.Destination, "AETITLE=" + parms.CalledAE, null,null,
+                    new ActiveParticipantContents(RoleIDCode.Destination, "AETITLE=" + parms.CalledAE, null, null,
 													  parms.LocalEndPoint.Address.ToString(), NetworkAccessPointTypeEnum.IpAddress, null));
 			}
 		}
@@ -238,15 +252,15 @@ namespace ClearCanvas.Dicom.Audit
 		protected void InternalAddActiveDicomParticipant(string sourceAE, string sourceHost, string destinationAE, string destinationHost)
 		{
 			IPAddress x;
-			_participantList.Add(new AuditMessageActiveParticipant(CodedValueType.Source, "AETITLE=" + sourceAE, null, null,
+            _participantList.Add(new ActiveParticipantContents(RoleIDCode.Source, "AETITLE=" + sourceAE, null, null,
 				sourceHost, IPAddress.TryParse(sourceHost, out x) ? NetworkAccessPointTypeEnum.IpAddress : NetworkAccessPointTypeEnum.MachineName, null));
-			_participantList.Add(new AuditMessageActiveParticipant(CodedValueType.Destination, "AETITLE=" + destinationAE, null, null,
+            _participantList.Add(new ActiveParticipantContents(RoleIDCode.Destination, "AETITLE=" + destinationAE, null, null,
 				destinationHost, IPAddress.TryParse(destinationHost, out x) ? NetworkAccessPointTypeEnum.IpAddress : NetworkAccessPointTypeEnum.MachineName, null));
 		}
 
 		protected void InternalAddAuditSource(DicomAuditSource auditSource)
 		{
-			_auditSourceList.Add(new AuditSourceIdentificationType(auditSource));
+			_auditSourceList.Add(new AuditSourceIdentificationContents(auditSource));
 		}
 		
 		protected void InternalAddParticipantObject(string key, AuditParticipantObject study)
@@ -257,7 +271,7 @@ namespace ClearCanvas.Dicom.Audit
 		protected void InternalAddActiveParticipant(AuditActiveParticipant participant)
 
 		{
-			_participantList.Add(new AuditMessageActiveParticipant(participant));
+			_participantList.Add(new ActiveParticipantContents(participant));
 		}
 		#endregion
 

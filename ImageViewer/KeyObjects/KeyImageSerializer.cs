@@ -36,6 +36,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 	/// <remarks>
 	/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
 	/// </remarks>
+	// TODO CR (Oct 11): Refactor to use SopInstanceFactory
 	public class KeyImageSerializer
 	{
 		private readonly FramePresentationList _framePresentationStates;

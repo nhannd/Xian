@@ -88,11 +88,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DICOM Server.
+        ///   Looks up a localized string similar to DICOM.
         /// </summary>
-        internal static string DicomServerConfiguration {
+        internal static string DicomConfiguration {
             get {
-                return ResourceManager.GetString("DicomServerConfiguration", resourceCulture);
+                return ResourceManager.GetString("DicomConfiguration", resourceCulture);
             }
         }
         
@@ -813,6 +813,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string ReindexApplicationName {
             get {
                 return ResourceManager.GetString("ReindexApplicationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local Server.
+        /// </summary>
+        internal static string ServerConfiguration {
+            get {
+                return ResourceManager.GetString("ServerConfiguration", resourceCulture);
             }
         }
         

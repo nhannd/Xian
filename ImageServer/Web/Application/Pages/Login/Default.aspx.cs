@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 SessionManager.InitializeSession(UserName.Text, Password.Text);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, SessionManager.Current.Credentials.DisplayName));
 				ServerPlatform.LogAuditMessage(audit);
 			}
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 PasswordExpiredDialog.Show(UserName.Text, Password.Text);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
 				ServerPlatform.LogAuditMessage(audit);
 			}
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 UserName.Focus();
 
                 UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-                    EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, UserAuthenticationEventType.Login);
+                    EventIdentificationContentsEventOutcomeIndicator.SeriousFailureActionTerminated, UserAuthenticationEventType.Login);
                 audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
                 ServerPlatform.LogAuditMessage(audit);
             }
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 ShowError(ErrorMessages.CannotContactEnterpriseServer);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
 				ServerPlatform.LogAuditMessage(audit);
 			}
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 ShowError(ex.Message);
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
+					EventIdentificationContentsEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
 				ServerPlatform.LogAuditMessage(audit);
 			}

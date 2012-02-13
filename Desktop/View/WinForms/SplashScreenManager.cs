@@ -53,7 +53,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		// Constants
 		private const double OpacityDelta = 0.20;	// 20%
-		private const int CloseDelay = 2000;		// 2.0 seconds
+		private const int CloseDelay = 20;			// 0.02 seconds
 		private const int TimerInterval = 50;		// 50 ms
 
 		/// <summary>

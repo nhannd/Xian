@@ -417,4 +417,58 @@
   <data name="NameSopInstanceUid" xml:space="preserve">
     <value>Sop Instance UID</value>
   </data>
+  <data name="DescriptionPatientBreedCodeSequence" xml:space="preserve">
+    <value>Coded identifier of the breed of the patient</value>
+  </data>
+  <data name="DescriptionPatientBreedDescription" xml:space="preserve">
+    <value>Description of the breed of the patient</value>
+  </data>
+  <data name="DescriptionPatientSpeciesCodeSequence" xml:space="preserve">
+    <value>Coded identifier of the species of the patient</value>
+  </data>
+  <data name="DescriptionPatientSpeciesDescription" xml:space="preserve">
+    <value>Description of the species of the patient</value>
+  </data>
+  <data name="DescriptionResponsibleOrganization" xml:space="preserve">
+    <value>The organization responsible for the patient</value>
+  </data>
+  <data name="DescriptionResponsiblePerson" xml:space="preserve">
+    <value>The person responsible for the patient (e.g. the owner)</value>
+  </data>
+  <data name="NamePatientBreedCodeSequence" xml:space="preserve">
+    <value>Patient Breed Code Sequence</value>
+  </data>
+  <data name="NamePatientBreedDescription" xml:space="preserve">
+    <value>Patient Breed Description</value>
+  </data>
+  <data name="NamePatientSpeciesCodeSequence" xml:space="preserve">
+    <value>Patient Species Code Sequence</value>
+  </data>
+  <data name="NamePatientSpeciesDescription" xml:space="preserve">
+    <value>Patient Species Description</value>
+  </data>
+  <data name="NameResponsibleOrganization" xml:space="preserve">
+    <value>Responsible Organization</value>
+  </data>
+  <data name="NameResponsiblePerson" xml:space="preserve">
+    <value>Responsible Person</value>
+  </data>
+  <data name="DescriptionCodeMeaning" xml:space="preserve">
+    <value>The meaning of the coded identifier value</value>
+  </data>
+  <data name="DescriptionCodeValue" xml:space="preserve">
+    <value>The coded identifier value</value>
+  </data>
+  <data name="DescriptionCodingSchemeDesignator" xml:space="preserve">
+    <value>The identifier of the coding scheme</value>
+  </data>
+  <data name="NameCodeMeaning" xml:space="preserve">
+    <value>Code Meaning</value>
+  </data>
+  <data name="NameCodeValue" xml:space="preserve">
+    <value>Code Value</value>
+  </data>
+  <data name="NameCodingSchemeDesignator" xml:space="preserve">
+    <value>Coding Scheme Designator</value>
+  </data>
 </root>

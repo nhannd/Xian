@@ -22,7 +22,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
     public partial class PersonNameInputPanel : UserControl
     {
         private PersonName _personName;
-        private bool _required;
         private string _validationGroup = "PersonNameInputValidationGroup";
         public PersonName PersonName
         {
@@ -30,7 +29,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             get
             {
                 string singlebyte =
-                    StringUtilities.Combine<string>(new string[]
+                    StringUtilities.Combine(new[]
                                                         {
                                                             PersonLastName.Text,
                                                             PersonGivenName.Text,
@@ -42,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 singlebyte = singlebyte.TrimEnd('^');
 
                 string ideographicName =
-                    StringUtilities.Combine<string>(new string[]
+                    StringUtilities.Combine(new[]
                                                         {
                                                             IdeographicLastName.Text,
                                                             IdeographicGivenName.Text,
@@ -54,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 ideographicName = ideographicName.TrimEnd('^');
 
                 string phoneticName =
-                    StringUtilities.Combine<string>(new string[]
+                    StringUtilities.Combine(new[]
                                                         {
                                                             PhoneticLastName.Text,
                                                             PhoneticGivenName.Text,
@@ -66,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 phoneticName = phoneticName.TrimEnd('^');
 
 
-                string dicomName = StringUtilities.Combine<string>(new string[]
+                string dicomName = StringUtilities.Combine(new[]
                                                         {
                                                             singlebyte,
                                                             ideographicName,
@@ -79,11 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             }
         }
 
-        public bool Required
-        {
-            get { return _required; }
-            set { _required = value; }
-        }
+        public bool Required { get; set; }
 
         public string ValidationGroup
         {
@@ -100,7 +95,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             PhoneticNameRowIndicator.ImageUrl = ImageServerConstants.ImageURLs.PhoneticName;
             IdeographyNameIndicator.ImageUrl = ImageServerConstants.ImageURLs.IdeographyName;
-            ScriptTemplate script =
+            var script =
                 new ScriptTemplate(typeof(PersonNameInputPanel).Assembly,
                                    "ClearCanvas.ImageServer.Web.Application.Controls.PersonNameInputPanel.js");
             script.Replace("@@CLIENTID@@", ClientID);
@@ -148,6 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 PersonMiddleName.Text = _personName.MiddleName;
                 PersonGivenName.Text = _personName.FirstName;
                 PersonTitle.Text = _personName.Title;
+                PersonSuffix.Text = _personName.Suffix;
 
                 if (_personName.Phonetic.IsEmpty)
                 {
@@ -191,7 +187,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 IdeographicRow.Style.Add(HtmlTextWriterStyle.Visibility, "hidden");
                 IdeographicRow.Style.Add(HtmlTextWriterStyle.Display, "none");
             }
-
         }
     }
 }

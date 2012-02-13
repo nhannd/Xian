@@ -19,16 +19,8 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 	/// </summary>
 	[EnterpriseCoreService]
 	[ServiceContract]
-	public interface IAuthorityGroupAdminService
-	{
-		/// <summary>
-		/// Summary list of all authority groups
-		/// </summary>
-		/// <param name="request"><see cref="ListAuthorityGroupsRequest"/></param>
-		/// <returns><see cref="ListAuthorityGroupsResponse"/></returns>
-		[OperationContract]
-		ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request);
-
+    public interface IAuthorityGroupAdminService
+	{		
 		/// <summary>
 		/// Add a new authority group
 		/// </summary>
@@ -46,7 +38,8 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 		[OperationContract]
 		[FaultContract(typeof(ConcurrentModificationException))]
 		[FaultContract(typeof(RequestValidationException))]
-		UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request);
+        [FaultContract(typeof(UserAccessDeniedException))]
+        UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request);
 
 		/// <summary>
 		/// Deletes an authority group
@@ -90,5 +83,13 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 		/// <returns></returns>
 		[OperationContract]
 		ImportAuthorityGroupsResponse ImportAuthorityGroups(ImportAuthorityGroupsRequest request);
+
+        /// <summary>
+        /// Summary list of all authority groups
+        /// </summary>
+        /// <param name="request"><see cref="ListAuthorityGroupsRequest"/></param>
+        /// <returns><see cref="ListAuthorityGroupsResponse"/></returns>
+        [OperationContract]
+        ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request);
 	}
 }

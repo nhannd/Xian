@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				Assert.Less(results[n], 0.01, "{0}:: opacity test frame #{1} exceeds difference limit.", testName, n);
 		}
 
-		private static IList<double> DiffFusionOperatorResults(IDataLut colorMap, bool thresholding, string testName)
+		private static IList<double> DiffFusionOperatorResults(IColorMap colorMap, bool thresholding, string testName)
 		{
 			var outputPath = new DirectoryInfo(Path.Combine(typeof (FusionColorCompositingTest).FullName, testName));
 			if (outputPath.Exists)
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		/// <summary>
 		/// Reference implementation of the image fusion operator.
 		/// </summary>
-		private static IPresentationImage Fuse(IPresentationImage baseImage, IPresentationImage overlayImage, IComposableLut colorMap, float opacity, bool thresholding)
+		private static IPresentationImage Fuse(IPresentationImage baseImage, IPresentationImage overlayImage, IColorMap colorMap, float opacity, bool thresholding)
 		{
 			Platform.CheckTrue(baseImage is IImageSopProvider, "baseImage must be a IImageSopProvider.");
 			Platform.CheckTrue(overlayImage is IImageSopProvider, "overlayImage must be a IImageSopProvider.");
@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 			}
 		}
 
-		private static void SetFusionDisplayParameters(IPresentationImage image, IDataLut colorMap, float opacity, bool thresholding)
+		private static void SetFusionDisplayParameters(IPresentationImage image, IColorMap colorMap, float opacity, bool thresholding)
 		{
 			if (image is IColorMapProvider)
 			{

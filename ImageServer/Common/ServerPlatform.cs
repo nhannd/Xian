@@ -504,6 +504,19 @@ namespace ClearCanvas.ImageServer.Common
         }
 
         /// <summary>
+        /// Helper method to return the path to the root folder under which duplicates are stored.
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <returns></returns>
+        public static String GetDuplicateFolderRootPath(StudyStorageLocation studyStorage)
+        {
+            String path = Path.Combine(studyStorage.FilesystemPath, studyStorage.PartitionFolder);
+            path = Path.Combine(path, ReconcileStorageFolder);
+
+            return path;
+        }
+
+        /// <summary>
         /// Helper method to return the path to the folder containing the duplicate images (in the Reconcile folder)
         /// </summary>
         /// <param name="storageLocation"></param>

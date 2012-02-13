@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			private void Apply()
 			{
 				ImageOperationApplicator applicator = new ImageOperationApplicator(_ownerTool.SelectedPresentationImage, _preset.Operation);
-				UndoableCommand historyCommand = applicator.ApplyToAllImages();
+				UndoableCommand historyCommand = _ownerTool._toolBehavior.Behavior.SelectedImageWindowLevelPresetsTool ? applicator.ApplyToReferenceImage() : applicator.ApplyToAllImages();
 				if (historyCommand != null)
 				{
 					historyCommand.Name = SR.CommandWindowLevelPreset;

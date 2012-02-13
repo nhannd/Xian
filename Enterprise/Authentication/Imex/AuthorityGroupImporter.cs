@@ -9,12 +9,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using ClearCanvas.Enterprise.Core;
-using System.IO;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
@@ -72,13 +68,17 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
             foreach (AuthorityGroupDefinition groupDef in groupDefs)
             {
                 AuthorityGroup group = CollectionUtils.SelectFirst(existingGroups,
-                    delegate(AuthorityGroup g) { return g.Name == groupDef.Name; });
+                                                                   g => g.Name == groupDef.Name);
 
                 // if group does not exist, create it
                 if (group == null)
                 {
-                    group = new AuthorityGroup();
-                    group.Name = groupDef.Name;
+                    group = new AuthorityGroup
+                                {
+                                    Name = groupDef.Name,
+                                    Description = groupDef.Description,
+                                    DataGroup = groupDef.DataGroup
+                                };
                     context.Lock(group, DirtyState.New);
                     existingGroups.Add(group);
                 }
@@ -87,7 +87,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
                 foreach (string tokenName in groupDef.Tokens)
                 {
                     AuthorityToken token = CollectionUtils.SelectFirst(existingTokens,
-                        delegate(AuthorityToken t) { return t.Name == tokenName; });
+                                                                       t => t.Name == tokenName);
 
                     // ignore non-existent tokens
                     if (token == null)

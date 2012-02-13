@@ -10,23 +10,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media.Effects;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Windows.Media.Imaging;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
+using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 {
@@ -35,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         private MouseEvent _mouseEnterEvent;
         private MouseEvent _mouseLeaveEvent;
         private AppServiceReference.WebIconSize _iconSize;
-        
+
         public HelpButton()
         {
             InitializeComponent();
@@ -86,21 +76,30 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             {
                 case AppServiceReference.WebIconSize.Large:
 
-                    HelpIcon.Source = new BitmapImage(new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpLarge.png"), UriKind.RelativeOrAbsolute));
-                        break;
+                    HelpIcon.Source =
+                        new BitmapImage(
+                            new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpLarge.png"),
+                                    UriKind.RelativeOrAbsolute));
+                    break;
 
                 case AppServiceReference.WebIconSize.Medium:
 
-                        HelpIcon.Source = new BitmapImage(new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpMedium.png"), UriKind.RelativeOrAbsolute));
-                        break;
+                    HelpIcon.Source =
+                        new BitmapImage(
+                            new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpMedium.png"),
+                                    UriKind.RelativeOrAbsolute));
+                    break;
 
                 case AppServiceReference.WebIconSize.Small:
 
-                        BitmapImage bmp = new BitmapImage(new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpSmall.png"), UriKind.RelativeOrAbsolute));
-                        HelpIcon.Source = bmp;
-                         break;
-            } 
-            
+                    var bmp =
+                        new BitmapImage(
+                            new Uri(String.Format("/{0};component/{1}", assemblyName, "Images/HelpSmall.png"),
+                                    UriKind.RelativeOrAbsolute));
+                    HelpIcon.Source = bmp;
+                    break;
+            }
+
         }
 
         #endregion

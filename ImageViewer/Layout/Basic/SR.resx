@@ -165,9 +165,6 @@
   <data name="LabelStudyCouldNotBeLoaded" xml:space="preserve">
     <value>The study could not be loaded.</value>
   </data>
-  <data name="LabelUnknownServer" xml:space="preserve">
-    <value>Unknown</value>
-  </data>
   <data name="MenuExplodeImageBox" xml:space="preserve">
     <value>Survey/Explode</value>
   </data>
@@ -183,27 +180,19 @@
   <data name="MenuStandard" xml:space="preserve">
     <value>Standard</value>
   </data>
-  <data name="MessageActionNoStudyLoader" xml:space="preserve">
-    <value>The study is on a non-streaming server and must be retrieved to view it.</value>
-  </data>
-  <data name="MessageActionStudyCouldNotBeLoaded" xml:space="preserve">
-    <value>The study could not be loaded.  Please contact your PACS administrator.</value>
-  </data>
-  <data name="MessageActionStudyInUse" xml:space="preserve">
-    <value>The study is in use.  Please close the current study, wait a few minutes, then try loading the study again.</value>
-  </data>
-  <data name="MessageActionStudyNearline" xml:space="preserve">
-    <value>The study is nearline.  If your PACS is a ClearCanvas ImageServer, please try opening the study manually, then wait a few minutes before trying again.
-Alternately, the study can be brought back online by a PACS administrator.</value>
-  </data>
-  <data name="MessageActionStudyOffline" xml:space="preserve">
-    <value>The study is offline and must be brought back online by a PACS administrator.</value>
-  </data>
   <data name="MessageLoadPriorsErrorPrefix" xml:space="preserve">
     <value>The following errors occurred while loading prior studies:</value>
   </data>
+  <data name="MessagePriorsIncomplete" xml:space="preserve">
+    <value>The search for prior studies did not complete successfully because at least one of your default servers was unreachable.
+Although some priors may be available, please be aware that you may be working with an incomplete patient history.
+
+PLEASE NOTE that you will NOT be notified of this problem again for as long as this problem persists.</value>
+  </data>
   <data name="MessageSearchForPriorsFailed" xml:space="preserve">
-    <value>The search for prior studies has failed.  Try reopening the study or select a different default server.</value>
+    <value>The search for prior studies has failed.  Try reopening the study or select a different default server.
+
+PLEASE NOTE that you will NOT be notified of this problem again for as long as this problem persists.</value>
   </data>
   <data name="Nearline" xml:space="preserve">
     <value>nearline</value>

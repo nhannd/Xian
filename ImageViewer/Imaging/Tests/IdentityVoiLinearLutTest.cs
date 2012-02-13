@@ -27,66 +27,45 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		}
 
 		[Test]
-		public void TestConstruction2()
-		{
-			IdentityVoiLinearLut lut = new IdentityVoiLinearLut(16);
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentOutOfRangeException))]
-		public void TestInvalidConstruction()
-		{
-			IdentityVoiLinearLut lut = new IdentityVoiLinearLut(0);
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentOutOfRangeException))]
-		public void TestInvalidConstruction2()
-		{
-			IdentityVoiLinearLut lut = new IdentityVoiLinearLut(32);
-		}
-
-		[Test]
 		public void Test1Bit()
 		{
 			const int bitDepth = 1;
-			TestIdentityLut(new IdentityVoiLinearLut(bitDepth), bitDepth);
+			TestIdentityLut(new IdentityVoiLinearLut(bitDepth, false), bitDepth);
 		}
 
 		[Test]
 		public void Test3Bit()
 		{
 			const int bitDepth = 3;
-			TestIdentityLut(new IdentityVoiLinearLut(bitDepth), bitDepth);
+			TestIdentityLut(new IdentityVoiLinearLut(bitDepth, false), bitDepth);
 		}
 
 		[Test]
 		public void Test4Bit()
 		{
 			const int bitDepth = 4;
-			TestIdentityLut(new IdentityVoiLinearLut(bitDepth), bitDepth);
+			TestIdentityLut(new IdentityVoiLinearLut(bitDepth, false), bitDepth);
 		}
 
 		[Test]
 		public void Test8Bit()
 		{
 			const int bitDepth = 8;
-			TestIdentityLut(new IdentityVoiLinearLut(), bitDepth);
-			TestIdentityLut(new IdentityVoiLinearLut(bitDepth), bitDepth);
+			TestIdentityLut(new IdentityVoiLinearLut(bitDepth, false), bitDepth);
 		}
 
 		[Test]
 		public void Test12Bit()
 		{
 			const int bitDepth = 12;
-			TestIdentityLut(new IdentityVoiLinearLut(bitDepth), bitDepth);
+			TestIdentityLut(new IdentityVoiLinearLut(bitDepth, false), bitDepth);
 		}
 
 		[Test]
 		public void Test31Bit()
 		{
 			const int bitDepth = 31;
-			TestIdentityLut(new IdentityVoiLinearLut(bitDepth), bitDepth);
+			TestIdentityLut(new IdentityVoiLinearLut(bitDepth, false), bitDepth);
 		}
 
 		private static void TestIdentityLut(IdentityVoiLinearLut lut, int bitDepth)

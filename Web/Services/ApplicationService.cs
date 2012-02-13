@@ -179,12 +179,12 @@ namespace ClearCanvas.Web.Services
 		}
 
 		public void StopApplication(StopApplicationRequest request)
-		{
-            IApplication application = FindApplication(request.ApplicationId);
-			
+		{			
 			try
 			{
-			    Platform.Log(LogLevel.Info, "Received application shutdown request from {0}", GetClientAddress());
+                IApplication application = FindApplication(request.ApplicationId);
+
+                Platform.Log(LogLevel.Info, "Received application shutdown request from {0}", GetClientAddress());
                    
                 application.Shutdown();
 			}
@@ -205,12 +205,24 @@ namespace ClearCanvas.Web.Services
 
             if (application!=null)
             {
-                var response = new GetPendingEventRequestResponse()
-                                   {
-                                       ApplicationId = application.Identifier,
-                                       EventSet = application.GetPendingOutboundEvent(Math.Max(0, request.MaxWaitTime))
-                                   };
-                return response;
+                try
+                {
+                    var response = new GetPendingEventRequestResponse
+                                       {
+                                           ApplicationId = application.Identifier,
+                                           EventSet = application.GetPendingOutboundEvent(Math.Max(0, request.MaxWaitTime))
+                                       };
+                
+                    return response;
+                }
+                catch (Exception)
+                {
+                    // This happens on shutdown, just return an empty response.
+                    return new GetPendingEventRequestResponse
+                               {
+                                   ApplicationId = application.Identifier,
+                               };
+                }
             }
 
             // Without a permanent connection, there's a chance the client is polling even when the application has stopped on the server.

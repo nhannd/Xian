@@ -426,16 +426,16 @@
     <value>Server</value>
   </data>
   <data name="AdminUserGroups_GroupName" xml:space="preserve">
-    <value>Group Name</value>
+    <value>Authority Group Name</value>
   </data>
   <data name="AdminUserGroups_Tokens" xml:space="preserve">
-    <value>Tokens</value>
+    <value>Authority Tokens</value>
   </data>
   <data name="LastLogin" xml:space="preserve">
     <value>Last Login</value>
   </data>
   <data name="UserGroups" xml:space="preserve">
-    <value>User Groups</value>
+    <value>Authority Groups</value>
   </data>
   <data name="UserID" xml:space="preserve">
     <value>User ID</value>
@@ -446,16 +446,28 @@
   <data name="UserDisplayName" xml:space="preserve">
     <value>Display Name</value>
   </data>
+  <data name="AdminUserGroups_DataGroup" xml:space="preserve">
+    <value>Data Access Authority Group</value>
+  </data>
+  <data name="AdminUserGroups_GroupDescription" xml:space="preserve">
+    <value>Authority Group Description</value>
+  </data>
+  <data name="StudyDetails_GroupName" xml:space="preserve">
+    <value>Authority Groups with Access to This Study</value>
+  </data>
   <data name="ServerRuleType" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="UserEmailAddress" xml:space="preserve">
+    <value>Email Address</value>
   </data>
   <data name="DicomTagDetails" xml:space="preserve">
     <value>Details</value>
   </data>
   <data name="DicomTagName" xml:space="preserve">
-    <value>Tag</value>
+    <value>Dicom Tag</value>
   </data>
-  <data name="DeletedBy" xml:space="preserve">
+  <data name="AdminDeletedStudies_DeletedBy" xml:space="preserve">
     <value>Deleted By</value>
   </data>
 </root>

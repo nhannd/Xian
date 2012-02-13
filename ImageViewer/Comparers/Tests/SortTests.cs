@@ -235,8 +235,6 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				set.Dispose();
 
 			studyTree.Dispose();
-
-			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private List<Study> GetStudies(IEnumerable<IImageSet> imageSets, StudyTree studyTree)
@@ -289,8 +287,6 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				set.Dispose();
 			foreach (DisplaySet set in orderedCollection)
 				set.Dispose();
-
-			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private void TestSortingDicomImagesBySliceLocation(bool reverse)
@@ -308,8 +304,6 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				image.Dispose();
 			foreach (PresentationImage image in orderedCollection)
 				image.Dispose();
-
-			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private void TestSortingDicomImagesByAcquisitionTime(bool reverse)
@@ -327,8 +321,6 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				image.Dispose();
 			foreach (PresentationImage image in orderedCollection)
 				image.Dispose();
-
-			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private void TestSortingDicomImagesByInstanceAndFrameNumber(bool reverse)
@@ -368,8 +360,6 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				image.Dispose();
 			foreach (PresentationImage image in orderedCollection)
 				image.Dispose();
-
-			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private IEnumerable<IPresentationImage> GetAcquisitionTimeTestImages()

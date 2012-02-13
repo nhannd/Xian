@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A3FD975D-F9A7-4435-B4E2-BB7FAEB92B44}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -14,6 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,6 +37,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
@@ -80,10 +84,6 @@
     <ProjectReference Include="..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\StudyLocator\ClearCanvas.ImageViewer.StudyLocator.csproj">
-      <Project>{68995968-271C-4915-B936-0F06C413F0B4}</Project>
-      <Name>ClearCanvas.ImageViewer.StudyLocator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

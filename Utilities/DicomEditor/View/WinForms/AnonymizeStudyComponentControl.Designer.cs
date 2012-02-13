@@ -59,6 +59,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnonymizeStudyComponentControl));
 			this._okButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
@@ -69,6 +70,10 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			this._patientId = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._studyDescription = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._preserveSeriesData = new System.Windows.Forms.CheckBox();
+			this._keepReportsAndAttachments = new System.Windows.Forms.CheckBox();
+			this._tooltipProvider = new System.Windows.Forms.ToolTip(this.components);
+			this._warningProvider = new System.Windows.Forms.ErrorProvider(this.components);
+			((System.ComponentModel.ISupportInitialize)(this._warningProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _okButton
@@ -137,10 +142,23 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			this._preserveSeriesData.Name = "_preserveSeriesData";
 			this._preserveSeriesData.UseVisualStyleBackColor = true;
 			// 
+			// _keepReportsAndAttachments
+			// 
+			resources.ApplyResources(this._keepReportsAndAttachments, "_keepReportsAndAttachments");
+			this._keepReportsAndAttachments.Name = "_keepReportsAndAttachments";
+			this._tooltipProvider.SetToolTip(this._keepReportsAndAttachments, resources.GetString("_keepReportsAndAttachments.ToolTip"));
+			this._keepReportsAndAttachments.UseVisualStyleBackColor = true;
+			// 
+			// _warningProvider
+			// 
+			this._warningProvider.ContainerControl = this;
+			resources.ApplyResources(this._warningProvider, "_warningProvider");
+			// 
 			// AnonymizeStudyComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._keepReportsAndAttachments);
 			this.Controls.Add(this._preserveSeriesData);
 			this.Controls.Add(this._studyDescription);
 			this.Controls.Add(this._patientId);
@@ -151,6 +169,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
 			this.Name = "AnonymizeStudyComponentControl";
+			((System.ComponentModel.ISupportInitialize)(this._warningProvider)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -167,5 +186,8 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _patientId;
 		private ClearCanvas.Desktop.View.WinForms.TextField _studyDescription;
 		private System.Windows.Forms.CheckBox _preserveSeriesData;
+		private System.Windows.Forms.CheckBox _keepReportsAndAttachments;
+		private System.Windows.Forms.ToolTip _tooltipProvider;
+		private System.Windows.Forms.ErrorProvider _warningProvider;
     }
 }

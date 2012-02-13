@@ -49,21 +49,21 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="type">Network Attach or Detach</param>
 		/// <param name="node">The identity of the node entering or leaving the network</param>
 		/// <param name="auditSource">The source of the audit message.</param>
-		public NetworkEntryAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, NetworkEntryType type, AuditProcessActiveParticipant node)
+		public NetworkEntryAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome, NetworkEntryType type, AuditProcessActiveParticipant node)
 			: base("NetworkEntry")
 
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.NetworkEntry;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.NetworkEntry;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.E;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
 			if (type == NetworkEntryType.Attach)
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] {CodedValueType.Attach};
+                AuditMessage.EventIdentification.EventTypeCode = new EventTypeCode[] { EventTypeCode.Attach };
 			else
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] {CodedValueType.Detach};
+                AuditMessage.EventIdentification.EventTypeCode = new EventTypeCode[] { EventTypeCode.Detach };
 
 			node.UserIsRequestor = false;
 			InternalAddActiveParticipant(node);

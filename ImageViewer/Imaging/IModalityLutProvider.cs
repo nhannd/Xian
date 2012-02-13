@@ -25,6 +25,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This property should never return null.
 		/// </remarks>
-		IComposableLut ModalityLut { get; }
+		IModalityLut ModalityLut { get; }
 	}
 }

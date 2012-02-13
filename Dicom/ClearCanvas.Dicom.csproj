@@ -1,4 +1,5 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -21,8 +22,9 @@
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation />
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <PublishUrl>http://localhost/ClearCanvas.Dicom/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -37,6 +39,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -59,6 +62,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -80,6 +84,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -193,9 +198,6 @@
     <Compile Include="Audit\DicomInstancesTransferredAuditHelper.cs" />
     <Compile Include="Audit\DicomStudyDeletedAuditHelper.cs" />
     <Compile Include="Audit\NetworkEntryAuditHelper.cs" />
-    <Compile Include="Audit\OrderRecordAuditHelper.cs" />
-    <Compile Include="Audit\PatientRecordAuditHelper.cs" />
-    <Compile Include="Audit\ProcedureRecordAuditHelper.cs" />
     <Compile Include="Audit\QueryAuditHelper.cs" />
     <Compile Include="Audit\SecurityAlertAuditHelper.cs" />
     <Compile Include="Audit\Test\AuditTest.cs" />
@@ -223,8 +225,13 @@
     <Compile Include="DirectoryRecordCollection.cs" />
     <Compile Include="DirectoryRecordSequenceItem.cs" />
     <Compile Include="IDicomAttributeProvider.cs" />
+    <Compile Include="Iod\AnatomicalOrientationType.cs" />
+    <Compile Include="Iod\ContextGroups\BreedContextGroup.cs" />
+    <Compile Include="Iod\ContextGroups\BreedRegistryContextGroup.cs" />
     <Compile Include="Iod\ContextGroups\ContextGroupItemBase.cs" />
     <Compile Include="Iod\ContextGroups\IsotopesInRadiopharmaceuticals.cs" />
+    <Compile Include="Iod\ContextGroups\MixBreedsContextGroup.cs" />
+    <Compile Include="Iod\ContextGroups\SpeciesContextGroup.cs" />
     <Compile Include="Iod\DataLut.cs" />
     <Compile Include="Iod\ContextGroups\ContextGroupBase.cs" />
     <Compile Include="Iod\ContextGroups\KeyObjectSelectionDocumentTitle.cs" />
@@ -232,8 +239,10 @@
     <Compile Include="Iod\HierarchicalSopInstanceReferenceDictionary.cs" />
     <Compile Include="Iod\IApplicationEntity.cs" />
     <Compile Include="Iod\ImageSopInstanceReferenceDictionary.cs" />
+    <Compile Include="Iod\Institution.cs" />
     <Compile Include="Iod\IodBase.cs" />
     <Compile Include="Iod\Iods\ColorSoftcopyPresentationStateIod.cs" />
+    <Compile Include="Iod\Iods\EncapsulatedPdfIod.cs" />
     <Compile Include="Iod\Iods\GrayscaleSoftcopyPresentationStateIod.cs" />
     <Compile Include="Iod\Iods\ImageIod.cs" />
     <Compile Include="Iod\Iods\ImageQueryIod.cs" />
@@ -278,6 +287,8 @@
     <Compile Include="Iod\Modules\ClinicalTrialSubjectModuleIod.cs" />
     <Compile Include="Iod\Modules\DisplayedArea.cs" />
     <Compile Include="Iod\Modules\DisplayShutterMacroIod.cs" />
+    <Compile Include="Iod\Modules\EncapsulatedDocumentModule.cs" />
+    <Compile Include="Iod\Modules\EncapsulatedDocumentSeriesModuleIod.cs" />
     <Compile Include="Iod\Modules\GeneralEquipment.cs" />
     <Compile Include="Iod\Modules\GeneralSeriesModuleIod.cs" />
     <Compile Include="Iod\Modules\GeneralStudyModuleIod.cs" />
@@ -286,7 +297,7 @@
     <Compile Include="Iod\Modules\IccProfileModule.cs" />
     <Compile Include="Iod\Modules\KeyObjectDocument.cs" />
     <Compile Include="Iod\Modules\KeyObjectDocumentSeries.cs" />
-    <Compile Include="Iod\Modules\Mask.cs" />
+    <Compile Include="Iod\Modules\MaskModuleIod.cs" />
     <Compile Include="Iod\Modules\ModalityLut.cs" />
     <Compile Include="Iod\Modules\MultiframeOverlayModule.cs" />
     <Compile Include="Iod\Modules\OverlayActivation.cs" />
@@ -312,6 +323,7 @@
     <Compile Include="Iod\Modules\PrintJobModuleIod.cs" />
     <Compile Include="Iod\Modules\RadiationDoseModuleIod.cs" />
     <Compile Include="Iod\Modules\RequestedProcedureModuleIod.cs" />
+    <Compile Include="Iod\Modules\ScEquipmentModuleIod.cs" />
     <Compile Include="Iod\Modules\ScheduledProcedureStepModuleIod.cs" />
     <Compile Include="Iod\Modules\SoftcopyPresentationLut.cs" />
     <Compile Include="Iod\Modules\SoftcopyVoiLut.cs" />
@@ -322,6 +334,7 @@
     <Compile Include="Iod\Modules\StudyModuleIod.cs" />
     <Compile Include="Iod\Modules\Tests\OverlayPlaneTests.cs" />
     <Compile Include="Iod\PaletteColorLut.cs" />
+    <Compile Include="Iod\PatientDirection.cs" />
     <Compile Include="Iod\PatientsSexNeutered.cs" />
     <Compile Include="Iod\ResponsiblePersonRole.cs" />
     <Compile Include="Iod\SequenceIodBase.cs" />
@@ -331,8 +344,10 @@
     <Compile Include="Iod\Sequences\BillingSuppliesAndDevicesSequenceIod.cs" />
     <Compile Include="Iod\Sequences\BreedRegistryCodeSequence.cs" />
     <Compile Include="Iod\Sequences\BreedRegistrationSequence.cs" />
+    <Compile Include="Iod\Sequences\CodingSchemeIdentificationSequenceIod.cs" />
     <Compile Include="Iod\Sequences\ContentTemplateSequence.cs" />
     <Compile Include="Iod\Sequences\GraphicAnnotationSequenceItem.cs" />
+    <Compile Include="Iod\Sequences\MaskSubtractionSequenceIod.cs" />
     <Compile Include="Iod\Sequences\OtherPatientIdsSequence.cs" />
     <Compile Include="Iod\Sequences\DeIdentificationMethodCodeSequence.cs" />
     <Compile Include="Iod\Sequences\PatientBreedCodeSequence.cs" />
@@ -356,6 +371,10 @@
     <Compile Include="Iod\SeriesReferenceDictionary.cs" />
     <Compile Include="Iod\ShutterShape.cs" />
     <Compile Include="Iod\StandardPaletteColorLuts.cs" />
+    <Compile Include="Iod\Tests\ModuleIodAttributeTests.cs" />
+    <Compile Include="Iod\Tests\PatientDirectionTests.cs" />
+    <Compile Include="Iod\Tests\QuadrupedPatientDirectionTests.cs" />
+    <Compile Include="Iod\VerificationFlag.cs" />
     <Compile Include="Iod\VoiDataLut.cs" />
     <Compile Include="Iod\PatientIdentityRemoved.cs" />
     <Compile Include="Iod\PatientsSex.cs" />
@@ -497,6 +516,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomSettings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="DicomTagDictionary.data" />
     <None Include="Network\NetworkSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>NetworkSettings.Designer.cs</LastGenOutput>
@@ -509,7 +529,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

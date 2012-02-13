@@ -25,10 +25,10 @@ namespace ClearCanvas.Controls.WinForms.Native
 		[DllImport("shell32.dll")]
 		public static extern int SHGetDesktopFolder(ref IShellFolder ppshf);
 
-		[DllImport("shell32.dll")]
+		[DllImport("shell32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr SHGetFileInfo([MarshalAs(UnmanagedType.LPTStr)] string pszPath, uint dwFileAttribs, out SHFILEINFO psfi, uint cbFileInfo, SHGFI uFlags);
 
-		[DllImport("shell32.dll")]
+		[DllImport("shell32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr SHGetFileInfo(IntPtr pIDL, uint dwFileAttributes, out SHFILEINFO psfi, uint cbFileInfo, SHGFI uFlags);
 
 		/// <summary>

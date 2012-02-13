@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return _collection.TryGetAttribute(tag, out attribute);
 			}
 
-			public static VolumeSopDataSourcePrototype Create(IDicomAttributeProvider source)
+			public static VolumeSopDataSourcePrototype Create(IDicomAttributeProvider source, int bitsAllocated, int bitsStored, bool isSigned)
 			{
 				VolumeSopDataSourcePrototype prototype = new VolumeSopDataSourcePrototype();
 				DicomAttributeCollection volumeDataSet = prototype._collection;
@@ -96,24 +96,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				// generate Image Pixel Module
 				volumeDataSet[DicomTags.SamplesPerPixel] = source[DicomTags.SamplesPerPixel].Copy();
 				volumeDataSet[DicomTags.PhotometricInterpretation] = source[DicomTags.PhotometricInterpretation].Copy();
-				volumeDataSet[DicomTags.BitsAllocated] = source[DicomTags.BitsAllocated].Copy();
-				volumeDataSet[DicomTags.BitsStored] = source[DicomTags.BitsStored].Copy();
-				volumeDataSet[DicomTags.HighBit] = source[DicomTags.HighBit].Copy();
-				volumeDataSet[DicomTags.PixelRepresentation] = source[DicomTags.PixelRepresentation].Copy();
-				volumeDataSet[DicomTags.PixelPaddingValue] = source[DicomTags.PixelPaddingValue];
-				volumeDataSet[DicomTags.PixelPaddingRangeLimit] = source[DicomTags.PixelPaddingRangeLimit];
-				volumeDataSet[DicomTags.SmallestImagePixelValue] = source[DicomTags.SmallestImagePixelValue];
-				volumeDataSet[DicomTags.LargestImagePixelValue] = source[DicomTags.LargestImagePixelValue];
-				volumeDataSet[DicomTags.SmallestPixelValueInSeries] = source[DicomTags.SmallestPixelValueInSeries];
-				volumeDataSet[DicomTags.LargestPixelValueInSeries] = source[DicomTags.LargestPixelValueInSeries];
-
-				// generate VOI LUT Module
-				volumeDataSet[DicomTags.WindowWidth] = source[DicomTags.WindowWidth].Copy();
-				volumeDataSet[DicomTags.WindowCenter] = source[DicomTags.WindowCenter].Copy();
-
-				// generate Modality LUT Module
-				volumeDataSet[DicomTags.RescaleSlope] = source[DicomTags.RescaleSlope].Copy();
-				volumeDataSet[DicomTags.RescaleIntercept] = source[DicomTags.RescaleIntercept].Copy();
+				volumeDataSet[DicomTags.BitsAllocated].SetInt32(0, bitsAllocated);
+				volumeDataSet[DicomTags.BitsStored].SetInt32(0, bitsStored);
+				volumeDataSet[DicomTags.HighBit].SetInt32(0, bitsStored - 1);
+				volumeDataSet[DicomTags.PixelRepresentation].SetInt32(0, isSigned ? 1 : 0);
 
 				// generate SOP Common Module
 				volumeDataSet[DicomTags.SopClassUid].SetStringValue(SopClass.SecondaryCaptureImageStorageUid);

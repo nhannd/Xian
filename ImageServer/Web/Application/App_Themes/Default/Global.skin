@@ -58,6 +58,8 @@
 <ccUI:ToolbarButton runat="server" SkinID="DiscardButton" EnabledImageURL="images/Buttons/DiscardEnabled.png" DisabledImageURL="images/Buttons/DiscardDisabled.png" HoverImageURL="images/Buttons/DiscardHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ResetPasswordButton" EnabledImageURL="images/Buttons/ResetPasswordEnabled.png" DisabledImageURL="images/Buttons/ResetPasswordDisabled.png" HoverImageURL="images/Buttons/ResetPasswordHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ViewImagesButton" EnabledImageURL="images/Buttons/ViewImagesEnabled.png" DisabledImageURL="images/Buttons/ViewImagesDisabled.png" HoverImageURL="images/Buttons/ViewImagesHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="AddDataAccessButton" EnabledImageURL="images/Buttons/AddDataAccessEnabled.png" DisabledImageURL="images/Buttons/AddDataAccessDisabled.png" HoverImageURL="images/Buttons/AddDataAccessHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="CopyButton" EnabledImageURL="images/Buttons/CopyEnabled.png" DisabledImageURL="images/Buttons/CopyDisabled.png" HoverImageURL="images/Buttons/CopyHover.png"/>
 
 <asp:LinkButton runat="server" SkinId="CloseButton"  CssClass="CloseButton" />
 

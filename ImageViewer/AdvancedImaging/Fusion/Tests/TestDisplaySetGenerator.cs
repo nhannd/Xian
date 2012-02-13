@@ -108,8 +108,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 					using (var fusionOverlaySlice = fusionOverlayData.CreateOverlaySlice(baseFrame))
 					{
 						var fus = new FusionPresentationImage(baseFrame, fusionOverlaySlice);
-						fus.BaseVoiLutManager.InstallVoiLut(new IdentityVoiLinearLut(fus.ImageSop.DataSource[DicomTags.BitsStored].GetInt32(0, 16)));
-						fus.OverlayVoiLutManager.InstallVoiLut(new IdentityVoiLinearLut(bitDepth));
+						fus.BaseVoiLutManager.InstallVoiLut(new IdentityVoiLinearLut());
+						fus.OverlayVoiLutManager.InstallVoiLut(new IdentityVoiLinearLut());
 						displaySet.PresentationImages.Add(fus);
 					}
 				}
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				foreach (var image in PresentationImageFactory.Create(sop))
 				{
 					if (image is IVoiLutProvider)
-						((IVoiLutProvider) image).VoiLutManager.InstallVoiLut(new IdentityVoiLinearLut(((IImageSopProvider) image).ImageSop.DataSource[DicomTags.BitsStored].GetInt32(0, 16)));
+						((IVoiLutProvider) image).VoiLutManager.InstallVoiLut(new IdentityVoiLinearLut());
 					displaySet.PresentationImages.Add(image);
 				}
 			}

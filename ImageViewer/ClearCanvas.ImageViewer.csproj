@@ -1,4 +1,5 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -21,7 +22,10 @@
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation />
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -34,7 +38,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -45,7 +48,8 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile />
     <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
-    <DocumentationFile>ClearCanvas.ImageViewer.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -59,6 +63,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -81,6 +86,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NMock2, Version=1.0.2313.18049, Culture=neutral, processorArchitecture=MSIL">
@@ -96,6 +102,9 @@
       <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
     </Reference>
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -144,11 +153,14 @@
       <DependentUpon>MouseToolSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BaseTools\MouseToolSettingsProfile.cs" />
+    <Compile Include="InputManagement\Tests\ViewerShortcutManagerTests.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\BufferCache.cs" />
+    <Compile Include="Common\Cache.cs" />
     <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Common\Diagnostics.cs" />
+    <Compile Include="Common\ExtensionData.cs" />
     <Compile Include="Common\LargeObjectContainer.cs" />
     <Compile Include="Common\LargeObjectContainerCache.cs" />
     <Compile Include="Common\MemoryCollector.cs" />
@@ -161,6 +173,7 @@
     <Compile Include="Common\MemoryManagementStrategy.cs" />
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
+    <Compile Include="Comparers\ReverseComparer.cs" />
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
     <Compile Include="Graphics\InvariantSpatialTransform.cs" />
@@ -168,6 +181,34 @@
     <Compile Include="Graphics\Tests\MammographyImageSpatialTransformTest.cs" />
     <Compile Include="Graphics\Utilities\GraphicsVisibilityHelper.cs" />
     <Compile Include="Annotations\Utilities\TextOverlayVisibilityHelper.cs" />
+    <Compile Include="ImageSetTree.cs" />
+    <Compile Include="Imaging\ColorMapBase.cs" />
+    <Compile Include="Imaging\ColorMapMemento.cs" />
+    <Compile Include="Imaging\ComposableModalityLut.cs" />
+    <Compile Include="Imaging\ComposableVoiLut.cs" />
+    <Compile Include="Imaging\DataModalityLut.cs" />
+    <Compile Include="Imaging\DataVoiLut.cs" />
+    <Compile Include="Imaging\GeneratedDataModalityLut.cs" />
+    <Compile Include="Imaging\IColorMap.cs" />
+    <Compile Include="Imaging\IDataModalityLut.cs" />
+    <Compile Include="Imaging\IModalityLut.cs" />
+    <Compile Include="Imaging\IVoiLut.cs" />
+    <Compile Include="Imaging\NamedVoiLutLinear.cs" />
+    <Compile Include="Imaging\NormalizationLutLinear.cs" />
+    <Compile Include="Imaging\SimpleColorMap.cs" />
+    <Compile Include="Imaging\SimpleDataModalityLut.cs" />
+    <Compile Include="Layout\HpDataContractAttribute.cs" />
+    <Compile Include="Layout\HpExtensionPoints.cs" />
+    <Compile Include="Layout\HpApplicabilityResult.cs" />
+    <Compile Include="Layout\HpProperty.cs" />
+    <Compile Include="Layout\IHpApplicabilityContributor.cs" />
+    <Compile Include="Layout\IHpContributor.cs" />
+    <Compile Include="Layout\IHpImageBoxDefinitionContributor.cs" />
+    <Compile Include="Layout\IHpLayoutDefinitionContributor.cs" />
+    <Compile Include="Layout\IHpLayoutHook.cs" />
+    <Compile Include="Layout\IHpProperty.cs" />
+    <Compile Include="Layout\IHpSerializableElement.cs" />
+    <Compile Include="Layout\Tests\HpApplicabilityResultTests.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
@@ -178,12 +219,18 @@
     <Compile Include="Common\IBlockingEnumerator.cs" />
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
+    <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
+    <Compile Include="StudyManagement\RescaleUnits.cs" />
+    <Compile Include="StudyManagement\SopInstanceFactory.cs" />
+    <Compile Include="StudyManagement\StudyExtensions.cs" />
     <Compile Include="StudyManagement\Tests\NormalizedPixelSpacingTests.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />
     <Compile Include="StudyManagement\WeightedWindowPrefetchingStrategy.cs" />
     <Compile Include="Tests\ImageDiff.cs" />
     <Compile Include="Tests\MockScreenInfoProvider.cs" />
+    <Compile Include="StudyManagement\Tests\StudyBuilder.cs" />
+    <Compile Include="StudyManagement\Tests\StudyBuilderFactory.cs" />
     <Compile Include="ViewerActionFilter.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />
@@ -216,7 +263,6 @@
     <Compile Include="Imaging\IColorMapInstaller.cs" />
     <Compile Include="Imaging\IdentityVoiLinearLut.cs" />
     <Compile Include="Imaging\Tests\IdentityVoiLinearLutTest.cs" />
-    <Compile Include="PresentationStates\Dicom\Institution.cs" />
     <Compile Include="Imaging\IVoiLutInstaller.cs" />
     <Compile Include="Rendering\Tests\ImageRendererVoiLutTests.cs" />
     <Compile Include="Tests\DisplaySetFactoryTests.cs" />
@@ -302,7 +348,7 @@
     <Compile Include="IUndoableOperation.cs" />
     <Compile Include="LinkedImageEnumerator.cs" />
     <Compile Include="Mathematics\Tests\PolygonFTests.cs" />
-    <Compile Include="PresentationStates\Dicom\DicomDefaultPresentationState.cs" />
+    <Compile Include="PresentationStates\Dicom\DicomPresentationState.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\DecoratorGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\EllipseGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\PolylineGraphicAnnotationSerializer.cs" />
@@ -439,7 +485,6 @@
     <Compile Include="Imaging\GeneratedDataLut.cs" />
     <Compile Include="Imaging\IDataLut.cs" />
     <Compile Include="Imaging\IInitialVoiLutProvider.cs" />
-    <Compile Include="Imaging\ILut.cs" />
     <Compile Include="Imaging\GrayscalePixelData.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
     <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />
@@ -447,7 +492,6 @@
     <Compile Include="Imaging\CalculatedVoiLutLinear.cs" />
     <Compile Include="Imaging\IModalityLutProvider.cs" />
     <Compile Include="Imaging\IComposedLut.cs" />
-    <Compile Include="Imaging\ComposableLutMemento.cs" />
     <Compile Include="Imaging\ColorMapDescriptor.cs" />
     <Compile Include="Imaging\ColorMapFactoryBase.cs" />
     <Compile Include="Imaging\IColorMapFactory.cs" />
@@ -475,7 +519,7 @@
     <Compile Include="Mathematics\Vector3D.cs" />
     <Compile Include="PriorStudyFinder.cs" />
     <Compile Include="PriorStudyLoader.cs" />
-    <Compile Include="ReferenceCountedObjectWrapper.cs" />
+    <Compile Include="Common\ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\BackBuffer.cs" />
@@ -636,10 +680,12 @@
     <Compile Include="Imaging\IComposableLut.cs" />
     <Compile Include="ImageOperationApplicator.cs" />
     <Compile Include="Imaging\ComposableLut.cs" />
+    <Compile Include="Imaging\ComposableLutBase.cs" />
     <Compile Include="Imaging\ModalityLutLinear.cs" />
     <Compile Include="Imaging\Tests\CompositeLUTTest.cs" />
     <Compile Include="Imaging\Tests\ModalityLUTLinearTest.cs" />
-    <Compile Include="Imaging\Tests\VOILUTLinearTest.cs" />
+    <Compile Include="Imaging\Tests\NormalizationLutLinearTests.cs" />
+    <Compile Include="Imaging\Tests\VoiLutLinearTests.cs" />
     <Compile Include="Annotations\AnnotationBox.cs" />
     <Compile Include="Graphics\GraphicCollection.cs" />
     <Compile Include="Graphics\VectorGraphic.cs" />
@@ -803,7 +849,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

@@ -10,7 +10,9 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
@@ -171,5 +173,93 @@ namespace ClearCanvas.ImageViewer
 		/// Selects the top left tile.
 		/// </summary>
 		void SelectDefaultTile();
+
+	    /// <summary>
+	    /// Occurs when the <see cref="DisplaySet"/> property has changed.
+	    /// </summary>
+	    event EventHandler<DisplaySetChangedEventArgs> DisplaySetChanged;
 	}
+
+    /// <summary>
+    /// An extension point for ImageBox "tools" 
+    /// </summary>
+    [ExtensionPoint]
+    public sealed class ImageBoxExtensionPoint : ExtensionPoint<IImageBoxExtension>
+    { }
+
+
+    /// TODO: Now IImageBoxExtension is basically an extension to the ImageBoxControl instead of the ImageBox.
+    /// Consider combining IImageBoxExtensionView and IImageBoxExtension.
+    /// 
+    /// <summary>
+    /// Defines interface to the view of an image box extension.
+    /// </summary>
+    public interface IImageBoxExtensionView:IView,IDisposable
+    {
+        ///<summary>
+        /// Sets the parent size for the view
+        ///</summary>
+        Size ParentSize{ set; }
+
+        /// <summary>
+        /// Gets the render size of the view
+        /// </summary>
+        Size ActualSize { get; }
+
+        ///<summary>
+        /// Updates the view
+        ///</summary>
+        void UpdateLayout();
+
+        ///<summary>
+        /// Gets a boolean indicating whether the view is visible
+        ///</summary>
+        bool Visible { get; }
+    }
+
+    /// TODO: Now IImageBoxExtension is basically an extension to the ImageBoxControl instead of the ImageBox.
+    /// Consider combining IImageBoxExtensionView and IImageBoxExtension.
+    /// 
+    /// <summary>
+    /// Defines the interface of an extension to the <see cref="IImageBox"/>
+    /// </summary>
+    public interface IImageBoxExtension : INotifyPropertyChanged, IDisposable
+    {
+
+        /// <summary>
+        /// Name of the extension
+        /// </summary>
+        string Name { get; }
+
+
+        ///<summary>
+        /// Sets the associated ImageBox
+        ///</summary>
+        IImageBox ImageBox { set; }
+
+        ///<summary>
+        /// Create an instance of the view for the plugin
+        ///</summary>
+        /// <remarks>
+        /// Caller will be responsible for managing the view
+        /// </remarks>
+        IImageBoxExtensionView CreateView();
+
+        ///<summary>
+        /// Gets or sets a value indicating whether the extension wants its <see cref="View"/> to be visible.
+        ///</summary>
+        /// <remarks>
+        /// It is up to the image box control implementation to decide whether it's feasible 
+        /// to display the extension's view on the screen.
+        /// The extension must fire <see cref="PropertyChanged"/> if it wants to change its visibility. 
+        /// </remarks>
+        bool Visible { get; set; }
+
+        ///<summary>
+        /// Gets the icons for the extension
+        ///</summary>
+        IconSet IconSet { get; }
+
+    }
+
 }

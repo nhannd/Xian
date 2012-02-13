@@ -35,14 +35,14 @@ namespace ClearCanvas.Dicom.Tests
 		[Test]
 		public void TestDateParser()
 		{
-			//valid date
+			//Valid date. In DICOM, it's 8 bytes fixed ... period.
 			DateTime date;
 			bool returnValue = DateParser.Parse("20060607", out date);
 			Assert.IsTrue(returnValue);
 			Assert.AreEqual(date, new DateTime(2006, 6, 7));
 			
 			// Valid date according to OLD Dicom Standard (pre 3.0).
-			// Recommended by Dicom that we still support it.
+			// Recommended by Dicom that we still support it, but we're choosing not to.
 			returnValue = DateParser.Parse("2006.06.07", out date);
 			Assert.IsFalse(returnValue);
 
@@ -52,6 +52,12 @@ namespace ClearCanvas.Dicom.Tests
 
 			returnValue = DateParser.Parse("2006067", out date);
 			Assert.IsFalse(returnValue);
+
+            returnValue = DateParser.Parse("200606", out date);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateParser.Parse("2006", out date);
+            Assert.IsFalse(returnValue);
 
 			returnValue = DateParser.Parse(String.Empty, out date);
 			Assert.IsFalse(returnValue);
@@ -166,11 +172,22 @@ namespace ClearCanvas.Dicom.Tests
 		}
 
 		[Test]
-		public void TestDateTimeParser()
+		public void TestDateTimeParser_Parse()
 		{
 			DateTime dateTime;
 			DateTime testDateTime;
-			bool returnValue = DateTimeParser.Parse("20060607", out dateTime);
+		    bool returnValue;
+            returnValue = DateTimeParser.Parse("2006", out dateTime);
+            Assert.IsTrue(returnValue);
+            testDateTime = new DateTime(2006, 01, 01, 0, 0, 0);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.Parse("200606", out dateTime);
+            Assert.IsTrue(returnValue);
+            testDateTime = new DateTime(2006, 06, 01, 0, 0, 0);
+            Assert.AreEqual(dateTime, testDateTime);
+            
+            returnValue = DateTimeParser.Parse("20060607", out dateTime);
 			Assert.IsTrue(returnValue);
 			testDateTime = new DateTime(2006, 06, 07, 0, 0, 0);
 			Assert.AreEqual(dateTime, testDateTime);
@@ -295,8 +312,11 @@ namespace ClearCanvas.Dicom.Tests
 			Assert.IsTrue(returnValue);
 			Assert.AreEqual(dateTime, testDateTime);
 
-			returnValue = DateTimeParser.Parse("200606-0514", out dateTime);
+			returnValue = DateTimeParser.Parse("2006-0514", out dateTime);
 			Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.Parse("200606-0514", out dateTime);
+            Assert.IsFalse(returnValue);
 
 			returnValue = DateTimeParser.Parse("a0060607221721.12345", out dateTime);
 			Assert.IsFalse(returnValue);
@@ -323,7 +343,112 @@ namespace ClearCanvas.Dicom.Tests
 			Assert.IsFalse(returnValue);
 		}
 
-		[Test]
+        [Test]
+        public void TestDateTimeParser_ParseDateAndTime()
+		{
+            DateTime dateTime;
+            DateTime testDateTime;
+            bool returnValue;
+            returnValue = DateTimeParser.ParseDateAndTime(null, "2006", null, out dateTime);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "200606", null, out dateTime);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", null, out dateTime);
+            Assert.IsTrue(returnValue);
+            testDateTime = new DateTime(2006, 06, 07, 0, 0, 0);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "22", out dateTime);
+            Assert.IsTrue(returnValue);
+            testDateTime = new DateTime(2006, 06, 07, 22, 0, 0);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "2217", out dateTime);
+            Assert.IsTrue(returnValue);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 0);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721", out dateTime);
+            Assert.IsTrue(returnValue);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            //zero fraction
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.000000", out dateTime);
+            Assert.IsTrue(returnValue);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            //maximum fraction defined by Dicom
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.999999", out dateTime);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            testDateTime = testDateTime.AddTicks(9999990); //ticks are in units of 100 nano-seconds (1e9 * 100 = 1e7)
+            Assert.IsTrue(returnValue);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            //arbitrary length fractions
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.1", out dateTime);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            testDateTime = testDateTime.AddTicks(1000000); //ticks are in units of 100 nano-seconds (1e9 * 100 = 1e7)
+            Assert.IsTrue(returnValue);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.12", out dateTime);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            testDateTime = testDateTime.AddTicks(1200000); //ticks are in units of 100 nano-seconds (1e9 * 100 = 1e7)
+            Assert.IsTrue(returnValue);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.123", out dateTime);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            testDateTime = testDateTime.AddTicks(1230000); //ticks are in units of 100 nano-seconds (1e9 * 100 = 1e7)
+            Assert.IsTrue(returnValue);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.1234", out dateTime);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            testDateTime = testDateTime.AddTicks(1234000); //ticks are in units of 100 nano-seconds (1e9 * 100 = 1e7)
+            Assert.IsTrue(returnValue);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.12345", out dateTime);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            testDateTime = testDateTime.AddTicks(1234500); //ticks are in units of 100 nano-seconds (1e9 * 100 = 1e7)
+            Assert.IsTrue(returnValue);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.123456", out dateTime);
+            testDateTime = new DateTime(2006, 06, 07, 22, 17, 21);
+            testDateTime = testDateTime.AddTicks(1234560); //ticks are in units of 100 nano-seconds (1e9 * 100 = 1e7)
+            Assert.IsTrue(returnValue);
+            Assert.AreEqual(dateTime, testDateTime);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.123456+05", out dateTime);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "a0060607", "221721.12345", out dateTime);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "a21721.12345", out dateTime);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.a2345", out dateTime);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.ParseDateAndTime(null, "20060607", "221721.12345r0517", out dateTime);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.Parse(String.Empty, out dateTime);
+            Assert.IsFalse(returnValue);
+
+            returnValue = DateTimeParser.Parse(null, out dateTime);
+            Assert.IsFalse(returnValue);
+
+		}
+
+	    [Test]
 		public void TestDateRangeParser()
 		{
 			string[,] tests = 

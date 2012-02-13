@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
@@ -73,11 +74,34 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			}
 		}
 
+		public string SourceSeriesInstanceUid
+		{
+			get { return Volume.SourceSeriesInstanceUid; }
+		}
+
 		public string FrameOfReferenceUid
 		{
 			get { return this.Volume.FrameOfReferenceUid; }
 		}
 
+		public string Modality
+		{
+			get { return Volume.Modality; }
+		}
+
+		public int MinVolumeValue
+		{
+			get { return Volume.MinimumVolumeValue; }
+		}
+
+		public int MaxVolumeValue
+		{
+			get { return Volume.MaximumVolumeValue; }
+		}
+
+		/// <summary>
+		/// Gets a list of the source frames from which the overlay data was constructed.
+		/// </summary>
 		public IList<Frame> Frames
 		{
 			get { return CollectionUtils.Map<IFrameReference, Frame>(_frames, f => f.Frame).AsReadOnly(); }
@@ -217,6 +241,54 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Finds the source frame closest to the specified position in patient coordinates.
+		/// </summary>
+		/// <param name="patientPosition">The reference position in patient coordinates.</param>
+		/// <returns>The source frame closest to the specified position in patient coordinates, or NULL if no such frame exists.</returns>
+		public Frame FindSourceFrame(Vector3D patientPosition)
+		{
+			PointF sourceImagePosition;
+			return FindSourceFrame(patientPosition, out sourceImagePosition);
+		}
+
+		/// <summary>
+		/// Finds the source frame closest to the specified position in patient coordinates.
+		/// </summary>
+		/// <param name="patientPosition">The reference position in patient coordinates.</param>
+		/// <param name="sourceImagePosition">Returns the position on the closest source frame corresponding to the specified patient position.</param>
+		/// <returns>The source frame closest to the specified position in patient coordinates, or NULL if no such frame exists.</returns>
+		public Frame FindSourceFrame(Vector3D patientPosition, out PointF sourceImagePosition)
+		{
+			Frame closestFrame = null;
+			sourceImagePosition = PointF.Empty;
+
+			var distance = float.MaxValue;
+			foreach (var frame in _frames)
+			{
+				var targetImagePlane = DicomImagePlane.FromFrame(frame.Frame);
+				var halfThickness = Math.Abs(targetImagePlane.Thickness/2);
+				var halfSpacing = Math.Abs(targetImagePlane.Spacing/2);
+				var toleranceDistanceToImagePlane = Math.Max(halfThickness, halfSpacing);
+
+				if (toleranceDistanceToImagePlane > 0)
+				{
+					var positionTargetImagePlane = targetImagePlane.ConvertToImagePlane(patientPosition);
+					var distanceToTargetImagePlane = Math.Abs(positionTargetImagePlane.Z);
+
+					if (distanceToTargetImagePlane <= toleranceDistanceToImagePlane && distanceToTargetImagePlane < distance)
+					{
+						distance = distanceToTargetImagePlane;
+						//The coordinates need to be converted to pixel coordinates because right now they are in mm.
+						sourceImagePosition = targetImagePlane.ConvertToImage(new PointF(positionTargetImagePlane.X, positionTargetImagePlane.Y));
+						closestFrame = frame.Frame;
+					}
+				}
+			}
+
+			return closestFrame;
 		}
 
 		#region Memory Management Support

@@ -258,6 +258,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             this._enableViewImageButton(false);
             this._enableSendStudyButton(false);
             this._enableRestoreButton(false);
+            this._enableAssignAuthorityGroupsButton(false);
 
             if (studylist != null) {
                 var rows = studylist.getSelectedRowElements();
@@ -287,14 +288,13 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                     }
                     // always enabled open button when a row is selected
                     this._enableOpenStudyButton(true);
+                    this._enableAssignAuthorityGroupsButton(true);
 
                     this._enableViewImageButton(canViewImagesCount == selectedStudyCount);
                     this._enableDeleteButton(canDeleteCount == selectedStudyCount);
                     this._enableSendStudyButton(canMoveCount == selectedStudyCount);
                     this._enableRestoreButton(canRestoreCount == selectedStudyCount);
-
                 }
-
             }
         },
 
@@ -323,6 +323,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             if (deleteButton != null) deleteButton.set_enable(en);
         },
 
+        _enableAssignAuthorityGroupsButton: function(en) {
+            var assignAuthorityGroupsButton = $find(this._AssignAuthorityGroupsButtonClientID);
+            if (assignAuthorityGroupsButton != null) assignAuthorityGroupsButton.set_enable(en);
+        },
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -381,6 +385,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         set_ViewImageButtonClientID: function(value) {
             this._ViewImageButtonClientID = value;
             this.raisePropertyChanged('ViewImageButtonClientID');
+        },
+
+        get_AssignAuthorityGroupsButtonClientID: function() {
+            return this._AssignAuthorityGroupsButtonClientID;
+        },
+
+        set_AssignAuthorityGroupsButtonClientID: function(value) {
+            this._AssignAuthorityGroupsButtonClientID = value;
+            this.raisePropertyChanged('AssignAuthorityGroupsButtonClientID');
         },
 
         get_StudyListClientID: function() {

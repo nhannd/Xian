@@ -69,7 +69,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ActionModelNode _menuModel;
 
     	private IconSize _iconResourceSize = ClearCanvas.Desktop.IconSize.Medium;
-    	private CheckBoxStyle _checkBoxStyle = CheckBoxStyle.None;
+    	private bool _checkBoxes = false;
         private bool _selectionDisabled = false;
     	private bool _allowDropToIndex = false;
 
@@ -269,18 +269,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Design time properties
 
-		[DefaultValue(false)]
+		[Browsable(false)]
+		[Obsolete("Use CheckBoxes property instead. The ITree model determines whether or not tristate check boxes are used.")]
 		public CheckBoxStyle CheckBoxStyle
 		{
-			get { return _checkBoxStyle; }
-			set
-			{
-				if (_checkBoxStyle != value)
-				{
-					_checkBoxStyle = value;
-					this.OnCheckBoxStyleChanged();
-				}
-			}
+			get { return CheckBoxes ? CheckBoxStyle.TriState : CheckBoxStyle.None; }
+			set { CheckBoxes = value != CheckBoxStyle.None; }
+		}
+
+		private bool ShouldSerializeCheckBoxStyle()
+		{
+			return false;
 		}
 
     	[DefaultValue(false)]
@@ -325,17 +324,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _treeCtrl.ShowRootLines = value;}
         }
 
-    	[Browsable(false)]
-    	[Obsolete("CheckBoxes is the same as toggling CheckBoxStyle to Standard. Consider using CheckBoxStyle instead.")]
+    	[DefaultValue(false)]
     	public bool CheckBoxes
     	{
-    		get { return this.CheckBoxStyle == CheckBoxStyle.Standard; }
-    		set { this.CheckBoxStyle = value ? CheckBoxStyle.Standard : CheckBoxStyle.None; }
-    	}
-
-    	private bool ShouldSerializeCheckBoxes()
-    	{
-    		return false;
+    		get { return _checkBoxes; }
+    		set
+    		{
+    			if (_checkBoxes != value)
+    			{
+    				_checkBoxes = value;
+    				OnCheckBoxesChanged();
+    			}
+    		}
     	}
 
         [DefaultValue(false)]
@@ -416,6 +416,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _iconResourceSize = value; }
     	}
 
+		[DefaultValue(ColorDepth.Depth32Bit)]
         public ColorDepth IconColorDepth
         {
             get { return _imageList.ColorDepth; }
@@ -477,11 +478,17 @@ namespace ClearCanvas.Desktop.View.WinForms
             return null;
         }
 
+		[Obsolete("Calls OnCheckBoxesChanged() instead.")]
 		protected virtual void OnCheckBoxStyleChanged()
 		{
+			OnCheckBoxesChanged();
+		}
+
+		protected virtual void OnCheckBoxesChanged()
+		{
 			_treeCtrl.BeginUpdate();
-			_treeCtrl.CheckBoxes = this.CheckBoxStyle == CheckBoxStyle.Standard;
-			_treeCtrl.StateImageList = this.CheckBoxStyle == CheckBoxStyle.TriState ? _stateImageList : null;
+			_treeCtrl.CheckBoxes = false;
+			_treeCtrl.StateImageList = CheckBoxes ? _stateImageList : null;
 			_treeCtrl.EndUpdate();
 		}
 
@@ -568,14 +575,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _treeCtrl_AfterCheck(object sender, TreeViewEventArgs e)
         {
-        	if (this.CheckBoxStyle == CheckBoxStyle.Standard)
-        	{
-        		BindingTreeNode node = e.Node as BindingTreeNode;
-        		if (node != null)
-        		{
-        			node.OnChecked();
-        		}
-        	}
+        	// the built-in checkbox functionality of the TreeView control is not used because of a
+			// double clicking bug where the node's internal state is not in sync with what is being painted
+        	// all checkbox support is now handled through the custom state image list
+        	// ref: http://connect.microsoft.com/VisualStudio/feedback/details/374516/treeview-control-does-not-fire-events-reliably-when-double-clicking-on-checkbox
+			// ref: CC ticket #9233
         }
 
         private void _treeCtrl_BeforeSelect(object sender, TreeViewCancelEventArgs e)
@@ -593,7 +597,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void _treeCtrl_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
-			if (this.CheckBoxStyle == CheckBoxStyle.TriState && _treeCtrl.HitTest(e.Location).Location == TreeViewHitTestLocations.StateImage)
+			if (CheckBoxes && _treeCtrl.HitTest(e.Location).Location == TreeViewHitTestLocations.StateImage)
 			{
 				BindingTreeNode node = e.Node as BindingTreeNode;
 				if (node != null)

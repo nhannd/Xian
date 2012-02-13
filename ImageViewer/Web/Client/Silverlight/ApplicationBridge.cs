@@ -10,15 +10,6 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Windows.Browser;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 
@@ -34,9 +25,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public event EventHandler<SessionUpdatedEventArgs> ViewerSessionUpdated;
 
         [ThreadStatic]
-        private static ApplicationBridge _current;
+        private static volatile ApplicationBridge _current;
 
-        [ThreadStatic]
         private static object _syncLock = new object();
 
         private ApplicationBridge()
@@ -51,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             if (ViewerSessionUpdated != null)
             {
-                ViewerSessionUpdated(sender, new SessionUpdatedEventArgs() { ExpiryTimeUtc = @event.ExpiryTimeUtc });
+                ViewerSessionUpdated(sender, new SessionUpdatedEventArgs { ExpiryTimeUtc = @event.ExpiryTimeUtc });
             }
         }
 
@@ -85,6 +75,5 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 return _current;
             }
         }
-
     }
 }

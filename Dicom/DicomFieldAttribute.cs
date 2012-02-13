@@ -30,6 +30,7 @@ namespace ClearCanvas.Dicom
     public sealed class DicomFieldAttribute : Attribute
     {
         private DicomTag _tag;
+    	private DicomTag _parentTag;
         private DicomFieldDefault _default;
         private bool _defltOnZL;
         private bool _createEmpty;
@@ -46,10 +47,23 @@ namespace ClearCanvas.Dicom
             _createEmpty = false;
         }
 
+		public DicomFieldAttribute(uint tag, uint parentTag)
+			: this(tag)
+		{
+			_parentTag = DicomTagDictionary.GetDicomTag(parentTag);
+			if (_parentTag == null)
+				_parentTag = new DicomTag(parentTag, "Unknown Tag", "UnknownTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+		}
+
         public DicomTag Tag
         {
             get { return _tag; }
         }
+
+    	public DicomTag ParentTag
+    	{
+    		get { return _parentTag; }
+    	}
 
         public DicomFieldDefault DefaultValue
         {

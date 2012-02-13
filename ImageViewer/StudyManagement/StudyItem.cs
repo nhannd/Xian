@@ -207,6 +207,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			PatientsBirthDate = other.PatientsBirthDate;
 			PatientsBirthTime = other.PatientsBirthTime;
 			PatientsSex = other.PatientsSex;
+
+			PatientSpeciesDescription = other.PatientSpeciesDescription;
+			PatientSpeciesCodeSequenceCodingSchemeDesignator = other.PatientSpeciesCodeSequenceCodingSchemeDesignator;
+			PatientSpeciesCodeSequenceCodeValue = other.PatientSpeciesCodeSequenceCodeValue;
+			PatientSpeciesCodeSequenceCodeMeaning = other.PatientSpeciesCodeSequenceCodeMeaning;
+			PatientBreedDescription = other.PatientBreedDescription;
+			PatientBreedCodeSequenceCodingSchemeDesignator = other.PatientBreedCodeSequenceCodingSchemeDesignator;
+			PatientBreedCodeSequenceCodeValue = other.PatientBreedCodeSequenceCodeValue;
+			PatientBreedCodeSequenceCodeMeaning = other.PatientBreedCodeSequenceCodeMeaning;
+			ResponsiblePerson = new PersonName(other.ResponsiblePerson);
+			ResponsiblePersonRole = other.ResponsiblePersonRole;
+			ResponsibleOrganization = other.ResponsibleOrganization;
 		}
 
 		#region IPatientData Members
@@ -260,6 +272,122 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _patientsSex; }
 			set { _patientsSex = value; }
 		}
+
+		#region Species
+
+		/// <summary>
+		/// Gets the patient's species description.
+		/// </summary>
+		public string PatientSpeciesDescription
+		{
+			get { return _patientSpeciesDescription; }
+			set { _patientSpeciesDescription = value; }
+		}
+
+		/// <summary>
+		/// Gets the coding scheme designator of the patient species code sequence.
+		/// </summary>
+		public string PatientSpeciesCodeSequenceCodingSchemeDesignator
+		{
+			get { return _patientSpeciesCodeSequenceCodingSchemeDesignator; }
+			set { _patientSpeciesCodeSequenceCodingSchemeDesignator = value; }
+		}
+
+		/// <summary>
+		/// Gets the code value of the patient species code sequence.
+		/// </summary>
+		public string PatientSpeciesCodeSequenceCodeValue
+		{
+			get { return _patientSpeciesCodeSequenceCodeValue; }
+			set { _patientSpeciesCodeSequenceCodeValue = value; }
+		}
+
+		/// <summary>
+		/// Gets the code meaning of the patient species code sequence.
+		/// </summary>
+		public string PatientSpeciesCodeSequenceCodeMeaning
+		{
+			get { return _patientSpeciesCodeSequenceCodeMeaning; }
+			set { _patientSpeciesCodeSequenceCodeMeaning = value; }
+		}
+
+		#endregion
+
+		#region Breed
+
+		/// <summary>
+		/// Gets the patient's breed description.
+		/// </summary>
+		public string PatientBreedDescription
+		{
+			get { return _patientBreedDescription; }
+			set { _patientBreedDescription = value; }
+		}
+
+		/// <summary>
+		/// Gets the coding scheme designator of the patient breed code sequence.
+		/// </summary>
+		public string PatientBreedCodeSequenceCodingSchemeDesignator
+		{
+			get { return _patientBreedCodeSequenceCodingSchemeDesignator; }
+			set { _patientBreedCodeSequenceCodingSchemeDesignator = value; }
+		}
+
+		/// <summary>
+		/// Gets the code value of the patient breed code sequence.
+		/// </summary>
+		public string PatientBreedCodeSequenceCodeValue
+		{
+			get { return _patientBreedCodeSequenceCodeValue; }
+			set { _patientBreedCodeSequenceCodeValue = value; }
+		}
+
+		/// <summary>
+		/// Gets the code meaning of the patient breed code sequence.
+		/// </summary>
+		public string PatientBreedCodeSequenceCodeMeaning
+		{
+			get { return _patientBreedCodeSequenceCodeMeaning; }
+			set { _patientBreedCodeSequenceCodeMeaning = value; }
+		}
+
+		#endregion
+
+		#region Responsible Person/Organization
+
+		/// <summary>
+		/// Gets the responsible person for this patient.
+		/// </summary>
+		public PersonName ResponsiblePerson
+		{
+			get { return _responsiblePerson; }
+			set { _responsiblePerson = value; }
+		}
+
+		string IPatientData.ResponsiblePerson
+		{
+			get { return (_responsiblePerson ?? ""); }
+		}
+
+		/// <summary>
+		/// Gets the role of the responsible person for this patient.
+		/// </summary>
+		public string ResponsiblePersonRole
+		{
+			get { return _responsiblePersonRole; }
+			set { _responsiblePersonRole = value; }
+		}
+
+		/// <summary>
+		/// Gets the organization responsible for this patient.
+		/// </summary>
+		public string ResponsibleOrganization
+		{
+			get { return _responsibleOrganization; }
+			set { _responsibleOrganization = value; }
+		}
+
+		#endregion
 
 		#endregion
 
@@ -465,6 +593,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private string _patientsBirthTime;
 		private string _patientsSex;
 		private PersonName _referringPhysiciansName;
+
+		private string _patientSpeciesDescription;
+		private string _patientSpeciesCodeSequenceCodingSchemeDesignator;
+		private string _patientSpeciesCodeSequenceCodeValue;
+		private string _patientSpeciesCodeSequenceCodeMeaning;
+
+		private string _patientBreedDescription;
+		private string _patientBreedCodeSequenceCodingSchemeDesignator;
+		private string _patientBreedCodeSequenceCodeValue;
+		private string _patientBreedCodeSequenceCodeMeaning;
+
+		private PersonName _responsiblePerson;
+		private string _responsiblePersonRole;
+		private string _responsibleOrganization;
 		#endregion
 	}
 
@@ -495,6 +637,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Initializes a new instance of <see cref="QueryParameters"/>.
 		/// </summary>
 		public QueryParameters()
+		{
+		}
+
+		/// <summary>
+		/// Make a copy of an existing instance of <see cref="QueryParameters"/>.
+		/// </summary>
+		/// <param name="parameters"></param>
+		public QueryParameters(QueryParameters parameters)
+			: base(parameters)
 		{
 		}
 	}

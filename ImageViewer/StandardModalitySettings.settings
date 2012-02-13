@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Modalities" Description="A list of standard DICOM modalities that can be used anywhere a list of modalities is required." Type="System.String" Scope="Application">
-      <Value Profile="(Default)">CR,CT,DX,ES,KO,MG,MR,NM,PR,OT,PT,RF,SC,US,XA</Value>
+      <Value Profile="(Default)">CR,CT,DOC,DX,ES,KO,MG,MR,NM,PR,OT,PT,RF,SC,US,XA</Value>
     </Setting>
   </Settings>
 </SettingsFile>

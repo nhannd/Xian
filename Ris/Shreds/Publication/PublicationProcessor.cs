@@ -67,6 +67,11 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			return PersistenceScope.CurrentContext.GetBroker<IPublicationStepBroker>().FindUnprocessedSteps(_settings.FailedItemRetryDelay, page);
 		}
 
+		protected override void MarkItemClaimed(PublicationStep item)
+		{
+			// do nothing
+		}
+
 		protected override void ActOnItem(PublicationStep item)
 		{
 			// execute each publication action

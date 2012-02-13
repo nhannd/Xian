@@ -34,12 +34,12 @@ namespace ClearCanvas.Dicom.Audit
 	public class UserAuthenticationAuditHelper : DicomAuditHelper
 	{
 		public UserAuthenticationAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome, UserAuthenticationEventType type)
+			EventIdentificationContentsEventOutcomeIndicator outcome, UserAuthenticationEventType type)
 			: base("UserAuthentication")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.UserAuthentication;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.UserAuthentication;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.E;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
@@ -47,9 +47,9 @@ namespace ClearCanvas.Dicom.Audit
 			InternalAddAuditSource(auditSource);
 
 			if (type == UserAuthenticationEventType.Login)
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.Login };
+				AuditMessage.EventIdentification.EventTypeCode = new EventTypeCode[] { EventTypeCode.Login };
 			else
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.Logout };
+				AuditMessage.EventIdentification.EventTypeCode = new EventTypeCode[] { EventTypeCode.Logout };
 		}
 
 		/// <summary>

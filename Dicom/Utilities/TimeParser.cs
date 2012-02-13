@@ -59,7 +59,7 @@ namespace ClearCanvas.Dicom.Utilities
 			if (timeString!=null)
 				timeString = timeString.Trim();
 
-			if (!DateTime.TryParseExact(timeString, _timeFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out time))
+			if (!DateTime.TryParseExact(timeString, _timeFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out time))
 				return false;
 
 			//exclude the date.

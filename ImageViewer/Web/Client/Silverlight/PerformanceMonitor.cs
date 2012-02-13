@@ -11,19 +11,11 @@
 
 using System;
 using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -34,12 +26,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         object _sync = new object();
         double _lastKnownClientFps = 10;
         TileView _currentTile;
-        List<long> _serverDrawTimes = new List<long>();
-        List<long> _clientDrawTimes = new List<long>();
-        List<long> _serverLoads = new List<long>();
-        List<long> _imageSizes = new List<long>();
+        readonly List<long> _clientDrawTimes = new List<long>();
+        readonly List<long> _imageSizes = new List<long>();
 
-        static PerformanceMonitor _current = new PerformanceMonitor();
+        static readonly PerformanceMonitor _current = new PerformanceMonitor();
         public static PerformanceMonitor CurrentInstance
         {
             get { return _current; }
@@ -313,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 }
                 AverageMouseMoveMsgRTTWithResponse = _mouseMoveDurationWithRsp.Average();
 
-                Logger.Write(String.Format("******* RTT #{0}: {1} ms. Average:{2:0.0} *********\n", msgNumber, dt, AverageMouseMoveMsgRTTWithResponse));
+                Platform.Log(LogLevel.Debug, "******* RTT #{0}: {1} ms. Average:{2:0.0} *********", msgNumber, dt, AverageMouseMoveMsgRTTWithResponse);
             }
         }
 

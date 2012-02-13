@@ -25,8 +25,8 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
 	[SettingsGroupDescription("Stores the action model document that controls ordering and naming of menus and toolbar items.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
-	[UserSettingsMigrationDisabled]
-	[SharedSettingsMigrationDisabled]
+	//Always use the new, clean, default value for the "shared", but allow users to keep their own.
+    [SharedSettingsMigrationDisabled]
 	internal sealed partial class ActionModelSettings : IDisposable
     {
 		private XmlDocument _actionModelXmlDoc;
@@ -37,10 +37,6 @@ namespace ClearCanvas.Desktop.Actions
 		private ActionModelSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
-		}
-
-		public override void Upgrade()
-		{
 		}
 
 		#region Public Methods
@@ -104,6 +100,9 @@ namespace ClearCanvas.Desktop.Actions
 			{
 				// clone the model because we don't want to be modifying the actual action model yet
 				xmlActionModel = (XmlElement) xmlActionModel.CloneNode(true);
+
+                //Fix all the group hints.
+			    UpdateGroupHints(xmlActionModel, actionMap);
 
 				// if there are new persistent actions that aren't already in the xml, insert them now
 				foreach (IAction action in actionMap.Values)
@@ -381,7 +380,7 @@ namespace ClearCanvas.Desktop.Actions
 			if (!modelExists)
 				xmlActionModel = CreateXmlActionModel(actionModelID);
 
-			if (ValidateXmlActionModel(xmlActionModel, actionMap))
+			if (UpdateGroupHints(xmlActionModel, actionMap))
 				changed = true;
 
 			//make sure every action has a pre-determined spot in the store, inserting
@@ -417,32 +416,34 @@ namespace ClearCanvas.Desktop.Actions
 		}
 
 		/// <summary>
-		/// Validates the entries in the xmlActionModel against the input set of actions.  If an entry
-		/// in the xml model does not have a 'group-hint' attribute, the default one from the corresponding
-		/// action is automatically inserted.
+		/// Updates all the group hints in the xml from the given set of actions.  Group-hints are
+		/// always taken from the actions themselves.
 		/// </summary>
 		/// <param name="xmlActionModel">the "action-model" to validate</param>
 		/// <param name="actionMap">the set of actions against which to validate the "action-model"</param>
 		/// <returns>a boolean indicating whether anything was modified</returns>
-		private static bool ValidateXmlActionModel(XmlElement xmlActionModel, IDictionary<string, IAction> actionMap)
+		private static bool UpdateGroupHints(XmlElement xmlActionModel, IDictionary<string, IAction> actionMap)
 		{
 			bool changed = false;
 
 			foreach (XmlElement xmlAction in xmlActionModel.GetElementsByTagName("action"))
 			{
-				XmlAttribute groupHintNode = xmlAction.GetAttributeNode("group-hint");
 				string id = xmlAction.GetAttribute("id");
+                if (!actionMap.ContainsKey(id))
+                    continue;
 
-				if (groupHintNode == null)
+			    var action = actionMap[id];
+                XmlAttribute groupHintNode = xmlAction.GetAttributeNode("group-hint");
+                if (groupHintNode == null)
 				{
-					//Only automatically add the group-hint to the xml if a corresponding action is currently in memory.
-					//otherwise, we don't know what it should be.
-					if (actionMap.ContainsKey(id))
-					{
-						xmlAction.SetAttribute("group-hint", actionMap[id].GroupHint.Hint);
-						changed = true;
-					}
+					xmlAction.SetAttribute("group-hint", action.GroupHint.Hint);
+					changed = true;
 				}
+                else if (groupHintNode.Value != action.GroupHint.Hint)
+                {
+                    groupHintNode.Value = action.GroupHint.Hint;
+                    changed = true;
+                }
 			}
 
 			return changed;
@@ -513,10 +514,11 @@ namespace ClearCanvas.Desktop.Actions
 		private static void ProcessXmlAction(XmlElement xmlAction, IAction action)
 		{
 			string path = xmlAction.GetAttribute("path");
-			string grouphint = xmlAction.GetAttribute("group-hint");
-
 			action.Path = new ActionPath(path, action.ResourceResolver);
-			action.GroupHint = new GroupHint(grouphint);
+            //The group hint from the xml never overrides the action's group hint!!!  Otherwise, we can't change
+            //the group hint of an action for the purpose of placing a new one near it.
+            //string grouphint = xmlAction.GetAttribute("group-hint");
+            //action.GroupHint = new GroupHint(grouphint);
 
 			bool available = true;
 			string availableValue = xmlAction.GetAttribute("available");
@@ -664,25 +666,40 @@ namespace ClearCanvas.Desktop.Actions
 				return false;
 			
 			XmlNode insertionPoint = null;
+            bool insertBefore = false;
 			int currentGroupScore = 0;
 
 			foreach (XmlElement xmlAction in xmlActionModel.GetElementsByTagName("action"))
 			{
 				string hint = xmlAction.GetAttribute("group-hint");
-				GroupHint groupHint = new GroupHint(hint);
+				var groupHint = new GroupHint(hint);
 
 				int groupScore = action.GroupHint.MatchScore(groupHint);
-				if (Math.Abs(groupScore) >= Math.Abs(currentGroupScore))
-				{
-					insertionPoint = xmlAction;
-					currentGroupScore = groupScore;
-				}
+                if (groupScore > 0 && groupScore >= Math.Abs(currentGroupScore))
+                {
+                    //"greater than" current score
+                    insertionPoint = xmlAction;
+                    currentGroupScore = groupScore;
+                    insertBefore = false;
+                }
+                else if (groupScore < 0 && Math.Abs(groupScore) > Math.Abs(currentGroupScore))
+                {
+                    //"less than"
+                    insertionPoint = xmlAction;
+                    currentGroupScore = groupScore;
+                    insertBefore = true;
+                }
 			}
 						
 			XmlElement newXmlAction = CreateXmlAction(document, action);
 			
 			if (insertionPoint != null)
-				xmlActionModel.InsertAfter(newXmlAction, insertionPoint);
+			{
+			    if (insertBefore)
+                    xmlActionModel.InsertBefore(newXmlAction, insertionPoint);
+                else 
+                    xmlActionModel.InsertAfter(newXmlAction, insertionPoint);
+			}
 			else
 				xmlActionModel.AppendChild(newXmlAction);
 
@@ -695,6 +712,5 @@ namespace ClearCanvas.Desktop.Actions
 		}
 
 		#endregion
-
-	}
+    }
 }

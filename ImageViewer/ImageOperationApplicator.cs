@@ -99,6 +99,31 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Applies the <see cref="IUndoableOperation{T}"/> to only the current (reference) image.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// <see cref="IUndoableOperation{T}.Apply"/> will be called only for the image if 
+		/// <see cref="IUndoableOperation{T}.AppliesTo"/> has returned true <b>and</b> <see cref="IUndoableOperation{T}.GetOriginator"/> 
+		/// has returned a non-null value.
+		/// </para>
+		/// <para>
+		/// The affect image is drawn automatically by this method.
+		/// </para>
+		/// </remarks>
+		public UndoableCommand ApplyToReferenceImage()
+		{
+			_imageEnumerator.ExcludeReferenceImage = true;
+
+			DrawableUndoableOperationCommand<IPresentationImage> command = new DrawableUndoableOperationCommand<IPresentationImage>(_operation, _imageEnumerator.ReferenceImage);
+			command.Execute();
+			if (command.Count == 0)
+				return null;
+			else
+				return command;
+		}
+
+		/// <summary>
 		/// Applies the same <see cref="IUndoableOperation{T}"/> to all linked images, but not the current (reference) image itself.
 		/// </summary>
 		/// <remarks>

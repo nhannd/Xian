@@ -26,12 +26,12 @@ namespace ClearCanvas.Dicom.Audit
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public DicomStudyDeletedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome)
+		public DicomStudyDeletedAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome)
 			: base("DicomStudyDeleted")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMStudyDeleted;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.D;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.DICOMStudyDeleted;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.D;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;

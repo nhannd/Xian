@@ -13,9 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.ImageServer.Enterprise.Admin;
+using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -144,8 +143,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
     [Serializable]
     public class UserGroupRowData
     {
-        private string _name;
-        private string _ref;
         private int _tokenCount;
         private List<TokenSummary> _tokens = new List<TokenSummary>();
 
@@ -155,7 +152,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         {
             Ref = group.AuthorityGroupRef.Serialize();
             Name = group.Name;
-
+            Description = group.Description;
+            DataGroup = group.DataGroup;
             foreach(AuthorityTokenSummary token in group.AuthorityTokens)
             {
                 Tokens.Add(new TokenSummary(token.Name, token.Description));
@@ -164,17 +162,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             TokenCount = group.AuthorityTokens.Count;
         }
 
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; }
 
-        public string Ref
-        {
-            get { return _ref; }
-            set { _ref = value; }
-        }
+        public string Description { get; set; }
+
+        public string Ref { get; set; }
+
+        public bool DataGroup { get; set; }
+
+        public string Password { get; set; }
 
         public int TokenCount
         {
@@ -192,26 +188,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
     [Serializable]
     public class TokenSummary
     {
-        private string _name;
-        private string _description;
-
         public TokenSummary(string name, string description)
         {
-            _name = name;
-            _description = description;
+            Name = name;
+            Description = description;
         }
 
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; }
 
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }     
+        public string Description { get; set; }
     }
 }
 

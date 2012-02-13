@@ -11,21 +11,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Clipboard;
+using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
-using ClearCanvas.ImageViewer.Services;
-using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
@@ -33,13 +27,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 	internal class KeyImagePublisher
 	{
 		private readonly KeyImageInformation _sourceInformation;
-
 		private readonly List<DicomFile> _keyObjectDocuments;
-		private readonly Dictionary<Server, List<DicomFile>> _remotePublishingInfo;
-		private readonly List<DicomFile> _localPublishingInfo;
 
-		private List<Server> _defaultServers;
-		private List<Server> _allServers;
 		private List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> _framePresentationStates;
 		private Dictionary<string, SeriesInfo> _seriesIndex;
 
@@ -47,15 +36,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		{
 			_sourceInformation = information;
 			_keyObjectDocuments = new List<DicomFile>();
-			_remotePublishingInfo = new Dictionary<Server, List<DicomFile>>();
-			_localPublishingInfo = new List<DicomFile>();
-
-			PublishToDefaultServers = true;
-			PublishLocalToSourceAE = false;
 		}
-
-		public bool PublishToDefaultServers { get; set; }
-		public bool PublishLocalToSourceAE { get; set; }
 
 		private List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> SourceFrames
 		{
@@ -85,14 +66,14 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 						var presentationState = DicomSoftcopyPresentationState.Create
 							(image, delegate(DicomSoftcopyPresentationState ps)
-							 	{
-							 		ps.SpecificCharacterSet = provider.ImageSop[DicomTags.SpecificCharacterSet].ToString();
-									ps.PresentationSeriesInstanceUid = seriesInfo.PresentationSeriesUid;
-									ps.PresentationSeriesNumber = seriesInfo.PresentationSeriesNumber;
-									ps.PresentationSeriesDateTime = seriesInfo.PresentationSeriesDateTime;
-									ps.PresentationInstanceNumber = seriesInfo.GetNextPresentationInstanceNumber();
-							 		ps.SourceAETitle = DicomServerConfigurationHelper.GetOfflineAETitle(false);
-							 	});
+							        	{
+							        		ps.SpecificCharacterSet = provider.ImageSop[DicomTags.SpecificCharacterSet].ToString();
+							        		ps.PresentationSeriesInstanceUid = seriesInfo.PresentationSeriesUid;
+							        		ps.PresentationSeriesNumber = seriesInfo.PresentationSeriesNumber;
+							        		ps.PresentationSeriesDateTime = seriesInfo.PresentationSeriesDateTime;
+							        		ps.PresentationInstanceNumber = seriesInfo.GetNextPresentationInstanceNumber();
+							        		ps.SourceAETitle = DicomServerConfigurationHelper.GetOfflineAETitle(false);
+							        	});
 
 						_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
 					}
@@ -100,44 +81,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 				return _framePresentationStates;
 			}
-		}
-
-		private List<Server> AllServers
-		{
-			get
-			{
-				if (_allServers == null)
-				{
-					_allServers = new List<Server>();
-
-					ServerTree tree = new ServerTree();
-					List<IServerTreeNode> allServers = tree.FindChildServers(tree.RootNode.ServerGroupNode);
-
-					foreach (IServerTreeNode node in allServers)
-						_allServers.Add((Server)node);
-				}
-
-				return _allServers;
-			}
-		}
-
-		private List<Server> DefaultServers
-		{
-			get
-			{
-				if (_defaultServers == null)
-					_defaultServers = ImageViewer.Configuration.DefaultServers.GetAll();
-
-				return _defaultServers;
-			}	
-		}
-
-		private bool IsDefaultServer(Server publishServer)
-		{
-			return CollectionUtils.Contains(DefaultServers, delegate(Server server)
-																{
-																	return server.Path == publishServer.Path;
-																});
 		}
 
 		/// <remarks>
@@ -159,119 +102,21 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			serializer.SeriesDescription = _sourceInformation.SeriesDescription;
 			serializer.SourceAETitle = DicomServerConfigurationHelper.GetOfflineAETitle(false);
 
-			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
-				serializer.AddImage(frameAndPR.Key, frameAndPR.Value);
+			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> presentationFrame in SourceFrames)
+				serializer.AddImage(presentationFrame.Key, presentationFrame.Value);
 
 			_keyObjectDocuments.AddRange(serializer.Serialize(
-				delegate(KeyImageSerializer.KeyObjectDocumentSeries keyObjectDocumentSeries)
-					{
-						string key = keyObjectDocumentSeries.StudyInstanceUid;
-						if (_seriesIndex.ContainsKey(key))
-						{
-							keyObjectDocumentSeries.SeriesDateTime = _seriesIndex[key].KeyObjectSeriesDateTime;
-							keyObjectDocumentSeries.SeriesNumber = _seriesIndex[key].KeyObjectSeriesNumber;
-							keyObjectDocumentSeries.SeriesInstanceUid = _seriesIndex[key].KeyObjectSeriesUid;
-						}
-					}
-				));
-		}
-
-		private static DicomFile GetKeyObjectDocument(string studyInstanceUid, List<DicomFile> documents)
-		{
-			return documents.Find(
-				delegate(DicomFile file)
-				{
-					string fileStudyUid = file.DataSet[DicomTags.StudyInstanceUid];
-					return fileStudyUid == studyInstanceUid;
-				});
-		}
-
-		private void AddRemotePublishDocuments(Server publishServer, Frame frame, DicomFile presentationStateDocument)
-		{
-			if (!_remotePublishingInfo.ContainsKey(publishServer))
-				_remotePublishingInfo.Add(publishServer, new List<DicomFile>());
-
-			List<DicomFile> publishDocuments = _remotePublishingInfo[publishServer];
-			DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUid, publishDocuments);
-
-			if (existingDocument == null)
-			{
-				DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUid, _keyObjectDocuments);
-				publishDocuments.Add(document);
-			}
-
-			if (presentationStateDocument != null && !publishDocuments.Contains(presentationStateDocument))
-				publishDocuments.Add(presentationStateDocument);
-		}
-
-		private Server GetServer(ApplicationEntity server)
-		{
-			return GetServer(server.AETitle);
-		}
-
-		private Server GetServer(string aeTitle)
-		{
-			return AllServers.Find(defaultServer => aeTitle == defaultServer.AETitle);
-		}
-
-		private void BuildPublishingInfo()
-		{
-			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
-			{
-				Frame frame = frameAndPR.Key;
-				DicomSoftcopyPresentationState presentationState = frameAndPR.Value;
-				DicomFile presentationStateDocument = null;
-				if(presentationState != null)
-					presentationStateDocument = presentationState.DicomFile;
-
-				if (PublishToDefaultServers)
-				{
-					foreach (Server defaultServer in DefaultServers)
-						AddRemotePublishDocuments(defaultServer, frame, presentationStateDocument);
-				}
-
-				ISopDataSource dataSource = frame.ParentImageSop.DataSource;
-				ApplicationEntity sourceServer = dataSource.Server as ApplicationEntity;
-
-				//Always try to publish back to the source server, whether it's streaming, local, or otherwise.
-				//This keeps the study in sync, which just makes sense.
-				if (sourceServer != null)
-				{
-					Server publishServer = GetServer(sourceServer);
-					if (publishServer != null)
-					{
-						bool alreadyAdded = IsDefaultServer(publishServer) && PublishToDefaultServers;
-						if (!alreadyAdded)
-							AddRemotePublishDocuments(publishServer, frame, presentationStateDocument);
-					}
-				}
-				else if (dataSource.StudyLoaderName == "DICOM_LOCAL")
-				{
-					Server sourceAE = null;
-					if (PublishLocalToSourceAE)
-					{
-						string sourceAETitle = dataSource[DicomTags.SourceApplicationEntityTitle].GetString(0, "");
-						if (!String.IsNullOrEmpty(sourceAETitle))
-							sourceAE = GetServer(sourceAETitle);
-					}
-
-					DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUid, _localPublishingInfo);
-					if (existingDocument == null)
-					{
-						DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUid, _keyObjectDocuments);
-						_localPublishingInfo.Add(document);
-						if (sourceAE != null)
-							AddRemotePublishDocuments(sourceAE, frame, document);
-					}
-
-					if (presentationStateDocument != null)
-					{
-						_localPublishingInfo.Add(presentationStateDocument);
-						if (sourceAE != null)
-							AddRemotePublishDocuments(sourceAE, frame, presentationStateDocument);
-					}
-				}
-			}
+			                             	delegate(KeyImageSerializer.KeyObjectDocumentSeries keyObjectDocumentSeries)
+			                             		{
+			                             			string key = keyObjectDocumentSeries.StudyInstanceUid;
+			                             			if (_seriesIndex.ContainsKey(key))
+			                             			{
+			                             				keyObjectDocumentSeries.SeriesDateTime = _seriesIndex[key].KeyObjectSeriesDateTime;
+			                             				keyObjectDocumentSeries.SeriesNumber = _seriesIndex[key].KeyObjectSeriesNumber;
+			                             				keyObjectDocumentSeries.SeriesInstanceUid = _seriesIndex[key].KeyObjectSeriesUid;
+			                             			}
+			                             		}
+			                             	));
 		}
 
 		public void Publish()
@@ -279,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (_sourceInformation.ClipboardItems.Count == 0)
 				return;
 
-			while(!LocalDataStoreActivityMonitor.IsConnected)
+			while (!LocalDataStoreActivityMonitor.IsConnected)
 			{
 				DialogBoxAction result = Application.ActiveDesktopWindow.ShowMessageBox(
 					SR.MessageCannotPublishKeyImagesServersNotRunning, MessageBoxActions.OkCancel);
@@ -289,85 +134,49 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			}
 
 			CreateKeyObjectDocuments();
-			BuildPublishingInfo();
 
-			bool remotePublishFailed = false;
-			if (PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
+			var publishers = new Dictionary<string, DicomPublishingHelper>();
+
+			// add each KO document to a publisher by study
+			foreach (var koDocument in _keyObjectDocuments)
 			{
-				foreach (KeyValuePair<Server, List<DicomFile>> pair in _remotePublishingInfo)
-				{
-					EventResult result = EventResult.Success;
-					AuditedInstances updatedInstances = new AuditedInstances();
-
-					try
-					{
-						Server server = pair.Key;
-						List<DicomFile> documents = pair.Value;
-						List<AEInformation> destinationServers = new List<AEInformation>();
-						AEInformation destination = new AEInformation();
-						destination.AETitle = server.AETitle;
-						destination.HostName = server.Host;
-						destination.Port = server.Port;
-						destinationServers.Add(destination);
-
-						foreach (DicomFile file in documents)
-						{
-							string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-							string patientId = file.DataSet[DicomTags.PatientId].ToString();
-							string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
-							updatedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
-						}
-
-						DicomFilePublisher.PublishRemote(documents, destination, true);
-					}
-					catch (EndpointNotFoundException)
-					{
-						result = EventResult.MajorFailure;
-						remotePublishFailed = true;
-						Platform.Log(LogLevel.Error,
-						             "Unable to publish key images to default servers; the local dicom server does not appear to be running.");
-					}
-					catch (Exception e)
-					{
-						result = EventResult.SeriousFailure;
-						remotePublishFailed = true;
-						Platform.Log(LogLevel.Error, e,
-						             "An error occurred while attempting to publish key images to server {0}.", pair.Key.AETitle);
-					}
-					finally
-					{
-						AuditHelper.LogUpdateInstances(new string[] {pair.Key.AETitle}, updatedInstances, EventSource.CurrentUser, result);
-					}
-				}
-			}
-			else
-			{
-				Platform.Log(LogLevel.Info, "Skipping remote key image publishing step; user does not have Export permissions.");
+				var publisher = GetValue(publishers, koDocument.DataSet[DicomTags.StudyInstanceUid].ToString());
+				publisher.Files.Add(koDocument);
 			}
 
-			bool localPublishFailed = true;
-			try
+			// add each PR state to a publisher by study
+			foreach (var presentationFrame in SourceFrames)
 			{
-				DicomFilePublisher.PublishLocal(_localPublishingInfo, true);
-				localPublishFailed = false;
-			}
-			catch (EndpointNotFoundException)
-			{
-				Platform.Log(LogLevel.Error,
-					"Unable to publish key images locally; the local data store service does not appear to be running.");
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e,
-						"An error occurred while attempting to publish key images locally.");
+				var sourceFrame = presentationFrame.Key;
+				var publisher = GetValue(publishers, sourceFrame.StudyInstanceUid);
+
+				if (presentationFrame.Value != null)
+					publisher.Files.Add(presentationFrame.Value.DicomFile);
+
+				// try to determine the origin and source AE from the image frame's SOP data source (should be the same for all frames from a given study)
+				var sopDataSource = sourceFrame.ParentImageSop.DataSource;
+				publisher.OriginServerAE = sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString();
+				publisher.SourceServerAE = sopDataSource.Server is ApplicationEntity ? ((ApplicationEntity) sopDataSource.Server).AETitle : string.Empty;
 			}
 
-			if (localPublishFailed && remotePublishFailed)
-				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessagePublishingFailed, MessageBoxActions.Ok);
-			else if (localPublishFailed)
-				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageLocalPublishingFailed, MessageBoxActions.Ok);
-			else if (remotePublishFailed)
-				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageRemotePublishingFailed, MessageBoxActions.Ok);
+			// publish all files now
+			var anyFailed = false;
+			foreach (var publisher in publishers.Values)
+			{
+				if (!publisher.Publish())
+					anyFailed = true;
+			}
+
+			if (anyFailed)
+				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageKeyImagePublishingFailed, MessageBoxActions.Ok);
+		}
+
+		private static T GetValue<T>(IDictionary<string, T> dictionary, string key)
+			where T : new()
+		{
+			if (!dictionary.ContainsKey(key))
+				dictionary.Add(key, new T());
+			return dictionary[key];
 		}
 
 		private class SeriesInfo
@@ -383,12 +192,12 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 			public SeriesInfo(IImageSopProvider provider)
 			{
-				this.KeyObjectSeriesUid = DicomUid.GenerateUid().UID;
-				this.KeyObjectSeriesNumber = CalculateSeriesNumber(provider.Frame);
-				this.KeyObjectSeriesDateTime = Platform.Time;
-				this.PresentationSeriesUid = DicomUid.GenerateUid().UID;
-				this.PresentationSeriesNumber = KeyObjectSeriesNumber + 1;
-				this.PresentationSeriesDateTime = Platform.Time;
+				KeyObjectSeriesUid = DicomUid.GenerateUid().UID;
+				KeyObjectSeriesNumber = CalculateSeriesNumber(provider.Frame);
+				KeyObjectSeriesDateTime = Platform.Time;
+				PresentationSeriesUid = DicomUid.GenerateUid().UID;
+				PresentationSeriesNumber = KeyObjectSeriesNumber + 1;
+				PresentationSeriesDateTime = Platform.Time;
 				_presentationNextInstanceNumber = 1;
 			}
 

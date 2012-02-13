@@ -20,17 +20,18 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost/ImageServerTeamBranch/Services/ApplicationService.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost/WebPortal/Services/ApplicationService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ApplicationService.xsd" MetadataType="Schema" ID="c2bd12a7-7a24-49ba-8f1a-12abf6b41d21" SourceId="1" SourceUrl="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc?xsd=xsd3" />
-    <MetadataFile FileName="ApplicationService.wsdl" MetadataType="Wsdl" ID="81ee7a9c-46d4-48a5-bdaf-4b804bfd5131" SourceId="1" SourceUrl="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc?wsdl" />
-    <MetadataFile FileName="ApplicationService1.xsd" MetadataType="Schema" ID="405ad548-da19-4464-92be-74977b0bd619" SourceId="1" SourceUrl="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc?xsd=xsd0" />
-    <MetadataFile FileName="ApplicationService2.xsd" MetadataType="Schema" ID="61d884fc-5316-42e1-bca2-ca0933a7038e" SourceId="1" SourceUrl="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc?xsd=xsd1" />
-    <MetadataFile FileName="ApplicationService1.wsdl" MetadataType="Wsdl" ID="fa3c8b54-11b8-4a0c-a409-3f37bb7541f9" SourceId="1" SourceUrl="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc?wsdl=wsdl0" />
-    <MetadataFile FileName="ApplicationService.disco" MetadataType="Disco" ID="d0cc089a-e51e-41b7-9964-203c4df64e70" SourceId="1" SourceUrl="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc?disco" />
-    <MetadataFile FileName="ApplicationService3.xsd" MetadataType="Schema" ID="e15f2f7b-b50d-4b90-b7b8-f90e154afcc4" SourceId="1" SourceUrl="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc?xsd=xsd4" />
-    <MetadataFile FileName="ApplicationService4.xsd" MetadataType="Schema" ID="b70ffd6a-ba05-4d61-8f29-d12cc046f9ca" SourceId="1" SourceUrl="http://thanh/ImageServerTeamBranch/Services/ApplicationService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ApplicationService513.xsd" MetadataType="Schema" ID="19949cf9-6a52-41b2-b107-a6aa301f6cdb" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd0" />
+    <MetadataFile FileName="ApplicationService514.xsd" MetadataType="Schema" ID="3d99bd66-1894-4629-af77-cc6708a36a86" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd4" />
+    <MetadataFile FileName="ApplicationService515.xsd" MetadataType="Schema" ID="adde5dcf-b8f6-4816-8d79-967fe1acb945" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd1" />
+    <MetadataFile FileName="ApplicationService516.xsd" MetadataType="Schema" ID="fe36b04d-4741-4026-803a-7e46389457dd" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ApplicationService517.xsd" MetadataType="Schema" ID="d8cf3110-2ae5-4e30-a7b1-4ddfdd9ee660" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd3" />
+    <MetadataFile FileName="ApplicationService26.wsdl" MetadataType="Wsdl" ID="5d004fbb-d639-4774-9c8b-78f005b619fc" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="ApplicationService27.wsdl" MetadataType="Wsdl" ID="acdff376-c897-452c-9a8f-b28a15c93238" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?wsdl" />
+    <MetadataFile FileName="ApplicationService518.xsd" MetadataType="Schema" ID="5a8eeca5-4980-4a2b-bf51-392182d8955c" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd5" />
+    <MetadataFile FileName="ApplicationService13.disco" MetadataType="Disco" ID="4be98619-c9a0-4f19-9cc5-146080d8c8e6" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?disco" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

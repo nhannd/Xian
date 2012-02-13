@@ -126,8 +126,8 @@
   <data name="ClearSelected" xml:space="preserve">
     <value>Clear Selected</value>
   </data>
-  <data name="DicomServerConfiguration" xml:space="preserve">
-    <value>DICOM Server</value>
+  <data name="ServerConfiguration" xml:space="preserve">
+    <value>Local Server</value>
   </data>
   <data name="DiskspaceManagerConfiguration" xml:space="preserve">
     <value>Diskspace Manager</value>
@@ -491,5 +491,8 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   </data>
   <data name="FormatProgressUpdate" xml:space="preserve">
     <value>... {0:F1}%</value>
+  </data>
+  <data name="DicomConfiguration" xml:space="preserve">
+    <value>DICOM</value>
   </data>
 </root>

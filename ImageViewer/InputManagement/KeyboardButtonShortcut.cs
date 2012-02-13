@@ -34,7 +34,12 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_keyData = keyData;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Gets whether or not this is an empty shortcut (e.g. no keystrokes).
+        /// </summary>
+        public bool IsEmpty { get { return _keyData == XKeys.None; } }
+		
+        /// <summary>
 		/// Gets the Key Data, in its entirety.
 		/// </summary>
 		public XKeys KeyData

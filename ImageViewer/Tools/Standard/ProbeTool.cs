@@ -11,6 +11,7 @@
 
 using System;
 using System.Drawing;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -33,26 +34,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[MouseButtonIconSet("activate", IconScheme.Colour, "Icons.ProbeToolSmall.png", "Icons.ProbeToolMedium.png", "Icons.ProbeToolLarge.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
-	[GroupHint("activate", "Tools.Image.Interrogation.Probe")]
+    [GroupHint("activate", "Tools.Image.Inspection.Probe")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 
 	#region Tool Settings Actions
 
-	[MenuAction("showCTPix", "probetool-dropdown/ShowCTPix", "ToggleShowCTPix")]
-	[CheckedStateObserver("showCTPix", "ShowCTPix", "ShowCTPixChanged")]
-	[Tooltip("showCTPix", "TooltipShowCTPix")]
-	[GroupHint("showCTPix", "Tools.Image.Interrogation.Probe.Modality.CT.ShowPixel")]
+	[MenuAction("showRawPix", "probetool-dropdown/MenuShowRawPixelValue", "ToggleShowRawPix")]
+	[CheckedStateObserver("showRawPix", "ShowRawPix", "ShowRawPixChanged")]
+	[GroupHint("showRawPix", "Tools.Image.Inspection.Probe.Modality.CT.ShowPixel")]
 
-	[MenuAction("showNonCTMod", "probetool-dropdown/ShowNonCTMod", "ToggleShowNonCTMod")]
-	[CheckedStateObserver("showNonCTMod", "ShowNonCTMod", "ShowNonCTModChanged")]
-	[Tooltip("showNonCTMod", "TooltipShowNonCTMod")]
-	[GroupHint("showNonCTMod", "Tools.Image.Interrogation.Probe.Modality.NonCT.ShowMod")]
-
-	[MenuAction("showVoiLut", "probetool-dropdown/ShowVoiLut", "ToggleShowVoiLut")]
+	[MenuAction("showVoiLut", "probetool-dropdown/MenuShowVoiPixelValue", "ToggleShowVoiLut")]
 	[CheckedStateObserver("showVoiLut", "ShowVoiLut", "ShowVoiLutChanged")]
-	[Tooltip("showVoiLut", "TooltipShowVoiLut")]
-	[GroupHint("showVoiLut", "Tools.Image.Interrogation.Probe.General.ShowVoiLut")]
+    [GroupHint("showVoiLut", "Tools.Image.Inspection.Probe.General.ShowVoiLut")]
 
 	#endregion
 
@@ -61,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	{
 		private Tile _selectedTile;
 		private ImageGraphic _selectedImageGraphic;
-		private ImageSop _selectedImageSop;
+		private Frame _selectedFrame;
 		private ActionModelNode _actionModel;
 
 		/// <summary>
@@ -102,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_selectedTile = mouseInformation.Tile as Tile;
 			_selectedTile.InformationBox = new InformationBox();
 			_selectedImageGraphic = this.SelectedImageGraphicProvider.ImageGraphic;
-			_selectedImageSop = (this.SelectedPresentationImage as IImageSopProvider).ImageSop;
+			_selectedFrame = ((IImageSopProvider) SelectedPresentationImage).Frame;
 
 			Probe(mouseInformation.Location);
 
@@ -153,58 +147,52 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			Point sourcePointRounded = Point.Truncate(_selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint));
 
 			ToolSettings settings = ToolSettings.Default;
-			bool isCT = (String.Compare(_selectedImageSop.Modality, "CT", true) == 0);
-			bool showPixelValue = !isCT || settings.ShowCTRawPixelValue;
-			bool showModalityValue = isCT || settings.ShowNonCTModPixelValue;
+			bool showPixelValue = settings.ShowRawPixelValue;
 			bool showVoiValue = settings.ShowVOIPixelValue;
 
-			string probeString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, SR.LabelNotApplicable, SR.LabelNotApplicable));
-			string pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelPixelValue, SR.LabelNotApplicable);
+			string probeString;
+			string coordinateString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, SR.LabelNotApplicable, SR.LabelNotApplicable));
+			string pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelRawPixel, SR.LabelNotApplicable);
 			string modalityLutString = String.Format(SR.FormatProbeInfo, SR.LabelModalityLut, SR.LabelNotApplicable);
 			string voiLutString = String.Format(SR.FormatProbeInfo, SR.LabelVOILut, SR.LabelNotApplicable);
 
 			try
 			{
+				var displayString = new StringBuilder();
 				if (_selectedImageGraphic.HitTest(destinationPoint))
 				{
-					probeString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, sourcePointRounded.X, sourcePointRounded.Y));
+					coordinateString = String.Format(SR.FormatProbeInfo, SR.LabelLocation, string.Format(SR.FormatCoordinates, sourcePointRounded.X, sourcePointRounded.Y));
 
 					if (_selectedImageGraphic is GrayscaleImageGraphic)
 					{
 						GrayscaleImageGraphic image = _selectedImageGraphic as GrayscaleImageGraphic;
 
 						int pixelValue = 0;
-						int modalityLutValue = 0;
-						int voiLutValue = 0;
 
 						GetPixelValue(image, sourcePointRounded, ref pixelValue, ref pixelValueString);
-						GetModalityLutValue(image, pixelValue, ref modalityLutValue, ref modalityLutString);
-						GetVoiLutValue(image, modalityLutValue, ref voiLutValue, ref voiLutString);
+						GetModalityLutValue(image, pixelValue, ref modalityLutString);
+						GetVoiLutValue(image, pixelValue, ref voiLutString);
+
+						// the modality LUT value is always shown
+						displayString.AppendLine(modalityLutString);
+
+						if (showPixelValue) displayString.AppendLine(pixelValueString);
+						if (showVoiValue) displayString.AppendLine(voiLutString);
 					}
 					else if (_selectedImageGraphic is ColorImageGraphic)
 					{
-						showModalityValue = false;
-						showVoiValue = false;
-
 						ColorImageGraphic image = _selectedImageGraphic as ColorImageGraphic;
 						Color color = image.PixelData.GetPixelAsColor(sourcePointRounded.X, sourcePointRounded.Y);
 						string rgbFormatted = String.Format(SR.FormatRGB, color.R, color.G, color.B);
-						pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelPixelValue, rgbFormatted);
-					}
-					else
-					{
-						showPixelValue = false;
-						showModalityValue = false;
-						showVoiValue = false;
+						pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelRGBPixel, rgbFormatted);
+						displayString.AppendLine(pixelValueString);
 					}
 				}
 
-				if (showPixelValue)
-					probeString += Environment.NewLine + pixelValueString;
-				if (showModalityValue)
-					probeString += Environment.NewLine + modalityLutString;
-				if (showVoiValue)
-					probeString += Environment.NewLine + voiLutString;
+				// show the coordinate last, cause it's probably the least interesting information
+				displayString.AppendLine(coordinateString);
+
+				probeString = displayString.ToString().Trim();
 			}
 			catch (Exception e)
 			{
@@ -222,22 +210,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			ref string pixelValueString)
 		{
 			pixelValue = grayscaleImage.PixelData.GetPixel(sourcePointRounded.X, sourcePointRounded.Y);
-			pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelPixelValue, pixelValue);
+			pixelValueString = String.Format(SR.FormatProbeInfo, SR.LabelRawPixel, pixelValue);
 		}
 
 		private void GetModalityLutValue(
 			GrayscaleImageGraphic grayscaleImage,
 			int pixelValue,
-			ref int modalityLutValue,
 			ref string modalityLutString)
 		{
 			if (grayscaleImage.ModalityLut != null)
 			{
-				modalityLutValue = grayscaleImage.ModalityLut[pixelValue];
-
-				var modalityLutValueDisplay = modalityLutValue.ToString();
-				if (_selectedImageSop != null && string.Compare(_selectedImageSop.Modality, "CT", true) == 0)
-					modalityLutValueDisplay = string.Format(SR.FormatValueUnits, modalityLutValueDisplay, SR.LabelHounsfieldUnitsAbbreviation);
+				var modalityLutValue = grayscaleImage.ModalityLut[pixelValue];
+				
+				var modalityLutValueDisplay = modalityLutValue.ToString(_selectedFrame != null && _selectedFrame.IsSubnormalRescale ? @"G3" : @"F1");
+				if (_selectedFrame != null)
+				{
+					var units = (_selectedFrame.RescaleUnits ?? RescaleUnits.None).Label;
+					if (!string.IsNullOrEmpty(units))
+						modalityLutValueDisplay = string.Format(SR.FormatValueUnits, modalityLutValueDisplay, units);
+				}
 
 				modalityLutString = String.Format(SR.FormatProbeInfo, SR.LabelModalityLut, modalityLutValueDisplay);
 			}
@@ -245,21 +236,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void GetVoiLutValue(
 			GrayscaleImageGraphic grayscaleImage,
-			int modalityLutValue,
-			ref int voiLutValue,
+			int pixelValue,
 			ref string voiLutString)
 		{
 			if (grayscaleImage.VoiLut != null)
 			{
-				voiLutValue = grayscaleImage.VoiLut[modalityLutValue];
+				var voiLutValue = grayscaleImage.OutputLut[pixelValue];
 				voiLutString = String.Format(SR.FormatProbeInfo, SR.LabelVOILut, voiLutValue);
 			}
 		}
 
 		#region Probe Tool Settings
 
-		private event EventHandler _showCTPixChanged;
-		private event EventHandler _showNonCTModChanged;
+		private event EventHandler _showRawPixChanged;
 		private event EventHandler _showVoiLutChanged;
 		private ToolSettings _settings;
 
@@ -285,11 +274,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			switch (e.PropertyName)
 			{
-				case "ShowCTRawPixelValue":
-					EventsHelper.Fire(_showCTPixChanged, this, EventArgs.Empty);
-					break;
-				case "ShowNonCTModPixelValue":
-					EventsHelper.Fire(_showNonCTModChanged, this, EventArgs.Empty);
+				case "ShowRawPixelValue":
+					EventsHelper.Fire(_showRawPixChanged, this, EventArgs.Empty);
 					break;
 				case "ShowVOIPixelValue":
 					EventsHelper.Fire(_showVoiLutChanged, this, EventArgs.Empty);
@@ -297,16 +283,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		public event EventHandler ShowCTPixChanged
+		public event EventHandler ShowRawPixChanged
 		{
-			add { _showCTPixChanged += value; }
-			remove { _showCTPixChanged -= value; }
-		}
-
-		public event EventHandler ShowNonCTModChanged
-		{
-			add { _showNonCTModChanged += value; }
-			remove { _showNonCTModChanged -= value; }
+			add { _showRawPixChanged += value; }
+			remove { _showRawPixChanged -= value; }
 		}
 
 		public event EventHandler ShowVoiLutChanged
@@ -315,13 +295,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { _showVoiLutChanged -= value; }
 		}
 
-		public bool ShowCTPix
+		public bool ShowRawPix
 		{
 			get
 			{
 				try
 				{
-					return _settings.ShowCTRawPixelValue;
+					return _settings.ShowRawPixelValue;
 				}
 				catch
 				{
@@ -330,26 +310,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 			set
 			{
-				_settings.ShowCTRawPixelValue = value;
-			}
-		}
-
-		public bool ShowNonCTMod
-		{
-			get
-			{
-				try
-				{
-					return _settings.ShowNonCTModPixelValue;
-				}
-				catch
-				{
-					return false;
-				}
-			}
-			set
-			{
-				_settings.ShowNonCTModPixelValue = value;
+				_settings.ShowRawPixelValue = value;
 			}
 		}
 
@@ -372,14 +333,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		public void ToggleShowCTPix()
+		public void ToggleShowRawPix()
 		{
-			this.ShowCTPix = !this.ShowCTPix;
-		}
-
-		public void ToggleShowNonCTMod()
-		{
-			this.ShowNonCTMod = !this.ShowNonCTMod;
+			this.ShowRawPix = !this.ShowRawPix;
 		}
 
 		public void ToggleShowVoiLut()

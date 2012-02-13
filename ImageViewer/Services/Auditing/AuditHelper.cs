@@ -236,7 +236,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				var aeTitlesArray = ToArray(aeTitles);
 				foreach (var patient in instances.EnumeratePatients())
 				{
-					var auditHelper = new DicomInstancesAccessedAuditHelper(eventSource, eventResult, EventIdentificationTypeEventActionCode.R);
+					var auditHelper = new DicomInstancesAccessedAuditHelper(eventSource, eventResult, EventIdentificationContentsEventActionCode.R);
 					auditHelper.AddUser(eventSource);
 					if (aeTitlesArray.Length > 0)
 						auditHelper.AddUser(new AuditProcessActiveParticipant(aeTitlesArray));
@@ -272,7 +272,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				var aeTitlesArray = ToArray(aeTitles);
 				foreach (var patient in instances.EnumeratePatients())
 				{
-					var auditHelper = new DicomInstancesAccessedAuditHelper(eventSource, eventResult, EventIdentificationTypeEventActionCode.C);
+					var auditHelper = new DicomInstancesAccessedAuditHelper(eventSource, eventResult, EventIdentificationContentsEventActionCode.C);
 					auditHelper.AddUser(eventSource);
 					if (aeTitlesArray.Length > 0)
 						auditHelper.AddUser(new AuditProcessActiveParticipant(aeTitlesArray));
@@ -308,7 +308,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				var aeTitlesArray = ToArray(aeTitles);
 				foreach (var patient in instances.EnumeratePatients())
 				{
-					var auditHelper = new DicomInstancesAccessedAuditHelper(eventSource, eventResult, EventIdentificationTypeEventActionCode.U);
+					var auditHelper = new DicomInstancesAccessedAuditHelper(eventSource, eventResult, EventIdentificationContentsEventActionCode.U);
 					auditHelper.AddUser(eventSource);
 					if (aeTitlesArray.Length > 0)
 						auditHelper.AddUser(new AuditProcessActiveParticipant(aeTitlesArray));

@@ -246,7 +246,7 @@
                                        <tr>
                                           <td style="padding-left: 10px; padding-right: 10px;">
                                              <div class="SeriesTitle">
-                                                <%= Titles.DicomTagsTitle %>Dicom Tags</div>
+                                                <%= Titles.DicomTagsTitle %></div>
                                           </td>
                                        </tr>
                                     </table>

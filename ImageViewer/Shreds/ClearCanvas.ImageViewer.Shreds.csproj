@@ -14,6 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,6 +36,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
@@ -117,10 +121,6 @@
     <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\StudyLocator\ClearCanvas.ImageViewer.StudyLocator.csproj">
-      <Project>{68995968-271C-4915-B936-0F06C413F0B4}</Project>
-      <Name>ClearCanvas.ImageViewer.StudyLocator</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

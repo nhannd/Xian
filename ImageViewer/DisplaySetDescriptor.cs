@@ -12,7 +12,6 @@
 using System;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
@@ -28,12 +27,26 @@ namespace ClearCanvas.ImageViewer
 		/// generate the <see cref="IDisplaySet"/>.
 		/// </summary>
 		/// <remarks>
-		/// The series used to create the <see cref="IDisplaySet"/> is not necessarily
+		/// <para>
+		///  The series used to create the <see cref="IDisplaySet"/> is not necessarily
 		/// the same as the series that the contained <see cref="IPresentationImage"/>s
 		/// belong to.  For example, the <see cref="SourceSeries"/> could be a Key Object
 		/// series that simply references images in other series.
-		/// </remarks>
+        /// </para>
+        /// <para>
+        /// Additionally, this property can also be null if, for example, the images are
+        /// a composition of images from many series in the same study.
+        /// </para>
+        /// </remarks>
 		ISeriesIdentifier SourceSeries { get; }
+
+        //TODO (CR July 2011): Not sure about this ...
+
+        /// <summary>
+        /// Gets whether or not the display set is comprised of simple DICOM images, taken from a single
+        /// series, or whether it is a composite of images from multiple series.
+        /// </summary>
+        bool IsComposite { get; }
 
 		//TODO: put this stuff back when we actually support dynamically updating the viewer.
 		//bool Update(Sop sop);
@@ -96,7 +109,6 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected DicomDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImageFactory presentationImageFactory)
 		{
-			Platform.CheckForNullReference(sourceSeries, "sourceSeries");
 			_sourceSeries = sourceSeries;
 			_presentationImageFactory = presentationImageFactory;
 		}
@@ -125,6 +137,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return _sourceSeries; }
 		}
+
+        public bool IsComposite { get; protected set; }
 
 		#endregion
 
@@ -204,33 +218,21 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected virtual int GetNumber()
 		{
+            if (SourceSeries == null)
+                return default(int);
+
 			return SourceSeries.SeriesNumber ?? default(int);
 		}
-
-		//bool IDicomDisplaySetDescriptor.Update(Sop sop)
-		//{
-		//    Platform.CheckForNullReference(sop, "sop");
-		//    return Update(sop);
-		//}
 
 		internal virtual bool ShouldAddSop(Sop sop)
 		{
 			return false;
 		}
 
+        //Add this when we actually support it.
 		internal virtual bool Update(Sop sop)
 		{
-			bool updated = false;
-			if (_presentationImageFactory != null && sop.SeriesInstanceUid == SourceSeries.SeriesInstanceUid && ShouldAddSop(sop))
-			{
-				foreach (IPresentationImage image in _presentationImageFactory.CreateImages(sop))
-				{
-					base.DisplaySet.PresentationImages.Add(image);
-					updated = true;
-				}
-			}
-
-			return updated;
+            throw new NotSupportedException();
 		}
 	}
 

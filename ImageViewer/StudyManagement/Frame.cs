@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					string[] values = DicomStringHelper.GetStringArray(patientOrientation);
 					if (values.Length == 2)
-						return new PatientOrientation(values[0], values[1]);
+						return new PatientOrientation(values[0], values[1], _parentImageSop.AnatomicalOrientationType);
 				}
 
 				return new PatientOrientation("", "");
@@ -571,6 +571,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				rescaleType = _parentImageSop[DicomTags.RescaleType].GetString(0, null);
 				return rescaleType ?? "";
 			}
+		}
+
+		/// <summary>
+		/// Gets the units of the rescale function output.
+		/// </summary>
+		/// <seealso cref="RescaleSlope"/>
+		/// <seealso cref="RescaleIntercept"/>
+		/// <seealso cref="RescaleType"/>
+		public RescaleUnits RescaleUnits
+		{
+			get { return RescaleUnits.GetRescaleUnits(_parentImageSop.DataSource); }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether or not the rescale function is subnormal (i.e. output of the function is too small to be represented as distinct values).
+		/// </summary>
+		public bool IsSubnormalRescale
+		{
+			// function is subnormal if slope is such that 2**BS distinct values all map to a single distinct integer
+			get { return RescaleSlope < 1.0/(1 << BitsStored); }
 		}
 
 		#endregion

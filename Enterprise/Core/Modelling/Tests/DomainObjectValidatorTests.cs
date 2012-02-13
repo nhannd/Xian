@@ -132,7 +132,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 				var validator = new DomainObjectValidator();
 				validator.Validate(foo);
 			}
-			catch (EntityValidationException e)
+			catch (EntityValidationException)
 			{
 				Assert.Fail("validation was disabled and should not have failed");
 			}
@@ -147,7 +147,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 				var validator = new DomainObjectValidator();
 				validator.Validate(foo);
 			}
-			catch (EntityValidationException e)
+			catch (EntityValidationException)
 			{
 				Assert.Fail("validation was disabled and should not have failed");
 			}
@@ -162,7 +162,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 				var validator = new DomainObjectValidator();
 				validator.Validate(foo);
 			}
-			catch (EntityValidationException e)
+			catch (EntityValidationException)
 			{
 				Assert.Fail("validation was disabled and should not have failed");
 			}

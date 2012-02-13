@@ -141,7 +141,8 @@ namespace ClearCanvas.Enterprise.Desktop
                 {
                     if (_isNew)
                     {
-                        _userDetail = new UserDetail() { 
+                        _userDetail = new UserDetail
+                                          { 
                         	// Force users to change the password when they log in
                         	PasswordExpiryTime = Platform.Time 
                          };
@@ -171,6 +172,7 @@ namespace ClearCanvas.Enterprise.Desktop
             }
         }
 
+        [ValidateNotNull]
 		public string DisplayName
 		{
 			get { return _userDetail.DisplayName; }
@@ -180,6 +182,16 @@ namespace ClearCanvas.Enterprise.Desktop
 				Modified = true;
 			}
 		}
+
+        public string EmailAddress
+        {
+            get { return _userDetail.EmailAddress; }
+            set
+            {
+                _userDetail.EmailAddress = value;
+                Modified = true;
+            }
+        }
 
         public bool IsUserIdReadOnly
         {
@@ -295,25 +307,20 @@ namespace ClearCanvas.Enterprise.Desktop
 
         public void OnAuthorityGroupChecked(object sender, EventArgs e)
         {
-            AuthorityGroupTableEntry changedEntry = (AuthorityGroupTableEntry)sender;
+            var changedEntry = (AuthorityGroupTableEntry)sender;
 
             if (changedEntry.Selected == false)
             {
                 // Remove the 
                 CollectionUtils.Remove(_userDetail.AuthorityGroups,
-                    delegate(AuthorityGroupSummary summary)
-                    {
-                        return summary.Name == changedEntry.AuthorityGroupSummary.Name;
-                    });
+                                       summary => summary.Name == changedEntry.AuthorityGroupSummary.Name);
                 Modified = true;
             }
             else
             {
                 bool alreadyAdded = CollectionUtils.Contains(_userDetail.AuthorityGroups,
-                    delegate(AuthorityGroupSummary summary)
-                    {
-                        return summary.Name == changedEntry.AuthorityGroupSummary.Name;
-                    });
+                                                             summary =>
+                                                             summary.Name == changedEntry.AuthorityGroupSummary.Name);
                 
                 if (alreadyAdded == false)
                 {

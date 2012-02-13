@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2010, ClearCanvas Inc.
+// Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -8,7 +8,6 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
-
 
 #if UNIT_TESTS
 

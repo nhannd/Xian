@@ -73,6 +73,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._referringPhysiciansName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._modalityPicker = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker();
+			this._progressBar = new System.Windows.Forms.ProgressBar();
+			this._searchingLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _patientID
@@ -173,11 +175,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			resources.ApplyResources(this._modalityPicker, "_modalityPicker");
 			this._modalityPicker.Name = "_modalityPicker";
 			// 
+			// _progressBar
+			// 
+			resources.ApplyResources(this._progressBar, "_progressBar");
+			this._progressBar.Name = "_progressBar";
+			// 
+			// _searchingLabel
+			// 
+			resources.ApplyResources(this._searchingLabel, "_searchingLabel");
+			this._searchingLabel.Name = "_searchingLabel";
+			// 
 			// SearchPanelComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Controls.Add(this._searchingLabel);
+			this.Controls.Add(this._progressBar);
 			this.Controls.Add(this._referringPhysiciansName);
 			this.Controls.Add(this._titleBar);
 			this.Controls.Add(this._patientID);
@@ -212,5 +226,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
 		private ModalityPicker _modalityPicker;
 		private ClearCanvas.Desktop.View.WinForms.TextField _referringPhysiciansName;
+		private System.Windows.Forms.ProgressBar _progressBar;
+		private System.Windows.Forms.Label _searchingLabel;
     }
 }

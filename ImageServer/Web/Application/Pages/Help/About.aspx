@@ -1128,9 +1128,9 @@ its contribution.
   </td><td valign="top" width="32%">
   
   <div style="margin-left: 20px; margin-top: 20px; font-size: 20px; color: #205F87">
-  <span style="font-weight: bold; font-size: 16px; "><%= ProductInformation.GetNameAndVersion(false, true, true, true) %> [<%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>]</span><br />
+  <span style="font-weight: bold; font-size: 16px; "><%=ProductInformation.GetNameAndVersion(false, true, true, true)%> [<%=String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>]</span><br />
   <div style="font-weight: bold; font-size: 16px; ">Part of the ClearCanvas RIS/PACS</div>
-  <div style="font-weight:bold; font-size:12pt; color:Red"><%= ServerPlatform.IsManifestVerified? "": Resources.SR.NonStandardInstallation %></div>
+  <div style="font-weight:bold; font-size:12pt; color:Red"><%=ServerPlatform.IsManifestVerified ? "" : Resources.SR.NonStandardInstallation%></div>
 
 <p><b>ClearCanvas Inc.</b><br />
 1920-439 University Ave.<br />
@@ -1138,23 +1138,49 @@ Toronto, ON M5G 1Y8<br />
 Canada
 </p>
 <p>
-  <span style="color: #999999; font-size: 12px; font-weight: bold;"><%= ProductInformation.Copyright %></span><br />  
+  <span style="color: #999999; font-size: 12px; font-weight: bold;"><%=ProductInformation.Copyright%></span><br />  
 </p>
 <p>
-  <span style="color: #999999; font-size: 12px; font-weight: bold;">Current Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %></span><br />
+  <span style="color: #999999; font-size: 12px; font-weight: bold;">Current Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture%>, <%=System.Globalization.CultureInfo.CurrentUICulture%></span><br />
 </p>
 <p>
-  <span style="color: #999999; font-size: 12px; font-weight: bold;">
-    <% LicenseInformation.Reset(); %>
-    License Key: <%= LicenseInformation.LicenseKey %>
-  </span>
+    <%
+        string licenseKey = null;
+        try
+        {
+            LicenseInformation.Reset();
+            licenseKey = LicenseInformation.LicenseKey;
+
+        }
+        catch (Exception ex)
+        {
+        }
+%>
+   
+   <%
+        if (!string.IsNullOrEmpty(licenseKey)) { %>   
+              <span style="color: #999999; font-size: 12px; font-weight: bold;">
+                License Key: <%=licenseKey%>
+              </span>
+      <%}%>
 </p>
 
-<p style="font-weight: bold;">
-<a style="color: #205F87" href="http://www.clearcanvas.ca" target=_blank>www.clearcanvas.ca</a><br />
-<a style="color: #205F87" href="http://www.youtube.com/ClearCanvas" target=_blank>ClearCanvas YouTube Channel</a><br />
-<a style="color: #205F87" href="http://www.clearcanvas.ca/dnn/Resources/Documentation/tabid/107/Default.aspx" target=_blank>ClearCanvas Documentation</a><br />
-</p>
+<p style="margin-top:20px; font-weight:bold"><a style="color: #205F87;" href="http://www.clearcanvas.ca" target=_blank>www.clearcanvas.ca</a></p>
+<p style="margin-top:20px; font-weight:bold"><a style="color: #205F87;" href="http://www.youtube.com/ClearCanvas" target=_blank>ClearCanvas YouTube Channel</a></p>
+
+<% if (!string.IsNullOrEmpty(ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.UsersGuideUrl))
+   {%>
+<p style="margin-top:20px; font-weight:bold"><a style="color: #205F87;" href="<%= ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.UsersGuideUrl %>" target="_blank">
+<%= Resources.SR.CCImageServerUsersGuide%></a></p>
+<% }%>
+<% if (!string.IsNullOrEmpty(ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.DocumentationUrl))
+   {%>
+    <p style="margin-top:20px; font-weight:bold"><a style="color: #205F87;" href="<%=ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.DocumentationUrl %>" target="_blank"><%= Resources.SR.CCDocumentation%></a></p>
+<% }%>
+
+
+
+
 
   </div>    
   </td></tr>

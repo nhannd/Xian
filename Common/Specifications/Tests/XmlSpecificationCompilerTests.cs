@@ -37,7 +37,7 @@ namespace ClearCanvas.Common.Specifications.Tests
 				if (extensionPoint.GetType() == typeof(XmlSpecificationCompilerOperatorExtensionPoint))
 					return new object[]{};
 
-				throw new NotSupportedException();
+				return new object[0];
 			}
 
 			public ExtensionInfo[] ListExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter)
@@ -48,7 +48,7 @@ namespace ClearCanvas.Common.Specifications.Tests
 				if (extensionPoint.GetType() == typeof(XmlSpecificationCompilerOperatorExtensionPoint))
 					return new ExtensionInfo[] { };
 
-				throw new NotSupportedException();
+				return new ExtensionInfo[0];
 			}
 		}
 

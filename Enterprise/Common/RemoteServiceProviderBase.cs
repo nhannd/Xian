@@ -235,7 +235,6 @@ namespace ClearCanvas.Enterprise.Common
 		private readonly IUserCredentialsProvider _userCredentialsProvider;
 
 		private readonly ResponseCachingClientSideAdvice _responseCachingAdvice;
-		private readonly FailedEndpointThrottleClientAdvice _failedEndpointThrottleAdvice;
 		private readonly FailoverClientAdvice _failoverAdvice;
 
 		/// <summary>
@@ -243,22 +242,21 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		/// <param name="args"></param>
 		protected RemoteServiceProviderBase(RemoteServiceProviderArgs args)
-			: this(new StaticChannelProvider(args), args.UserCredentialsProvider, args.FailedEndpointBlackoutTime)
+			: this(new StaticChannelProvider(args), args.UserCredentialsProvider, !string.IsNullOrEmpty(args.FailoverBaseUrl))
 		{
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider, TimeSpan failedEndpointBlackoutTime)
+		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider, bool supportFailover)
 		{
 			_channelProvider = channelProvider;
 			_userCredentialsProvider = userCredentialsProvider;
 			_proxyGenerator = new ProxyGenerator();
 
 			_responseCachingAdvice = new ResponseCachingClientSideAdvice();
-			_failedEndpointThrottleAdvice = new FailedEndpointThrottleClientAdvice(failedEndpointBlackoutTime);
-			_failoverAdvice = new FailoverClientAdvice(this);
+			_failoverAdvice = supportFailover ? new FailoverClientAdvice(this) : null;
 		}
 
 		#region IServiceProvider
@@ -308,17 +306,17 @@ namespace ClearCanvas.Enterprise.Common
 			// because Dispose() is not a service operation
 			interceptors.Add(new DisposableInterceptor());
 
-			if (Caching.Cache.IsSupported() && IsResponseCachingEnabled(serviceType))
+			if (ClearCanvas.Common.Caching.Cache.IsSupported() && IsResponseCachingEnabled(serviceType))
 			{
 				// add response-caching client-side advice
 				interceptors.Add(_responseCachingAdvice);
 			}
 
-			interceptors.Add(_failedEndpointThrottleAdvice);
-
-			// add fail-over advice at the end of the list, closest the target call
-			//TODO: can we avoid adding this advice if no failover is defined?
-			interceptors.Add(_failoverAdvice);
+			// if failover was defined, add fail-over advice at the end of the list, closest the target call
+			if(_failoverAdvice != null)
+			{
+				interceptors.Add(_failoverAdvice);
+			}
 		}
 
 		/// <summary>

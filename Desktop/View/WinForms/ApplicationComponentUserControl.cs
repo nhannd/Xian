@@ -56,6 +56,19 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _errorProvider; }
         }
 
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+
+			// for some reason, the error provider doesn't automatically query the component
+			// for validation errors on the initial page load, so we need to force this
+			// (note: it can be null when running in the designer, so need to check this)
+			if(_errorProvider != null)
+			{
+				_errorProvider.UpdateBinding();
+			}
+		}
+
         private void ValidationVisibleChangedEventHandler(object sender, EventArgs e)
         {
             _errorProvider.UpdateBinding();

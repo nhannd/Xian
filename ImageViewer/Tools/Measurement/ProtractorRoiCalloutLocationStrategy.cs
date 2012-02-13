@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public new IPointsGraphic Roi
 		{
-			get { return (IPointsGraphic) base.Roi; }
+            get { return (IPointsGraphic)AnnotationSubject; }
 		}
 
 		protected override void OnAnnotationGraphicChanged(AnnotationGraphic oldAnnotationGraphic, AnnotationGraphic annotationGraphic)
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			else
 			{
-				coordinateSystem = base.Roi.CoordinateSystem;
+                coordinateSystem = AnnotationSubject.CoordinateSystem;
 
 				if (this.Roi.Points.Count < 3)
 					endPoint = this.Roi.Points[0];

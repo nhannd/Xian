@@ -25,6 +25,18 @@
     border: solid 1px #ff0000;
 }
 
+.EditStudyDialogStructureReportWarning
+{
+    text-align:center; 
+    color: #FF0000;
+    font-size: 12px; 
+    font-weight: bold; 
+    background: #FFFAA5;
+    padding: 10px;
+    margin: 5px 5px 10px 5px;
+    border: solid 1px #ff0000;
+}
+
 .PatientName
 {
     font-size: 24px;
@@ -226,7 +238,7 @@
 ========================================*/
 
 div.DeleteStudiesTableContainer {
-	border: 1px solid #999999;
+	border: 1px solid #618FAD;
 	margin-top: 5px;
 	width: 800px;
 	height: 200px;

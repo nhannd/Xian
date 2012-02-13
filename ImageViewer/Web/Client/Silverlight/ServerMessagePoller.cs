@@ -10,51 +10,45 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Threading;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
+using ClearCanvas.Web.Client.Silverlight;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-    internal class MessagePollerEventReceivedEventArgs : EventArgs
+    internal class ServerEventReceivedEventArgs : EventArgs
     {
         public EventSet EventSet { get; set; }
     }
-    internal class MessagePollerErrorEventArgs : EventArgs
+
+    internal class ServerChannelFaultEventArgs : EventArgs
     {
         public Exception Error { get; set; }
+
+        public String ErrorMessage { get; set; }
     }
 
     internal class ServerMessagePoller : IDisposable
     {
         const int MinPollDelaySinceLastActivity = 100; // 100 ms since last activity
 
-        private ApplicationServiceClient _service;
+        private ServerMessageSender _service;
         private Thread _pollingThread;
         private bool _stop;
-        private object _syncLock = new object();
-        private long _lastPollTick = Environment.TickCount;
+        private readonly object _syncLock = new object();
         private int _pendingPollingCount;
+        private bool _disposed = false;
 
-        public event EventHandler<MessagePollerEventReceivedEventArgs> MessageReceived;
-        
-        public ServerMessagePoller(ApplicationServiceClient service)
+        public ServerMessagePoller(ServerMessageSender service)
         {
             _service = service;
-            _service.GetPendingEventCompleted += OnGetPendingEventCompleted;
+            _service.PollCompleted += OnGetPendingEventCompleted;
         }
 
         public void Start()
         {
             _pollingThread = new Thread(ThreadStart);
+            _pollingThread.Name = String.Format("Polling Thread[{0}]", _pollingThread.ManagedThreadId);
             _pollingThread.Start();
         }
 
@@ -62,15 +56,9 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             while (true)
             {
-                if (_stop || _service.InnerChannel.State != System.ServiceModel.CommunicationState.Opened)
+                if (_stop || _service.Faulted)
                 {
                     return;
-                }
-
-                if (ApplicationContext.Current == null)
-                {
-                    Thread.Sleep(50);
-                    continue;
                 }
 
                 long now = Environment.TickCount;
@@ -98,31 +86,12 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         private void OnGetPendingEventCompleted(object sender, GetPendingEventCompletedEventArgs e)
         {
-            _lastPollTick = Environment.TickCount;
             Interlocked.Decrement(ref _pendingPollingCount);
 
             lock (_syncLock)
             {
                 Monitor.PulseAll(_syncLock);
-            }
-
-            if (e.Error != null)
-            {
-                ErrorHandler.HandleException(e.Error);
-            }
-            else
-            {
-                if (e.Result != null)
-                {
-                    if (e.Result.EventSet != null)
-                    {
-                        if (MessageReceived != null)
-                        {
-                            MessageReceived(this, new MessagePollerEventReceivedEventArgs { EventSet = e.Result.EventSet });
-                        }
-                    }
-                }
-            }
+            }          
         }
 
         private bool DoPoll()
@@ -135,25 +104,19 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
                 try
                 {
-                    
-                    // TODO: the client may have disconnected
-                    // Note: do not call this inside a lock statement. It can cause deadlock
-                    _service.GetPendingEventAsync(new GetPendingEventRequest() { ApplicationId = ApplicationContext.Current.ID, MaxWaitTime = maxWaitTime });
+                    _service.CheckForPendingEvents(maxWaitTime);
 
                     lock (_syncLock)
                     {
                         Monitor.Wait(_syncLock, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
                     } 
                 }
-                catch (Exception)
+                catch (Exception x)
                 {
                     // catch exception to prevent crashing
+                    Platform.Log(LogLevel.Error, x, "Unexpected exception polling for server data");
                 }
-                finally
-                {
-                    _lastPollTick = Environment.TickCount;
-                }
-                
+
                 return true;
             }
 
@@ -164,13 +127,32 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
         public void Dispose()
         {
-            _stop = true;
-            if (_pollingThread != null)
-            {
-                _service.GetPendingEventCompleted -= OnGetPendingEventCompleted;
+            Dispose(true);
 
-                lock (_syncLock)
-                    Monitor.PulseAll(_syncLock);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                _stop = true;
+                if (_service != null)
+                {
+                    _service.PollCompleted -= OnGetPendingEventCompleted;
+                    _service = null;
+                }
+
+                if (_pollingThread != null)
+                {
+                    lock (_syncLock)
+                        Monitor.PulseAll(_syncLock);
+
+                    _pollingThread.Join(500);
+                    _pollingThread = null;
+                }
+
+                _disposed = true;
             }
         }
 

@@ -179,6 +179,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				this.LayoutPhysicalWorkspace();
 				this.FillPhysicalWorkspace();
 				this.ImageViewer.PhysicalWorkspace.Draw();
+				this.PhysicalWorkspace.SelectDefaultImageBox();
 			}
 
 			public new MprViewerComponent ImageViewer

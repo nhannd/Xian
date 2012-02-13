@@ -34,11 +34,10 @@ namespace ClearCanvas.ImageViewer
 			{
 			}
 
-			public StudyItemList FindPriorStudies()
+			public PriorStudyFinderResult FindPriorStudies()
 			{
-				return new StudyItemList();
+                return new PriorStudyFinderResult(new StudyItemList(), true);
 			}
-
 
 			#region IPriorStudyFinder Members
 
@@ -88,7 +87,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the list of prior studies.
 		/// </summary>
-		public abstract StudyItemList FindPriorStudies();
+        public abstract PriorStudyFinderResult FindPriorStudies();
 
 		/// <summary>
 		/// Cancels the search for prior studies.

@@ -200,7 +200,17 @@ namespace ClearCanvas.Desktop.View.WinForms
         public int FirstDisplayedScrollingRowIndex
         {
             get { return _dataGridView.FirstDisplayedScrollingRowIndex; }
-            set { _dataGridView.FirstDisplayedScrollingRowIndex = value; }
+            set
+            {
+                try
+                {
+                    _dataGridView.FirstDisplayedScrollingRowIndex = value;
+                }
+                catch (InvalidOperationException)
+                {
+                    // #9466 if there isn't enough space to scroll first row into view, just ignore it - when user resizes us, the first visible row will change anyway
+                }
+            }
         }
 
         [DefaultValue(true)]

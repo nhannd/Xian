@@ -22,7 +22,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation />
     <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkSubset>
     </TargetFrameworkSubset>
   </PropertyGroup>
@@ -91,12 +91,11 @@
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\StudyLocator\ClearCanvas.ImageViewer.StudyLocator.csproj">
-      <Project>{68995968-271C-4915-B936-0F06C413F0B4}</Project>
-      <Name>ClearCanvas.ImageViewer.StudyLocator</Name>
-    </ProjectReference>
     <Reference Include="System">
       <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>

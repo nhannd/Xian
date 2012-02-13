@@ -20,6 +20,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -45,12 +46,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private readonly SpatialTransformImageOperation _operation;
 		private MemorableUndoableCommand _memorableCommand;
 		private ImageOperationApplicator _applicator;
+		private ToolModalityBehaviorHelper _toolBehavior;
 
 		public PanTool()
 			: base(SR.TooltipPan)
 		{
 			this.CursorToken = new CursorToken("Icons.PanToolSmall.png", this.GetType().Assembly);
 			_operation = new SpatialTransformImageOperation(Apply);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_toolBehavior = new ToolModalityBehaviorHelper(ImageViewer);
 		}
 
 		public override event EventHandler TooltipChanged
@@ -86,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			_memorableCommand.EndState = GetSelectedImageTransform().CreateMemento();
-			UndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
+			UndoableCommand applicatorCommand = _toolBehavior.Behavior.SelectedImagePanTool ? null : _applicator.ApplyToLinkedImages();
 			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
 
 			if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))

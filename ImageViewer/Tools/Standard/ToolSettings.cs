@@ -9,9 +9,11 @@
 
 #endregion
 
+using System;
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -19,9 +21,47 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[SettingsProvider(typeof (StandardSettingsProvider))]
 	internal sealed partial class ToolSettings
 	{
+		private ToolModalityBehaviorCollection _cachedToolModalityBehavior;
+
 		public ToolSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
+
+		protected override void OnSettingsLoaded(object sender, SettingsLoadedEventArgs e)
+		{
+			_cachedToolModalityBehavior = null;
+
+			base.OnSettingsLoaded(sender, e);
+		}
+
+		protected override void OnSettingChanging(object sender, SettingChangingEventArgs e)
+		{
+			if (e.SettingName == "ToolModalityBehavior")
+				_cachedToolModalityBehavior = null;
+
+			base.OnSettingChanging(sender, e);
+		}
+
+		public ToolModalityBehaviorCollection CachedToolModalityBehavior
+		{
+			get
+			{
+				if (_cachedToolModalityBehavior == null)
+				{
+					ToolModalityBehaviorCollection result;
+					try
+					{
+						result = ToolModalityBehavior;
+					}
+					catch (Exception)
+					{
+						result = null;
+					}
+					_cachedToolModalityBehavior = result ?? new ToolModalityBehaviorCollection();
+				}
+				return _cachedToolModalityBehavior;
+			}
 		}
 	}
 }

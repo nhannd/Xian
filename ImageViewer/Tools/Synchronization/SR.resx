@@ -144,8 +144,11 @@
   <data name="ShowFirstAndLastReferenceLines" xml:space="preserve">
     <value>Show First and Last Reference Lines</value>
   </data>
-  <data name="TitleSynchronizationTools" xml:space="preserve">
-    <value>Synchronization Tools</value>
+  <data name="TitleSynchronization" xml:space="preserve">
+    <value>Synchronization</value>
+  </data>
+  <data name="TitleTools" xml:space="preserve">
+    <value>Tools</value>
   </data>
   <data name="ToolbarReferenceLines" xml:space="preserve">
     <value>Reference Lines</value>

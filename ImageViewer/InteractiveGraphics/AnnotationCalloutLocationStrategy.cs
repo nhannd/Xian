@@ -72,13 +72,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return _annotationGraphic; }
 		}
 
-		/// <summary>
-		/// Gets the <see cref="AnnotationGraphic"/>'s Subject.
-		/// </summary>
+        [Obsolete("Access this via AnnotationSubject.")]
 		protected IGraphic Roi
 		{
 			get { return _annotationGraphic.Subject; }
 		}
+
+	    protected IGraphic AnnotationSubject
+	    {
+            get { return _annotationGraphic.Subject; }    
+	    }
 
 		/// <summary>
 		/// Gets the <see cref="AnnotationGraphic"/>'s Callout.
@@ -136,9 +139,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				SizeF offset = new SizeF(0, 55);
 
 				// Setup the callout
-				this.Roi.CoordinateSystem = CoordinateSystem.Destination;
-				location = RectangleUtilities.ConvertToPositiveRectangle(Roi.BoundingBox).Location - offset;
-				this.Roi.ResetCoordinateSystem();
+                AnnotationSubject.CoordinateSystem = CoordinateSystem.Destination;
+                location = RectangleUtilities.ConvertToPositiveRectangle(AnnotationSubject.BoundingBox).Location - offset;
+                AnnotationSubject.ResetCoordinateSystem();
 				return true;
 			}
 

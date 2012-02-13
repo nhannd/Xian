@@ -17,6 +17,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.StudyManagement;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
@@ -67,10 +68,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 		public void Initialize()
 		{
 			_provider = new JunkProvider();
-			_leftAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left);
-			_topAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top);
-			_rightAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right);
-			_bottomAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom);
+            _leftAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left);
+            _topAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top);
+            _rightAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right);
+            _bottomAnnotation = new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom);
 		}
 
 		private void NewTransform()
@@ -94,8 +95,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 			// For an explanation of why this works see the DirectionalMarkerAnnotationItem class.
 			// Notice how on 90 degree rotations, the labels roll upward (in this editor).  That is 
 			// the nature of the algorithm and is what we expect to happen.
-			
-			Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), leftLabelNoTransform);
+
+            Assert.AreEqual(_leftAnnotation.GetAnnotationTextInternal(_transform, iop), leftLabelNoTransform);
 			Assert.AreEqual(_topAnnotation.GetAnnotationTextInternal(_transform, iop), topLabelNoTransform);
 			Assert.AreEqual(_rightAnnotation.GetAnnotationTextInternal(_transform, iop), rightLabelNoTransform);
 			Assert.AreEqual(_bottomAnnotation.GetAnnotationTextInternal(_transform, iop), bottomLabelNoTransform);

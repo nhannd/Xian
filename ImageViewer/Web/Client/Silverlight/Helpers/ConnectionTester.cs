@@ -11,32 +11,24 @@
 
 using System;
 using System.Net;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Browser;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Views;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
+using ClearCanvas.Web.Client.Silverlight.Utilities;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
-    class SpeedTestResult
+    public class SpeedTestResult
     {
         public double SpeedInMbps { get; set; }
         public Exception Error { get; set; }
     }
 
-    class SpeedTestCompletedEventArgs : EventArgs
+    public class SpeedTestCompletedEventArgs : EventArgs
     {
         public SpeedTestResult Result { get; set; }
     }
 
-    internal class ConnectionTester
+    public class ConnectionTester
     {
         const string TinyFile = "Test/speedtest_tiny.bin";
         const string SmallFile = "Test/speedtest_small.bin";
@@ -50,16 +42,73 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
         {
         }
 
+        public  static void TestConnection(Delegate del)
+        {
+            ConnectionTester.StartAsync((result) =>
+            {
+                if (result.Error == null)
+                {
+                    // TODO: Should we continue if the speed is too low? It won't be useful for the user anyway.
+                    if (result.SpeedInMbps < 1)
+                    {
+                        PopupHelper.PopupMessage(DialogTitles.Warning, SR.SlowConnection, Labels.ButtonContinue, false);
+                    }
+
+                    SelectThrottleSettings(result);
+                    del.DynamicInvoke(null);                    
+                }
+                else
+                {
+                    PopupHelper.PopupMessage(DialogTitles.Warning, SR.SpeedTestFailed, Labels.ButtonContinue, false);
+                }
+
+            });
+        }
+
+        private static void SelectThrottleSettings(SpeedTestResult result)
+        {
+            if (result == null || result.Error != null)
+            {
+                ThrottleSettings.Default.EnableDynamicImageQuality = true;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 1;
+                return;
+            }
+
+            // These speeds are picked based on experiments.
+            if (result.SpeedInMbps >= 150)
+            {
+                // the connection is fast enough
+                ThrottleSettings.Default.EnableDynamicImageQuality = false;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 4;
+            }
+            else if (result.SpeedInMbps >= 10)
+            {
+                // the connection is fast enough
+                ThrottleSettings.Default.EnableDynamicImageQuality = false;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 3;
+            }
+            else if (result.SpeedInMbps >= 2)
+            {
+                ThrottleSettings.Default.EnableDynamicImageQuality = true;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 2;
+            }
+            else
+            {
+                ThrottleSettings.Default.EnableDynamicImageQuality = true;
+                ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 1;
+            }
+        }
+
         public static void StartAsync(Action<SpeedTestResult> actionWhenCompleted)
         {
-            ChildWindow msgBox = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.CheckingConnectionSpeed);
+           // ChildWindow msgBox = PopupHelper.PopupMessage(DialogTitles.Initializing, SR.CheckingConnectionSpeed);
 
             ConnectionTester test = new ConnectionTester();
             test.SpeedTestCompleted += (s, ev) =>
             {
                 UIThread.Execute(() =>
                 {
-                    msgBox.Close();
+                  //  msgBox.Close();
                     var result = ev.Result;
                     actionWhenCompleted(result);
                 });

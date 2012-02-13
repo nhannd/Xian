@@ -16,11 +16,13 @@ using System.ServiceModel.Description;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.DesktopServices;
 using ClearCanvas.ImageViewer.Services.Automation;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.Threading;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -72,9 +74,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			//Select the local data store node.
 			explorerComponent.ServerTreeComponent.SetSelection(explorerComponent.ServerTreeComponent.ServerTree.RootNode.LocalDataStoreNode);
 
-			SetSearchCriteria(explorerComponent.SearchPanelComponent, request.SearchCriteria);
-
-			SynchronizationContext.Current.Post(delegate { explorerComponent.SearchPanelComponent.Search(); }, null); 
+			SynchronizationContext.Current.Post(
+				delegate
+				{
+					var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
+					PrepareQueryParameters(request.SearchCriteria, queryParams);
+					explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
+				}, null); 
 
 			return new SearchLocalStudiesResult();
 		}
@@ -110,9 +116,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				explorerComponent.ServerTreeComponent.SetSelection(server);
 			}
 
-			SetSearchCriteria(explorerComponent.SearchPanelComponent, request.SearchCriteria);
-
-			SynchronizationContext.Current.Post(delegate { explorerComponent.SearchPanelComponent.Search(); }, null); 
+			SynchronizationContext.Current.Post(
+				delegate
+					{
+						var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
+						PrepareQueryParameters(request.SearchCriteria, queryParams);
+						explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
+					}, null); 
 			
 			return new SearchRemoteStudiesResult();
 		}
@@ -185,16 +195,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return null;
 		}
 
-		private static void SetSearchCriteria(SearchPanelComponent searchPanel, DicomExplorerSearchCriteria searchCriteria)
+		private static void PrepareQueryParameters(DicomExplorerSearchCriteria searchCriteria, QueryParameters queryParams)
 		{
-			searchPanel.PatientID = searchCriteria.PatientId;
-			searchPanel.PatientsName = searchCriteria.PatientsName;
-			searchPanel.AccessionNumber = searchCriteria.AccessionNumber;
-			searchPanel.StudyDateFrom = searchCriteria.StudyDateFrom;
-			searchPanel.StudyDateTo = searchCriteria.StudyDateTo;
-			searchPanel.StudyDescription = searchCriteria.StudyDescription;
-			searchPanel.ReferringPhysiciansName = searchCriteria.ReferringPhysiciansName;
-			searchPanel.SearchModalities = searchCriteria.Modalities ?? new List<string>();
+		    /// TODO (CR Nov 2011): This is wrong - it's going to put the wildcards into the search fields, which it should not do.
+			queryParams["PatientsName"] = QueryStringHelper.ConvertNameToSearchCriteria(searchCriteria.PatientsName);
+			queryParams["ReferringPhysiciansName"] = QueryStringHelper.ConvertNameToSearchCriteria(searchCriteria.ReferringPhysiciansName);
+			queryParams["PatientId"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(searchCriteria.PatientId, false, true);
+			queryParams["AccessionNumber"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(searchCriteria.AccessionNumber, false, true);
+			queryParams["StudyDescription"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(searchCriteria.StudyDescription, false, true);
+			queryParams["StudyDate"] = DateRangeHelper.GetDicomDateRangeQueryString(searchCriteria.StudyDateFrom, searchCriteria.StudyDateTo);
+
+			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
+			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
+			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
+			//or by running multiple queries, one per modality specified (for example).
+			queryParams["ModalitiesInStudy"] = DicomStringHelper.GetDicomStringArray(searchCriteria.Modalities ?? new List<string>());
 		}
 	}
 }

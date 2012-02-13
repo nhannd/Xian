@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -68,6 +69,8 @@ namespace ClearCanvas.ImageViewer
 		private DisplaySetDescriptor _descriptor;
 		private event EventHandler _drawing;
 		private PresentationImageCollection _presentationImages;
+
+	    private ExtensionData _extensionData;
 		
 		#endregion
 
@@ -299,6 +302,16 @@ namespace ClearCanvas.ImageViewer
 			get { return _descriptor.Uid; }
 			set { _descriptor.Uid = value; }
 		}
+
+        public ExtensionData ExtensionData
+        {
+            get
+            {
+                if (_extensionData == null)
+                    _extensionData = new ExtensionData();
+                return _extensionData;
+            }
+        }
 
 		#endregion
 

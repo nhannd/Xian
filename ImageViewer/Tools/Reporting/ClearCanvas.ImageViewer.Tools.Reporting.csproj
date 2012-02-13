@@ -14,6 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,24 +36,19 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorityTokens.cs" />
-    <Compile Include="KeyImages\ConfigurationPageProvider.cs" />
     <Compile Include="KeyImages\DesktopWindowTool.cs" />
     <Compile Include="KeyImages\EditKeyImageInformationTool.cs" />
     <Compile Include="KeyImages\KeyImageClipboardComponent.cs" />
-    <Compile Include="KeyImages\KeyImageConfigurationComponent.cs" />
     <Compile Include="KeyImages\KeyImagePublisher.cs" />
-    <Compile Include="KeyImages\KeyImageSettings.cs" />
-    <Compile Include="KeyImages\KeyImageSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>KeyImageSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="KeyImages\KeyImageTool.cs" />
     <Compile Include="KeyImages\KeyImageClipboard.cs" />
     <Compile Include="KeyImages\KeyImageInformationEditorComponent.cs" />
@@ -100,13 +96,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="KeyImages\KeyImageSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>KeyImageSettings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\CreateKeyImageToolLarge.png" />

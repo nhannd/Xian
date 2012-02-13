@@ -30,17 +30,16 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 	public class PriorStudyFinder : ImageViewer.PriorStudyFinder
 	{
 		private volatile bool _cancel;
-        private List<IStudyRootQuery> _defaultQueryList = new List<IStudyRootQuery>();
-        
+
         public PriorStudyFinder()
         {
         }
 
-        public override StudyItemList FindPriorStudies()
+        public override PriorStudyFinderResult FindPriorStudies()
 		{
 			_cancel = false;
 
-            _defaultQueryList = new List<IStudyRootQuery>();
+            var priorsServerQueries = new List<IStudyRootQuery>();
             foreach (ServerPartition partition in ServerPartitionMonitor.Instance)
             {
                 using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
@@ -62,33 +61,30 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
                         DicomStudyRootQuery remoteQuery = new DicomStudyRootQuery(partition.AeTitle, theDevice.AeTitle,
                                                                                   theDevice.IpAddress, theDevice.Port);
-                        _defaultQueryList.Add(remoteQuery);
-                    }
-
-                    // Log the prior servers for debug purpose
-                    if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-                    {
-                        if (_defaultQueryList.Count > 0)
-                        {
-                            StringBuilder log = new StringBuilder();
-                            log.Append("Searching for priors on the following servers:");
-
-                            StringBuilder serverList = new StringBuilder();
-                            foreach (DicomStudyRootQuery server in _defaultQueryList)
-                            {
-                                if (serverList.Length > 0)
-                                    serverList.Append(",");
-                                serverList.AppendFormat("{0}", server);
-                            }
-
-                            log.Append(serverList.ToString());
-                            Platform.Log(LogLevel.Debug, log.ToString());
-
-                        }
+                        priorsServerQueries.Add(remoteQuery);
                     }
                 }
             }
-			StudyItemList results = new StudyItemList();
+
+            // Log the prior servers for debug purpose
+            if (Platform.IsLogLevelEnabled(LogLevel.Debug) && priorsServerQueries.Count > 0)
+            {
+                StringBuilder log = new StringBuilder();
+                log.Append("Searching for priors on the following servers:");
+
+                StringBuilder serverList = new StringBuilder();
+                foreach (DicomStudyRootQuery server in priorsServerQueries)
+                {
+                    if (serverList.Length > 0)
+                        serverList.Append(",");
+                    serverList.AppendFormat("{0}", server);
+                }
+
+                log.Append(serverList.ToString());
+                Platform.Log(LogLevel.Debug, log.ToString());
+            }
+
+            StudyItemList results = new StudyItemList();
 
 			DefaultPatientReconciliationStrategy reconciliationStrategy = new DefaultPatientReconciliationStrategy();
 			List<string> patientIds = new List<string>();
@@ -102,14 +98,16 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 					patientIds.Add(reconciled.PatientId);
 			}
 
+            //Note: we don't catch the exception for this one because it's just querying the other
+            //partitions, so if it fails we want an outright failure to occur.  Besides, it should never happen
+            //if the server is functioning correctly.
 			using (StudyRootQueryBridge bridge = new StudyRootQueryBridge(Platform.GetService<IStudyRootQuery>()))
 			{
 				foreach (string patientId in patientIds)
 				{
-					StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
-					identifier.PatientId = patientId;
+					StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier {PatientId = patientId};
 
-					IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
+				    IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
 					foreach (StudyRootStudyIdentifier study in studies)
 					{
 						if (_cancel)
@@ -122,7 +120,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 				}
 			}
 
-            foreach (IStudyRootQuery query in _defaultQueryList)
+            bool complete = true;
+            foreach (IStudyRootQuery query in priorsServerQueries)
             {
                 foreach (string patientId in patientIds)
                 {
@@ -145,22 +144,18 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                     }
                     catch (FaultException<DataValidationFault> ex)
                     {
+                        complete = false;
                         Platform.Log(LogLevel.Error, ex, "An error has occurred when searching for prior studies on server '{0}'", query.ToString());
-
-                        // note: ideally we want to continue searching on other servers. But for consistency with the workstation, we throw an exception here
-                        throw; 
                     }
                     catch (FaultException<QueryFailedFault> ex)
                     {
+                        complete = false;
                         Platform.Log(LogLevel.Error, ex, "An error has occurred when searching for prior studies on server '{0}'", query.ToString());
-                        
-                        //note: ideally we want to continue searching on other servers. But for consistency with the workstation, we throw an exception here
-                        throw;
                     }
                 }
             }
-          
-			return results;
+
+            return new PriorStudyFinderResult(results, complete);
 		}
 
 		public override void Cancel()

@@ -561,22 +561,24 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 			//The image's LutComposer is private, so we just replicate it here and recalculate.
 			GrayscaleImageGraphic graphic = (GrayscaleImageGraphic) _image;
 			LutComposer composer = new LutComposer(graphic.BitsStored, graphic.IsSigned);
-			composer.LutCollection.Add(graphic.ModalityLut);
-			composer.LutCollection.Add(graphic.VoiLut);
-			composer.LutCollection.Add(new GrayscaleColorMap());
-			return Color.FromArgb(composer[interpolated]).R;
+			composer.ModalityLut = graphic.ModalityLut;
+			composer.VoiLut = graphic.VoiLut;
+			var colorMap = new GrayscaleColorMap();
+			colorMap.MaxInputValue = composer.MaxOutputValue;
+			colorMap.MinInputValue = composer.MinOutputValue;
+			return Color.FromArgb(colorMap[composer[interpolated]]).R;
 		}
 
 		private void CreateImageLayer(ImageTypes imageType)
 		{
 			if (imageType == ImageTypes.Mono16)
-				_image = new GrayscaleImageGraphic(_srcHeight, _srcWidth, 16, 16, 15, false, false, 1.0, 0, new byte[2 * _srcWidth * _srcHeight]);
+				_image = new GrayscaleImageGraphic(_srcHeight, _srcWidth, 16, 16, 15, false, false, 1.9, 3, new byte[2 * _srcWidth * _srcHeight]);
 			else if (imageType == ImageTypes.Mono8)
 				_image = new GrayscaleImageGraphic(_srcHeight, _srcWidth, 8, 8, 7, false, false, 1.0, 0, new byte[_srcWidth * _srcHeight]);
 			if (imageType == ImageTypes.Mono16Signed)
-				_image = new GrayscaleImageGraphic(_srcHeight, _srcWidth, 16, 16, 15, true, false, 1.0, 0, new byte[2 * _srcWidth * _srcHeight]);
+				_image = new GrayscaleImageGraphic(_srcHeight, _srcWidth, 16, 16, 15, true, false, 2.0, -630, new byte[2 * _srcWidth * _srcHeight]);
 			else if (imageType == ImageTypes.Mono8Signed)
-				_image = new GrayscaleImageGraphic(_srcHeight, _srcWidth, 8, 8, 7, true, false, 1.0, 0, new byte[_srcWidth * _srcHeight]);
+				_image = new GrayscaleImageGraphic(_srcHeight, _srcWidth, 8, 8, 7, true, false, 0.5, 4, new byte[_srcWidth * _srcHeight]);
 			else
 				_image = new ColorImageGraphic(_srcHeight, _srcWidth, new byte[4 * _srcWidth * _srcHeight]);
 

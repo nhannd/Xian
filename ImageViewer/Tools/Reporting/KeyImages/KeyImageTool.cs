@@ -78,8 +78,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			base.Initialize();
 			KeyImageClipboard.OnViewerOpened(base.Context.Viewer);
 
-			base.Enabled = LocalDataStoreActivityMonitor.IsConnected &&
-				PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
+			UpdateEnabled();
 
 			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
 			_localDataStoreEventBroker.Connected += this.OnConnected;

@@ -135,6 +135,9 @@
   <data name="ButtonYes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="LoadingStudy" xml:space="preserve">
+    <value>Loading study...</value>
+  </data>
   <data name="MenuImageBoxLayout" xml:space="preserve">
     <value>Image Box Layout</value>
   </data>

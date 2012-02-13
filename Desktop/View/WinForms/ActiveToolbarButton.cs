@@ -157,54 +157,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 	
 		private void UpdateIcon()
 		{
-			if (_action.IconSet != null && _action.ResourceResolver != null)
-			{
-				try
-				{
-					Image oldImage = this.Image;
-
-					this.Image = _action.IconSet.CreateIcon(_iconSize, _action.ResourceResolver);
-					if (oldImage != null)
-						oldImage.Dispose();
-
-					this.Invalidate();
-				}
-				catch (Exception e)
-				{
-					// the icon was either null or not found - log some helpful message
-					Platform.Log(LogLevel.Error, e);
-				}
-			}
+			ActionViewUtils.SetIcon(this, _action, _iconSize);
 		}
 
 		private void SetTooltipText()
 		{
-			ToolTipText = GetTooltipText(_action);
+			ActionViewUtils.SetTooltipText(this, _action);
 		}
 
-		internal static string GetTooltipText(IClickAction action)
-		{
-			string actionTooltip = action.Tooltip;
-			if (string.IsNullOrEmpty(actionTooltip))
-				actionTooltip = (action.Label ?? string.Empty).Replace("&", "");
-
-			if (action.KeyStroke == XKeys.None)
-				return actionTooltip;
-
-			XKeys keyCode = action.KeyStroke & XKeys.KeyCode;
-			
-			StringBuilder builder = new StringBuilder();
-			builder.Append(actionTooltip);
-
-			if (keyCode != XKeys.None)
-			{
-				if (builder.Length > 0)
-					builder.AppendLine();
-				builder.AppendFormat("{0}: ", SR.LabelKeyboardShortcut);
-				builder.Append(XKeysConverter.Format(action.KeyStroke));
-			}
-
-			return builder.ToString();
-		}
 	}
 }

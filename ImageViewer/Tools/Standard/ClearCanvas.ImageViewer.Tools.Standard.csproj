@@ -1,4 +1,5 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -21,7 +22,24 @@
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation />
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -42,6 +60,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -62,6 +81,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -102,7 +122,23 @@
       <Name>System.XML</Name>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -110,6 +146,13 @@
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
     <Compile Include="ColorBarTool.cs" />
+    <Compile Include="Configuration\ConfigurationPageProvider.cs" />
+    <Compile Include="Configuration\ToolConfigurationComponent.cs" />
+    <Compile Include="Configuration\ToolModalityBehavior.cs" />
+    <Compile Include="Configuration\ToolModalityBehaviorCollection.cs" />
+    <Compile Include="Configuration\ToolModalityBehaviorHelper.cs" />
+    <Compile Include="Configuration\Tests\ToolModalityBehaviorCollectionTests.cs" />
+    <Compile Include="ImageComparerList.cs" />
     <Compile Include="ImageProperties\ImagePropertyProvider.cs" />
     <Compile Include="ImageProperties\ImagePropertiesApplicationComponent.cs" />
     <Compile Include="ImageProperties\ImagePropertiesSettings.cs" />
@@ -138,6 +181,9 @@
     <Compile Include="MagnificationTool.cs" />
     <Compile Include="OverlayToolBase.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
+    <Compile Include="PresetVoiLuts\Operations\AutoVoiLutApplicator.cs" />
+    <Compile Include="PresetVoiLuts\LutHelper.cs" />
+    <Compile Include="PresetVoiLuts\Operations\VoiLutSelector.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutReservedActionModelKeyStrokesProvider.cs" />
     <Compile Include="ScaleGraphic.cs" />
     <Compile Include="ScaleOverlayTool.cs" />
@@ -174,10 +220,9 @@
     <Compile Include="PresetVoiLuts\Operations\InitialVoiLutProvider.cs" />
     <Compile Include="PresetVoiLuts\Operations\AllowMultiplePresetVoiLutOperationsAttribute.cs" />
     <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactory.cs" />
-    <Compile Include="PresetVoiLuts\Luts\PresetVoiLutLinear.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLut.cs" />
     <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactories.cs" />
-    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactoryExtensionPoint.cs" />
+    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperation.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutCollection.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutConfiguration.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutGroup.cs" />
@@ -210,9 +255,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="SortMenuItem.cs" />
     <Compile Include="StackTool.cs" />
-    <Compile Include="SortMenuItemFactory.cs" />
+    <Compile Include="ImageComparer.cs" />
     <Compile Include="TextOverlayTool.cs" />
     <Compile Include="WindowLevelTool.cs" />
     <Compile Include="WindowLevelToolSensitivity.cs" />
@@ -444,6 +488,9 @@
     <EmbeddedResource Include="Icons\ColorBarToolLarge.png" />
     <EmbeddedResource Include="Icons\ColorBarToolMedium.png" />
     <EmbeddedResource Include="Icons\ColorBarToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\ToolModalityBehaviorCollectionDefault.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

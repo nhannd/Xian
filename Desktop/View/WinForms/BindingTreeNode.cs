@@ -135,10 +135,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.ToolTipText = _parentTree.Binding.GetTooltipText(_item);
 
 			CheckState checkState = _parentTree.Binding.GetCheckState(_item);
-			if (_bindingTreeView.CheckBoxStyle == CheckBoxStyle.TriState)
+			if (_bindingTreeView.CheckBoxes)
 				this.StateImageKey = checkState.ToString();
-			else
-				this.Checked = checkState == CheckState.Checked;
 
 			if (_parentTree.Binding.GetIsHighlighted(_item))
 				this.BackColor = System.Drawing.Color.FromArgb(124, 177, 221);
@@ -237,10 +235,8 @@ namespace ClearCanvas.Desktop.View.WinForms
     		{
     			_isUpdating = true;
     			CheckState checkState = _parentTree.Binding.ToggleCheckState(_item);
-				if (_bindingTreeView.CheckBoxStyle == CheckBoxStyle.TriState)
+				if (_bindingTreeView.CheckBoxes)
 					this.StateImageKey = checkState.ToString();
-				else
-					this.Checked = checkState == CheckState.Checked;
     			_isUpdating = false;
     		}
     	}

@@ -14,7 +14,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -58,9 +57,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		void RefreshStudyTable();
 	}
-	
+
 	[AssociateView(typeof(StudyBrowserComponentViewExtensionPoint))]
-	public class StudyBrowserComponent : ApplicationComponent
+	public class StudyBrowserComponent : ApplicationComponent, IStudyBrowserComponent
 	{
 		#region Tool Context
 
@@ -84,12 +83,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			public ReadOnlyCollection<StudyItem> SelectedStudies 
+			public ReadOnlyCollection<StudyItem> SelectedStudies
 			{
-				get 
+				get
 				{
 					return _component.SelectedStudies;
-				} 
+				}
 			}
 
 			public AEServerGroup SelectedServerGroup
@@ -124,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				try
 				{
-					BlockingOperation.Run(_component.Search);
+					_component.Search(_component._lastQueryParametersList);
 				}
 				catch (Exception e)
 				{
@@ -139,8 +138,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#region Fields
 
-		private SearchPanelComponent _searchPanelComponent;
-
+		private List<QueryParameters> _lastQueryParametersList;
 		private readonly Dictionary<string, SearchResult> _searchResults;
 		private readonly Table<StudyItem> _dummyStudyTable;
 		private event EventHandler _studyTableChanged;
@@ -165,12 +163,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 		private DelayedEventPublisher _processStudiesEventPublisher;
 
+		private bool _isEnabled = true;
+		private bool _searchInProgress;
+
 		#endregion
 
 		public StudyBrowserComponent()
 		{
 			_dummyStudyTable = new Table<StudyItem>();
 			_searchResults = new Dictionary<string, SearchResult>();
+			_lastQueryParametersList = new List<QueryParameters> { CreateOpenSearchQueryParams() };
 
 			_localDataStoreCleared = false;
 			_setStudiesArrived = new Dictionary<string, string>();
@@ -179,15 +181,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#region Properties/Events
 
-		internal SearchPanelComponent SearchPanelComponent
-		{
-			get { return _searchPanelComponent; }
-			set { _searchPanelComponent = value; }
-		}
-
-		internal AEServerGroup SelectedServerGroup
+		public AEServerGroup SelectedServerGroup
 		{
 			get { return _selectedServerGroup; }
+			set
+			{
+				_selectedServerGroup = value;
+
+				if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
+				{
+					SearchResult searchResult = CreateSearchResult();
+					searchResult.Initialize();
+					_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
+				}
+
+				ProcessReceivedAndRemovedStudies();
+				OnSelectedServerChanged();
+			}
 		}
 
 		internal bool FilterDuplicateStudies
@@ -230,7 +240,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			remove { _selectedServerChangedEvent -= value; }
 		}
 
+		#endregion
+
 		#region Presentation Model
+
+		public bool IsEnabled
+		{
+			get { return _isEnabled; }
+			private set
+			{
+				if(value != _isEnabled)
+				{
+					_isEnabled = value;
+					NotifyPropertyChanged("IsEnabled");
+				}
+			}
+		}
 
 		public Table<StudyItem> StudyTable
 		{
@@ -297,20 +322,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _contextMenuModel; }
 		}
 
-		public void SelectServerGroup(AEServerGroup selectedServerGroup)
-		{
-			_selectedServerGroup = selectedServerGroup;
-
-			if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
-			{
-				SearchResult searchResult = new SearchResult();
-				_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
-			}
-
-			ProcessReceivedAndRemovedStudies();
-			OnSelectedServerChanged();
-		}
-
 		public void SetSelection(ISelection selection)
 		{
 			if (_currentSelection != selection)
@@ -320,57 +331,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public void Search()
-		{
-			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
-				_setStudiesArrived.Clear();
-
-			QueryParameters queryParams = PrepareQueryParameters();
-
-			bool isOpenSearchQuery = (queryParams["PatientsName"].Length == 0
-									  && queryParams["ReferringPhysiciansName"].Length == 0
-									  && queryParams["PatientId"].Length == 0
-			                          && queryParams["AccessionNumber"].Length == 0
-			                          && queryParams["StudyDescription"].Length == 0
-			                          && queryParams["ModalitiesInStudy"].Length == 0
-			                          && queryParams["StudyDate"].Length == 0 &&
-			                          queryParams["StudyInstanceUid"].Length == 0);
-
-			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
-			{
-				if (Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
-					return;
-			}
-
-			List<KeyValuePair<string, Exception>> failedServerInfo = new List<KeyValuePair<string, Exception>>();
-			StudyItemList aggregateStudyItemList = Query(queryParams, failedServerInfo);
-
-			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
-
-			// Re-throw the last exception with a list of failed server name, if any
-			if (failedServerInfo.Count > 0)
-			{
-				StringBuilder aggregateExceptionMessage = new StringBuilder();
-				int count = 0;
-				foreach(KeyValuePair<string, Exception> pair in failedServerInfo)
-				{
-					if (count++ > 0)
-						aggregateExceptionMessage.Append("\n\n");
-
-					aggregateExceptionMessage.AppendFormat(SR.FormatUnableToQueryServer, pair.Key, pair.Value.Message);
-				}
-
-				// this isn't ideal, but since we can operate on multiple entities, we need to aggregate all the
-				// exception messages. We should at least attempt to get at the first inner exception, and that's
-				// what we do here, to aid in debugging
-
-				//NOTE: must use Application.ActiveDesktopWindow instead of Host.DesktopWindow b/c this
-				//method is called on startup before the component is started.
-				Application.ActiveDesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
-			}
-
-			UpdateResultsTitle();
-		}
 
 		public void ItemDoubleClick()
 		{
@@ -379,6 +339,82 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		}
 
 		#endregion
+
+		#region IStudyBrowserComponent implementation
+
+		public virtual SearchResult CreateSearchResult()
+		{
+			return new SearchResult();
+		}
+
+		public virtual QueryParameters CreateOpenSearchQueryParams()
+		{
+			var queryParams = new QueryParameters
+			                  	{
+			                  		{"PatientsName", ""},
+			                  		{"ReferringPhysiciansName", ""},
+			                  		{"PatientId", ""},
+			                  		{"AccessionNumber", ""},
+			                  		{"StudyDescription", ""},
+			                  		{"ModalitiesInStudy", ""},
+			                  		{"StudyDate", ""},
+			                  		{"StudyInstanceUid", ""},
+			                  	};
+
+			return queryParams;
+		}
+
+
+		public virtual void Search(List<QueryParameters> queryParametersList)
+		{
+			// cancel any pending searches
+			Async.CancelPending(this);
+
+			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
+				_setStudiesArrived.Clear();
+
+			var isOpenSearchQuery = CollectionUtils.TrueForAll(queryParametersList,
+				q => CollectionUtils.TrueForAll(q.Values,
+					v => string.IsNullOrEmpty(v)));
+
+			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
+			{
+				if (Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
+					return;
+			}
+
+			// disable the study browser while the search is executing
+			this.IsEnabled = false;
+			_searchInProgress = true;
+
+			EventsHelper.Fire(this.SearchStarted, this, EventArgs.Empty);
+
+			_lastQueryParametersList = new List<QueryParameters>(queryParametersList);
+			var failedServerInfo = new List<KeyValuePair<string, Exception>>();
+			var aggregateStudyItemList = new StudyItemList();
+
+			Async.Invoke(this,
+						 () => aggregateStudyItemList = Query(queryParametersList, failedServerInfo),
+						 () => OnSearchCompleted(aggregateStudyItemList, failedServerInfo));
+		}
+
+		public virtual void CancelSearch()
+		{
+			if(!_searchInProgress)
+				return;
+
+			Async.CancelPending(this);
+			_searchInProgress = false;
+
+			// re-enable the study browser
+			this.IsEnabled = true;
+
+			EventsHelper.Fire(this.SearchEnded, this, EventArgs.Empty);
+		}
+
+		public event EventHandler SearchStarted;
+		public event EventHandler SearchEnded;
+
 		#endregion
 
 		#region IApplicationComponent overrides
@@ -407,6 +443,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Stop()
 		{
+			Async.CancelPending(this);
+
 			_processStudiesEventPublisher.Dispose();
 
 			_toolSet.Dispose();
@@ -423,6 +461,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		}
 
 		#endregion
+
+		#region Private Helpers
 
 		private void OnSelectedServerChanged()
 		{
@@ -443,125 +483,69 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			NotifyPropertyChanged("ResultsTitle");
 		}
 
-		private QueryParameters PrepareQueryParameters()
-		{
-			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
-
-			string patientsName = ConvertNameToSearchCriteria(_searchPanelComponent.PatientsName);
-			string referringPhysiciansName = ConvertNameToSearchCriteria(_searchPanelComponent.ReferringPhysiciansName);
-
-			string patientId = "";
-			if (!String.IsNullOrEmpty(_searchPanelComponent.PatientID))
-				patientId = _searchPanelComponent.PatientID + "*";
-
-			string accessionNumber = "";
-			if (!String.IsNullOrEmpty(_searchPanelComponent.AccessionNumber))
-				accessionNumber = _searchPanelComponent.AccessionNumber + "*";
-
-			string studyDescription = "";
-			if (!String.IsNullOrEmpty(_searchPanelComponent.StudyDescription))
-				studyDescription = _searchPanelComponent.StudyDescription + "*";
-
-			string dateRangeQuery = DateRangeHelper.GetDicomDateRangeQueryString(_searchPanelComponent.StudyDateFrom, _searchPanelComponent.StudyDateTo);
-
-			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
-			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
-			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
-			//or by running multiple queries, one per modality specified (for example).
-
-			string modalityFilter = DicomStringHelper.GetDicomStringArray(_searchPanelComponent.SearchModalities);
-
-			QueryParameters queryParams = new QueryParameters();
-			queryParams.Add("PatientsName", patientsName);
-			queryParams.Add("ReferringPhysiciansName", referringPhysiciansName); 
-			queryParams.Add("PatientId", patientId);
-			queryParams.Add("AccessionNumber", accessionNumber);
-			queryParams.Add("StudyDescription", studyDescription);
-			queryParams.Add("ModalitiesInStudy", modalityFilter);
-			queryParams.Add("StudyDate", dateRangeQuery);
-			queryParams.Add("StudyInstanceUid", "");
-
-			return queryParams;
-		}
-
-		private static string[] GetNameComponents(string unparsedName)
-		{
-			unparsedName = unparsedName ?? "";
-			char separator = DicomExplorerConfigurationSettings.Default.NameSeparator;
-			string name = unparsedName.Trim();
-			if (String.IsNullOrEmpty(name))
-				return new string[0];
-
-			return name.Split(new char[] { separator }, StringSplitOptions.None);
-		}
-
-		private static string ConvertNameToSearchCriteria(string name)
-		{
-			string[] nameComponents = GetNameComponents(name);
-			if (nameComponents.Length == 1)
-			{
-				//Open name search
-				return String.Format("*{0}*", nameComponents[0].Trim());
-			}
-			else if (nameComponents.Length > 1)
-			{
-				if (String.IsNullOrEmpty(nameComponents[0]))
-				{
-					//Open name search - should never get here
-					return String.Format("*{0}*", nameComponents[1].Trim());
-				}
-				else if (String.IsNullOrEmpty(nameComponents[1]))
-				{
-					//Pure Last Name search
-					return String.Format("{0}*", nameComponents[0].Trim());
-				}
-				else
-				{
-					//Last Name, First Name search
-					return String.Format("{0}*{1}*", nameComponents[0].Trim(), nameComponents[1].Trim());
-				}
-			}
-
-			return "";
-		}
-
-		private StudyItemList Query(QueryParameters queryParams, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
+		private StudyItemList Query(List<QueryParameters> queryParamsList, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
 		{
 			StudyItemList aggregateStudyItemList = new StudyItemList();
 
 			foreach (IServerTreeNode serverNode in _selectedServerGroup.Servers)
 			{
+				var serverStudyItemList = new StudyItemList();
+				var serverHasError = false;
+
 				try
 				{
-					StudyItemList serverStudyItemList;
-
-					if (serverNode.IsLocalDataStore)
+					foreach (var q in queryParamsList)
 					{
-						serverStudyItemList = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
-					}
-					else if (serverNode.IsServer)
-					{
-						Server server = (Server)serverNode;
-						ApplicationEntity ae = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
-														server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
+						// Make sure the query parameters sent contains all user specified parameters, plus any keys defined in 
+						// OpenSearchQueryParams but not in user specified parameters.
+						var queryParams = MergeQueryParams(q, this.CreateOpenSearchQueryParams());
 
-						serverStudyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
-					}
-					else
-					{
-						throw new Exception("The specified server object is not queryable.");
-					}
+						if (serverNode.IsLocalDataStore)
+						{
+							var studyItemList = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
+							serverStudyItemList.AddRange(studyItemList);
+						}
+						else if (serverNode.IsServer)
+						{
+							Server server = (Server)serverNode;
+							ApplicationEntity ae = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
+															server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
 
-					aggregateStudyItemList.AddRange(serverStudyItemList);
+							var studyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
+							serverStudyItemList.AddRange(studyItemList);
+						}
+						else
+						{
+							throw new Exception("The specified server object is not queryable.");
+						}
+					}
 				}
 				catch (Exception e)
 				{
 					// keep track of the failed server names and exceptions
 					failedServerInfo.Add(new KeyValuePair<string, Exception>(serverNode.Name, e));
+					serverHasError = true;
 				}
+
+				if (!serverHasError)
+					aggregateStudyItemList.AddRange(serverStudyItemList);
 			}
 
 			return aggregateStudyItemList;
+		}
+
+		private static QueryParameters MergeQueryParams(QueryParameters primary, QueryParameters secondary)
+		{
+			// Merge the primary with secondary query parameters.  If the key exist in both, keep the value in the primary
+			// Otherwise, add the value in the secondary to the merged query parameters.
+			var merged = new QueryParameters(primary);
+			foreach (var k in secondary.Keys)
+			{
+				if (!merged.ContainsKey(k))
+					merged.Add(k, secondary[k]);
+			}
+
+			return merged;
 		}
 
 		private bool StudyExists(string studyInstanceUid)
@@ -600,12 +584,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				string studyUids = DicomStringHelper.GetDicomStringArray(studyUidList);
 				if (!String.IsNullOrEmpty(studyUids))
 				{
-					QueryParameters parameters = PrepareQueryParameters();
-					parameters["StudyInstanceUid"] = studyUids;
+					var queryParams = new QueryParameters(this.CreateOpenSearchQueryParams());
+					queryParams["StudyInstanceUid"] = studyUids;
 
 					try
 					{
-						StudyItemList list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
+						StudyItemList list = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
 						foreach (StudyItem item in list)
 						{
 							//don't need to check this again, it's just paranoia
@@ -622,7 +606,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 							}
 						}
 					}
-					catch(StudyFinderNotFoundException e)
+					catch (StudyFinderNotFoundException e)
 					{
 						//should never get here, really.
 						Platform.Log(LogLevel.Error, e);
@@ -634,7 +618,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			foreach(string deleteStudyUid in _setStudiesDeleted.Keys)
+			foreach (string deleteStudyUid in _setStudiesDeleted.Keys)
 			{
 				int foundIndex = studyTable.Items.FindIndex(
 				delegate(StudyItem test)
@@ -656,6 +640,42 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			ProcessReceivedAndRemovedStudies();
 			UpdateResultsTitle();
+		}
+
+		private void OnSearchCompleted(StudyItemList aggregateStudyItemList, List<KeyValuePair<string, Exception>> failedServerInfo)
+		{
+			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
+
+			// Re-throw the last exception with a list of failed server name, if any
+			if (failedServerInfo.Count > 0)
+			{
+				var aggregateExceptionMessage = new StringBuilder();
+				var count = 0;
+				foreach (var pair in failedServerInfo)
+				{
+					if (count++ > 0)
+						aggregateExceptionMessage.Append("\n\n");
+
+					aggregateExceptionMessage.AppendFormat(SR.FormatUnableToQueryServer, pair.Key, pair.Value.Message);
+				}
+
+				// this isn't ideal, but since we can operate on multiple entities, we need to aggregate all the
+				// exception messages. We should at least attempt to get at the first inner exception, and that's
+				// what we do here, to aid in debugging
+
+				//NOTE: must use Application.ActiveDesktopWindow instead of Host.DesktopWindow b/c this
+				//method is called on startup before the component is started.
+				Application.ActiveDesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
+			}
+
+			UpdateResultsTitle();
+
+			_searchInProgress = false;
+
+			// re-enable the study browser
+			this.IsEnabled = true;
+
+			EventsHelper.Fire(this.SearchEnded, this, EventArgs.Empty);
 		}
 
 		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)
@@ -712,6 +732,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			existingItem.SpecificCharacterSet = sourceItem.SpecificCharacterSet;
 			existingItem.StudyDate = sourceItem.StudyDate;
 			existingItem.StudyDescription = sourceItem.StudyDescription;
+
+			existingItem.PatientSpeciesDescription = sourceItem.PatientSpeciesDescription;
+			existingItem.PatientSpeciesCodeSequenceCodingSchemeDesignator = sourceItem.PatientSpeciesCodeSequenceCodingSchemeDesignator;
+			existingItem.PatientSpeciesCodeSequenceCodeValue = sourceItem.PatientSpeciesCodeSequenceCodeValue;
+			existingItem.PatientSpeciesCodeSequenceCodeMeaning = sourceItem.PatientSpeciesCodeSequenceCodeMeaning;
+			existingItem.PatientBreedDescription = sourceItem.PatientBreedDescription;
+			existingItem.PatientBreedCodeSequenceCodingSchemeDesignator = sourceItem.PatientBreedCodeSequenceCodingSchemeDesignator;
+			existingItem.PatientBreedCodeSequenceCodeValue = sourceItem.PatientBreedCodeSequenceCodeValue;
+			existingItem.PatientBreedCodeSequenceCodeMeaning = sourceItem.PatientBreedCodeSequenceCodeMeaning;
+			existingItem.ResponsibleOrganization = sourceItem.ResponsibleOrganization;
+			existingItem.ResponsiblePersonRole = sourceItem.ResponsiblePersonRole;
+			existingItem.ResponsiblePerson = sourceItem.ResponsiblePerson;
 		}
+
+		#endregion
 	}
 }

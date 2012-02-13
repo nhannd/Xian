@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected new IPointsGraphic Roi
 		{
-			get { return ((IPointsGraphic) base.Roi); }
+            get { return ((IPointsGraphic)AnnotationSubject); }
 		}
 
 		private void OnPolygonGraphicClosed(object sender, EventArgs e)

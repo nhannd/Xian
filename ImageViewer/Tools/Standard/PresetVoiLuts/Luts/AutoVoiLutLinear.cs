@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Imaging;
@@ -18,24 +19,22 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
 	[Cloneable(true)]
-	internal abstract class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLut
+    internal abstract class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLut
 	{
 		#region Memento
 
 		private class AutoVoiLutLinearMemento : IEquatable<AutoVoiLutLinearMemento>
 		{
 			public readonly int Index;
-			public readonly string Name;
 
-			public AutoVoiLutLinearMemento(string name, int index)
+			public AutoVoiLutLinearMemento(int index)
 			{
-				this.Name = name;
 				this.Index = index;
 			}
 
 			public override int GetHashCode()
 			{
-				return this.Name.GetHashCode() ^ this.Index.GetHashCode() ^ 0x09bf0923;
+				return this.Index.GetHashCode() ^ 0x09bf0923;
 			}
 
 			public override bool Equals(object obj)
@@ -47,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 			public bool Equals(AutoVoiLutLinearMemento other)
 			{
-				return other != null && this.Name == other.Name && this.Index == other.Index;
+				return other != null && this.Index == other.Index;
 			}
 		}
 
@@ -57,7 +56,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		[CloneCopyReference]
 		private readonly IList<VoiWindow> _windows;
-
 		private int _index;
 
 		#endregion
@@ -66,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		protected AutoVoiLutLinear(IList<VoiWindow> windows)
 		{
-			_windows = windows;
+			_windows = new ReadOnlyCollection<VoiWindow>(windows);
 			_index = 0;
 		}
 
@@ -77,28 +75,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		#endregion
 
-		#region Protected Properties
+        #region Public Properties/Methods
 
-		protected int Index
-		{
-			get { return _index; }
-			set
-			{
-				int lastIndex = _index;
-				_index = value;
-				if (_index >= _windows.Count)
-					_index = 0;
+        public abstract bool IsHeader { get; }
 
-				if (lastIndex != _index)
-					base.OnLutChanged();
-			}
-		}
+        public bool IsData { get { return false; } }
 
-		#endregion
+        public int Index
+        {
+            get { return _index; }
+            set
+            {
+                Platform.CheckArgumentRange(value, 0, _windows.Count - 1, "index");
+                if (Equals(value, _index))
+                    return;
 
-		#region Public Properties/Methods
-
-		public abstract string Name { get; }
+                _index = value;
+                base.OnLutChanged();
+            }
+        }
 
 		public override sealed double WindowWidth
 		{
@@ -117,15 +112,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		public bool IsLast
 		{
-			get { return _index >= _windows.Count - 1; }
+			get { return _index == _windows.Count - 1; }
 		}
 
 		public void ApplyNext()
 		{
-			this.Index = _index + 1;
+            if (IsLast)
+                Index = 0;
+		    else
+                Index++;
 		}
 
-		public override string GetDescription()
+	    public override string GetDescription()
 		{
 			if (string.IsNullOrEmpty(Explanation))
 				return String.Format(SR.FormatDescriptionAutoLinearLutNoExplanation, WindowWidth, WindowCenter);
@@ -135,23 +133,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		public override sealed object CreateMemento()
 		{
-			return new AutoVoiLutLinearMemento(this.Name, this.Index);
+			return new AutoVoiLutLinearMemento(Index);
 		}
 
 		public override sealed void SetMemento(object memento)
 		{
-			AutoVoiLutLinearMemento autoMemento = (AutoVoiLutLinearMemento) memento;
-			Platform.CheckTrue(this.Name == autoMemento.Name, "Memento has a different creator.");
-			this.Index = autoMemento.Index;
+			var autoMemento = (AutoVoiLutLinearMemento) memento;
+			Index = autoMemento.Index;
 		}
 
 		#endregion
 	}
 
 	[Cloneable(true)]
-	internal sealed class AutoImageVoiLutLinear : AutoVoiLutLinear
+    internal sealed class AutoImageVoiLutLinear : AutoVoiLutLinear
 	{
-		private readonly string _name = "AutoImageVoiLutLinear";
 		private AutoImageVoiLutLinear(IList<VoiWindow> windows) : base(windows) {}
 
 		/// <summary>
@@ -159,30 +155,56 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		/// </summary>
 		private AutoImageVoiLutLinear() : base() {}
 
-		public override string Name
+        public override bool IsHeader
+        {
+            get { return true; }
+        }
+
+		public static bool CanCreateFrom(IDicomVoiLutsProvider provider, string lutExplanation)
 		{
-			get { return _name; }
+		    return provider != null 
+                && null != CollectionUtils.SelectFirst(provider.DicomVoiLuts.ImageVoiLinearLuts,lut => lut.Explanation == lutExplanation);
+        }
+
+        public static bool CanCreateFrom(IDicomVoiLutsProvider provider, int lutIndex)
+		{
+			return provider != null && provider.DicomVoiLuts.ImageVoiLinearLuts.Count > lutIndex;
+        }
+
+        public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
+    	{
+            return CanCreateFrom(provider, 0);
 		}
 
-		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
+		public static AutoImageVoiLutLinear CreateFrom(IDicomVoiLutsProvider provider, string lutExplanation)
 		{
-			return provider != null && provider.DicomVoiLuts.ImageVoiLinearLuts.Count > 0;
-		}
+			var luts = provider.DicomVoiLuts.ImageVoiLinearLuts;
+		    int index;
+            for(index = 0; index < luts.Count; ++index)
+                if (luts[index].Explanation == lutExplanation)break;
 
-		public static AutoImageVoiLutLinear CreateFrom(IDicomVoiLutsProvider provider)
-		{
-			IDicomVoiLuts luts = provider.DicomVoiLuts;
-			if (luts.ImageVoiLinearLuts.Count > 0)
-				return new AutoImageVoiLutLinear(luts.ImageVoiLinearLuts);
+		    if (index < luts.Count)
+				return new AutoImageVoiLutLinear(luts) {Index = index};
 			return null;
 		}
-	}
+
+        public static AutoImageVoiLutLinear CreateFrom(IDicomVoiLutsProvider provider, int lutIndex)
+		{
+			var luts = provider.DicomVoiLuts.ImageVoiLinearLuts;
+			if (luts.Count > lutIndex)
+				return new AutoImageVoiLutLinear(luts) {Index = lutIndex};
+			return null;
+		}
+
+    	public static AutoImageVoiLutLinear CreateFrom(IDicomVoiLutsProvider provider)
+		{
+    	    return CreateFrom(provider, 0);
+		}
+    }
 
 	[Cloneable(true)]
-	internal sealed class AutoPresentationVoiLutLinear : AutoVoiLutLinear
+    internal sealed class AutoPresentationVoiLutLinear : AutoVoiLutLinear
 	{
-		private readonly string _name = "AutoPresentationVoiLutLinear";
-
 		private AutoPresentationVoiLutLinear(IList<VoiWindow> windows) : base(windows) {}
 
 		/// <summary>
@@ -190,17 +212,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		/// </summary>
 		private AutoPresentationVoiLutLinear() : base() {}
 
-		public override string Name
-		{
-			get { return _name; }
-		}
+        public override bool IsHeader
+        {
+            get { return false; }
+        }
 
-		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
-		{
-			return provider != null && provider.DicomVoiLuts.PresentationVoiLinearLuts.Count > 0;
-		}
-
-		public override sealed string GetDescription()
+		public override string GetDescription()
 		{
 			if (string.IsNullOrEmpty(Explanation))
 				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, SR.LabelPresentationStateVoiLinearLut);
@@ -208,7 +225,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, Explanation);
 		}
 
-		public static AutoPresentationVoiLutLinear CreateFrom(IDicomVoiLutsProvider provider)
+		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
+		{
+			return provider != null && provider.DicomVoiLuts.PresentationVoiLinearLuts.Count > 0;
+		}
+
+        public static AutoPresentationVoiLutLinear CreateFrom(IDicomVoiLutsProvider provider)
 		{
 			IDicomVoiLuts luts = provider.DicomVoiLuts;
 			if (luts.PresentationVoiLinearLuts.Count > 0)

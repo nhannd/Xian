@@ -10,22 +10,20 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 
 namespace ClearCanvas.Enterprise.Common.Authentication
 {
 	[DataContract]
 	public class InitiateSessionResponse : DataContractBase
 	{
-		public InitiateSessionResponse(SessionToken sessionToken, string[] authorityTokens, string displayName)
+		public InitiateSessionResponse(SessionToken sessionToken, string[] authorityTokens, Guid[] authorityGroups, string displayName, string emailAddress)
 		{
 			this.SessionToken = sessionToken;
 			this.AuthorityTokens = authorityTokens;
 		    this.DisplayName = displayName;
+		    this.DataGroupOids = authorityGroups;
+		    this.EmailAddress = emailAddress;
 		}
 
 		/// <summary>
@@ -45,5 +43,17 @@ namespace ClearCanvas.Enterprise.Common.Authentication
         /// </summary>
 	    [DataMember] 
         public string DisplayName;
-	}
+
+        /// <summary>
+        /// Email Address of the user.
+        /// </summary>
+        [DataMember]
+        public string EmailAddress;
+
+        /// <summary>
+        /// User data authority group oids, if requested.
+        /// </summary>
+        [DataMember]
+        public Guid[] DataGroupOids;
+    }
 }

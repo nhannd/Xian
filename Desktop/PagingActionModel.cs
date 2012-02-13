@@ -79,12 +79,12 @@ namespace ClearCanvas.Desktop
 
 		private ClickAction Next
 		{
-			get { return this["Next"]; }
+			get { return (ClickAction)this["Next"]; }
 		}
 
 		private ClickAction Previous
 		{
-			get { return this["Previous"]; }
+			get { return (ClickAction)this["Previous"]; }
 		}
 	}
 }

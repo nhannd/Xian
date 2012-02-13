@@ -10,17 +10,18 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 {
     [DataContract]
     public class AuthorityGroupSummary : DataContractBase
     {
-        public AuthorityGroupSummary(EntityRef authorityGroupRef, string name)
+        public AuthorityGroupSummary(EntityRef authorityGroupRef, string name, string description, bool dataGroup)
         {
-            this.AuthorityGroupRef = authorityGroupRef;
-            this.Name = name;
+            AuthorityGroupRef = authorityGroupRef;
+            Name = name;
+            Description = description;
+            DataGroup = dataGroup;
         }
 
         [DataMember]
@@ -28,5 +29,11 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 
         [DataMember]
         public string Name;
+
+        [DataMember]
+        public string Description;
+
+        [DataMember]
+        public bool DataGroup;
     }
 }

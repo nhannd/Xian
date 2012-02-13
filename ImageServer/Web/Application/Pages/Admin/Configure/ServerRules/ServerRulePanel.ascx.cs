@@ -86,7 +86,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                     ServerRuleTypeEnum en = ServerRuleTypeEnum.GetEnum(RuleTypeDropDownList.SelectedItem.Value);
                     criteria.ServerRuleTypeEnum.EqualTo(en);
                 }
+                else
+                    criteria.ServerRuleTypeEnum.NotEqualTo(ServerRuleTypeEnum.DataAccess);
             }
+            else
+                criteria.ServerRuleTypeEnum.NotEqualTo(ServerRuleTypeEnum.DataAccess);
 
             if (StatusFilter.SelectedIndex != 0)
             {

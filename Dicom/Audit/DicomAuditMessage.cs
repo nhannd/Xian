@@ -10,9 +10,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom.IO;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.Audit
 {
@@ -21,82 +19,175 @@ namespace ClearCanvas.Dicom.Audit
 
 	}
 
-	public partial class CodedValueType
+    public partial class EventID
+    {
+        public static EventID ApplicationActivity = new EventID("110100", "DCM", "Application Activity", "Application audit event");
+        public static EventID AuditLogUsed = new EventID("110101", "DCM", "	Audit Log Used	", "Audit Log Used audit event");
+        public static EventID BeginTransferringDICOMInstances = new EventID("110102", "DCM", "Begin Transferring DICOM Instances", "Begin Storing DICOM Instances audit event");
+        public static EventID DICOMInstancesAccessed = new EventID("110103", "DCM", "DICOM Instances Accessed", "DICOM Instances created, read, updated, or deleted audit event");
+        public static EventID DICOMInstancesTransferred = new EventID("110104", "DCM", "DICOM Instances Transferred", "Storage of DICOM Instances complete audit event");
+        public static EventID DICOMStudyDeleted = new EventID("110105", "DCM", "DICOM Study Deleted", "Deletion of Entire Study audit event");
+        public static EventID SecurityAlert = new EventID("110113", "DCM", "Security Alert", "SecurityAlert audit event");
+        public static EventID Export = new EventID("110106", "DCM", "Export", "Data exported out of the system audit event");
+        public static EventID Import = new EventID("110107", "DCM", "Import", "Data imported into the system audit event");
+        public static EventID Query = new EventID("110112", "DCM", "Query", "Query requested audit event");
+        public static EventID UserAuthentication = new EventID("110114", "DCM", "User Authentication", "User Authentication audit event");
+        public static EventID OrderRecord = new EventID("110109", "DCM", "Order Record", "Order Record audit event");
+        public static EventID PatientRecord = new EventID("110110", "DCM", "Patient Record", "Patient Record audit event");
+        public static EventID ProcedureRecord = new EventID("110111", "DCM", "Procedure Record", "Procedure Record audit event");
+        public static EventID NetworkEntry = new EventID("110108", "DCM", "Network Entry", "Network Entry audit event");
+
+        public EventID(string _code, string _codeSystemNameField,
+                       string _displayNameField, string description)
+        {
+            codeSystemName = _codeSystemNameField;
+            code = _code;
+            displayNameField = _displayNameField;
+            _description = description;
+        }
+
+        private readonly string _description;
+
+        public EventID()
+        {
+        }
+
+        public string Description
+        {
+            get { return String.IsNullOrEmpty(_description) ? String.Empty : _description; }
+        }
+    }
+    public partial class EventTypeCode
+    {
+        public static EventTypeCode ApplicationStart = new EventTypeCode("110120", "DCM", "Application Start", "Application Entity Started audit event type");
+        public static EventTypeCode ApplicationStop = new EventTypeCode("110121", "DCM", "Application Stop", "Application Entity Stopped audit event type");
+        public static EventTypeCode Login = new EventTypeCode("110122", "DCM", "Login", "User login attempted audit event type");
+        public static EventTypeCode Logout = new EventTypeCode("110123", "DCM", "Logout", "User logout attempted audit event type");
+        public static EventTypeCode Attach = new EventTypeCode("110124", "DCM", "Attach", "Node attaches to a network audit event type");
+        public static EventTypeCode Detach = new EventTypeCode("110125", "DCM", "Detach", "Node detaches from a network audit event type");
+        public static EventTypeCode NodeAuthentication = new EventTypeCode("110126", "DCM", "Node Authentication", "Node Authentication audit event type");
+        public static EventTypeCode EmergencyOverride = new EventTypeCode("110127", "DCM", "Emergency Override", "Emergency Override audit event type");
+        public static EventTypeCode NetworkConfiguration = new EventTypeCode("110128", "DCM", "Network Configuration", "Network configuration change audit event type");
+        public static EventTypeCode SecurityConfiguration = new EventTypeCode("110129", "DCM", "Security Configuration", "Security configuration change audit event type");
+        public static EventTypeCode HardwareConfiguration = new EventTypeCode("110130", "DCM", "Hardware Configuration", "Hardware configuration change audit event type");
+        public static EventTypeCode SoftwareConfiguration = new EventTypeCode("110131", "DCM", "Software Configuration", "Software configuration change audit event type");
+        public static EventTypeCode UseOfRestrictedFunction = new EventTypeCode("110132", "DCM", "Use of Restricted Function", "A use of a restricted function audit event type");
+        public static EventTypeCode AuditRecordingStopped = new EventTypeCode("110133", "DCM", "Audit Recording Stopped", "Audit recording stopped audit event type");
+        public static EventTypeCode AuditRecordingStarted = new EventTypeCode("110134", "DCM", "Audit Recording Started", "Audit recording started audit event type");
+        public static EventTypeCode ObjectSecurityAttributesChanged = new EventTypeCode("110135", "DCM", "Object Security Attributes Changed", "The security attributes of an object changed audit event type");
+        public static EventTypeCode SecurityRolesChanged = new EventTypeCode("110136", "DCM", "Security Roles Changed", "Security roles changed audit event type");
+        public static EventTypeCode UserSecurityAttributesChanged = new EventTypeCode("110137", "DCM", "User security Attributes Changed", "The security attributes of a user changed audit event type");
+
+        public EventTypeCode(string _code, string _codeSystemNameField,
+                       string _displayNameField, string description)
+        {
+            codeSystemName = _codeSystemNameField;
+            code = _code;
+            displayNameField = _displayNameField;
+            _description = description;
+        }
+
+        private readonly string _description;
+
+        public EventTypeCode()
+        {
+        }
+
+        public string Description
+        {
+            get { return String.IsNullOrEmpty(_description) ? String.Empty : _description; }
+        }
+    }
+
+    public partial class RoleIDCode
+    {
+        public static RoleIDCode Application = new RoleIDCode("110150", "DCM", "Application", "Audit participant role ID of DICOM application");
+        public static RoleIDCode ApplicationLauncher = new RoleIDCode("110151", "DCM", "Application Launcher", "Audit participant role ID of DICOM application launcher, i.e., the entity that started or stopped an application.");
+        public static RoleIDCode Destination = new RoleIDCode("110152", "DCM", "Destination Role ID", "Audit participant role ID of the receiver of data");
+        public static RoleIDCode Source = new RoleIDCode("110153", "DCM", "Source Role ID", "Audit participant role ID of the sender of data");
+        public static RoleIDCode DestinationMedia = new RoleIDCode("110154", "DCM", "Destination Media", "Audit participant role ID of media receiving data during an export.");
+        public static RoleIDCode SourceMedia = new RoleIDCode("110155", "DCM", "Source Media", "Audit participant role ID of media providing data during an import.");
+        
+        public RoleIDCode(string _code, string _codeSystemNameField,
+                          string _displayNameField, string description)
+        {
+            codeSystemName = _codeSystemNameField;
+            code = _code;
+            displayNameField = _displayNameField;
+            _description = description;
+        }
+
+        private readonly string _description;
+
+        public RoleIDCode()
+        {
+        }
+
+        public string Description
+        {
+            get { return String.IsNullOrEmpty(_description) ? String.Empty : _description; }
+        }
+    }
+
+    public partial class ParticipantObjectIDTypeCode
+    {
+        public static ParticipantObjectIDTypeCode StudyInstanceUID = new ParticipantObjectIDTypeCode("110180", "DCM", "Study Instance UID", "Study Instance UID Participant Object ID type");
+        public static ParticipantObjectIDTypeCode ClassUID = new ParticipantObjectIDTypeCode("110181", "DCM", "SOP Class UID", "SOP Class UID Participant Object ID type");
+        public static ParticipantObjectIDTypeCode NodeID = new ParticipantObjectIDTypeCode("110182", "DCM", "Node ID", "ID of a node that is a participant object of an audit message");
+
+        public ParticipantObjectIDTypeCode(string _code, string _codeSystemNameField,
+                          string _displayNameField, string description)
+        {
+            codeSystemName = _codeSystemNameField;
+            code = _code;
+            displayNameField = _displayNameField;
+            _description = description;
+        }
+
+        private readonly string _description;
+
+        public string Description
+        {
+            get { return String.IsNullOrEmpty(_description) ? String.Empty : _description; }
+        }
+    }
+
+    public partial class MediaType
+    {
+        public static MediaType USBDiskEmulation = new MediaType("110030", "DCM", "USB Disk Emulation");
+        public static MediaType Email = new MediaType("110031", "DCM", "Email");
+        public static MediaType CD = new MediaType("110032", "DCM", "CD");
+        public static MediaType DVD = new MediaType("110033", "DCM", "DVD");
+        public static MediaType CompactFlash = new MediaType("110034", "DCM", "Compact Flash");
+        public static MediaType MultiMediaCard = new MediaType("110035", "DCM", "Multi-media Card");
+        public static MediaType SecureDigitalCard = new MediaType("110036", "DCM", "Secure Digital Card");
+        public static MediaType URI = new MediaType("110037", "DCM", "URI");
+        public static MediaType Film = new MediaType("110010", "DCM", "Film");
+        public static MediaType PaperDocument = new MediaType("110038", "DCM", "Paper Document");
+
+
+        public MediaType()
+        {
+        }
+
+        public MediaType(string _code, string _codeSystemNameField, string _displayNameField)
+        {
+            codeSystemName = _codeSystemNameField;
+            code = _code;
+            displayNameField = _displayNameField;
+        }
+    }
+
+    public partial class ActiveParticipantContents
 	{
-		public static CodedValueType ApplicationActivity = new CodedValueType("110100", "DCM", "Application Activity", "Application audit event");
-		public static CodedValueType AuditLogUsed = new CodedValueType("110101", "DCM", "	Audit Log Used	", "Audit Log Used audit event");
-		public static CodedValueType BeginTransferringDICOMInstances = new CodedValueType("110102", "DCM", "Begin Transferring DICOM Instances", "Begin Storing DICOM Instances audit event");
-		public static CodedValueType DICOMInstancesAccessed = new CodedValueType("110103", "DCM", "DICOM Instances Accessed", "DICOM Instances created, read, updated, or deleted audit event");
-		public static CodedValueType DICOMInstancesTransferred = new CodedValueType("110104", "DCM", "DICOM Instances Transferred", "Storage of DICOM Instances complete audit event");
-		public static CodedValueType DICOMStudyDeleted = new CodedValueType("110105", "DCM", "DICOM Study Deleted", "Deletion of Entire Study audit event");
-		public static CodedValueType Export = new CodedValueType("110106", "DCM", "Export", "Data exported out of the system audit event");
-		public static CodedValueType Import = new CodedValueType("110107", "DCM", "Import", "Data imported into the system audit event");
-		public static CodedValueType NetworkEntry = new CodedValueType("110108", "DCM", "Network Entry", "Network Entry audit event");
-		public static CodedValueType OrderRecord = new CodedValueType("110109", "DCM", "Order Record", "Order Record audit event");
-		public static CodedValueType PatientRecord = new CodedValueType("110110", "DCM", "Patient Record", "Patient Record audit event");
-		public static CodedValueType ProcedureRecord = new CodedValueType("110111", "DCM", "Procedure Record", "Procedure Record audit event");
-		public static CodedValueType Query = new CodedValueType("110112", "DCM", "Query", "Query requested audit event");
-		public static CodedValueType SecurityAlert = new CodedValueType("110113", "DCM", "Security Alert", "SecurityAlert audit event");
-		public static CodedValueType UserAuthentication = new CodedValueType("110114", "DCM", "User Authentication", "User Authentication audit event");
-		public static CodedValueType ApplicationStart = new CodedValueType("110120", "DCM", "Application Start", "Application Entity Started audit event type");
-		public static CodedValueType ApplicationStop = new CodedValueType("110121", "DCM", "Application Stop", "Application Entity Stopped audit event type");
-		public static CodedValueType Login = new CodedValueType("110122", "DCM", "Login", "User login attempted audit event type");
-		public static CodedValueType Logout = new CodedValueType("110123", "DCM", "Logout", "User logout attempted audit event type");
-		public static CodedValueType Attach = new CodedValueType("110124", "DCM", "Attach", "Node attaches to a network audit event type");
-		public static CodedValueType Detach = new CodedValueType("110125", "DCM", "Detach", "Node detaches from a network audit event type");
-		public static CodedValueType NodeAuthentication = new CodedValueType("110126", "DCM", "Node Authentication", "Node Authentication audit event type");
-		public static CodedValueType EmergencyOverride = new CodedValueType("110127", "DCM", "Emergency Override", "Emergency Override audit event type");
-		public static CodedValueType NetworkConfiguration = new CodedValueType("110128", "DCM", "Network Configuration", "Network configuration change audit event type");
-		public static CodedValueType SecurityConfiguration = new CodedValueType("110129", "DCM", "Security Configuration", "Security configuration change audit event type");
-		public static CodedValueType HardwareConfiguration = new CodedValueType("110130", "DCM", "Hardware Configuration", "Hardware configuration change audit event type");
-		public static CodedValueType SoftwareConfiguration = new CodedValueType("110131", "DCM", "Software Configuration", "Software configuration change audit event type");
-		public static CodedValueType UseOfRestrictedFunction = new CodedValueType("110132", "DCM", "Use of Restricted Function", "A use of a restricted function audit event type");
-		public static CodedValueType AuditRecordingStopped = new CodedValueType("110133", "DCM", "Audit Recording Stopped", "Audit recording stopped audit event type");
-		public static CodedValueType AuditRecordingStarted = new CodedValueType("110134", "DCM", "Audit Recording Started", "Audit recording started audit event type");
-		public static CodedValueType ObjectSecurityAttributesChanged = new CodedValueType("110135", "DCM", "Object Security Attributes Changed", "The security attributes of an object changed audit event type");
-		public static CodedValueType SecurityRolesChanged = new CodedValueType("110136", "DCM", "Security Roles Changed", "Security roles changed audit event type");
-		public static CodedValueType UserSecurityAttributesChanged = new CodedValueType("110137", "DCM", "User security Attributes Changed", "The security attributes of a user changed audit event type");
-		public static CodedValueType Application = new CodedValueType("110150", "DCM", "Application", "Audit participant role ID of DICOM application");
-		public static CodedValueType ApplicationLauncher = new CodedValueType("110151", "DCM", "Application Launcher", "Audit participant role ID of DICOM application launcher, i.e., the entity that started or stopped an application.");
-		public static CodedValueType Destination = new CodedValueType("110152", "DCM", "Destination", "Audit participant role ID of the receiver of data");
-		public static CodedValueType Source = new CodedValueType("110153", "DCM", "Source", "Audit participant role ID of the sender of data");
-		public static CodedValueType DestinationMedia = new CodedValueType("110154", "DCM", "Destination Media", "Audit participant role ID of media receiving data during an export.");
-		public static CodedValueType SourceMedia = new CodedValueType("110155", "DCM", "Source Media", "Audit participant role ID of media providing data during an import.");
-		public static CodedValueType StudyInstanceUID = new CodedValueType("110180", "DCM", "Study Instance UID", "Study Instance UID Participant Object ID type");
-		public static CodedValueType ClassUID = new CodedValueType("110181", "DCM", "Class UID", "SOP Class UID Participant Object ID type");
-		public static CodedValueType NodeID = new CodedValueType("110182", "DCM", "Node ID", "ID of a node that is a participant object of an audit message");
-
-		public CodedValueType(string _code, string _codeSystemNameField,
-			string _displayNameField, string description)
-		{
-			codeSystemName = _codeSystemNameField;
-			code = _code;
-			displayNameField = _displayNameField;
-			_description = description;
-		}
-
-		private readonly string _description;
-
-		public CodedValueType()
-		{
-		}
-
-		public string Description
-		{
-			get { return String.IsNullOrEmpty(_description) ? String.Empty : _description; }
-		}
-	}
-
-	public partial class AuditMessageActiveParticipant
-	{
-		public AuditMessageActiveParticipant()
+		public ActiveParticipantContents()
 		{}
 
-		public AuditMessageActiveParticipant(AuditActiveParticipant participant)
+        public ActiveParticipantContents(AuditActiveParticipant participant)
 		{
 			if (participant.RoleIdCode != null)
 			{
-				RoleIDCode = new CodedValueType[1];
+                RoleIDCode = new RoleIDCode[1];
 				RoleIDCode[0] = participant.RoleIdCode;
 			}
 			if (participant.UserIsRequestor.HasValue)
@@ -119,18 +210,18 @@ namespace ClearCanvas.Dicom.Audit
 
 			if (participant.NetworkAccessPointType.HasValue)
 			{
-				NetworkAccessPointTypeCode = (byte) participant.NetworkAccessPointType.Value;
+				NetworkAccessPointTypeCode = (ActiveParticipantContentsNetworkAccessPointTypeCode) participant.NetworkAccessPointType.Value;
 				NetworkAccessPointTypeCodeSpecified = true;
 			}
 			else
 				NetworkAccessPointTypeCodeSpecified = false;
 		}
 
-		public AuditMessageActiveParticipant(CodedValueType roleId, string _userIDField, string alternateUserId, string _userNameField, string _networkAccessPointIDField, NetworkAccessPointTypeEnum? _networkAccessPointTypeCode, bool? userIsRequestor)
+        public ActiveParticipantContents(RoleIDCode roleId, string _userIDField, string alternateUserId, string _userNameField, string _networkAccessPointIDField, NetworkAccessPointTypeEnum? _networkAccessPointTypeCode, bool? userIsRequestor)
 		{
 			if (roleId != null)
 			{
-				RoleIDCode = new CodedValueType[1];
+                RoleIDCode = new RoleIDCode[1];
 				RoleIDCode[0] = roleId;
 			}
 
@@ -151,33 +242,29 @@ namespace ClearCanvas.Dicom.Audit
 
 			if (_networkAccessPointTypeCode.HasValue)
 			{
-				NetworkAccessPointTypeCode = (byte)_networkAccessPointTypeCode.Value;
+				NetworkAccessPointTypeCode = (ActiveParticipantContentsNetworkAccessPointTypeCode)_networkAccessPointTypeCode.Value;
 				NetworkAccessPointTypeCodeSpecified = true;
 			}
 			else
 				NetworkAccessPointTypeCodeSpecified = false;
 		}
 	}
-	public partial class ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode
+	public partial class ParticipantObjectIDTypeCode
 	{
-		public ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode()
+		public ParticipantObjectIDTypeCode()
 		{}
-		public ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(CodedValueType value)
+        public ParticipantObjectIDTypeCode(ParticipantObjectIDTypeCode value)
 		{
 			code = value.code;
-			codeSystem = value.codeSystem;
 			codeSystemName = value.codeSystemName;
 			displayName = value.displayName;
 			originalText = value.originalText;
 		}
 	}
 
-	public partial class AuditSourceIdentificationType
+	public partial class AuditSourceIdentificationContents
 	{
-		public AuditSourceIdentificationType()
-		{}
-
-		public AuditSourceIdentificationType(DicomAuditSource auditSource)
+		public AuditSourceIdentificationContents(DicomAuditSource auditSource)
 		{
 			if (!String.IsNullOrEmpty(auditSource.EnterpriseSiteId))
 				AuditEnterpriseSiteID = auditSource.EnterpriseSiteId;
@@ -185,41 +272,41 @@ namespace ClearCanvas.Dicom.Audit
 
 			if (auditSource.AuditSourceType.HasValue)
 			{
-				AuditSourceTypeCode = new AuditSourceIdentificationTypeAuditSourceTypeCode[1];
-				AuditSourceTypeCode[0] = new AuditSourceIdentificationTypeAuditSourceTypeCode(auditSource.AuditSourceType.Value);
+				AuditSourceTypeCode = new string[1];
+				AuditSourceTypeCode[0] = auditSource.AuditSourceType.Value.ToString();
 			}
 		}
-		public AuditSourceIdentificationType(string sourceId)
+        public AuditSourceIdentificationContents(string sourceId)
 		{
 			AuditSourceID = sourceId;
 		}
 	}
 
-	public partial class AuditSourceIdentificationTypeAuditSourceTypeCode
+	public partial class AuditSourceIdentificationContents
 	{
-		public AuditSourceIdentificationTypeAuditSourceTypeCode()
+		public AuditSourceIdentificationContents()
 		{}
 
-		public AuditSourceIdentificationTypeAuditSourceTypeCode(AuditSourceTypeCodeEnum e)
+        public AuditSourceIdentificationContents(AuditSourceTypeCodeEnum e)
 		{
 			code = ((byte)e).ToString();
 		}
 	}
 
-	public partial class ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode
+	public partial class ParticipantObjectIDTypeCode
 	{
-		public ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(ParticipantObjectIdTypeCodeEnum e)
+		public ParticipantObjectIDTypeCode(ParticipantObjectIdTypeCodeEnum e)
 		{
 			code = ((byte)e).ToString();
 		}
 	}
 
-	public partial class ParticipantObjectIdentificationType
+	public partial class ParticipantObjectIdentificationContents
 	{
-		public ParticipantObjectIdentificationType()
+		public ParticipantObjectIdentificationContents()
 		{}
 
-		public ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum? type, 
+		public ParticipantObjectIdentificationContents(ParticipantObjectTypeCodeEnum? type, 
 			ParticipantObjectTypeCodeRoleEnum? role,
 			ParticipantObjectDataLifeCycleEnum? lifeCycle, 
 			string participantObjectId, 
@@ -227,14 +314,14 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			if (type.HasValue)
 			{
-				ParticipantObjectTypeCode = (byte)type.Value;
+				ParticipantObjectTypeCode = (ParticipantObjectIdentificationContentsParticipantObjectTypeCode)type.Value;
 				ParticipantObjectTypeCodeSpecified = true;
 			}
 			else ParticipantObjectTypeCodeSpecified = false;
 
 			if (role.HasValue)
 			{
-				ParticipantObjectTypeCodeRole = (byte)role.Value;
+				ParticipantObjectTypeCodeRole = (ParticipantObjectIdentificationContentsParticipantObjectTypeCodeRole)role.Value;
 				ParticipantObjectTypeCodeRoleSpecified = true;
 			}
 			else
@@ -242,7 +329,7 @@ namespace ClearCanvas.Dicom.Audit
 
 			if (lifeCycle.HasValue)
 			{
-				ParticipantObjectDataLifeCycle = (byte)lifeCycle.Value;
+				ParticipantObjectDataLifeCycle = (ParticipantObjectIdentificationContentsParticipantObjectDataLifeCycle)lifeCycle.Value;
 				ParticipantObjectDataLifeCycleSpecified = true;
 			}
 			else
@@ -250,21 +337,21 @@ namespace ClearCanvas.Dicom.Audit
 
 			ParticipantObjectID = participantObjectId;
 
-			ParticipantObjectIDTypeCode = new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(typeCode);
+			ParticipantObjectIDTypeCode = new ParticipantObjectIDTypeCode(typeCode);
 		}
 
-		public ParticipantObjectIdentificationType(AuditParticipantObject item)
+        public ParticipantObjectIdentificationContents(AuditParticipantObject item)
 		{
 			if (item.ParticipantObjectTypeCode.HasValue)
 			{
-				ParticipantObjectTypeCode = (byte) item.ParticipantObjectTypeCode.Value;
+                ParticipantObjectTypeCode = (ParticipantObjectIdentificationContentsParticipantObjectTypeCode)item.ParticipantObjectTypeCode.Value;
 				ParticipantObjectTypeCodeSpecified = true;
 			}
 			else ParticipantObjectTypeCodeSpecified = false;
 
 			if (item.ParticipantObjectTypeCodeRole.HasValue)
 			{
-				ParticipantObjectTypeCodeRole = (byte) item.ParticipantObjectTypeCodeRole.Value;
+                ParticipantObjectTypeCodeRole = (ParticipantObjectIdentificationContentsParticipantObjectTypeCodeRole)item.ParticipantObjectTypeCodeRole.Value;
 				ParticipantObjectTypeCodeRoleSpecified = true;
 			}
 			else
@@ -272,7 +359,7 @@ namespace ClearCanvas.Dicom.Audit
 
 			if (item.ParticipantObjectDataLifeCycle.HasValue)
 			{
-				ParticipantObjectDataLifeCycle = (byte) item.ParticipantObjectDataLifeCycle.Value;
+                ParticipantObjectDataLifeCycle = (ParticipantObjectIdentificationContentsParticipantObjectDataLifeCycle)item.ParticipantObjectDataLifeCycle.Value;
 				ParticipantObjectDataLifeCycleSpecified = true;
 			}
 			else
@@ -281,12 +368,12 @@ namespace ClearCanvas.Dicom.Audit
 			if (item.ParticipantObjectIdTypeCode.HasValue)
 			{
 				ParticipantObjectIDTypeCode =
-					new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(item.ParticipantObjectIdTypeCode.Value);
+					new ParticipantObjectIDTypeCode(item.ParticipantObjectIdTypeCode.Value);
 			}
 			else if (item.ParticipantObjectIdTypeCodedValue != null)
 			{
 				ParticipantObjectIDTypeCode =
-					new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(item.ParticipantObjectIdTypeCodedValue);
+                    new ParticipantObjectIDTypeCode(item.ParticipantObjectIdTypeCodedValue);
 			}
 
 			if (item.ParticipantObjectDetail != null)
@@ -294,7 +381,7 @@ namespace ClearCanvas.Dicom.Audit
 
 			if (!string.IsNullOrEmpty(item.ParticipantObjectDetailString))
 			{
-				ParticipantObjectDetailString = new[] {item.ParticipantObjectDetailString};
+                ParticipantObjectDetail = new ParticipantObjectDetail[] { new ParticipantObjectDetail() {type = item.ParticipantObjectDetailString }};
 			}
 
 			if (!string.IsNullOrEmpty(item.ParticipantObjectId))
@@ -306,25 +393,17 @@ namespace ClearCanvas.Dicom.Audit
 			if (item.ParticipantObjectQuery != null)
 				Item = item.ParticipantObjectQuery;
 
-			ParticipantObjectDescriptionType description = new ParticipantObjectDescriptionType();
 			if (!String.IsNullOrEmpty(item.AccessionNumber))
-				description.Accession = new[] { new ParticipantObjectDescriptionTypeAccession(item.AccessionNumber) };
+				Accession = new[] { new ParticipantObjectDescriptionTypeAccession(item.AccessionNumber) };
 			if (!String.IsNullOrEmpty(item.MppsUid))
-				description.MPPS = new[] { new ParticipantObjectDescriptionTypeMPPS(item.MppsUid) };
+                MPPS = new[] { new ParticipantObjectDescriptionTypeMPPS(item.MppsUid) };
 
 			if (item.SopClassDictionary != null && item.SopClassDictionary.Count > 0)
 			{
-				description.SOPClass = new ParticipantObjectDescriptionTypeSOPClass[item.SopClassDictionary.Count];
-				List<AuditSopClass> list = new List<AuditSopClass>(item.SopClassDictionary.Values);
-				for (int i = 0; i < item.SopClassDictionary.Count; i++)
-				{
-					description.SOPClass[i] =
-						new ParticipantObjectDescriptionTypeSOPClass(list[i].UID, list[i].NumberOfInstances);
-				}
+                // TODO: right now the schema only allows one SOP Class. It nees to be fixed.
+                var sopClass = CollectionUtils.FirstElement(item.SopClassDictionary.Values);
+                SOPClass = new ParticipantObjectDescriptionTypeSOPClass(sopClass.UID,sopClass.NumberOfInstances);
 			}
-
-			ParticipantObjectDescription = new ParticipantObjectDescriptionType[] { description };
-
 		}
 	}
 
@@ -339,7 +418,7 @@ namespace ClearCanvas.Dicom.Audit
 		}
 	}
 
-	public partial class ParticipantObjectDescriptionTypeMPPS
+    public partial class ParticipantObjectDescriptionTypeMPPS
 	{
 		public ParticipantObjectDescriptionTypeMPPS()
 		{}
@@ -360,6 +439,5 @@ namespace ClearCanvas.Dicom.Audit
 			UID = sopClassUid;
 			NumberOfInstances = numberOfInstances.ToString();
 		}
-	}
-   
+	}   
 }

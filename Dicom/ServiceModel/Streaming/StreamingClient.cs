@@ -186,6 +186,19 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
         	return RetrieveImageData(imageUrl, out metaInfo);
         }
 
+        public Stream RetrievePdf(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid)
+        {
+            StreamingResultMetaData result;
+            return RetrievePdf(serverAE, studyInstanceUID, seriesInstanceUID, sopInstanceUid, out result);
+        }
+
+        public Stream RetrievePdf(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid, out StreamingResultMetaData metaInfo)
+        {
+            string imageUrl = BuildImageUrl(serverAE, studyInstanceUID, seriesInstanceUID, sopInstanceUid);
+            imageUrl = imageUrl + String.Format("&contentType={0}", HttpUtility.HtmlEncode("application/pdf"));
+            return RetrieveImageData(imageUrl, out metaInfo);
+        }
+
         #endregion Public Methods
 
 		#region Private Methods
@@ -197,17 +210,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 			Platform.CheckForEmptyString(seriesInstanceUid, "seriesInstanceUid");
 			Platform.CheckForEmptyString(sopInstanceUid, "sopInstanceUid");
 
-			StringBuilder url = new StringBuilder();
-			if (_baseUri.ToString().EndsWith("/"))
-			{
-				url.AppendFormat("{0}{1}", _baseUri, serverAE);
-			}
-			else
-			{
-				url.AppendFormat("{0}/{1}", _baseUri, serverAE);
-			}
+			var url = new StringBuilder();
+		    url.AppendFormat(_baseUri.ToString().EndsWith("/") ? "{0}{1}" : "{0}/{1}", _baseUri, serverAE);
 
-			url.AppendFormat("?requesttype=WADO&studyUID={0}&seriesUID={1}&objectUID={2}", studyInstanceUid, seriesInstanceUid, sopInstanceUid);
+		    url.AppendFormat("?requesttype=WADO&studyUID={0}&seriesUID={1}&objectUID={2}", studyInstanceUid, seriesInstanceUid, sopInstanceUid);
 			return url.ToString();
 		}
 
@@ -219,8 +225,8 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
 				result.Speed.Start();
 
-				HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
-				request.Accept = "application/dicom,application/clearcanvas,application/clearcanvas-header,image/jpeg";
+				var request = (HttpWebRequest) WebRequest.Create(url.ToString());
+				request.Accept = "application/dicom,application/clearcanvas,application/clearcanvas-header,image/jpeg,application/pdf";
 				request.Timeout = (int) TimeSpan.FromSeconds(StreamingSettings.Default.ClientTimeoutSeconds).TotalMilliseconds;
 				request.KeepAlive = false;
 

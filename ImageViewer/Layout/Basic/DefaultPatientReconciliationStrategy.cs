@@ -31,6 +31,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			PatientsBirthDate = patientData.PatientsBirthDate;
 			PatientsBirthTime = patientData.PatientsBirthTime;
 			PatientsSex = patientData.PatientsSex;
+
+			PatientSpeciesDescription = patientData.PatientSpeciesDescription;
+			PatientSpeciesCodeSequenceCodingSchemeDesignator = patientData.PatientSpeciesCodeSequenceCodingSchemeDesignator;
+			PatientSpeciesCodeSequenceCodeValue = patientData.PatientSpeciesCodeSequenceCodeValue;
+			PatientSpeciesCodeSequenceCodeMeaning = patientData.PatientSpeciesCodeSequenceCodeMeaning;
+			PatientBreedDescription = patientData.PatientBreedDescription;
+			PatientBreedCodeSequenceCodingSchemeDesignator = patientData.PatientBreedCodeSequenceCodingSchemeDesignator;
+			PatientBreedCodeSequenceCodeValue = patientData.PatientBreedCodeSequenceCodeValue;
+			PatientBreedCodeSequenceCodeMeaning = patientData.PatientBreedCodeSequenceCodeMeaning;
+			ResponsiblePerson = patientData.ResponsiblePerson;
+			ResponsiblePersonRole = patientData.ResponsiblePersonRole;
+			ResponsibleOrganization = patientData.ResponsibleOrganization;
+
 		}
 
 		#region IPatientData Members
@@ -41,6 +54,31 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		public string PatientsBirthTime { get; private set; }
 		public string PatientsSex { get; private set; }
 
+		#region Species
+
+		public string PatientSpeciesDescription { get; private set; }
+		public string PatientSpeciesCodeSequenceCodingSchemeDesignator { get; private set; }
+		public string PatientSpeciesCodeSequenceCodeValue { get; private set; }
+		public string PatientSpeciesCodeSequenceCodeMeaning { get; private set; }
+
+		#endregion
+
+		#region Breed
+
+		public string PatientBreedDescription { get; private set; }
+		public string PatientBreedCodeSequenceCodingSchemeDesignator { get; private set; }
+		public string PatientBreedCodeSequenceCodeValue { get; private set; }
+		public string PatientBreedCodeSequenceCodeMeaning { get; private set; }
+
+		#endregion
+
+		#region Responsible Person/Organization
+
+		public string ResponsiblePerson { get; private set; }
+		public string ResponsiblePersonRole { get; private set; }
+		public string ResponsibleOrganization { get; private set; }
+
+		#endregion
 		#endregion
 
 		public PatientInformation Clone()

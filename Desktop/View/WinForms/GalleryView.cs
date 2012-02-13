@@ -251,9 +251,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			ListViewItem lvi = _listView.Items[index];
 			IGalleryItem item = (IGalleryItem) _gallery[index];
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
-			_listView.LargeImageList.Images[keyIndex] = item.Image;
-			// update name, description
-			_listView.RedrawItems(index, index, true);
+		    
+            var existing = _listView.LargeImageList.Images[keyIndex];
+		    var @new = (Image) item.Image;
+
+            if (existing != @new)
+            {
+                _listView.LargeImageList.Images[keyIndex] = @new;
+                // update name, description
+                _listView.RedrawItems(index, index, true);
+            }
 		}
 
 		private void AddItem(object item)
@@ -261,7 +268,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			IGalleryItem galleryItem = CastToGalleryItem(item);
 
 			string imageKey = Guid.NewGuid().ToString();
-			_listView.LargeImageList.Images.Add(imageKey, galleryItem.Image);
+            _listView.LargeImageList.Images.Add(imageKey, (Image)galleryItem.Image);
 			ListViewItem lvi = new ListViewItem(galleryItem.Name, imageKey);
 
 			AddSubItems(lvi, galleryItem);
@@ -348,16 +355,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return null;
 		}
 
-		private void OnListViewResize(object sender, EventArgs e)
-		{
-			// force tile sizing to fit within the control without horizontal scrolling
-			const int tileSpacing = 4;
-			_listView.TileSize = new Size(
-				Math.Max(3*this.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2*tileSpacing),
-				this.ImageSize.Height + tileSpacing
-				);
-		}
-
 		private void OnItemDrag(object sender, ItemDragEventArgs e)
 		{
 			// Only allow dragging of one item at a time, so deselect all other items
@@ -371,7 +368,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			DataObject data = new DataObject();
 			if (DragOutside)
-				data.SetData(draggedItem.Tag);
+			{
+			    data.SetData(draggedItem.Tag);
+			    data.SetText(draggedItem.Tag.ToString(),TextDataFormat.UnicodeText);
+			}
 			if (DragReorder)
 				data.SetData(draggedItem);
 

@@ -15,7 +15,7 @@ using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
 using System.Reflection;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Core
 {

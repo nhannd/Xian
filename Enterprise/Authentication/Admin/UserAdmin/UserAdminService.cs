@@ -84,7 +84,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 
 			// create new user
     		UserInfo userInfo =
-    			new UserInfo(userDetail.UserName, userDetail.DisplayName, userDetail.ValidFrom, userDetail.ValidUntil);
+    			new UserInfo(userDetail.UserName, userDetail.DisplayName, userDetail.EmailAddress, userDetail.ValidFrom, userDetail.ValidUntil);
 
 			User user = User.CreateNewUser(userInfo, settings.DefaultTemporaryPassword);
 

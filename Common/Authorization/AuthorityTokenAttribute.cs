@@ -13,29 +13,22 @@ using System;
 
 namespace ClearCanvas.Common.Authorization
 {
-    /// <summary>
-    /// Attribute used to define authority group tokens on types.
-    /// </summary>
+	/// <summary>
+	/// Attribute used to define authority group tokens on types.
+	/// </summary>
 	/// <seealso cref="AuthorityGroupDefinition"/>
-	[AttributeUsage(AttributeTargets.Field, AllowMultiple=false, Inherited=false)]
-    public class AuthorityTokenAttribute : Attribute
-    {
-        private string _description;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-        public AuthorityTokenAttribute()
-        {
-        }
-
+	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+	public class AuthorityTokenAttribute : Attribute
+	{
 		/// <summary>
 		/// The token description.
 		/// </summary>
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
-    }
+		public string Description { get; set; }
+
+		/// <summary>
+		/// The former identities of this token, used for purposes of migrating a token.
+		/// Separate multiple former identities by a semicolon.
+		/// </summary>
+		public string Formerly { get; set; }
+	}
 }

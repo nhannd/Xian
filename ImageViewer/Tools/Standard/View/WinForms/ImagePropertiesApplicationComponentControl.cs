@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Globalization;
+using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.View.WinForms;
@@ -133,6 +135,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 	internal class ImagePropertyDescriptor : PropertyDescriptor
 	{
 		public readonly IImageProperty ImageProperty;
+		private object _value;
 
 		public ImagePropertyDescriptor(IImageProperty imageProperty)
 			: base(imageProperty.Identifier, CreateAttributes(imageProperty))
@@ -169,7 +172,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		public override object GetValue(object component)
 		{
-			return GetStringValue(ImageProperty.Value, true);
+			if (_value == null)
+			{
+				// if the value is a nested set of properties, wrap in an ImageProperties container
+				if (ImageProperty.Value is IEnumerable<IImageProperty>)
+					_value = new ImageProperties(new List<IImageProperty>((IEnumerable<IImageProperty>) ImageProperty.Value));
+				else
+					_value = GetStringValue(ImageProperty.Value, true);
+			}
+			return _value;
 		}
 
 		public override bool IsReadOnly
@@ -180,7 +191,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		public override Type PropertyType
 		{
-			get { return ImageProperty.ValueType; }
+			get
+			{
+				// if the value is a nested set of properties, wrap in an ImageProperties container
+				if (ImageProperty.Value is IEnumerable<IImageProperty>)
+					return typeof (ImageProperties);
+				return ImageProperty.ValueType;
+			}
 		}
 
 		public override void ResetValue(object component)
@@ -207,6 +224,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			{
 				returnValue = (string)value;
 			}
+			else if (value is IEnumerable<IImageProperty>)
+			{
+				var sb = new StringBuilder();
+				foreach (var property in (IEnumerable<IImageProperty>) value)
+				{
+					if (sb.Length > 0)
+						sb.AppendLine();
+					sb.Append(GetStringValue(property.Value, true));
+				}
+				returnValue = sb.ToString();
+			}
 			else
 			{
 				TypeConverter converter = TypeDescriptor.GetConverter(value.GetType());
@@ -228,6 +256,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		}
 	}
 
+	[TypeConverter(typeof(ImagePropertiesConverter))]
 	internal class ImageProperties : ICustomTypeDescriptor
 	{
 		private readonly PropertyDescriptorCollection _propertyDescriptors;
@@ -303,6 +332,41 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		public object GetPropertyOwner(PropertyDescriptor pd)
 		{
 			return this;
+		}
+
+		#endregion
+
+		#region ImagePropertiesConverter Class
+
+		private class ImagePropertiesConverter : ExpandableObjectConverter
+		{
+			public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+			{
+				if (destinationType == typeof (string))
+					return true;
+				return base.CanConvertTo(context, destinationType);
+			}
+
+			public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+			{
+				var imageProperties = value as ImageProperties;
+				if (destinationType == typeof (string) && imageProperties != null)
+					return ImagePropertyDescriptor.GetStringValue(CollectionUtils.Map<ImagePropertyDescriptor, IImageProperty>(imageProperties.GetProperties(), p => p.ImageProperty), true);
+				return base.ConvertTo(context, culture, value, destinationType);
+			}
+
+			public override bool GetPropertiesSupported(ITypeDescriptorContext context)
+			{
+				return true;
+			}
+
+			public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
+			{
+				var imageProperties = value as ImageProperties;
+				if (imageProperties != null)
+					return imageProperties.GetProperties(attributes);
+				return base.GetProperties(context, value, attributes);
+			}
 		}
 
 		#endregion

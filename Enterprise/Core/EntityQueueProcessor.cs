@@ -43,6 +43,12 @@ namespace ClearCanvas.Enterprise.Core
 		protected abstract IList<TItem> GetNextEntityBatch(int batchSize);
 
 		/// <summary>
+		/// Called to mark a queue item as being claimed for processing.
+		/// </summary>
+		/// <param name="item"></param>
+		protected abstract void MarkItemClaimed(TItem item);
+
+		/// <summary>
 		/// Called to act on a queue item.
 		/// </summary>
 		/// <remarks>
@@ -89,7 +95,7 @@ namespace ClearCanvas.Enterprise.Core
 
 		#region Override Methods
 
-		protected override IList<TItem> GetNextBatch(int batchSize)
+		protected sealed override IList<TItem> GetNextBatch(int batchSize)
 		{
 			using (var scope = new PersistenceScope(PersistenceContextType.Read))
 			{
@@ -100,7 +106,35 @@ namespace ClearCanvas.Enterprise.Core
 			}
 		}
 
-		protected override void ProcessItem(TItem item)
+		protected sealed override bool ClaimItem(TItem item)
+		{
+			try
+			{
+				using (var scope = new PersistenceScope(PersistenceContextType.Update))
+				{
+					var context = (IUpdateContext)PersistenceScope.CurrentContext;
+					context.ChangeSetRecorder.OperationName = this.GetType().FullName;
+
+					// need to lock the item in context, to allow loading of extended properties collection by subclass
+					context.Lock(item);
+
+					// mark item as being in process
+					MarkItemClaimed(item);
+
+					// complete the transaction
+					scope.Complete();
+				}
+				return true;
+			}
+			catch (EntityVersionException)
+			{
+				// if we get a version exception, the item has already been claimed by another process
+				// this is not an error
+				return false;
+			}
+		}
+
+		protected sealed override void ProcessItem(TItem item)
 		{
 			Exception error = null;
 			using (var scope = new PersistenceScope(PersistenceContextType.Update))
@@ -113,7 +147,7 @@ namespace ClearCanvas.Enterprise.Core
 
 				try
 				{
-					// take action base on item
+					// take action based on item
 					ActOnItem(item);
 
 					// ensure that the commit will ultimately succeed
@@ -133,58 +167,55 @@ namespace ClearCanvas.Enterprise.Core
 				}
 			}
 
-			// exceptions thrown upon exiting the using block are intentionally not caught here,
+			// exceptions thrown upon exiting the using block above are intentionally not caught here,
 			// allow them to be caught by the calling method
 
 			// post-processing
-			if(error == null)
+			if (error == null)
 			{
 				AfterCommit(item);
 			}
 			else
 			{
-				UpdateQueueItemOnError(item, error);
+				UpdateItemOnError(item, error);
 			}
 		}
 
 		#endregion
 
-		private void UpdateQueueItemOnError(TItem item, Exception error)
-			{
+		private void UpdateItemOnError(TItem item, Exception error)
+		{
 			// use a new scope to mark the item as failed, because we don't want to commit any changes made in the outer scope
 			using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
-				{
+			{
 				var failContext = (IUpdateContext)PersistenceScope.CurrentContext;
-					failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
-					
+				failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
+
 				// bug #7191 : Reload the TItem in this scope;  using the existing item results in NHibernate throwing a lazy loading exception
 				var itemForThisScope = failContext.Load<TItem>(item.GetRef(), EntityLoadFlags.None);
 
-					// lock item into this context
-					failContext.Lock(itemForThisScope);
+				// lock item into this context
+				failContext.Lock(itemForThisScope);
 
-					// failure callback
-					OnItemFailed(itemForThisScope, error);
+				// failure callback
+				OnItemFailed(itemForThisScope, error);
 
-					// complete the transaction
-					scope.Complete();
-				}
+				// complete the transaction
+				scope.Complete();
 			}
+		}
 
 		private void AfterCommit(TItem item)
 		{
 			try
 			{
 				OnTransactionCommitted(item);
-		}
+			}
 			catch (Exception e)
 			{
 				// Swallow exception on purpose.  We don't care if the resources failed to get cleanup.
 				ExceptionLogger.Log(this.GetType().FullName + ".ProcessItem", e);
 			}
 		}
-
-
-
 	}
 }

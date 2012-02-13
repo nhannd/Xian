@@ -48,8 +48,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private Fields
 
-		private bool _invert;
-
 		private LutComposer _lutComposer;
 		private IVoiLutManager _voiLutManager;
 
@@ -117,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			context.CloneFields(source, this);
 
-			if (source.LutComposer.LutCollection.Count > (int) Luts.Voi) //clone the voi lut.
+			if (source.LutComposer.VoiLut != null) //clone the voi lut.
 				this.InstallVoiLut(source.VoiLut.Clone());
 		}
 
@@ -149,11 +147,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>
 		/// Inversion is equivalent to polarity.
 		/// </remarks>
-		public bool Invert
-		{
-			get { return _invert; }
-			set { _invert = value; }
-		}
+		public bool Invert { get; set; }
+
+	    /// <summary>
+	    /// Gets the default value of <see cref="Invert"/>.  In DICOM, this would be true
+	    /// for all MONOCHROME1 images.
+	    /// </summary>
+        public bool DefaultInvert { get { return false; } }
 
 		/// <summary>
 		/// Gets an object that encapsulates the pixel data.
@@ -187,12 +187,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets or sets the LUT used to select and rescale values of interest in the color pixel data <b>on a per-channel basis</b>.
 		/// </summary>
-		public IComposableLut VoiLut
+		public IVoiLut VoiLut
 		{
 			get
 			{
 				InitializeNecessaryLuts(Luts.Voi);
-				return this.LutComposer.LutCollection[(int) Luts.Voi];
+				return this.LutComposer.VoiLut;
 			}
 		}
 
@@ -258,9 +258,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void InitializeNecessaryLuts(Luts luts)
 		{
-			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == (int) Luts.Voi)
+			if (luts >= Luts.Voi && LutComposer.VoiLut == null)
 			{
-				IComposableLut lut = null;
+				IVoiLut lut = null;
 				
 				if (_voiLutFactory != null)
 					lut = _voiLutFactory.CreateVoiLut(this);
@@ -276,21 +276,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private / Explicit Members
 
-		private void InstallVoiLut(IComposableLut voiLut)
+		private void InstallVoiLut(IVoiLut voiLut)
 		{
 			Platform.CheckForNullReference(voiLut, "voiLut");
 
-			if (this.LutComposer.LutCollection.Count == (int) Luts.Voi)
-			{
-				this.LutComposer.LutCollection.Add(voiLut);
-			}
-			else
-			{
-				this.LutComposer.LutCollection[(int) Luts.Voi] = voiLut;
-			}
+			this.LutComposer.VoiLut = voiLut;
 		}
 
-		void IVoiLutInstaller.InstallVoiLut(IComposableLut voiLut)
+		void IVoiLutInstaller.InstallVoiLut(IVoiLut voiLut)
 		{
 			InstallVoiLut(voiLut);
 		}

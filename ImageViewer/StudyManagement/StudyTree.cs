@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -18,7 +19,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A tree representation of the DICOM patient, study, series, SOP hierarchy.
 	/// </summary>
-	public sealed class StudyTree
+	public sealed class StudyTree : IDisposable
 	{
 		// We add these master dictionaries so we can have rapid
 		// look up of study, series and sop objects without having to traverse
@@ -46,6 +47,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public PatientCollection Patients
 		{
 			get { return _patients; }
+		}
+
+		/// <summary>
+		/// Enumerates all studies for all patients.
+		/// </summary>
+		public IEnumerable<Study> Studies
+		{
+			get { return _patients.SelectMany(p => p.Studies); }
 		}
 
 		/// <summary>

@@ -120,6 +120,9 @@
   <data name="ColumnHeadingAccessionNumber" xml:space="preserve">
     <value>Accession Number</value>
   </data>
+  <data name="ColumnHeadingAttachments" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
   <data name="ColumnHeadingAvailability" xml:space="preserve">
     <value>Availability</value>
   </data>

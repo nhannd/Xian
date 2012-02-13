@@ -147,6 +147,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
         
         private string ApplicationNameField;
         
+        private ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LoadStudyOptions LoadStudyOptionsField;
+        
         private System.Collections.ObjectModel.Collection<string> PatientIdField;
         
         private System.Collections.ObjectModel.Collection<string> StudyInstanceUidField;
@@ -191,6 +193,19 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LoadStudyOptions LoadStudyOptions {
+            get {
+                return this.LoadStudyOptionsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LoadStudyOptionsField, value) != true)) {
+                    this.LoadStudyOptionsField = value;
+                    this.RaisePropertyChanged("LoadStudyOptions");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public System.Collections.ObjectModel.Collection<string> PatientId {
             get {
                 return this.PatientIdField;
@@ -213,6 +228,111 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
                     this.StudyInstanceUidField = value;
                     this.RaisePropertyChanged("StudyInstanceUid");
                 }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="LoadStudyOptions", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common")]
+    public partial class LoadStudyOptions : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private bool ExcludePriorsField;
+        
+        private bool KeyImagesOnlyField;
+        
+        private ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LayoutConfiguration PreferredLayoutField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool ExcludePriors {
+            get {
+                return this.ExcludePriorsField;
+            }
+            set {
+                if ((this.ExcludePriorsField.Equals(value) != true)) {
+                    this.ExcludePriorsField = value;
+                    this.RaisePropertyChanged("ExcludePriors");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool KeyImagesOnly {
+            get {
+                return this.KeyImagesOnlyField;
+            }
+            set {
+                if ((this.KeyImagesOnlyField.Equals(value) != true)) {
+                    this.KeyImagesOnlyField = value;
+                    this.RaisePropertyChanged("KeyImagesOnly");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LayoutConfiguration PreferredLayout {
+            get {
+                return this.PreferredLayoutField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.PreferredLayoutField, value) != true)) {
+                    this.PreferredLayoutField = value;
+                    this.RaisePropertyChanged("PreferredLayout");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="LayoutConfiguration", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageViewer.Web.Common")]
+    public partial class LayoutConfiguration : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int ColumnsField;
+        
+        private int RowsField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public int Columns {
+            get {
+                return this.ColumnsField;
+            }
+            set {
+                if ((this.ColumnsField.Equals(value) != true)) {
+                    this.ColumnsField = value;
+                    this.RaisePropertyChanged("Columns");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public int Rows {
+            get {
+                return this.RowsField;
+            }
+            set {
+                if ((this.RowsField.Equals(value) != true)) {
+                    this.RowsField = value;
+                    this.RaisePropertyChanged("Rows");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -430,13 +550,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Message", Namespace="http://www.clearcanvas.ca/web/application")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.UpdatePropertyMessage))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ActionClickedMessage))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetLayoutActionMessage))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMessage))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveMessage))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseWheelMessage))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.DismissMessageBoxMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.UpdatePropertyMessage))]
     public partial class Message : object, System.ComponentModel.INotifyPropertyChanged {
         
         private System.Guid IdentifierField;
@@ -475,6 +595,108 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
             System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
             if ((propertyChanged != null)) {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="UpdatePropertyMessage", Namespace="http://www.clearcanvas.ca/web/application")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LoadStudyOptions))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LayoutConfiguration))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationNotFoundEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStartedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStoppedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EntityUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PropertyChangedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MetaInformation))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequestResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.OutOfResourceFault))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StopApplicationRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageSet))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PerformanceData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<string>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ContextMenuEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.TileUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Rectangle))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Cursor))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Position))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InformationBox))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.RectangleF))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBoxShownEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBox))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebMessageBoxActions))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveProcessedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ActionClickedMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetLayoutActionMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseButton))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseButtonState))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseWheelMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.DismissMessageBoxMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDialogBoxAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Viewer))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebIconSize))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Size))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebIconSet))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebClickAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownButtonAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebLayoutChangerAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartViewerApplicationRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ViewerApplication))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionValidationFault))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InvalidOperationFault))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ProcessMessagesResult))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetPropertyRequest))]
+    public partial class UpdatePropertyMessage : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message {
+        
+        private string PropertyNameField;
+        
+        private object ValueField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PropertyName {
+            get {
+                return this.PropertyNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.PropertyNameField, value) != true)) {
+                    this.PropertyNameField = value;
+                    this.RaisePropertyChanged("PropertyName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public object Value {
+            get {
+                return this.ValueField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ValueField, value) != true)) {
+                    this.ValueField = value;
+                    this.RaisePropertyChanged("Value");
+                }
             }
         }
     }
@@ -638,7 +860,287 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="UpdatePropertyMessage", Namespace="http://www.clearcanvas.ca/web/application")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ApplicationNotFoundEvent", Namespace="http://www.clearcanvas.ca/web/application")]
+    public partial class ApplicationNotFoundEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
+        
+        private System.Guid ApplicationIdField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid ApplicationId {
+            get {
+                return this.ApplicationIdField;
+            }
+            set {
+                if ((this.ApplicationIdField.Equals(value) != true)) {
+                    this.ApplicationIdField = value;
+                    this.RaisePropertyChanged("ApplicationId");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Event", Namespace="http://www.clearcanvas.ca/web/application")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStartedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStoppedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EntityUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PropertyChangedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ContextMenuEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.TileUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBoxShownEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveProcessedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationNotFoundEvent))]
+    public partial class Event : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private System.Guid IdentifierField;
+        
+        private string SenderField;
+        
+        private System.Guid SenderIdField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid Identifier {
+            get {
+                return this.IdentifierField;
+            }
+            set {
+                if ((this.IdentifierField.Equals(value) != true)) {
+                    this.IdentifierField = value;
+                    this.RaisePropertyChanged("Identifier");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Sender {
+            get {
+                return this.SenderField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SenderField, value) != true)) {
+                    this.SenderField = value;
+                    this.RaisePropertyChanged("Sender");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid SenderId {
+            get {
+                return this.SenderIdField;
+            }
+            set {
+                if ((this.SenderIdField.Equals(value) != true)) {
+                    this.SenderIdField = value;
+                    this.RaisePropertyChanged("SenderId");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ApplicationStartedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
+    public partial class ApplicationStartedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
+        
+        private ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application ApplicationField;
+        
+        private System.Guid StartRequestIdField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application Application {
+            get {
+                return this.ApplicationField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ApplicationField, value) != true)) {
+                    this.ApplicationField = value;
+                    this.RaisePropertyChanged("Application");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid StartRequestId {
+            get {
+                return this.StartRequestIdField;
+            }
+            set {
+                if ((this.StartRequestIdField.Equals(value) != true)) {
+                    this.StartRequestIdField = value;
+                    this.RaisePropertyChanged("StartRequestId");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Application", Namespace="http://www.clearcanvas.ca/web/application")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ViewerApplication))]
+    public partial class Application : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private System.Guid IdentifierField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid Identifier {
+            get {
+                return this.IdentifierField;
+            }
+            set {
+                if ((this.IdentifierField.Equals(value) != true)) {
+                    this.IdentifierField = value;
+                    this.RaisePropertyChanged("Identifier");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ApplicationStoppedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
+    public partial class ApplicationStoppedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
+        
+        private bool IsTimedOutField;
+        
+        private string MessageField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public bool IsTimedOut {
+            get {
+                return this.IsTimedOutField;
+            }
+            set {
+                if ((this.IsTimedOutField.Equals(value) != true)) {
+                    this.IsTimedOutField = value;
+                    this.RaisePropertyChanged("IsTimedOut");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Message {
+            get {
+                return this.MessageField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MessageField, value) != true)) {
+                    this.MessageField = value;
+                    this.RaisePropertyChanged("Message");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="EntityUpdatedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
+    public partial class EntityUpdatedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
+        
+        private ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity EntityField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity Entity {
+            get {
+                return this.EntityField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.EntityField, value) != true)) {
+                    this.EntityField = value;
+                    this.RaisePropertyChanged("Entity");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Entity", Namespace="http://www.clearcanvas.ca/web/application")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebClickAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownButtonAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebLayoutChangerAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBox))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Viewer))]
+    public partial class Entity : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private System.Guid IdentifierField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid Identifier {
+            get {
+                return this.IdentifierField;
+            }
+            set {
+                if ((this.IdentifierField.Equals(value) != true)) {
+                    this.IdentifierField = value;
+                    this.RaisePropertyChanged("Identifier");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PropertyChangedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LoadStudyOptions))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LayoutConfiguration))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationNotFoundEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStartedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStoppedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EntityUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.UpdatePropertyMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MetaInformation))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequestResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.OutOfResourceFault))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StopApplicationRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageSet))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PerformanceData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<string>))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ContextMenuEvent))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode>))]
@@ -676,38 +1178,30 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebLayoutChangerAction))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartViewerApplicationRequest))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ViewerApplication))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationNotFoundEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStartedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStoppedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EntityUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PropertyChangedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MetaInformation))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequestResponse))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.OutOfResourceFault))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StopApplicationRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageSet))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PerformanceData))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionValidationFault))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InvalidOperationFault))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ProcessMessagesResult))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetPropertyRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<string>))]
-    public partial class UpdatePropertyMessage : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message {
+    public partial class PropertyChangedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
+        
+        private System.Collections.ObjectModel.Collection<string> DebugInfoField;
         
         private string PropertyNameField;
         
         private object ValueField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.ObjectModel.Collection<string> DebugInfo {
+            get {
+                return this.DebugInfoField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DebugInfoField, value) != true)) {
+                    this.DebugInfoField = value;
+                    this.RaisePropertyChanged("DebugInfo");
+                }
+            }
+        }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string PropertyName {
@@ -738,42 +1232,108 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Position", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
-    public partial struct Position : System.ComponentModel.INotifyPropertyChanged {
+    [System.Runtime.Serialization.DataContractAttribute(Name="SessionUpdatedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
+    public partial class SessionUpdatedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
         
-        private int XField;
+        private System.DateTime ExpiryTimeUtcField;
         
-        private int YField;
+        private string UsernameField;
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int X {
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime ExpiryTimeUtc {
             get {
-                return this.XField;
+                return this.ExpiryTimeUtcField;
             }
             set {
-                if ((this.XField.Equals(value) != true)) {
-                    this.XField = value;
-                    this.RaisePropertyChanged("X");
+                if ((this.ExpiryTimeUtcField.Equals(value) != true)) {
+                    this.ExpiryTimeUtcField = value;
+                    this.RaisePropertyChanged("ExpiryTimeUtc");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Username {
+            get {
+                return this.UsernameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UsernameField, value) != true)) {
+                    this.UsernameField = value;
+                    this.RaisePropertyChanged("Username");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="EventSet", Namespace="http://www.clearcanvas.ca/web/application")]
+    public partial class EventSet : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private System.Guid ApplicationIdField;
+        
+        private System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event> EventsField;
+        
+        private bool HasMorePendingField;
+        
+        private int NumberField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid ApplicationId {
+            get {
+                return this.ApplicationIdField;
+            }
+            set {
+                if ((this.ApplicationIdField.Equals(value) != true)) {
+                    this.ApplicationIdField = value;
+                    this.RaisePropertyChanged("ApplicationId");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int Y {
+        public System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event> Events {
             get {
-                return this.YField;
+                return this.EventsField;
             }
             set {
-                if ((this.YField.Equals(value) != true)) {
-                    this.YField = value;
-                    this.RaisePropertyChanged("Y");
+                if ((object.ReferenceEquals(this.EventsField, value) != true)) {
+                    this.EventsField = value;
+                    this.RaisePropertyChanged("Events");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public bool HasMorePending {
+            get {
+                return this.HasMorePendingField;
+            }
+            set {
+                if ((this.HasMorePendingField.Equals(value) != true)) {
+                    this.HasMorePendingField = value;
+                    this.RaisePropertyChanged("HasMorePending");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public int Number {
+            get {
+                return this.NumberField;
+            }
+            set {
+                if ((this.NumberField.Equals(value) != true)) {
+                    this.NumberField = value;
+                    this.RaisePropertyChanged("Number");
                 }
             }
         }
         
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         
-        void RaisePropertyChanged(string propertyName) {
+        protected void RaisePropertyChanged(string propertyName) {
             System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
             if ((propertyChanged != null)) {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
@@ -781,49 +1341,220 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="MouseButton", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
-    public enum MouseButton : int {
+    [System.Runtime.Serialization.DataContractAttribute(Name="GetPendingEventRequest", Namespace="http://www.clearcanvas.ca/web/application")]
+    public partial class GetPendingEventRequest : object, System.ComponentModel.INotifyPropertyChanged {
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        None = 0,
+        private System.Guid ApplicationIdField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Left = 1,
+        private int MaxWaitTimeField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Right = 2,
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid ApplicationId {
+            get {
+                return this.ApplicationIdField;
+            }
+            set {
+                if ((this.ApplicationIdField.Equals(value) != true)) {
+                    this.ApplicationIdField = value;
+                    this.RaisePropertyChanged("ApplicationId");
+                }
+            }
+        }
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Middle = 3,
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int MaxWaitTime {
+            get {
+                return this.MaxWaitTimeField;
+            }
+            set {
+                if ((this.MaxWaitTimeField.Equals(value) != true)) {
+                    this.MaxWaitTimeField = value;
+                    this.RaisePropertyChanged("MaxWaitTime");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="MouseButtonState", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
-    public enum MouseButtonState : int {
+    [System.Runtime.Serialization.DataContractAttribute(Name="GetPendingEventRequestResponse", Namespace="http://www.clearcanvas.ca/web/application")]
+    public partial class GetPendingEventRequestResponse : object, System.ComponentModel.INotifyPropertyChanged {
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Up = 0,
+        private System.Guid ApplicationIdField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Down = 1,
+        private ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet EventSetField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid ApplicationId {
+            get {
+                return this.ApplicationIdField;
+            }
+            set {
+                if ((this.ApplicationIdField.Equals(value) != true)) {
+                    this.ApplicationIdField = value;
+                    this.RaisePropertyChanged("ApplicationId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet EventSet {
+            get {
+                return this.EventSetField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.EventSetField, value) != true)) {
+                    this.EventSetField = value;
+                    this.RaisePropertyChanged("EventSet");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="WebDialogBoxAction", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
-    public enum WebDialogBoxAction : int {
+    [System.Runtime.Serialization.DataContractAttribute(Name="PerformanceData", Namespace="http://www.clearcanvas.ca/web/application")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LoadStudyOptions))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.LayoutConfiguration))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationNotFoundEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStartedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStoppedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EntityUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PropertyChangedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.UpdatePropertyMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MetaInformation))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequestResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.OutOfResourceFault))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StopApplicationRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageSet))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<string>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ContextMenuEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.TileUpdatedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Rectangle))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Cursor))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Position))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InformationBox))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.RectangleF))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBoxShownEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBox))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebMessageBoxActions))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveProcessedEvent))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ActionClickedMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetLayoutActionMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseButton))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseButtonState))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseWheelMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.DismissMessageBoxMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDialogBoxAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Viewer))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile>))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebIconSize))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Size))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebIconSet))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebClickAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownButtonAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebLayoutChangerAction))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartViewerApplicationRequest))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ViewerApplication))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionValidationFault))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InvalidOperationFault))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ProcessMessagesResult))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetPropertyRequest))]
+    public partial class PerformanceData : object, System.ComponentModel.INotifyPropertyChanged {
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Ok = 1,
+        private string ClientIpField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Cancel = 2,
+        private string NameField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Yes = 4,
+        private object ValueField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        No = 8,
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string ClientIp {
+            get {
+                return this.ClientIpField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ClientIpField, value) != true)) {
+                    this.ClientIpField = value;
+                    this.RaisePropertyChanged("ClientIp");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string Name {
+            get {
+                return this.NameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NameField, value) != true)) {
+                    this.NameField = value;
+                    this.RaisePropertyChanged("Name");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public object Value {
+            get {
+                return this.ValueField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ValueField, value) != true)) {
+                    this.ValueField = value;
+                    this.RaisePropertyChanged("Value");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -1202,6 +1933,51 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Position", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
+    public partial struct Position : System.ComponentModel.INotifyPropertyChanged {
+        
+        private int XField;
+        
+        private int YField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public int X {
+            get {
+                return this.XField;
+            }
+            set {
+                if ((this.XField.Equals(value) != true)) {
+                    this.XField = value;
+                    this.RaisePropertyChanged("X");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public int Y {
+            get {
+                return this.YField;
+            }
+            set {
+                if ((this.YField.Equals(value) != true)) {
+                    this.YField = value;
+                    this.RaisePropertyChanged("Y");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="InformationBox", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
     public partial class InformationBox : object, System.ComponentModel.INotifyPropertyChanged {
         
@@ -1428,6 +2204,51 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="MouseMoveProcessedEvent", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
     public partial class MouseMoveProcessedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MouseButton", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
+    public enum MouseButton : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        None = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Left = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Right = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Middle = 3,
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MouseButtonState", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
+    public enum MouseButtonState : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Up = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Down = 1,
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="WebDialogBoxAction", Namespace="http://www.clearcanvas.ca/web/application/viewer")]
+    public enum WebDialogBoxAction : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Ok = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Cancel = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Yes = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        No = 8,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -1958,701 +2779,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference {
                     this.ViewerField = value;
                     this.RaisePropertyChanged("Viewer");
                 }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ApplicationNotFoundEvent", Namespace="http://www.clearcanvas.ca/web/application")]
-    public partial class ApplicationNotFoundEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
-        
-        private System.Guid ApplicationIdField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid ApplicationId {
-            get {
-                return this.ApplicationIdField;
-            }
-            set {
-                if ((this.ApplicationIdField.Equals(value) != true)) {
-                    this.ApplicationIdField = value;
-                    this.RaisePropertyChanged("ApplicationId");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Event", Namespace="http://www.clearcanvas.ca/web/application")]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.TileUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBoxShownEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveProcessedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationNotFoundEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStartedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStoppedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EntityUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PropertyChangedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ContextMenuEvent))]
-    public partial class Event : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private System.Guid IdentifierField;
-        
-        private string SenderField;
-        
-        private System.Guid SenderIdField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid Identifier {
-            get {
-                return this.IdentifierField;
-            }
-            set {
-                if ((this.IdentifierField.Equals(value) != true)) {
-                    this.IdentifierField = value;
-                    this.RaisePropertyChanged("Identifier");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Sender {
-            get {
-                return this.SenderField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SenderField, value) != true)) {
-                    this.SenderField = value;
-                    this.RaisePropertyChanged("Sender");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid SenderId {
-            get {
-                return this.SenderIdField;
-            }
-            set {
-                if ((this.SenderIdField.Equals(value) != true)) {
-                    this.SenderIdField = value;
-                    this.RaisePropertyChanged("SenderId");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ApplicationStartedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
-    public partial class ApplicationStartedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
-        
-        private ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application ApplicationField;
-        
-        private System.Guid StartRequestIdField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application Application {
-            get {
-                return this.ApplicationField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ApplicationField, value) != true)) {
-                    this.ApplicationField = value;
-                    this.RaisePropertyChanged("Application");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid StartRequestId {
-            get {
-                return this.StartRequestIdField;
-            }
-            set {
-                if ((this.StartRequestIdField.Equals(value) != true)) {
-                    this.StartRequestIdField = value;
-                    this.RaisePropertyChanged("StartRequestId");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Application", Namespace="http://www.clearcanvas.ca/web/application")]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ViewerApplication))]
-    public partial class Application : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private System.Guid IdentifierField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid Identifier {
-            get {
-                return this.IdentifierField;
-            }
-            set {
-                if ((this.IdentifierField.Equals(value) != true)) {
-                    this.IdentifierField = value;
-                    this.RaisePropertyChanged("Identifier");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ApplicationStoppedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
-    public partial class ApplicationStoppedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
-        
-        private bool IsTimedOutField;
-        
-        private string MessageField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public bool IsTimedOut {
-            get {
-                return this.IsTimedOutField;
-            }
-            set {
-                if ((this.IsTimedOutField.Equals(value) != true)) {
-                    this.IsTimedOutField = value;
-                    this.RaisePropertyChanged("IsTimedOut");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Message {
-            get {
-                return this.MessageField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.MessageField, value) != true)) {
-                    this.MessageField = value;
-                    this.RaisePropertyChanged("Message");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="EntityUpdatedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
-    public partial class EntityUpdatedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
-        
-        private ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity EntityField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity Entity {
-            get {
-                return this.EntityField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.EntityField, value) != true)) {
-                    this.EntityField = value;
-                    this.RaisePropertyChanged("Entity");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Entity", Namespace="http://www.clearcanvas.ca/web/application")]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebClickAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownButtonAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebLayoutChangerAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBox))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Viewer))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile))]
-    public partial class Entity : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private System.Guid IdentifierField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid Identifier {
-            get {
-                return this.IdentifierField;
-            }
-            set {
-                if ((this.IdentifierField.Equals(value) != true)) {
-                    this.IdentifierField = value;
-                    this.RaisePropertyChanged("Identifier");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PropertyChangedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ContextMenuEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.TileUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Rectangle))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Cursor))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Position))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InformationBox))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.RectangleF))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBoxShownEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBox))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebMessageBoxActions))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveProcessedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ActionClickedMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetLayoutActionMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseButton))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseButtonState))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseWheelMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.DismissMessageBoxMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDialogBoxAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Viewer))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebIconSize))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Size))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebIconSet))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebClickAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownButtonAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebLayoutChangerAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartViewerApplicationRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ViewerApplication))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationNotFoundEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStartedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStoppedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EntityUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.UpdatePropertyMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MetaInformation))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequestResponse))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.OutOfResourceFault))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StopApplicationRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageSet))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PerformanceData))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionValidationFault))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InvalidOperationFault))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ProcessMessagesResult))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetPropertyRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<string>))]
-    public partial class PropertyChangedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
-        
-        private System.Collections.ObjectModel.Collection<string> DebugInfoField;
-        
-        private string PropertyNameField;
-        
-        private object ValueField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.ObjectModel.Collection<string> DebugInfo {
-            get {
-                return this.DebugInfoField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DebugInfoField, value) != true)) {
-                    this.DebugInfoField = value;
-                    this.RaisePropertyChanged("DebugInfo");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PropertyName {
-            get {
-                return this.PropertyNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.PropertyNameField, value) != true)) {
-                    this.PropertyNameField = value;
-                    this.RaisePropertyChanged("PropertyName");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public object Value {
-            get {
-                return this.ValueField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ValueField, value) != true)) {
-                    this.ValueField = value;
-                    this.RaisePropertyChanged("Value");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SessionUpdatedEvent", Namespace="http://www.clearcanvas.ca/web/application")]
-    public partial class SessionUpdatedEvent : ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event {
-        
-        private System.DateTime ExpiryTimeUtcField;
-        
-        private string UsernameField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.DateTime ExpiryTimeUtc {
-            get {
-                return this.ExpiryTimeUtcField;
-            }
-            set {
-                if ((this.ExpiryTimeUtcField.Equals(value) != true)) {
-                    this.ExpiryTimeUtcField = value;
-                    this.RaisePropertyChanged("ExpiryTimeUtc");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Username {
-            get {
-                return this.UsernameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UsernameField, value) != true)) {
-                    this.UsernameField = value;
-                    this.RaisePropertyChanged("Username");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="EventSet", Namespace="http://www.clearcanvas.ca/web/application")]
-    public partial class EventSet : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private System.Guid ApplicationIdField;
-        
-        private System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event> EventsField;
-        
-        private bool HasMorePendingField;
-        
-        private int NumberField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid ApplicationId {
-            get {
-                return this.ApplicationIdField;
-            }
-            set {
-                if ((this.ApplicationIdField.Equals(value) != true)) {
-                    this.ApplicationIdField = value;
-                    this.RaisePropertyChanged("ApplicationId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event> Events {
-            get {
-                return this.EventsField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.EventsField, value) != true)) {
-                    this.EventsField = value;
-                    this.RaisePropertyChanged("Events");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public bool HasMorePending {
-            get {
-                return this.HasMorePendingField;
-            }
-            set {
-                if ((this.HasMorePendingField.Equals(value) != true)) {
-                    this.HasMorePendingField = value;
-                    this.RaisePropertyChanged("HasMorePending");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int Number {
-            get {
-                return this.NumberField;
-            }
-            set {
-                if ((this.NumberField.Equals(value) != true)) {
-                    this.NumberField = value;
-                    this.RaisePropertyChanged("Number");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="GetPendingEventRequest", Namespace="http://www.clearcanvas.ca/web/application")]
-    public partial class GetPendingEventRequest : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private System.Guid ApplicationIdField;
-        
-        private int MaxWaitTimeField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid ApplicationId {
-            get {
-                return this.ApplicationIdField;
-            }
-            set {
-                if ((this.ApplicationIdField.Equals(value) != true)) {
-                    this.ApplicationIdField = value;
-                    this.RaisePropertyChanged("ApplicationId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int MaxWaitTime {
-            get {
-                return this.MaxWaitTimeField;
-            }
-            set {
-                if ((this.MaxWaitTimeField.Equals(value) != true)) {
-                    this.MaxWaitTimeField = value;
-                    this.RaisePropertyChanged("MaxWaitTime");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="GetPendingEventRequestResponse", Namespace="http://www.clearcanvas.ca/web/application")]
-    public partial class GetPendingEventRequestResponse : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private System.Guid ApplicationIdField;
-        
-        private ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet EventSetField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid ApplicationId {
-            get {
-                return this.ApplicationIdField;
-            }
-            set {
-                if ((this.ApplicationIdField.Equals(value) != true)) {
-                    this.ApplicationIdField = value;
-                    this.RaisePropertyChanged("ApplicationId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet EventSet {
-            get {
-                return this.EventSetField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.EventSetField, value) != true)) {
-                    this.EventSetField = value;
-                    this.RaisePropertyChanged("EventSet");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PerformanceData", Namespace="http://www.clearcanvas.ca/web/application")]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ContextMenuEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebActionNode>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.TileUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Rectangle))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Cursor))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Position))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InformationBox))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.RectangleF))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBoxShownEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageBox))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebMessageBoxActions))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveProcessedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ActionClickedMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetLayoutActionMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseButton))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseButtonState))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseMoveMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MouseWheelMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.DismissMessageBoxMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDialogBoxAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Viewer))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ImageBox))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Tile>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebIconSize))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Size))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebIconSet))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebClickAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownButtonAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebDropDownAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.WebLayoutChangerAction))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartViewerApplicationRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ViewerApplication))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationNotFoundEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStartedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Application))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ApplicationStoppedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EntityUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Entity))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.PropertyChangedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionUpdatedEvent))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.UpdatePropertyMessage))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MetaInformation))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequestResponse))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.OutOfResourceFault))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StopApplicationRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.MessageSet))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Message>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.EventSet))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.Event>))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SessionValidationFault))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.InvalidOperationFault))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ProcessMessagesResult))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.SetPropertyRequest))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.ObjectModel.Collection<string>))]
-    public partial class PerformanceData : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string ClientIpField;
-        
-        private string NameField;
-        
-        private object ValueField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string ClientIp {
-            get {
-                return this.ClientIpField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ClientIpField, value) != true)) {
-                    this.ClientIpField = value;
-                    this.RaisePropertyChanged("ClientIp");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public object Value {
-            get {
-                return this.ValueField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ValueField, value) != true)) {
-                    this.ValueField = value;
-                    this.RaisePropertyChanged("Value");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }

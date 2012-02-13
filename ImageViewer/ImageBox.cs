@@ -10,6 +10,8 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -26,7 +28,7 @@ namespace ClearCanvas.ImageViewer
 	{
 	}
 
-	/// <summary>
+    /// <summary>
 	/// A container for <see cref="ITile"/> objects.
 	/// </summary>
 	[AssociateView(typeof(ImageBoxViewExtensionPoint))]
@@ -49,7 +51,7 @@ namespace ClearCanvas.ImageViewer
 		private static Color _selectedColor = Color.Orange;
 		private static Color _unselectedColor = Color.DarkGray;
 
-		private event EventHandler _drawingEvent;
+        private event EventHandler _drawingEvent;
 		private event EventHandler<ItemEventArgs<IImageBox>> _selectionChangedEvent;
 		private event EventHandler<DisplaySetChangedEventArgs> _displaySetChangedEvent;
 		private event EventHandler<ItemEventArgs<ITile>> _tileAddedEvent;
@@ -65,7 +67,9 @@ namespace ClearCanvas.ImageViewer
 		{
 			this.Tiles.ItemAdded += OnTileAdded;
 			this.Tiles.ItemRemoved += OnTileRemoved;
+
 		}
+
 
 		#region Public properties
 
@@ -459,7 +463,8 @@ namespace ClearCanvas.ImageViewer
 			set { _enabled = value; }
 		}
 
-		#endregion
+
+        #endregion
 
 		#region Public events
 
@@ -556,7 +561,8 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		private void DisposeTiles()
+
+        private void DisposeTiles()
 		{
 			if (this.Tiles == null)
 				return;
@@ -740,6 +746,7 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		#region Internal/private methods
+
 
 		internal void Deselect()
 		{

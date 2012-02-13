@@ -19,6 +19,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Tools.Standard;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -44,13 +45,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private readonly VoiLutImageOperation _operation;
 		private MemorableUndoableCommand _memorableCommand;
 		private ImageOperationApplicator _applicator;
+		private ToolModalityBehaviorHelper _toolBehavior;
 
 		public WindowLevelTool()
 			: base(SR.TooltipWindowLevel)
 		{
 			this.CursorToken = new CursorToken("Icons.WindowLevelToolSmall.png", this.GetType().Assembly);
 			_operation = new VoiLutImageOperation(Apply);
-        }
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_toolBehavior = new ToolModalityBehaviorHelper(ImageViewer);
+		}
 
 		public override event EventHandler TooltipChanged
 		{
@@ -88,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (this.SelectedVoiLutProvider.VoiLutManager.VoiLut is IBasicVoiLutLinear)
 			{
 				_memorableCommand.EndState = GetSelectedImageVoiLutManager().CreateMemento();
-				UndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
+				UndoableCommand applicatorCommand = _toolBehavior.Behavior.SelectedImageWindowLevelTool ? null : _applicator.ApplyToLinkedImages();
 				DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
 
 				if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))

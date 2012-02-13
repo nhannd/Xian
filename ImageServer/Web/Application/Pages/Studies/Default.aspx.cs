@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
             ServerPartitionTabs.SetupLoadPartitionTabs(CreatePartitionTab);
             DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
-
+            
             SetPageTitle(Titles.StudiesPageTitle);
         }
 
@@ -58,6 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 panel.ServerPartition = partition;
                 panel.ID = "SearchPanel_" + partition.AeTitle;
                 panel.DeleteButtonClicked += SearchPanel_DeleteButtonClicked;
+                panel.AssignAuthorityGroupsButtonClicked += SearchPanel_AssignAuthorityGroupsButtonClicked;
                 _partitionPanelMap.Add(partition.AeTitle, panel);
             }
             return panel;
@@ -84,7 +85,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 _partitionPanelMap[partitionAE].Refresh();
         }
 
-        private void SearchPanel_DeleteButtonClicked(object sender, SearchPanelDeleteButtonClickedEventArgs e)
+        private void SearchPanel_DeleteButtonClicked(object sender, SearchPanelButtonClickedEventArgs e)
         {
             List<StudySummary> list = new List<StudySummary>();
             list.AddRange(e.SelectedStudies);
@@ -113,5 +114,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             DeleteStudyConfirmDialog.Show();
         }
 
+        private void SearchPanel_AssignAuthorityGroupsButtonClicked(object sender, SearchPanelButtonClickedEventArgs e)
+        {
+            List<StudySummary> list = new List<StudySummary>();
+            list.AddRange(e.SelectedStudies);
+            ShowAddAuthorityGroupDialog(list);
+        }
+
+        protected void ShowAddAuthorityGroupDialog(IList<StudySummary> studyList)
+        {
+            AddAuthorityGroupsDialog.Initialize(studyList);
+            AddAuthorityGroupsDialog.Show();
+        }
     }
 }

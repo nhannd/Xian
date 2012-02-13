@@ -38,6 +38,8 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 
 			_displayName.DataBindings.Add("Value", _component, "DisplayName", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _emailAddress.DataBindings.Add("Value", _component, "EmailAddress", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _validFrom.DataBindings.Add("Value", _component, "ValidFrom", true, DataSourceUpdateMode.OnPropertyChanged);
             _validUntil.DataBindings.Add("Value", _component, "ValidUntil", true, DataSourceUpdateMode.OnPropertyChanged);
             _accountEnabledCheckBox.DataBindings.Add("Checked", _component, "AccountEnabled", true, DataSourceUpdateMode.OnPropertyChanged);

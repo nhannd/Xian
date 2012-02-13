@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		protected abstract void Create();
 
 		/// <summary>
-		/// Fires the <see cref="ComposableLut.LutChanged"/> event.
+		/// Fires the <see cref="DataLut.LutChanged"/> event.
 		/// </summary>
 		/// <remarks>
 		/// Inheritors should call this method when any property of the Lut has changed.

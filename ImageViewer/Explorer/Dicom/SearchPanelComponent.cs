@@ -11,10 +11,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
-using System.Text.RegularExpressions;
+using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -30,12 +33,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	/// SearchPanelComponent class
 	/// </summary>
 	[AssociateView(typeof(SearchPanelComponentViewExtensionPoint))]
-	public class SearchPanelComponent : ApplicationComponent
+	public class SearchPanelComponent : ApplicationComponent, ISearchPanelComponent
 	{
 		private const string _disallowedCharacters = @"\r\n\e\f\\";
 		private const string _disallowedCharactersPattern = @"[" + _disallowedCharacters + @"]+";
-
-		private readonly StudyBrowserComponent _studyBrowserComponent;
 
 		private string _title;
 
@@ -53,16 +54,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private readonly List<string> _searchModalities;
 		private readonly ICollection<string> _availableModalities;
-		
+
+		private event EventHandler<SearchRequestedEventArgs> _searchRequested;
+		private event EventHandler _searchCancelled;
+
+		private bool _isSearchEnabled = true;
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public SearchPanelComponent(StudyBrowserComponent studyBrowserComponent)
+		public SearchPanelComponent()
 		{
-			Platform.CheckForNullReference(studyBrowserComponent, "studyBrowserComponent");
-			_studyBrowserComponent = studyBrowserComponent;
-			_studyBrowserComponent.SearchPanelComponent = this;
-
 			_searchModalities = new List<string>();
 			_availableModalities = StandardModalities.Modalities;
 
@@ -98,9 +100,58 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_openNameSearchRegex = new Regex(String.Format(@"\A\s*{0}+\s*\Z", allowedExceptSeparator));
 		}
 
-		public IDesktopWindow DesktopWindow
+		public override void Start()
 		{
-			get { return this.Host.DesktopWindow; }
+			this.Title = SR.TitleSearch;
+
+			base.Start();
+		}
+
+		#region ISearchPanelComponent implementation
+
+		event EventHandler<SearchRequestedEventArgs> ISearchPanelComponent.SearchRequested
+		{
+			add { _searchRequested += value; }
+			remove { _searchRequested -= value; }
+		}
+
+		event EventHandler ISearchPanelComponent.SearchCancelled
+		{
+			add { _searchCancelled += value; }
+			remove { _searchCancelled -= value; }
+		}
+
+		void ISearchPanelComponent.Search()
+		{
+			Search();
+		}
+
+		void ISearchPanelComponent.Clear()
+		{
+			Clear();
+		}
+
+		bool ISearchPanelComponent.SearchInProgress
+		{
+			get { return !IsSearchEnabled; }
+			set { IsSearchEnabled = !value;}
+		}
+
+		#endregion
+
+		#region Presentation Model
+
+		public bool IsSearchEnabled
+		{
+			get { return _isSearchEnabled; }
+			set
+			{
+				if(value != _isSearchEnabled)
+				{
+					_isSearchEnabled = value;
+					NotifyPropertyChanged("IsSearchEnabled");
+				}
+			}
 		}
 
 		public string Title
@@ -221,14 +272,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public override void Start()
-		{
-			this.Title = SR.TitleSearch;
-
-			base.Start();
-		}
-
-		public void Clear()
+		public virtual void Clear()
 		{
 			this.PatientID = "";
 			this.PatientsName = "";
@@ -240,42 +284,62 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			InternalClearDates();
 		}
 
-		public void Search()
+		public virtual void Search()
 		{
-			if (base.HasValidationErrors)
-			{
-				base.ShowValidation(true);
-				return;
-			}
-			else
-			{
-				base.ShowValidation(false);
-			}
-
 			try
 			{
-				BlockingOperation.Run(_studyBrowserComponent.Search);
+				if (base.HasValidationErrors)
+				{
+					base.ShowValidation(true);
+					return;
+				}
+				else
+				{
+					base.ShowValidation(false);
+				}
+
+				var queryParams = PrepareBaseQueryParameters();
+				var eventArgs = new SearchRequestedEventArgs(new List<QueryParameters> { queryParams });
+				OnSearchRequested(eventArgs);
 			}
-			catch(Exception e)
+			catch (Exception ex)
 			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
 			}
 		}
 
 		public void SearchToday()
         {
-			InternalSearchLastXDays(0);
-        }
+			try
+			{
+				InternalSearchLastXDays(0);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
+			}
+		}
 
 		public void SearchLastWeek()
 		{
-			InternalSearchLastXDays(7);
+			try
+			{
+				InternalSearchLastXDays(7);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, this.Host.DesktopWindow);
+			}
 		}
 
-		public void SearchLastXDays(int numberOfDays)
+		public void CancelSearch()
 		{
-			InternalSearchLastXDays(numberOfDays);
+			EventsHelper.Fire(_searchCancelled, this, EventArgs.Empty);
 		}
+
+		#endregion
+
+		#region Helpers
 
 		private void InternalSearchLastXDays(int numberOfDays)
 		{
@@ -361,5 +425,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			return new ValidationResult(true, "");
 		}
-    }
+
+		private QueryParameters PrepareBaseQueryParameters()
+		{
+			var queryParams = new QueryParameters();
+			queryParams["PatientsName"] = QueryStringHelper.ConvertNameToSearchCriteria(this.PatientsName);
+			queryParams["ReferringPhysiciansName"] = QueryStringHelper.ConvertNameToSearchCriteria(this.ReferringPhysiciansName);
+			queryParams["PatientId"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.PatientID, false, true);
+			queryParams["AccessionNumber"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.AccessionNumber, false, true);
+			queryParams["StudyDescription"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.StudyDescription, false, true);
+			queryParams["StudyDate"] = DateRangeHelper.GetDicomDateRangeQueryString(this.StudyDateFrom, this.StudyDateTo);
+
+			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
+			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
+			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
+			//or by running multiple queries, one per modality specified (for example).
+			queryParams["ModalitiesInStudy"] = DicomStringHelper.GetDicomStringArray(this.SearchModalities);
+
+			return queryParams;
+		}
+
+		protected virtual void OnSearchRequested(SearchRequestedEventArgs e)
+		{
+			EventsHelper.Fire(_searchRequested, this, e);
+		}
+
+		#endregion
+	}
 }

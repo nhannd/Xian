@@ -251,192 +251,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			NotifyPropertyChanged("TileSectionEnabled");
 		}
 
-		private static object[,] GetImageBoxMementos(IPhysicalWorkspace physicalWorkspace)
-		{
-			int rows = physicalWorkspace.Rows;
-			int columns = physicalWorkspace.Columns;
-
-			object[,] mementos = new object[rows, columns];
-
-			for (int row = 0; row < rows; ++row)
-			{
-				for (int column = 0; column < columns; ++column)
-				{
-					IImageBox imageBox = physicalWorkspace[row, column];
-					if (imageBox.DisplaySet != null)
-						mementos[row, column] = imageBox.CreateMemento();
-				}
-			}
-
-			return mementos;
-		}
-
-		private static Queue GetOffScreenImageBoxMementos(IPhysicalWorkspace physicalWorkspace, object[,] oldImageBoxMementos)
-		{
-			//TODO (cr Oct 2009): this whole thing with mementos wouldn't be necessary
-			//if we had a SetImageBoxGrid(imageBox[,])
-
-			int oldRows = oldImageBoxMementos.GetLength(0);
-			int oldColumns = oldImageBoxMementos.GetLength(1);
-
-			int newRows = physicalWorkspace.Rows;
-			int newColumns = physicalWorkspace.Columns;
-
-			int sameRows = Math.Min(oldRows, newRows);
-			int sameColumns = Math.Min(oldColumns, newColumns);
-
-			Queue offScreenMementos = new Queue();
-			//Get mementos for all the display sets that have gone off-screen, from top-to-bottom, left-to-right.
-
-			for (int row = 0; row < sameRows; ++row)
-			{
-				for (int column = sameColumns; column < oldColumns; ++column)
-				{
-					object memento = oldImageBoxMementos[row, column];
-					if (memento != null)
-						offScreenMementos.Enqueue(memento);
-				}
-			}
-
-			for (int row = sameRows; row < oldRows; ++row)
-			{
-				for (int column = 0; column < oldColumns; ++column)
-				{
-					object memento = oldImageBoxMementos[row, column];
-					if (memento != null)
-						offScreenMementos.Enqueue(memento);
-				}
-			}
-
-			return offScreenMementos;
-		}
-
-		private static IEnumerable<IImageBox> GetAvailableEmptyImageBoxes(IPhysicalWorkspace physicalWorkspace)
-		{
-			Stack<IImageBox> imageBoxes = new Stack<IImageBox>();
-
-			//go top to bottom, right to left, stopping before the first non-empty image box.
-			for (int row = 0; row < physicalWorkspace.Rows; ++row)
-			{
-				for (int column = physicalWorkspace.Columns - 1; column >= 0; --column)
-				{
-					IImageBox imageBox = physicalWorkspace[row, column];
-					if (imageBox.DisplaySet == null)
-						imageBoxes.Push(imageBox);
-					else
-						break; //skip to the next row
-				}
-
-				while (imageBoxes.Count > 0)
-					yield return imageBoxes.Pop();
-			}
-		}
-
-		private static List<IImageSet> GetVisibleImageSets(IPhysicalWorkspace physicalWorkspace)
-		{
-			List<IImageSet> visibleImageSets = new List<IImageSet>();
-			foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
-			{
-				IDisplaySet displaySet = imageBox.DisplaySet;
-				if (displaySet == null)
-					continue;
-
-				IImageSet imageSet = displaySet.ParentImageSet;
-				if (imageSet == null || visibleImageSets.Contains(imageSet))
-					continue;
-
-				visibleImageSets.Add(imageSet);
-			}
-
-			return visibleImageSets;
-		}
-
-		private static IDisplaySet GetNextDisplaySet(IPhysicalWorkspace physicalWorkspace)
-		{
-			foreach (IImageSet imageSet in GetVisibleImageSets(physicalWorkspace))
-			{
-				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
-				{
-					bool alreadyVisible = false;
-					foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
-					{
-						if (imageBox.DisplaySet != null && imageBox.DisplaySet.Uid == displaySet.Uid)
-						{
-							alreadyVisible = true;
-							break;
-						}
-					}
-
-					if (!alreadyVisible)
-						return displaySet.CreateFreshCopy();
-				}
-			}
-
-			return null;
-		}
-
-		private static void FillImageBoxes(IEnumerable<IImageBox> imageBoxes, Queue oldImageBoxMementos)
-		{
-			foreach (IImageBox imageBox in imageBoxes)
-			{
-				if (oldImageBoxMementos.Count > 0)
-				{
-					imageBox.SetMemento(oldImageBoxMementos.Dequeue());
-				}
-				else
-				{
-					imageBox.SetTileGrid(1, 1);
-					imageBox.DisplaySet = GetNextDisplaySet(imageBox.ParentPhysicalWorkspace);
-				}
-			}
-		}
-
-		private static void SetImageBoxLayout(IPhysicalWorkspace physicalWorkspace, int rows, int columns)
-		{
-			object[,] oldImageBoxMementos = GetImageBoxMementos(physicalWorkspace);
-
-			physicalWorkspace.SetImageBoxGrid(rows, columns);
-
-			Queue offScreenMementos = GetOffScreenImageBoxMementos(physicalWorkspace, oldImageBoxMementos);
-
-			int newRows = physicalWorkspace.Rows;
-			int newColumns = physicalWorkspace.Columns;
-
-			int oldRows = oldImageBoxMementos.GetLength(0);
-			int oldColumns = oldImageBoxMementos.GetLength(1);
-
-			int sameRows = Math.Min(oldRows, newRows);
-			int sameColumns = Math.Min(oldColumns, newColumns);
-
-			// Try to keep existing display sets in the same row/column position, if possible.
-			for (int row = 0; row < sameRows; ++row)
-			{
-				for (int column = 0; column < sameColumns; ++column)
-				{
-					object memento = oldImageBoxMementos[row, column];
-					if (memento == null)
-						physicalWorkspace[row, column].SetTileGrid(1, 1);
-					else
-						physicalWorkspace[row, column].SetMemento(memento);
-				}
-			}
-
-			// Fill in available image boxes, preferably with display sets that went 'off-screen',
-			// followed by new ones that are not already visible.
-			FillImageBoxes(GetAvailableEmptyImageBoxes(physicalWorkspace), offScreenMementos);
-		}
-
-		private static void SetImageBoxLayoutSimple(IPhysicalWorkspace physicalWorkspace, int rows, int columns)
-		{
-			Queue oldMementos = new Queue();
-			foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
-				oldMementos.Enqueue(imageBox.CreateMemento());
-
-			physicalWorkspace.SetImageBoxGrid(rows, columns);
-
-			FillImageBoxes(physicalWorkspace.ImageBoxes, oldMementos);
-		}
-
 		public static void SetImageBoxLayout(IImageViewer imageViewer, int rows, int columns)
 		{
 			Platform.CheckForNullReference(imageViewer, "imageViewer");
@@ -447,26 +261,20 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (physicalWorkspace.Locked)
 				return;
 
-			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(physicalWorkspace);
-			memorableCommand.BeginState = physicalWorkspace.CreateMemento();
+			var memorableCommand = new MemorableUndoableCommand(physicalWorkspace)
+			                           {BeginState = physicalWorkspace.CreateMemento()};
 
-			bool isOldLayoutRectangular = physicalWorkspace.Rows > 0 && physicalWorkspace.Columns > 0;
-			if (isOldLayoutRectangular)
-			{
-				SetImageBoxLayout(physicalWorkspace, rows, columns);
-			}
-			else
-			{
-				SetImageBoxLayoutSimple(physicalWorkspace, rows, columns);
-			}
-
+		    var fillingStrategy = ImageBoxFillingStrategy.Create();
+		    var context = new ImageBoxFillingStrategyContext(imageViewer, p => p.SetImageBoxGrid(rows, columns),
+		                                                     imageBox => imageBox.SetTileGrid(1, 1));
+            fillingStrategy.SetContext(context);
+            fillingStrategy.FillImageBoxes();
 			physicalWorkspace.Draw();
 			physicalWorkspace.SelectDefaultImageBox();
 
 			memorableCommand.EndState = physicalWorkspace.CreateMemento();
-			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(physicalWorkspace);
-			historyCommand.Name = SR.CommandLayoutImageBoxes;
-			historyCommand.Enqueue(memorableCommand);
+			var historyCommand = new DrawableUndoableCommand(physicalWorkspace) {Name = SR.CommandLayoutImageBoxes};
+		    historyCommand.Enqueue(memorableCommand);
 
 			imageViewer.CommandHistory.AddCommand(historyCommand);
 		}
@@ -481,10 +289,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (imageBox.ParentPhysicalWorkspace.Locked)
 				return;
 
-			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(imageBox);
-			memorableCommand.BeginState = imageBox.CreateMemento();
+			var memorableCommand = new MemorableUndoableCommand(imageBox) {BeginState = imageBox.CreateMemento()};
 
-			int index = imageBox.TopLeftPresentationImageIndex;
+		    int index = imageBox.TopLeftPresentationImageIndex;
 
 			imageBox.SetTileGrid(rows, columns);
 			imageBox.TopLeftPresentationImageIndex = index;
@@ -493,9 +300,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			memorableCommand.EndState = imageBox.CreateMemento();
 
-			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(imageBox);
-			historyCommand.Name = SR.CommandLayoutTiles; 
-			historyCommand.Enqueue(memorableCommand);
+			var historyCommand = new DrawableUndoableCommand(imageBox) {Name = SR.CommandLayoutTiles};
+		    historyCommand.Enqueue(memorableCommand);
 			imageViewer.CommandHistory.AddCommand(historyCommand);
 		}
 	}

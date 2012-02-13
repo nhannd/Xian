@@ -219,9 +219,6 @@ void DicomJpegCodecTest::DicomJpegLossless14CodecTest()
 	file = CreateFile(256, 256, "MONOCHROME1", 9, 16, false, 1);
 	LosslessImageTest(syntax, file);
 
-	file = CreateFile(256, 256, "MONOCHROME1", 8, 16, false, 1);
-	LosslessImageTestWithConversion(syntax, file);
-
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
 
@@ -243,6 +240,13 @@ void DicomJpegCodecTest::DicomJpegLossless14CodecTest()
 	file = CreateFile(255, 255, "YBR_FULL", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
 
+}
+
+void DicomJpegCodecTest::DicomJpegLossless14CodecTest_8BitsStored16BitsAllocated()
+{
+	TransferSyntax^ syntax = TransferSyntax::JpegLosslessNonHierarchicalProcess14;
+	DicomFile^ file = CreateFile(256, 256, "MONOCHROME1", 8, 16, false, 1);
+	LosslessImageTestWithConversion(syntax, file);
 }
 
 void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest()
@@ -288,9 +292,6 @@ void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest()
 	file = CreateFile(256, 256, "MONOCHROME1", 9, 16, false, 1);
 	LosslessImageTest(syntax, file);
 
-	file = CreateFile(256, 256, "MONOCHROME1", 8, 16, false, 1);
-	LosslessImageTestWithConversion(syntax, file);
-
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
 
@@ -313,6 +314,12 @@ void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest()
 	LosslessImageTest(syntax, file);
 }
 
+void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest_8BitsStored16BitsAllocated()
+{
+	TransferSyntax^ syntax = TransferSyntax::JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1;
+	DicomFile^ file = CreateFile(256, 256, "MONOCHROME1", 8, 16, false, 1);
+	LosslessImageTestWithConversion(syntax, file);
+}
 
 }
 }

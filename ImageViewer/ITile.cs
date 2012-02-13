@@ -11,6 +11,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -108,5 +109,14 @@ namespace ClearCanvas.ImageViewer
 		/// Occurs when the <see cref="EditBox"/> property has changed.
 		/// </summary>
 		event EventHandler EditBoxChanged;
+
+        /// <summary>
+        /// Invokes a context menu showing the given <paramref name="actionModel"/>, at the given point in the tile.
+        /// </summary>
+        /// <param name="tileLocation">If provided, this is the point where the context menu is shown. Otherwise, the
+        /// current mouse position within the tile is used.</param>
+        /// <param name="actionModel">If provided, this is the action model shown in the context menu. Otherwise, it's
+        /// the action model of the the graphic at the given location.</param>
+	    void ShowContextMenu(Point? tileLocation, ActionModelNode actionModel);
 	}
 }

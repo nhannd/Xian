@@ -148,15 +148,23 @@ namespace ClearCanvas.Dicom.Iod
         /// </summary>
         public String MiddleName
         {
-            get { return this.SingleByte.MiddleName; }
+            get { return SingleByte.MiddleName; }
         }
 
         /// <summary>
-        /// Gets the patient's title.
+        /// Gets the patient's title (prefix).
         /// </summary>
         public String Title
         {
-            get { return this.SingleByte.Prefix; }
+            get { return SingleByte.Prefix; }
+        }
+
+        /// <summary>
+        /// Gets the patient's suffix.
+        /// </summary>
+        public String Suffix
+        {
+            get { return SingleByte.Suffix; }
         }
 
 		/// <summary>

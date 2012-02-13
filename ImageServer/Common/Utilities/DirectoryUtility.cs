@@ -162,6 +162,36 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 			return true;// not exist = empty 
         }
 
+        /// <summary>
+        /// Deletes a folder and its ascendants if they are empty. Stops when reaching the specified parent folder.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="stopAtParentPath"></param>
+        /// <returns></returns>
+        public static bool DeleteIfEmpty(string path, string stopAtParentPath)
+        {
+            try
+            {
+                DirectoryInfo parent = Directory.GetParent(path);
+                if (DeleteIfEmpty(path))
+                {
+                    if (parent != null && !parent.FullName.Equals(stopAtParentPath))
+                    {
+                        DeleteIfEmpty(parent.FullName);
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when attempting to delete directory: {0}", path);
+                return false;
+            }
+
+            return false;
+        }
+
 		/// <summary>
 		/// Delete any empty subdirectories
 		/// </summary>

@@ -51,6 +51,12 @@ namespace ClearCanvas.ImageViewer
         /// </summary>
         EventBroker EventBroker { get; }
 
+
+        /// <summary>
+        /// Occurs when the <see cref="IImageViewer"/> is about to close.
+        /// </summary>
+        event EventHandler Closing;
+
         /// <summary>
         /// Gets the currently selected <see cref="IImageBox"/>
         /// </summary>

@@ -18,13 +18,20 @@ namespace ClearCanvas.Enterprise.Desktop
     {
         public AuthorityGroupTable()
         {
-            this.Columns.Add(new TableColumn<AuthorityGroupSummary, string>(
-                SR.ColumnAuthorityGroupName,
-                delegate(AuthorityGroupSummary summary)
-                {
-                    return summary.Name;
-                },
-                0.5f));
+            Columns.Add(new TableColumn<AuthorityGroupSummary, string>(
+                            SR.ColumnAuthorityGroupName,
+                            summary => summary.Name,
+                            0.35f));
+
+            Columns.Add(new TableColumn<AuthorityGroupSummary, string>(
+                            SR.ColumnAuthorityGroupDescription,
+                            summary => summary.Description,
+                            0.5f));
+
+            Columns.Add(new TableColumn<AuthorityGroupSummary, bool>(
+                            SR.ColumnAuthorityGroupDataGroup,
+                            summary => summary.DataGroup,
+                            0.15f));
         }
     }
 }

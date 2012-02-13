@@ -516,24 +516,8 @@ namespace ClearCanvas.Dicom.Tests
 			                                		NumberOfFrames = numberOfFrames
 			                                	};
 
-			if (photometricInterpretation.Equals("RGB")
-			 || photometricInterpretation.Equals("YBR_FULL"))
-			{
-				pd.SamplesPerPixel = 3;
-				pd.PlanarConfiguration = 1;
-				CreateColorPixelData(pd);
-			}
-			else if (photometricInterpretation.Equals("MONOCHROME1")
-				  || photometricInterpretation.Equals("MONOCHROME2"))
-			{
-				CreateMonochromePixelData(pd);
-			}
-			else
-			{
-				throw new DicomException("Unsupported Photometric Interpretation in CreateFile");
-			}
-
-			pd.UpdateAttributeCollection(dataSet);
+            CreatePixelData(pd);
+            pd.UpdateAttributeCollection(dataSet);
 
 			SetupMetaInfo(file);
 
@@ -553,6 +537,35 @@ namespace ClearCanvas.Dicom.Tests
             ConvertAttributeToUN(theSet,DicomTags.LossyImageCompressionMethod);
 
             return file;
+        }
+
+        protected static void CreatePixelData(DicomAttributeCollection dataSet)
+        {
+            dataSet[DicomTags.PixelData] = null;
+            var pd = new DicomUncompressedPixelData(dataSet);
+            CreatePixelData(pd);
+            pd.UpdateAttributeCollection(dataSet);
+        }
+
+        protected static void CreatePixelData(DicomUncompressedPixelData pd)
+        {
+            var photometricInterpretation = pd.PhotometricInterpretation;
+            if (photometricInterpretation.Equals("RGB")
+                || photometricInterpretation.Equals("YBR_FULL"))
+            {
+                pd.SamplesPerPixel = 3;
+                pd.PlanarConfiguration = 1;
+                CreateColorPixelData(pd);
+            }
+            else if (photometricInterpretation.Equals("MONOCHROME1")
+              || photometricInterpretation.Equals("MONOCHROME2"))
+            {
+                CreateMonochromePixelData(pd);
+            }
+            else
+            {
+                throw new DicomException("Unsupported Photometric Interpretation in CreateFile");
+            }
         }
 
         protected static void CreateMonochromePixelData(DicomUncompressedPixelData pd)

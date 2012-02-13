@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private static IGraphic CreatePoint(PointF location)
 		{
-			const float radius = 5;
+			const float radius = 4;
 
 			InvariantEllipsePrimitive point = new InvariantEllipsePrimitive();
 			point.Location = location;

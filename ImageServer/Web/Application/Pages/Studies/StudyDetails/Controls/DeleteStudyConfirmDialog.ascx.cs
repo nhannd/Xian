@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 							// Audit log
                         	DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
                         										ServerPlatform.AuditSource, 
-																EventIdentificationTypeEventOutcomeIndicator.Success);
+																EventIdentificationContentsEventOutcomeIndicator.Success);
 							helper.AddUserParticipant(new AuditPersonActiveParticipant(
 																SessionManager.Current.Credentials.UserName, 
 																null, 

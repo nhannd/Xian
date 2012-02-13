@@ -28,7 +28,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<ImageViewerWebClientSilverlightXAPOutputDir>$(TrunkDirectory)\ImageViewer\Web\Client\Silverlight\bin\$(Configuration)</ImageViewerWebClientSilverlightXAPOutputDir>
+		<ImageViewerWebClientSilverlightXAPOutputDir>$(TrunkDirectory)\ImageServer\Web\Client\Silverlight\bin\$(Configuration)</ImageViewerWebClientSilverlightXAPOutputDir>
 	</PropertyGroup>
 
 
@@ -45,6 +45,7 @@
     </When>
     <Otherwise>
       <!-- assumes Win32 -->
+      
       <PropertyGroup>
         <PlatformSubFolder></PlatformSubFolder>
       </PropertyGroup>
@@ -61,8 +62,9 @@
 		<WebConfig Include="$(SolutionDir)\$(SolutionName)_Web.config"/>
 	</ItemGroup>
 
-	<ItemGroup>		
-		<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer.dll"/>
+	<ItemGroup>
+    <PluginFiles Include="$(TrunkDirectory)\ImageServer\Web\Common\bin\$(Configuration)\System.Web.Extensions.Design.dll"/>
+    <PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer.dll"/>
 	</ItemGroup>
 
@@ -98,7 +100,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <CodecPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+    <CodecPlugins Condition=" '$(TargetPlatform)' == 'x86' " Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
     <CodecPlugins Include="$(TrunkDirectory)\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll"/>
   </ItemGroup>
 

@@ -19,14 +19,14 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 	public class ActionDispatcher : IDisposable
 	{
 		private readonly Dictionary<Guid,IActionUpdate> _map = new Dictionary<Guid, IActionUpdate>();
-        private readonly ServerEventDispatcher _eventDispatcher;
+        private ServerEventMediator _eventDispatcher;
 
-        public ServerEventDispatcher EventDispatcher
+        public ServerEventMediator EventDispatcher
         {
             get { return _eventDispatcher; }
         }
 
-		public ActionDispatcher(ServerEventDispatcher dispatcher)
+		public ActionDispatcher(ServerEventMediator dispatcher)
 		{
 		    _eventDispatcher = dispatcher;
 
@@ -65,9 +65,15 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
 	    public void Dispose()
 	    {
-            foreach (Guid g in _map.Keys)
+            if (_eventDispatcher != null)
             {
-				_eventDispatcher.UnregisterEventHandler(g);
+                foreach (Guid g in _map.Keys)
+                {
+                    _eventDispatcher.UnregisterEventHandler(g);
+                }
+
+                _eventDispatcher = null;
+                _map.Clear();
             }
 	    }
 	}

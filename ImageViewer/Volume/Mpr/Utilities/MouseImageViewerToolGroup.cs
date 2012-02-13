@@ -18,6 +18,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
+using Action=ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 {
@@ -422,7 +423,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 				private readonly string _actionID;
 				private readonly object _actionTarget;
 				private readonly ResourceResolver _resolver;
-				private Action _action;
+				private Desktop.Actions.Action _action;
 
 				public CustomActionBuildingContext(string actionID, object actionTarget)
 				{

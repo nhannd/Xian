@@ -310,28 +310,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void UpdateIcon()
 		{
-			if (_action.IconSet != null && _action.ResourceResolver != null)
-			{
-				try
-				{
-					Image oldImage = this.Image;
-
-					this.Image = _action.IconSet.CreateIcon(_iconSize, _action.ResourceResolver);
-					if (oldImage != null)
-						oldImage.Dispose();
-
-					this.Invalidate();
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-				}
-			}
+			ActionViewUtils.SetIcon(this, _action, _iconSize);
 		}
 
 		private void SetTooltipText()
 		{
-			ToolTipText = ActiveToolbarButton.GetTooltipText(_action);
+			ActionViewUtils.SetTooltipText(this, _action);
 		}
 
 		protected override void Dispose(bool disposing)

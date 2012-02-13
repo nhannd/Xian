@@ -80,7 +80,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         public static string CreateVariableName(string input)
         {
             // Now create the variable name
-            char[] charSeparators = new char[] {'(', ')', ',', ' ', '\'', '�', '�', '-', '/', '&', '[', ']', '@'};
+            char[] charSeparators = new[] {'(', ')', ',', ' ', '\'', '�', '�', '-', '/', '&', '[', ']', '@', '.'};
 
             // just remove apostrophes so casing is correct
             string tempString = input.Replace("’", ""); 
@@ -222,9 +222,9 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                             {
                                                 SopClass thisUid = new SopClass();
 
-                                                thisUid.uid = columnArray[0];
-                                                thisUid.name = columnArray[1];
-                                                thisUid.type = columnArray[2];
+                                                thisUid.uid = columnArray[0] ?? string.Empty;
+                                                thisUid.name = columnArray[1] ?? string.Empty;
+                                                thisUid.type = columnArray[2] ?? string.Empty;
 
                                                 thisUid.varName = CreateVariableName(thisUid.name);
 
@@ -273,6 +273,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             catch (XmlException)
             {
 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(string.Format("Unexpected exception: {0}", e.Message));
             }
         }
     }

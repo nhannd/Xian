@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {

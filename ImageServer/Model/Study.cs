@@ -27,6 +27,19 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+
+        public bool HasAttachment
+        {
+            get
+            {
+                if (this.Series==null)
+                    return false;
+
+                return CollectionUtils.Contains(this.Series.Values, 
+                    (series)=> !String.IsNullOrEmpty(series.Modality) && (series.Modality.Equals("SR") || series.Modality.Equals("DOC")));
+            }
+        }
+
         /// <summary>
         /// Gets the <see cref="Series"/> related to this study.
         /// </summary>

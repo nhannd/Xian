@@ -42,9 +42,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			DicomFile sourceFile = (DicomFile)SourceMessage;
 			sourceFile.TransferSyntaxUid = instanceXml.TransferSyntax.UidString;
 			sourceFile.MediaStorageSopInstanceUid = instanceXml.SopInstanceUid;
-			sourceFile.MetaInfo[DicomTags.SopClassUid].SetString(0, instanceXml.SopClass.Uid);
 
-			_host = host;
+		    sourceFile.MetaInfo[DicomTags.SopClassUid].SetString(0,
+		                                                         instanceXml.SopClass == null
+		                                                             ? instanceXml[DicomTags.SopClassUid].ToString()
+		                                                             : instanceXml.SopClass.Uid);
+
+		    _host = host;
 			_aeTitle = aeTitle;
 			_wadoUriPrefix = wadoUriPrefix;
 			_wadoServicePort = wadoServicePort;

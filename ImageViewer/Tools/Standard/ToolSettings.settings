@@ -2,13 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Tools.Standard" GeneratedClassName="ToolSettings">
   <Profiles />
   <Settings>
-    <Setting Name="ShowNonCTModPixelValue" Description="Enables display of post-modality LUT value on non CT images." Type="System.Boolean" Scope="User">
+    <Setting Name="ShowRawPixelValue" Description="Enables display of stored pixel value when using the probe tool." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ShowCTRawPixelValue" Description="Enables display of pre-modality LUT value on CT images." Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="ShowVOIPixelValue" Description="Enables display of post-VOI LUT value." Type="System.Boolean" Scope="User">
+    <Setting Name="ShowVOIPixelValue" Description="Enables display of post-VOI LUT value when using the probe tool." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="TextCalloutMode" Description="Last used text tool mode." Type="System.String" Scope="User">
@@ -22,6 +19,9 @@
     </Setting>
     <Setting Name="MatchScaleForNonParallelImages" Description="Enables match scale tool for non-parallel images." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ToolModalityBehavior" Description="Configures modality-specific behavior for various tools" Type="ClearCanvas.ImageViewer.Tools.Standard.Configuration.ToolModalityBehaviorCollection" Scope="User">
+      <Value Profile="(Default)">Configuration.ToolModalityBehaviorCollectionDefault.xml</Value>
     </Setting>
   </Settings>
 </SettingsFile>

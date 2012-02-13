@@ -26,5 +26,8 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 
 		[DataMember]
 		public SearchResultPage Page;
+
+        [DataMember] 
+        public bool? DataGroup;
 	}
 }

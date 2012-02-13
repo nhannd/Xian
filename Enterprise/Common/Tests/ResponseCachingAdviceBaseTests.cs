@@ -15,10 +15,10 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
 using Castle.Core.Interceptor;
 using System.Reflection;
-using System.ServiceModel;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common.Tests
 {
@@ -85,7 +85,7 @@ namespace ClearCanvas.Enterprise.Common.Tests
 
 			public string CacheID
 			{
-				get { throw new NotImplementedException(); }
+				get { return "test"; }
 			}
 
 			public object Get(string key, CacheGetOptions options)
@@ -179,7 +179,11 @@ namespace ClearCanvas.Enterprise.Common.Tests
 
 			public object InvocationTarget
 			{
-				get { throw new NotImplementedException(); }
+				get
+				{
+					// not sure about this... 
+					return this.Target;
+				}
 			}
 
 			public MethodInfo MethodInvocationTarget
@@ -257,7 +261,11 @@ namespace ClearCanvas.Enterprise.Common.Tests
 
 		public ResponseCachingAdviceBaseTests()
 		{
-			Platform.SetExtensionFactory(new TestExtensionFactory());
+			Platform.SetExtensionFactory(
+				new UnitTestExtensionFactory(
+					new Dictionary<Type, Type> {{typeof (CacheProviderExtensionPoint), typeof (TestCacheProvider)}}
+				)
+			);
 		}
 
 		[Test]

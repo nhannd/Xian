@@ -29,13 +29,13 @@ namespace ClearCanvas.Enterprise.Core.Upgrade
 		#region Public Methods
 		public void RunApplication(string[] args)
 		{
-			CommandLine cmdLine = new CommandLine();
+			var cmdLine = new CommandLine();
 			try
 			{
 				cmdLine.Parse(args);
 
-				Version persistentStoreVersion = LoadPersistentStoreVersion();
-				Version assemblyVersion = LoadAssemblyVersion();
+				var persistentStoreVersion = LoadPersistentStoreVersion();
+				var assemblyVersion = LoadAssemblyVersion();
 
 				if (cmdLine.Switches.ContainsKey("check") && cmdLine.Switches["check"])
 				{
@@ -85,10 +85,10 @@ namespace ClearCanvas.Enterprise.Core.Upgrade
 				return;
 			}
 
-			PersistentStoreUpgradeScriptExtensionPoint ep = new PersistentStoreUpgradeScriptExtensionPoint();
-			object[] extensions = ep.CreateExtensions();
+			var ep = new PersistentStoreUpgradeScriptExtensionPoint();
+			var extensions = ep.CreateExtensions();
 
-			bool found = false;
+			var found = false;
 			foreach (IPersistentStoreUpgradeScript script in extensions)
 			{
 				if (script.SourceVersion.Equals(databaseVersion))
@@ -113,14 +113,14 @@ namespace ClearCanvas.Enterprise.Core.Upgrade
 
 		private static bool UpdatePersistentStore(Version startingVersion, Version assemblyVersion)
 		{
-			Version currentVersion = startingVersion;
+			var currentVersion = startingVersion;
 
-			PersistentStoreUpgradeScriptExtensionPoint ep = new PersistentStoreUpgradeScriptExtensionPoint();
-			object[] extensions = ep.CreateExtensions();
+			var ep = new PersistentStoreUpgradeScriptExtensionPoint();
+			var extensions = ep.CreateExtensions();
 
 			while (!currentVersion.Equals(assemblyVersion))
 			{
-				bool found = false;
+				var found = false;
 				foreach (IPersistentStoreUpgradeScript script in extensions)
 				{
 					if (script.SourceVersion.Equals(currentVersion))
@@ -131,7 +131,7 @@ namespace ClearCanvas.Enterprise.Core.Upgrade
 						}
 						catch (Exception e)
 						{
-							Console.WriteLine("Unexpected Exception when executing upgrade script :");
+							Console.WriteLine("Unexpected Exception when executing upgrade script : {0}", e.Message);
 							Console.WriteLine("Call stack : {0}", e.StackTrace);
 							return false;
 						}
@@ -161,7 +161,7 @@ namespace ClearCanvas.Enterprise.Core.Upgrade
 
 		private static Version LoadPersistentStoreVersion()
 		{
-			IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+			var store = PersistentStoreRegistry.GetDefaultStore();
 			return store.Version;
 		}
 		#endregion

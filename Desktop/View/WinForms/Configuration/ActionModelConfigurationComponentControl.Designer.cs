@@ -96,7 +96,7 @@
 			// 
 			this._actionModelTree.AllowDrop = true;
 			this._actionModelTree.AllowDropToIndex = true;
-			this._actionModelTree.CheckBoxStyle = ClearCanvas.Desktop.View.WinForms.CheckBoxStyle.TriState;
+			this._actionModelTree.CheckBoxes = true;
 			resources.ApplyResources(this._actionModelTree, "_actionModelTree");
 			this._actionModelTree.IconColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
 			this._actionModelTree.IconResourceSize = ClearCanvas.Desktop.IconSize.Small;

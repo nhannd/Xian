@@ -16,142 +16,138 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.UsageTracking;
 using ClearCanvas.Utilities.Manifest;
-using Timer=System.Threading.Timer;
+using Timer = System.Threading.Timer;
 
 namespace ClearCanvas.Desktop
 {
-    static internal class PhoneHome
-    {
-        #region Private Fields
+	static internal class PhoneHome
+	{
+		#region Private Fields
 
-        private static readonly TimeSpan _repeat24Hours = TimeSpan.FromHours(24);
-        static private Timer _phoneHomeTimer;
-        static private readonly object _sync = new object();
-        static private bool _started;
-        static private DateTime _startTimestamp;
-        #endregion
+		private static readonly TimeSpan Repeat24Hours = TimeSpan.FromHours(24);
+		private static readonly TimeSpan StartUpDelay = TimeSpan.FromSeconds(10);
+		private static Timer _phoneHomeTimer;
+		private static readonly object _sync = new object();
+		private static bool _started;
+		private static DateTime _startTimestamp;
+		private static bool _sentStartUpMessage;
+		#endregion
 
-        #region Public Methods
+		#region Public Methods
 
-        /// <summary>
-        /// Start up the phone home service.
-        /// </summary>
-        static internal void Startup()
-        {
-            lock (_sync)
-            {
-                try
-                {
-                    OnStartUp();
+		/// <summary>
+		/// Start up the phone home service.
+		/// </summary>
+		internal static void Startup()
+		{
+			lock (_sync)
+			{
+				OnStartUp();
 
-                    var msg = CreateUsageMessage(UsageType.Startup);
-                    UsageUtilities.Register(msg, UsageTrackingThread.Background);
+				_phoneHomeTimer = new Timer(ignore =>
+												{
+													var msg = CreateUsageMessage(_sentStartUpMessage ? UsageType.Other : UsageType.Startup);
+													UsageUtilities.Register(msg, UsageTrackingThread.Background);
 
-                    _phoneHomeTimer = new Timer(ignore =>
-                                                    {
-                                                        msg = CreateUsageMessage(UsageType.Other);
-                                                        UsageUtilities.Register(msg, UsageTrackingThread.Background);
-                                                    },
-                                                null, _repeat24Hours, _repeat24Hours);
-                }
-                catch (Exception ex)
-                {
-                    // Requirement says log must be in debug
-                    Platform.Log(LogLevel.Debug, ex, "Error occurred when shutting down phone home service");
-                }
-            }
+													_sentStartUpMessage = true;
+												},
+											null,
+											StartUpDelay,
+											Repeat24Hours);
+			}
 
-        }
+		}
 
-        /// <summary>
-        /// Shut down the phone home service.
-        /// </summary>
-        static internal void ShutDown()
-        {
-            // Guard against incorrect use of this class when Startup() is not called.
-            if (!_started)
-                return;
-            
-            lock (_sync)
-            {
-                try
-                {
-                    OnShutdown();
-                    
-                    // Note: use a thread to send the message because we don't want to block the app
-                    Thread workerThread = new Thread(SendShutdownMessage);
-                    workerThread.Start();
+		/// <summary>
+		/// Shut down the phone home service.
+		/// </summary>
+		internal static void ShutDown()
+		{
+			// Guard against incorrect use of this class when Startup() is not called.
+			if (!_started)
+				return;
 
-                    // wait up to 10 seconds, this is a requirement.
-                    if (!workerThread.Join(TimeSpan.FromSeconds(10)))
-                    {
-                        Platform.Log(LogLevel.Debug,
-                                     "PhoneHome.ShutDown(): web service does not return within 10 seconds. Continue shutting down.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Requirement says log must be in debug
-                    Platform.Log(LogLevel.Debug, ex, "Error occurred when shutting down phone home service");
-                }
-            }
-        }
+			lock (_sync)
+			{
+				try
+				{
+					OnShutdown();
 
-        #endregion
+					// note: CR Sep 2011: Ummm... I guess the point of this thread spawn is to have a 10 sec time limit???
 
-        #region Helpers
+					// Note: use a thread to send the message because we don't want to block the app
+					var workerThread = new Thread(SendShutdownMessage);
+					workerThread.Start();
 
+					// wait up to 10 seconds, this is a requirement.
+					if (!workerThread.Join(TimeSpan.FromSeconds(10)))
+					{
+						Platform.Log(LogLevel.Debug,
+									 "PhoneHome.ShutDown(): web service does not return within 10 seconds. Continue shutting down.");
+					}
+				}
+				catch (Exception ex)
+				{
+					// Requirement says log must be in debug
+					Platform.Log(LogLevel.Debug, ex, "Error occurred when shutting down phone home service");
+				}
+			}
+		}
 
-        private static void SendShutdownMessage()
-        {
-            const string keyProcessUptime = "PROCESSUPTIME";
-            try
-            {
-                TimeSpan uptime = DateTime.Now - _startTimestamp;
+		#endregion
 
-                var msg = CreateUsageMessage(UsageType.Shutdown);
-                msg.AppData = new List<UsageApplicationData>();
-                msg.AppData.Add(new UsageApplicationData { Key = keyProcessUptime, Value = String.Format(CultureInfo.InvariantCulture, "{0}", uptime.TotalHours) });
+		#region Helpers
 
-                // Message must be sent using the current thread instead of threadpool when the app is being shut down
-                UsageUtilities.Register(msg, UsageTrackingThread.Current);
-            }
-            catch (Exception ex)
-            {
-                // Requirement says log must be in debug
-                Platform.Log(LogLevel.Debug, ex, "Error occurred when shutting down phone home service");
-            }
-        }
+		private static void SendShutdownMessage()
+		{
+			const string keyProcessUptime = "PROCESSUPTIME";
+			try
+			{
+				TimeSpan uptime = DateTime.Now - _startTimestamp;
 
-        static UsageMessage CreateUsageMessage(UsageType type)
-        {
-            var msg = UsageUtilities.GetUsageMessage();
-            msg.Certified = ManifestVerification.Valid;
-            msg.MessageType = type;
-            return msg;
-        }
+				var msg = CreateUsageMessage(UsageType.Shutdown);
+				msg.AppData = new List<UsageApplicationData>();
+				msg.AppData.Add(new UsageApplicationData { Key = keyProcessUptime, Value = String.Format(CultureInfo.InvariantCulture, "{0}", uptime.TotalHours) });
+
+				// Message must be sent using the current thread instead of threadpool when the app is being shut down
+				UsageUtilities.Register(msg, UsageTrackingThread.Current);
+			}
+			catch (Exception ex)
+			{
+				// Requirement says log must be in debug
+				Platform.Log(LogLevel.Debug, ex, "Error occurred when shutting down phone home service");
+			}
+		}
+
+		private static UsageMessage CreateUsageMessage(UsageType type)
+		{
+			var msg = UsageUtilities.GetUsageMessage();
+			msg.Certified = ManifestVerification.Valid;
+			msg.MessageType = type;
+			return msg;
+		}
 
 
-        static private void OnStartUp()
-        {
-            if (!_started)
-            {
-                _startTimestamp = DateTime.Now;
-                _started = true;
-            }
-        }
+		private static void OnStartUp()
+		{
+			if (!_started)
+			{
+				_startTimestamp = DateTime.Now;
+				_started = true;
+			}
+		}
 
 
-        static private void OnShutdown()
-        {
-            if (_phoneHomeTimer != null)
-            {
-                _phoneHomeTimer.Dispose();
-                _phoneHomeTimer = null;
-                _started = false;
-            }
-        }
-        #endregion
-    }
+		private static void OnShutdown()
+		{
+			if (_phoneHomeTimer != null)
+			{
+				_phoneHomeTimer.Dispose();
+				_phoneHomeTimer = null;
+				_started = false;
+			}
+		}
+		#endregion
+	}
 
 }

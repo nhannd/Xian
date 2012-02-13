@@ -120,29 +120,30 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 				for (int i = 0; i < numberOfSops; ++i)
 				{
-					//TODO (CR February 2011) - High: Sops not disposed, will cause caching issues.
-					Sop sop = LocalStudyLoader.LoadNextSop();
-					if (sop != null)
+					using (var sop = LocalStudyLoader.LoadNextSop())
 					{
-						//preserve the patient sex.
-						if (patientsSex == null)
-							anonymizer.StudyDataPrototype.PatientsSex = patientsSex = sop.PatientsSex ?? "";
-
-						if (sop.DataSource is ILocalSopDataSource)
+						if (sop != null && (_component.KeepReportsAndAttachments || !IsReportOrAttachmentSopClass(sop.SopClassUid)))
 						{
-							string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
-							DicomFile file = ((ILocalSopDataSource)sop.DataSource).File;
+							//preserve the patient sex.
+							if (patientsSex == null)
+								anonymizer.StudyDataPrototype.PatientsSex = patientsSex = sop.PatientsSex ?? "";
 
-							// make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
-							file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
-							anonymizer.Anonymize(file);
-							filePaths.Add(filename);
-							file.Save(filename);
+							if (sop.DataSource is ILocalSopDataSource)
+							{
+								string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
+								DicomFile file = ((ILocalSopDataSource) sop.DataSource).File;
 
-							string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-							string patientId = file.DataSet[DicomTags.PatientId].ToString();
-							string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
-							anonymizedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+								// make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
+								file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
+								anonymizer.Anonymize(file);
+								filePaths.Add(filename);
+								file.Save(filename);
+
+								string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+								string patientId = file.DataSet[DicomTags.PatientId].ToString();
+								string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
+								anonymizedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+							}
 						}
 					}
 
@@ -203,6 +204,21 @@ namespace ClearCanvas.Utilities.DicomEditor
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
 			UpdateEnabled();
+		}
+
+		internal static bool IsReportOrAttachmentSopClass(string sopClassUid)
+		{
+			return sopClassUid == SopClass.EncapsulatedPdfStorageUid
+			       || sopClassUid == SopClass.EncapsulatedCdaStorageUid
+			       || sopClassUid == SopClass.BasicTextSrStorageUid
+			       || sopClassUid == SopClass.ChestCadSrStorageUid
+			       || sopClassUid == SopClass.ColonCadSrStorageUid
+			       || sopClassUid == SopClass.ComprehensiveSrStorageTrialRetiredUid
+			       || sopClassUid == SopClass.ComprehensiveSrStorageUid
+			       || sopClassUid == SopClass.EnhancedSrStorageUid
+			       || sopClassUid == SopClass.MammographyCadSrStorageUid
+			       || sopClassUid == SopClass.TextSrStorageTrialRetiredUid
+			       || sopClassUid == SopClass.XRayRadiationDoseSrStorageUid;
 		}
 	}
 }

@@ -57,8 +57,8 @@ namespace ClearCanvas.ImageViewer
 				   frameReference.Frame.BitsAllocated,
 				   frameReference.Frame.BitsStored,
 				   frameReference.Frame.HighBit,
-				   frameReference.Frame.PixelRepresentation != 0 ? true : false,
-				   frameReference.Frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
+				   frameReference.Frame.PixelRepresentation != 0,
+				   frameReference.Frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1,
 				   frameReference.Frame.RescaleSlope,
 				   frameReference.Frame.RescaleIntercept,
 				   frameReference.Frame.NormalizedPixelSpacing.Column,
@@ -75,6 +75,14 @@ namespace ClearCanvas.ImageViewer
 			{
 				// use a special image spatial transform for digital mammography
 				CompositeImageGraphic.SpatialTransform = new MammographyImageSpatialTransform(CompositeImageGraphic, Frame.Rows, Frame.Columns, Frame.NormalizedPixelSpacing.Column, Frame.NormalizedPixelSpacing.Row, Frame.PixelAspectRatio.Column, Frame.PixelAspectRatio.Row, Frame.PatientOrientation, ImageSop.ImageLaterality);
+			}
+
+			if (ImageSop.Modality == "PT" && frameReference.Frame.IsSubnormalRescale)
+			{
+				// some PET images have such a small slope that all stored pixel values map to one single value post-modality LUT
+				// we detect this condition here and apply the inverse of the modality LUT as a normalization function for VOI purposes
+				// http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/8930b159cb2a8e73?pli=1
+				ImageGraphic.NormalizationLut = new NormalizationLutLinear(frameReference.Frame.RescaleSlope, frameReference.Frame.RescaleIntercept);
 			}
 
 			Initialize();
@@ -121,10 +129,10 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		private static IComposableLut GetInitialVoiLut(IGraphic graphic)
+		private static IVoiLut GetInitialVoiLut(IGraphic graphic)
 		{
 			GrayscaleImageGraphic grayImageGraphic = (GrayscaleImageGraphic) graphic;
-			IComposableLut lut = InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage);
+			IVoiLut lut = InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage);
 			if (lut == null)
 				lut = new MinMaxPixelCalculatedLinearLut(grayImageGraphic.PixelData, grayImageGraphic.ModalityLut);
 			return lut;

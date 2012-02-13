@@ -188,23 +188,7 @@ namespace ClearCanvas.Enterprise.Common
 
 		public bool IsOnline
 		{
-			get
-			{
-				try
-				{
-					Platform.GetService<IPingService>((service) => service.Ping(new PingRequest()));
-					return true;
-				}
-				catch (EndpointNotFoundException)
-				{
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Debug, e, "Enterprise settings store may be experiencing some problems.");
-				}
-
-				return false;
-			}	
+			get { return RemoteCoreServiceProvider.IsOnline; }	
 		}
 
 		public bool SupportsImport

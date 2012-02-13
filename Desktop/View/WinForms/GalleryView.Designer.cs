@@ -61,7 +61,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._listView.Name = "_listView";
 			this._listView.ShowItemToolTips = true;
 			this._listView.UseCompatibleStateImageBehavior = false;
-			this._listView.Resize += new System.EventHandler(this.OnListViewResize);
 			this._listView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnAfterLabelEdit);
 			// 
 			// _contextMenu

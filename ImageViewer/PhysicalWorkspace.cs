@@ -16,10 +16,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Mathematics;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer
 {
+    //TODO: Update documentation, particular for how and when LayoutCompleted fires, because it has changed.
 	/// <summary>
 	/// A container for image boxes.
 	/// </summary>
@@ -50,7 +50,8 @@ namespace ClearCanvas.ImageViewer
 		private int _rows;
 		private int _columns;
 		private bool _enabled = true;
-		private event EventHandler _drawingEvent;
+	    private bool _needLayoutCompleted = true;
+        private event EventHandler _drawingEvent;
 		private event EventHandler _layoutCompletedEvent;
 		private event EventHandler _enabledChanged;
 		private event EventHandler _lockedChanged;
@@ -374,8 +375,8 @@ namespace ClearCanvas.ImageViewer
 			_rows = rows;
 			_columns = columns;
 
+		    _needLayoutCompleted = true;
 			SetImageBoxGrid();
-			OnLayoutCompleted();
 		}
 
 		/// <summary>
@@ -391,7 +392,10 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public void OnLayoutCompleted()
 		{
-			EventsHelper.Fire(_layoutCompletedEvent, this, EventArgs.Empty);
+            //Force the normalized rectangles to be correct on layout completed.
+		    SetImageBoxGrid();
+            EventsHelper.Fire(_layoutCompletedEvent, this, EventArgs.Empty);
+            _needLayoutCompleted = false;
 		}
 
 		/// <summary>
@@ -406,10 +410,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (this.ImageBoxes.Count > 0)
 			{
-				IImageBox topLeftImageBox = this.ImageBoxes[0];
-
-				if (topLeftImageBox != null)
-					topLeftImageBox.SelectDefaultTile();
+                foreach(IImageBox imageBox in ImageBoxes)
+                {
+                    if (imageBox.DisplaySet != null)
+                    {
+                        imageBox.SelectDefaultTile();
+                        return;
+                    }
+                }
+				
 			}
 		}
 
@@ -418,6 +427,9 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public void Draw()
 		{
+            if (_needLayoutCompleted)
+                OnLayoutCompleted();
+
 			EventsHelper.Fire(_drawingEvent, this, EventArgs.Empty);
 		}
 
@@ -497,11 +509,12 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		#region Private methods
+	    #region Private methods
 
 		private void OnImageBoxAdded(object sender, ListEventArgs<IImageBox> e)
 		{
-			_rows = _columns = -1;
+		    _needLayoutCompleted = true;
+            _rows = _columns = -1;
 
 			ImageBox imageBox = (ImageBox)e.Item;
 			imageBox.ImageViewer = this.ImageViewer;
@@ -510,7 +523,8 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnImageBoxRemoved(object sender, ListEventArgs<IImageBox> e)
 		{
-			_rows = _columns = -1;
+            _needLayoutCompleted = true;
+            _rows = _columns = -1;
 
 			if (e.Item.Selected)
 				this.SelectedImageBox = null;

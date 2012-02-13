@@ -15,9 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
@@ -86,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 		public virtual bool AppliesTo(IPresentationImage presentationImage)
 		{
-			return GetOriginator(presentationImage) != null && IsVoiLutEnabled(presentationImage);
+            return LutHelper.IsVoiLutEnabled(presentationImage) && GetOriginator(presentationImage) != null;
 		}
 
 		public abstract void Apply(IPresentationImage image);
@@ -153,39 +151,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		protected static PresetVoiLutOperationValidationException CreateValidationException(string message)
 		{
 			return new PresetVoiLutOperationValidationException(message);
-		}
-
-		protected static bool IsModalityLutProvider(IPresentationImage presentationImage)
-		{
-			return presentationImage is IModalityLutProvider;
-		}
-
-		protected static bool IsVoiLutProvider(IPresentationImage presentationImage)
-		{
-			return presentationImage is IVoiLutProvider;
-		}
-
-		protected static bool IsVoiLutEnabled(IPresentationImage presentationImage)
-		{
-			IVoiLutProvider provider = presentationImage as IVoiLutProvider;
-			return provider != null && provider.VoiLutManager.Enabled;
-		}
-
-		protected static bool IsImageSopProvider(IPresentationImage presentationImage)
-		{
-			return presentationImage is IImageSopProvider;
-		}
-
-		protected static bool IsGrayScaleImage(IPresentationImage presentationImage)
-		{
-			IImageGraphicProvider graphicProvider = presentationImage as IImageGraphicProvider;
-			return graphicProvider != null && graphicProvider.ImageGraphic.PixelData is GrayscalePixelData;
-		}
-
-		protected static bool IsColorImage(IPresentationImage presentationImage)
-		{
-			IImageGraphicProvider graphicProvider = presentationImage as IImageGraphicProvider;
-			return graphicProvider != null && graphicProvider.ImageGraphic.PixelData is ColorPixelData;
 		}
 
 		#endregion

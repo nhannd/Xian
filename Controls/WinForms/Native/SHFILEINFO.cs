@@ -16,6 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace ClearCanvas.Controls.WinForms.Native
 {
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 	internal struct SHFILEINFO
 	{
 		public IntPtr hIcon;

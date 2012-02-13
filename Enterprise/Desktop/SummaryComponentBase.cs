@@ -130,7 +130,7 @@ namespace ClearCanvas.Enterprise.Desktop
 			/// </summary>
 			public ClickAction ToggleActivation
 			{
-				get { return this[ToggleActivationKey]; }
+				get { return (ClickAction)this[ToggleActivationKey]; }
 			}
 		}
 

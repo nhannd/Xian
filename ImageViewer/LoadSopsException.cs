@@ -58,21 +58,21 @@ namespace ClearCanvas.ImageViewer
 			string message;
 			if (e is InUseLoadStudyException)
 			{
-				message = SR.MessageStudyInUse;
+                message = SR.MessageLoadStudyFailedInUse;
 			}
 			else if (e is NearlineLoadStudyException)
 			{
 				message = ((NearlineLoadStudyException) e).IsStudyBeingRestored
-				          	? SR.MessageStudyNearline
-				          	: String.Format("{0}  {1}", SR.MessageStudyNearlineNoRestore, SR.MessageContactPacsAdmin);
+                            ? SR.MessageLoadStudyFailedNearline
+                            : String.Format("{0}  {1}", SR.MessageLoadStudyFailedNearlineNoRestore, SR.MessageContactPacsAdmin);
 			}
 			else if (e is OfflineLoadStudyException)
 			{
-				message = SR.MessageStudyOffline;
+                message = SR.MessageLoadStudyFailedOffline;
 			}
 			else if (e is NotFoundLoadStudyException)
 			{
-				message = SR.MessageStudyNotFound;
+                message = SR.MessageLoadStudyFailedNotFound;
 			}
 			else
 			{

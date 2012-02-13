@@ -20,9 +20,33 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// be data Luts, which is important because the overall efficiency of the Lut pipeline is improved 
 	/// substantially.
 	/// </remarks>
-	/// <seealso cref="ILut"/>
-	public interface IComposedLut : ILut
+	public interface IComposedLut
 	{
+		/// <summary>
+		/// Gets the minimum input value.
+		/// </summary>
+		int MinInputValue { get; }
+
+		/// <summary>
+		/// Gets the maximum input value.
+		/// </summary>
+		int MaxInputValue { get; }
+
+		/// <summary>
+		/// Gets the minimum output value.
+		/// </summary>
+		int MinOutputValue { get; }
+
+		/// <summary>
+		/// Gets the maximum output value.
+		/// </summary>
+		int MaxOutputValue { get; }
+
+		/// <summary>
+		/// Gets the output value of the lut at a given input index.
+		/// </summary>
+		int this[int index] { get; }
+
 		/// <summary>
 		/// Gets the lut's data.
 		/// </summary>

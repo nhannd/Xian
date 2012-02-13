@@ -14,6 +14,7 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Default" %>
 
 <%@ Register Src="StudyDetails/Controls/DeleteStudyConfirmDialog.ascx" TagName="DeleteStudyConfirmDialog" TagPrefix="localAsp" %>
+<%@ Register Src="StudyDetails/Controls/AddAuthorityGroupsDialog.ascx" TagName="AddAuthorityGroupsDialog" TagPrefix="localAsp" %>
 
 <asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,Studies%>" /></asp:Content>
     
@@ -27,5 +28,5 @@
     </asp:Panel>    
 
     <localAsp:DeleteStudyConfirmDialog ID="DeleteStudyConfirmDialog" runat="server"/>
-
+    <localAsp:AddAuthorityGroupsDialog ID="AddAuthorityGroupsDialog" runat="server"/>
 </asp:Content>

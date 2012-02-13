@@ -596,7 +596,7 @@ namespace ClearCanvas.Dicom
 		/// </summary>
 		public static int GetMinPixelValue(int bitsStored, bool isSigned)
 		{
-			return !isSigned ? 0 : -(int)Math.Pow(2, bitsStored - 1);
+			return isSigned ? -(1 << (bitsStored - 1)) : 0;
 		}
 
 		/// <summary>
@@ -604,7 +604,7 @@ namespace ClearCanvas.Dicom
 		/// </summary>
 		public static int GetMaxPixelValue(int bitsStored, bool isSigned)
 		{
-			return !isSigned ? (int)Math.Pow(2, bitsStored) - 1 : (int)Math.Pow(2, bitsStored - 1) - 1;
+			return isSigned ? (1 << (bitsStored - 1)) - 1 : (1 << bitsStored) - 1;
 		}
 
 		#endregion

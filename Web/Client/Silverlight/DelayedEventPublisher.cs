@@ -10,15 +10,6 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Threading;
 using System.Windows.Threading;
 
@@ -31,80 +22,37 @@ namespace ClearCanvas.Web.Client.Silverlight
     /// This class <B>must</B> be instantiated from within a UI thread; see <see cref="Timer"/> for more details.
     /// </remarks>
     /// <seealso cref="Timer"/>
-    public class DelayedEventPublisher : IDisposable
+    public class DelayedEventPublisher<TEventArgs> : IDisposable
+        where TEventArgs : EventArgs
     {
-        Dispatcher _dispatcher;
-        private Timer _timer;
-        private readonly EventHandler _trueEventHandler;
-
-        private readonly int _timeoutMilliseconds;
-
-        private DateTime _lastPublishTime;
+        private DispatcherTimer _timer;
+        private readonly EventHandler<TEventArgs> _eventHandler;
         private object _lastSender;
-        private EventArgs _lastArgs;
+        private TEventArgs _lastEvent;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="trueEventHandler">The 'true' event handler; calls to which are delayed until 
-        /// the default timeout of 350 milliseconds has elapsed with no calls to <see cref="Publish(object, EventArgs)"/>.</param>
-        public DelayedEventPublisher(Dispatcher dispatcher, EventHandler trueEventHandler)
-            : this(trueEventHandler, 200)
+        /// <param name="eventHandler">The 'true' event handler; calls to which are delayed until 
+        /// the timeout has elapsed with no calls to <see cref="Publish(object, TEventArgs)"/>.</param>
+        /// <param name="timeout">The timeout</param>
+        public DelayedEventPublisher(EventHandler<TEventArgs> eventHandler, TimeSpan timeout)
         {
-            _dispatcher = dispatcher;
+            _timer = new DispatcherTimer { Interval = timeout };
+            _timer.Tick += OnTimeout;
+            _eventHandler = eventHandler;
         }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="trueEventHandler">The 'true' event handler; calls to which are delayed until 
-        /// <paramref name="timeoutMilliseconds"/> has elapsed with no calls to <see cref="Publish(object, EventArgs)"/>.</param>
-        /// <param name="timeoutMilliseconds">The time after which, if <see cref="Publish(object, EventArgs)"/> has not been called, 
-        /// to publish the delayed event via <paramref name="trueEventHandler"/>.</param>
-        public DelayedEventPublisher(EventHandler trueEventHandler, int timeoutMilliseconds)
+        /// <param name="eventHandler">The 'true' event handler; calls to which are delayed until 
+        /// <paramref name="timeoutMilliseconds"/> has elapsed with no calls to <see cref="Publish(object, TEventArgs)"/>.</param>
+        /// <param name="timeoutMilliseconds">The time after which, if <see cref="Publish(object, TEventArgs)"/> has not been called, 
+        /// to publish the delayed event via <paramref name="eventHandler"/>.</param>
+        public DelayedEventPublisher(EventHandler<TEventArgs> eventHandler, double timeoutMilliseconds)
+            : this(eventHandler, TimeSpan.FromMilliseconds(timeoutMilliseconds))
         {
-            _trueEventHandler = trueEventHandler;
-            _timeoutMilliseconds = Math.Max(10, timeoutMilliseconds);
-        }
-
-        private void OnTimer(object nothing)
-        {
-            if (_timer == null)
-                return;
-
-            //TODO (Time Review): Use Environment.TickCount
-            if (DateTime.Now.Subtract(_lastPublishTime).TotalMilliseconds >= _timeoutMilliseconds)
-                Publish();
-        }
-
-        private void StopTimer()
-        {
-            if (_timer == null)
-                return;
-
-            _timer.Dispose();
-            _timer = null;
-        }
-
-        private void StartTimer()
-        {
-            if (_timer != null)
-                return;
-
-            _timer = new Timer(OnTimer, null, 10, 10);
-        }
-
-        private void Publish()
-        {
-            StopTimer();
-
-            if (_trueEventHandler != null)
-            {
-                _dispatcher.BeginInvoke(() => _trueEventHandler(this, EventArgs.Empty));
-            }
-
-            _lastSender = null;
-            _lastArgs = null;
         }
 
         /// <summary>
@@ -112,34 +60,9 @@ namespace ClearCanvas.Web.Client.Silverlight
         /// </summary>
         public void Cancel()
         {
-            StopTimer();
+            _timer.Stop();
             _lastSender = null;
-            _lastArgs = null;
-        }
-
-        /// <summary>
-        /// Called to immediately publish the currently pending
-        /// delay-published event; the method does nothing if there
-        /// is no event pending.
-        /// </summary>
-        public void PublishNow()
-        {
-            if (_timer != null)
-                Publish();
-        }
-
-        /// <summary>
-        /// Called to immediately publish the event with the input
-        /// parameters; if there is a pending delay-published event,
-        /// it is discarded.
-        /// </summary>
-        public void PublishNow(object sender, EventArgs args)
-        {
-            _lastPublishTime = DateTime.Now;
-            _lastSender = sender;
-            _lastArgs = args;
-
-            Publish();
+            _lastEvent = null;
         }
 
         /// <summary>
@@ -147,52 +70,86 @@ namespace ClearCanvas.Web.Client.Silverlight
         /// </summary>
         /// <remarks>
         /// <para>
-        /// Repeated calls to <see cref="Publish(object, EventArgs)"/> will cause
+        /// Repeated calls to <see cref="Publish(object, TEventArgs)"/> will cause
         /// only the most recent event parameters to be remembered until the delay
         /// timeout has expired, at which time only those event parameters will
         /// be used to publish the delayed event.
         /// </para>
         /// <para>
-        /// When a delayed event is published, the <see cref="DelayedEventPublisher"/>
-        /// goes into an idle state.  The next call to <see cref="Publish(object, EventArgs)"/>
+        /// When a delayed event is published, the <see cref="DelayedEventPublisher{TEventArgs}"/>
+        /// goes into an idle state.  The next call to <see cref="Publish(object, TEventArgs)"/>
         /// starts the delayed publishing process over again.
         /// </para>
         /// </remarks>
-        public void Publish(object sender, EventArgs args)
+        public void Publish(object sender, TEventArgs @event)
         {
-            _lastPublishTime = DateTime.Now;
-            _lastSender = sender;
-            _lastArgs = args;
+            lock (_timer)
+            {
+                _lastSender = sender;
+                _lastEvent = @event;
 
-            StartTimer();
+                if (_timer.IsEnabled)
+                {
+                    //Logger.Write("Delayed event\n");
+                    return; //ignore it
+                }
+
+                _timer.Start();
+            }
+
+        }
+
+        private void OnTimeout(object sender, EventArgs e)
+        {
+            if (_timer != null)
+            {
+                lock (_timer)
+                {
+                    PublishNow();
+                }
+            }
         }
 
         /// <summary>
-        /// Disposes the <see cref="DelayedEventPublisher"/>.
+        /// Called to immediately publish the currently pending
+        /// delay-published event; the method does nothing if there
+        /// is no event pending.
         /// </summary>
-        protected virtual void Dispose(bool disposing)
+        private void PublishNow()
         {
-            if (disposing)
-                StopTimer();
+            if (_eventHandler == null || _timer == null)
+                return;
+
+            if (_timer.IsEnabled)
+            {
+                _timer.Stop();
+
+                _eventHandler(_lastSender, _lastEvent);
+            }
         }
 
-        #region IDisposable Members
 
         /// <summary>
         /// Implementation of the <see cref="IDisposable"/> pattern.
         /// </summary>
         public void Dispose()
         {
-            try
+            if (_timer != null)
             {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-            catch (Exception)
-            {
+                lock (_timer)
+                {
+                    _timer.Stop();
+                    _timer = null;
+                }
             }
         }
 
-        #endregion
+        /// <summary>
+        /// True if a delayed event is active
+        /// </summary>
+        public bool DelayedEvent
+        {
+            get { return _timer != null && _timer.IsEnabled; }
+        }
     }
 }

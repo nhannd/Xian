@@ -37,6 +37,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		private readonly IList<PointF> _vertices;
 		private readonly RectangleF _boundingRect;
 		private readonly PointF[] _vertexArray;
+		private readonly SizeF _normalizingOffset;
 		private readonly bool _isComplex;
 
 		/// <summary>
@@ -62,8 +63,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			_vertices = list.AsReadOnly();
 			_vertexArray = list.ToArray();
 
-			// initialize side list
+			// determine polygon properties
 			_boundingRect = InitializeBoundingRectangle(_vertexArray);
+			_normalizingOffset = NormalizeVertexArray(_vertexArray, _boundingRect);
 			_isComplex = InitializeIsComplex(_vertexArray);
 		}
 
@@ -120,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			{
 				fixed (PointF* vertices = _vertexArray)
 				{
-					return CountWindings(point, vertices, _vertexArray.Length) != 0;
+					return CountWindings(point - _normalizingOffset, vertices, _vertexArray.Length) != 0;
 				}
 			}
 		}
@@ -142,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 						if (!_isComplex)
 							return ComputeSimpleArea(vertices, _vertexArray.Length);
 						else
-							return ComputeComplexArea(_boundingRect, vertices, _vertexArray.Length);
+							return ComputeComplexArea(new RectangleF(_boundingRect.Location - _normalizingOffset, _boundingRect.Size), vertices, _vertexArray.Length);
 					}
 				}
 			}
@@ -164,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			{
 				fixed (PointF* vertices = _vertexArray)
 				{
-					return CountWindings(point, vertices, _vertexArray.Length);
+					return CountWindings(point - _normalizingOffset, vertices, _vertexArray.Length);
 				}
 			}
 		}
@@ -198,7 +200,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			int point0 = vertexCount - 1;
 			for (int point1 = 0; point1 < vertexCount; point0 = point1, point1++)
 			{
-				result += vertices[point0].X*vertices[point1].Y - vertices[point1].X*vertices[point0].Y;
+				// ensure each multiplication is carried out to double precision
+				result += (double) vertices[point0].X*vertices[point1].Y - (double) vertices[point1].X*vertices[point0].Y;
 			}
 			return Math.Abs(result/2);
 		}
@@ -288,6 +291,21 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			}
 		}
 
+		private static unsafe SizeF NormalizeVertexArray(PointF[] vertices, RectangleF boundingRect)
+		{
+			// floating point calculations involving large numbers can result in lost precision even though the relative position of the vertices isn't particularly great
+			// by normalizing the vertices to a point closer to the absolute position of the vertices, we can minimize this precision loss
+			// just remember to apply the offset when switching between relative and absolute coordinates!
+			var offset = new SizeF(boundingRect.Left + boundingRect.Width/2, boundingRect.Top + boundingRect.Height/2);
+			fixed (PointF* pVertexArray = vertices)
+			{
+				var vertexCount = vertices.Length;
+				for (var i = 0; i < vertexCount; ++i)
+					pVertexArray[i] = pVertexArray[i] - offset;
+			}
+			return offset;
+		}
+
 		private static unsafe bool CheckIsComplex(PointF* vertices, int vertexCount)
 		{
 			// the line segments immediately preceding and succeeding a given segment are never considered as "intersecting"
@@ -330,6 +348,14 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		#region Unsafe Algorithm Unit Test Entry Points
 
 #if UNIT_TESTS
+		/// <summary>
+		/// Unit test entry point for vertex normalization algorithm.
+		/// </summary>
+		internal static SizeF TestVertexNormalization(PointF[] vertices)
+		{
+			return NormalizeVertexArray(vertices, RectangleUtilities.ComputeBoundingRectangle(vertices));
+		}
+
 		/// <summary>
 		/// Unit test entry point for complex area computation algorithm.
 		/// </summary>

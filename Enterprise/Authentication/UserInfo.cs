@@ -10,23 +10,23 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Enterprise.Authentication
 {
     public class UserInfo
     {
-        public UserInfo(string userName, string displayName, DateTime? validFrom, DateTime? validUntil)
+        public UserInfo(string userName, string displayName, string emailAddress, DateTime? validFrom, DateTime? validUntil)
         {
             this.UserName = userName;
             this.DisplayName = displayName;
             this.ValidFrom = validFrom;
             this.ValidUntil = validUntil;
+            this.EmailAddress = emailAddress;
         }
 
         public string UserName;
         public string DisplayName;
+        public string EmailAddress;
         public DateTime? ValidFrom;
         public DateTime? ValidUntil;
     }

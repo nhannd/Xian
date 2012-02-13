@@ -30,6 +30,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_petSeries = ptSeries;
 			_attenuationCorrection = attenuationCorrection;
 			_fusionSeriesInstanceUid = DicomUid.GenerateUid().UID;
+
+		    IsComposite = true;
 		}
 
 		/// <summary>

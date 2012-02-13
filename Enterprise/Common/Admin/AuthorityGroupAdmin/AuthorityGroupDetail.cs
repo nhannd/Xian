@@ -11,18 +11,19 @@
 
 using System.Runtime.Serialization;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 {
     [DataContract]
     public class AuthorityGroupDetail : DataContractBase
     {
-        public AuthorityGroupDetail(EntityRef authorityGroupRef, string name, List<AuthorityTokenSummary> authorityTokens)
+        public AuthorityGroupDetail(EntityRef authorityGroupRef, string name, string description, bool dataGroup, List<AuthorityTokenSummary> authorityTokens)
         {
             AuthorityGroupRef = authorityGroupRef;
             Name = name;
             AuthorityTokens = authorityTokens;
+            Description = description;
+            DataGroup = dataGroup;
         }
 
         public AuthorityGroupDetail()
@@ -38,5 +39,11 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 
         [DataMember]
         public List<AuthorityTokenSummary> AuthorityTokens;
+
+        [DataMember]
+        public string Description;
+
+        [DataMember]
+        public bool DataGroup;
     }
 }

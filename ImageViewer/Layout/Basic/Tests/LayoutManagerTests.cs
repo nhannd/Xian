@@ -67,19 +67,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.Tests
 
 						Assert.AreEqual(9, viewer.LogicalWorkspace.ImageSets[0].DisplaySets.Count, "There should be 9 display sets here");
 
-						// FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number
+						// FOR PRESENTATION series should be sorted to the front.
 						Assert.AreEqual("Series1ForPres", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[0].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
-						Assert.AreEqual("Series3ForShaiHulud", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[1].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
-						Assert.AreEqual("Series4ForPres", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[2].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
-						Assert.AreEqual("Series6ForTheHorde", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[3].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
-						Assert.AreEqual("Series7ForPres", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[4].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
-						Assert.AreEqual("Series9ForAiur", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[5].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
+						Assert.AreEqual("Series4ForPres", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[1].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
+						Assert.AreEqual("Series7ForPres", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[2].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
 
-						// FOR PROCESSING series should be sorted to the back, subsorted by series number
-						Assert.AreEqual("Series2ForProc", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[6].Description, "FOR PROCESSING series should be sorted to the back, subsorted by series number");
-						Assert.AreEqual("Series5ForProc", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[7].Description, "FOR PROCESSING series should be sorted to the back, subsorted by series number");
-						Assert.AreEqual("Series8ForProc", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[8].Description, "FOR PROCESSING series should be sorted to the back, subsorted by series number");
-					}
+						// FOR PROCESSING and indeterminate series are equivalent and are sorted to the end.
+                        Assert.AreEqual("Series2ForProc", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[3].Description, "FOR PROCESSING series should be sorted to the back, subsorted by series number");
+                        Assert.AreEqual("Series3ForShaiHulud", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[4].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
+                        Assert.AreEqual("Series5ForProc", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[5].Description, "FOR PROCESSING series should be sorted to the back, subsorted by series number");
+                        Assert.AreEqual("Series6ForTheHorde", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[6].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
+                        Assert.AreEqual("Series8ForProc", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[7].Description, "FOR PROCESSING series should be sorted to the back, subsorted by series number");
+                        Assert.AreEqual("Series9ForAiur", viewer.LogicalWorkspace.ImageSets[0].DisplaySets[8].Description, "FOR PRESENTATION and indeterminate series should be sorted to the front, subsorted by series number");
+                    }
 				}
 			}
 			finally

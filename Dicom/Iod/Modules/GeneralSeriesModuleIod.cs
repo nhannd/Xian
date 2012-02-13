@@ -63,6 +63,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			this.SeriesInstanceUid  = "1";
 			this.SeriesNumber = null;
 			this.SmallestPixelValueInSeries = null;
+			this.AnatomicalOrientationType = AnatomicalOrientationType.None;
 		}
 
 		/// <summary>
@@ -626,6 +627,24 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		}
 
 		/// <summary>
+		/// Gets or sets the anatomical orientation type.  Type 1C
+		/// </summary>
+		public AnatomicalOrientationType AnatomicalOrientationType
+		{
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.AnatomicalOrientationType].GetString(0, String.Empty), AnatomicalOrientationType.None); }
+			set
+			{
+				if (value == AnatomicalOrientationType.None)
+				{
+					base.DicomAttributeProvider[DicomTags.AnatomicalOrientationType].SetNullValue();
+					return;
+				}
+
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.AnatomicalOrientationType], value);
+			}
+		}
+
+		/// <summary>
 		/// PerformedProtocol Code Sequence
 		/// </summary>
 		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 10.13 (Table 10-16)</remarks>
@@ -783,6 +802,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				yield return DicomTags.SeriesInstanceUid;
 				yield return DicomTags.SeriesNumber;
 				yield return DicomTags.SmallestPixelValueInSeries;
+				yield return DicomTags.AnatomicalOrientationType;
 			}
 		}
 	}

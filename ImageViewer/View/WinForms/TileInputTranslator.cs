@@ -27,7 +27,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 							Keys.ShiftKey,
 							Keys.LShiftKey,
 							Keys.RShiftKey,
-							Keys.Menu
+							Keys.Menu,
+                            Keys.LMenu,
+                            Keys.RMenu
 						};
 
 		public TileInputTranslator(TileControl tileControl)

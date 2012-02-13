@@ -166,7 +166,13 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 		}
 
-		#endregion
+        //For unit tests.
+        internal static void Reset()
+        {
+            _profile = null;
+        }
+
+	    #endregion
 
 		#region IXmlSerializable Members
 

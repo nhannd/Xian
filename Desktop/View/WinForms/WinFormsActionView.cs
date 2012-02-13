@@ -110,5 +110,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 					return item;
 				});
 		}
+
+		public static IActionView CreateTextBoxActionView()
+		{
+			return new StandardWinFormsActionView(
+				delegate(IActionViewContext context)
+				{
+					var item = new TextBoxToolbarItem((ITextBoxAction)context.Action, context.IconSize);
+					context.IconSizeChanged += delegate { item.IconSize = context.IconSize; };
+					return item;
+				});
+		}
 	}
 }

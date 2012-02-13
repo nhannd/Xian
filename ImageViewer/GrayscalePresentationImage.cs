@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets this image's modality lut.
 		/// </summary>
-		public IComposableLut ModalityLut
+		public IModalityLut ModalityLut
 		{
 			get
 			{

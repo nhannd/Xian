@@ -9,10 +9,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
@@ -23,6 +20,7 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 		public ImportAuthorityTokensRequest(List<AuthorityTokenSummary> tokens)
 		{
 			Tokens = tokens;
+			AddToGroups = new List<string>();
 		}
 
 

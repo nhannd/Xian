@@ -359,6 +359,12 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
            (newid(),105,'SopCompress','SOP Compress','A rule to specify when a SOP Instance should be compressed (during initial processing)')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),106,'DataAccess','Data Access','A rule to specify the Authority Groups that have access to a study')
+GO
+
 
 -- ServerRuleApplyTimeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
@@ -452,7 +458,7 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),102,'FilesystemStudyProcess','Filesystem Reapply Rules','This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem.')
+           (newid(),102,'FilesystemStudyProcess','Filesystem Reapply Rules','This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem that have not been archived.  Studies that have been archived will have Study Archived and Data Access rules applied.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
@@ -488,6 +494,12 @@ INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),202,'ImportFiles','Import Dicom Files','This service periodically scans the filesystem for dicom files and imports them into the system.')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),300,'SyncDataAccess','Synchronize Data Access','This service periodically synchronizes the deletion status of Authority Groups on the Administrative Services with Data Access granted to studies on the ImageServer.')
 GO
 
 -- ServiceLock Entries not associated with a Filesystem

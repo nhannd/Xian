@@ -107,6 +107,50 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						DicomDataFormatHelper.RawStringFormat
 					)
 				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<PersonName>
+					(
+						"Dicom.Patient.ResponsiblePerson",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.ResponsiblePerson; },
+						DicomDataFormatHelper.PersonNameFormatter
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+					(
+						"Dicom.Patient.ResponsibleOrganization",
+						resolver,
+						delegate(Frame frame) { return frame.ParentImageSop.ResponsibleOrganization; },
+						DicomDataFormatHelper.RawStringFormat
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new CodeSequenceAnnotationItem
+					(
+						"Dicom.Patient.PatientSpecies",
+						resolver,
+						DicomTags.PatientSpeciesCodeSequence,
+						DicomTags.PatientSpeciesDescription
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new CodeSequenceAnnotationItem
+					(
+						"Dicom.Patient.PatientBreed",
+						resolver,
+						DicomTags.PatientBreedCodeSequence,
+						DicomTags.PatientBreedDescription
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

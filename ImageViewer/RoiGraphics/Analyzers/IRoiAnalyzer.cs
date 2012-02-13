@@ -51,11 +51,15 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 		Responsive = 1
 	}
 
+
+    public delegate void RoiAnalyzerUpdateCallback();
+
 	/// <summary>
 	/// Interface for all ROI analyzers.
 	/// </summary>
 	public interface IRoiAnalyzer
 	{
+	    
 		/// <summary>
 		/// Gets or sets the base unit of measurement in which analysis is performed.
 		/// </summary>
@@ -79,5 +83,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 		/// <returns>A string containing the analysis results, which can be appended to the analysis
 		/// callout of the associated <see cref="RoiGraphic"/>, if one exists.</returns>
 		string Analyze(Roi roi, RoiAnalysisMode mode);
+
+	    void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback);
 	}
 }

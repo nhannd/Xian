@@ -44,37 +44,19 @@ namespace ClearCanvas.Common
         public object[] CreateExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter, bool justOne)
         {
             // get subset of applicable extensions
-            List<ExtensionInfo> extensions = ListExtensionsHelper(extensionPoint, filter);
+            var extensions = ListExtensionsHelper(extensionPoint, filter);
 
             // attempt to instantiate the extension classes
-            List<object> createdObjects = new List<object>();
-            foreach (ExtensionInfo extension in extensions)
+            var createdObjects = new List<object>();
+            foreach (var extension in extensions)
             {
                 if (justOne && createdObjects.Count > 0)
                     break;
 
-                // is the extension a concrete class?
-                if (!IsConcreteClass(extension.ExtensionClass))
-                {
-                    Platform.Log(LogLevel.Warn, SR.ExceptionExtensionMustBeConcreteClass,
-                        extension.ExtensionClass.FullName);
-                    continue;
-                }
-
-                // does the extension implement the required interface?
-                if (!extensionPoint.InterfaceType.IsAssignableFrom(extension.ExtensionClass))
-                {
-                    Platform.Log(LogLevel.Warn, SR.ExceptionExtensionDoesNotImplementRequiredInterface,
-                        extension.ExtensionClass.FullName,
-                        extensionPoint.InterfaceType);
-
-                    continue;
-                }
-
                 try
                 {
                     // instantiate
-                    object o = Activator.CreateInstance(extension.ExtensionClass);
+                    var o = Activator.CreateInstance(extension.ExtensionClass);
                     createdObjects.Add(o);
                 }
                 catch (Exception e)
@@ -108,45 +90,29 @@ namespace ClearCanvas.Common
 			// ensure extension map has been constructed
 			BuildExtensionMapOnce();
 
-			Type extensionPointClass = extensionPoint.GetType();
-
 			List<ExtensionInfo> extensions;
-			if (_extensionMap.TryGetValue(extensionPointClass, out extensions))
+			if (_extensionMap.TryGetValue(extensionPoint.GetType(), out extensions))
 			{
 				return CollectionUtils.Select(extensions,
-					delegate(ExtensionInfo extension)
-					{
-						return extension.Enabled
-								&& (filter == null || filter.Test(extension));
-					});
+					extension => extension.Enabled && (filter == null || filter.Test(extension)));
 			}
-			else
-			{
-				return new List<ExtensionInfo>();
-			}
-
-		}
-
-		private static bool IsConcreteClass(Type type)
-		{
-			return !type.IsAbstract && type.IsClass;
+			return new List<ExtensionInfo>();
 		}
 
 		private void BuildExtensionMapOnce()
 		{
 			// build extension map if not already built
 			// note that this is the only place where we need to lock, because once built, map is safe for concurrent readers
-			if(_extensionMap == null)
+			if (_extensionMap != null)
+				return;
+
+			lock(_syncLock)
 			{
-				lock(_syncLock)
+				if(_extensionMap == null)
 				{
-					if(_extensionMap == null)
-					{
-						// group extensions by extension point
-						// (note that grouping preserves the order of the original Extensions list)
-						_extensionMap = CollectionUtils.GroupBy<ExtensionInfo, Type>(Platform.PluginManager.Extensions,
-							delegate(ExtensionInfo extension) { return extension.PointExtended; });
-					}
+					// group extensions by extension point
+					// (note that grouping preserves the order of the original Extensions list)
+					_extensionMap = CollectionUtils.GroupBy(Platform.PluginManager.Extensions, ext => ext.PointExtended);
 				}
 			}
 		}

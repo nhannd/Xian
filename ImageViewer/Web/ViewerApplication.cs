@@ -43,17 +43,16 @@ namespace ClearCanvas.ImageViewer.Web
 			//TODO (CR April 2011): Figure out how to share the Exception Policies for these messages ...
 			//Current ExceptionHandler/Policy design just doesn't work for this at all.
 			if (e.GetType().Equals(typeof(InUseLoadStudyException)))
-				return ImageViewer.SR.MessageStudyInUse;
+				return ImageViewer.SR.MessageLoadStudyFailedInUse;
 			if (e.GetType().Equals(typeof(NearlineLoadStudyException)))
 			{
 				return ((NearlineLoadStudyException)e).IsStudyBeingRestored
-					? ImageViewer.SR.MessageStudyNearline
-					: String.Format("{0}  {1}", ImageViewer.SR.MessageStudyNearlineNoRestore, ImageViewer.SR.MessageContactPacsAdmin);
+                    ? ImageViewer.SR.MessageLoadStudyFailedNearline : ImageViewer.SR.MessageLoadStudyFailedNearlineNoRestore;
 			}
 			if (e.GetType().Equals(typeof(OfflineLoadStudyException)))
-				return ImageViewer.SR.MessageStudyOffline;
+                return ImageViewer.SR.MessageLoadStudyFailedOffline;
 			if (e.GetType().Equals(typeof(NotFoundLoadStudyException)))
-				return ImageViewer.SR.MessageStudyNotFound;
+                return ImageViewer.SR.MessageLoadStudyFailedNotFound;
 			if (e.GetType().Equals(typeof(LoadStudyException)))
 				return SR.MessageStudyCouldNotBeLoaded;
 			if (e is LoadMultipleStudiesException)
@@ -307,7 +306,7 @@ namespace ClearCanvas.ImageViewer.Web
             WebDesktopWindow window = new WebDesktopWindow(args, Application.Instance);
             window.Open();
 
-			_viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+            _viewer = CreateViewerComponent(startRequest);
 
 			try
 			{
@@ -356,7 +355,8 @@ namespace ClearCanvas.ImageViewer.Web
             ApplicationContext.Current.FireEvent(@event);
 		}
 
-	    private LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
+
+	    public static LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
 	    {
 
             // TODO: Need to think about this more. What's the best way to swap different loader?
@@ -382,6 +382,56 @@ namespace ClearCanvas.ImageViewer.Web
 	            throw new NotSupportedException("Only streaming study loader is supported at this time");
 	        }
 	    }
+
+        
+
+
+        private ImageViewerComponent CreateViewerComponent(StartViewerApplicationRequest request)
+        {
+            var keyImagesOnly = request.LoadStudyOptions != null && request.LoadStudyOptions.KeyImagesOnly;
+            var excludePriors = request.LoadStudyOptions != null && request.LoadStudyOptions.ExcludePriors;
+
+            if (keyImagesOnly)
+            {
+                var layoutManager = new ImageViewer.Layout.Basic.LayoutManager() { LayoutHook = new KeyImageLayoutHook() };
+                //override the KO options
+                const string ko = "KO";
+                var realOptions = new KeyImageDisplaySetCreationOptions(layoutManager.DisplaySetCreationOptions[ko]);
+                layoutManager.DisplaySetCreationOptions[ko] = realOptions;
+
+
+                if (excludePriors)
+                {
+                    return new ImageViewerComponent(layoutManager, PriorStudyFinder.Null); 
+                }
+                else
+                {
+                    return new ImageViewerComponent(layoutManager);
+                }
+            }
+            else
+            {
+                ImageViewer.Layout.Basic.LayoutManager layoutManager;
+
+                layoutManager = new ImageViewer.Layout.Basic.LayoutManager()
+                {
+                    LayoutHook = (request.LoadStudyOptions!=null && request.LoadStudyOptions.PreferredLayout != null)
+                                ? new CustomLayoutHook(request.LoadStudyOptions.PreferredLayout.Rows, request.LoadStudyOptions.PreferredLayout.Columns)
+                                : new CustomLayoutHook()
+                };
+                
+                if (excludePriors) 
+                {
+                    return new ImageViewerComponent(layoutManager, PriorStudyFinder.Null);
+                }
+                else
+                {
+                    return new ImageViewerComponent(layoutManager); 
+                } 
+            }
+
+
+        }
 
 	    protected override void OnStop()
 		{
@@ -468,4 +518,6 @@ namespace ClearCanvas.ImageViewer.Web
             //throw new NotSupportedException();
         }
     }
+
+    
 }

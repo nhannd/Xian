@@ -379,10 +379,10 @@
     <value>User Found</value>
   </data>
   <data name="GridPagerUserGroupsMultipleItemsFound" xml:space="preserve">
-    <value>User Groups Found</value>
+    <value>Authority Groups Found</value>
   </data>
   <data name="GridPagerUserGroupsSingleItemFound" xml:space="preserve">
-    <value>User Group Found</value>
+    <value>Authority Group Found</value>
   </data>
   <data name="GridPagerAuthorityTokenMultipleItemsFound" xml:space="preserve">
     <value>Authority Tokens Found</value>
@@ -394,7 +394,7 @@
     <value>Add Token</value>
   </data>
   <data name="DialogAddUserGroupTitle" xml:space="preserve">
-    <value>Add User Group</value>
+    <value>Add Authority Group</value>
   </data>
   <data name="DialogAddUserTitle" xml:space="preserve">
     <value>Add User</value>
@@ -403,7 +403,7 @@
     <value>Edit Token</value>
   </data>
   <data name="DialogEditUserGroupTitle" xml:space="preserve">
-    <value>Edit User Group</value>
+    <value>Edit Authority Group</value>
   </data>
   <data name="DialogEditUserTitle" xml:space="preserve">
     <value>Edit User</value>
@@ -707,10 +707,10 @@ At least one server partition is required. Please add a new server partition.</v
     <value>No services were found using the provided criteria</value>
   </data>
   <data name="NoUserGroupsFound" xml:space="preserve">
-    <value>No User Groups were found using the provided criteria.</value>
+    <value>No Authority Groups were found using the provided criteria.</value>
   </data>
   <data name="AdminUserGroups_DeleteDialog_AreYouSure" xml:space="preserve">
-    <value>Are you sure you want to delete user group "{0}"?</value>
+    <value>Are you sure you want to delete authority group "{0}"?</value>
   </data>
   <data name="AdminUser_DeleteDialog_AreYouSure" xml:space="preserve">
     <value>Are you sure to delete user "{0}" ({1})?</value>
@@ -757,5 +757,35 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="AdminUserGroup_DeleteNonEmptyGroupDialog_AreYouSure" xml:space="preserve">
     <value>{0} Are you sure you want to delete this group?</value>
     <comment>{0} is a reason for the message. For eg: the group contains one or more users.</comment>
+  </data>
+  <data name="DialogAddDataRuleTitle" xml:space="preserve">
+    <value>Add Data Access Rule</value>
+  </data>
+  <data name="DialogEditDataRuleTitle" xml:space="preserve">
+    <value>Edit Data Access Rule</value>
+  </data>
+  <data name="StudyDetails_NoAuthorityGroupsForThisStudy" xml:space="preserve">
+    <value>No Data Access Authority Groups assigned to this study.</value>
+  </data>
+  <data name="AddEditUserGroups_DataAccessChanged" xml:space="preserve">
+    <value>Disabling data access for an authority group removes the association between the authority group and imaging studies.  Users associated with the authority group will no longer be able to see their imaging studies.  Please re-enter your password to confirm this change.</value>
+  </data>
+  <data name="AddEditUserGroupsDialog_InvalidPassword" xml:space="preserve">
+    <value>Unable to update Authority Group, the password entered is incorrect.</value>
+  </data>
+  <data name="AddEditUserGroups_PasswordConfirmTitle" xml:space="preserve">
+    <value>Please Confirm Update</value>
+  </data>
+  <data name="WarningEditStudyWithAttachment" xml:space="preserve">
+    <value>Warning: this study contains attachment(s) which must be examined AFTER the edit to ensure all information is consistent.</value>
+  </data>
+  <data name="CCDocumentation" xml:space="preserve">
+    <value>ClearCanvas Documentation</value>
+  </data>
+  <data name="CCImageServerUsersGuide" xml:space="preserve">
+    <value>ImageServer User's Guide</value>
+  </data>
+  <data name="AddEditUserGroups_DataAccessChangedDelayWarning" xml:space="preserve">
+    <value>Note: This change may not take effect immediately.</value>
   </data>
 </root>

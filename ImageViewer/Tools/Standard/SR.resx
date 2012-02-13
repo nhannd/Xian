@@ -202,10 +202,10 @@
     <value>n/a</value>
   </data>
   <data name="LabelModalityLut" xml:space="preserve">
-    <value>MOD</value>
+    <value>VAL</value>
   </data>
-  <data name="LabelPixelValue" xml:space="preserve">
-    <value>PIX</value>
+  <data name="LabelRawPixel" xml:space="preserve">
+    <value>RAW</value>
   </data>
   <data name="LabelVOILut" xml:space="preserve">
     <value>VOI</value>
@@ -524,15 +524,6 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="SortByImageNumberDescription" xml:space="preserve">
     <value>Image Number</value>
   </data>
-  <data name="SortByReverseAcquisitionTimeDescription" xml:space="preserve">
-    <value>Acquisition Time (Reverse)</value>
-  </data>
-  <data name="SortByReverseImageNumberDescription" xml:space="preserve">
-    <value>Image Number (Reverse)</value>
-  </data>
-  <data name="SortByReverseSliceLocationDescription" xml:space="preserve">
-    <value>Slice Location (Reverse)</value>
-  </data>
   <data name="SortBySliceLocationDescription" xml:space="preserve">
     <value>Slice Location</value>
   </data>
@@ -558,23 +549,11 @@ Please check the log for more details.</value>
   <data name="StandardTools" xml:space="preserve">
     <value>Standard Tools</value>
   </data>
-  <data name="ShowCTPix" xml:space="preserve">
-    <value>Show Raw Pixel Value for CT Images</value>
+  <data name="MenuShowRawPixelValue" xml:space="preserve">
+    <value>Show Raw Pixel Value</value>
   </data>
-  <data name="ShowNonCTMod" xml:space="preserve">
-    <value>Show Post-Modality LUT Value for non-CT Images</value>
-  </data>
-  <data name="ShowVoiLut" xml:space="preserve">
-    <value>Show Post-VOI LUT Value for All Images</value>
-  </data>
-  <data name="TooltipShowCTPix" xml:space="preserve">
-    <value>Shows the raw pixel value on CT images</value>
-  </data>
-  <data name="TooltipShowNonCTMod" xml:space="preserve">
-    <value>Shows the post-modality LUT pixel value on non-CT images</value>
-  </data>
-  <data name="TooltipShowVoiLut" xml:space="preserve">
-    <value>Shows the post-VOI LUT pixel value on all images</value>
+  <data name="MenuShowVoiPixelValue" xml:space="preserve">
+    <value>Show Post-VOI LUT Pixel Value</value>
   </data>
   <data name="CommandSortImages" xml:space="preserve">
     <value>Sort Images</value>
@@ -800,5 +779,17 @@ Please check the log for more details.</value>
   </data>
   <data name="LabelLocation" xml:space="preserve">
     <value>LOC</value>
+  </data>
+  <data name="FormatSortByReverse" xml:space="preserve">
+    <value>{0} (Reverse)</value>
+  </data>
+  <data name="FormatLinearPresetDescription" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="LabelRGBPixel" xml:space="preserve">
+    <value>RGB</value>
+  </data>
+  <data name="TitleTools" xml:space="preserve">
+    <value>Tools</value>
   </data>
 </root>

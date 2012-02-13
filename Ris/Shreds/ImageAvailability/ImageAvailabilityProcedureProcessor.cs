@@ -51,6 +51,11 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			return PersistenceScope.CurrentContext.GetBroker<IProcedureBroker>().Find(criteria, page);
 		}
 
+		protected override void MarkItemClaimed(Procedure item)
+		{
+			// do nothing
+		}
+
 		protected override void ActOnItem(Procedure procedure)
 		{
 			// create the workqueue item

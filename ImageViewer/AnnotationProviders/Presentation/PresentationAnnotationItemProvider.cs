@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Annotations;
+//using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {
@@ -23,20 +24,19 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		public PresentationAnnotationItemProvider()
 			: base("AnnotationItemProviders.Presentation", new AnnotationResourceResolver(typeof(PresentationAnnotationItemProvider).Assembly))
 		{
-			_annotationItems = new List<IAnnotationItem>();
-
-			_annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem());
-			_annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem());
-
-			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left));
-			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
-			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right));
-			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
-
-			_annotationItems.Add(new DFOVAnnotationItem());
-            _annotationItems.Add(new ImageCalibrationAnnotationItem());
-            _annotationItems.Add(new DisplaySetDescriptionAnnotationItem());
-			_annotationItems.Add(new DisplaySetNumberAnnotationItem());
+			_annotationItems = new List<IAnnotationItem>
+			                       {
+			                           new ZoomAnnotationItem(),
+			                           new AppliedLutAnnotationItem(),
+			                           new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left),
+			                           new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top),
+			                           new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right),
+			                           new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom),
+			                           new DFOVAnnotationItem(),
+			                           new ImageCalibrationAnnotationItem(),
+			                           new DisplaySetDescriptionAnnotationItem(),
+			                           new DisplaySetNumberAnnotationItem()
+			                       };
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

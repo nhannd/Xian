@@ -169,7 +169,8 @@
     <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll" />
   </ItemGroup>
 
-  <ItemGroup>
+
+<ItemGroup>
     <StudyBrowserFiles Include="$(TrunkDirectory)\Controls\WinForms\bin\$(Configuration)\ClearCanvas.Controls.WinForms.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\Desktop\Explorer\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.View.WinForms.dll" />
@@ -186,7 +187,6 @@
 
   <ItemGroup>
     <DesktopServiceFiles Include="$(TrunkDirectory)\ImageViewer\DesktopServices\bin\$(Configuration)\ClearCanvas.ImageViewer.DesktopServices.dll" />
-    <DesktopServiceFiles Include="$(TrunkDirectory)\ImageViewer\StudyLocator\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLocator.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -323,7 +323,10 @@
 
   <ItemGroup Condition="$(ShredHostBuild)">
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Shreds\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyLocator\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLocator.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UnitTestImages Include="$(TrunkDirectory)\ImageViewer\RoiGraphics\Tests\Images\**\*.*" Exclude=".svn\*.*;_svn\*.*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -531,6 +534,9 @@
 
     <!-- Always copy database for shred host -->
     <CallTarget Condition="$(ShredHostBuild) Or !$(ExcludeDatabase)" Targets="Copy Database Files" />
+    
+    <!-- If building in debug configuration, copy unit test images -->
+    <Copy Condition="'$(Configuration)' == 'Debug'" SourceFiles="@(UnitTestImages)" DestinationFiles="@(UnitTestImages->'$(PluginsDirectory)/TestImages/%(RecursiveDir)%(Filename)%(Extension)')" />
 
   </Target>
 

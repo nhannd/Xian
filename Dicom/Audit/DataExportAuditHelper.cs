@@ -32,12 +32,12 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="outcome">The outcome (success or failure)</param>
 		/// <param name="exportDestination">Any machine readable identifications on the media, such as media serial number, volume label, 
 		/// DICOMDIR SOP Instance UID.</param>
-		public DataExportAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, string exportDestination)
+		public DataExportAuditHelper(DicomAuditSource auditSource, EventIdentificationContentsEventOutcomeIndicator outcome, string exportDestination)
 			: base("DataExport")
 		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.Export;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification = new EventIdentificationContents();
+			AuditMessage.EventIdentification.EventID = EventID.Export;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationContentsEventActionCode.E;
 			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
@@ -46,7 +46,7 @@ namespace ClearCanvas.Dicom.Audit
 
 			// Add the Destination
 			_participantList.Add(
-				new AuditMessageActiveParticipant(CodedValueType.DestinationMedia, ProcessName, exportDestination, null, null, null,false));
+				new ActiveParticipantContents(RoleIDCode.DestinationMedia, ProcessName, exportDestination, null, null, null,false));
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="userIsRequestor">Flag telling if the exporter is a user (as opposed to a process)</param>
 		public void AddExporter(AuditActiveParticipant participant)
 		{
-			participant.RoleIdCode = CodedValueType.SourceMedia;
+            participant.RoleIdCode = RoleIDCode.SourceMedia;
 			participant.UserIsRequestor = true;
 			InternalAddActiveParticipant(participant);
 		}

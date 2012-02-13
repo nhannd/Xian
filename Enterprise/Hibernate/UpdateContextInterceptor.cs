@@ -33,12 +33,12 @@ namespace ClearCanvas.Enterprise.Hibernate
 		private readonly ChangeTracker _fullChangeTracker = new ChangeTracker();
 		private readonly List<ChangeTracker> _changeTrackers = new List<ChangeTracker>();
 		private readonly Queue<DomainObject> _pendingValidations = new Queue<DomainObject>();
-		private readonly DomainObjectValidator _validator;
+		private readonly UpdateContext _owner;
 
 
-		internal UpdateContextInterceptor(DomainObjectValidator validator)
+		internal UpdateContextInterceptor(UpdateContext owner)
 		{
-			_validator = validator;
+			_owner = owner;
 			_changeTrackers.Add(_fullChangeTracker);
 		}
 
@@ -108,7 +108,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// rather than testing every validation rule we can selectively test only those rules
 			// that may be affected by the modified state
 			var dirtyPropNames = CollectionUtils.Map(dirtyProperties, (PropertyDiff pc) => pc.PropertyName);
-			_validator.ValidateLowLevel((DomainObject)entity, rule => ShouldCheckRule(rule, dirtyPropNames));
+			_owner.Validator.ValidateLowLevel((DomainObject)entity, rule => ShouldCheckRule(rule, dirtyPropNames));
 
 			RecordChange(entity, EntityChangeType.Update, propertyDiffs);
 			return false;
@@ -159,7 +159,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			while (_pendingValidations.Count > 0)
 			{
 				var domainObject = _pendingValidations.Dequeue();
-				_validator.ValidateLowLevel(domainObject, rule => true);
+				_owner.Validator.ValidateLowLevel(domainObject, rule => true);
 			}
 
 			base.PreFlush(entities);

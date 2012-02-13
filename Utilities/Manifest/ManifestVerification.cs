@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -313,12 +314,17 @@ namespace ClearCanvas.Utilities.Manifest
 
         private void VerifyFileList()
         {
+            var sb = new StringBuilder();
+            bool foundError = false;
+
             foreach (string relativePath in _installedFileDictionary.Keys)
             {
                 ManifestFile file;
                 if (!_manifestFileDictionary.TryGetValue(relativePath, out file))
                 {
-                    throw new AppDomainUnloadedException("File in distribution not in manifest: " + relativePath);
+                    if (foundError) sb.AppendLine();
+                    sb.AppendFormat("File in distribution not in manifest: " + relativePath);                    
+                    foundError = true;
                 }
             }
 
@@ -329,9 +335,13 @@ namespace ClearCanvas.Utilities.Manifest
                 string absolutePath;
                 if (!_installedFileDictionary.TryGetValue(file.Filename,out absolutePath))
                 {
-                    throw new AppDomainUnloadedException("Manifest file not in distribution: " + file.Filename);
+                    if (foundError) sb.AppendLine();
+                    sb.AppendFormat("Manifest file not in distribution: " + file.Filename);
+                    foundError = true;
                 }
             }
+
+            if (foundError) throw new ApplicationException(sb.ToString());
         }
 
         private void VerifyChecksums()

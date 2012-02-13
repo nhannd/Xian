@@ -107,79 +107,33 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <param name="rect"></param>
 		/// <returns>A new rectangle that has been rounded away from the centre
 		/// of the original input rectangle.</returns>
-		public static RectangleF RoundInflate(RectangleF rect)
+		public static Rectangle RoundInflate(RectangleF rect)
 		{
-			float left, top, right, bottom;
+			int left, top, right, bottom;
 
 			if (rect.Width >= 0)
 			{
-				if (rect.Left >= 0)
-				{
-					left = (int)rect.Left;
-					right = (int)(rect.Right + 0.5);
-				}
-				else
-				{
-					left = (int)(rect.Left - 0.5);
-
-					if (rect.Right >= 0)
-						right = (int)(rect.Right + 0.5);
-					else
-						right = (int)rect.Right;
-				}
+                left = (int)Math.Floor(rect.Left);
+                right = (int)Math.Ceiling(rect.Right);
 			}
 			else
 			{
-				if (rect.Left >= 0)
-				{
-					left = (int)(rect.Left + 0.5);
-					if (rect.Right >= 0)
-						right = (int)rect.Right;
-					else
-						right = (int)(rect.Right - 0.5);
-				}
-				else
-				{
-					left = (int)rect.Left;
-					right = (int)(rect.Right - 0.5);
-				}
-			}
+                left = (int)Math.Ceiling(rect.Left);
+                right = (int)Math.Floor(rect.Right);
+            }
 
 			if (rect.Height >= 0)
 			{
-				if (rect.Top >= 0)
-				{
-					top = (int)rect.Top;
-					bottom = (int)(rect.Bottom + 0.5);
-				}
-				else
-				{
-					top = (int)(rect.Top - 0.5);
-
-					if (rect.Bottom >= 0)
-						bottom = (int)(rect.Bottom + 0.5);
-					else
-						bottom = (int)rect.Bottom;
-				}
-			}
+                top = (int)Math.Floor(rect.Top);
+                bottom = (int)Math.Ceiling(rect.Bottom);
+            }
 			else
 			{
-				if (rect.Top >= 0)
-				{
-					top = (int)(rect.Top + 0.5);
-					if (rect.Bottom >= 0)
-						bottom = (int)rect.Bottom;
-					else
-						bottom = (int)(rect.Bottom - 0.5);
-				}
-				else
-				{
-					top = (int)rect.Top;
-					bottom = (int)(rect.Bottom - 0.5);
-				}
-			}
+                top = (int)Math.Ceiling(rect.Top);
+                bottom = (int)Math.Floor(rect.Bottom);
+            }
 
-			return RectangleF.FromLTRB(left, top, right, bottom);
+			return Rectangle.FromLTRB(left, top, right, bottom);
 		}
 
 		/// <summary>

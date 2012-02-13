@@ -11,8 +11,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400"
-    xmlns:my="clr-namespace:ClearCanvas.Web.Client.Silverlight;assembly=ClearCanvas.Web.Client.Silverlight">
+    mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Styles.xaml" x:Name="Styles"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot" Margin="0,1,0,1">
         <Grid.RowDefinitions>
@@ -21,7 +28,7 @@
         
         <ScrollBar Grid.Row="0" x:Name="ImageScrollBar" Orientation="Vertical" Width="17"  HorizontalAlignment="Right"
                SmallChange="1" Style="{StaticResource ScrollBarStyle}"
-               Scroll="ImageScrollBar_Scroll" LargeChange="5"  >       
+               Scroll="ImageScrollBarScroll" LargeChange="5"  >       
         </ScrollBar>
     </Grid>
 </UserControl>

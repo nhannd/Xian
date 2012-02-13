@@ -1,4 +1,5 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -23,7 +24,9 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation />
     <SignAssembly>false</SignAssembly>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -36,12 +39,9 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <TargetFrameworkSubset>
-    </TargetFrameworkSubset>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -50,7 +50,8 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile />
     <DefineConstants>DEBUG;TRACE;UNIT_TESTS</DefineConstants>
-    <DocumentationFile>ClearCanvas.Common.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -65,6 +66,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningsAsErrors>
     </WarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -88,6 +90,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningsAsErrors>
     </WarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UNIT_TESTS_USAGE_TRACKING|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -99,6 +102,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
@@ -114,6 +118,9 @@
       <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
     </Reference>
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -121,6 +128,7 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -142,7 +150,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\ConfigurationDocumentNotFoundException.cs" />
-    <Compile Include="Configuration\ConfigurationStoreFactory.cs" />
+    <Compile Include="Configuration\ConfigurationStore.cs" />
     <Compile Include="Configuration\IConfigurationStore.cs" />
     <Compile Include="Configuration\SettingsStoreSettingsProvider.cs" />
     <Compile Include="Configuration\ISettingsStore.cs" />
@@ -155,6 +163,11 @@
     <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="ITimeProvider.cs" />
+    <Compile Include="LicenseSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LicenseSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="log4net\FileAppender.cs" />
     <Compile Include="log4net\RollingFileAppender.cs" />
     <Compile Include="Specifications\CaseSpecification.cs" />
@@ -262,12 +275,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PluginAttribute.cs" />
-    <Compile Include="PluginFinder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="PluginLoader.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PluginManager.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -326,8 +333,24 @@
     <Compile Include="Audit\AuditLog.cs" />
     <Compile Include="Audit\AuditEntryInfo.cs" />
     <Compile Include="Audit\IAuditSink.cs" />
+    <Compile Include="Caching\Cache.cs" />
+    <Compile Include="Caching\CacheClientLoggingDecorator.cs" />
+    <Compile Include="Caching\CacheException.cs" />
+    <Compile Include="Caching\CacheGetOptions.cs" />
+    <Compile Include="Caching\CacheOptionsBase.cs" />
+    <Compile Include="Caching\CacheProviderInitializationArgs.cs" />
+    <Compile Include="Caching\CachePutOptions.cs" />
+    <Compile Include="Caching\CacheRemoveOptions.cs" />
+    <Compile Include="Caching\DefaultCacheClient.cs" />
+    <Compile Include="Caching\DefaultCacheProvider.cs" />
+    <Compile Include="Caching\ICacheClient.cs" />
+    <Compile Include="Caching\ICacheProvider.cs" />
+    <Compile Include="Caching\IDefinesCacheKey.cs" />
     <Compile Include="Configuration\ApplicationSettingsExtensions.cs" />
     <Compile Include="Configuration\ApplicationSettingsHelper.cs" />
+    <Compile Include="Configuration\ConfigurationDocumentQuery.cs" />
+    <Compile Include="Configuration\ConfigurationDocumentHeader.cs" />
+    <Compile Include="Configuration\ConfigurationDocumentKey.cs" />
     <Compile Include="Configuration\ConfigurationFileReader.cs" />
     <Compile Include="Configuration\ConfigurationSectionPath.cs" />
     <Compile Include="Configuration\ApplicationCriticalSettingsProvider.cs" />
@@ -367,9 +390,6 @@
     <Compile Include="FatalExceptionHandler.cs" />
     <Compile Include="IUserCredentialsProvider.cs" />
     <Compile Include="LicenseSettings.cs" />
-    <Compile Include="LicenseSettings.Designer.cs">
-      <DependentUpon>LicenseSettings.cs</DependentUpon>
-    </Compile>
     <Compile Include="ProductSettings.cs" />
     <Compile Include="ProductSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -403,12 +423,14 @@
     <Compile Include="Utilities\IRemoteFileTransfer.cs" />
     <Compile Include="Utilities\HttpFileTransfer.cs" />
     <Compile Include="Utilities\EnvironmentUtilities.cs" />
+    <Compile Include="Utilities\JsmlSerializer.cs" />
+    <Compile Include="Utilities\Tests\JsmlSerializerTests.cs" />
     <Compile Include="Utilities\UnitTestExtensionFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
@@ -428,7 +450,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ExtensionSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="LicenseSettings.settings" />
+    <None Include="LicenseSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LicenseSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ProductSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ProductSettings.Designer.cs</LastGenOutput>
@@ -444,7 +469,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

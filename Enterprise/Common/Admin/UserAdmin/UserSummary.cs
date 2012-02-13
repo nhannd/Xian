@@ -17,11 +17,12 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
     [DataContract]
     public class UserSummary : DataContractBase
     {
-        public UserSummary(string userId, string displayName, DateTime creationTime, DateTime? validFrom, DateTime? validUntil,
+        public UserSummary(string userId, string displayName, string emailAddress, DateTime creationTime, DateTime? validFrom, DateTime? validUntil,
             DateTime? lastLoginTime, DateTime? passwordExpiry, bool enabled)
         {
             UserName = userId;
             DisplayName = displayName;
+            EmailAddress = emailAddress;
             CreationTime = creationTime;
             ValidFrom = validFrom;
             ValidUntil = validUntil;
@@ -35,6 +36,9 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
 
         [DataMember]
         public string DisplayName;
+
+        [DataMember]
+        public string EmailAddress;
 
         [DataMember]
         public DateTime CreationTime;

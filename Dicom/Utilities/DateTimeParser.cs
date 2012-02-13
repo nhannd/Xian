@@ -16,6 +16,7 @@ namespace ClearCanvas.Dicom.Utilities
 {
 	public static class DateTimeParser
 	{
+	    /// TODO (CR Sep 2011): Are we sure this is 100% correct?
 		public static readonly string DicomFullDateTimeFormatWithTimeZone = "yyyyMMddHHmmss.ffffff&zzzz";
 		public static readonly string DicomFullDateTimeFormat = "yyyyMMddHHmmss.ffffff";
 
@@ -37,8 +38,7 @@ namespace ClearCanvas.Dicom.Utilities
 		}
 
 		/// <summary>
-		/// Parses a dicom Date/Time string using the DateParser and TimeParser
-		/// (TryParseExact) functions.  The Hour/Minute adjustment factor (as
+		/// Parses a dicom Date/Time. The Hour/Minute adjustment factor (as
 		/// specified in Dicom for universal time adjustment) is accounted for 
 		/// (and parsed) by this function.
 		/// </summary>
@@ -47,31 +47,36 @@ namespace ClearCanvas.Dicom.Utilities
 		/// <returns>true on success, false otherwise</returns>
 		public static bool Parse(string dicomDateTime, out DateTime dateTime)
 		{
-			dateTime = new DateTime(); 
+			dateTime = new DateTime();
 			
 			if (String.IsNullOrEmpty(dicomDateTime))
 				return false;
 
 			int plusMinusIndex = dicomDateTime.IndexOfAny(_plusMinus);
-
 			string dateTimeString = dicomDateTime;
 
 			string offsetString = String.Empty;
 			if (plusMinusIndex > 0)
 			{
+                //It has to be at least beyond the "day" ... there's probably even more complex rules, but I don't think we need to go nuts.
+                if (plusMinusIndex < 8)
+                    return false;
+
 				offsetString = dateTimeString.Substring(plusMinusIndex);
 				dateTimeString = dateTimeString.Remove(plusMinusIndex);
 			}
 
 			string dateString;
-			if (dateTimeString.Length >= 8)
-				dateString = dateTimeString.Substring(0, 8);
+            string timeString = String.Empty;
+            if (dateTimeString.Length >= 8)
+            {
+                dateString = dateTimeString.Substring(0, 8);
+                timeString = dateTimeString.Substring(8);
+            }
 			else
-				return false;
-
-			string timeString = String.Empty;
-			if (dateTimeString.Length > 8)
-				timeString = dateTimeString.Substring(8);
+            {
+                dateString = dateTimeString;
+            }
 
 			int hourOffset = 0;
 			int minuteOffset = 0;
@@ -95,8 +100,12 @@ namespace ClearCanvas.Dicom.Utilities
 			}
 
 			DateTime date;
-			if (!DateParser.Parse(dateString, out date))
-				return false;
+            var formats = new[] { "yyyy", "yyyyMM", "yyyyMMdd" };
+            //We do this independently of DateParser here because the rules are slightly different than for a date.
+            //In DICOM, DT values can exclude the month and/or day, whereas DA values cannot.
+            //The rules for the time component are the same as for TM, so we use TimeParser.
+            if (!DateTime.TryParseExact(dateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+                return false;
 
 			DateTime time = new DateTime(); //zero datetime
 			if (!String.IsNullOrEmpty(timeString))
@@ -106,9 +115,9 @@ namespace ClearCanvas.Dicom.Utilities
 			}
 
 			dateTime = date;
-			dateTime = dateTime.AddTicks(time.Ticks);
 			dateTime = dateTime.AddHours(hourOffset);
 			dateTime = dateTime.AddMinutes(minuteOffset);
+            dateTime = dateTime.Add(time.TimeOfDay);
 
 			return true;
 		}
@@ -123,11 +132,11 @@ namespace ClearCanvas.Dicom.Utilities
 			if (toUTC)
 			{
 				DateTime utc = datetime.ToUniversalTime();
-				return utc.ToString(DicomFullDateTimeFormatWithTimeZone, System.Globalization.CultureInfo.InvariantCulture);
+				return utc.ToString(DicomFullDateTimeFormatWithTimeZone, CultureInfo.InvariantCulture);
 			}
 			else
 			{
-				return datetime.ToString(DicomFullDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+				return datetime.ToString(DicomFullDateTimeFormat, CultureInfo.InvariantCulture);
 			}
             
 		}
@@ -136,88 +145,45 @@ namespace ClearCanvas.Dicom.Utilities
 		/// Parses Dicom Date/Time tags.  The <paramref name="dicomDateTime"/> would be a DateTime tag value - such as AcquisitionDatetime,
 		/// the <paramref name="dicomDate"/> would be just a Date tag value - such as AcquisitionDate; and <paramref name="dicomTime"/> would
 		/// be just the Time tag value - such as AcquisitionTime.  So, this method will parse the <paramref name="dicomDateTime"/> if it is not empty,
-		/// otherwise it will parse the <paramref name="dicomDate"/> and <paramref name="dicomTimee"/> together.
+		/// otherwise it will parse the <paramref name="dicomDate"/> and <paramref name="dicomTime"/> together.
 		/// </summary>
 		/// <param name="dicomDateTime">The dicom date time.</param>
 		/// <param name="dicomDate">The dicom date.</param>
 		/// <param name="dicomTime">The dicom time.</param>
-		/// <param name="dateTime">The date time.</param>
+        /// <param name="outDateTime">The date time.</param>
 		/// <returns></returns>
 		public static bool ParseDateAndTime(string dicomDateTime, string dicomDate, string dicomTime, out DateTime outDateTime)
 		{
 			outDateTime = DateTime.MinValue; // set default value
-			try
-			{
-				string dateTimeConcat = null;
 
-				string dateValue = dicomDate == null ? String.Empty : dicomDate.Trim();
-				string timeValue = dicomTime == null ? String.Empty : dicomTime.Trim();
-				if (timeValue == "000000") timeValue = String.Empty; // might as well be blank
+			string dateTimeValue = dicomDateTime == null ? String.Empty : dicomDateTime.Trim();
 
-				string dateTimeValue = dicomDateTime == null ? String.Empty : dicomDateTime.Trim();
+			// First try to do dateValue and timeValue separately - if both are there then set 
+			// dateTimeConcat, and then parse dateTimeConcat the same as if dateTimeValue was set
+			if (dateTimeValue != String.Empty)
+			    return Parse(dateTimeValue, out outDateTime);
 
-				if (dateTimeValue == String.Empty && dateValue == String.Empty && timeValue == String.Empty)
-					return false;
+            string dateValue = dicomDate == null ? String.Empty : dicomDate.Trim();
+            string timeValue = dicomTime == null ? String.Empty : dicomTime.Trim();
 
-				// First try to do dateValue and timeValue separately - if both are there then set 
-				// dateTimeConcat, and then parse dateTimeConcat the same as if dateTimeValue was set
-				if (dateTimeValue == String.Empty)
-				{
-					// use separate date and time values
-					// first get rid of .'s in date value, if any
-					dateValue = dateValue.Replace(".", "");
+		    if (dateValue == String.Empty)
+		        return false;
 
-					// see if only the date or time was sent in - if so, then good, parse it immediately, else set dateTimeConcat and parse it later 
-					if (dateValue == String.Empty)
-					{
-						if (timeValue.IndexOf(".") == -1)
-							outDateTime = DateTime.ParseExact(timeValue, "HHmmss", CultureInfo.InvariantCulture);
-						else
-							outDateTime = DateTime.ParseExact(timeValue, "HHmmss.ffffff", CultureInfo.InvariantCulture);
-					}
-					else if (timeValue == String.Empty)
-					{
-						outDateTime = DateTime.ParseExact(dateValue, "yyyyMMdd", CultureInfo.InvariantCulture);
-					}
-					else
-					{
-						dateTimeConcat = dateValue + timeValue;
-					}
-				}
-				else
-				{
-					// dateTimeValue was set, set dateTimeConcat and parse it later
-					dateTimeConcat = dateTimeValue;
-				}
+		    DateTime date;
+		    if (!DateParser.Parse(dateValue, out date))
+		        return false;
 
-				if (dateTimeConcat != null)
-				{
-					string[] date_formats = new string[15];
-					date_formats[0] = "yyyyMMdd";
-					date_formats[1] = "yyyy.MM.dd";
-					date_formats[2] = "yyyy";
-					date_formats[3] = "yyyyMM";
-					date_formats[4] = "yyyy.MM";
-					date_formats[5] = "yyyyMMddHHmmss";
-					date_formats[6] = "yyyyMMddHHmmss.f";
-					date_formats[6] = "yyyyMMddHHmmss.ff";
-					date_formats[7] = "yyyyMMddHHmmss.ffffff";
-					date_formats[8] = "yyyyMMddHHmmss.ffffffzzz";
-					date_formats[9] = "yyyyMMddHHmmss.fff";
-					date_formats[10] = "MM/dd/yyyy HH:mm:ss tt";
-					date_formats[11] = "MM/dd/yyyy HH:mm:ss t";
-					date_formats[12] = "MM/dd/yyyy HH:mm:ss";
-					date_formats[13] = "MM/dd/yyyy";
-					outDateTime = DateTime.ParseExact(dateTimeConcat, date_formats, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault);
+		    outDateTime = date;
+            if (timeValue == String.Empty)
+		        return true;
 
-				}
+            //Even though we have the date, the time is wrong. The "out" parameter will still have the parsed date in it if anyone cares.
+		    DateTime time;
+		    if (!TimeParser.Parse(timeValue, out time))
+		        return false;
 
-				return true;
-			}
-			catch
-			{
-				return false;
-			}
+		    outDateTime = outDateTime.Add(time.TimeOfDay);
+		    return true;
 		}
 
 		/// <summary>

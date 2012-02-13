@@ -9,12 +9,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens;
-using System.Text;
 using System.ServiceModel;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common.Authentication
 {
@@ -71,5 +66,14 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		/// <returns></returns>
 		[OperationContract]
 		GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request);
+
+        /// <summary>
+        /// Resets the password for the specified user account and sends an email to the user
+        /// </summary>
+        /// <exception cref="UserAccessDeniedException">Invalid user credentials or the user doesn't have an email address configured.</exception>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(UserAccessDeniedException))]
+        ResetPasswordResponse ResetPassword(ResetPasswordRequest request);
 	}
 }

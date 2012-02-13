@@ -134,22 +134,22 @@
     <value>130, 17</value>
   </metadata>
   <metadata name="_toolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>0, 0</value>
   </metadata>
   <data name="_sortAscendingButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>163, 22</value>
   </data>
   <data name="_sortAscendingButton.Text" xml:space="preserve">
     <value>Sort Ascending</value>
   </data>
   <data name="_sortDescendingButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>163, 22</value>
   </data>
   <data name="_sortDescendingButton.Text" xml:space="preserve">
     <value>Sort Descending</value>
   </data>
   <data name="_sortSeparator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 6</value>
+    <value>160, 6</value>
   </data>
   <data name="_sortButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -241,7 +241,7 @@
     <value>3</value>
   </data>
   <metadata name="_statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>589, 17</value>
+    <value>0, 206</value>
   </metadata>
   <data name="_statusLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>525, 17</value>
@@ -250,7 +250,7 @@
     <value>MiddleLeft</value>
   </data>
   <data name="_statusStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 206</value>
+    <value>0, 0</value>
   </data>
   <data name="_statusStrip.Size" type="System.Drawing.Size, System.Drawing">
     <value>540, 22</value>

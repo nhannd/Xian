@@ -123,6 +123,9 @@
   <data name="DescriptionDefaultServers" xml:space="preserve">
     <value>Please check the servers that should be used as defaults for the application.</value>
   </data>
+  <data name="DicomConfiguration" xml:space="preserve">
+    <value>DICOM</value>
+  </data>
   <data name="FormatServerConflict" xml:space="preserve">
     <value>The server properties conflict with an existing entry ({0}).
 Each server must have a unique Name and cannot have the same AE Title, Host and Port as another server.</value>
@@ -220,6 +223,9 @@ Please choose another Server Group Name.</value>
   </data>
   <data name="PathContextMenuConfiguration" xml:space="preserve">
     <value>Context Menu (Image)</value>
+  </data>
+  <data name="PublishingConfiguration" xml:space="preserve">
+    <value>Publishing</value>
   </data>
   <data name="TitleAddNewServer" xml:space="preserve">
     <value>Add New Server</value>

@@ -78,6 +78,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			get { return Width * Height * Depth; }
 		}
 
+	    /// TODO (CR Oct 2011): Need to override base Equals and GetHashCode, or make this a struct.
 		#region IEquatable<Vector3D> Members
 
 		/// <summary>

@@ -11,7 +11,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ClearCanvas.Common.Utilities
@@ -82,5 +85,38 @@ namespace ClearCanvas.Common.Utilities
 			else
 				return availableBytes / 1073741824;
 		}
+
+
+        [DllImport("kernel32.dll", EntryPoint = "GetDiskFreeSpaceExA")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out long lpFreeBytesAvailableToCaller,
+                                            out long lpTotalNumberOfBytes, out long lpTotalNumberOfFreeBytes);
+
+        public static DriveInformation GetDriveInformation(string path)
+	    {
+            long available, total, free;
+            bool result = GetDiskFreeSpaceEx(path, out available, out total, out free);
+
+            if (result)
+            {
+                return new DriveInformation()
+                           {
+                               RootDirectory = System.IO.Path.GetPathRoot(path),
+                               Total = total,
+                               Free = free
+                           };
+            }
+
+            throw new Win32Exception(string.Format("Unable to get drive information {0}. Error code: {1}", path, 0));
+	    }
 	}
+
+    public class DriveInformation
+    {
+        public string RootDirectory { get; set; }
+
+        public long Total { get; set; }
+
+        public long Free { get; set; }
+    }
 }

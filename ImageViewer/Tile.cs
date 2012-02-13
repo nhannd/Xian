@@ -14,10 +14,23 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer
 {
+    public class TileContextMenuRequestEventArgs : EventArgs
+    {
+        public TileContextMenuRequestEventArgs(Point? location, ActionModelNode actionModel)
+        {
+            Location = location;
+            ActionModel = actionModel;
+        }
+
+        public Point? Location { get; private set; }
+        public ActionModelNode ActionModel { get; private set; }
+    }
+
 	/// <summary>
 	/// Extension point for views onto <see cref="Tile"/>
 	/// </summary>
@@ -47,8 +60,9 @@ namespace ClearCanvas.ImageViewer
 		private static int _insetWidth = 5;
 		private static Color _selectedColor = Color.Yellow;
 		private static Color _unselectedColor = Color.Gray;
+        private EventHandler<TileContextMenuRequestEventArgs> _contextMenuRequested;
 
-		private event EventHandler _rendererChangedEvent;
+	    private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ItemEventArgs<ITile>> _selectionChangedEvent;
 		private event EventHandler<PresentationImageChangedEventArgs> _presentationImageChangedEvent;
@@ -385,7 +399,13 @@ namespace ClearCanvas.ImageViewer
 			remove { _editBoxChanged -= value; }
 		}
 
-		#endregion
+        public event EventHandler<TileContextMenuRequestEventArgs> ContextMenuRequested
+        {
+            add { _contextMenuRequested += value; }
+			remove { _contextMenuRequested -= value; }
+		}
+
+        #endregion
 
 		#region Disposal
 
@@ -425,7 +445,12 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public methods
 
-		/// <summary>
+        public void ShowContextMenu(Point? tileLocation, ActionModelNode actionModel)
+        {
+            EventsHelper.Fire(_contextMenuRequested, this, new TileContextMenuRequestEventArgs(tileLocation, actionModel));
+        }
+
+	    /// <summary>
 		/// Selects the <see cref="Tile"/>.
 		/// </summary>
 		/// <remarks>

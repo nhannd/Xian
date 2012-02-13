@@ -185,6 +185,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
 		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
+            if (!HitTest(mouseInformation.Location))
+                return new ActionSet();
+
 			IResourceResolver resolver = new ResourceResolver(this.GetType(), true);
 			string @namespace = typeof(TextEditControlGraphic).FullName;
 			MenuAction action = new MenuAction(@namespace + ":edit", new ActionPath(site + "/MenuEditText", resolver), ClickActionFlags.None, resolver);

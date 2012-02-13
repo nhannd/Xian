@@ -18,6 +18,7 @@
     <property name="Enabled" column="Enabled_" type="Boolean" not-null="true"/>
     <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true" access="nosetter.camelcase-underscore"/>
     <property name="LastLoginTime" column="LastLoginTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
+    <property name="EmailAddress" column="EmailAddress_" type="String" not-null="false" length="255"/>
     <set name="AuthorityGroups" table="AuthorityGroupUser_" lazy="true" cascade="all">
       <key column="UserOID_"/>
       <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup" fetch="join"/>

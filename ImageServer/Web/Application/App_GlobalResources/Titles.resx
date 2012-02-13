@@ -253,7 +253,7 @@
     <value>Users</value>
   </data>
   <data name="UserGroups" xml:space="preserve">
-    <value>User Groups</value>
+    <value>Authority Groups</value>
   </data>
   <data name="StudyHistory" xml:space="preserve">
     <value>History</value>
@@ -268,7 +268,7 @@
     <value>Deleted Studies | {0}</value>
   </data>
   <data name="UserGroupsPageTitle" xml:space="preserve">
-    <value>User Groups | {0}</value>
+    <value>Authority Groups | {0}</value>
   </data>
   <data name="DevicesPageTitle" xml:space="preserve">
     <value>Devices | {0}</value>
@@ -413,6 +413,21 @@
   </data>
   <data name="MoveStudies" xml:space="preserve">
     <value>Move Studies</value>
+  </data>
+  <data name="DataRules" xml:space="preserve">
+    <value>Data Access Rules</value>
+  </data>
+  <data name="DataRulesPageTitle" xml:space="preserve">
+    <value>Data Access Rules | {0}</value>
+  </data>
+  <data name="DataAccess" xml:space="preserve">
+    <value>Data Access</value>
+  </data>
+  <data name="UpdateAuthorityGroupDialog" xml:space="preserve">
+    <value>Update Data Access Authority Group Assignments</value>
+  </data>
+  <data name="AddAuthorityGroupsDialogTitle" xml:space="preserve">
+    <value>Add Data Access Authority Groups to Studies</value>
   </data>
   <data name="DicomTagsTitle" xml:space="preserve">
     <value>DICOM Tags</value>

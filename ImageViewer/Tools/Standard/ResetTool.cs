@@ -13,6 +13,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Tools.Standard.Configuration;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -22,16 +23,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipReset")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ResetToolSmall.png", "Icons.ResetToolMedium.png", "Icons.ResetToolLarge.png")]
-	[GroupHint("activate", "Tools.Image.Manipulation.Reset")]
+	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Reset")]
 
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ResetTool : ImageViewerTool
     {
 		private readonly ImageSpatialTransformImageOperation _operation;
+		private ToolModalityBehaviorHelper _toolBehavior;
 		
 		public ResetTool()
 		{
 			_operation = new ImageSpatialTransformImageOperation(Apply);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_toolBehavior = new ToolModalityBehaviorHelper(ImageViewer);
 		}
 
 		public void Activate()
@@ -40,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			ImageOperationApplicator applicator = new ImageOperationApplicator(SelectedPresentationImage, _operation);
-			UndoableCommand historyCommand = applicator.ApplyToAllImages();
+			UndoableCommand historyCommand = _toolBehavior.Behavior.SelectedImageResetTool ? applicator.ApplyToReferenceImage() : applicator.ApplyToAllImages();
 			if (historyCommand != null)
 			{
 				historyCommand.Name = SR.CommandReset;

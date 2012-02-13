@@ -23,9 +23,7 @@ namespace ClearCanvas.ImageViewer.Services
 	public class DicomFilePublishingException : Exception
 	{
 		internal DicomFilePublishingException(string message, Exception innerException)
-			: base(message, innerException)
-		{
-		}
+			: base(message, innerException) {}
 	}
 
 	//TODO: Instead of static helper, could be part of 2 separate bridges (IDicomSendBridge and ILocalDataStorebridge).
@@ -80,7 +78,6 @@ namespace ClearCanvas.ImageViewer.Services
 			{
 				tempDirectory = String.Format("{0}.{1}.{2}", prefix, dateTime.Date.ToString("yyyyMMdd"), ++number);
 				tempDirectory = Path.Combine(path, tempDirectory);
-
 			} while (Directory.Exists(tempDirectory));
 
 			return tempDirectory;
@@ -88,8 +85,8 @@ namespace ClearCanvas.ImageViewer.Services
 
 		private static void SaveFiles(IEnumerable<DicomFile> files, string tempDirectoryPrefix, out string tempDirectory)
 		{
-			tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ClearCanvas");
-			tempDirectory = System.IO.Path.Combine(tempDirectory, "Publishing");
+			tempDirectory = Path.Combine(Path.GetTempPath(), "ClearCanvas");
+			tempDirectory = Path.Combine(tempDirectory, "Publishing");
 
 			DeleteEmptyFolders(tempDirectory);
 			tempDirectory = GetTempDirectory(tempDirectory, tempDirectoryPrefix);
@@ -97,91 +94,105 @@ namespace ClearCanvas.ImageViewer.Services
 
 			foreach (DicomFile file in files)
 			{
-				string savePath = System.IO.Path.Combine(tempDirectory, file.DataSet[DicomTags.SopInstanceUid] + ".dcm");
+				string savePath = Path.Combine(tempDirectory, file.DataSet[DicomTags.SopInstanceUid] + ".dcm");
 				file.Save(savePath);
 			}
 		}
 
-		private static AuditedInstances GetAuditedInstances(IEnumerable<DicomFile> files)
+		private static AuditedInstances GetAuditedInstances(IEnumerable<DicomFile> files, bool includeFilename)
 		{
-			AuditedInstances instances = new AuditedInstances();
-			foreach (DicomFile file in files)
+			var instances = new AuditedInstances();
+			foreach (var file in files)
 			{
-				string patientId = file.DataSet[DicomTags.PatientId].GetString(0, "");
-				string name = file.DataSet[DicomTags.PatientsName].GetString(0, "");
-				string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-				
-				instances.AddInstance(patientId, name, studyInstanceUid, file.Filename);
+				var patientId = file.DataSet[DicomTags.PatientId].ToString();
+				var patientsName = file.DataSet[DicomTags.PatientsName].ToString();
+				var studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+				instances.AddInstance(patientId, patientsName, studyInstanceUid, includeFilename ? file.Filename : null);
 			}
-
 			return instances;
 		}
 
 		public static void PublishLocal(ICollection<DicomFile> files, bool isBackground)
 		{
-			if (files.Count == 0)
+			if (files == null || files.Count == 0)
 				return;
 
+			// cache files to temporary storage
 			string tempFileDirectory;
-			SaveFiles(files, "Local", out tempFileDirectory);
+			SaveFiles(files, @"Local", out tempFileDirectory);
 
+			// setup auditing information
+			var result = EventResult.Success;
+			var auditedInstances = GetAuditedInstances(files, true);
+
+			var client = new LocalDataStoreServiceClient();
 			try
 			{
-				AuditHelper.LogImportStudies(GetAuditedInstances(files), EventSource.CurrentProcess, EventResult.Success);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e, "Failed to audit imported instances for published files.");
-			}
-
-			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
-			try
-			{
-				client.Open();
-
-				FileImportRequest request = new FileImportRequest();
-				request.FilePaths = new string[] { tempFileDirectory };
+				var request = new FileImportRequest();
+				request.FilePaths = new[] {tempFileDirectory};
 				request.Recursive = true;
 				request.FileImportBehaviour = FileImportBehaviour.Move;
 				request.IsBackground = isBackground;
+
+				client.Open();
 				client.Import(request);
 				client.Close();
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
 				client.Abort();
-				string message = String.Format("Failed to connect to the local data store service to import files.  The files must be imported manually (location: {0})", tempFileDirectory);
-				throw new DicomFilePublishingException(message, e);
+				result = EventResult.MajorFailure;
+
+				var message = string.Format("Failed to connect to the local data store service to import files.  The files must be imported manually (location: {0})", tempFileDirectory);
+				throw new DicomFilePublishingException(message, ex);
+			}
+			finally
+			{
+				// audit attempt to import these instances to local store
+				AuditHelper.LogImportStudies(auditedInstances, EventSource.CurrentUser, result);
 			}
 		}
 
 		public static void PublishRemote(ICollection<DicomFile> files, AEInformation destinationServer, bool isBackground)
 		{
-			if (files.Count == 0)
+			if (files == null || files.Count == 0)
 				return;
 
+			// cache files to temporary storage
 			string tempFileDirectory;
-			SaveFiles(files, destinationServer.AETitle , out tempFileDirectory);
+			SaveFiles(files, destinationServer.AETitle, out tempFileDirectory);
 
-			DicomSendServiceClient client = new DicomSendServiceClient();
+			// setup auditing information
+			var result = EventResult.Success;
+			var auditedInstances = GetAuditedInstances(files, false);
+
+			var client = new DicomSendServiceClient();
 			try
 			{
-				client.Open();
-				SendFilesRequest request = new SendFilesRequest();
-				request.FilePaths = new string[] { tempFileDirectory };
+				var request = new SendFilesRequest();
+				request.FilePaths = new[] {tempFileDirectory};
 				request.FileExtensions = new string[0];
 				request.Recursive = true;
 				request.DeletionBehaviour = DeletionBehaviour.DeleteOnSuccess;
 				request.DestinationAEInformation = destinationServer;
 				request.IsBackground = isBackground;
+
+				client.Open();
 				client.SendFiles(request);
 				client.Close();
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
 				client.Abort();
-				string message = String.Format("Failed to connect to the dicom send service to send files.  The files must be published manually (location: {0})", tempFileDirectory);
-				throw new DicomFilePublishingException(message, e);
+				result = EventResult.MajorFailure;
+
+				var message = string.Format("Failed to connect to the dicom send service to send files.  The files must be published manually (location: {0})", tempFileDirectory);
+				throw new DicomFilePublishingException(message, ex);
+			}
+			finally
+			{
+				// audit attempt to update instances on remote server
+				AuditHelper.LogUpdateInstances(new[] {destinationServer.AETitle}, auditedInstances, EventSource.CurrentUser, result);
 			}
 		}
 	}

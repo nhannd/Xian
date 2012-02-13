@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Utilities.DicomEditor.Tools;
@@ -21,6 +22,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
     public partial class AnonymizeStudyComponentControl : ApplicationComponentUserControl
     {
         private AnonymizeStudyComponent _component;
+    	private bool _updating = false;
 
         /// <summary>
         /// Constructor.
@@ -41,6 +43,9 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			_studyDate.DataBindings.Add("Value", _component, "StudyDate", true, DataSourceUpdateMode.OnPropertyChanged);
 			_dateOfBirth.DataBindings.Add("Value", _component, "PatientsBirthDate", true, DataSourceUpdateMode.OnPropertyChanged);
 			_preserveSeriesData.DataBindings.Add("Checked", _component, "PreserveSeriesData", true, DataSourceUpdateMode.OnPropertyChanged);
+
+        	_keepReportsAndAttachments.Checked = _component.KeepReportsAndAttachments;
+        	_keepReportsAndAttachments.CheckedChanged += _keepReportsAndAttachments_CheckedChanged;
 		}
 
 		private void OnOkButtonClicked(object sender, System.EventArgs e)
@@ -52,5 +57,23 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 		{
 			_component.Cancel();
 		}
+
+    	private void _keepReportsAndAttachments_CheckedChanged(object sender, EventArgs e)
+    	{
+    		if (_updating)
+    			return;
+
+    		_updating = true;
+    		try
+    		{
+    			_component.KeepReportsAndAttachments = _keepReportsAndAttachments.Checked;
+    			_keepReportsAndAttachments.Checked = _component.KeepReportsAndAttachments;
+    			_warningProvider.SetError(_keepReportsAndAttachments, _keepReportsAndAttachments.Checked ? SR.WarningKeepReportsAndAttachmentsIsPotentialPatientPrivacyIssue : string.Empty);
+    		}
+    		finally
+    		{
+    			_updating = false;
+    		}
+    	}
     }
 }

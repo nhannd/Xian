@@ -28,9 +28,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			
 		}
 
-		public Stream GetStudyHeader(string callingAETitle, HeaderStreamingParameters parameters)
+		public Stream GetStudyHeader(string callingAeTitle, HeaderStreamingParameters parameters)
 		{
-			return base.Channel.GetStudyHeader(callingAETitle, parameters);
+			return base.Channel.GetStudyHeader(callingAeTitle, parameters);
 		}
 	}
 }

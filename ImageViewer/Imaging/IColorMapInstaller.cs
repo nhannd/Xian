@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the currently installed color map.
 		/// </summary>
-		IDataLut ColorMap { get; }
+		IColorMap ColorMap { get; }
 
 		/// <summary>
 		/// Installs a color map by name.
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Installs a color map.
 		/// </summary>
-		void InstallColorMap(IDataLut colorMap);
+		void InstallColorMap(IColorMap colorMap);
 
 		/// <summary>
 		/// Gets <see cref="ColorMapDescriptor"/>s for all the different types of available color maps.

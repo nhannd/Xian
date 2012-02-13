@@ -400,34 +400,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			protected override IControlGraphic InitializePointControlGraphic(IPointGraphic pointGraphic)
 			{
-				return new NullControlGraphic(pointGraphic);
+				return new ControlGraphic(pointGraphic);
 			}
 
 			protected override IControlGraphic InitializeTextControlGraphic(ITextGraphic textGraphic)
 			{
-				return new NullControlGraphic(textGraphic);
+				return new ControlGraphic(textGraphic);
 			}
-
-			#region NullControlGraphic Class
-
-			[Cloneable]
-			private class NullControlGraphic : ControlGraphic
-			{
-				public NullControlGraphic(IGraphic graphic) : base(graphic) {}
-
-				/// <summary>
-				/// Cloning constructor.
-				/// </summary>
-				/// <param name="source">The source object from which to clone.</param>
-				/// <param name="context">The cloning context object.</param>
-				protected NullControlGraphic(NullControlGraphic source, ICloningContext context)
-					: base(source, context)
-				{
-					context.CloneFields(source, this);
-				}
-			}
-
-			#endregion
 		}
 	}
 }

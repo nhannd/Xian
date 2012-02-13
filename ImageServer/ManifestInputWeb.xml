@@ -13,10 +13,14 @@
     <File name="Web\Web.sitemap" />
     <File name="Web\App_Themes\Default\Global.skin" />
 	<File name="Web\logs" ignore="true"/>
+	<File name="Web\Pages\Help\UsersGuide" ignore="true"/>
     <File name="Web\App_Themes\Default\images\AboutBackground.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Background.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\blank.gif" checksum="true" />
     <File name="Web\App_Themes\Default\images\LoginSplash.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessDisabled.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessEnabled.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\AddDataAccessHover.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddDisabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddEnabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\AddHover.png" checksum="true" />
@@ -28,6 +32,9 @@
     <File name="Web\App_Themes\Default\images\Buttons\CancelEnabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\CancelHover.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\ClearButtonBackground.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\CopyDisabled.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\CopyEnabled.png" checksum="true" />
+    <File name="Web\App_Themes\Default\images\Buttons\CopyHover.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\DeleteAllDisabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\DeleteAllEnabled.png" checksum="true" />
     <File name="Web\App_Themes\Default\images\Buttons\DeleteAllHover.png" checksum="true" />
@@ -274,11 +281,13 @@
     <File name="Web\bin\ClearCanvas.Server.ShredHost.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Utilities.Manifest.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Web.Common.dll" checksum="true" />
+    <File name="Web\bin\ClearCanvas.Web.Enterprise.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Web.Services.dll" checksum="true" />
     <File name="Web\bin\Ionic.Zip.dll" checksum="true" />
     <File name="Web\bin\log4net.dll" checksum="true" />
     <File name="Web\bin\nunit.framework.dll" checksum="true" />
     <File name="Web\bin\System.Web.Extensions.dll" checksum="true" />
+    <File name="Web\bin\System.Web.Extensions.Design.dll" checksum="true" />
     <File name="Web\bin\Validators.dll" checksum="true" />
     <File name="Web\bin\ar\AjaxControlToolkit.resources.dll" checksum="true" />
     <File name="Web\bin\cs\AjaxControlToolkit.resources.dll" checksum="true" />
@@ -335,6 +344,12 @@
     <File name="Web\Pages\Admin\Audit\DeletedStudies\GeneralArchiveInfoPanel.ascx" />
     <File name="Web\Pages\Admin\Audit\DeletedStudies\HsmArchiveInfoPanel.ascx" />
     <File name="Web\Pages\Admin\Audit\DeletedStudies\SearchResultGridView.ascx" />
+    <File name="Web\Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx" />
+    <File name="Web\Pages\Admin\Configure\DataRules\DataRuleGridView.ascx" />
+    <File name="Web\Pages\Admin\Configure\DataRules\DataRulePanel.ascx" />
+    <File name="Web\Pages\Admin\Configure\DataRules\DataRulePanel.js" />
+    <File name="Web\Pages\Admin\Configure\DataRules\DataRuleSamples.asmx" />
+    <File name="Web\Pages\Admin\Configure\DataRules\Default.aspx" />
     <File name="Web\Pages\Admin\Configure\Devices\AddEditDeviceDialog.ascx" />
     <File name="Web\Pages\Admin\Configure\Devices\Default.aspx" />
     <File name="Web\Pages\Admin\Configure\Devices\DeviceGridView.ascx" />
@@ -379,6 +394,7 @@
     <File name="Web\Pages\Admin\Dashboard\WorkQueueSummary.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\Default.aspx" />
+    <File name="Web\Pages\Admin\UserManagement\UserGroups\PasswordConfirmDialog.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\UserGroupsGridPanel.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.js" />
@@ -469,7 +485,9 @@
     <File name="Web\Pages\Studies\SeriesDetails\SeriesDetailsView.ascx" />
     <File name="Web\Pages\Studies\SeriesDetails\StudySummaryPanel.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Default.aspx" />
+    <File name="Web\Pages\Studies\StudyDetails\Controls\AddAuthorityGroupsDialog.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx" />
+    <File name="Web\Pages\Studies\StudyDetails\Controls\DataAccessPanel.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\DeleteSeriesConfirmDialog.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\DeleteStudyConfirmDialog.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
@@ -489,6 +507,7 @@
     <File name="Web\Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\StudyStateAlertPanel.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\StudyStorageView.ascx" />
+    <File name="Web\Pages\Studies\StudyDetails\Controls\UpdateAuthorityGroupDialog.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Controls\WorkQueueGridView.ascx" />
     <File name="Web\Pages\Studies\StudyDetails\Scripts\FileSystemQueueGridView.js" />
     <File name="Web\Pages\Studies\StudyDetails\Scripts\SeriesGridView.js" />

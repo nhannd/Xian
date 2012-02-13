@@ -10,8 +10,8 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Common.Caching;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Ris.Application.Common
 {

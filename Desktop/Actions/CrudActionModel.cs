@@ -94,7 +94,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public ClickAction Add
         {
-            get { return this[AddKey]; }
+			get { return (ClickAction)this[AddKey]; }
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public ClickAction Edit
         {
-            get { return this[EditKey]; }
+			get { return (ClickAction)this[EditKey]; }
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public ClickAction Delete
         {
-            get { return this[DeleteKey]; }
+			get { return (ClickAction)this[DeleteKey]; }
         }
     }
 }

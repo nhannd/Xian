@@ -15,14 +15,14 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	public class AlphaColorMap : ColorMap
 	{
-		private readonly IDataLut _baseColorMap;
+		private readonly IColorMap _baseColorMap;
 		private byte _alpha = 255;
 		private bool _thresholding;
 
-		public AlphaColorMap(IDataLut baseColorMap)
+		public AlphaColorMap(IColorMap baseColorMap)
 			: this(baseColorMap, 255, false) {}
 
-		public AlphaColorMap(IDataLut baseColorMap, byte alpha, bool thresholding)
+		public AlphaColorMap(IColorMap baseColorMap, byte alpha, bool thresholding)
 		{
 			_baseColorMap = baseColorMap;
 			_alpha = alpha;

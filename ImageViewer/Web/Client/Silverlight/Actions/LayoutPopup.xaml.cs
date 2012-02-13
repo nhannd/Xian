@@ -11,15 +11,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.Web.Client.Silverlight;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
@@ -29,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
     /// <summary>
     /// Popup component for the Layout tool.
     /// </summary>
-    public partial class LayoutPopup : UserControl, IPopup
+    public partial class LayoutPopup : UserControl, IPopup, IDisposable
     {
         private class Box 
         {
@@ -39,10 +34,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             public int Column {get;set;}
             public Border TheBorder {get;set;}
             public System.Windows.Shapes.Rectangle TheRectangle {get;set;}
-            private IList<Box> _boxList;
-            private Grid _grid;
-            private TextBlock _textBox;
-            private WebLayoutChangerAction _action;
+            private readonly IList<Box> _boxList;
+            private readonly Grid _grid;
+            private readonly TextBlock _textBox;
+            private readonly WebLayoutChangerAction _action;
 
             public ClickDelegate OnClick;
  
@@ -55,20 +50,24 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
 
                 Row = row;
                 Column = col;
-                               
-                TheBorder = new Border();
-                TheBorder.BorderThickness = new Thickness(1.5);
-                TheBorder.CornerRadius = new CornerRadius(0);
-                TheBorder.BorderBrush = new SolidColorBrush(ClearCanvasStyle.ClearCanvasBlue);
-                TheBorder.Margin = new Thickness(1);
 
-                TheRectangle = new System.Windows.Shapes.Rectangle();
-                TheRectangle.Width = 20;
-                TheRectangle.Height = 20;
-                TheRectangle.MinHeight = 20;
-                TheRectangle.MinWidth = 20;
+                TheBorder = new Border
+                                {
+                                    BorderThickness = new Thickness(1.5),
+                                    CornerRadius = new CornerRadius(0),
+                                    BorderBrush = new SolidColorBrush(ClearCanvasStyle.ClearCanvasBlue),
+                                    Margin = new Thickness(1)
+                                };
 
-                TheRectangle.Fill = new SolidColorBrush(Colors.Transparent);
+                TheRectangle = new System.Windows.Shapes.Rectangle
+                                   {
+                                       Width = 20,
+                                       Height = 20,
+                                       MinHeight = 20,
+                                       MinWidth = 20,
+                                       Fill = new SolidColorBrush(Colors.Transparent)
+                                   };
+
 
                 TheBorder.Child = TheRectangle;
                 TheBorder.SetValue(Grid.RowProperty, row);
@@ -76,10 +75,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             
                 _grid.Children.Add(TheBorder);
                 
-                TheRectangle.MouseEnter += new MouseEventHandler(TheRectangle_MouseEnter);
-                _grid.MouseLeave += new MouseEventHandler(Grid_MouseLeave);
+                TheRectangle.MouseEnter += TheRectangle_MouseEnter;
+                _grid.MouseLeave += Grid_MouseLeave;
 
-                TheRectangle.MouseLeftButtonUp += new MouseButtonEventHandler(TheRectangle_MouseLeftButtonUp);
+                TheRectangle.MouseLeftButtonUp += TheRectangle_MouseLeftButtonUp;
             }
 
             void TheRectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -122,16 +121,17 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             typeof(double), typeof(LayoutPopup), new PropertyMetadata(0.0, OnVerticalOffsetPropertyChanged));
         #endregion
 
-        private List<Box> _imageBoxList = new List<Box>();
-        private List<Box> _tileList = new List<Box>();
-        private WebLayoutChangerAction _imageBoxAction;
-        private WebLayoutChangerAction _tilesAction;
+        private readonly List<Box> _imageBoxList = new List<Box>();
+        private readonly List<Box> _tileList = new List<Box>();
+        private readonly WebLayoutChangerAction _imageBoxAction;
+        private readonly WebLayoutChangerAction _tilesAction;
         private ActionDispatcher _actionDispatcher;
+        private bool _disposed = false;
 
         private event EventHandler _opened;
         private event EventHandler _closed;
 
-        public LayoutPopup(ActionDispatcher dispatcher, System.Collections.ObjectModel.Collection<WebActionNode> actions)
+        public LayoutPopup(ActionDispatcher dispatcher, IEnumerable<WebActionNode> actions)
         {
             InitializeComponent();
 
@@ -157,20 +157,40 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             CreateGridElements();
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                _actionDispatcher = null;                
+
+                foreach (Box theBox in _imageBoxList)
+                {
+                    theBox.OnClick -= OnClick;
+                }
+                _imageBoxList.Clear();
+
+                _disposed = true;
+            }
+        }
+
         public void CreateGridElements()
         {
             for (int cols = 0; cols < _imageBoxAction.MaxColumns; cols++)
             {
-                ColumnDefinition coldef = new ColumnDefinition();
-                coldef.Width = GridLength.Auto;
+                var coldef = new ColumnDefinition {Width = GridLength.Auto};
                 ImageBoxGrid.ColumnDefinitions.Add(coldef);
             }
 
             for (int rows = 0; rows < _imageBoxAction.MaxRows; rows++)
             {
                 //do this for each row
-                RowDefinition rowDef = new RowDefinition();
-                rowDef.Height = GridLength.Auto;
+                var rowDef = new RowDefinition {Height = GridLength.Auto};
                 ImageBoxGrid.RowDefinitions.Add(rowDef);
             }
 
@@ -178,23 +198,21 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             for (int cols = 0; cols < _imageBoxAction.MaxColumns; cols++)
                 for (int rows = 0; rows < _imageBoxAction.MaxRows; rows++)
                 {
-                    Box theBox = new Box(rows, cols, ImageBoxGrid, _imageBoxList, ImageBoxLayoutText,_imageBoxAction);
+                    var theBox = new Box(rows, cols, ImageBoxGrid, _imageBoxList, ImageBoxLayoutText,_imageBoxAction);
                     theBox.OnClick += OnClick;
                     _imageBoxList.Add(theBox);
                 }
 
             for (int cols = 0; cols < _tilesAction.MaxColumns; cols++)
             {
-                ColumnDefinition coldef = new ColumnDefinition();
-                coldef.Width = GridLength.Auto;
+                var coldef = new ColumnDefinition {Width = GridLength.Auto};
                 TileGrid.ColumnDefinitions.Add(coldef);
             }
 
             for (int rows = 0; rows < _tilesAction.MaxRows; rows++)
             {
                 //do this for each row
-                RowDefinition rowDef = new RowDefinition();
-                rowDef.Height = GridLength.Auto;
+                var rowDef = new RowDefinition {Height = GridLength.Auto};
                 TileGrid.RowDefinitions.Add(rowDef);
             }
 
@@ -202,7 +220,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
             for (int cols = 0; cols < _tilesAction.MaxColumns; cols++)
                 for (int rows = 0; rows < _tilesAction.MaxColumns; rows++)
                 {
-                    Box theBox = new Box(rows, cols, TileGrid, _tileList, TileLayoutText,_tilesAction);
+                    var theBox = new Box(rows, cols, TileGrid, _tileList, TileLayoutText,_tilesAction);
                     theBox.OnClick += OnClick;
                     _tileList.Add(theBox);
                 }
@@ -212,11 +230,13 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
         {
             Hide();
 
-            SetLayoutActionMessage msg = new SetLayoutActionMessage();
-            msg.Columns = columns;
-            msg.Rows = rows;
-            msg.TargetId = action.Identifier;
-            msg.Identifier = action.Identifier;
+            var msg = new SetLayoutActionMessage
+                          {
+                              Columns = columns,
+                              Rows = rows,
+                              TargetId = action.Identifier,
+                              Identifier = action.Identifier
+                          };
 
             _actionDispatcher.EventDispatcher.DispatchMessage(msg);
         }
@@ -285,8 +305,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Actions
                 b.Grid_MouseLeave(null, null);
             foreach (Box b in _imageBoxList)
                 b.Grid_MouseLeave(null, null);
+            
+            Popup.IsOpen = newValue;
 
-            if (Popup.IsOpen = newValue)
+            if (Popup.IsOpen)
             {
                 Popup.HorizontalOffset = HorizontalOffset;
                 Popup.VerticalOffset = VerticalOffset;

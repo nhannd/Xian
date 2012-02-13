@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the currently installed color map.
 		/// </summary>
-		public IDataLut GetColorMap()
+		public IColorMap GetColorMap()
 		{
 			return _colorMapInstaller.ColorMap;
 		}
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the currently installed color map.
 		/// </summary>
-		public IDataLut ColorMap
+		public IColorMap ColorMap
 		{
 			get { return _colorMapInstaller.ColorMap; }
 		}
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Installs a color map.
 		/// </summary>
-		public void InstallColorMap(IDataLut colorMap)
+		public void InstallColorMap(IColorMap colorMap)
 		{
 			_colorMapInstaller.InstallColorMap(colorMap);
 		}
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public object CreateMemento()
 		{
-			return new ComposableLutMemento(_colorMapInstaller.ColorMap);
+			return new ColorMapMemento(_colorMapInstaller.ColorMap);
 		}
 
 		/// <summary>
@@ -110,13 +110,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public void SetMemento(object memento)
 		{
-			ComposableLutMemento lutMemento = (ComposableLutMemento) memento;
+			ColorMapMemento colorMapMemento = (ColorMapMemento) memento;
 
-			if (_colorMapInstaller.ColorMap != lutMemento.OriginatingLut)
-				_colorMapInstaller.InstallColorMap(lutMemento.OriginatingLut as IDataLut);
+			if (_colorMapInstaller.ColorMap != colorMapMemento.Originator)
+				_colorMapInstaller.InstallColorMap(colorMapMemento.Originator);
 
-			if (lutMemento.InnerMemento != null)
-				_colorMapInstaller.ColorMap.SetMemento(lutMemento.InnerMemento);
+			if (colorMapMemento.InnerMemento != null)
+				_colorMapInstaller.ColorMap.SetMemento(colorMapMemento.InnerMemento);
 		}
 
 		#endregion

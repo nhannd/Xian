@@ -110,56 +110,55 @@ namespace ClearCanvas.Desktop.Actions.Tests
 		{
 			//null
 			GroupHint left = new GroupHint(null);
-			Assert.AreEqual(left.Hint, "");
+			Assert.AreEqual(String.Empty, left.Hint);
 
 			// left = "", right=""
 			GroupHint right = new GroupHint("");
-
-			Assert.AreEqual(left.MatchScore(right), 1);
+			Assert.AreEqual(1, left.MatchScore(right));
 
 			// left = "NonEmpty.Test", right=""
 			left = new GroupHint("NonEmpty.Test");
-			Assert.AreEqual(left.MatchScore(right), 1);
+			Assert.AreEqual(1, left.MatchScore(right));
 
 			// left = "", right="NonEmpty.Test"
 			left = right;
 			right = new GroupHint("NonEmpty.Test");
-			Assert.AreEqual(left.MatchScore(right), 0);
+			Assert.AreEqual(0, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut.LutPresets", right="Tools.Standard.ImageManipulation.Lut"
 			left = new GroupHint("Tools.Standard.ImageManipulation.Lut.LutPresets");
 			right = new GroupHint("Tools.Standard.ImageManipulation.Lut");
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(5, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut", right="Tools.Standard.ImageManipulation.Lut.LutPresets"
 			GroupHint temp = left;
 			left = right;
 			right = temp;
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(-5, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut", right="Tools.Standard.ImageManipulation.Lut"
 			right = left;
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(5, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut.LutPresets", right="Tools.Standard.ImageManipulation.Lut.Auto"
 			left = new GroupHint("Tools.Standard.ImageManipulation.Lut.LutPresets");
 			right = new GroupHint("Tools.Standard.ImageManipulation.Lut.Auto");
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(5, left.MatchScore(right));
 
 			// left = "Tools.Standard.ImageManipulation.Lut.Auto", right="Tools.Standard.ImageManipulation.Lut.LutPresets"
 			left = right;
 			right = temp;
-			Assert.AreEqual(left.MatchScore(right), 5);
+			Assert.AreEqual(-5, left.MatchScore(right));
 			
 			// left = "Tools.Standard.ImageManipulation.Lut", right="DisplaySets"
 			right = new GroupHint("DisplaySets");
-			Assert.AreEqual(left.MatchScore(right), 0);
+			Assert.AreEqual(0, left.MatchScore(right));
 
 			// left = "DisplaySets", right="Tools.Standard.ImageManipulation.Lut"
 			temp = left;
 			left = right;
 			right = temp;
-			Assert.AreEqual(left.MatchScore(right), 0);
+			Assert.AreEqual(0, left.MatchScore(right));
 		}
 
 		[Test]
@@ -172,8 +171,8 @@ namespace ClearCanvas.Desktop.Actions.Tests
 				{ "ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:auto", "imageviewer-contextmenu/MenuToolsStandardLutPresets/auto", "Tools.Image.Manipulation.Lut.Presets" }, 
 				{ "BogusDefault", "imageviewer-contextmenu/BogusDefault", "" }, 
 				{ "ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate", "imageviewer-contextmenu/MenuToolsStandardPan", "Tools.Image.Manipulation.Pan" },
-				{ "ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate", "imageviewer-contextmenu/MenuToolsStandardZoom", "Tools.Image.Manipulation.Zoom" } ,
 				{ "test1", "imageviewer-contextmenu/Tools.Image.Manipulation.SomethingNew", "Tools.Image.Manipulation.SomethingNew" },
+                { "ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate", "imageviewer-contextmenu/MenuToolsStandardZoom", "Tools.Image.Manipulation.Zoom" } ,
 				{ "ClearCanvas.ImageViewer.Tools.Standard.ProbeTool:activate", "imageviewer-contextmenu/MenuToolsStandardProbe", "Tools.Image.Interrogation.Probe" },
 				{ "test2", "imageviewer-contextmenu/Tools.Image.SomethingNew", "Tools.Image.SomethingNew" },
 				{ "ClearCanvas.ImageViewer.Tools.Volume.ZoomVolumeTool:activate", "imageviewer-contextmenu/Zoom Volume", "Tools.VolumeImage.Manipulation.Zoom" },

@@ -1959,6 +1959,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Description:	Completely delete a Study from the database
 -- History
 --	Oct 06, 2009:  Delete StudyHistory record if DestStudyStorageGUID matches
+--  Aug 18, 2011:  Delete StudyDataAccess
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteStudyStorage] 
 	-- Add the parameters for the stored procedure here
@@ -2010,6 +2011,9 @@ BEGIN
 	DELETE FROM WorkQueue 
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
+	DELETE FROM StudyDataAccess
+	WHERE StudyStorageGUID = @StudyStorageGUID
+	
 	DELETE FROM StudyHistory
 	WHERE StudyStorageGUID = @StudyStorageGUID OR DestStudyStorageGUID=@StudyStorageGUID
 
@@ -2735,9 +2739,9 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: July 11, 2008
--- Update date: Oct 15, 2008
+-- Update date: Oct 28, 2011
 -- Description:	Insert and/or update the appropriate ArchiveQueue records
--- 
+-- Oct 28, 2011:	(#8866) Ensured existing entries are reset (if failed) and only insert new ones if no entries are found for the studies
 -- Oct 15, 2008:	Removed Update parameter and insert new entry if the study has been archive so that edit can trigger rearchive
 --
 -- =============================================
@@ -2754,6 +2758,7 @@ BEGIN
 	DECLARE @StudyDeleteTypeEnum smallint
 	DECLARE @StudyPurgeTypeEnum smallint
 	DECLARE @PendingArchiveQueueStatus smallint
+	DECLARE @FailedArchiveQueueStatus smallint
 	DECLARE @StudyDeleteCount int
 	DECLARE @StudyPurgeCount int
 	DECLARE @ArchiveStudyStorageCount int
@@ -2763,6 +2768,7 @@ BEGIN
 	SELECT @StudyDeleteTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''DeleteStudy''
 	SELECT @StudyPurgeTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''PurgeStudy''
 	SELECT @PendingArchiveQueueStatus = Enum from ArchiveQueueStatusEnum where Lookup = ''Pending''
+	SELECT @FailedArchiveQueueStatus = Enum from ArchiveQueueStatusEnum where Lookup = ''Failed''
 
 	BEGIN TRANSACTION
 
@@ -2800,10 +2806,9 @@ BEGIN
 			SELECT @ArchiveQueueGUID = GUID from ArchiveQueue 
 			WHERE StudyStorageGUID = @StudyStorageGUID
 				AND PartitionArchiveGUID = @PartitionArchiveGUID
-				AND ArchiveQueueStatusEnum = @PendingArchiveQueueStatus
 			if @@ROWCOUNT = 0
 			BEGIN
-				-- There''s no Pending archive entry, insert one
+				-- There''s no archive entry, insert one
 				SET @ArchiveQueueGUID = NEWID();
 
 				INSERT into ArchiveQueue (GUID, PartitionArchiveGUID, StudyStorageGUID, ArchiveQueueStatusEnum, ScheduledTime)
@@ -2811,10 +2816,13 @@ BEGIN
 			END
 			ELSE
 			BEGIN
-				UPDATE ArchiveQueue SET ScheduledTime = @ScheduledTime
+				-- Reset/reschedule existing entries, make sure the failed ones are reset to pending
+				UPDATE ArchiveQueue 
+				SET ScheduledTime = @ScheduledTime,
+					ArchiveQueueStatusEnum=@PendingArchiveQueueStatus
 				WHERE StudyStorageGUID = @StudyStorageGUID
-				AND PartitionArchiveGUID = @PartitionArchiveGUID
-				AND ArchiveQueueStatusEnum = @PendingArchiveQueueStatus
+					AND PartitionArchiveGUID = @PartitionArchiveGUID
+					AND (ArchiveQueueStatusEnum in (@PendingArchiveQueueStatus, @FailedArchiveQueueStatus))
 			END
 
 			Fetch NEXT FROM PartitionArchiveCursor INTO @PartitionArchiveGUID, @ArchiveDelayHours
@@ -2832,10 +2840,10 @@ BEGIN
 	ELSE
 	BEGIN
 		-- Delete from the ArchiveQueue, the study is scheduled for deletion
-		-- In most cases this should delete no rows
+		-- Only delete entries that are Pending or Failed. In most cases this should delete no rows
 		DELETE FROM ArchiveQueue
 			WHERE StudyStorageGUID = @StudyStorageGUID
-				AND ArchiveQueueStatusEnum = @PendingArchiveQueueStatus
+				AND (ArchiveQueueStatusEnum in (@PendingArchiveQueueStatus, @FailedArchiveQueueStatus))
 	END
 
 	COMMIT TRANSACTION

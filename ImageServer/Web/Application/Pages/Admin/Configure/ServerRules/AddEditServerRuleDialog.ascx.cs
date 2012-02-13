@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             var ruleTypeList = new Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>>();
             foreach (ISampleRule extension in extensions)
             {
-                if (!ruleTypeList.ContainsKey(extension.Type))
+                if (!ruleTypeList.ContainsKey(extension.Type)  && !extension.Type.Equals(ServerRuleTypeEnum.DataAccess))
                     ruleTypeList.Add(extension.Type, extension.ApplyTimeList);
             }
 

@@ -114,6 +114,38 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		private bool _showLocalDataStoreNode = true;
 		private bool _isReadOnly = false;
 		private bool _showCheckBoxes = false;
+		private bool _isEnabled = true;
+
+		#endregion
+
+
+		public ServerTreeComponent()
+		{
+			_selectedServers = new AEServerGroup();
+			_serverTree = new ImageViewer.Services.ServerTree.ServerTree();
+
+			if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
+			{
+				_selectedServers.Servers.Add(_serverTree.CurrentNode);
+				_selectedServers.Name = _serverTree.CurrentNode.Name;
+				_selectedServers.GroupID = _serverTree.CurrentNode.Path;
+			}
+		}
+
+		#region Presentation Model
+
+		public bool IsEnabled
+		{
+			get { return _isEnabled; }
+			set
+			{
+				if(value != _isEnabled)
+				{
+					_isEnabled = value;
+					NotifyPropertyChanged("IsEnabled");
+				}
+			}
+		}
 
 		public ImageViewer.Services.ServerTree.ServerTree ServerTree
 		{
@@ -172,19 +204,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		}
 
 		#endregion
-
-		public ServerTreeComponent()
-		{
-			_selectedServers = new AEServerGroup();
-			_serverTree = new ImageViewer.Services.ServerTree.ServerTree();
-
-			if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
-			{
-				_selectedServers.Servers.Add(_serverTree.CurrentNode);
-				_selectedServers.Name = _serverTree.CurrentNode.Name;
-				_selectedServers.GroupID = _serverTree.CurrentNode.Path;
-			}
-		}
 
 		public void SetSelection(IServerTreeNode dataNode)
 		{

@@ -9,26 +9,46 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 {
-    [DataContract]
-    public class AuthorityTokenSummary : DataContractBase
-    {
-        public AuthorityTokenSummary(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+	[DataContract]
+	public class AuthorityTokenSummary : DataContractBase
+	{
+		public AuthorityTokenSummary(string name)
+		{
+			Name = name;
+			FormerIdentities = new List<string>();
+		}
 
-        [DataMember]
-        public string Name;
+		public AuthorityTokenSummary(string name, string description)
+		{
+			Name = name;
+			Description = description;
+			FormerIdentities = new List<string>();
+		}
 
-        [DataMember]
-        public string Description;
-    }
+		public AuthorityTokenSummary(string name, string definingAssembly, string description, IEnumerable<string> formerIdentities)
+		{
+			Name = name;
+			DefiningAssembly = definingAssembly;
+			Description = description;
+			FormerIdentities = new List<string>(formerIdentities);
+		}
+
+		[DataMember]
+		public string Name;
+
+		[DataMember]
+		public string DefiningAssembly;
+
+		[DataMember]
+		public string Description;
+
+		[DataMember]
+		public List<string> FormerIdentities;
+	}
 }

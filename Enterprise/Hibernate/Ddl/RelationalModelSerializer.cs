@@ -10,7 +10,9 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using System.IO;
 
@@ -59,7 +61,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private static void Write(XmlWriter writer, object data)
 		{
 			// bug #5300: do not write out the "Unique" flag anymore
-			var options = new JsmlSerializer.SerializeOptions { MemberFilter = (m => m.Name != "Unique") };
+			var options = new JsmlSerializer.SerializeOptions { DataMemberTest = (m => AttributeUtils.HasAttribute<DataMemberAttribute>(m) && m.Name != "Unique") };
 			JsmlSerializer.Serialize(writer, data, data.GetType().Name, options);
 		}
 

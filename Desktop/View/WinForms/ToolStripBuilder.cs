@@ -403,6 +403,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 						else
 							view = StandardWinFormsActionView.CreateDropDownActionView();
 					}
+					else if(action is ITextBoxAction)
+						view = StandardWinFormsActionView.CreateTextBoxActionView();
 					else if (action is IClickAction)
 						view = StandardWinFormsActionView.CreateButtonActionView();
 				}

@@ -54,7 +54,7 @@ namespace ClearCanvas.Dicom.Utilities
 			// This method is used in DicomAttribute Get/TryGet,
 			// which allow leading/trailing spaces in the string
 			// They are considered valid DICOM date/time.
-			if (dicomDate!=null)
+			if (dicomDate != null)
 				dicomDate = dicomDate.Trim();
 
 			return DateTime.TryParseExact(dicomDate, DicomDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);

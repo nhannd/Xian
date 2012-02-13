@@ -18,8 +18,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using System.Threading;
 
 namespace ClearCanvas.Desktop
 {

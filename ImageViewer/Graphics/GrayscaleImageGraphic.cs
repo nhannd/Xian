@@ -44,7 +44,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
-		private bool _invert;
 
 		private LutComposer _lutComposer;
 		private LutFactory _lutFactory;
@@ -54,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private IGraphicVoiLutFactory _voiLutFactory;
 
 		private IColorMapManager _colorMapManager;
-		private IDataLut _colorMap;
+		private IColorMap _colorMap;
 
 		#endregion
 
@@ -169,10 +168,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			context.CloneFields(source, this);
 
-			if (source.LutComposer.LutCollection.Count > 0) //modality lut is constant; no need to clone.
+			if (source.LutComposer.ModalityLut != null) //modality lut is constant; no need to clone.
 				this.InitializeNecessaryLuts(Luts.Modality);
 
-			if (source.LutComposer.LutCollection.Count > 1) //clone the voi lut.
+			if (source.LutComposer.NormalizationLut != null)
+				LutComposer.NormalizationLut = source.NormalizationLut.Clone();
+
+			if (source.LutComposer.VoiLut != null) //clone the voi lut.
 				(this as IVoiLutInstaller).InstallVoiLut(source.VoiLut.Clone());
 
 			//color map has already been cloned.
@@ -221,11 +223,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>
 		/// Inversion is equivalent to polarity.
 		/// </remarks>
-		public bool Invert
-		{
-			get { return _invert; }
-			set { _invert = value; }
-		}
+		public bool Invert { get; set; }
+
+	    /// <summary>
+	    /// Gets the default value of <see cref="Invert"/>.  In DICOM, this would be true
+	    /// for all MONOCHROME1 images.
+	    /// </summary>
+	    public bool DefaultInvert { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the VOI LUT factory for this <see cref="GrayscaleImageGraphic"/>.
@@ -302,24 +306,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Retrieves this image's modality lut.
 		/// </summary>
-		public IComposableLut ModalityLut
+		public IModalityLut ModalityLut
 		{
 			get
 			{
 				InitializeNecessaryLuts(Luts.Modality);
-				return this.LutComposer.LutCollection[0]; 
+				return this.LutComposer.ModalityLut; 
 			}
 		}
 
 		/// <summary>
 		/// Retrieves this image's Voi Lut.
 		/// </summary>
-		public IComposableLut VoiLut
+		public IVoiLut VoiLut
 		{
 			get
 			{
 				InitializeNecessaryLuts(Luts.Voi);
-				return this.LutComposer.LutCollection[1]; 
+				return this.LutComposer.VoiLut; 
 			}
 		}
 
@@ -338,7 +342,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Retrieves this image's color map.
 		/// </summary>
-		public IDataLut ColorMap
+		public IColorMap ColorMap
 		{
 			get
 			{
@@ -352,6 +356,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 
 		#region Private properties
+
+		/// <summary>
+		/// Gets or sets a LUT to normalize the output of the modality LUT immediately prior to the VOI LUT.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// In most cases, this should be left NULL. However, some PET images have a very small rescale slope (&lt;&lt; 1)
+		/// and thus need this to fix the input to the VOI LUT.
+		/// </para>
+		/// <para>
+		/// At any rate, DO NOT use the output of this LUT for any purpose other than as an input to the VOI LUT, as it is meaningless otherwise.</para>
+		/// </remarks>
+		public IComposableLut NormalizationLut
+		{
+			get { return LutComposer.NormalizationLut; }
+			set { LutComposer.NormalizationLut = value; }
+		}
 
 		private LutComposer LutComposer
 		{
@@ -451,22 +472,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_isSigned = isSigned;
 			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
 			_rescaleIntercept = rescaleIntercept;
-			_invert = invert;
+			DefaultInvert = Invert = invert;
 		}
 
 		private void InitializeNecessaryLuts(Luts luts)
 		{
-			if (luts >= Luts.Modality && LutComposer.LutCollection.Count == 0)
+			if (luts >= Luts.Modality && LutComposer.ModalityLut == null)
 			{
-				IComposableLut modalityLut =
+				IModalityLut modalityLut =
 					this.LutFactory.GetModalityLutLinear(this.BitsStored, this.IsSigned, _rescaleSlope, _rescaleIntercept);
 			
-				this.LutComposer.LutCollection.Add(modalityLut);
+				this.LutComposer.ModalityLut = modalityLut;
 			}
 
-			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == 1)
+			if (luts >= Luts.Voi && LutComposer.VoiLut == null)
 			{
-				IComposableLut lut = null;
+				IVoiLut lut = null;
 
 				if (_voiLutFactory != null)
 					lut = _voiLutFactory.CreateVoiLut(this);
@@ -490,20 +511,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		void IVoiLutInstaller.InstallVoiLut(IComposableLut voiLut)
+		void IVoiLutInstaller.InstallVoiLut(IVoiLut voiLut)
 		{
 			Platform.CheckForNullReference(voiLut, "voiLut");
 
 			InitializeNecessaryLuts(Luts.Modality);
 
-			if (this.LutComposer.LutCollection.Count == 1)
-			{
-				this.LutComposer.LutCollection.Add(voiLut);
-			}
-			else
-			{
-				this.LutComposer.LutCollection[1] = voiLut;
-			}
+			this.LutComposer.VoiLut = voiLut;
 		}
 
 		void IColorMapInstaller.InstallColorMap(string name)
@@ -516,7 +530,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			(this as IColorMapInstaller).InstallColorMap(descriptor.Name);
 		}
 
-		void IColorMapInstaller.InstallColorMap(IDataLut colorMap)
+		void IColorMapInstaller.InstallColorMap(IColorMap colorMap)
 		{
 			if (_colorMap == colorMap)
 				return;

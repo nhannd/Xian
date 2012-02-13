@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
 			if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
-				yield return new ConfigurationPage<SynchronizationToolConfigurationComponent>("TitleSynchronizationTools");
+				yield return new ConfigurationPage<SynchronizationToolConfigurationComponent>("TitleTools/TitleSynchronization");
 		}
 	}
 

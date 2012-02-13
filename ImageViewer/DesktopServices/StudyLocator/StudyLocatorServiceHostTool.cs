@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 
 		protected override ServiceHost CreateServiceHost()
 		{
-			ServiceHost host = new ServiceHost(typeof(ClearCanvas.ImageViewer.StudyLocator.StudyLocator));
+			ServiceHost host = new ServiceHost(typeof(Configuration.StudyLocator));
 			foreach (ServiceEndpoint endpoint in host.Description.Endpoints)
 				endpoint.Binding.Namespace = QueryNamespace.Value;
 

@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -55,6 +56,8 @@ namespace ClearCanvas.ImageViewer
 		[CloneIgnore]
 		private IRenderer _renderer;
 		private event EventHandler _drawing;
+
+	    private ExtensionData _extensionData;
 
 		#endregion
 
@@ -300,6 +303,16 @@ namespace ClearCanvas.ImageViewer
 			get { return _renderer; }
 			protected set { _renderer = value; }
 		}
+
+	    public ExtensionData ExtensionData
+	    {
+	        get
+	        {
+	            if (_extensionData == null)
+                    _extensionData = new ExtensionData();
+	            return _extensionData;
+	        }    
+	    }
 
 		#endregion
 

@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,9 +12,10 @@
     <AssemblyName>ClearCanvas.ImageServer.Web.Common</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AjaxControlToolkit, Version=1.0.10920.32880, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
@@ -45,8 +49,12 @@
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="System.Web.Extensions.Design, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Extensions.Design, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Validators, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -57,6 +65,8 @@
     <Compile Include="Data\ApplicationLogAdaptor.cs" />
     <Compile Include="Data\AlertAdaptor.cs" />
     <Compile Include="Data\AlertController.cs" />
+    <Compile Include="Data\StudyDataAccessAdaptor.cs" />
+    <Compile Include="Data\StudyDataAccessController.cs" />
     <Compile Include="Data\StudyEditReasonAdaptor.cs" />
     <Compile Include="Data\DataSource\BaseDatasource.cs" />
     <Compile Include="Data\DuplicateSopEntryController.cs" />
@@ -134,6 +144,11 @@
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Modules\HttpContextDataManagementModule.cs" />
     <Compile Include="Modules\ApplicationModule.cs" />
+    <Compile Include="PageSettings\AboutPage.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AboutPage.settings</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\WebAppUserCredentialProvider.cs" />
     <Compile Include="Security\WebViewerUserAuthentication.cs" />
@@ -218,6 +233,10 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Web\Enterprise\ClearCanvas.Web.Enterprise.csproj">
+      <Project>{22444EF5-740E-41C2-B6DD-0029BD616338}</Project>
+      <Name>ClearCanvas.Web.Enterprise</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Web\Services\ClearCanvas.Web.Services.csproj">
       <Project>{8EAC6A5A-ADC1-49E4-B1A3-9A87812EE661}</Project>
       <Name>ClearCanvas.Web.Services</Name>
@@ -253,6 +272,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
+    </None>
+    <None Include="PageSettings\AboutPage.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AboutPage.Designer.cs</LastGenOutput>
     </None>
     <None Include="UISettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

@@ -14,6 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,6 +36,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
@@ -48,7 +52,6 @@
       <DependentUpon>ThumbnailsSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Configuration\ThumbnailsConfigurationComponent.cs" />
-    <Compile Include="ImageSetTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -57,7 +60,17 @@
     </Compile>
     <Compile Include="ThumbnailComponent.cs" />
     <Compile Include="ShowThumbnailsTool.cs" />
-    <Compile Include="Thumbnail.cs" />
+    <Compile Include="ThumbnailDescriptor.cs" />
+    <Compile Include="ImageData.cs" />
+    <Compile Include="ThumbnailFactory.cs" />
+    <Compile Include="Gallery.cs" />
+    <Compile Include="GalleryItem.cs" />
+    <Compile Include="ThumbnailGallery.cs" />
+    <Compile Include="ThumbnailGalleryItem.cs" />
+    <Compile Include="ThumbnailGalleryItemFactory.cs" />
+    <Compile Include="ThumbnailLoader.cs" />
+    <Compile Include="ThumbnailRepository.cs" />
+    <Compile Include="ThumbnailSizes.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

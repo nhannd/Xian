@@ -22,7 +22,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint))]
 	public class ProtractorAngleCalculator : IRoiAnalyzer
 	{
-		Units IRoiAnalyzer.Units
+	    private RoiAnalyzerUpdateCallback _updateCallback;
+
+	    Units IRoiAnalyzer.Units
 		{
 			get { return Units.Centimeters; }
 			set { }
@@ -68,7 +70,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return Analyze((ProtractorRoiInfo) roi, mode);
 		}
 
-		public bool SupportsRoi(Roi roi)
+	    public void SetRoiAnalyzerUpdateCallback(RoiAnalyzerUpdateCallback callback)
+	    {
+	        _updateCallback = callback;
+	    }
+
+	    public bool SupportsRoi(Roi roi)
 		{
 			return roi is ProtractorRoiInfo;
 		}

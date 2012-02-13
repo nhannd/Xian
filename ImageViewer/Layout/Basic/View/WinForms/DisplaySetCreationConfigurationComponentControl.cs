@@ -26,8 +26,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
     /// </summary>
     public partial class DisplaySetCreationConfigurationComponentControl : ApplicationComponentUserControl
     {
-        private DisplaySetCreationConfigurationComponent _component;
-		BindingSource _bindingSource;
+        private readonly DisplaySetCreationConfigurationComponent _component;
+        private readonly BindingSource _bindingSource;
 
         /// <summary>
         /// Constructor.
@@ -38,14 +38,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			_component = component;
             InitializeComponent();
 
-			_bindingSource = new BindingSource();
-			_bindingSource.DataSource = _component.Options;
+			_bindingSource = new BindingSource {DataSource = _component.Options};
 
-			_modality.DataSource = _bindingSource;
+            _modality.DataSource = _bindingSource;
 			_modality.DisplayMember = "Modality";
 
 			_createSingleImageDisplaySets.DataBindings.Add("Checked", _bindingSource, "CreateSingleImageDisplaySets", false, DataSourceUpdateMode.OnPropertyChanged);
 			_createSingleImageDisplaySets.DataBindings.Add("Enabled", _bindingSource, "CreateSingleImageDisplaySetsEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+
+            _createAllImagesDisplaySet.DataBindings.Add("Checked", _bindingSource, "CreateAllImagesDisplaySet", false, DataSourceUpdateMode.OnPropertyChanged);
+            _createAllImagesDisplaySet.DataBindings.Add("Enabled", _bindingSource, "CreateAllImagesDisplaySetEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+
+            _showOriginalSeries.DataBindings.Add("Checked", _bindingSource, "ShowOriginalSeries", false, DataSourceUpdateMode.OnPropertyChanged);
+            _showOriginalSeries.DataBindings.Add("Enabled", _bindingSource, "ShowOriginalSeriesEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 
 			_splitEchos.DataBindings.Add("Checked", _bindingSource, "SplitMultiEchoSeries", false, DataSourceUpdateMode.OnPropertyChanged);
 			_splitEchos.DataBindings.Add("Enabled", _bindingSource, "SplitMultiEchoSeriesEnabled", false, DataSourceUpdateMode.OnPropertyChanged);

@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
@@ -84,17 +85,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 
 		public static ImageProperty Create(DicomAttribute attribute, string category, string name, string description, string separator)
 		{
-			string identifier = attribute.Tag.VariableName;
-			if (String.IsNullOrEmpty(identifier))
-				identifier = attribute.Tag.HexString;
+			// always use the hex value as the identifier, so that private and unknown tags aren't all mapped to the same identifier
+			string identifier = attribute.Tag.HexString;
+
+			if (category == null)
+				category = string.Empty;
+
+			if (string.IsNullOrEmpty(name))
+				name = GetTagName(attribute.Tag);
+
+			if (string.IsNullOrEmpty(description))
+				description = GetTagDescription(attribute.Tag);
 
 			if (attribute.IsNull || attribute.IsEmpty)
-				return new ImageProperty(identifier, category, name, description, "");
+				return new ImageProperty(identifier, category, name, description, string.Empty);
 
 			if (String.IsNullOrEmpty(separator))
 				separator = ", ";
 
-			string value;
+			object value;
 			if (attribute.Tag.VR.Name == DicomVr.DAvr.Name)
 			{
 				value = StringUtilities.Combine(attribute.Values as string[], separator,
@@ -140,6 +149,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 				                                		return personName.FormattedName;
 				                                	}, true);
 			}
+			else if (attribute.Tag.VR == DicomVr.SQvr)
+			{
+				value = string.Empty;
+
+				var values = attribute.Values as DicomSequenceItem[];
+				if (values != null && values.Length > 0)
+				{
+					// handle simple use case by listing only the attributes of the first sequence item
+					// since user can always use DICOM editor for more complex use cases
+					var subproperties = new List<IImageProperty>();
+					foreach (var subattribute in values[0])
+						subproperties.Add(Create(subattribute, string.Empty, null, null, null));
+					subproperties.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.CurrentCultureIgnoreCase));
+					value = subproperties.ToArray();
+				}
+			}
 			else if (attribute.Tag.VR.IsTextVR && attribute.GetValueType() == typeof(string[]))
 			{
 				value = StringUtilities.Combine(attribute.Values as string[], separator, true);
@@ -150,6 +175,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 			}
 
 			return new ImageProperty(identifier, category, name, description, value);
+		}
+
+		private static readonly IResourceResolver _resolver = new ResourceResolver(typeof (ImageProperty), false);
+
+		private static string GetTagName(DicomTag dicomTag)
+		{
+			var lookup = string.Format(@"Name{0}", dicomTag.VariableName);
+			var resolved = _resolver.LocalizeString(lookup);
+			return lookup == resolved ? dicomTag.Name : resolved;
+		}
+
+		private static string GetTagDescription(DicomTag dicomTag)
+		{
+			var lookup = string.Format(@"Description{0}", dicomTag.VariableName);
+			var resolved = _resolver.LocalizeString(lookup);
+			return lookup == resolved ? string.Empty : resolved;
 		}
 	}
 }

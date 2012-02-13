@@ -10,26 +10,15 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Browser;
 
 namespace ClearCanvas.Web.Client.Silverlight
 {
     public static class PopupManager
     {
-        private static IPopup _activePopup;
+        public static event EventHandler PopupOpened;
+        public static event EventHandler PopupClosed;
 
-        static PopupManager()
-        {
-        }
+        private static IPopup _activePopup;
 
         internal static IPopup ActivePopup
         {
@@ -44,6 +33,16 @@ namespace ClearCanvas.Web.Client.Silverlight
                 if (old != null)
                     old.IsOpen = false;
             }
+        }
+
+        public static void FirePopupOpened()
+        {
+            if (PopupOpened != null) PopupOpened(null,EventArgs.Empty);
+        }
+
+        public static void FirePopupClosed()
+        {
+            if (PopupClosed != null) PopupClosed(null, EventArgs.Empty);
         }
 
         public static void CloseActivePopup()
@@ -61,13 +60,17 @@ namespace ClearCanvas.Web.Client.Silverlight
         private static void OnPopupOpened(object sender, EventArgs e)
         {
             ActivePopup = (IPopup)sender;
+            if (PopupOpened != null) PopupOpened(sender, e);
         }
 
         private static void OnPopupClosed(object sender, EventArgs e)
         {
             var popup = (IPopup)sender;
             if (ReferenceEquals(_activePopup, popup))
+            {
                 ActivePopup = null;
+                if (PopupClosed != null) PopupClosed(sender, e);
+            }
         }
    }
 }

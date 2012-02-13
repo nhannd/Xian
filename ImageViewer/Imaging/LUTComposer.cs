@@ -11,18 +11,44 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Allows <see cref="IComposableLut"/> objects to be composed together in a pipeline.
+	/// Combines various <see cref="IComposableLut"/> objects together in the standard grayscale image display pipeline.
 	/// </summary>
+	/// <seealso cref="IComposableLut"/>
+	/// <remarks>
+	/// <para>
+	/// The sub-functions of the standard imaging display pipeline are, in order:
+	/// <list type="table">
+	/// <listheader>
+	/// <name>Name</name>
+	/// <description>Description</description>
+	/// </listheader>
+	/// <item>
+	/// <name>Modality LUT</name>
+	/// <description>Transforms stored pixel values to manufacturer-independent values.</description>
+	/// </item>
+	/// <item>
+	/// <name>Normalization LUT</name>
+	/// <description>Performs any additional transformation prior to selecting the VOI range, as may be necessary in some PET images.</description>
+	/// </item>
+	/// <item>
+	/// <name>Values-of-Interest (VOI) LUT</name>
+	/// <description>Selects range from manufacturer-independent values for display.</description>
+	/// </item>
+	/// </list>
+	/// </para>
+	/// </remarks>
 	public class LutComposer : IComposedLut, IDisposable
 	{
 		#region Private Fields
 
 		private LutCollection _lutCollection;
+		private IComposableLut _normalizationLut;
+		private IModalityLut _modalityLut;
+		private IVoiLut _voiLut;
 		private bool _recalculate = true;
 		private ComposedLutCache.ICachedLut _cachedLut;
 		private int _minInputValue = int.MinValue;
@@ -33,13 +59,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Initializes a new instance of <see cref="LutComposer"/>.
 		/// </summary>
-		public LutComposer()
-		{
-			LutCollection.ItemAdded += OnLutAdded;
-			LutCollection.ItemChanging += OnLutChanging;
-			LutCollection.ItemChanged += OnLutChanged;
-			LutCollection.ItemRemoved += OnLutRemoved;
-		}
+		public LutComposer() {}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LutComposer"/>.
@@ -71,26 +91,89 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the assembled collection of <see cref="IComposableLut"/>s.
+		/// </summary>
+		private LutCollection LutCollection
+		{
+			get
+			{
+				if (_lutCollection == null)
+				{
+					_lutCollection = new LutCollection();
+
+					if (_modalityLut != null) _lutCollection.Add(_modalityLut);
+					if (_normalizationLut != null) _lutCollection.Add(_normalizationLut);
+					if (_voiLut != null) _lutCollection.Add(_voiLut);
+				}
+
+				return _lutCollection;
+			}
+		}
+
 		#region Public Properties
 
 		/// <summary>
-		/// A collection of <see cref="IComposableLut"/> objects.
+		/// Gets or sets the modality LUT in the grayscale image display pipeline, which transforms stored pixel values to manufacturer-independent values.
 		/// </summary>
-		public LutCollection LutCollection
+		/// <seealso cref="LutComposer"/>
+		public IModalityLut ModalityLut
 		{
-			get 
-			{ 
-				if (_lutCollection == null)
-					_lutCollection = new LutCollection();
+			get { return _modalityLut; }
+			set { SetLutField(ref _modalityLut, value); }
+		}
 
-				return _lutCollection; 
-			}
+		/// <summary>
+		/// Gets or sets the normalization LUT in the grayscale image display pipeline, which additional transformation of manufacturer-independent values prior to selecting a dynamic range for display.
+		/// </summary>
+		/// <seealso cref="LutComposer"/>
+		public IComposableLut NormalizationLut
+		{
+			get { return _normalizationLut; }
+			set { SetLutField(ref _normalizationLut, value); }
+		}
+
+		/// <summary>
+		/// Gets or sets the VOI (values of interest) LUT in the grayscale image display pipeline, which selects a range from the manufacturer-independent values for display.
+		/// </summary>
+		/// <seealso cref="LutComposer"/>
+		public IVoiLut VoiLut
+		{
+			get { return _voiLut; }
+			set { SetLutField(ref _voiLut, value); }
 		}
 
 		#endregion
 
+		/// <summary>
+		/// Sets the <see cref="IComposableLut"/> field and sets up the LutChanged event handler.
+		/// </summary>
+		private void SetLutField<T>(ref T field, T value)
+			where T : class, IComposableLut
+		{
+			if (Equals(field, value))
+				return;
+
+			if (field != null)
+				field.LutChanged -= OnLutValuesChanged;
+
+			field = value;
+
+			if (field != null)
+				field.LutChanged += OnLutValuesChanged;
+
+			OnLutChanged();
+		}
+
 		private void OnLutChanged()
 		{
+			// clear the LUT pipeline so that it will be reassembled
+			if (_lutCollection != null)
+			{
+				_lutCollection.Clear();
+				_lutCollection = null;
+			}
+
 			SyncMinMaxValues();
 			_recalculate = true;
 		}
@@ -118,29 +201,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Event Handlers
 
-		private void OnLutChanging(object sender, ListEventArgs<IComposableLut> e)
-		{
-			e.Item.LutChanged -= OnLutValuesChanged;
-		}
-
-		private void OnLutChanged(object sender, ListEventArgs<IComposableLut> e)
-		{
-			e.Item.LutChanged += OnLutValuesChanged;
-			OnLutChanged();
-		}
-
-		private void OnLutRemoved(object sender, ListEventArgs<IComposableLut> e)
-		{
-			e.Item.LutChanged -= OnLutValuesChanged;
-			OnLutChanged();
-		}
-
-		private void OnLutAdded(object sender, ListEventArgs<IComposableLut> e)
-		{
-			e.Item.LutChanged += OnLutValuesChanged;
-			OnLutChanged();
-		}
-
 		private void OnLutValuesChanged(object sender, EventArgs e)
 		{
 			OnLutChanged();
@@ -149,6 +209,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		#region Properties
+
 		/// <summary>
 		/// The output LUT of the pipeline.
 		/// </summary>
@@ -235,7 +296,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public int MinOutputValue
 		{
-			get { return LastLut.MinOutputValue; }
+			get { return (int) Math.Round(LastLut.MinOutputValue); }
 		}
 
 		/// <summary>
@@ -243,7 +304,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public int MaxOutputValue
 		{
-			get { return LastLut.MaxOutputValue; }
+			get { return (int) Math.Round(LastLut.MaxOutputValue); }
 		}
 
 		/// <summary>
@@ -285,11 +346,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (disposing)
 			{
-				LutCollection.ItemAdded -= OnLutAdded;
-				LutCollection.ItemChanging -= OnLutChanging;
-				LutCollection.ItemChanged -= OnLutChanged;
-				LutCollection.ItemRemoved -= OnLutRemoved;
-
 				DisposeCachedLut();
 
 				if (_lutCollection != null)
@@ -298,6 +354,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#endregion
+
 		#endregion
 	}
 }

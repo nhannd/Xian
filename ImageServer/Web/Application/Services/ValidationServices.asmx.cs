@@ -199,6 +199,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             try
             {
                 string xml = Microsoft.JScript.GlobalObject.unescape(serverRule);
+                
+                if (type.Equals(ServerRuleTypeEnum.DataAccess))
+                {
+                    // Validated DataAccess rules only have the condition.  Make a fake 
+                    // rule that includes a non-op action
+                    xml = String.Format("<rule>{0}<action><no-op/></action></rule>", xml);
+                }
+
                 theDoc.LoadXml(xml);
             }
             catch (Exception e)
@@ -210,7 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             }
 
             string error;
-            if (false == ClearCanvas.ImageServer.Rules.Rule.ValidateRule(type, theDoc, out error))
+            if (false == Rules.Rule.ValidateRule(type, theDoc, out error))
             {
                 result.ErrorText = error;
                 result.Success = false;

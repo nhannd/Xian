@@ -64,8 +64,13 @@ public:
 	void DicomJpegCodecTest::DicomJpegLossless14CodecTest();
 
 	[NUnit::Framework::Test]
+	void DicomJpegCodecTest::DicomJpegLossless14CodecTest_8BitsStored16BitsAllocated();
+
+	[NUnit::Framework::Test]
 	void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest();
 
+	[NUnit::Framework::Test]
+	void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest_8BitsStored16BitsAllocated();
 };
 
 }

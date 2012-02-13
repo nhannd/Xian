@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
@@ -20,6 +21,8 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.Web.Enterprise.Authentication;
+using AuthorityTokens = ClearCanvas.ImageServer.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 {
@@ -173,6 +176,38 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 StudySelectCriteria criteria = new StudySelectCriteria();
                 if (Partition !=null)
                     criteria.ServerPartitionKey.EqualTo(Partition.Key);
+
+                if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.DataAccess.AllStudies))
+                {
+                    var principal = Thread.CurrentPrincipal as CustomPrincipal;
+                    if (principal != null)
+                    {
+                        var oidList = new List<ServerEntityKey>();
+                        foreach (var oid in principal.Credentials.DataAccessAuthorityGroups)
+                            oidList.Add(new ServerEntityKey("OID", oid));
+                        var dataAccessGroupSelectCriteria = new DataAccessGroupSelectCriteria();
+                        dataAccessGroupSelectCriteria.AuthorityGroupOID.In(oidList);
+                        IList<DataAccessGroup> groups;
+                        using (IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                        {
+                            var broker = context.GetBroker<IDataAccessGroupEntityBroker>();
+                            groups = broker.Find(dataAccessGroupSelectCriteria);
+                        }
+
+                        var entityList = new List<ServerEntityKey>();
+                        foreach (DataAccessGroup group in groups)
+                        {
+                            entityList.Add(group.Key);
+                        }
+
+                        var dataAccessSelectCriteria = new StudyDataAccessSelectCriteria();
+                        dataAccessSelectCriteria.DataAccessGroupKey.In(entityList);
+
+                        criteria.StudyDataAccessRelatedEntityCondition.Exists(dataAccessSelectCriteria);
+                    }
+                }
+
+
 
                 DicomAttributeCollection data = message;
                 foreach (DicomAttribute attrib in message)

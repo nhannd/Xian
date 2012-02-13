@@ -12,7 +12,7 @@
 using System;
 using System.ServiceModel.Channels;
 using Castle.Core.Interceptor;
-using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Caching;
 using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common

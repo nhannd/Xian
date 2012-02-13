@@ -78,7 +78,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                         if (ReconcileHistory.ImageSetData.Fields == null ||
                             ReconcileHistory.ImageSetData.Fields.Length == 0)
                         {%>
-                        <%= SR.NotAvailable %>
+                        <%= Resources.SR.NotAvailable %>
                     <% }
                         else
                         { %>

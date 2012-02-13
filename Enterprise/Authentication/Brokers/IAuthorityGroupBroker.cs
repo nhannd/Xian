@@ -9,10 +9,14 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.Enterprise.Authentication.Brokers
 {
     public partial interface IAuthorityGroupBroker
     {
         int GetUserCountForGroup(AuthorityGroup group);
+
+        Guid[] FindDataGroupsByUserName(string userName);
     }
 }

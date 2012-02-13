@@ -16,10 +16,29 @@ namespace ClearCanvas.Desktop
 {
 	public enum SessionStatus
 	{
+		/// <summary>
+		/// Operating as a standalone installation, without an enterprise server.
+		/// </summary>
 		LocalOnly = 0,
+
+		/// <summary>
+		/// Not yet determined.
+		/// </summary>
 		Unknown,
+
+		/// <summary>
+		/// Online
+		/// </summary>
 		Online,
+
+		/// <summary>
+		/// Online, but session has expired, and user must re-authenticate.
+		/// </summary>
 		Expired,
+
+		/// <summary>
+		/// Offline
+		/// </summary>
 		Offline
 	}
 

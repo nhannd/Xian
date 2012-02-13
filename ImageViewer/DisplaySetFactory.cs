@@ -30,7 +30,13 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <returns>Zero or more <see cref="IDisplaySet"/>s.</returns>
 		List<IDisplaySet> CreateDisplaySets(Series series);
-	}
+
+        /// <summary>
+        /// Creates zero or more <see cref="IDisplaySet"/>s from the given <see cref="Study"/>.
+        /// </summary>
+        /// <returns>Zero or more <see cref="IDisplaySet"/>s.</returns>
+        List<IDisplaySet> CreateDisplaySets(Study study);
+    }
 
 	/// <summary>
 	/// Abstract base implementation of <see cref="IDisplaySetFactory"/>.
@@ -93,6 +99,18 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>Zero or more <see cref="IDisplaySet"/>s.</returns>
 		public abstract List<IDisplaySet> CreateDisplaySets(Series series);
 
-		#endregion
+        /// <summary>
+        /// Creates zero or more <see cref="IDisplaySet"/>s from the given <see cref="Study"/>.
+        /// </summary>
+        /// <returns>Zero or more <see cref="IDisplaySet"/>s.</returns>
+        public virtual List<IDisplaySet> CreateDisplaySets(Study study)
+        {
+            var displaySets = new List<IDisplaySet>();
+            foreach (var series in study.Series)
+               displaySets.AddRange(CreateDisplaySets(series));
+            return displaySets;
+        }
+
+	    #endregion
 	}
 }

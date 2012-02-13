@@ -15,7 +15,7 @@ using System.Web.Security;
 using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
+using ClearCanvas.Web.Enterprise.Authentication;
 using Resources;
 using ClearCanvas.ImageServer.Web.Common.Security;
 

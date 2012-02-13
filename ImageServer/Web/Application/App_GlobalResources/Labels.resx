@@ -607,8 +607,11 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="ArchiveQueue_EnterSearchCriteria" xml:space="preserve">
-    <value>Please enter search criteria to find archive items.</value>
+  <data name="AddAuthorityGroupsDialog_AuthorityGroupsLabel" xml:space="preserve">
+    <value>To the following data access authority groups (The below does not reflect the current state of data access.  See Study Details for the study of interest to determine current access.):</value>
+  </data>
+  <data name="AddAuthorityGroupsDialog_StudyListingLabel" xml:space="preserve">
+    <value>The following study/studies will be assigned:</value>
   </data>
   <data name="ArchiveQueue_NoResults" xml:space="preserve">
     <value>No items found matching the provided criteria.</value>
@@ -618,5 +621,8 @@
   </data>
   <data name="NotSpecified" xml:space="preserve">
     <value>Not Specified</value>
+  </data>
+  <data name="ArchiveQueue_EnterSearchCriteria" xml:space="preserve">
+    <value>Please enter search criteria</value>
   </data>
 </root>

@@ -54,17 +54,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Controls.Primitives;
 
 namespace ClearCanvas.Web.Client.Silverlight
 {
@@ -74,7 +65,7 @@ namespace ClearCanvas.Web.Client.Silverlight
         public const string DependentContainerTemplateName = "DependentContainerElement";
 
         public static readonly DependencyProperty MenuPositioningStrategyProperty = DependencyProperty.Register("MenuPositioningStrategy",
-            typeof(IMenuPositioningStrategy), typeof(ContextMenu), new PropertyMetadata(new DefaultMenuPositioningStrategy(), new PropertyChangedCallback(OnMenuPositioningStrategyChanged)));
+            typeof(IMenuPositioningStrategy), typeof(ContextMenu), new PropertyMetadata(new DefaultMenuPositioningStrategy(), OnMenuPositioningStrategyChanged));
         
         private DependencyObject _owner;
         event EventHandler _opened;
@@ -82,7 +73,7 @@ namespace ClearCanvas.Web.Client.Silverlight
 
         public ContextMenu()
         {
-            this.DefaultStyleKey = typeof(ContextMenu);
+            DefaultStyleKey = typeof(ContextMenu);
             AutoClose = MenuManager.AutoCloseMenus;
 
             PopupManager.RegisterSingletonPopup(this);
