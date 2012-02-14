@@ -214,7 +214,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 PreDeleteConfirmDialog.Data = WorkQueueItemKey;
                 PreDeleteConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
-                PreDeleteConfirmDialog.Message = SR.WorkQueueDeleteConfirm;
+                PreDeleteConfirmDialog.Message = WorkQueue.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ExternalEdit) 
+                    ? SR.WorkQueueDeleteConfirmExternalEdit 
+                    : SR.WorkQueueDeleteConfirm;
             }
             else
             {

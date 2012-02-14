@@ -1955,6 +1955,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Removing an External Edit WorkQueue entry may cause the demographics for the study to be incorrect.  Are you sure you want to delete this item from the queue?.
+        /// </summary>
+        internal static string WorkQueueDeleteConfirmExternalEdit {
+            get {
+                return ResourceManager.GetString("WorkQueueDeleteConfirmExternalEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to delete this work queue item. Please contact server administrator..
         /// </summary>
         internal static string WorkQueueDeleteFailed {
