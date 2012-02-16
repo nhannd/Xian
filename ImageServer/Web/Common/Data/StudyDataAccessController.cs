@@ -22,68 +22,10 @@ using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class StudyDataAccessSummary
-    {
-        public string Name { get; set; }
-
-        public string Description { get; set; }
-
-        public string AuthorityGroupOID { set; get; }
-
-        public StudyDataAccess StudyDataAccess { get; set; }
-    }
-
     public class StudyDataAccessController
     {
-        //private readonly StudyDataAccessAdaptor _adaptor = new StudyDataAccessAdaptor();
 
-
-        private static Dictionary<ServerEntityKey,AuthorityGroupSummary> LoadAuthorityGroups(out List<AuthorityGroupSummary> otherSummaries )
-        {
-            Dictionary<ServerEntityKey, AuthorityGroupSummary> dic = new Dictionary<ServerEntityKey, AuthorityGroupSummary>();
-            var summaries = new List<AuthorityGroupSummary>();
-
-            using (var service = new AuthorityRead())
-            {
-                IList<AuthorityGroupSummary> tokens = service.ListDataAccessAuthorityGroups();
-                CollectionUtils.ForEach(tokens, delegate(AuthorityGroupSummary group)
-                                                    {
-                                                        DataAccessGroupSelectCriteria select = new DataAccessGroupSelectCriteria();
-                                                        select.AuthorityGroupOID.EqualTo(new ServerEntityKey("AuthorityGroupOID", new Guid(group.AuthorityGroupRef.ToString(false,false))));
-                                                        IDataAccessGroupEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IDataAccessGroupEntityBroker>();
-                                                        DataAccessGroup accessGroup = broker.FindOne(select);
-                                                        if (accessGroup != null)
-                                                        {
-                                                            dic.Add(accessGroup.Key, group);    
-                                                        }
-                                                        else
-                                                        {
-                                                            summaries.Add(group);
-                                                        }
-                                                    });
-            }
-
-            otherSummaries = summaries;
-
-            return dic;
-        }
-
-        public DataAccessGroup FindDataAccessGroup(string oid)
-        {
-            DataAccessGroupSelectCriteria select = new DataAccessGroupSelectCriteria();
-            select.AuthorityGroupOID.EqualTo(new ServerEntityKey("AuthorityGroupOID", new Guid(oid)));
-            IDataAccessGroupEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IDataAccessGroupEntityBroker>();
-            return broker.FindOne(select);
-        }
-
-        public StudyDataAccess FindStudyDataAccess(ServerEntityKey studyStorageKey, ServerEntityKey dataAccessKey)
-        {
-            StudyDataAccessSelectCriteria select = new StudyDataAccessSelectCriteria();
-            select.StudyStorageKey.EqualTo(studyStorageKey);
-            select.DataAccessGroupKey.EqualTo(dataAccessKey);
-            IStudyDataAccessEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDataAccessEntityBroker>();
-            return broker.FindOne(select);
-        }
+        #region Public Methods
 
         public DataAccessGroup AddDataAccessIfNotExists(string oid)
         {
@@ -107,52 +49,56 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return theGroup;
         }
 
-        public IList<StudyDataAccessSummary> LoadStudyDataAccess(ServerEntityKey studyStorageKey)
+        /// <summary>
+        /// Returns all data-access groups that have access to the study not through direct data access assignment. 
+        /// <remarks>Use <seealso cref="ListAuthorityGroupsForStudyViaToken"/> to get groups which can access the study through other means</remarks>
+        /// </summary>
+        /// <param name="studyStorageKey"></param>
+        /// <returns></returns>
+        public IList<AuthorityGroupStudyAccessInfo> ListDataAccessGroupsForStudy(ServerEntityKey studyStorageKey)
         {
-            List<AuthorityGroupSummary> nonAddedAuthorityGroups;
-            Dictionary<ServerEntityKey, AuthorityGroupSummary> dictionary = LoadAuthorityGroups(out nonAddedAuthorityGroups);
-            return LoadStudyDataAccess(dictionary, studyStorageKey);
+            List<AuthorityGroupDetail> nonAddedAuthorityGroups;
+            Dictionary<ServerEntityKey, AuthorityGroupDetail> dictionary = LoadAuthorityGroups(out nonAddedAuthorityGroups);
+            return ListDataAccessGroupsForStudy(dictionary, studyStorageKey);
         }
 
-        public IList<StudyDataAccessSummary> LoadStudyDataAccess(Dictionary<ServerEntityKey, AuthorityGroupSummary> dictionary, ServerEntityKey studyStorageKey)
+        /// <summary>
+        /// Returns all authority groups (data-access or not) 
+        /// that have access to the study not through direct data access assignment but through other means, such as administrative tokens
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <returns></returns>
+        public IList<AuthorityGroupStudyAccessInfo> ListAuthorityGroupsForStudyViaToken(StudyStorage studyStorage)
         {
-            List<StudyDataAccessSummary> summaryList = new List<StudyDataAccessSummary>();
+            // list all Authority Groups (data or non data-access) with permission to access all studies on the same partition
+            var adapter = new ServerPartitionDataAdapter();
+            IList<AuthorityGroupDetail> groupWithAccessToAllStudies;
+            adapter.GetAuthorityGroupsForPartition(studyStorage.ServerPartitionKey, false, out groupWithAccessToAllStudies);
 
-            StudyDataAccessSelectCriteria select = new StudyDataAccessSelectCriteria();
-            select.StudyStorageKey.EqualTo(studyStorageKey);
-            IStudyDataAccessEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDataAccessEntityBroker>();             
+            // Convert into AuthorityGroupStudyAccessInfo objects for rendering
+            var result = new List<AuthorityGroupStudyAccessInfo>();
+            foreach (var groupDetail in groupWithAccessToAllStudies)
+            {
+                result.Add(new AuthorityGroupStudyAccessInfo(groupDetail));
+            }
 
-            broker.Find(select, delegate(StudyDataAccess dataAccess)
-                                              {
-                                                  AuthorityGroupSummary groupSummary;
-                                                  if (dictionary.TryGetValue(dataAccess.DataAccessGroupKey, out groupSummary))
-                                                  {
-                                                      summaryList.Add(new StudyDataAccessSummary
-                                                                          {
-                                                                              Description = groupSummary.Description,
-                                                                              Name = groupSummary.Name,
-                                                                              AuthorityGroupOID = groupSummary.AuthorityGroupRef.ToString(false,false), 
-                                                                              StudyDataAccess = dataAccess
-                                                                          });
-                                                  }
-                                              });
 
-            return summaryList;              
+            return result;
         }
 
         public bool UpdateStudyAuthorityGroups(string studyInstanceUid, string accessionNumber, ServerEntityKey studyStorageKey, IList<string> assignedGroupOids)
         {
-            List<AuthorityGroupSummary> nonAddedAuthorityGroups;
-            Dictionary<ServerEntityKey,AuthorityGroupSummary> dic = LoadAuthorityGroups(out nonAddedAuthorityGroups);
-            IList<StudyDataAccessSummary> assignedList = LoadStudyDataAccess(dic, studyStorageKey);
+            List<AuthorityGroupDetail> nonAddedAuthorityGroups;
+            Dictionary<ServerEntityKey, AuthorityGroupDetail> dic = LoadAuthorityGroups(out nonAddedAuthorityGroups);
+            IList<AuthorityGroupStudyAccessInfo> assignedList = ListDataAccessGroupsForStudy(dic, studyStorageKey);
 
             List<string> groupList = new List<string>();
-            foreach (StudyDataAccessSummary summary in assignedList)
+            foreach (AuthorityGroupStudyAccessInfo group in assignedList)
             {
                 bool found = false;
                 foreach (var oid in assignedGroupOids)
                 {
-                    if (summary.AuthorityGroupOID.Equals(oid))
+                    if (group.AuthorityOID.Equals(oid))
                     {
                         found = true;
                         break;
@@ -163,11 +109,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         IStudyDataAccessEntityBroker broker = update.GetBroker<IStudyDataAccessEntityBroker>();
-                        broker.Delete(summary.StudyDataAccess.Key);
+                        broker.Delete(group.StudyDataAccess.Key);
                         update.Commit();
                     }
 
-                    groupList.Add(summary.Description);
+                    groupList.Add(group.Description);
                 }
             }
 
@@ -180,9 +126,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             foreach (var oid in assignedGroupOids)
             {
                 bool found = false;
-                foreach (StudyDataAccessSummary summary in assignedList)
+                foreach (AuthorityGroupStudyAccessInfo group in assignedList)
                 {
-                    if (summary.AuthorityGroupOID.Equals(oid))
+                    if (group.AuthorityOID.Equals(oid))
                     {
                         found = true;
                         break;
@@ -205,7 +151,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         updateContext.Commit();
                     }
 
-                    foreach (AuthorityGroupSummary group in nonAddedAuthorityGroups)
+                    foreach (AuthorityGroupDetail group in nonAddedAuthorityGroups)
                     {
                         if (group.AuthorityGroupRef.ToString(false,false).Equals(accessGroup.AuthorityGroupOID.Key.ToString()))
                             groupList.Add(group.Name);
@@ -221,17 +167,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool AddStudyAuthorityGroups(string studyInstanceUid, string accessionNumber, ServerEntityKey studyStorageKey, IList<string> assignedGroupOids)
         {
-            List<AuthorityGroupSummary> nonAddedSummaries;
-            Dictionary<ServerEntityKey, AuthorityGroupSummary> dic = LoadAuthorityGroups(out nonAddedSummaries);
-            IList<StudyDataAccessSummary> assignedList = LoadStudyDataAccess(dic, studyStorageKey);
+            List<AuthorityGroupDetail> nonAddedSummaries;
+            Dictionary<ServerEntityKey, AuthorityGroupDetail> dic = LoadAuthorityGroups(out nonAddedSummaries);
+            IList<AuthorityGroupStudyAccessInfo> assignedList = ListDataAccessGroupsForStudy(dic, studyStorageKey);
 
             List<string> assignedGroups = new List<string>();
             foreach (var oid in assignedGroupOids)
             {
                 bool found = false;
-                foreach (StudyDataAccessSummary summary in assignedList)
+                foreach (AuthorityGroupStudyAccessInfo group in assignedList)
                 {
-                    if (summary.AuthorityGroupOID.Equals(oid))
+                    if (group.AuthorityOID.Equals(oid))
                     {
                         found = true;
                         break;
@@ -254,16 +200,80 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         updateContext.Commit();
                     }
 
-                      AuthorityGroupSummary groupSummary;
-                      if (dic.TryGetValue(accessGroup.Key, out groupSummary))
-                      {
-                          assignedGroups.Add(groupSummary.Name);
-                      }
+                    AuthorityGroupDetail detail;
+                    if (dic.TryGetValue(accessGroup.Key, out detail))
+                    {
+                      assignedGroups.Add(detail.Name);
+                    }
                 }
             }
             if (assignedGroups.Count > 0)
                 ServerAuditHelper.AddAuthorityGroupAccess(studyInstanceUid, accessionNumber, assignedGroups);
             return true;
         }
+
+        #endregion
+
+        #region Private Methods
+
+        private static Dictionary<ServerEntityKey, AuthorityGroupDetail> LoadAuthorityGroups(out List<AuthorityGroupDetail> otherList)
+        {
+            Dictionary<ServerEntityKey, AuthorityGroupDetail> dic = new Dictionary<ServerEntityKey, AuthorityGroupDetail>();
+            var list = new List<AuthorityGroupDetail>();
+
+            using (var service = new AuthorityRead())
+            {
+                IList<AuthorityGroupDetail> tokens = service.ListDataAccessAuthorityGroupDetails();
+                CollectionUtils.ForEach(tokens, delegate(AuthorityGroupDetail group)
+                {
+                    DataAccessGroupSelectCriteria select = new DataAccessGroupSelectCriteria();
+                    select.AuthorityGroupOID.EqualTo(new ServerEntityKey("AuthorityGroupOID", new Guid(group.AuthorityGroupRef.ToString(false, false))));
+                    IDataAccessGroupEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IDataAccessGroupEntityBroker>();
+                    DataAccessGroup accessGroup = broker.FindOne(select);
+                    if (accessGroup != null)
+                    {
+                        dic.Add(accessGroup.Key, group);
+                    }
+                    else
+                    {
+                        list.Add(group);
+                    }
+                });
+            }
+
+            otherList = list;
+
+            return dic;
+        }
+       
+        private IList<AuthorityGroupStudyAccessInfo> ListDataAccessGroupsForStudy(Dictionary<ServerEntityKey, AuthorityGroupDetail> dictionary, ServerEntityKey studyStorageKey)
+        {
+            List<AuthorityGroupStudyAccessInfo> list = new List<AuthorityGroupStudyAccessInfo>();
+
+            StudyDataAccessSelectCriteria select = new StudyDataAccessSelectCriteria();
+            select.StudyStorageKey.EqualTo(studyStorageKey);
+            IStudyDataAccessEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDataAccessEntityBroker>();
+
+            broker.Find(select, delegate(StudyDataAccess dataAccess)
+            {
+                AuthorityGroupDetail detail;
+                if (dictionary.TryGetValue(dataAccess.DataAccessGroupKey, out detail))
+                {
+                    list.Add(new AuthorityGroupStudyAccessInfo(detail) { StudyDataAccess = dataAccess });
+                }
+            });
+
+            return list;
+        }
+
+        private DataAccessGroup FindDataAccessGroup(string oid)
+        {
+            DataAccessGroupSelectCriteria select = new DataAccessGroupSelectCriteria();
+            select.AuthorityGroupOID.EqualTo(new ServerEntityKey("AuthorityGroupOID", new Guid(oid)));
+            IDataAccessGroupEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IDataAccessGroupEntityBroker>();
+            return broker.FindOne(select);
+        }
+
+        #endregion
     }
 }

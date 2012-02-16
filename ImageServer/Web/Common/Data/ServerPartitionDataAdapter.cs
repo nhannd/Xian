@@ -256,16 +256,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
            }
        }
 
-        public IList<AuthorityGroupDetail> GetAuthorityGroupsForPartition(ServerEntityKey partitionKey, out IList<AuthorityGroupDetail> allStudiesGroup )
+        /// <summary>
+        /// Gets a list of authority groups that can access a given partition
+        /// </summary>
+        /// <param name="partitionKey">The partition</param>
+        /// <param name="dataAccessGrupsOnly">True to find data access groups only; False to find all authority groups</param>
+        /// <param name="allStudiesGroup">Returns a list of groups that have access to all studies</param>
+        /// <returns></returns>
+        public IList<AuthorityGroupDetail> GetAuthorityGroupsForPartition(ServerEntityKey partitionKey, bool dataAccessGrupsOnly, out IList<AuthorityGroupDetail> allStudiesGroup )
         {
             using (var service = new AuthorityRead())
             {
-                IList<AuthorityGroupDetail> tokens = service.ListDataAccessAuthorityGroupDetails();
+                IList<AuthorityGroupDetail> groups = dataAccessGrupsOnly
+                                                         ? service.ListDataAccessAuthorityGroupDetails()
+                                                         : service.ListAllAuthorityGroupDetails();
+
                 IList<AuthorityGroupDetail> resultGroups = new List<AuthorityGroupDetail>();
                 var internalAllStudiesGroup = new List<AuthorityGroupDetail>();
 
                 CollectionUtils.ForEach(
-                    tokens,
+                    groups,
                     delegate(AuthorityGroupDetail group)
                     {
                         bool allPartitions = false;
