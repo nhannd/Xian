@@ -62,22 +62,14 @@ function @@CLIENTID@@_ClientSideEvaluator()
             
             if (result.OK == false)
             {
-                if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
-                {
-                    if ('@@COMPARISON_OP@@' == '>=')
-                        result.Message = '@@INPUT_NAME@@ must be between @@MIN_VALUE@@ and @@MAX_VALUE@@ and greater than @@COMPARE_TO_INPUT_NAME@@';
-                    else
-                        result.Message = '@@INPUT_NAME@@ must be between @@MIN_VALUE@@ and @@MAX_VALUE@@ and less than @@COMPARE_TO_INPUT_NAME@@';
-                }
-                else
-                    result.Message = '@@ERROR_MESSAGE@@';
+                result.Message = '@@ERROR_MESSAGE@@';
                 
             }
         }
         else
         {
             result.OK = false;
-            result.Message = '@@INPUT_NAME@@ is not a valid number';
+            result.Message = '@@ERROR_MESSAGE@@';
         }
     }   
     else
