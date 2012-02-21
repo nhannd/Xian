@@ -18,6 +18,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.Web.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions
@@ -155,87 +156,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                         yield return item.Value;
                 }
 
-            }
-        }
-    }
-
-    class DataAccessGroupInfoCollection:List<DataAccessGroupInfo>
-    {
-        public DataAccessGroupInfoCollection(IEnumerable<DataAccessGroupInfo> list):base(list)
-        { }
-
-        public bool ContainsGroupWithAllPartitionAccess
-        {
-            get { return Exists(item => item.CanAccessAllPartitions); }
-        }
-
-        public bool ContainsGroupWithAllStudiesAccess
-        {
-            get { return Exists(item => item.CanAccessAllStudies); }
-        }
-    }
-
-    class DataAccessGroupInfo
-    {
-        public string AuthorityGroupRef { get; private set; }
-        public string Name { get; private set; }
-        public string Description { get; set; }
-        public bool HasAccessToCurrentPartition { get; set; }
-        public bool CanAccessAllPartitions { get; set; }
-        public bool CanAccessAllStudies{ get; set; }
-
-        public DataAccessGroupInfo(string authorityGroupRef, string name)
-        {
-            AuthorityGroupRef = authorityGroupRef;
-            Name = name;
-        }
-    }
-
-    static class DataAccessGroupListItemConverter
-    {
-        public static ListItem Convert(DataAccessGroupInfo info)
-        {
-            string displayContent = GetRenderedHtml(info);
-
-            var item = new ListItem(displayContent, info.AuthorityGroupRef);
-            item.Attributes["title"] = info.Description;
-
-            item.Selected = info.HasAccessToCurrentPartition;
-            item.Enabled = !info.CanAccessAllPartitions;
-
-            return item;
-        }
-
-        private static string GetRenderedHtml(DataAccessGroupInfo info)
-        {
-            StringBuilder html = new StringBuilder();
-            html.Append(info.Name);
-            
-            if (info.CanAccessAllStudies)
-                html.AppendFormat("<span class='GlocalSeeNotesMarker'/> * </span>");
-
-            return html.ToString();
-
-        }
-    }
-
-    class DatagroupComparer : IComparer<DataAccessGroupInfo>
-    {
-        public int Compare(DataAccessGroupInfo x, DataAccessGroupInfo y)
-        {
-            if (x.CanAccessAllPartitions)
-            {
-                if (!y.CanAccessAllPartitions)
-                    return -1; //x first
-
-                return x.Name.CompareTo(y.Name); // alphabetically
-            }
-            else
-            {
-                if (y.CanAccessAllPartitions)
-                    return 1; // y first
-
-                return x.Name.CompareTo(y.Name); // alphabetically
             }
         }
     }

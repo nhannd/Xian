@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     var study = CollectionUtils.FirstElement(AuthorityGroupStudies);
                     var adapter = new ServerPartitionDataAdapter();
                     IList<AuthorityGroupDetail> accessAllStudiesList;
-                    IList<AuthorityGroupDetail> groups = adapter.GetAuthorityGroupsForPartition(study.ThePartition.Key, out accessAllStudiesList);
+                    IList<AuthorityGroupDetail> groups = adapter.GetAuthorityGroupsForPartition(study.ThePartition.Key, true, out accessAllStudiesList);
 
 
                     IList<ListItem> items = CollectionUtils.Map(

@@ -453,7 +453,7 @@
     <value>Authority Group Description</value>
   </data>
   <data name="StudyDetails_GroupName" xml:space="preserve">
-    <value>Authority Groups with Access to This Study</value>
+    <value>Group Name</value>
   </data>
   <data name="ServerRuleType" xml:space="preserve">
     <value>Type</value>

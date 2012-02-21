@@ -385,7 +385,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
                 var adapter = new ServerPartitionDataAdapter();
                 IList<AuthorityGroupDetail> accessAllStudiesList;
-                IList<AuthorityGroupDetail> groups = adapter.GetAuthorityGroupsForPartition(_partition.Key, out accessAllStudiesList);
+                IList<AuthorityGroupDetail> groups = adapter.GetAuthorityGroupsForPartition(_partition.Key, true, out accessAllStudiesList);
 
                 IList<ListItem> items = CollectionUtils.Map(
                     groups,

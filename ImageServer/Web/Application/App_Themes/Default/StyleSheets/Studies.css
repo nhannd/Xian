@@ -345,3 +345,19 @@ div.DeleteStudiesTableContainer {
 {
     width: 85px;
 }
+
+/*************************************************************************************************
+	Move panels
+*************************************************************************************************/
+.MovePanelTd
+{
+	background-color: #3d98d1;
+}
+.MovePanel 
+{
+	border: solid 1px #3d98d1;
+}
+.SeriesDetailsContent 
+{
+	background: url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat;
+}

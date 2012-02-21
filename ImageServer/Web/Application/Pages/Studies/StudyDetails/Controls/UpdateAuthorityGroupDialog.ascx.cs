@@ -59,11 +59,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 AuthorityGroupCheckBoxList.Items.Clear();
 
                 var controller = new StudyDataAccessController();
-                var list = controller.LoadStudyDataAccess(Study.TheStudyStorage.Key);
+                var list = controller.ListDataAccessGroupsForStudy(Study.TheStudyStorage.Key);
 
                 var adapter = new ServerPartitionDataAdapter();
                 IList<AuthorityGroupDetail> accessAllStudiesList;
-                var groups = adapter.GetAuthorityGroupsForPartition(Study.ThePartition.Key, out accessAllStudiesList);
+                var groups = adapter.GetAuthorityGroupsForPartition(Study.ThePartition.Key, true, out accessAllStudiesList);
 
 
                 IList<ListItem> items = CollectionUtils.Map(
@@ -87,9 +87,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                               @group.AuthorityGroupRef.ToString(false, false));
                     item.Attributes["title"] = @group.Description;
 
-                    foreach (StudyDataAccessSummary s in list)
+                    foreach (AuthorityGroupStudyAccessInfo s in list)
                     {
-                        if (s.AuthorityGroupOID.Equals(group.AuthorityGroupRef.ToString(false, false)))
+                        if (s.AuthorityOID.Equals(group.AuthorityGroupRef.ToString(false, false)))
                             item.Selected = true;
                     }
 

@@ -10,11 +10,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
@@ -33,67 +32,41 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// </summary>
         public StudySummary Study { get; set; }
 
-        /// <summary>
-        /// Gets or sets the list of Data Access Groups to be displayed
-        /// </summary>
-        protected IList<StudyDataAccessSummary> DataAccessGroups { get; set; }
-
-        public IList<StudyDataAccessSummary> SelectedItems
-        {
-            get
-            {
-                if (!AccessListControl.IsDataBound) DataBind();
-
-                if (DataAccessGroups == null || DataAccessGroups.Count == 0)
-                    return null;
-
-                int[] rows = AccessListControl.SelectedIndices;
-                if (rows == null || rows.Length == 0)
-                    return null;
-
-                IList<StudyDataAccessSummary> dataAccessSummaries = new List<StudyDataAccessSummary>();
-                for (int i = 0; i < rows.Length; i++)
-                {
-                    if (rows[i] < DataAccessGroups.Count)
-                    {
-                        dataAccessSummaries.Add(DataAccessGroups[rows[i]]);
-                    }
-                }
-
-                return dataAccessSummaries;
-            }
-        }     
-
-        public Web.Common.WebControls.UI.GridView AccessListControl
-        {
-            get { return GridView1; }
-        }
+        public ServerPartition Partition { get; set; }
 
         #endregion Public properties
 
-        #region Protected methods
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
+        #region Overridden Public Methods
 
         public override void DataBind()
         {
             if (Study != null)
             {
-                StudyDataAccessController controller = new StudyDataAccessController();
+                if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.EditDataAccess))
+                {
+                    StudyDataAccessController controller = new StudyDataAccessController();
 
-                DataAccessGroups = Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.EditDataAccess) 
-                    ? controller.LoadStudyDataAccess(Study.TheStudyStorage.Key) 
-                    : new List<StudyDataAccessSummary>();
+                    var dataAccessGroupList = CollectionUtils.Sort(controller.ListDataAccessGroupsForStudy(Study.TheStudyStorage.Key), Compare);
+                    UpdatableDataAccessGroupsGridView.DataSource = dataAccessGroupList;
 
-                GridView1.DataSource = DataAccessGroups;
+
+                    var tokenAccessGroupList = CollectionUtils.Sort(controller.ListAuthorityGroupsForStudyViaToken(Study.TheStudyStorage), Compare);
+                    OtherGroupsWithAccessGridView.DataSource = tokenAccessGroupList;
+                    OtherGroupsListing.Visible = tokenAccessGroupList.Count > 0;
+
+                    LinkToOtherGroupListing.Visible = dataAccessGroupList.Count > 10;
+
+                }
             }
 
             base.DataBind();
         }
+        
+        #endregion
 
+        #region Protected methods
+
+        
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
         {
             DataBind();
@@ -101,55 +74,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            GridView1.PageIndex = e.NewPageIndex;
+            UpdatableDataAccessGroupsGridView.PageIndex = e.NewPageIndex;
             DataBind();
-        }
-
-        protected override void OnInit(EventArgs e)
-        {
-            //This sets the GridView Page Size to the number of series. Needs to be done in the OnInit method,
-            //since the page size needs to be set here, and the Study and Partition aren't set until the databind
-            //happens in StudyDetailsTabs.
-            
-            var studyInstanceUID = Request.QueryString[ImageServerConstants.QueryStrings.StudyInstanceUID];
-            var serverAE = Request.QueryString[ImageServerConstants.QueryStrings.ServerAE];
-
-            if (!String.IsNullOrEmpty(studyInstanceUID) && !String.IsNullOrEmpty(serverAE)
-              && Thread.CurrentPrincipal.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.EditDataAccess))
-            {
-                var adaptor = new ServerPartitionDataAdapter();
-                var partitionCriteria = new ServerPartitionSelectCriteria();
-                partitionCriteria.AeTitle.EqualTo(serverAE);
-                IList<ServerPartition> partitions = adaptor.Get(partitionCriteria);
-                if (partitions != null && partitions.Count > 0)
-                {
-                    if (partitions.Count == 1)
-                    {
-                        var partition = partitions[0];
-
-                        var studyAdaptor = new StudyAdaptor();
-                        var studyCriteria = new StudySelectCriteria();
-                        studyCriteria.StudyInstanceUid.EqualTo(studyInstanceUID);
-                        studyCriteria.ServerPartitionKey.EqualTo(partition.GetKey());
-                        var study = studyAdaptor.GetFirst(studyCriteria);
-
-                        if (study != null)
-                        {
-                            StudyDataAccessController controller = new StudyDataAccessController();
-                            DataAccessGroups = controller.LoadStudyDataAccess(study.Key);
-                            if (DataAccessGroups.Count > 0)
-                                GridView1.PageSize = DataAccessGroups.Count;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                GridView1.PageSize = 150;   //Set it to a large number to ensure that all series are displayed if more than 25.
-            }         
         }
 
         #endregion Protected methods
 
+        #region Helper Methods
+
+        private static int Compare(AuthorityGroupStudyAccessInfo x, AuthorityGroupStudyAccessInfo y)
+        {
+            if (x.CanAccessToAllStudies && !y.CanAccessToAllStudies)
+                return -1; // x first
+
+            if (!x.CanAccessToAllStudies && y.CanAccessToAllStudies)
+                return 1; // y first
+
+            return x.Name.CompareTo(y.Name); // alphabetically
+        }
+
+        #endregion
+
     }
+
 }

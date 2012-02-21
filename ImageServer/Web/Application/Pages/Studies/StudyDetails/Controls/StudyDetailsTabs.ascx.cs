@@ -250,6 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 HistoryPanel.TheStudySummary = Study;
                 StudyIntegrityQueueGridView.Study = Study;
                 DataAccessPanel.Study = Study;
+                DataAccessPanel.Partition = Partition;
             }
 
             base.DataBind();

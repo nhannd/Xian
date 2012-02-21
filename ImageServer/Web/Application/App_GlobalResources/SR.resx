@@ -807,4 +807,13 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="WorkQueueDeleteConfirmExternalEdit" xml:space="preserve">
     <value>Removing an External Edit WorkQueue entry may cause the demographics for the study to be incorrect.  Are you sure you want to delete this item from the queue?</value>
   </data>
+  <data name="StudyDetails_UpdatableDataAccessGroupListingSectionTitle" xml:space="preserve">
+    <value>The following Data Access authority group(s) currently have access to this study:</value>
+  </data>
+  <data name="StudyDetails_NonUpdatableGroupListingSectionTitle" xml:space="preserve">
+    <value>The following authority group(s) also have access to this study due to administrative tokens:</value>
+  </data>
+  <data name="StudyDetails_JumpToNonUpdatableGroupListingSectionLink" xml:space="preserve">
+    <value>Jump to other authority groups</value>
+  </data>
 </root>

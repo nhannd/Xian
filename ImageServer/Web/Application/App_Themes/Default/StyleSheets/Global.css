@@ -285,6 +285,20 @@ Global.css - Defines the global styles for the entire web application relating
     border-top: solid 1px white;
 }
 
+.ToolbarLabelPanel
+{
+    background: #dddddd url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
+    height: 28px;
+    border-top: solid 1px white;
+    width: 100%; 
+    color: #205F87; 
+    font-family: Sans-serif; 
+    font-weight: bold; 
+    font-size: 18px; 
+    padding-left: 5px;
+    border-bottom: solid 1px #3d98d1;
+}
+
 .ToolbarButtons
 {
     padding-top: 3px;
