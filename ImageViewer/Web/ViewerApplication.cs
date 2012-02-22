@@ -305,6 +305,8 @@ namespace ClearCanvas.ImageViewer.Web
 					Platform.StartApp();
 			}
 
+            
+
 
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Debug, "Finding studies...");
