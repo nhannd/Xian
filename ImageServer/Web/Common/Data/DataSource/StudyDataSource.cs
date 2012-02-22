@@ -72,9 +72,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get
 			{
 				if (!QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
-                    return String.Format("{0}, {1}", StudyStatusEnum.Description, QueueStudyStateEnum.Description);
+                    return String.Format("{0}, {1}", 
+                        ServerEnumDescription.GetLocalizedDescription(StudyStatusEnum), 
+                        ServerEnumDescription.GetLocalizedDescription(QueueStudyStateEnum));
 
-				return StudyStatusEnum.Description;
+				return ServerEnumDescription.GetLocalizedDescription(StudyStatusEnum);
 			}
 		}
 
@@ -156,17 +158,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			if (IsLocked)
 			{
-				reason = "Study is being locked";
+				reason = SR.ActionNotAllowed_StudyIsLocked;
 				return false;
 			}
 			if (IsReconcileRequired)
 			{
-				reason = "There are images to be reconciled for this study";
+			    reason = SR.ActionNotAllowed_NeedReconcile;
 				return false;
 			}
 			if (IsNearline)
 			{
-				reason = "Study is nearline. It must be restored before it can be deleted.";
+				reason = SR.ActionNotAllowed_StudyIsNearline;
 				return false;
 			}
 
@@ -178,24 +180,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         {
             if (IsLocked)
             {
-                reason = "Study is being locked";
+                reason = SR.ActionNotAllowed_StudyIsLocked;
                 return false;
             }
             if (IsReconcileRequired)
             {
-                reason = "There are images to be reconciled for this study";
+                reason = SR.ActionNotAllowed_NeedReconcile;
                 return false;
             }
             if (IsNearline)
             {
-                reason = "Study is nearline. It must be restored before it can be deleted.";
+                reason = SR.ActionNotAllowed_StudyIsNearline;
                 return false;
             }
 
             if (StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy)
             && IsArchivedLossless)
             {
-                reason = "Study was archived as lossless. It must be restored before a series can be deleted.";
+                reason = SR.ActionNotAllowed_StudyIsLossyOnline;
                 return false;
             }
             reason = String.Empty;
@@ -206,38 +208,38 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			if (IsLocked)
 			{
-				reason = "Study has been locked by another process.";
+                reason = SR.ActionNotAllowed_StudyIsLocked;
 				return false;
 			}
 
 			if (IsProcessing)
 			{
-				reason = "Study is being processed.";
+				reason = SR.ActionNotAllowed_StudyIsBeingProcessing;
 				return false;
 			}
 
 			if (IsNearline)
 			{
-				reason = "Study is nearline. It must be restored before it can be edited.";
+				reason = SR.ActionNotAllowed_StudyIsNearline;
 				return false;
 			}
 
 			if (HasPendingWorkQueueItems)
 			{
-				reason = "There are pending WorkQueue entries for this study.";
+				reason = SR.ActionNotAllowed_StudyHasPendingWorkQueue;
 				return false;
 			}
 
 			if (IsReconcileRequired)
 			{
-				reason = "There are images to be reconciled for this study.";
+				reason = SR.ActionNotAllowed_NeedReconcile;
 				return false;
 			}
 
             if (StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy) 
                 && IsArchivedLossless)
             {
-                reason = "Study was archived as lossless. It must be restored before it can be edited.";
+                reason = SR.ActionNotAllowed_StudyIsLossyOnline;
                 return false;
             }
 
@@ -254,19 +256,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			if (IsLocked)
 			{
-				reason = "Study is being locked.";
+				reason = SR.ActionNotAllowed_StudyIsLocked;
 				return false;
 			}
             
 			if (IsReconcileRequired)
 			{
-				reason = "There are images to be reconciled for this study.";
+				reason = SR.ActionNotAllowed_NeedReconcile;
 				return false;
 			}
             
 			if (IsNearline)
 			{
-				reason = "Study is nearline.";
+				reason = SR.ActionNotAllowed_StudyIsNearline;
 				return false;
 			}
 
@@ -284,7 +286,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             
             if (IsNearline)
             {
-                reason = "Study is nearline and needs to be restored before viewing.";
+                reason = SR.ActionNotAllowed_StudyIsNearline;
                 return false;
             }
 
@@ -296,19 +298,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			if (IsArchiving)
 			{
-				reason = "Study is being archived";
+				reason = SR.ActionNotAllowed_StudyIsBeingArchived;
 				return false;
 			}
 
 			if (!IsArchived)
 			{
-				reason = "Study has not been archived.";
+				reason = SR.ActionNotAllowed_StudyIsNotArchived;
 				return false;
 			}
             
 			if (IsLocked)
 			{
-				reason = "Study is being locked";
+				reason = SR.ActionNotAllowed_StudyIsLocked;
 				return false;
 			}
             
