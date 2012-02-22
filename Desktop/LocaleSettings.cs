@@ -41,6 +41,8 @@ namespace ClearCanvas.Desktop
 		private const string _attributeDefault = "Default";
 		private const string _attributeDisplayName = "DisplayName";
 
+		private static InstalledLocales _instance;
+
 		private readonly List<Locale> _installedLocales = new List<Locale>();
 		private string _defaultLocale;
 
@@ -56,16 +58,30 @@ namespace ClearCanvas.Desktop
 		{
 			get
 			{
-				InstalledLocales instance = null;
-				try
+				if (_instance == null)
 				{
-					instance = LocaleSettings.Default.InstalledLocales;
+					try
+					{
+						_instance = LocaleSettings.Default.InstalledLocales;
+
+						// apply locale policy settings
+						var allowed = new List<string>((LocalePolicy.Default.AllowedLocalizationsList ?? string.Empty).Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries));
+						if (allowed.Count > 0)
+						{
+							var disallowed = new List<Locale>();
+							foreach (var locale in _instance._installedLocales)
+								if (locale != InvariantLocale && !allowed.Contains(locale.Culture)) disallowed.Add(locale);
+							foreach (var locale in disallowed)
+								_instance._installedLocales.Remove(locale);
+						}
+					}
+					catch (Exception ex)
+					{
+						Platform.Log(LogLevel.Debug, ex, "Unexpected error reading {0}", typeof (LocaleSettings));
+					}
+					_instance = _instance ?? new InstalledLocales();
 				}
-				catch (Exception ex)
-				{
-					Platform.Log(LogLevel.Debug, ex, "Unexpected error reading {0}", typeof (LocaleSettings));
-				}
-				return instance ?? new InstalledLocales();
+				return _instance;
 			}
 		}
 
@@ -82,7 +98,22 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		public Locale Default
 		{
-			get { return (Find(_defaultLocale) ?? CollectionUtils.FirstElement(_installedLocales)) ?? InvariantLocale; }
+			get { return ((!string.IsNullOrEmpty(_defaultLocale) ? Find(_defaultLocale) : null) ?? FindBestMatchSystemLocale(_installedLocales)) ?? InvariantLocale; }
+		}
+
+		private static Locale FindBestMatchSystemLocale(IEnumerable<Locale> locales)
+		{
+			var culture = CultureInfo.CurrentUICulture;
+			while (culture != null && culture != CultureInfo.InvariantCulture)
+			{
+				var cultureCode = culture.Name;
+				var locale = CollectionUtils.SelectFirst(locales, l => l.Culture == cultureCode);
+				if (locale != null)
+					return locale;
+
+				culture = culture.Parent;
+			}
+			return null;
 		}
 
 		/// <summary>
