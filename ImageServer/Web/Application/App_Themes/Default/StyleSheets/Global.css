@@ -280,14 +280,14 @@ Global.css - Defines the global styles for the entire web application relating
 
 .ToolbarButtonPanel
 {
-    background: #dddddd url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
+    background: #b8d9ee url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
     height: 28px;
     border-top: solid 1px white;
 }
 
 .ToolbarLabelPanel
 {
-    background: #dddddd url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
+    background: #b8d9ee url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
     height: 28px;
     border-top: solid 1px white;
     width: 100%; 
