@@ -76,18 +76,26 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
         [TypeConverter(typeof(ItemConverter))]
         public class Item
         {
+            private readonly IResourceResolver _resourceResolver;
+            private readonly string _description;
+
             internal Item(ImageComparer imageComparer, bool reverse)
             {
+                _resourceResolver = new ResourceResolver(imageComparer.GetType(), false);
+                _description = imageComparer.Description;
                 Name = imageComparer.Name;
-                Description = !reverse ? imageComparer.Description : string.Format(SR.FormatSortByReverse, imageComparer.Description);
                 IsReverse = reverse;
                 Comparer = imageComparer.GetComparer(reverse);
             }
 
             public string Name { get; private set; }
-            public string Description { get; private set; }
             public bool IsReverse { get; private set; }
             public IComparer<IPresentationImage> Comparer { get; private set; }
+
+            public string Description
+            {
+                get { return !IsReverse ? _resourceResolver.LocalizeString(_description) : string.Format(SR.FormatSortByReverse, _resourceResolver.LocalizeString(_description)); }
+            }
         }
 
         public static ReadOnlyCollection<Item> Items { get; private set; }
