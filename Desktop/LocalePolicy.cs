@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
@@ -10,14 +10,15 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop
 {
-	[SettingsGroupDescription("Configures the installed localizations available for use in the application.")]
-	[SettingsProvider(typeof (LocalFileSettingsProvider))]
-	internal sealed partial class LocaleSettings
+	[SettingsGroupDescription("Configures the policy controlling which localizations are available for use in the application.")]
+	[SettingsProvider(typeof (StandardSettingsProvider))]
+	internal sealed partial class LocalePolicy
 	{
-		public LocaleSettings()
+		public LocalePolicy()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}

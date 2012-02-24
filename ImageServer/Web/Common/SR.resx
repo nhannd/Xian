@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActionNotAllowed_NeedReconcile" xml:space="preserve">
+    <value>There are images to be reconciled for this study</value>
+  </data>
   <data name="ActionNotAllowed_StudyHasPendingWorkQueue" xml:space="preserve">
     <value>There is some pending work queue item(s) for this study.</value>
+  </data>
+  <data name="ActionNotAllowed_StudyIsBeingArchived" xml:space="preserve">
+    <value>This study is being archived</value>
   </data>
   <data name="ActionNotAllowed_StudyIsBeingProcessing" xml:space="preserve">
     <value>Study is being processed.</value>
@@ -132,10 +138,14 @@
   <data name="ActionNotAllowed_StudyIsNearline" xml:space="preserve">
     <value>Study is nearline.</value>
   </data>
+  <data name="ActionNotAllowed_StudyIsNotArchived" xml:space="preserve">
+    <value>Study has not been archived</value>
+  </data>
   <data name="MessageCurrentSessionNoLongerValid" xml:space="preserve">
     <value>The current session is no longer valid.</value>
   </data>
   <data name="WebGUILogHeader" xml:space="preserve">
     <value>Web (@{0},{1} {2}, User:{3})</value>
+    <comment>{0} = ip, {1} {2} = browser info,  {3}=user name/id</comment>
   </data>
 </root>

@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public string StatusString
 		{
-			get { return _theRestoreQueueItem.RestoreQueueStatusEnum.Description; }
+			get { return ServerEnumDescription.GetLocalizedDescription(_theRestoreQueueItem.RestoreQueueStatusEnum); }
 		}
 
 		public string PatientId

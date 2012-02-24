@@ -157,4 +157,8 @@
   <data name="PartitionFolderIsInUse" xml:space="preserve">
     <value>Partition Folder '{0}' is already in use</value>
   </data>
+  <data name="IsNotAValidNumber" xml:space="preserve">
+    <value>This is not a invalid number for {0}</value>
+    <comment>{0} is the name of the input, eg port</comment>
+  </data>
 </root>
