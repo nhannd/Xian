@@ -206,6 +206,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>LocalePolicy.settings</DependentUpon>
     </Compile>
+    <Compile Include="InstalledLocales.cs" />
     <Compile Include="LocaleSettings.cs" />
     <Compile Include="LocaleSettings.Designer.cs">
       <AutoGen>True</AutoGen>
