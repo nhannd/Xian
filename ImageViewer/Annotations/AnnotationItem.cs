@@ -10,6 +10,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
@@ -19,6 +20,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 	/// <seealso cref="IAnnotationItem"/>
 	public abstract class AnnotationItem : IAnnotationItem
 	{
+		private readonly IAnnotationResourceResolver _annotationResourceResolver;
+		private readonly IResourceResolver _standardResourceResolver;
 		private readonly string _identifier;
 		private readonly string _displayName;
 		private readonly string _label;
@@ -28,11 +31,14 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// the display name and label using an <see cref="IAnnotationResourceResolver"/>.
 		/// </summary>
 		/// <param name="identifier">The unique identifier of the <see cref="AnnotationItem"/>.</param>
-		/// <param name="resolver">The object that will resolve the display name and label 
+		/// <param name="annotationResourceResolver">The object that will resolve the display name and label 
 		/// from the <see cref="AnnotationItem"/>'s unique identifier.</param>
-		protected AnnotationItem(string identifier, IAnnotationResourceResolver resolver)
-			: this(identifier, resolver.ResolveDisplayName(identifier), resolver.ResolveLabel(identifier))
+		protected AnnotationItem(string identifier, IAnnotationResourceResolver annotationResourceResolver)
 		{
+			Platform.CheckForEmptyString(identifier, "identifier");
+
+			_annotationResourceResolver = annotationResourceResolver ?? new AnnotationResourceResolver(this);
+			_identifier = identifier;
 		}
 
 		/// <summary>
@@ -42,10 +48,21 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <param name="displayName">The <see cref="AnnotationItem"/>'s display name.</param>
 		/// <param name="label">The <see cref="AnnotationItem"/>'s label.</param>
 		protected AnnotationItem(string identifier, string displayName, string label)
+			: this(identifier, displayName, label, null) {}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="identifier">The unique identifier of the <see cref="AnnotationItem"/>.</param>
+		/// <param name="displayName">The <see cref="AnnotationItem"/>'s display name.</param>
+		/// <param name="label">The <see cref="AnnotationItem"/>'s label.</param>
+		/// <param name="resourceResolver">The object that will resolve the display name and label parameters as the keys representing localized strings.</param>
+		protected AnnotationItem(string identifier, string displayName, string label, IResourceResolver resourceResolver)
 		{
 			Platform.CheckForEmptyString(identifier, "identifier");
 			Platform.CheckForEmptyString(displayName, "displayName");
 
+			_standardResourceResolver = resourceResolver ?? new ResourceResolver(GetType(), false);
 			_identifier = identifier;
 			_displayName = displayName;
 			_label = label ?? "";
@@ -66,7 +83,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// </summary>
 		public string GetDisplayName()
 		{
-			return _displayName;
+			if (_annotationResourceResolver != null) return _annotationResourceResolver.ResolveDisplayName(_identifier);
+			return _standardResourceResolver != null ? _standardResourceResolver.LocalizeString(_displayName) : _displayName;
 		}
 
 		/// <summary>
@@ -75,7 +93,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// </summary>
 		public string GetLabel()
 		{
-			return _label;
+			if (_annotationResourceResolver != null) return _annotationResourceResolver.ResolveLabel(_identifier);
+			return _standardResourceResolver != null ? _standardResourceResolver.LocalizeString(_label) : _label;
 		}
 
 		/// <summary>

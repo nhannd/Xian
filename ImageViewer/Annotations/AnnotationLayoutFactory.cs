@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 				Platform.Log(LogLevel.Error, e);
 
 				var layout = new AnnotationLayout();
-				var item = new BasicTextAnnotationItem("errorbox", "errorbox", SR.LabelError,
+				var item = new BasicTextAnnotationItem("errorbox", "errorbox", @"LabelError",
 				                                                   SR.MessageErrorLoadingAnnotationLayout);
 				var box = new AnnotationBox(new RectangleF(0.5F, 0.90F, 0.5F, 0.10F), item)
 				          	{

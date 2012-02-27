@@ -39,8 +39,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 				FrameDataRetrieverDelegate<T> sopDataRetrieverDelegate,
 				ResultFormatterDelegate<T> resultFormatterDelegate
 			)
-			: this(identifier, resolver.ResolveDisplayName(identifier), resolver.ResolveLabel(identifier), sopDataRetrieverDelegate, resultFormatterDelegate)
+			: base(identifier, resolver)
 		{
+			Platform.CheckForNullReference(sopDataRetrieverDelegate, "sopDataRetrieverDelegate");
+			Platform.CheckForNullReference(resultFormatterDelegate, "resultFormatterDelegate");
+
+			_sopDataRetrieverDelegate = sopDataRetrieverDelegate;
+			_resultFormatterDelegate = resultFormatterDelegate;
 		}
 
 		/// <summary>
