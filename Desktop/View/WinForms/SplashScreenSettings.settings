@@ -131,5 +131,23 @@
     <Setting Name="LoginLocation" Type="System.Drawing.Point" Scope="Application">
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
+    <Setting Name="MessageLocation" Type="System.Drawing.Point" Scope="Application">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="MessageSize" Type="System.Drawing.Size" Scope="Application">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="MessageAutoSize" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MessageForeColor" Type="System.Drawing.Color" Scope="Application">
+      <Value Profile="(Default)">255, 255, 128</Value>
+    </Setting>
+    <Setting Name="MessageFontBold" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MessageTextAlign" Type="System.Drawing.ContentAlignment" Scope="Application">
+      <Value Profile="(Default)">TopLeft</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

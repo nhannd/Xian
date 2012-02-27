@@ -572,5 +572,59 @@ namespace ClearCanvas.Desktop.View.WinForms {
                 return ((global::System.Drawing.Point)(this["LoginLocation"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point MessageLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["MessageLocation"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size MessageSize {
+            get {
+                return ((global::System.Drawing.Size)(this["MessageSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MessageAutoSize {
+            get {
+                return ((bool)(this["MessageAutoSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("255, 255, 128")]
+        public global::System.Drawing.Color MessageForeColor {
+            get {
+                return ((global::System.Drawing.Color)(this["MessageForeColor"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MessageFontBold {
+            get {
+                return ((bool)(this["MessageFontBold"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TopLeft")]
+        public global::System.Drawing.ContentAlignment MessageTextAlign {
+            get {
+                return ((global::System.Drawing.ContentAlignment)(this["MessageTextAlign"]));
+            }
+        }
     }
 }
