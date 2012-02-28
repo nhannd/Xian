@@ -79,36 +79,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas Inc.
-        ///1920-439 University Ave.
-        ///Toronto, ON M5G 1Y8
-        ///Canada.
-        /// </summary>
-        public static string CompanyAddress {
-            get {
-                return ResourceManager.GetString("CompanyAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to www.clearcanvas.ca.
-        /// </summary>
-        public static string CompanyWebAddress {
-            get {
-                return ResourceManager.GetString("CompanyWebAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Copyright 2012 ClearCanvas Inc. All rights reserved..
-        /// </summary>
-        public static string Copyright {
-            get {
-                return ResourceManager.GetString("Copyright", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Disposing.
         /// </summary>
         public static string Disposing {
@@ -123,25 +93,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources {
         public static string OpeningConnection {
             get {
                 return ResourceManager.GetString("OpeningConnection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Part of the ClearCanvas RIS/PACS.
-        /// </summary>
-        public static string PartOfClearCanvasRISPACS {
-            get {
-                return ResourceManager.GetString("PartOfClearCanvasRISPACS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas ImageServer {0} {1} [{2}]
-        ///Part of the ClearCanvas RIS/PACS.
-        /// </summary>
-        public static string ProductInfo {
-            get {
-                return ResourceManager.GetString("ProductInfo", resourceCulture);
             }
         }
         
