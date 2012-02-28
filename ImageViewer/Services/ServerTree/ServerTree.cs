@@ -521,6 +521,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
     public class ServerGroup : IServerTreeNode
 	{
 		#region Private Fields
+		private const string _rootServersGroupPath = @"./My Servers/";
 		private string _parentPath;
 		private string _path;
     	private string _nameOfGroup;
@@ -599,7 +600,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
         public string DisplayName
         {
             // if this group is the default "My Servers" node (and not manually customized by user), display the localized name
-            get { return Path == @"./My Servers/" ? SR.MyServersTitle : Name; }
+            get { return Path == _rootServersGroupPath ? SR.MyServersTitle : Name; }
         }
 
         public string ParentPath
@@ -697,7 +698,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
     	public override string ToString()
     	{
-			return _path;
+			return Path.StartsWith(_rootServersGroupPath) ? string.Format(@"./{0}/{1}", SR.MyServersTitle, Path.Substring(_rootServersGroupPath.Length)) : Path;
     	}
     }
 
