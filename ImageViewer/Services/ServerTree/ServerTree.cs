@@ -23,9 +23,6 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
     public class ServerTree
 	{
 		internal static readonly string MyServersXmlFile = "DicomAEServers.xml";
-		internal static readonly string MyDataStoreTitle = SR.MyDataStoreTitle;
-		internal static readonly string MyServersTitle = SR.MyServersTitle;
-		internal static readonly string RootNodeName = "Root";
 		
 		#region Private fields
 
@@ -351,7 +348,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
             else
             {
                 // create default entries and save them to disk
-                _rootNode.ServerGroupNode = new ServerGroup(MyServersTitle);
+                _rootNode.ServerGroupNode = new ServerGroup(@"My Servers");
 				_rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup(SR.ExampleGroup));
                 _rootNode.ServerGroupNode.ChildServers.Add(
 					new Server(SR.ExampleServer, "", "localhost", "SAMPLE", 104, false, 50221, 1000));
@@ -430,6 +427,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
         string ParentPath { get; }
         string Path { get; }
         string Name { get; }
+        string DisplayName { get; }
     }
 
     [Serializable]
@@ -497,7 +495,12 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
         public string Name
         {
-            get { return ServerTree.RootNodeName; }
+            get { return @"Root"; }
+        }
+
+        string IServerTreeNode.DisplayName
+        {
+            get { return string.Empty; }
         }
 
         public string ParentPath
@@ -591,6 +594,12 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
         public string Name
         {
             get { return NameOfGroup; }
+        }
+
+        public string DisplayName
+        {
+            // if this group is the default "My Servers" node (and not manually customized by user), display the localized name
+            get { return Path == @"./My Servers/" ? SR.MyServersTitle : Name; }
         }
 
         public string ParentPath
@@ -802,6 +811,11 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
             get { return NameOfServer; }
         }
 
+        string IServerTreeNode.DisplayName
+        {
+            get { return Name; }
+        }
+
         public string ParentPath
         {
 			get { return _parentPath; }
@@ -882,7 +896,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 					_dicomServerConfigurationProvider.RefreshAsync();
 
 				if (_dicomServerConfigurationProvider.ConfigurationExists)
-					return String.Format(SR.FormatLocalDataStoreDetails, Name, _dicomServerConfigurationProvider.AETitle, _dicomServerConfigurationProvider.Host, _dicomServerConfigurationProvider.Port, _dicomServerConfigurationProvider.InterimStorageDirectory);
+					return String.Format(SR.FormatLocalDataStoreDetails, DisplayName, _dicomServerConfigurationProvider.AETitle, _dicomServerConfigurationProvider.Host, _dicomServerConfigurationProvider.Port, _dicomServerConfigurationProvider.InterimStorageDirectory);
 			}
 			catch (Exception e)
 			{
@@ -958,7 +972,12 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		public string Name
 		{
-			get { return ServerTree.MyDataStoreTitle; }
+			get { return @"My Studies"; }
+		}
+
+		public string DisplayName
+		{
+			get { return SR.MyDataStoreTitle; }
 		}
 
 		#endregion
