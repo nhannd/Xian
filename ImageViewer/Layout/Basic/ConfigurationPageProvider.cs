@@ -27,12 +27,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public static string BasicLayoutConfigurationPath
 		{
-			get { return SR.TitleLayoutConfiguration; }
+			get { return @"TitleLayoutConfiguration"; }
 		}
 
 		public static string DisplaySetCreationConfigurationPath
 		{
-			get { return String.Format("{0}/{1}", BasicLayoutConfigurationPath, SR.TitleDisplaySetCreationConfiguration); }
+			get { return @"TitleLayoutConfiguration/TitleDisplaySetCreationConfiguration"; }
 		}
 
 		#region IConfigurationPageProvider Members
