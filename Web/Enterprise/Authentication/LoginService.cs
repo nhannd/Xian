@@ -22,6 +22,7 @@ using ClearCanvas.Enterprise.Common.Authentication;
 
 namespace ClearCanvas.Web.Enterprise.Authentication
 {
+    
     /// <summary>
     /// Wrapper for <see cref="IAuthenticationService"/> service.
     /// </summary>
@@ -31,7 +32,12 @@ namespace ClearCanvas.Web.Enterprise.Authentication
         [Obfuscation(Exclude = true)]
         public SessionInfo Login(string userName, string password, string appName)
         {
-            Platform.CheckForEmptyString(userName, "userName");
+            if (string.IsNullOrEmpty(userName))
+                throw new ArgumentException(SR.UsernameIsEmpty);
+
+            if (string.IsNullOrEmpty(password))
+                throw new ArgumentException(SR.PasswordIsEmpty);
+
             Platform.CheckForEmptyString(password, "password");
             Platform.CheckForEmptyString(appName, "appName");
 
@@ -78,6 +84,10 @@ namespace ClearCanvas.Web.Enterprise.Authentication
                             throw ex.Detail;
                         }
                         catch(FaultException<UserAccessDeniedException> ex)
+                        {
+                            throw ex.Detail;
+                        }
+                        catch (FaultException<RequestValidationException> ex)
                         {
                             throw ex.Detail;
                         }
@@ -175,13 +185,24 @@ namespace ClearCanvas.Web.Enterprise.Authentication
         [Obfuscation(Exclude = true)]
         public void ChangePassword(string userName, string oldPassword, string newPassword)
         {
-            var request = new ChangePasswordRequest(userName, oldPassword, newPassword);
-            Platform.GetService(
-                delegate(IAuthenticationService service)
-                    {
-                        service.ChangePassword(request);
-                        Platform.Log(LogLevel.Info, "Password for {0} has been changed.", userName);
-                    });
+            try
+            {
+                var request = new ChangePasswordRequest(userName, oldPassword, newPassword);
+                Platform.GetService(
+                    delegate(IAuthenticationService service)
+                        {
+                            service.ChangePassword(request);
+                            Platform.Log(LogLevel.Info, "Password for {0} has been changed.", userName);
+                        });
+            }
+            catch (FaultException<UserAccessDeniedException> ex)
+            {
+                throw ex.Detail;
+            }
+            catch(FaultException<RequestValidationException> ex)
+            {
+                throw ex.Detail;
+            }
         }
 
         [Obfuscation(Exclude = true)]
