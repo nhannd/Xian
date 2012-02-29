@@ -252,14 +252,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingIdeographicName,
 				delegate(StudyItem item) { return item.PatientsName.Ideographic; },
-				0.5f);
+				0.5f) { Visible = false };
 
 			columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingPhoneticName,
 				delegate(StudyItem item) { return item.PatientsName.Phonetic; },
-				0.5f);
+				0.5f) { Visible = false };
 
 			columns.Add(column);
 
