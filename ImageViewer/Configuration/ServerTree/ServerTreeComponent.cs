@@ -124,10 +124,10 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			_selectedServers = new AEServerGroup();
 			_serverTree = new ImageViewer.Services.ServerTree.ServerTree();
 
-			if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
+			if (_serverTree.CurrentNode != null && (_serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore))
 			{
 				_selectedServers.Servers.Add(_serverTree.CurrentNode);
-				_selectedServers.Name = _serverTree.CurrentNode.Name;
+				_selectedServers.Name = _serverTree.CurrentNode.DisplayName;
 				_selectedServers.GroupID = _serverTree.CurrentNode.Path;
 			}
 		}
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			{
 				_selectedServers = new AEServerGroup();
 				_selectedServers.Servers.Add(dataNode);
-				_selectedServers.Name = dataNode.Name;
+				_selectedServers.Name = dataNode.DisplayName;
 				_selectedServers.GroupID = dataNode.Path;
 				_serverTree.CurrentNode = dataNode;
 				FireSelectedServerChangedEvent();
@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 				_selectedServers = new AEServerGroup();
 				_selectedServers.Servers = _serverTree.FindChildServers(dataNode as ServerGroup);
 				_selectedServers.GroupID = dataNode.Path;
-				_selectedServers.Name = dataNode.Name;
+				_selectedServers.Name = dataNode.DisplayName;
 				_serverTree.CurrentNode = dataNode;
 				FireSelectedServerChangedEvent();
 			}
