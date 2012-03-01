@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert.cs" />
+    <Compile Include="ConstantResourceManager.cs" />
     <Compile Include="ExceptionLogAdviceAttribute.cs" />
     <Compile Include="Exceptions\AutoReconcileException.cs" />
     <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
