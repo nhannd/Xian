@@ -119,6 +119,8 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		public DicomAnonymizer()
 		{
 			_validationStrategy = new ValidationStrategy();
+
+			SpecificCharacterSet = @"ISO_IR 192";
 		}
 
 		#region Public Properties
@@ -229,6 +231,15 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				_anonymizeSeriesDataDelegate = value;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the DICOM specific character set to be used when encoding SOP instances.
+		/// </summary>
+		/// <remarks>
+		/// By default, text attribute values will be encoded using UTF-8 Unicode (ISO-IR 192).
+		/// If set to NULL or empty, values will be encoded using the default character repertoire (ISO-IR 6).
+		/// </remarks>
+		public string SpecificCharacterSet { get; set; }
 
 		#endregion
 
@@ -403,6 +414,9 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 
 			try
 			{
+				var specificCharacterSet = SpecificCharacterSet ?? string.Empty;
+				_currentFile.DataSet.SpecificCharacterSet = specificCharacterSet;
+				_currentFile.DataSet[DicomTags.SpecificCharacterSet].SetStringValue(specificCharacterSet);
 				_recursionLevel = -1;
 				Anonymize(_currentFile.DataSet);
 			}

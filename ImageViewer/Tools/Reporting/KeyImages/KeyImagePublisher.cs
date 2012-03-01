@@ -67,7 +67,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 						var presentationState = DicomSoftcopyPresentationState.Create
 							(image, delegate(DicomSoftcopyPresentationState ps)
 							        	{
-							        		ps.SpecificCharacterSet = provider.ImageSop[DicomTags.SpecificCharacterSet].ToString();
 							        		ps.PresentationSeriesInstanceUid = seriesInfo.PresentationSeriesUid;
 							        		ps.PresentationSeriesNumber = seriesInfo.PresentationSeriesNumber;
 							        		ps.PresentationSeriesDateTime = seriesInfo.PresentationSeriesDateTime;
