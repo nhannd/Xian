@@ -185,10 +185,35 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				    UpdateEntry.OriginalValue = attr.ToString();
 					try
 					{
-						attr.SetStringValue(UpdateEntry.GetStringValue());
+					    var desiredValue = UpdateEntry.GetStringValue();
+                        attr.SetStringValue(desiredValue);
+
+                        //Make sure the data is not garbled when stored into file
+                        var encodedValue = attr.GetEncodedString(file.TransferSyntax, file.DataSet.SpecificCharacterSet);
+                        if (encodedValue != null)
+                        {
+                            var diff = Diff(encodedValue.Trim(), desiredValue.Trim());
+
+                            if (diff >= 0)
+                            {
+                                string instanceNumber = file.DataSet[DicomTags.InstanceNumber].ToString();
+                                string instanceUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
+                                char badChar = diff >= desiredValue.Length ? desiredValue[desiredValue.Length - 1] : desiredValue[diff];
+                                var error = string.Format("SOP {4}\n\nCannot set {0} to {1}. Character {2} is not valid in character set {3}.",
+                                                    UpdateEntry.TagPath.Tag.Name, desiredValue, badChar, file.DataSet.SpecificCharacterSet,
+                                                    string.Format("#{0} [{1}]", instanceNumber, instanceUid)
+                                                    );
+
+                                Platform.Log(LogLevel.Error, error);
+                                throw new InvalidDicomValueException(error);
+                            }
+                        }
+					    
+					   
 					}
 					catch (DicomDataException)
 					{
+                        //TODO: Why do we ignore it?
 						Platform.Log(LogLevel.Warn, "Unexpected exception when updating tag {0} to value {1}, leaving current value: {2}",
 						             UpdateEntry.TagPath, UpdateEntry.GetStringValue(),
 						             attr.ToString());
@@ -199,6 +224,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 			return true;
 		}
+
+
 
 		public override string ToString()
 		{
@@ -234,5 +261,21 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 			return collection[entry.TagPath.Tag];
 		}
+
+        private int Diff(string s1, string s2)
+        {
+            if (s1.Equals(s2))
+                return -1;
+
+            int index = 0;
+            for (; index < s1.Length && index < s2.Length; index++)
+            {
+                var  ch = s1[index];
+                if (!s2[index].Equals(ch))
+                    break;
+            }
+
+            return index;
+        }
 	}
 }
