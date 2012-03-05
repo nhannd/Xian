@@ -14,5 +14,8 @@
     <Setting Name="BufferedQueryResponses" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">50</Value>
     </Setting>
+    <Setting Name="CFindRspCharacterSet" Type="ClearCanvas.ImageServer.Services.Dicom.CFindRspCharacterSet" Scope="Application">
+      <Value Profile="(Default)">Source</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

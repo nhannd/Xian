@@ -61,6 +61,7 @@
     <Compile Include="AssociationAuditLogger.cs" />
     <Compile Include="AssociationVerifier.cs" />
     <Compile Include="BaseScp.cs" />
+    <Compile Include="CFindRspCharacterSet.cs" />
     <Compile Include="CompressedStorageScpExtension.cs" />
     <Compile Include="DeviceManager.cs" />
     <Compile Include="DicomScpContext.cs" />

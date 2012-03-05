@@ -207,7 +207,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
             //dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
-            if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
+            var characterSet = GetPreferredCharacterSet();
+            if (characterSet == CFindRspCharacterSet.ISO_IR_126)
+            {
+                const string cs = "ISO_IR 126";
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(cs);
+                dataSet.SpecificCharacterSet = cs; 
+            }
+            else if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
                 dataSet[DicomTags.SpecificCharacterSet].SetStringValue(row.SpecificCharacterSet);
                 dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
@@ -301,7 +308,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 			dataSet[DicomTags.InstanceAvailability].SetStringValue(availability);
 
-            if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
+            var characterSet = GetPreferredCharacterSet();
+            if (characterSet == CFindRspCharacterSet.ISO_IR_126)
+            {
+                const string cs = "ISO_IR 126";
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(cs);
+                dataSet.SpecificCharacterSet = cs;
+            }
+            else if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
                 dataSet[DicomTags.SpecificCharacterSet].SetStringValue(row.SpecificCharacterSet);
                 dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
@@ -405,7 +419,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                                        ? "NEARLINE"
                                                                        : "ONLINE");
 
-            if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
+            var characterSet = GetPreferredCharacterSet();
+            if (characterSet == CFindRspCharacterSet.ISO_IR_126)
+            {
+                const string cs = "ISO_IR 126";
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(cs);
+                dataSet.SpecificCharacterSet = cs;
+            }
+            else if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
 			{
 				dataSet[DicomTags.SpecificCharacterSet].SetStringValue(theStudy.SpecificCharacterSet);
 				dataSet.SpecificCharacterSet = theStudy.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
@@ -495,7 +516,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             DicomAttributeCollection sourceDataSet = theInstanceStream.Collection;
 
-			if (false == sourceDataSet.Contains(DicomTags.SpecificCharacterSet))
+            var characterSet = GetPreferredCharacterSet();
+            if (characterSet == CFindRspCharacterSet.ISO_IR_126)
+            {
+                const string cs = "ISO_IR 126";
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(cs);
+                dataSet.SpecificCharacterSet = cs;
+            }
+            else if (false == sourceDataSet.Contains(DicomTags.SpecificCharacterSet))
 			{
 				dataSet[DicomTags.SpecificCharacterSet].SetStringValue(sourceDataSet[DicomTags.SpecificCharacterSet].ToString());
 				dataSet.SpecificCharacterSet = sourceDataSet[DicomTags.SpecificCharacterSet].ToString(); // this will ensure the data is encoded using the specified character set
@@ -1179,6 +1207,16 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.SeriousFailureActionTerminated, message);
             }
             return;
+        }
+
+        /// <summary>
+        /// Get the character set
+        /// </summary>
+        /// <returns></returns>
+        private CFindRspCharacterSet GetPreferredCharacterSet()
+        {
+            // TODO: In the future, should be device-dependent
+            return DicomSettings.Default.CFindRspCharacterSet;
         }
 
         #endregion
