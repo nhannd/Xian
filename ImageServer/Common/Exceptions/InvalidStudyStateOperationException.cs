@@ -9,6 +9,8 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.ImageServer.Common.Exceptions
 {
     /// <summary>

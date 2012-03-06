@@ -425,7 +425,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			StudyXmlOutputSettings outputSettings = ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings;
 
 			StudyXml newStudyXml = new StudyXml();
-			foreach (SeriesXml seriesXml in studyXml)
+            bool characterSetUpdatedWarning = false;
+            foreach (SeriesXml seriesXml in studyXml)
 			{
 				foreach (InstanceXml instanceXml in seriesXml)
 				{
@@ -445,10 +446,13 @@ namespace ClearCanvas.ImageServer.Core.Edit
 						                        		SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty)
 						                        	};
 
+                        bool characterSetUpdated = false;
+					    string originalCharacterSet = file.DataSet.SpecificCharacterSet;
 						foreach (BaseImageLevelUpdateCommand command in _commands)
 						{
 							command.File = file;
 							command.Apply(file);
+						    characterSetUpdated = characterSetUpdated || command.SpecificCharacterSetModified;
 						}
 
 						SaveFile(file);
@@ -465,9 +469,19 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 						newStudyXml.AddFile(file, fileSize, outputSettings);
 
-						Platform.Log(ServerPlatform.InstanceLogLevel, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
 
-						SimulateErrors();
+                        // Write instance-level log messages
+                        if (characterSetUpdated)
+                        {
+                            Platform.Log(ServerPlatform.InstanceLogLevel, "Specific Character Set in SOP {0} has been changed from {1} to {2}", instance.SopInstanceUid, originalCharacterSet, file.DataSet.SpecificCharacterSet);
+                            //TODO: Add to the history?
+                        } 
+                        Platform.Log(ServerPlatform.InstanceLogLevel, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
+
+
+					    characterSetUpdatedWarning = characterSetUpdatedWarning | characterSetUpdated;
+
+					    SimulateErrors();
 					}
 					catch (Exception)
 					{
@@ -477,11 +491,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				}
 			}
 
+            // Log any study-level warnings
 			if (_updatedSopList.Count != _totalSopCount)
 			{
 				Platform.Log(LogLevel.Warn, "Inconsistent data: expected {0} instances to be updated / Found {1}.", _totalSopCount, _updatedSopList.Count);
 			}
+            if (characterSetUpdatedWarning)
+            {
+                Platform.Log(LogLevel.Info, "Specific Character Set in some instance(s) has been modified.");
+            }
 
+            // update the header
 			Platform.Log(LogLevel.Info, "Generating new study header...");
 			string newStudyXmlPath = Path.Combine(NewStudyPath, _newStudyInstanceUid + ".xml");
 			string gzipStudyXmlPath = Path.Combine(NewStudyPath, _newStudyInstanceUid + ".xml.gz");

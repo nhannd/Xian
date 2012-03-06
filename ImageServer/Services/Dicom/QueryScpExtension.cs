@@ -208,11 +208,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             //dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
             var characterSet = GetPreferredCharacterSet();
-            if (characterSet == CFindRspCharacterSet.ISO_IR_126)
+            if (!string.IsNullOrEmpty(characterSet))
             {
-                const string cs = "ISO_IR 126";
-                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(cs);
-                dataSet.SpecificCharacterSet = cs; 
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+                dataSet.SpecificCharacterSet = characterSet; 
             }
             else if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
@@ -309,11 +308,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 			dataSet[DicomTags.InstanceAvailability].SetStringValue(availability);
 
             var characterSet = GetPreferredCharacterSet();
-            if (characterSet == CFindRspCharacterSet.ISO_IR_126)
+            if (!string.IsNullOrEmpty(characterSet))
             {
-                const string cs = "ISO_IR 126";
-                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(cs);
-                dataSet.SpecificCharacterSet = cs;
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+                dataSet.SpecificCharacterSet = characterSet;
             }
             else if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
@@ -420,11 +418,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                                        : "ONLINE");
 
             var characterSet = GetPreferredCharacterSet();
-            if (characterSet == CFindRspCharacterSet.ISO_IR_126)
+            if (!string.IsNullOrEmpty(characterSet))
             {
-                const string cs = "ISO_IR 126";
-                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(cs);
-                dataSet.SpecificCharacterSet = cs;
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+                dataSet.SpecificCharacterSet = characterSet;
             }
             else if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
 			{
@@ -517,11 +514,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             DicomAttributeCollection sourceDataSet = theInstanceStream.Collection;
 
             var characterSet = GetPreferredCharacterSet();
-            if (characterSet == CFindRspCharacterSet.ISO_IR_126)
+            if (!string.IsNullOrEmpty(characterSet))
             {
-                const string cs = "ISO_IR 126";
-                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(cs);
-                dataSet.SpecificCharacterSet = cs;
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+                dataSet.SpecificCharacterSet = characterSet;
             }
             else if (false == sourceDataSet.Contains(DicomTags.SpecificCharacterSet))
 			{
@@ -1210,13 +1206,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         }
 
         /// <summary>
-        /// Get the character set
+        /// Get the prefered character set for the C-FIND-RSP.
         /// </summary>
         /// <returns></returns>
-        private CFindRspCharacterSet GetPreferredCharacterSet()
+        private static string GetPreferredCharacterSet()
         {
             // TODO: In the future, should be device-dependent
-            return DicomSettings.Default.CFindRspCharacterSet;
+
+            switch(DicomSettings.Default.PreferredCharacterSet)
+            {
+                case CharacterSetSelectOption.Source: return null;
+                case CharacterSetSelectOption.Unicode: return "ISO_IR 192";
+
+                default:
+                    return null;
+            }
         }
 
         #endregion

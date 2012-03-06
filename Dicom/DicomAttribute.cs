@@ -89,6 +89,23 @@ namespace ClearCanvas.Dicom
             return length;
         }
 
+        /// <summary>
+        /// Get the string representation of the value
+        /// when the attribute is saved using the specific character set and transfer syntax 
+        /// and read again using one of the GetString methods
+        /// </summary>
+        /// <param name="syntax"></param>
+        /// <param name="specificCharacterSet"></param>
+        /// <returns></returns>
+        public virtual string GetEncodedString(TransferSyntax syntax, String specificCharacterSet)
+        {
+            var buffer = GetByteBuffer(syntax, specificCharacterSet);
+            if (buffer == null)
+                return null;
+
+            return buffer.GetString();
+        }
+
         public virtual void SetStringValue(String stringValue)
         {
             throw new DicomException(SR.InvalidType);
