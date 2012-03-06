@@ -132,39 +132,48 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					return;
 			}
 
-			CreateKeyObjectDocuments();
+		    var anyFailed = false;
+		    try
+		    {
+                CreateKeyObjectDocuments();
 
-			var publishers = new Dictionary<string, DicomPublishingHelper>();
+                var publishers = new Dictionary<string, DicomPublishingHelper>();
 
-			// add each KO document to a publisher by study
-			foreach (var koDocument in _keyObjectDocuments)
-			{
-				var publisher = GetValue(publishers, koDocument.DataSet[DicomTags.StudyInstanceUid].ToString());
-				publisher.Files.Add(koDocument);
-			}
+                // add each KO document to a publisher by study
+                foreach (var koDocument in _keyObjectDocuments)
+                {
+                    var publisher = GetValue(publishers, koDocument.DataSet[DicomTags.StudyInstanceUid].ToString());
+                    publisher.Files.Add(koDocument);
+                }
 
-			// add each PR state to a publisher by study
-			foreach (var presentationFrame in SourceFrames)
-			{
-				var sourceFrame = presentationFrame.Key;
-				var publisher = GetValue(publishers, sourceFrame.StudyInstanceUid);
+                // add each PR state to a publisher by study
+                foreach (var presentationFrame in SourceFrames)
+                {
+                    var sourceFrame = presentationFrame.Key;
+                    var publisher = GetValue(publishers, sourceFrame.StudyInstanceUid);
 
-				if (presentationFrame.Value != null)
-					publisher.Files.Add(presentationFrame.Value.DicomFile);
+                    if (presentationFrame.Value != null)
+                        publisher.Files.Add(presentationFrame.Value.DicomFile);
 
-				// try to determine the origin and source AE from the image frame's SOP data source (should be the same for all frames from a given study)
-				var sopDataSource = sourceFrame.ParentImageSop.DataSource;
-				publisher.OriginServerAE = sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString();
-				publisher.SourceServerAE = sopDataSource.Server is ApplicationEntity ? ((ApplicationEntity) sopDataSource.Server).AETitle : string.Empty;
-			}
+                    // try to determine the origin and source AE from the image frame's SOP data source (should be the same for all frames from a given study)
+                    var sopDataSource = sourceFrame.ParentImageSop.DataSource;
+                    publisher.OriginServerAE = sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString();
+                    publisher.SourceServerAE = sopDataSource.Server is ApplicationEntity ? ((ApplicationEntity)sopDataSource.Server).AETitle : string.Empty;
+                }
 
-			// publish all files now
-			var anyFailed = false;
-			foreach (var publisher in publishers.Values)
-			{
-				if (!publisher.Publish())
-					anyFailed = true;
-			}
+                // publish all files now
+		        foreach (var publisher in publishers.Values)
+                {
+                    if (!publisher.Publish())
+                        anyFailed = true;
+                }
+		    }
+		    catch (Exception e)
+		    {
+		        anyFailed = true;
+		        Platform.Log(LogLevel.Error, e, "An unexpected error occurred while trying to publish key images.");
+		    }
+
 
 			if (anyFailed)
 				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageKeyImagePublishingFailed, MessageBoxActions.Ok);

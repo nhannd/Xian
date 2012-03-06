@@ -192,13 +192,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				{
 					try
 					{
-						KeyImagePublisher publisher = new KeyImagePublisher(info);
+						var publisher = new KeyImagePublisher(info);
 						publisher.Publish();
 					}
 					catch (Exception e)
 					{
-						//TODO: show a message box or something?
-						Platform.Log(LogLevel.Error, e, "An error occurred while attempting to publish key images.");
+                        //Should never happen because KeyImagePublisher.Publish doesn't throw exceptions.
+                        ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 					}
 				}
 			}

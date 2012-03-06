@@ -405,10 +405,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private static void SetAllSpecificCharacterSets(GraphicAnnotationSequenceItem annotation, string specificCharacterSet)
 		{
+            if (annotation.TextObjectSequence == null)
+                return;
+
 			foreach (var textItem in annotation.TextObjectSequence)
 			{
-				if (textItem.DicomAttributeProvider is DicomAttributeCollection)
-					((DicomAttributeCollection) textItem.DicomAttributeProvider).SpecificCharacterSet = specificCharacterSet;
+			    var attributeCollection = textItem.DicomAttributeProvider as DicomAttributeCollection;
+                if (attributeCollection != null)
+			        attributeCollection.SpecificCharacterSet = specificCharacterSet;
 			}
 		}
 
