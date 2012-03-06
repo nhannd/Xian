@@ -12,6 +12,7 @@
 using System;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Helpers;
 
@@ -188,29 +189,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
 					    var desiredValue = UpdateEntry.GetStringValue();
                         attr.SetStringValue(desiredValue);
 
-                        //Make sure the data is not garbled when stored into file
-                        var encodedValue = attr.GetEncodedString(file.TransferSyntax, file.DataSet.SpecificCharacterSet);
-                        if (encodedValue != null)
+                        if (!string.IsNullOrEmpty(desiredValue))
                         {
-                            var diff = Diff(encodedValue.Trim(), desiredValue.Trim());
-
-                            if (diff >= 0)
-                            {
-                                string instanceNumber = file.DataSet[DicomTags.InstanceNumber].ToString();
-                                string instanceUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
-                                char badChar = diff >= desiredValue.Length ? desiredValue[desiredValue.Length - 1] : desiredValue[diff];
-                                var error = string.Format("SOP {4}\n\nCannot set {0} to {1}. Character {2} is not valid in character set {3}.",
-                                                    UpdateEntry.TagPath.Tag.Name, desiredValue, badChar, file.DataSet.SpecificCharacterSet,
-                                                    string.Format("#{0} [{1}]", instanceNumber, instanceUid)
-                                                    );
-
-                                Platform.Log(LogLevel.Error, error);
-                                throw new InvalidDicomValueException(error);
-                            }
+                            //Make sure the data is not garbled when stored into file
+                            EnsureCharacterSetIsGood(file, attr, desiredValue);
                         }
-					    
-					   
+                       
 					}
+                    catch(DicomCharacterSetException ex)
+                    {
+                        throw; //rethrow
+                    }
 					catch (DicomDataException)
 					{
                         //TODO: Why do we ignore it?
@@ -225,13 +214,20 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			return true;
 		}
 
+	    public bool UseUnicodeIfNecessary
+	    {
+            get
+            {
+                return ImageServer.Common.Settings.Default.UnicodeEncodingAllowed;
+            }
+	    }
 
-
-		public override string ToString()
+	    public override string ToString()
 		{
 			return String.Format("Set {0}={1} [Original={2}]", UpdateEntry.TagPath.Tag, UpdateEntry.Value, UpdateEntry.OriginalValue?? "N/A or TBD");
 		}
-		#endregion
+		
+        #endregion
 
 		protected static DicomAttribute FindAttribute(DicomAttributeCollection collection, ImageLevelUpdateEntry entry)
 		{
@@ -260,9 +256,19 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 
 			return collection[entry.TagPath.Tag];
-		}
+        }
 
-        private int Diff(string s1, string s2)
+
+        #region Private Methods
+
+        /// <summary>
+        /// Compares two string and return the position where they differ.
+        /// </summary>
+        /// <remarks>The position is zero-based.</remarks>
+        /// <param name="s1"></param>
+        /// <param name="s2"></param>
+        /// <returns></returns>
+        private static int Diff(string s1, string s2)
         {
             if (s1.Equals(s2))
                 return -1;
@@ -277,5 +283,80 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
             return index;
         }
-	}
+
+
+        /// <summary>
+        /// Makes sure the new value can be encoded with the specific character set in the dicom file header. If necessary and if it's allowed,
+        /// convert the dicom file to use unicode (ISO_IR 192).
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="attr"></param>
+        /// <param name="desiredValue"></param>
+        /// <exception cref="DicomCharacterSetException">Thrown if unicode is not allowed or (for some reason) the value cannot be encoded using unicode</exception>
+        private void EnsureCharacterSetIsGood(DicomFile file, DicomAttribute attr, string desiredValue)
+        {
+            var encodedValue = attr.GetEncodedString(file.TransferSyntax, file.DataSet.SpecificCharacterSet);
+            var diff = Diff(encodedValue.Trim(), desiredValue.Trim());
+            if (diff < 0)
+            {
+                // it's all good
+                return;
+            }
+
+            // The current specific character set does not support the new value. Try to encode it using unicode (if it's configured)
+            if (!UseUnicodeIfNecessary)
+            {
+                Platform.Log(LogLevel.Debug, "'{0}' cannot be encoded using current Character Set and Unicode is not allowed. Aborting..", desiredValue);
+                
+                //Throw DicomCharacterSetException
+                var characterSetDescriptions = SpecificCharacterSetParser.GetCharacterSetInfoDescriptions(file.DataSet.SpecificCharacterSet);
+                string instanceNumber = file.DataSet[DicomTags.InstanceNumber].ToString();
+                string instanceUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
+                char badChar = diff >= desiredValue.Length ? desiredValue[desiredValue.Length - 1] : desiredValue[diff];
+                var error = string.Format("SOP {5}\n\nCannot set {0} to {1}. Character {2} is not covered by character set {3} [{4}].",
+                                          UpdateEntry.TagPath.Tag.Name, desiredValue, badChar, file.DataSet.SpecificCharacterSet,
+                                          StringUtilities.Combine(characterSetDescriptions, ","),
+                                          string.Format("#{0} [{1}]", instanceNumber, instanceUid)
+                    );
+
+                Platform.Log(LogLevel.Error, error);
+                throw new DicomCharacterSetException(UpdateEntry.TagPath.Tag.TagValue, file.DataSet.SpecificCharacterSet, desiredValue, error);
+            }
+
+
+            // The attribute value has been set, only need to set specific character set to unicode
+            const string newSpecificCharacterSet = "ISO_IR 192";
+
+            // Before we commit the change, let's verify again if that's good.
+            Platform.Log(LogLevel.Debug, "'{0}'cannot be encoded using current Character Set and Unicode is allowed. Checking for value consistency if switching to Unicode encoding", desiredValue);
+            encodedValue = attr.GetEncodedString(file.TransferSyntax, newSpecificCharacterSet);
+            diff = Diff(encodedValue.Trim(), desiredValue.Trim());
+            if (diff >= 0)
+            {
+                // not ok?
+                var characterSetDescriptions = SpecificCharacterSetParser.GetCharacterSetInfoDescriptions(file.DataSet.SpecificCharacterSet);
+                string instanceNumber = file.DataSet[DicomTags.InstanceNumber].ToString();
+                string instanceUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
+                char badChar = diff >= desiredValue.Length ? desiredValue[desiredValue.Length - 1] : desiredValue[diff];
+                var error = string.Format("SOP {5}\n\nCannot set {0} to {1}. Character {2} is not covered by character set {3} [{4}]. Attempt to use {6} did not solve the problem.",
+                                          UpdateEntry.TagPath.Tag.Name, desiredValue, badChar, file.DataSet.SpecificCharacterSet,
+                                          StringUtilities.Combine(characterSetDescriptions, ","),
+                                          string.Format("#{0} [{1}]", instanceNumber, instanceUid),
+                                          newSpecificCharacterSet
+                    );
+
+                Platform.Log(LogLevel.Error, error);
+                throw new DicomCharacterSetException(UpdateEntry.TagPath.Tag.TagValue, file.DataSet.SpecificCharacterSet, desiredValue, error);
+            }
+
+            Platform.Log(LogLevel.Debug, "Specific Character Set for SOP {0} is now changed to unicode", file.MediaStorageSopInstanceUid);
+
+            file.DataSet.SpecificCharacterSet = newSpecificCharacterSet;
+            file.DataSet[DicomTags.SpecificCharacterSet].SetStringValue(newSpecificCharacterSet);
+            SpecificCharacterSetModified = true;
+        }
+
+        #endregion
+
+    }
 }

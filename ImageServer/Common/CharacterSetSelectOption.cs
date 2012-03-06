@@ -1,9 +1,9 @@
-namespace ClearCanvas.ImageServer.Services.Dicom
+namespace ClearCanvas.ImageServer.Common
 {
     /// <summary>
     /// 
     /// </summary>
-    public enum CFindRspCharacterSet
+    public enum CharacterSetSelectOption
     {
         /// <summary>
         /// Use whatever in the source (header/database)
@@ -11,8 +11,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         Source,    
 
         /// <summary>
-        /// Use  ISO_IR 126 (UTF-8)
+        /// Use  ISO_IR 192 (UTF-8)
         /// </summary>
-        ISO_IR_126  
+        Unicode
     }
 }

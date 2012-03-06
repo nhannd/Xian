@@ -63,7 +63,7 @@
     <Compile Include="Edit\EditStudyWorkQueueData.cs" />
     <Compile Include="Edit\Extensions\LogHistory\LogHistory.cs" />
     <Compile Include="Edit\InstanceInfo.cs" />
-    <Compile Include="InvalidDicomValueException.cs" />
+    <Compile Include="DicomCharacterSetException.cs" />
     <Compile Include="Edit\IWebEditStudyCommandCompiler.cs" />
     <Compile Include="Edit\IWebEditStudyProcessorExtension.cs" />
     <Compile Include="Edit\PatientInfo.cs" />
