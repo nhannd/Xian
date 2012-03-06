@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// label1
 			// 
 			resources.ApplyResources(this.label1, "label1");
-			this.label1.MaximumSize = new System.Drawing.Size(60, 0);
+			this.label1.MaximumSize = new System.Drawing.Size(80, 26);
 			this.label1.Name = "label1";
 			// 
 			// label2
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// label3
 			// 
 			resources.ApplyResources(this.label3, "label3");
-			this.label3.MaximumSize = new System.Drawing.Size(60, 0);
+			this.label3.MaximumSize = new System.Drawing.Size(80, 26);
 			this.label3.Name = "label3";
 			// 
 			// label4
