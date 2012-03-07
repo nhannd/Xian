@@ -86,10 +86,16 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 				throw new FaultException(message);
 			}
 
-			DicomAttributeCollection queryCriteria;
-			try
+            var oldCharacterSet = identifier.SpecificCharacterSet;
+            const string utf8 = "ISO_IR 192";
+            //.NET strings are unicode, so the query criteria are unicode.
+            identifier.SpecificCharacterSet = utf8;
+            
+            DicomAttributeCollection queryCriteria;
+			
+            try
 			{
-				queryCriteria = identifier.ToDicomAttributeCollection();
+                queryCriteria = identifier.ToDicomAttributeCollection();
 			}
 			catch (DicomException e)
 			{
@@ -105,8 +111,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 				Platform.Log(LogLevel.Error, e, fault.Description);
 				throw new FaultException<DataValidationFault>(fault, fault.Description);
 			}
+            finally
+            {
+                identifier.SpecificCharacterSet = oldCharacterSet;
+            }
 
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+		    using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
 				IEnumerable<DicomAttributeCollection> results = reader.Query(queryCriteria);
 

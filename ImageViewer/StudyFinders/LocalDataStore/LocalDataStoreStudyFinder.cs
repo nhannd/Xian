@@ -27,15 +27,18 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
         public LocalDataStoreStudyFinder()
 			: base("DICOM_LOCAL")
         {
-
         }
 
         public override StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
 			Platform.CheckForNullReference(queryParams, "queryParams");
 
-			DicomAttributeCollection collection = new DicomAttributeCollection();
-        	collection[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
+            //.NET strings are unicode, therefore, so is all the query data.
+            const string utf8 = "ISO_IR 192";
+            var collection = new DicomAttributeCollection {SpecificCharacterSet = utf8};
+            collection[DicomTags.SpecificCharacterSet].SetStringValue(utf8);
+            
+            collection[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
             collection[DicomTags.PatientId].SetStringValue(queryParams["PatientId"]);
             collection[DicomTags.AccessionNumber].SetStringValue(queryParams["AccessionNumber"]);
             collection[DicomTags.PatientsName].SetStringValue(queryParams["PatientsName"]);
@@ -61,7 +64,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 						CodeMeaning = codeMeaning
 					};
 				collection[DicomTags.PatientSpeciesCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
-			}
+            }
 
 			collection[DicomTags.PatientBreedDescription].SetStringValue(GetString(queryParams, "PatientBreedDescription"));
 			codeValue = GetString(queryParams, "PatientBreedCodeSequenceCodeValue");
@@ -75,7 +78,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 						CodeMeaning = codeMeaning
 					};
 				collection[DicomTags.PatientBreedCodeSequence].AddSequenceItem(codeSequenceMacro.DicomSequenceItem);
-			}
+            }
 
 			collection[DicomTags.ResponsiblePerson].SetStringValue(GetString(queryParams, "ResponsiblePerson"));
 			collection[DicomTags.ResponsiblePersonRole].SetStringValue("");
@@ -117,7 +120,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					if (!patientBreedCodeSequence.IsNull && patientBreedCodeSequence.Count > 0)
 					{
 						var codeSequenceMacro = new CodeSequenceMacro(((DicomSequenceItem[])result[DicomTags.PatientBreedCodeSequence].Values)[0]);
-						item.PatientBreedCodeSequenceCodingSchemeDesignator = codeSequenceMacro.CodingSchemeDesignator;
+                        item.PatientBreedCodeSequenceCodingSchemeDesignator = codeSequenceMacro.CodingSchemeDesignator;
 						item.PatientBreedCodeSequenceCodeValue = codeSequenceMacro.CodeValue;
 						item.PatientBreedCodeSequenceCodeMeaning = codeSequenceMacro.CodeMeaning;
 					}

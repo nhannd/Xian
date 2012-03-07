@@ -295,6 +295,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			set { this["StorageTransferSyntaxes"] = value; }
 		}
 
+        [ConfigurationProperty("QueryResponsesInUtf8", DefaultValue = false)]
+        public bool QueryResponsesInUtf8
+        {
+            get { return (bool)this["QueryResponsesInUtf8"]; }
+            set { this["QueryResponsesInUtf8"] = value; }
+        }
+
 		#endregion
 
         public override object Clone()
@@ -310,6 +317,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			clone.StorageTransferSyntaxes = _instance.StorageTransferSyntaxes;
 			clone.ImageStorageSopClasses = _instance.ImageStorageSopClasses;
 			clone.NonImageStorageSopClasses = _instance.NonImageStorageSopClasses;
+            clone.QueryResponsesInUtf8 = _instance.QueryResponsesInUtf8;
 
             return clone;
         }
@@ -325,9 +333,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				case "Port":
 				case "InterimStorageDirectory":
 				case "AllowUnknownCaller":
-					migrationValues.CurrentValue = migrationValues.PreviousValue;
+                case "QueryResponsesInUtf8":
+                    migrationValues.CurrentValue = migrationValues.PreviousValue;
 					break;
-				default: //Don't migrate the storage sop classes or transfer syntaxes
+                default: //Don't migrate the storage sop classes or transfer syntaxes
 					break;
     }
 		}

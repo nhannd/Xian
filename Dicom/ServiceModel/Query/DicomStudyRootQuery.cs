@@ -78,6 +78,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			{
 				DicomAttributeCollection criteria;
 
+			    var oldCharacterSet = queryCriteria.SpecificCharacterSet;
+                const string utf8 = "ISO_IR 192";
+                //.NET strings are unicode, so the query criteria are unicode.
+                queryCriteria.SpecificCharacterSet = utf8;
+
 				try
 				{
 					criteria = queryCriteria.ToDicomAttributeCollection();
@@ -96,8 +101,12 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 					Platform.Log(LogLevel.Error, e, fault.Description);
 					throw new FaultException<DataValidationFault>(fault, fault.Description);
 				}
+                finally
+				{
+                    queryCriteria.SpecificCharacterSet = oldCharacterSet;
+				}
 
-				try
+			    try
 				{
 					scuResults = scu.Find(_localAE, _remoteAE, _remoteHost, _remotePort, criteria);
 					scu.Join();

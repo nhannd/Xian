@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
@@ -78,11 +79,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						IEnumerable<DicomAttributeCollection> results = reader.Query(message.DataSet);
 						foreach (DicomAttributeCollection result in results)
 						{
-							DicomMessage response = new DicomMessage();
-							foreach (DicomAttribute attribute in result)
-								response.DataSet[attribute.Tag] = attribute.Copy();
+                            const string utf8 = "ISO_IR 192";
+                            if (DicomServerSettings.Instance.QueryResponsesInUtf8)
+                                ChangeCharacterSet(result, utf8);
 
-							//Add these to each response.
+                            var response = new DicomMessage(null, result);
+
+						    //Add these to each response.
 							message.DataSet[DicomTags.RetrieveAeTitle].SetStringValue(Context.AETitle);
 							message.DataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
@@ -141,5 +144,28 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				                             message.AffectedSopClassUid, message.DataSet);
 			}
 		}
-	}
+
+	    // TODO (CR Mar 2012): Hack for now to make sure character set is consistent in root and all sequences.
+        private static void ChangeCharacterSet(DicomAttributeCollection attributes, string characterSet)
+	    {
+            ChangeCharacterSet(attributes, characterSet, true);
+	    }
+
+        private static void ChangeCharacterSet(DicomAttributeCollection attributes, string characterSet, bool isRoot)
+	    {
+            attributes.SpecificCharacterSet = characterSet;
+            if (isRoot)
+                attributes[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+
+            foreach (var attribute in attributes.OfType<DicomAttributeSQ>())
+            {
+                var items = attribute.Values as DicomSequenceItem[];
+                if (items == null || items.Length == 0)
+                    continue;
+
+                foreach (var item in items)
+                    ChangeCharacterSet(item, characterSet, false);
+            }
+	    }
+    }
 }
