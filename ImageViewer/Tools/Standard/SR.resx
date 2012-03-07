@@ -792,4 +792,7 @@ Please check the log for more details.</value>
   <data name="TitleTools" xml:space="preserve">
     <value>Tools</value>
   </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
 </root>

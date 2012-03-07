@@ -62,9 +62,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Source")]
-        public global::ClearCanvas.ImageServer.Services.Dicom.CFindRspCharacterSet CFindRspCharacterSet {
+        public global::ClearCanvas.ImageServer.Common.CharacterSetSelectOption PreferredCharacterSet {
             get {
-                return ((global::ClearCanvas.ImageServer.Services.Dicom.CFindRspCharacterSet)(this["CFindRspCharacterSet"]));
+                return ((global::ClearCanvas.ImageServer.Common.CharacterSetSelectOption)(this["PreferredCharacterSet"]));
             }
         }
     }
