@@ -61,10 +61,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Source")]
-        public global::ClearCanvas.ImageServer.Common.CharacterSetSelectOption PreferredCharacterSet {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CFINDRspAlwaysInUnicode {
             get {
-                return ((global::ClearCanvas.ImageServer.Common.CharacterSetSelectOption)(this["PreferredCharacterSet"]));
+                return ((bool)(this["CFINDRspAlwaysInUnicode"]));
             }
         }
     }

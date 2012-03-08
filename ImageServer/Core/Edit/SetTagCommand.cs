@@ -214,11 +214,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			return true;
 		}
 
-	    public bool UseUnicodeIfNecessary
+        public bool CanSaveInUnicode
 	    {
             get
             {
-                return ImageServer.Common.Settings.Default.UnicodeEncodingAllowed;
+                return ImageServer.Common.Settings.Default.AllowedConvertToUnicodeOnEdit;
             }
 	    }
 
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             }
 
             // The current specific character set does not support the new value. Try to encode it using unicode (if it's configured)
-            if (!UseUnicodeIfNecessary)
+            if (!CanSaveInUnicode)
             {
                 Platform.Log(LogLevel.Debug, "'{0}' cannot be encoded using current Character Set and Unicode is not allowed. Aborting..", desiredValue);
                 

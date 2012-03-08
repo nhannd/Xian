@@ -170,9 +170,9 @@ namespace ClearCanvas.ImageServer.Common {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UnicodeEncodingAllowed {
+        public bool AllowedConvertToUnicodeOnEdit {
             get {
-                return ((bool)(this["UnicodeEncodingAllowed"]));
+                return ((bool)(this["AllowedConvertToUnicodeOnEdit"]));
             }
         }
     }

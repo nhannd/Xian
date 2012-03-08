@@ -1213,14 +1213,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             // TODO: In the future, should be device-dependent
 
-            switch(DicomSettings.Default.PreferredCharacterSet)
-            {
-                case CharacterSetSelectOption.Source: return null;
-                case CharacterSetSelectOption.Unicode: return "ISO_IR 192";
-
-                default:
-                    return null;
-            }
+            if (DicomSettings.Default.CFINDRspAlwaysInUnicode)
+                return "ISO_IR 192";
+            else
+                return null;
         }
 
         #endregion
