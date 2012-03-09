@@ -353,7 +353,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
             file.DataSet.SpecificCharacterSet = newSpecificCharacterSet;
             file.DataSet[DicomTags.SpecificCharacterSet].SetStringValue(newSpecificCharacterSet);
-            SpecificCharacterSetModified = true;
         }
 
         #endregion

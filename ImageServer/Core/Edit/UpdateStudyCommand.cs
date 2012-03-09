@@ -555,13 +555,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
         {
             var originalCS = file.DataSet.SpecificCharacterSet;
                         
-            bool instanceCharacterSetUpdated = false;
 
             foreach (BaseImageLevelUpdateCommand command in _commands)
             {
                 command.File = file;
                 command.Apply(file);
-                instanceCharacterSetUpdated = instanceCharacterSetUpdated || command.SpecificCharacterSetModified;
             }           
 
             var newCS = file.DataSet.SpecificCharacterSet;

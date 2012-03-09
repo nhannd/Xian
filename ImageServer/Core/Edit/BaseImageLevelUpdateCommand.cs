@@ -26,11 +26,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// </summary>
 		ImageLevelUpdateEntry UpdateEntry { get; }
 
-        /// <summary>
-        /// Gets a value indicating whether the command has modified the specific character set tag in the dicom file.
-        /// </summary>
-        bool SpecificCharacterSetModified { get; }
-
 	}
 
 	/// <summary>
@@ -94,8 +89,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		}
 
 	    #region IActionItem<DicomFile> Members
-
-        public bool SpecificCharacterSetModified { get; protected set; }
 
 		public abstract bool Apply(DicomFile file);
 
