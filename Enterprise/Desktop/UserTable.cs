@@ -30,27 +30,27 @@ namespace ClearCanvas.Enterprise.Desktop
                                                              user => user.EmailAddress,
                                                              1.0f));
 
-            Columns.Add(new DateTimeTableColumn<UserSummary>("Created On",
+            Columns.Add(new DateTimeTableColumn<UserSummary>(SR.ColumnCreatedOn,
                                                              user => user.CreationTime,
                                                              0.75f));
 
-            Columns.Add(new TableColumn<UserSummary, bool>("Enabled",
+            Columns.Add(new TableColumn<UserSummary, bool>(SR.ColumnEnabled,
                                                            user => user.Enabled,
                                                            0.25f));
 
-            Columns.Add(new DateTimeTableColumn<UserSummary>("Valid From",
+            Columns.Add(new DateTimeTableColumn<UserSummary>(SR.ColumnValidFrom,
                                                              user => user.ValidFrom,
                                                              0.75f));
 
-            Columns.Add(new DateTimeTableColumn<UserSummary>("Valid Until",
+            Columns.Add(new DateTimeTableColumn<UserSummary>(SR.ColumnValidUntil,
                                                              user => user.ValidUntil,
                                                              0.75f));
 
-            Columns.Add(new DateTimeTableColumn<UserSummary>("Password Expiry",
+            Columns.Add(new DateTimeTableColumn<UserSummary>(SR.ColumnPasswordExpiry,
                                                              user => user.PasswordExpiry,
                                                              0.75f));
 
-            Columns.Add(new DateTimeTableColumn<UserSummary>("Last Login Time",
+            Columns.Add(new DateTimeTableColumn<UserSummary>(SR.ColumnLastLoginTime,
                                                              user => user.LastLoginTime,
                                                              0.75f));
         }

@@ -138,8 +138,20 @@
   <data name="ColumnAuthorityTokenName" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="ColumnCreatedOn" xml:space="preserve">
+    <value>Created On</value>
+  </data>
   <data name="ColumnEmailAddress" xml:space="preserve">
     <value>Email Address</value>
+  </data>
+  <data name="ColumnEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="ColumnLastLoginTime" xml:space="preserve">
+    <value>Last Login Time</value>
+  </data>
+  <data name="ColumnPasswordExpiry" xml:space="preserve">
+    <value>Password Expiry</value>
   </data>
   <data name="ColumnUser" xml:space="preserve">
     <value>User</value>
@@ -149,6 +161,12 @@
   </data>
   <data name="ColumnUserName" xml:space="preserve">
     <value>Display Name</value>
+  </data>
+  <data name="ColumnValidFrom" xml:space="preserve">
+    <value>Valid From</value>
+  </data>
+  <data name="ColumnValidUntil" xml:space="preserve">
+    <value>Valid Until</value>
   </data>
   <data name="DescriptionDataAccessGroupChange" xml:space="preserve">
     <value>Disabling data access for an authority group removes the association between the authority group and imaging studies.  Users associated with the authority group will no longer be able to see their imaging studies.  Please re-enter your password to confirm this change.
