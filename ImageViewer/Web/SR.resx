@@ -133,4 +133,7 @@ Although some priors may be available, please be aware that you may be working w
   <data name="MessageStudyCouldNotBeLoaded" xml:space="preserve">
     <value>The study could not be loaded.</value>
   </data>
+  <data name="TooltipLayoutManager" xml:space="preserve">
+    <value>Layout Manager</value>
+  </data>
 </root>

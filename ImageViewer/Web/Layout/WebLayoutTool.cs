@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Web.Layout
     [MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuLayoutManager", "Show")]
     [DropDownAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager", "LayoutDropDownMenuModel")]
     [IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
-	[Tooltip("show", "Layout Manager")]
+    [Tooltip("show", "TooltipLayoutManager")]
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 
