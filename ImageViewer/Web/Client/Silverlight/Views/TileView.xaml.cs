@@ -615,7 +615,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Views
 
                     var performance = PerformanceMonitor.CurrentInstance;
                     if (performance.CurrentTile == this)
-                        performance.LogImageDraw(ev.Tile.Image.Length);
+                    {
+                        if (ev.Tile!=null&& ev.Tile.Image!=null)
+                            performance.LogImageDraw(ev.Tile.Image.Length);
+                    }
 
                     Draw(ev.Identifier, ev.Tile.Image);
 
