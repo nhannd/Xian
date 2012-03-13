@@ -607,7 +607,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                     isMultiVrTag = false;
                 }
                 writer.WriteLine("{0};{1};{2};{3};{4};{5};{6};{7}",
-                    tag.nTag,tag.name,tag.varName,vr,vmLow,vmHigh, string.IsNullOrEmpty(tag.retired) ? false : true,isMultiVrTag);
+                    tag.nTag, tag.name, tag.varName, vr, isMultiVrTag, vmLow, vmHigh, string.IsNullOrEmpty(tag.retired) ? false : true);
             }
 
             writer.Close();
