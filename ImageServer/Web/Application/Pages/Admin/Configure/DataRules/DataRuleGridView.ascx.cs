@@ -118,10 +118,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         {
             var fs = e.Row.DataItem as ServerRule;
             var lbl = e.Row.FindControl("ServerRuleApplyTimeEnum") as Label; // The label is added in the template
-            if (lbl != null && fs != null) lbl.Text = fs.ServerRuleApplyTimeEnum.Description;
+            if (lbl != null && fs != null) 
+                lbl.Text = ServerEnumDescription.GetLocalizedDescription(fs.ServerRuleApplyTimeEnum);
 
             lbl = e.Row.FindControl("ServerRuleTypeEnum") as Label; // The label is added in the template
-            if (lbl != null && fs != null) lbl.Text = fs.ServerRuleTypeEnum.Description;
+            if (lbl != null && fs != null) 
+                lbl.Text = ServerEnumDescription.GetLocalizedDescription(fs.ServerRuleTypeEnum);
 
 
             var img = ((Image)e.Row.FindControl("EnabledImage"));

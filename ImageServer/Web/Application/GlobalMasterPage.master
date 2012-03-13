@@ -1,3 +1,4 @@
+<%@ Import Namespace="System.Globalization"%>
 <%@ Import Namespace="Resources"%>
 <%@ Master Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.GlobalMasterPage" Codebehind="GlobalMasterPage.master.cs" %>
 
@@ -13,10 +14,18 @@
     <title></title>
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
     <link rel="shortcut icon" type="image/ico" runat="server" href="~/Images/favicon.ico" />   
-    <ccAsp:JQuery ID="MainJQuery" MultiSelect="true" Effects="true" runat="server" />        
+    <ccAsp:JQuery ID="MainJQuery" MultiSelect="true" Effects="true" runat="server" />
+    
 </head>
 <body id="MasterBody" class="GlobalBody">
+
     <script type="text/javascript">
+        function Locale() {
+            this.currentLocale = "<%=CultureInfo.CurrentUICulture%>";
+            this.decimalSeparator = "<%= CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator %>";
+            this.digitGroupSeparator = "<%= CultureInfo.CurrentUICulture.NumberFormat.NumberGroupSeparator %>";
+        }
+            
         var SR = new function() {
             this.Unknown = "<%= SR.Unknown %>";
             this.SelectAll = "<%= SR.SelectAll %>";
@@ -26,9 +35,12 @@
             this.ThisFieldIsRequired = "<%= InputValidation.ThisFieldIsRequired %>";
         };
     </script>
+    
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>"></script>
-    <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/date.js") %>"></script>    
+    <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/date.js") %>"></script>  
 
+    
+    
     <!-- this is special code that web service validation needs -->
     <div id="service" style="behavior: url(<%= ResolveClientUrl("~/Services/webservice.htc") %>);" />
     <!-- this is special code that web service validation needs -->

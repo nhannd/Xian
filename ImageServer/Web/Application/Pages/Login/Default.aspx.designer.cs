@@ -14,15 +14,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
     public partial class _Default {
         
         /// <summary>
-        /// Link1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlLink Link1;
-        
-        /// <summary>
         /// CheckJavascript control.
         /// </summary>
         /// <remarks>
@@ -41,15 +32,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
         protected global::System.Web.UI.ScriptManager GlobalScriptManager;
         
         /// <summary>
-        /// LoginSplash control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel LoginSplash;
-        
-        /// <summary>
         /// ManifestWarningTextLabel control.
         /// </summary>
         /// <remarks>
@@ -57,6 +39,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label ManifestWarningTextLabel;
+        
+        /// <summary>
+        /// CopyrightLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label CopyrightLabel;
         
         /// <summary>
         /// UserName control.

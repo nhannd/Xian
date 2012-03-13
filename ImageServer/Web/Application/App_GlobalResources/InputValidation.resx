@@ -162,6 +162,9 @@
   <data name="EmailAddressInvalid" xml:space="preserve">
     <value>The email address is invalidly formatted.</value>
   </data>
+  <data name="HighWatermark_InvalidRange" xml:space="preserve">
+    <value>High Watermark must be between 1 and 99 and less than the Low Watermark</value>
+  </data>
   <data name="InvalidAETitle" xml:space="preserve">
     <value>Invalid AE Title</value>
   </data>
@@ -185,6 +188,9 @@
   </data>
   <data name="InvalidTime" xml:space="preserve">
     <value>Invalid time</value>
+  </data>
+  <data name="LowWatermark_InvalidRange" xml:space="preserve">
+    <value>Low Watermark must be between 1 and 99 and less than the High Watermark</value>
   </data>
   <data name="PersonNameInputPanel_InvalidName" xml:space="preserve">
     <value>Invalid Person Name. Each field may contain up to 64 characters.</value>

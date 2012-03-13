@@ -44,20 +44,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             DataBind();
 
             SetPageTitle(Titles.LoginPageTitle);
-        }
 
-        protected bool EnterpriseMode
-        {
-            get
-            {
-            	// There's no simple way to determine what mode the Web GUI is running.
-            	// Here we assume it's stand-alone if the DefaultAuthenticationService plugin is enabled.
-                // This is not perfect but at least it works.                
-            	XmlDocument doc = new XmlDocument();
-                doc.Load(Server.MapPath("~/critical.Config"));
-                XmlNode node = doc.SelectSingleNode("//extensions/extension[@class='ClearCanvas.ImageServer.Services.Common.Authentication.DefaultAuthenticationService, ClearCanvas.ImageServer.Services.Common']");
-                return node != null && bool.Parse(node.Attributes["enabled"].Value) == false;
-            }
+            UserName.Focus();
         }
 
         protected void LoginClicked(object sender, EventArgs e)
@@ -124,8 +112,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         {
             ChangePasswordDialog.Show(true);
         }
-
-
 
         private void ShowError(string error)
         {

@@ -722,6 +722,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Suggestions:.
+        /// </summary>
+        internal static string EmptySearchResult_Suggestions {
+            get {
+                return ResourceManager.GetString("EmptySearchResult_Suggestions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enabled.
         /// </summary>
         internal static string Enabled {
@@ -992,6 +1001,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High watermark.
+        /// </summary>
+        internal static string HighWatermark {
+            get {
+                return ResourceManager.GetString("HighWatermark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hours.
         /// </summary>
         internal static string Hours {
@@ -1051,6 +1069,15 @@ namespace Resources {
         internal static string LogLevelWarning {
             get {
                 return ResourceManager.GetString("LogLevelWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Low watermark.
+        /// </summary>
+        internal static string LowWatermark {
+            get {
+                return ResourceManager.GetString("LowWatermark", resourceCulture);
             }
         }
         

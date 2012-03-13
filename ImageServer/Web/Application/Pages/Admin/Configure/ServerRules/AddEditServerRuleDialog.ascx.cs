@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                     myEle.text = '{1}';
                     if(navigator.appName == 'Microsoft Internet Explorer') applyTimeList.add(myEle);
                     else applyTimeList.add(myEle, null);",
-                                applyTimeEnum.Lookup, applyTimeEnum.Description);
+                                applyTimeEnum.Lookup, ServerEnumDescription.GetLocalizedDescription(applyTimeEnum));
                     }
                     break;
                 }
@@ -186,24 +186,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
             RuleTypeDropDownList.TextChanged += delegate
                                                     {
-                                                        ServerRuleValidator.
-                                                            RuleTypeControl =
-                                                            RuleTypeDropDownList.
-                                                                SelectedValue;
+                                                        ServerRuleValidator.RuleTypeControl = RuleTypeDropDownList.SelectedValue;
                                                     };
 
             string javascript =
                 @"<script type='text/javascript'>
             function ValidationServerRuleParams()
             {
-                control = document.getElementById('" +
-                RuleXmlTextBox.ClientID +
-                @"');
+                control = document.getElementById('" +RuleXmlTextBox.ClientID +@"');
                 params = new Array();
                 params.serverRule=escape(CodeMirrorEditor.getCode());
-				var oList = document.getElementById('" +
-                RuleTypeDropDownList.ClientID +
-                @"');
+				var oList = document.getElementById('" +RuleTypeDropDownList.ClientID +@"');
 				params.ruleType = oList.options[oList.selectedIndex].value;
                 return params;
             }
@@ -211,12 +204,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             function selectRuleType(oList, selectedIndex)
             {                         
                 var val = oList.value; 
-                var sampleList = document.getElementById('" +
-                SampleRuleDropDownList.ClientID +
-                @"');
-                var applyTimeList = document.getElementById('" +
-                RuleApplyTimeDropDownList.ClientID +
-                @"');
+                var sampleList = document.getElementById('" +SampleRuleDropDownList.ClientID +@"');
+                var applyTimeList = document.getElementById('" +RuleApplyTimeDropDownList.ClientID +@"');
                 
                 for (var q=sampleList.options.length; q>=0; q--) sampleList.options[q]=null;
                 for (var q=applyTimeList.options.length; q>=0; q--) applyTimeList.options[q]=null;
@@ -236,7 +225,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             }
 
             javascript +=
-                @"}
+            @"}
 
             // This function calls the Web Service method.  
             function webServiceScript(oList)
@@ -255,14 +244,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             // processes the Web Service return value.
             function OnSucess(result)
             {
-                var oList = document.getElementById('" +
-                SampleRuleDropDownList.ClientID +
-                @"');
+                var oList = document.getElementById('" +SampleRuleDropDownList.ClientID +@"');
                 var sValue = oList.options[oList.selectedIndex].value;
              
-                RsltElem = document.getElementById('" +
-                RuleXmlTextBox.ClientID +
-                @"');
+                RsltElem = document.getElementById('" +RuleXmlTextBox.ClientID +@"');
 
                 //Set the value on the TextArea and then set the value in the Editor.
                 //CodeMirror doesn't monitor changes to the textarea.
@@ -271,22 +256,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             }
            
             function pageLoad(){
-                $find('" +
-                ModalDialog.PopupExtenderID +
-                @"').add_shown(HighlightXML);
+                $find('" + ModalDialog.PopupExtenderID + @"').add_shown(HighlightXML);
             }
 
             function HighlightXML() {
-                CodeMirrorEditor = CodeMirror.fromTextArea('" +
-                RuleXmlTextBox.ClientID +
-                @"', {parserfile: 'parsexml.js',path: '../../../../Scripts/CodeMirror/js/', stylesheet: '../../../../Scripts/CodeMirror/css/xmlcolors.css'});
+                CodeMirrorEditor = CodeMirror.fromTextArea('" + RuleXmlTextBox.ClientID + @"', {parserfile: 'parsexml.js',path: '../../../../Scripts/CodeMirror/js/', stylesheet: '../../../../Scripts/CodeMirror/css/xmlcolors.css'});
             }
 
 	        function UpdateRuleXML() {
-                RsltElem = document.getElementById('" +
-                RuleXmlTextBox.ClientID +
-                @"');	            
-
+                RsltElem = document.getElementById('" + RuleXmlTextBox.ClientID + @"');	
                 RsltElem.value = CodeMirrorEditor.getCode();    
 	        }
   

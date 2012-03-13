@@ -31,15 +31,14 @@ function MultiSelect() {
             selectAllText: "<%= SR.All %>",
             noneSelected: '',
             oneOrMoreSelected: '*',
-            dropdownStyle: 'width: 90px;',
-            textboxStyle: 'width: 75px;'
+            dropdownStyle: 'width: 100px;' /* The list is long and there will  be a vertial scrollbar. 
+                                            It's ok to set the width explicitly here so that the items are not obscured by the scrollbar. 
+                                            Note: the text for the each item in this list does not change */
         });   
         
         $("#<%=StatusListBox.ClientID %>").multiSelect({
             noneSelected: '',
-            oneOrMoreSelected: '*',
-            //dropdownStyle: 'width: 200px;',
-            textboxStyle: 'width: 90px;'            
+            oneOrMoreSelected: '*'
         });   
 
 }

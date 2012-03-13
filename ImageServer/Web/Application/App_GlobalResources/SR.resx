@@ -804,6 +804,15 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="StudyDetails_WebServiceEdit_Description" xml:space="preserve">
     <value>Edited by external web service</value>
   </data>
+  <data name="HighWatermark" xml:space="preserve">
+    <value>High watermark</value>
+  </data>
+  <data name="LowWatermark" xml:space="preserve">
+    <value>Low watermark</value>
+  </data>
+  <data name="EmptySearchResult_Suggestions" xml:space="preserve">
+    <value>Suggestions:</value>
+  </data>
   <data name="WorkQueueDeleteConfirmExternalEdit" xml:space="preserve">
     <value>Removing an External Edit WorkQueue entry may cause the demographics for the study to be incorrect.  Are you sure you want to delete this item from the queue?</value>
   </data>

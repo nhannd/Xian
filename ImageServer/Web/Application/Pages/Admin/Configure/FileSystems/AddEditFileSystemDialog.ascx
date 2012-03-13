@@ -170,9 +170,12 @@
                                                         <ccAsp:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" SkinID="InvalidInputIndicator">
                                                         </ccAsp:InvalidInputIndicator>
                                                         <ccValidator:RangeComparisonValidator ID="HighWatermarkValidator" runat="server"
-                                                            ControlToValidate="HighWatermarkTextBox" ControlToCompare="LowWatermarkTextBox"
-                                                            GreaterThan="true" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditFileSystemValidationGroup" MinValue="1"
-                                                            MaxValue="99" InputName="High watermark" CompareToInputName="Low watermark" Display="None"
+                                                            ControlToValidate="HighWatermarkTextBox" InputName="High watermark" 
+                                                            ControlToCompare="LowWatermarkTextBox" GreaterThan="true" 
+                                                            Text="<%$Resources: InputValidation, HighWatermark_InvalidRange%>"
+                                                            InvalidInputCSS="DialogTextBoxInvalidInput" 
+                                                            ValidationGroup="AddEditFileSystemValidationGroup" 
+                                                            MinValue="1" MaxValue="99"  Display="None"
                                                             InvalidInputIndicatorID="HighWatermarkHelp" />
                                                     </td>
                                                 </tr>
@@ -199,8 +202,9 @@
                                                         </ccAsp:InvalidInputIndicator>
                                                         <ccValidator:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
                                                             runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
+                                                            Text="<%$Resources: InputValidation, LowWatermark_InvalidRange%>"
                                                             GreaterThan="false" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditFileSystemValidationGroup" MinValue="1"
-                                                            MaxValue="99" InputName="Low watermark" CompareToInputName="High watermark" Display="None"
+                                                            MaxValue="99" InputName="Low watermark" Display="None"
                                                             InvalidInputIndicatorID="LowWatermarkHelp" />
                                                     </td>
                                                 </tr>
