@@ -9,12 +9,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Shreds
 {
@@ -37,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Shreds
 
 		public static implicit operator StudyInformation(StudyInformationFieldExchanger info)
 		{
-			ClearCanvas.ImageViewer.Services.StudyInformation clone = new StudyInformation();
+			StudyInformation clone = new StudyInformation();
 			clone.StudyInstanceUid = info.StudyInstanceUid;
 			clone.PatientId = info.PatientId;
 			clone.PatientsName = info.PatientsName;

@@ -14,13 +14,12 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer

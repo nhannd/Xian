@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {

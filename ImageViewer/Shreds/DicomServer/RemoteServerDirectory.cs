@@ -12,8 +12,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.ServerTree;
-using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {

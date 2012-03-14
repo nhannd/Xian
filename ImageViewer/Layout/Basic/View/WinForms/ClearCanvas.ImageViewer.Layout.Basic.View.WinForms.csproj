@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DisplaySetCreationConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DisplaySetCreationConfigurationComponentControl.Designer.cs">
       <DependentUpon>DisplaySetCreationConfigurationComponentControl.cs</DependentUpon>

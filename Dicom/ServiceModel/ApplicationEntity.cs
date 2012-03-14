@@ -9,10 +9,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel

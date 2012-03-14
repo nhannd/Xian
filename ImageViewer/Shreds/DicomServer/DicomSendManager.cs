@@ -17,12 +17,11 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
-using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.Common.Utilities;
 using System.IO;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer

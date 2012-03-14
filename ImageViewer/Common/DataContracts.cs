@@ -12,7 +12,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.ImageViewer.Services
+namespace ClearCanvas.ImageViewer.Common
 {
 	[DataContract]
 	public class AEInformation

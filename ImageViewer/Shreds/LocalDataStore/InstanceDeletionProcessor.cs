@@ -15,6 +15,7 @@ using System.IO;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Services;
 
