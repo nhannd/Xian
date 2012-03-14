@@ -9,14 +9,12 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-	internal class BufferCache<T>
+	public class BufferCache<T>
 	{
 		private readonly int _maxSize;
 		private readonly bool _synchronized;

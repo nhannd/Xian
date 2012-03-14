@@ -15,7 +15,7 @@ using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class ComposedLut : IComposedLut
+	public sealed class ComposedLut : IComposedLut
 	{
 		private readonly int _minInputValue;
 		private readonly int _maxInputValue;

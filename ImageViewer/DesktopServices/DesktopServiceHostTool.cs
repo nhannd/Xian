@@ -19,7 +19,6 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.Common;
 using System.Security.Principal;
 using System.IdentityModel.Claims;
 

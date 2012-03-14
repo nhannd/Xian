@@ -138,6 +138,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <CommonFiles Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
   	<ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
     <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.config" />
   </ItemGroup>
@@ -226,7 +230,6 @@
 
   <ItemGroup>
     <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
-    <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -527,6 +530,7 @@
   <Target Name="Copy Project Files" DependsOnTargets="Copy Plugin Files">
 
     <Copy SourceFiles="@(DicomToolkitFiles)" DestinationFolder="$(CommonDirectory)" />
+    <Copy SourceFiles="@(CommonFiles)" DestinationFolder="$(CommonDirectory)" />
 
     <RegexIsMatch Pattern="ExcludeDatabase" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDatabase" />

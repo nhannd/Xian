@@ -9,14 +9,10 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer;
 
-namespace ClearCanvas.ImageViewer.Common
+namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// Helper class for determining whether or not the current user has certain viewer-specific permissions.

@@ -12,7 +12,6 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Explorer;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom

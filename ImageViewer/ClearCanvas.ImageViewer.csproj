@@ -165,23 +165,6 @@
     <Compile Include="InputManagement\Tests\ViewerShortcutManagerTests.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
-    <Compile Include="Common\BufferCache.cs" />
-    <Compile Include="Common\Cache.cs" />
-    <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
-    <Compile Include="Common\Diagnostics.cs" />
-    <Compile Include="Common\ExtensionData.cs" />
-    <Compile Include="Common\LargeObjectContainer.cs" />
-    <Compile Include="Common\LargeObjectContainerCache.cs" />
-    <Compile Include="Common\MemoryCollector.cs" />
-    <Compile Include="Common\MemoryManagementSettings.cs" />
-    <Compile Include="Common\MemoryManagementSettings.Designer.cs">
-      <DependentUpon>MemoryManagementSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="Common\MemoryManagementStrategy.cs" />
-    <Compile Include="Common\MemoryManager.cs" />
-    <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="Comparers\ReverseComparer.cs" />
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
@@ -219,14 +202,12 @@
     <Compile Include="Layout\IHpSerializableElement.cs" />
     <Compile Include="Layout\RectangularGrid.cs" />
     <Compile Include="Layout\Tests\HpApplicabilityResultTests.cs" />
+    <Compile Include="PermissionsHelper.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
     <Compile Include="Rendering\RenderingException.cs" />
-    <Compile Include="Common\BlockingCollection.cs" />
-    <Compile Include="Common\BlockingThreadPool.cs" />
-    <Compile Include="Common\IBlockingEnumerator.cs" />
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
@@ -255,7 +236,6 @@
     <Compile Include="RoiGraphics\Tests\RectangularRoiTests.cs" />
     <Compile Include="RoiGraphics\Tests\RoiStatisticsTests.cs" />
     <Compile Include="RoiGraphics\Tests\RoiTestBase.cs" />
-    <Compile Include="Common\RetryableCommandExecutor.cs" />
     <Compile Include="Comparers\DicomSopComparer.cs" />
     <Compile Include="Comparers\InstanceNumberComparer.cs" />
     <Compile Include="DicomPresentationImageSettings.cs" />
@@ -294,7 +274,6 @@
     <Compile Include="PresentationStates\Dicom\DicomGraphicsDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsFactory.cs" />
     <Compile Include="EditBox.cs" />
-    <Compile Include="Common\FilteredGroup.cs" />
     <Compile Include="Graphics\DecoratorCompositeGraphic.cs" />
     <Compile Include="Graphics\AddGraphicUndoableCommand.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneLayers.cs" />
@@ -529,7 +508,6 @@
     <Compile Include="Mathematics\Vector3D.cs" />
     <Compile Include="PriorStudyFinder.cs" />
     <Compile Include="PriorStudyLoader.cs" />
-    <Compile Include="Common\ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\BackBuffer.cs" />
@@ -649,7 +627,6 @@
     <Compile Include="Tests\BuildTreeTest.cs" />
     <Compile Include="Tests\AddImageTest.cs" />
     <Compile Include="Tests\DisplaySetSelectionTest.cs" />
-    <Compile Include="Common\Tests\FilteredGroupsTest.cs" />
     <Compile Include="Tests\MockPresentationImage.cs" />
     <Compile Include="Tests\SelectionTest.cs" />
     <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />
@@ -770,6 +747,10 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
+    <ProjectReference Include="Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="BaseTools\MouseToolSettings.settings">
@@ -813,10 +794,6 @@
     <None Include="ClassDiagrams\StudyFindersLoaders.cd" />
     <None Include="ClassDiagrams\VectorGraphics.cd" />
     <None Include="ClassDiagrams\ViewerUndoSupport.cd" />
-    <None Include="Common\MemoryManagementSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>MemoryManagementSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="DicomPresentationImageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomPresentationImageSettings.Designer.cs</LastGenOutput>

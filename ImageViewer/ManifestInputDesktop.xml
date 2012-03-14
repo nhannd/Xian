@@ -19,6 +19,7 @@
     <File name="PrivacyNotice.rtf" />
     <File name="Logging.config" />
     <File name="common\ClearCanvas.Common.dll" checksum="true" />
+    <File name="common\ClearCanvas.ImageViewer.Common.dll" checksum="true" />
     <File name="common\ClearCanvas.Dicom.DataStore.dll" checksum="true" />
     <File name="common\ClearCanvas.Dicom.dll" checksum="true" />
     <File name="common\ClearCanvas.Server.ShredHost.dll" checksum="true" />

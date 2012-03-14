@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
