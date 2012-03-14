@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.ServiceModel;
 using System.Web.Security;
 using System.Web.UI;
@@ -73,17 +74,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                         }
                     }
                 }
-                catch (FaultException<RequestValidationException> ex)
+                catch(ArgumentException ex)
                 {
-                    // NOTE: The server is throwing FaultException<RequestValidationException> when username or password doesn't match the configured policy
-                    Platform.Log(LogLevel.Error, ex, "Unable to change password for {0}", ChangePasswordUsername.Text);
-                    string error = String.Format(ErrorMessages.ChangePasswordError, ex.Detail.Message);
+                    Platform.Log(LogLevel.Error, ex, "Unable to change password for {0}: {1}", ChangePasswordUsername.Text, ex.Message);
+                    string error = String.Format(ErrorMessages.ChangePasswordError, ex.Message);
                     ShowError(error);
+                }
+                catch (PasswordExpiredException ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Unable to change password for {0}: {1}", ChangePasswordUsername.Text, ex.Message);
+                    ShowError(ErrorMessages.PasswordExpired);
                 }
                 catch (UserAccessDeniedException ex)
                 {
                     Platform.Log(LogLevel.Error, ex, "Unable to change password for {0}: {1}", ChangePasswordUsername.Text, ex.Message);
-                    ShowError(ex.Message);
+                    ShowError(ErrorMessages.UserAccessDenied);
+                }
+                catch (RequestValidationException ex)
+                {
+                    // NOTE: The server is throwing FaultException<RequestValidationException> when username or password doesn't match the configured policy
+                    Platform.Log(LogLevel.Error, ex, "Unable to change password for {0}: {1}", ChangePasswordUsername.Text, ex.Message);
+                    
+                    string error = String.Format(ErrorMessages.PasswordPolicyNotMet);
+                    ShowError(error);
                 }
                 catch (CommunicationException ex)
                 {

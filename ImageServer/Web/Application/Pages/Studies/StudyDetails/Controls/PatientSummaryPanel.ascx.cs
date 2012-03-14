@@ -51,10 +51,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
                 personName.PersonName = _patientSummary.PatientName;
                 PatientDOB.Value = _patientSummary.Birthdate;
-				if (!String.IsNullOrEmpty(_patientSummary.PatientsAge))
-				{
-                     string patientAge = _patientSummary.PatientsAge.Substring(0, 3).TrimStart('0');
-
+                
+				if (String.IsNullOrEmpty(_patientSummary.PatientsAge))
+                    PatientAge.Text = SR.Unknown;
+				else
+                {
+                    string patientAge = _patientSummary.PatientsAge.Substring(0, 3).TrimStart('0');
                     switch (_patientSummary.PatientsAge.Substring(3))
                     {
                         case "Y":
@@ -76,10 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
                     PatientAge.Text = patientAge;
 				}
-				else
-				{
-                    PatientAge.Text = SR.Years;
-				}
+
 
             	if (String.IsNullOrEmpty(_patientSummary.Sex))
                     PatientSex.Text = SR.Unknown;

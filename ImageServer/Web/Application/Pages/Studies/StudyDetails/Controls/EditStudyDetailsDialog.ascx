@@ -103,7 +103,8 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" Text="20010101" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" /><asp:LinkButton ID="ClearPatientBirthDateButton" 
+                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" Text="20010101" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" />
+                                        <asp:LinkButton ID="ClearPatientBirthDateButton" 
                                                     Text="<%$Resources: Labels, Clear %>" runat="server" CssClass="DialogLinkButton" />
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientBirthDateHelp" runat="server" SkinID="InvalidInputIndicator" />
@@ -192,7 +193,11 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                         <td>
-                                            <ccUI:TextBox ID="StudyDate" runat="server" CausesValidation="true" CssClass="DialogTextBox" ReadOnly="true" /><ccUI:TextBox ID="StudyTimeHours" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><span style="color: black">:</span><asp:TextBox ID="StudyTimeMinutes" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><span style="color:Black ">:</span><asp:TextBox ID="StudyTimeSeconds" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><asp:LinkButton ID="ClearStudyDateTimeButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                            <ccUI:TextBox ID="StudyDate" runat="server" CausesValidation="true" CssClass="DialogTextBox" ReadOnly="true" />
+                                            <ccUI:TextBox ID="StudyTimeHours" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" />
+                                            <span style="color: black">:</span><asp:TextBox ID="StudyTimeMinutes" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" />
+                                            <span style="color:Black ">:</span><asp:TextBox ID="StudyTimeSeconds" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" />
+                                            <asp:LinkButton ID="ClearStudyDateTimeButton" Text="<%$Resources: Labels, Clear %>"  runat="server" CssClass="DialogLinkButton" />
                                         </td>
                                         <td>
                                         <ccAsp:InvalidInputIndicator ID="StudyDateHelp" runat="server" SkinID="InvalidInputIndicator" />
