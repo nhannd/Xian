@@ -381,6 +381,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>UpgradeSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DataContractBase.cs" />
     <Compile Include="ExtensionSettings.cs" />
     <Compile Include="ExtensionSettings.Designer.cs">
       <AutoGen>True</AutoGen>

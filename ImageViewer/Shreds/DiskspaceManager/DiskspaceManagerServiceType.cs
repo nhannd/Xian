@@ -10,12 +10,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.DiskspaceManager;
+using ClearCanvas.ImageViewer.Common.DiskspaceManager;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager

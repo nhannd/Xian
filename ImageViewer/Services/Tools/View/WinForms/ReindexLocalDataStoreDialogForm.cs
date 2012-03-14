@@ -9,8 +9,8 @@
 
 #endregion
 
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using Crownwood.DotNetMagic.Forms;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.Windows.Forms;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms

@@ -14,7 +14,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
-using ClearCanvas.ImageViewer.Services.DiskspaceManager;
+using ClearCanvas.ImageViewer.Common.DiskspaceManager;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {

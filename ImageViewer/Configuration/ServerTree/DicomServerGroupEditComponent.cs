@@ -13,7 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
-using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			{
 				DicomServerGroupEditComponent groupComponent = (DicomServerGroupEditComponent)component;
 
-				ImageViewer.Services.ServerTree.ServerTree serverTree = groupComponent._serverTree;
+				Common.ServerTree.ServerTree serverTree = groupComponent._serverTree;
 
 				bool valid = true; 
 				string conflictingPath = "";
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		#region Private Fields
 
-		private readonly ImageViewer.Services.ServerTree.ServerTree _serverTree;
+		private readonly Common.ServerTree.ServerTree _serverTree;
 		private string _serverGroupName;
 		private readonly bool _isNewServerGroup;
 
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public DicomServerGroupEditComponent(ImageViewer.Services.ServerTree.ServerTree dicomServerTree, ServerUpdateType updatedType)
+		public DicomServerGroupEditComponent(Common.ServerTree.ServerTree dicomServerTree, ServerUpdateType updatedType)
 		{
 			_isNewServerGroup = updatedType.Equals(ServerUpdateType.Add)? true : false;
 			_serverTree = dicomServerTree;

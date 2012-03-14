@@ -17,9 +17,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Explorer.Local;
-using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools

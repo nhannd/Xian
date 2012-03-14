@@ -79,6 +79,10 @@
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Explorer\Dicom\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
       <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>
       <Name>ClearCanvas.ImageViewer.Explorer.Dicom</Name>
@@ -86,10 +90,6 @@
     <ProjectReference Include="..\..\..\Explorer\Local\ClearCanvas.ImageViewer.Explorer.Local.csproj">
       <Project>{AD9F87CF-0F30-442D-ACCD-80FACC339F22}</Project>
       <Name>ClearCanvas.ImageViewer.Explorer.Local</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Services\Tools\ClearCanvas.ImageViewer.Services.Tools.csproj">
       <Project>{EF1E3BC4-21CA-467A-B84F-9B692846F459}</Project>

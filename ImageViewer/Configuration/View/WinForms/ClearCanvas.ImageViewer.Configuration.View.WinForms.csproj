@@ -64,35 +64,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomizeViewerActionModelsComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CustomizeViewerActionModelsComponentControl.Designer.cs">
       <DependentUpon>CustomizeViewerActionModelsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomizeViewerActionModelsComponentView.cs" />
     <Compile Include="DicomServerEditComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerEditComponentControl.Designer.cs">
       <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerEditComponentView.cs" />
     <Compile Include="DicomServerGroupEditComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentControl.Designer.cs">
       <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentView.cs" />
     <Compile Include="PublishingConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PublishingConfigurationComponentControl.Designer.cs">
       <DependentUpon>PublishingConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PublishingConfigurationComponentView.cs" />
     <Compile Include="MonitorConfigurationApplicationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MonitorConfigurationApplicationComponentControl.Designer.cs">
       <DependentUpon>MonitorConfigurationApplicationComponentControl.cs</DependentUpon>
@@ -114,7 +109,6 @@
     </Compile>
     <Compile Include="ServerTreeComponentView.cs" />
     <Compile Include="ServerTreeConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ServerTreeConfigurationComponentControl.Designer.cs">
       <DependentUpon>ServerTreeConfigurationComponentControl.cs</DependentUpon>
@@ -135,9 +129,9 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Configuration.csproj">
       <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>

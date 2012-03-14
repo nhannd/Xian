@@ -12,16 +12,15 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.Automation;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
-using ClearCanvas.ImageViewer.Services.Automation;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ApplicationEntity=ClearCanvas.ImageViewer.StudyManagement.ApplicationEntity;
 

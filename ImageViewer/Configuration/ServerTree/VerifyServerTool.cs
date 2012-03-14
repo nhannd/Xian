@@ -15,7 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Network.Scu;
-using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 				return;
 			}
 
-			string myAE = ImageViewer.Services.ServerTree.ServerTree.GetClientAETitle();
+			string myAE = Common.ServerTree.ServerTree.GetClientAETitle();
 
 			StringBuilder msgText = new StringBuilder();
 			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");

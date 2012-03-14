@@ -22,9 +22,9 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Services;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom

@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MprConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MprConfigurationComponentControl.Designer.cs">
       <DependentUpon>MprConfigurationComponentControl.cs</DependentUpon>
@@ -76,6 +75,10 @@
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Volume.Mpr.csproj">
       <Project>{AD8F67CF-0F30-412D-ACCD-80BACA332F22}</Project>

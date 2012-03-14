@@ -14,8 +14,8 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Services;
-using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {

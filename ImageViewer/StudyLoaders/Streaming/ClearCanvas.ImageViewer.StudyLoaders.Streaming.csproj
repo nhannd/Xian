@@ -114,10 +114,6 @@
       <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
       <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

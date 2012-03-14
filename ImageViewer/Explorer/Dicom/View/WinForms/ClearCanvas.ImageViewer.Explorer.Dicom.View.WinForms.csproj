@@ -65,7 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomExplorerConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomExplorerConfigurationComponentControl.Designer.cs">
       <DependentUpon>DicomExplorerConfigurationComponentControl.cs</DependentUpon>
@@ -84,7 +83,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SearchPanelComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SearchPanelComponentControl.Designer.cs">
       <DependentUpon>SearchPanelComponentControl.cs</DependentUpon>
@@ -124,9 +122,9 @@
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
+    <ProjectReference Include="..\..\..\..\Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
       <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>

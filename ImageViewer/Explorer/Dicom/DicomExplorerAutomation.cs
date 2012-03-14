@@ -17,10 +17,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.Automation;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.DesktopServices;
-using ClearCanvas.ImageViewer.Services.Automation;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.Threading;
 using ClearCanvas.ImageViewer.StudyManagement;
 

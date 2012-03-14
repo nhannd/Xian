@@ -108,10 +108,6 @@
       <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
       <Name>ClearCanvas.ImageViewer.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>

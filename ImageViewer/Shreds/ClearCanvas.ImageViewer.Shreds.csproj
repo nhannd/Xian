@@ -118,9 +118,9 @@
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
       <Name>ClearCanvas.Server.ShredHost</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
+    <ProjectReference Include="..\Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

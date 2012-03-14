@@ -18,10 +18,10 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {

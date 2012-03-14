@@ -15,11 +15,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Clipboard;
+using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
-using ClearCanvas.ImageViewer.Services.DicomServer;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages

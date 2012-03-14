@@ -39,6 +39,16 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.ServiceModel.dll</HintPath>
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -49,17 +59,50 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auditing\AuditedInstances.cs" />
+    <Compile Include="Auditing\AuditHelper.cs" />
+    <Compile Include="Auditing\EventReceiptAction.cs" />
+    <Compile Include="Auditing\EventResult.cs" />
+    <Compile Include="Auditing\EventSource.cs" />
+    <Compile Include="AuthorityTokens.cs" />
+    <Compile Include="Automation\DataContracts.cs" />
+    <Compile Include="Automation\IDicomExplorerAutomation.cs" />
+    <Compile Include="Automation\IViewerAutomation.cs" />
+    <Compile Include="Automation\IViewerAutomationBridge.cs" />
+    <Compile Include="Automation\ViewerAutomationBridge.cs" />
+    <Compile Include="Automation\ViewerAutomationServiceClient.cs" />
     <Compile Include="BlockingCollection.cs" />
     <Compile Include="BlockingThreadPool.cs" />
     <Compile Include="BufferCache.cs" />
     <Compile Include="Cache.cs" />
+    <Compile Include="DataContracts.cs" />
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />
+    <Compile Include="DicomFilePublisher.cs" />
+    <Compile Include="DicomServer\DataContracts.cs" />
+    <Compile Include="DicomServer\DicomSendServiceClient.cs" />
+    <Compile Include="DicomServer\DicomServerConfigurationHelper.cs" />
+    <Compile Include="DicomServer\DicomServerServiceClient.cs" />
+    <Compile Include="DicomServer\IDicomSendService.cs" />
+    <Compile Include="DicomServer\IDicomServerService.cs" />
+    <Compile Include="DiskspaceManager\DataContracts.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerServiceClient.cs" />
+    <Compile Include="DiskspaceManager\IDiskspaceManagerService.cs" />
     <Compile Include="ExtensionData.cs" />
     <Compile Include="FilteredGroup.cs" />
     <Compile Include="IBlockingEnumerator.cs" />
     <Compile Include="LargeObjectContainer.cs" />
     <Compile Include="LargeObjectContainerCache.cs" />
+    <Compile Include="LocalDataStore\DataContracts.cs" />
+    <Compile Include="LocalDataStore\ILocalDataStoreActivityMonitorService.cs" />
+    <Compile Include="LocalDataStore\ILocalDataStoreService.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreActivityMonitor.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceClient.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreDeletionHelper.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreEventBroker.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreReindexer.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreServiceClient.cs" />
+    <Compile Include="LocalDataStore\LocalStudyRootQueryExtensionPoint.cs" />
     <Compile Include="MemoryCollector.cs" />
     <Compile Include="MemoryManagementSettings.cs" />
     <Compile Include="MemoryManagementSettings1.Designer.cs">
@@ -72,9 +115,23 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="RetryableCommandExecutor.cs" />
+    <Compile Include="ImageViewerNamespace.cs" />
+    <Compile Include="ServerTree\AEServerGroup.cs" />
+    <Compile Include="ServerTree\ServerTree.cs" />
+    <Compile Include="SR.Designer.cs">
+      <DependentUpon>SR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
+    <Compile Include="WorkItem\IWorkItemService.cs" />
+    <Compile Include="WorkItem\WorkItem.cs" />
+    <Compile Include="WorkItem\WorkItemProgress.cs" />
+    <Compile Include="WorkItem\WorkItemRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="DataContracts.cd" />
     <None Include="MemoryManagementSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MemoryManagementSettings1.Designer.cs</LastGenOutput>
@@ -93,6 +150,16 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="StudyManagement\Storage\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -17,7 +17,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
-using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using System.Net;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer

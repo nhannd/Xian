@@ -63,7 +63,6 @@
     <Compile Include="ExtendedOpenFilesDialogProvider.cs" />
     <Compile Include="StudyFilterColumnHeaderCell.cs" />
     <Compile Include="ExportComponentPanel.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExportComponentPanel.Designer.cs">
       <DependentUpon>ExportComponentPanel.cs</DependentUpon>
@@ -90,7 +89,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StudyFilterTableView.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ToolStripFilterItems\ClickableToolStripControlHost.cs">
       <SubType>Component</SubType>

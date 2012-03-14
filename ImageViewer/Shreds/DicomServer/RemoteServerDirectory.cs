@@ -12,8 +12,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Services;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -28,10 +28,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				ServerTree serverTree = new ServerTree();
 				List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
 
-				ClearCanvas.ImageViewer.Services.ServerTree.Server server = servers.Find(delegate(IServerTreeNode node)
+				Common.ServerTree.Server server = servers.Find(delegate(IServerTreeNode node)
 												{
-													return ((ClearCanvas.ImageViewer.Services.ServerTree.Server)node).AETitle == aeTitle;
-												}) as ClearCanvas.ImageViewer.Services.ServerTree.Server;
+													return ((Common.ServerTree.Server)node).AETitle == aeTitle;
+												}) as Common.ServerTree.Server;
 
 				if (server != null)
 				{

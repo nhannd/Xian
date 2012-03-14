@@ -11,15 +11,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using System.ComponentModel;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 

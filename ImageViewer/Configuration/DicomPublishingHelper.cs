@@ -15,9 +15,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Services;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.Linq;
 
 namespace ClearCanvas.ImageViewer.Configuration
@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			if (string.IsNullOrEmpty(aetitle))
 				return null;
 
-			var tree = new Services.ServerTree.ServerTree();
+			var tree = new Common.ServerTree.ServerTree();
 			foreach (var node in tree.FindChildServers(tree.RootNode.ServerGroupNode))
 			{
 				var server = node as Server;
@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		private static bool StudyExistsOnRemote(Server server, string studyInstanceUid)
 		{
-			var srq = new DicomStudyRootQuery(Services.ServerTree.ServerTree.GetClientAETitle(), server.AETitle, server.Host, server.Port);
+			var srq = new DicomStudyRootQuery(Common.ServerTree.ServerTree.GetClientAETitle(), server.AETitle, server.Host, server.Port);
 			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
 			return result.Count > 0;
 		}

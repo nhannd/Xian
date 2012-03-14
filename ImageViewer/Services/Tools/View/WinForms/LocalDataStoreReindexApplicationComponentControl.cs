@@ -13,7 +13,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using MessageBox=ClearCanvas.Desktop.View.WinForms.MessageBox;
 using ClearCanvas.Common;
 

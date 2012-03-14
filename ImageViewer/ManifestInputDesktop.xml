@@ -58,7 +58,6 @@
     <File name="plugins\ClearCanvas.ImageViewer.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Layout.Basic.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.Services.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Shreds.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Thumbnails.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" checksum="true" />

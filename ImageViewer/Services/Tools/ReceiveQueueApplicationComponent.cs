@@ -16,11 +16,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				_serverName = "";
 				try
 				{
-					ServerTree.ServerTree serverTree = new ServerTree.ServerTree();
+					ServerTree serverTree = new ServerTree();
 					List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
 					foreach (Server server in servers)
 					{

@@ -12,7 +12,7 @@
 using System;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer

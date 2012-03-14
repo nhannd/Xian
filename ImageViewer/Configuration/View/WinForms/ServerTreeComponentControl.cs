@@ -18,8 +18,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
@@ -381,7 +381,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         /// <summary>
         /// Builds the root and first-level of the tree
         /// </summary>
-        private void BuildServerTreeView(TreeView treeView, ClearCanvas.ImageViewer.Services.ServerTree.ServerTree dicomServerTree)
+        private void BuildServerTreeView(TreeView treeView, Common.ServerTree.ServerTree dicomServerTree)
         {
             treeView.Nodes.Clear();
             treeView.ShowNodeToolTips = true;

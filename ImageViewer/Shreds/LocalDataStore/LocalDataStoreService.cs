@@ -13,9 +13,8 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.DataStore;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {

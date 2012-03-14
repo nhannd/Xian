@@ -13,9 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return CollectionUtils.Select(candidates, delegate(Server node) { return defaultServerPaths.Contains(node.Path); });
 		}
 
-		public static List<Server> SelectFrom(Services.ServerTree.ServerTree serverTree)
+		public static List<Server> SelectFrom(Common.ServerTree.ServerTree serverTree)
 		{
 			List<Server> allServers = CollectionUtils.Map(serverTree.FindChildServers(),
 				delegate(IServerTreeNode server) { return (Server) server; });
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public static List<Server> GetAll()
 		{
-			ImageViewer.Services.ServerTree.ServerTree tree = new Services.ServerTree.ServerTree();
+			Common.ServerTree.ServerTree tree = new Common.ServerTree.ServerTree();
 			return SelectFrom(tree);
 		}
 
@@ -63,9 +63,9 @@ namespace ClearCanvas.ImageViewer.Configuration
                     yield return localDataStoreQuery;
             }
 
-            string localAE = Services.ServerTree.ServerTree.GetClientAETitle();
+            string localAE = Common.ServerTree.ServerTree.GetClientAETitle();
 
-			List<Server> defaultServers = DefaultServers.SelectFrom(new Services.ServerTree.ServerTree());
+			List<Server> defaultServers = DefaultServers.SelectFrom(new Common.ServerTree.ServerTree());
 			List<Server> streamingServers = CollectionUtils.Select(defaultServers, 
 				delegate(Server server) { return server.IsStreaming; });
 

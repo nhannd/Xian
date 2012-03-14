@@ -11,7 +11,7 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Desktop;
 using Timer=ClearCanvas.Common.Utilities.Timer;
 

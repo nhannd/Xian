@@ -13,7 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;

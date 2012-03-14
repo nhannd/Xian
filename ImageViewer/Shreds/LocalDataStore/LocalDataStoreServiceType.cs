@@ -13,7 +13,7 @@ using System;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {

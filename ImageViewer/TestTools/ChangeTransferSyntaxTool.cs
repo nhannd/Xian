@@ -13,14 +13,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 using Path=System.IO.Path;
 using ClearCanvas.Dicom.Codec;

@@ -11,16 +11,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.ServiceModel.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Clipboard;
-using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
-using System.Threading;
 using System.Security.Policy;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {

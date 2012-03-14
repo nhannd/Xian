@@ -16,8 +16,8 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 

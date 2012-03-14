@@ -16,9 +16,9 @@ using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.Common.DiskspaceManager;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Services;
-using ClearCanvas.ImageViewer.Services.DiskspaceManager;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {

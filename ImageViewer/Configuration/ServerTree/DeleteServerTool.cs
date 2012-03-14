@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		private void DeleteServerServerGroup()
 		{
-			ImageViewer.Services.ServerTree.ServerTree serverTree = this.Context.ServerTree;
+			Common.ServerTree.ServerTree serverTree = this.Context.ServerTree;
 			if (serverTree.CurrentNode.IsServer)
 			{
 				if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteServer, MessageBoxActions.YesNo) != DialogBoxAction.Yes)

@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		private void EditServer()
 		{
-			ImageViewer.Services.ServerTree.ServerTree serverTree = this.Context.ServerTree;
+			Common.ServerTree.ServerTree serverTree = this.Context.ServerTree;
 			this.Context.UpdateType = (int)ServerUpdateType.Edit;
 
 			if (serverTree.CurrentNode.IsServer)

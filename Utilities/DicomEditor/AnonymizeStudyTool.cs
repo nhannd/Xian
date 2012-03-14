@@ -18,10 +18,10 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer;
+using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 using Path=System.IO.Path;
 

@@ -11,8 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Desktop;
 using System.Windows.Forms;

@@ -12,9 +12,8 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Server.ShredHost;
-using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {

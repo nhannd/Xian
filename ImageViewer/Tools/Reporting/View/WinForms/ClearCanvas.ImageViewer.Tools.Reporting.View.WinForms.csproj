@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="KeyImageInformationEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="KeyImageInformationEditorComponentControl.Designer.cs">
       <DependentUpon>KeyImageInformationEditorComponentControl.cs</DependentUpon>

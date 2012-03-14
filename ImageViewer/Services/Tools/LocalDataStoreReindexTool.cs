@@ -9,17 +9,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {

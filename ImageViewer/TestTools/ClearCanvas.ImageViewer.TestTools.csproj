@@ -110,10 +110,6 @@
       <Project>{AD9F87CF-0F30-442D-ACCD-80FACC339F22}</Project>
       <Name>ClearCanvas.ImageViewer.Explorer.Local</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\StudyLoaders\Streaming\ClearCanvas.ImageViewer.StudyLoaders.Streaming.csproj">
       <Project>{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}</Project>
       <Name>ClearCanvas.ImageViewer.StudyLoaders.Streaming</Name>

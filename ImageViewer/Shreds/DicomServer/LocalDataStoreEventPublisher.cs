@@ -10,11 +10,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Common;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {

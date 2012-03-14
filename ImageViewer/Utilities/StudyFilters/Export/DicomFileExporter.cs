@@ -17,7 +17,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.Common;
 using System.IO;
-using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using System.Threading;
 using Path=System.IO.Path;
 
