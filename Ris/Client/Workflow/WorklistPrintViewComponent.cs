@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 

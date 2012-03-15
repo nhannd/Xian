@@ -12,6 +12,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;

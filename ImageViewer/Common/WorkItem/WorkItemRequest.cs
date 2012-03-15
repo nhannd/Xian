@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem

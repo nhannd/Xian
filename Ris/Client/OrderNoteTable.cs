@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
@@ -29,7 +30,7 @@ namespace ClearCanvas.Ris.Client
 			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments, n => RemoveLineBreak(n.NoteBody), 0.5f, 1));
 		}
 
-		public TableColumn<OrderNoteDetail, string>.SetColumnClickLinkDelegate<OrderNoteDetail> UpdateNoteClickLinkDelegate
+		public Action<OrderNoteDetail> UpdateNoteClickLinkDelegate
 		{
 			get { return _linkColumn.ClickLinkDelegate; }
 			set { _linkColumn.ClickLinkDelegate = value; }

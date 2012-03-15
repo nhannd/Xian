@@ -11,6 +11,7 @@
 
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
 {

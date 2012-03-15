@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow

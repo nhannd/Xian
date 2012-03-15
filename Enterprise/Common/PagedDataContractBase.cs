@@ -10,6 +10,7 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Enterprise.Common
 {

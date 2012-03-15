@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin
 {

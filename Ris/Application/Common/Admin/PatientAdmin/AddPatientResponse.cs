@@ -11,8 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
