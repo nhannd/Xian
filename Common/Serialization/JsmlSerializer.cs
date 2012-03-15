@@ -387,6 +387,13 @@ namespace ClearCanvas.Common.Serialization
 				}
 				return false;
 			}
+
+			protected bool IsDataContract(Type dataType)
+			{
+				// need to explicitly exclude enums, which can have the [DataContract] attribute applied
+				// for .NET serialization, but we don't treat them as data contracts
+				return !(dataType.IsEnum) && this.Options.DataContractTest(dataType);
+			}
 		}
 
 		#endregion
@@ -466,7 +473,7 @@ namespace ClearCanvas.Common.Serialization
 					_writer.WriteAttributeString(kvp.Key, kvp.Value);
 				}
 
-				if (this.Options.DataContractTest(obj.GetType()))
+				if (IsDataContract(obj.GetType()))
 				{
 					var dataMemberFields = new List<IObjectMemberContext>(GetDataMemberFields(obj, this.Options.DataMemberTest));
 					if (dataMemberFields.Count > 0)
@@ -590,7 +597,7 @@ namespace ClearCanvas.Common.Serialization
 				// hooks may have modified these args
 				dataType = dctx.DataType;
 
-				if (this.Options.DataContractTest(dataType))
+				if (IsDataContract(dataType))
 				{
 					var dataObject = Activator.CreateInstance(dataType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, null);
 

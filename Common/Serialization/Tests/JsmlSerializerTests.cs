@@ -196,6 +196,22 @@ namespace ClearCanvas.Common.Serialization.Tests
 			public string DataB { get; set; }
 		}
 
+		[DataContract]
+		public enum TestEnumWithDataContract { Enum1, Enum2 }
+
+		[DataContract]
+		class TestContract5
+		{
+			[DataMember]
+			public TestEnumWithDataContract Data { get; set; }
+
+			public override bool Equals(object obj)
+			{
+				var that = obj as TestContract5;
+				return that != null && that.Data == this.Data;
+			}
+		}
+
 
 		public JsmlSerializerTests()
 		{
@@ -621,6 +637,14 @@ namespace ClearCanvas.Common.Serialization.Tests
 			Assert.IsInstanceOfType(typeof(TestContract4_B), output.Child);
 			Assert.AreEqual("x", output.Child.Data);
 			Assert.AreEqual("b", ((TestContract4_B)output.Child).DataB);
+		}
+
+		[Test]
+		public void Test_Enum_with_DataContract_attribute_processed_as_enum()
+		{
+			var value = new TestContract5() {Data = TestEnumWithDataContract.Enum2};
+			SerializeHelper(value, "<Tag type=\"hash\">\r\n  <Data>Enum2</Data>\r\n</Tag>");
+			DeserializeHelper(value, "<Tag type=\"hash\">\r\n  <Data>Enum2</Data>\r\n</Tag>");
 		}
 
 		#region Private helpers
