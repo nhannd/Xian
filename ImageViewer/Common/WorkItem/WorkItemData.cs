@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// Base WorkItem representing a unit of Work to be done.
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
-    public class WorkItem : DataContractBase
+    public class WorkItemData : DataContractBase
     {
         /// <summary>
         /// The Identifier for the WorkItem.

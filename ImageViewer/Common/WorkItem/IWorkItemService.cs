@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class WorkItemInsertResponse : DataContractBase
     {
         [DataMember]
-        public WorkItem Item { get; set; }
+        public WorkItemData Item { get; set; }
     }
 
     [DataContract]
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class WorkItemUpdateResponse : DataContractBase
     {
         [DataMember]
-        public WorkItem Item { get; set; }
+        public WorkItemData Item { get; set; }
     }
 
     [DataContract]
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class WorkItemQueryResponse : DataContractBase
     {
         [DataMember]
-        public IEnumerable<WorkItem> Items { get; set; }
+        public IEnumerable<WorkItemData> Items { get; set; }
     }
 
     [DataContract]

@@ -5,7 +5,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public interface IWorkItemActivityCallback
     {
         [OperationContract(IsOneWay = true)]
-        void WorkItemChanged(WorkItem progressItem);
+        void WorkItemChanged(WorkItemData progressItem);
 
         [OperationContract(IsOneWay = true)]
         void LocalDataStoreCleared();

@@ -17,7 +17,6 @@ using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using SR = ClearCanvas.ImageViewer.Services.SR;
 
 namespace ClearCanvas.ImageViewer.Common.ServerTree
 {

@@ -16,7 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using System.ComponentModel;
-using SR = ClearCanvas.ImageViewer.Services.SR;
+using SR = ClearCanvas.ImageViewer.Common.SR;
 
 namespace ClearCanvas.ImageViewer.Common.LocalDataStore
 {
