@@ -8,6 +8,7 @@
 // For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,21 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
-	public enum RuleActionType
+	public class RuleBroker : Broker
 	{
-		//DO NOT modify the order of these values - doing so will break existing databases
+		internal RuleBroker(DicomStoreDataContext context) : base(context)
+		{
+		}
 
+		public IList<RuleCondition> GetRules()
+		{
+			return (from r in this.Context.RuleConditions
+			        select r).ToList();
+		}
+
+		public RuleCondition GetRule(int oid)
+		{
+			return this.Context.RuleConditions.First(r => r.Oid == oid);
+		}
 	}
 }
