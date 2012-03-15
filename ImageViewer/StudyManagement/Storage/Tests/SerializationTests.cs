@@ -37,14 +37,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.Tests
 		[Test]
 		public void Test_WorkItemRequest_serialize_null()
 		{
-			var a = WorkItemRequestSerializer.Serialize(null);
+			var a = Serializer.SerializeWorkItemRequest(null);
 			Assert.IsNull(a);
 		}
 
 		[Test]
 		public void Test_WorkItemRequest_deserialize_null()
 		{
-			var a = WorkItemRequestSerializer.Deserialize(null);
+			var a = Serializer.DeserializeWorkItemRequest(null);
 			Assert.IsNull(a);
 		}
 
@@ -54,12 +54,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.Tests
 			var requestA = new TestRequestA();
 			var requestB = new TestRequestB();
 
-			var a = WorkItemRequestSerializer.Serialize(requestA);
-			var b = WorkItemRequestSerializer.Serialize(requestB);
+			var a = Serializer.SerializeWorkItemRequest(requestA);
+			var b = Serializer.SerializeWorkItemRequest(requestB);
 
 			// ensure that we get instances of the correct sub-classes back, even if we ask for the base-class
-			Assert.IsInstanceOfType(typeof(TestRequestA), WorkItemRequestSerializer.Deserialize(a));
-			Assert.IsInstanceOfType(typeof(TestRequestB), WorkItemRequestSerializer.Deserialize(b));
+			Assert.IsInstanceOfType(typeof(TestRequestA), Serializer.DeserializeWorkItemRequest(a));
+			Assert.IsInstanceOfType(typeof(TestRequestB), Serializer.DeserializeWorkItemRequest(b));
 		}
 	}
 }

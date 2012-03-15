@@ -9,6 +9,7 @@
 
 #endregion
 
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -19,11 +20,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		{
 			get
 			{
-				return WorkItemRequestSerializer.Deserialize(this.SerializedRequest);
+				return Serializer.DeserializeWorkItemRequest(this.SerializedRequest);
 			}
 			set
 			{
-				this.SerializedRequest = WorkItemRequestSerializer.Serialize(value);
+				this.SerializedRequest = Serializer.SerializeWorkItemRequest(value);
+			}
+		}
+
+		public StudyIdentifier StudyData
+		{
+			get
+			{
+				return Serializer.DeserializeStudyData(this.SerializedStudy);
+			}
+			set
+			{
+				this.SerializedStudy = Serializer.SerializeStudyData(value);
 			}
 		}
 
