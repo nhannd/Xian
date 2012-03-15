@@ -4,7 +4,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0B4BE8FD-8B23-49B3-B43C-B68A52A17A6F}</ProjectGuid>
+    <ProjectGuid>{9E0CCF98-03DA-46EE-8E6B-3092F80EE9AF}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClearCanvas.ImageServer.Model.SqlServer.CodeGenerator</RootNamespace>
