@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Common.LocalDataStore
 {

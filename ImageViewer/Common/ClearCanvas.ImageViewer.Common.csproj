@@ -123,6 +123,9 @@
     <Compile Include="RetryableCommandExecutor.cs" />
     <Compile Include="ImageViewerNamespace.cs" />
     <Compile Include="ServerTree\AEServerGroup.cs" />
+    <Compile Include="ServerTree\IServerTreeNode.cs" />
+    <Compile Include="ServerTree\LocalDataStore.cs" />
+    <Compile Include="ServerTree\Server.cs" />
     <Compile Include="ServerTree\ServerTree.cs" />
     <Compile Include="SR.Designer.cs">
       <DependentUpon>SR.resx</DependentUpon>
@@ -147,10 +150,6 @@
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
-      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
-      <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>

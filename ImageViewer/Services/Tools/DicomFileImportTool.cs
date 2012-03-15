@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[Tooltip("Import", "TooltipImportDicomFiles")]
 	[IconSet("Import", "Icons.DicomFileImportToolSmall.png", "Icons.DicomFileImportToolMedium.png", "Icons.DicomFileImportToolLarge.png")]
 	[EnabledStateObserver("Import", "Enabled", "EnabledChanged")]
-	[ViewerActionPermission("Import", ImageViewer.Services.AuthorityTokens.Study.Import)]
+	[ViewerActionPermission("Import", ImageViewer.Common.AuthorityTokens.Study.Import)]
 
 	[ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
 	public class DicomFileImportTool : Tool<ILocalImageExplorerToolContext>

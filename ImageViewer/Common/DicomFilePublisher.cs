@@ -19,7 +19,7 @@ using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 
-namespace ClearCanvas.ImageViewer.Services
+namespace ClearCanvas.ImageViewer.Common
 {
 	public class DicomFilePublishingException : Exception
 	{

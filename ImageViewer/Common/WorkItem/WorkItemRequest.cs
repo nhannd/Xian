@@ -8,8 +8,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-
-
     public static class WorkItemRequestTypeProvider
     {
         private static readonly List<Type> List = new List<Type>

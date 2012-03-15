@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
