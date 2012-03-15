@@ -1,7 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -12,14 +19,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		{
 			get
 			{
-				return Deserialize<WorkItemRequest>(this.SerializedRequest);
+				return WorkItemRequestSerializer.Deserialize(this.SerializedRequest);
+			}
+			set
+			{
+				this.SerializedRequest = WorkItemRequestSerializer.Serialize(value);
 			}
 		}
 
-		private T Deserialize<T>(object value)
-		{
-			// need to figure out exactly which serialization format we're using
-			throw new NotImplementedException();
-		}
 	}
 }

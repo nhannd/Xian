@@ -8,8 +8,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-
-
     public static class WorkItemRequestTypeProvider
     {
         private static readonly List<Type> List = new List<Type>
@@ -33,6 +31,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [XmlInclude(typeof(DicomSendRequest))]
     [XmlInclude(typeof(DicomImportRequest))]
     [DataContract(Namespace = ImageViewerNamespace.Value)]
+	[WorkItemRequestDataContract("b2d86945-96b7-4563-8281-02142e84ffc3")]
     public abstract class WorkItemRequest : DataContractBase
     {
         [DataMember]
@@ -54,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <see cref="WorkItemRequest"/> for sending a study to a DICOM AE.
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
+	[WorkItemRequestDataContract("c6a4a14e-e877-45a3-871d-bb06054dd837")]
     public class DicomSendRequest : WorkItemRequest
     {
         DicomSendRequest()
@@ -82,7 +82,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <see cref="WorkItemRequest"/> for importing files/studies.
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
-    public class DicomImportRequest : WorkItemRequest
+	[WorkItemRequestDataContract("02b7d427-1107-4458-ade3-67ee6779a766")]
+	public class DicomImportRequest : WorkItemRequest
     {
         DicomImportRequest()
         {
@@ -104,7 +105,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// DICOM Retrieve Request
     /// </summary>
-    public class DicomRetreiveRequest : WorkItemRequest
+	[WorkItemRequestDataContract("0e04fa53-3f45-4ae2-9444-f3208047757c")]
+	public class DicomRetreiveRequest : WorkItemRequest
     {
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
