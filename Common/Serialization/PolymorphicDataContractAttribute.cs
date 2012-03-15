@@ -1,0 +1,39 @@
+﻿using System;
+
+namespace ClearCanvas.Common.Serialization
+{
+	/// <summary>
+	/// Assigns a GUID to a class to enable robust polymorphic de/serialization.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
+	public abstract class PolymorphicDataContractAttribute : Attribute
+	{
+		private readonly string _guidString;
+		private Guid _guid;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="dataContractGuid"></param>
+		protected PolymorphicDataContractAttribute(string dataContractGuid)
+		{
+			_guidString = dataContractGuid;
+		}
+
+		/// <summary>
+		/// Gets the ID that identifies the data-contract.
+		/// </summary>
+		public string ContractId
+		{
+			get
+			{
+				if(_guid == Guid.Empty)
+				{
+					_guid = new Guid(_guidString);
+				}
+				return _guid.ToString("N");
+			}
+		}
+	}
+
+}

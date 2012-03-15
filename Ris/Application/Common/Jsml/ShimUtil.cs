@@ -10,13 +10,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.ServiceModel;
-using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Jsml
 {
