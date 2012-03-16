@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[Tooltip("activate", "TooltipDeleteStudy")]
 	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 
-	[ViewerActionPermission("activate", ImageViewer.Services.AuthorityTokens.Study.Delete)]
+    [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Delete)]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class DeleteStudyTool : StudyBrowserTool
 	{

@@ -18,8 +18,8 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomSendReceiveActivity", "Activate")]
-	[ViewerActionPermission("activate", ImageViewer.Services.AuthorityTokens.Study.Send)]
-	[ViewerActionPermission("activate", ImageViewer.Services.AuthorityTokens.Study.Retrieve)]
+	[ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Send)]
+    [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Retrieve)]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
 	public class DicomSendReceiveActivityTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>

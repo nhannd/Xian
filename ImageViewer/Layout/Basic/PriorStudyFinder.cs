@@ -15,6 +15,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
@@ -238,7 +239,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private static StudyItem ConvertToStudyItem(IStudyRootStudyIdentifier study)
 		{
 			string studyLoaderName;
-			ApplicationEntity applicationEntity = null;
+            IDicomServerApplicationEntity applicationEntity = null;
 
 			IServerTreeNode node = FindServer(study.RetrieveAeTitle);
 			if (node.IsLocalDataStore)
@@ -249,9 +250,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				var server = (Server) node;
 				studyLoaderName = server.IsStreaming ? "CC_STREAMING" : "DICOM_REMOTE";
-
-				applicationEntity = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
-				                                          server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
+			    applicationEntity = server.ToApplicationEntity();
 			}
 			else // (node == null)
 			{

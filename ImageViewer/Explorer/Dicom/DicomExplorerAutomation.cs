@@ -177,24 +177,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		private static string GetFirstDefaultServerAETitle()
-		{
-			List<Server> defaultServers = DefaultServers.GetAll();
-
-			//since streaming servers are queried automatically, it's more likely users will
-			//want to query non-streaming servers.
-			foreach (Server server in defaultServers)
-			{
-				if (!server.IsStreaming)
-					return server.AETitle;
-			}
-
-			foreach (Server server in defaultServers)
-				return server.AETitle;
-
-			return null;
-		}
-
 		private static void PrepareQueryParameters(DicomExplorerSearchCriteria searchCriteria, QueryParameters queryParams)
 		{
 		    /// TODO (CR Nov 2011): This is wrong - it's going to put the wildcards into the search fields, which it should not do.

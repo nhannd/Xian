@@ -414,6 +414,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 			set { _studyInstanceUid = value; }
 		}
 
+	    // TODO (CR Mar 2012): Pass in an AE object?
 		/// <summary>
 		/// The AE Title where the study is known to reside.
 		/// </summary>

@@ -19,112 +19,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO: get rid of this or incorporate into Dicom somehow.
-
-	//TODO (cr Oct 2009): can implement IApplicationEntity?
-
-	/// <summary>
-	/// Represents a remote dicom server.
-	/// </summary>
-	public class ApplicationEntity
-	{
-		private readonly string _name;
-		private readonly string _host;
-		private readonly string _aeTitle;
-		private readonly int _port;
-		private readonly bool _isStreaming;
-		private readonly int _headerServicePort;
-		private readonly int _wadoServicePort;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public ApplicationEntity(
-			string host, 
-			string aeTitle,
-			string name,
-			int port,
-			bool isStreaming,
-			int headerServicePort,
-			int wadoServicePort)
-		{
-			_host = host;
-			_aeTitle = aeTitle;
-			_name = name;
-			_port = port;
-			_isStreaming = isStreaming;
-			_headerServicePort = headerServicePort;
-			_wadoServicePort = wadoServicePort;
-
-			if (_isStreaming && (_headerServicePort <= 0 || _wadoServicePort <= 0))
-				throw new ArgumentException("Invalid streaming parameters");
-		}
-
-		/// <summary>
-		/// Gets the friendly name.
-		/// </summary>
-		public string Name
-		{
-			get { return _name; }	
-		}
-
-		/// <summary>
-		/// The host name or IP address.
-		/// </summary>
-		public string Host
-		{
-			get { return _host; }
-		}
-
-		/// <summary>
-		/// The AE Title.
-		/// </summary>
-		public string AETitle
-		{
-			get { return _aeTitle; }
-		}
-
-		/// <summary>
-		/// The DICOM listening port.
-		/// </summary>
-		public int Port
-		{
-			get { return _port; }
-		}
-
-		/// <summary>
-		/// Gets whether or not the server is a streaming server.
-		/// </summary>
-		public bool IsStreaming
-		{
-			get { return _isStreaming; }
-		}
-	
-		/// <summary>
-		/// Header service port for image streaming.
-		/// </summary>
-		public int HeaderServicePort
-		{
-			get { return _headerServicePort; }
-		}
-
-		/// <summary>
-		/// WADO service port.
-		/// </summary>
-		public int WadoServicePort
-		{
-			get { return _wadoServicePort; }
-		}
-
-		/// <summary>
-		/// Returns the <see cref="Name"/>, or "Unknown".
-		/// </summary>
-		public override string ToString()
-		{
-			return (_name ?? "Unknown");
-		}
-	}
-
 	/// <summary>
 	/// A study item.
 	/// </summary>
@@ -514,8 +408,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				if (_server != null && _server is ApplicationEntity)
-					return ((ApplicationEntity)_server).AETitle;
+                if (_server != null && _server is IDicomServerApplicationEntity)
+					return ((IApplicationEntity)_server).AETitle;
 				else
 					return "";
 			}

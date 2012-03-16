@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
@@ -32,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[Tooltip("activate", "TooltipRetrieveStudy")]
 	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
 
-	[ViewerActionPermission("activate", ImageViewer.Services.AuthorityTokens.Study.Retrieve)]
+    [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Retrieve)]
 	
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class RetrieveStudyTool : StudyBrowserTool
@@ -56,17 +57,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			EventResult result = EventResult.Success;
 
-			Dictionary<ApplicationEntity, List<StudyInformation>> retrieveInformation = new Dictionary<ApplicationEntity, List<StudyInformation>>();
+            var retrieveInformation = new Dictionary<IDicomServerApplicationEntity, List<StudyInformation>>();
 			foreach (StudyItem item in Context.SelectedStudies)
 			{
-				ApplicationEntity applicationEntity = item.Server as ApplicationEntity;
+                var applicationEntity = item.Server as IDicomServerApplicationEntity;
 				if (applicationEntity != null && !retrieveInformation.ContainsKey(applicationEntity))
 					retrieveInformation[applicationEntity] = new List<StudyInformation>();
+                else continue;
 
-				StudyInformation studyInformation = new StudyInformation();
-				studyInformation.PatientId = item.PatientId;
-				studyInformation.PatientsName = item.PatientsName;
-				DateTime studyDate;
+				var studyInformation = new StudyInformation {PatientId = item.PatientId, PatientsName = item.PatientsName};
+			    DateTime studyDate;
 				DateParser.Parse(item.StudyDate, out studyDate);
 				studyInformation.StudyDate = studyDate;
 				studyInformation.StudyDescription = item.StudyDescription;
@@ -75,24 +75,27 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				retrieveInformation[applicationEntity].Add(studyInformation);
 			}
 
-			DicomServerServiceClient client = new DicomServerServiceClient();
+			var client = new DicomServerServiceClient();
 
 			try
 			{
 				client.Open();
 
-				foreach (KeyValuePair<ApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
+                foreach (KeyValuePair<IDicomServerApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
 				{
-					AEInformation aeInformation = new AEInformation();
-					aeInformation.AETitle = kvp.Key.AETitle;
-					aeInformation.HostName = kvp.Key.Host;
-					aeInformation.Port = kvp.Key.Port;
+					var aeInformation = new AEInformation
+					                        {
+					                            AETitle = kvp.Key.AETitle,
+					                            HostName = kvp.Key.HostName,
+					                            Port = kvp.Key.Port
+					                        };
 
-					client.RetrieveStudies(aeInformation, kvp.Value);
+				    client.RetrieveStudies(aeInformation, kvp.Value);
 				}
 
 				client.Close();
 
+			    // TODO (Marmot): What will we show now? Nothing?
 				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
@@ -108,12 +111,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			finally
 			{
-				foreach (KeyValuePair<ApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
+                foreach (KeyValuePair<IDicomServerApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
 				{
-					AuditedInstances requestedInstances = new AuditedInstances();
+					var requestedInstances = new AuditedInstances();
 					foreach (StudyInformation study in kvp.Value)
 						requestedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
-					AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.Host, requestedInstances, EventSource.CurrentUser, result);
+					AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.HostName, requestedInstances, EventSource.CurrentUser, result);
 				}
 			}
 		}

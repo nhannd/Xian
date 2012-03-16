@@ -16,6 +16,7 @@ using System.IO.Compression;
 using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common.Auditing;
@@ -53,7 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
         private const string _loaderName = "CC_STREAMING";
 
         private IEnumerator<InstanceXml> _instances;
-        private ApplicationEntity _serverAe;
+        private IStreamingServerApplicationEntity _serverAe;
 
         public StreamingStudyLoader()
             : this(_loaderName)
@@ -81,7 +82,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
         {
-            ApplicationEntity serverAe = studyLoaderArgs.Server as ApplicationEntity;
+            var serverAe = studyLoaderArgs.Server as IStreamingServerApplicationEntity;
+            Platform.CheckForNullReference(serverAe, "Server");
             _serverAe = serverAe;
 
             EventResult result = EventResult.Success;
@@ -122,22 +124,24 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             if (!_instances.MoveNext())
                 return null;
 
-            return new StreamingSopDataSource(_instances.Current, _serverAe.Host, _serverAe.AETitle, StreamingSettings.Default.FormatWadoUriPrefix, _serverAe.WadoServicePort);
+            return new StreamingSopDataSource(_instances.Current, _serverAe.HostName, _serverAe.AETitle, StreamingSettings.Default.FormatWadoUriPrefix, _serverAe.WadoServicePort);
         }
 
         private XmlDocument RetrieveHeaderXml(StudyLoaderArgs studyLoaderArgs)
         {
-            HeaderStreamingParameters headerParams = new HeaderStreamingParameters();
-            headerParams.StudyInstanceUID = studyLoaderArgs.StudyInstanceUid;
-            headerParams.ServerAETitle = _serverAe.AETitle;
-            headerParams.ReferenceID = Guid.NewGuid().ToString();
+            var headerParams = new HeaderStreamingParameters
+                                   {
+                                       StudyInstanceUID = studyLoaderArgs.StudyInstanceUid,
+                                       ServerAETitle = _serverAe.AETitle,
+                                       ReferenceID = Guid.NewGuid().ToString()
+                                   };
 
             HeaderStreamingServiceClient client = null;
             try
             {
 
-                string uri = String.Format(StreamingSettings.Default.FormatHeaderServiceUri, _serverAe.Host, _serverAe.HeaderServicePort);
-                EndpointAddress endpoint = new EndpointAddress(uri);
+                string uri = String.Format(StreamingSettings.Default.FormatHeaderServiceUri, _serverAe.HostName, _serverAe.HeaderServicePort);
+                var endpoint = new EndpointAddress(uri);
 
                 client = new HeaderStreamingServiceClient();
                 client.Endpoint.Address = endpoint;

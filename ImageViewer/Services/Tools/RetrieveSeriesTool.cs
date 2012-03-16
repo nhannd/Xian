@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
@@ -32,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[Tooltip("activate", "TooltipRetrieveSeries")]
 	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[ViewerActionPermission("activate", Services.AuthorityTokens.Study.Retrieve)]
+    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Retrieve)]
 	[ExtensionOf(typeof (SeriesDetailsToolExtensionPoint))]
 	public class RetrieveSeriesTool : SeriesDetailsTool
 	{
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			var result = EventResult.Success;
 
-			var applicationEntity = Server as ApplicationEntity;
+			var applicationEntity = Server as IDicomServerApplicationEntity;
 			if (applicationEntity == null)
 				return;
 
@@ -63,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 				var aeInformation = new AEInformation();
 				aeInformation.AETitle = applicationEntity.AETitle;
-				aeInformation.HostName = applicationEntity.Host;
+				aeInformation.HostName = applicationEntity.HostName;
 				aeInformation.Port = applicationEntity.Port;
 
 				client.RetrieveSeries(aeInformation, studyInformation, seriesToRetrieve);
@@ -87,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				var requestedInstances = new AuditedInstances();
 				requestedInstances.AddInstance(studyInformation.PatientId, studyInformation.PatientsName, studyInformation.StudyInstanceUid);
-				AuditHelper.LogBeginReceiveInstances(applicationEntity.AETitle, applicationEntity.Host, requestedInstances, EventSource.CurrentUser, result);
+				AuditHelper.LogBeginReceiveInstances(applicationEntity.AETitle, applicationEntity.HostName, requestedInstances, EventSource.CurrentUser, result);
 
 			}
 

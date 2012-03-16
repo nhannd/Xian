@@ -21,11 +21,11 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.ServerTree;
-using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -513,9 +513,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						}
 						else if (serverNode.IsServer)
 						{
-							Server server = (Server)serverNode;
-							ApplicationEntity ae = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
-															server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
+							var server = (Server)serverNode;
+                            IDicomServerApplicationEntity ae = server.ToApplicationEntity();
 
 							var studyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
 							serverStudyItemList.AddRange(studyItemList);

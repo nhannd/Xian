@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
@@ -158,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
                     // try to determine the origin and source AE from the image frame's SOP data source (should be the same for all frames from a given study)
                     var sopDataSource = sourceFrame.ParentImageSop.DataSource;
                     publisher.OriginServerAE = sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString();
-                    publisher.SourceServerAE = sopDataSource.Server is ApplicationEntity ? ((ApplicationEntity)sopDataSource.Server).AETitle : string.Empty;
+                    publisher.SourceServerAE = sopDataSource.Server is IApplicationEntity ? ((IApplicationEntity)sopDataSource.Server).AETitle : string.Empty;
                 }
 
                 // publish all files now

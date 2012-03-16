@@ -15,6 +15,8 @@ using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -154,18 +156,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			removed.Clear();
 
-			Dictionary<string, StudyItem> uniqueStudies = new Dictionary<string, StudyItem>();
+			var uniqueStudies = new Dictionary<string, StudyItem>();
 			foreach (StudyItem study in allStudies)
 			{
 				StudyItem existing;
 				if (uniqueStudies.TryGetValue(study.StudyInstanceUid, out existing))
 				{
-					ApplicationEntity server = study.Server as ApplicationEntity;
+                    var server = study.Server as IDicomServerApplicationEntity;
 					//we will only replace an existing entry if this study's server is streaming.
 					if (server != null && server.IsStreaming)
 					{
 						//only replace existing entry if it is on a non-streaming server.
-						server = existing.Server as ApplicationEntity;
+                        server = existing.Server as IDicomServerApplicationEntity;
 						if (server == null || !server.IsStreaming)
 						{
 							removed.Add(existing);

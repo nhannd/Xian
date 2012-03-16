@@ -11,7 +11,7 @@
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO (later): move this stuff into ImageViewer.Services and deprecate it.
+	//TODO (later): move this stuff into ImageViewer.Common and deprecate it.
 
 	/// <summary>
 	/// Defines a study finder.
