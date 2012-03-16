@@ -2,9 +2,22 @@ using System;
 using System.Text;
 using System.Xml.Serialization;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Common.ServerTree
 {
+    public static class ServerExtensions
+    {
+        public static IDicomServerApplicationEntity ToApplicationEntity(this Server server)
+        {
+            if (server.IsStreaming)
+                return new StreamingServerApplicationEntity(server.AETitle, server.Host, server.Port,
+                                                            server.HeaderServicePort, server.WadoServicePort);
+
+            return new DicomServerApplicationEntity(server.AETitle, server.Host, server.Port);
+        }
+    }
+
     [Serializable]
     public class Server : IServerTreeNode
     {
@@ -135,28 +148,19 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
 
         public override string ToString()
         {
-            StringBuilder aeDescText = new StringBuilder();
+            var aeDescText = new StringBuilder();
             aeDescText.AppendFormat(SR.FormatServerDetails, this.Name, this.AETitle, this.Host, this.Port);
             if (!string.IsNullOrEmpty(this.Location))
             {
                 aeDescText.AppendLine();
                 aeDescText.AppendFormat(SR.Location, this.Location);
             }
-            if(this.IsStreaming)
+            if(IsStreaming)
             {
                 aeDescText.AppendLine();
                 aeDescText.AppendFormat(SR.FormatStreamingDetails, this.HeaderServicePort, this.WadoServicePort);
             }
             return aeDescText.ToString();
-        }
-
-        public static implicit operator ApplicationEntity(Server server)
-        {
-            if (server.IsStreaming)
-                return new StreamingServerApplicationEntity(server.AETitle, server.Host, server.Port,
-                                                            server.HeaderServicePort, server.WadoServicePort);
-
-            return new DicomServerApplicationEntity(server.AETitle, server.Host, server.Port);
         }
     }
 }

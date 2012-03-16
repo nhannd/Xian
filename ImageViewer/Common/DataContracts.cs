@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common
 {
+    // TODO (Marmot): remove.
 	[DataContract]
 	public class AEInformation
 	{
@@ -46,6 +47,8 @@ namespace ClearCanvas.ImageViewer.Common
 			set { _port = value; }
 		}
 	}
+
+    // TODO (Marmot): Remove.
 
 	[DataContract]
 	public class StudyInformation
@@ -128,6 +131,7 @@ namespace ClearCanvas.ImageViewer.Common
 		Sop
 	}
 
+    // TODO (Marmot): remove.
 	[DataContract]
 	public class InstanceInformation
 	{

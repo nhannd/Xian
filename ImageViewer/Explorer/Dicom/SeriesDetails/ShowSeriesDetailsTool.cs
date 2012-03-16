@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.ServerTree;
@@ -82,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 						Server theServer = server as Server;
 						if (theServer != null)
 						{
-							ApplicationEntity ae = studyItem.Server as ApplicationEntity;
+                            var ae = studyItem.Server as IDicomServerApplicationEntity;
 							if (ae != null)
 								return theServer.AETitle == ae.AETitle;
 						}

@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel
 {
-	//[DataContract(Namespace = DicomNamespace.Value)]
+	[DataContract(Namespace = DicomNamespace.Value)]
 	public class DicomServerApplicationEntity : ApplicationEntity, IDicomServerApplicationEntity
 	{
 		public DicomServerApplicationEntity()
@@ -41,5 +41,7 @@ namespace ClearCanvas.Dicom.ServiceModel
 		public int Port { get; set; }
 
 		#endregion
-	}
+
+        public override bool IsStreaming { get { return true; } }
+    }
 }

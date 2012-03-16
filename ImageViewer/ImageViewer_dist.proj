@@ -230,6 +230,7 @@
 
   <ItemGroup>
     <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
+    <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
   </ItemGroup>
 
   <ItemGroup>
