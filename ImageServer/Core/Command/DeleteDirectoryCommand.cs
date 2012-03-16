@@ -13,10 +13,10 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.ImageServer.Core.Command
 {
     public class DeleteDirectoryCommand : CommandBase, IDisposable
     {

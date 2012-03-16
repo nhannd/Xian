@@ -16,6 +16,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 
@@ -54,7 +55,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupDuplicate
             if (WorkQueueUidList.Count == 0)
             {
                 // cleanup
-                DirectoryInfo dir = new DirectoryInfo(_reconcileQueueData.DuplicateSopFolder);
+                var dir = new DirectoryInfo(_reconcileQueueData.DuplicateSopFolder);
                 DirectoryUtility.DeleteIfEmpty(dir.FullName);
                 if (dir.Parent != null) 
                     DirectoryUtility.DeleteIfEmpty(dir.Parent.FullName);

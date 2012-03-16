@@ -63,8 +63,8 @@ namespace ClearCanvas.ImageServer.Core
 			}
 
 			// Select the Server Transfer Syntax
-			ServerTransferSyntaxSelectCriteria syntaxCriteria = new ServerTransferSyntaxSelectCriteria();
-			IServerTransferSyntaxEntityBroker syntaxBroker = updateContext.GetBroker<IServerTransferSyntaxEntityBroker>();
+			var syntaxCriteria = new ServerTransferSyntaxSelectCriteria();
+			var syntaxBroker = updateContext.GetBroker<IServerTransferSyntaxEntityBroker>();
 			syntaxCriteria.Uid.EqualTo(fileSyntax.UidString);
 
 			ServerTransferSyntax serverSyntax = syntaxBroker.FindOne(syntaxCriteria);
@@ -75,17 +75,17 @@ namespace ClearCanvas.ImageServer.Core
 			}
 
 			// Get the FilesystemStudyStorage update broker ready
-			IFilesystemStudyStorageEntityBroker filesystemStudyStorageEntityBroker = updateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
-			FilesystemStudyStorageUpdateColumns filesystemStorageUpdate = new FilesystemStudyStorageUpdateColumns();
-			FilesystemStudyStorageSelectCriteria filesystemStorageCritiera = new FilesystemStudyStorageSelectCriteria();
+			var filesystemStudyStorageEntityBroker = updateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
+			var filesystemStorageUpdate = new FilesystemStudyStorageUpdateColumns();
+			var filesystemStorageCritiera = new FilesystemStudyStorageSelectCriteria();
 
 			filesystemStorageUpdate.ServerTransferSyntaxKey = serverSyntax.Key;
 			filesystemStorageCritiera.StudyStorageKey.EqualTo(_location.Key);
 
 			// Get the StudyStorage update broker ready
-			IStudyStorageEntityBroker studyStorageBroker =
+			var studyStorageBroker =
 				updateContext.GetBroker<IStudyStorageEntityBroker>();
-			StudyStorageUpdateColumns studyStorageUpdate = new StudyStorageUpdateColumns();
+			var studyStorageUpdate = new StudyStorageUpdateColumns();
 			StudyStatusEnum statusEnum = _location.StudyStatusEnum;
 			if (fileSyntax.LossyCompressed)
 				studyStorageUpdate.StudyStatusEnum = statusEnum = StudyStatusEnum.OnlineLossy;

@@ -13,13 +13,15 @@ using System;
 using System.IO;
 using System.Threading;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Provides convenient blocking methods for file opening.
     /// </summary>
     /// <remarks>
-    /// 
+    /// The FileStreamOpener class is an abstraction for file opening.  It has a built in mechanism to retry opening a file 
+    /// if there is a sharing collision with the file.  This should make software opening files to be more resilliant if 
+    /// files are attempted to be opened at the same time.
     /// </remarks>
     public static class FileStreamOpener
     {
@@ -35,10 +37,11 @@ namespace ClearCanvas.ImageServer.Common
         /// <param name="mode">Opening mode</param>
         /// <returns>A <see cref="FileStream"/> with sole write access.</returns>
         /// <remarks>
+        /// <para>
         /// This methods will block indefinitely until the file is opened or exceptions are thrown because file cannot be open 
         /// using the specified mode. If it cannot be opened due to access permission (eg, it is being locked
         /// for update by another process), the method will try again.
-        /// <para>
+        /// </para>
         /// <para>
         /// Once the file is opened, subsequent attempt to open the file for writing will fail until the returned stream is closed. However, other processes are 
         /// allowed to open the files for reading.
@@ -108,8 +111,8 @@ namespace ClearCanvas.ImageServer.Common
                 {
                 	stream =
                 		new FileStream(path, mode, FileAccess.Write, FileShare.Read
-                		               /* don't block others from reading this file */, Settings.Default.WriteBufferSize,
-                		               Settings.Default.WriteThroughMode ? FileOptions.WriteThrough : FileOptions.None);
+                        /* don't block others from reading this file */, 65536 /* This was configurable in the past, but we never changed it */,
+                		               FileOptions.WriteThrough /* WriteThrough mode could be turned off in the past */);
                     break;
                 }
                 catch(FileNotFoundException)
@@ -131,7 +134,7 @@ namespace ClearCanvas.ImageServer.Common
                 catch (IOException)
                 {
                     // other types of exception should be treated as retry
-                    Random rand = new Random();
+                    var rand = new Random();
                     Thread.Sleep(rand.Next(retryMinDelay, 2 * retryMinDelay));
                 }
 
@@ -217,12 +220,12 @@ namespace ClearCanvas.ImageServer.Common
         static public FileStream OpenForRead(string path, FileMode mode, long timeout, ManualResetEvent stopSignal, int retryMinDelay)
         {
             FileStream stream = null;
-            Exception lastException = null;
             long begin = Environment.TickCount;
             bool cancelled = false;
 
             while (!cancelled)
             {
+                Exception lastException;
                 try
                 {
                     stream = new FileStream(path, mode, FileAccess.Read, FileShare.ReadWrite /* allow others to update this file */);
@@ -254,7 +257,7 @@ namespace ClearCanvas.ImageServer.Common
                 {
                     // other IO exceptions should be treated as retry
                     lastException = e; 
-                    Random rand = new Random();
+                    var rand = new Random();
                     Thread.Sleep(rand.Next(retryMinDelay, 2 * retryMinDelay));
                 }
 

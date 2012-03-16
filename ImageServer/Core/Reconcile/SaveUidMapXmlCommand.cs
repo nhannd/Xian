@@ -11,9 +11,8 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Command;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
 
@@ -67,7 +66,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
         private void Backup()
         {
-            _backupPath = FileUtils.Backup(_path);
+            _backupPath = FileUtils.Backup(_path, ProcessorContext.BackupDirectory);
         }
         
         #endregion

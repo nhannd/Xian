@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace ClearCanvas.ImageServer.Common.Diagnostics
+namespace ClearCanvas.ImageServer.Core.Diagnostics
 {
     static public class Settings
     {

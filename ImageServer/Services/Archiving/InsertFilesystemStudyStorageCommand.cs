@@ -63,21 +63,24 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 			get { return _location; }
 		}
 
-		/// <summary>
-		/// Execute the insert.
-		/// </summary>
-		/// <param name="updateContext">The persistent store connection to use for the update.</param>
-		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
+	    /// <summary>
+	    /// Execute the insert.
+	    /// </summary>
+	    /// <param name="theProcessor">The command processor calling us</param>
+	    /// <param name="updateContext">The persistent store connection to use for the update.</param>
+	    protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
-			IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
-			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
-			insertParms.ServerPartitionKey = _serverPartitionKey;
-			insertParms.StudyInstanceUid = _studyInstanceUid;
-			insertParms.Folder = _folder;
-			insertParms.FilesystemKey = _filesystemKey;
-			insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+			var locInsert = updateContext.GetBroker<IInsertStudyStorage>();
+	        var insertParms = new InsertStudyStorageParameters
+	                              {
+	                                  ServerPartitionKey = _serverPartitionKey,
+	                                  StudyInstanceUid = _studyInstanceUid,
+	                                  Folder = _folder,
+	                                  FilesystemKey = _filesystemKey,
+	                                  QueueStudyStateEnum = QueueStudyStateEnum.Idle
+	                              };
 
-			if (_transfersyntax.LosslessCompressed)
+	        if (_transfersyntax.LosslessCompressed)
 			{
 				insertParms.TransferSyntaxUid = _transfersyntax.UidString;
 				insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;

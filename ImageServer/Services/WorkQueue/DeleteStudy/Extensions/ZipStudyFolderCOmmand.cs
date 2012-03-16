@@ -12,8 +12,8 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Utilities;
 using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions

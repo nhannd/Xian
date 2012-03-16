@@ -9,17 +9,17 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using System;
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.ImageServer.Core.Command
 {
 	/// <summary>
 	/// Specific exception if a file exists when saving.
@@ -58,8 +58,8 @@ namespace ClearCanvas.ImageServer.Common.Command
 		private readonly DicomFile _file;
 		private readonly bool _failOnExists;
 		private readonly bool _saveTemp;
-		private bool _fileCreated = false;
-		private readonly StudyStorageLocation _storageLocation = null;
+		private bool _fileCreated;
+		private readonly StudyStorageLocation _storageLocation;
 	    readonly RateStatistics _backupSpeed = new RateStatistics("BackupSpeed", RateType.BYTES);
 	    readonly RateStatistics _saveSpeed = new RateStatistics("SaveSpeed", RateType.BYTES);
 		private readonly Stack<ICommand> _aggregateStack = new Stack<ICommand>();
@@ -115,8 +115,8 @@ namespace ClearCanvas.ImageServer.Common.Command
 				{
 
                     _backupSpeed.Start();
-                    FileInfo fi = new FileInfo(_path);
-                    _backupPath = FileUtils.Backup(_path);
+                    var fi = new FileInfo(_path);
+                    _backupPath = FileUtils.Backup(_path, ProcessorContext.BackupDirectory);
                     _backupSpeed.SetData(fi.Length);
                     _backupSpeed.End();
 				}
@@ -130,9 +130,8 @@ namespace ClearCanvas.ImageServer.Common.Command
 		private string GetTempPath()
 		{
 			int count = 0;
-			string path;
-			
-			path = String.Format("{0}_tmp", _path);
+
+		    string path = String.Format("{0}_tmp", _path);
 
 			while (File.Exists(path))
 			{
@@ -165,7 +164,8 @@ namespace ClearCanvas.ImageServer.Common.Command
 			}
 
 			// Make sure the directory exists where we're storing the file.
-			if (!Directory.Exists(Path.GetDirectoryName(_path)))
+		    var p = Path.GetDirectoryName(_path);
+			if (string.IsNullOrEmpty(p) || !Directory.Exists(p))
 			{
 				if (!theProcessor.ExecuteSubCommand(this, new CreateDirectoryCommand(Path.GetDirectoryName(_path))))
 					throw new ApplicationException(theProcessor.FailureReason);
@@ -174,13 +174,7 @@ namespace ClearCanvas.ImageServer.Common.Command
             if (RequiresRollback)
                 Backup();
 
-	    	string path;
-			if (_saveTemp)
-			{
-				path = GetTempPath();
-			}
-			else
-				path = _path;
+		    string path = _saveTemp ? GetTempPath() : _path;
 
 	    	using (FileStream stream = FileStreamOpener.OpenForSoleUpdate(path, FileMode.Create))
 			{
@@ -194,7 +188,7 @@ namespace ClearCanvas.ImageServer.Common.Command
 				stream.Close();
                 _saveSpeed.End();
 
-                FileInfo fi = new FileInfo(path);
+                var fi = new FileInfo(path);
                 _saveSpeed.SetData(fi.Length);
                 
 			}
@@ -203,21 +197,22 @@ namespace ClearCanvas.ImageServer.Common.Command
 			{
 				if (File.Exists(_path))
 				{
-					if (_failOnExists)
+				    if (_failOnExists)
 					{
 						try
 						{
 							FileUtils.Delete(path);
 						}
-						catch
-						{}
+						catch (Exception x)
+						{
+						    throw new ApplicationException(String.Format("DICOM File unexpectedly already exists: {0}", _path), x);
+						}
 						throw new ApplicationException(String.Format("DICOM File unexpectedly already exists: {0}", _path));
 					}
-					else
-						FileUtils.Delete(_path);
+				    FileUtils.Delete(_path);
 				}
 
-				File.Move(path, _path);
+			    File.Move(path, _path);
 				_fileCreated = true;
 			}
 		}

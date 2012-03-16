@@ -418,7 +418,10 @@
     <Compile Include="UsageTracking\UsageMessage.cs" />
     <Compile Include="UsageTracking\UsageTrackingServiceClient.cs" />
     <Compile Include="UsageTracking\UsageUtilities.cs" />
+    <Compile Include="Utilities\DirectoryUtility.cs" />
     <Compile Include="Utilities\FileSize.cs" />
+    <Compile Include="Utilities\FileStreamOpener.cs" />
+    <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\FtpFileTransfer.cs" />
     <Compile Include="Utilities\IObservableList.cs" />
     <Compile Include="Utilities\IRemoteFileTransfer.cs" />

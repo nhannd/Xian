@@ -13,10 +13,9 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
     /// <summary>
     /// A ServerCommand derived class for moving a directory.
@@ -33,7 +32,7 @@ namespace ClearCanvas.ImageServer.Common.Command
         private string _backupDestDir ;
         private readonly TimeSpanStatistics _backupTime = new TimeSpanStatistics();
         private readonly RateStatistics _moveSpeed = new RateStatistics("MoveSpeed", RateType.BYTES);
-        private DirectoryUtility.CopyProcessCallback _callback;
+        private readonly DirectoryUtility.CopyProcessCallback _callback;
         #endregion
 
         public MoveDirectoryCommand(string src, string dest, DirectoryUtility.CopyProcessCallback callback)
@@ -67,8 +66,6 @@ namespace ClearCanvas.ImageServer.Common.Command
                 Backup();
             }
 
-
-
             MoveSpeed.Start();
             ulong bytesCopied = DirectoryUtility.Copy(_src, _dest, _callback);
             MoveSpeed.SetData(bytesCopied);
@@ -80,9 +77,7 @@ namespace ClearCanvas.ImageServer.Common.Command
             if (Directory.Exists(_dest))
             {
                 BackupTime.Start();
-                ServerExecutionContext context = ProcessorContext as ServerExecutionContext;
-                if (context != null)
-                    _backupDestDir = Path.Combine(context.BackupDirectory, "DestStudy");
+                _backupDestDir = Path.Combine(ProcessorContext.BackupDirectory, "DestStudy");
                 Directory.CreateDirectory(_backupDestDir);
                 Platform.Log(LogLevel.Info, "Backing up original destination folder {0}", _dest);
                 DirectoryUtility.Copy(_dest, _backupDestDir);
@@ -107,7 +102,6 @@ namespace ClearCanvas.ImageServer.Common.Command
                     Platform.Log(LogLevel.Info, "Original destination folder {0} is restored", _dest);
                 }
             }
-
         }
 
         #region IDisposable Members

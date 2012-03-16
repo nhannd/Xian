@@ -13,11 +13,9 @@ using System;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Utilities.Command;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
 	/// <summary>
 	/// Command for compressing a DICOM Sop Instance.

@@ -12,12 +12,13 @@
 using System;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.ImageServer.Rules
 {
 	/// <summary>
 	/// <see cref="ArchiveQueue"/> for inserting into the <see cref="CommandBase"/>.
@@ -50,12 +51,14 @@ namespace ClearCanvas.ImageServer.Common.Command
 		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			// Setup the insert parameters
-			InsertArchiveQueueParameters parms = new InsertArchiveQueueParameters();
-			parms.ServerPartitionKey = _serverPartitionKey;
-			parms.StudyStorageKey = _studyStorageKey;
-			
-			// Get the Insert ArchiveQueue broker and do the insert
-			IInsertArchiveQueue insert = updateContext.GetBroker<IInsertArchiveQueue>();
+		    var parms = new InsertArchiveQueueParameters
+		                    {
+                                ServerPartitionKey = _serverPartitionKey, 
+                                StudyStorageKey = _studyStorageKey
+                            };
+
+		    // Get the Insert ArchiveQueue broker and do the insert
+			var insert = updateContext.GetBroker<IInsertArchiveQueue>();
 
 			// Do the insert
             if (!insert.Execute(parms))

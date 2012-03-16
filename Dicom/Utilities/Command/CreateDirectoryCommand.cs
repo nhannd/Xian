@@ -12,10 +12,9 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
 	/// <summary>
 	/// A ServerCommand derived class for creating a directory.
@@ -65,9 +64,9 @@ namespace ClearCanvas.ImageServer.Common.Command
             catch(UnauthorizedAccessException)
             {
                 //alert the system admin
-                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", 
-                                        AlertTypeCodes.NoPermission, null, TimeSpan.Zero,
-                                     "Unauthorized access to {0} from {1}", _directory, ServerPlatform.HostId);
+                //ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", 
+                //                        AlertTypeCodes.NoPermission, null, TimeSpan.Zero,
+                //                     "Unauthorized access to {0} from {1}", _directory, ServerPlatform.HostId);
                 throw;
             }
 

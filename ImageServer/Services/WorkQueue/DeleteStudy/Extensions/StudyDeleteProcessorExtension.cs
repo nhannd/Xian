@@ -11,11 +11,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Command;
@@ -128,16 +128,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             if (_context.WorkQueueItem.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy)
             {
                 
-                using (ServerCommandProcessor processor = new ServerCommandProcessor("Backup deleted study"))
+                using (var processor = new ServerCommandProcessor("Backup deleted study"))
                 {
                     string path = _context.Filesystem.ResolveAbsolutePath(BackupSubPath);
 
                     Platform.Log(LogLevel.Info, "Saving a copy of the study to {0}...", path);
 
-                    CreateDirectoryCommand mkdir = new CreateDirectoryCommand(path);
+                    var mkdir = new CreateDirectoryCommand(path);
                     processor.AddCommand(mkdir);
 
-                    ZipStudyFolderCommand zip = new ZipStudyFolderCommand(storage.GetStudyPath(), BackupFullPath);
+                    var zip = new ZipStudyFolderCommand(storage.GetStudyPath(), BackupFullPath);
                     processor.AddCommand(zip);
 
                     if (!processor.Execute())

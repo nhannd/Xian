@@ -10,7 +10,7 @@
 #endregion
 
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Command;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core

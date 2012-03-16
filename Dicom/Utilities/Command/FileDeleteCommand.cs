@@ -12,9 +12,8 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Utilities.Command;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
 	/// <summary>
 	/// <see cref="CommandBase"/> for deleting a file, not that there is no rollback.  Rollback
@@ -24,7 +23,7 @@ namespace ClearCanvas.ImageServer.Common.Command
 	public class FileDeleteCommand : CommandBase, IDisposable
 	{
         private string _backupFile;
-        private bool _backedUp = false;
+        private bool _backedUp;
         private readonly string _path;
 
 		public FileDeleteCommand(string path, bool requiresRollback) 

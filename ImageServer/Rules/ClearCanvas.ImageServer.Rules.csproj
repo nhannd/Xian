@@ -54,6 +54,7 @@
     <Compile Include="GrantAccessAction\GrantAccessActionOperator.cs" />
     <Compile Include="GrantAccessAction\GrantAccessSamples.cs" />
     <Compile Include="GrantAccessAction\InsertStudyDataAccessCommand.cs" />
+    <Compile Include="InsertArchiveQueueCommand.cs" />
     <Compile Include="InsertFilesystemQueueCommand.cs" />
     <Compile Include="ISampleRule.cs" />
     <Compile Include="CompressSamples\CompressSamples.cs" />

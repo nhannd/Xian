@@ -272,7 +272,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		}
 
 		public InitializeStorageCommand(ReconcileStudyProcessorContext context, DicomMessageBase file)
-			:base("InitializeStorageCommand", true, context)
+			:base("InitializeStorageCommand", context)
 		{
 			Platform.CheckForNullReference(file, "file");
 			_studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 		public InitializeStorageCommand(ReconcileStudyProcessorContext context, string studyInstanceUid,
 			string studyDate, TransferSyntax transferSyntax)
-			: base("InitializeStorageCommand", true, context)
+			: base("InitializeStorageCommand", context)
 		{
 			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
 			Platform.CheckForNullReference(studyDate, "studyDate");

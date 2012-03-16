@@ -11,7 +11,7 @@
 
 using System.Xml;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common.Command;
+using ClearCanvas.Dicom.Utilities.Command;
 
 namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 {

@@ -12,9 +12,8 @@
 using System;
 using System.IO;
 using System.Threading;
-using ClearCanvas.ImageServer.Common.Command;
 
-namespace ClearCanvas.ImageServer.Common.Utilities
+namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
 	/// File related utilities.
@@ -60,16 +59,13 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 				{
 					// other IO exceptions should be treated as retry
 					lastException = e;
-					Random rand = new Random();
+					var rand = new Random();
 					Thread.Sleep(rand.Next(retryMinDelay, 2*retryMinDelay));
 				}
 
 				if (timeout > 0 && Environment.TickCount - begin > timeout)
 				{
-					if (lastException != null)
-						throw lastException;
-					else
-						throw new TimeoutException();
+					throw lastException;
 				}
 
 				if (stopSignal != null)
@@ -83,19 +79,19 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 		}
 
 
-        /// <summary>
-        /// Replacement for <see cref="File.Copy"/> that retries if the file is in use.
-        /// </summary>
-        /// <param name="source">The path to copy from.</param>
-        /// <param name="destination">The path to copy to.</param>
-        /// <param name="overwrite">Overwrite an existing destination file.</param>
-        static public void Copy(string source, string destination, bool overwrite)
+	    /// <summary>
+	    /// Replacement for <see><cref>File.Copy</cref></see> that retries if the file is in use.
+	    /// </summary>
+	    /// <param name="source">The path to copy from.</param>
+	    /// <param name="destination">The path to copy to.</param>
+	    /// <param name="overwrite">Overwrite an existing destination file.</param>
+	    static public void Copy(string source, string destination, bool overwrite)
         {
             Copy(source, destination, overwrite, RETRY_MAX_DELAY, null, RETRY_MIN_DELAY);
         }
 
         /// <summary>
-        /// Replacement for <see cref="File.Copy"/> that retries if the file is in use.
+        /// Replacement for <see><cref>File.Copy</cref></see> that retries if the file is in use.
         /// </summary>
         /// <param name="source">The path to copy from.</param>
         /// <param name="destination">The path to copy to.</param>
@@ -127,16 +123,13 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 {
                     // other IO exceptions should be treated as retry
                     lastException = e;
-                    Random rand = new Random();
+                    var rand = new Random();
                     Thread.Sleep(rand.Next(retryMinDelay, 2 * retryMinDelay));
                 }
 
                 if (timeout > 0 && Environment.TickCount - begin > timeout)
                 {
-                    if (lastException != null)
-                        throw lastException;
-                    else
-                        throw new TimeoutException();
+                    throw lastException;
                 }
 
                 if (stopSignal != null)
@@ -155,11 +148,11 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         /// </summary>
         /// <param name="source"></param>
         /// <returns>The path to the backup file. Null if the file is not backed up (it doesn't exist).</returns>
-        /// <param name="inSourceFolder">A boolean value indicating whether to save the backup in the same folder</param>
+        /// <param name="backupDirectory">A backup directory, if null backup in the same folder</param>
         /// <remarks>If the file is in use, retry will be attempted until it succeeds.</remarks>
-        static public string Backup(string source, bool inSourceFolder)
+        static public string Backup(string source, string backupDirectory)
         {
-            FileInfo sourceInfo = new FileInfo(source);
+            var sourceInfo = new FileInfo(source);
             if (File.Exists(source))
             {
                 int i = 0;
@@ -172,14 +165,14 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                     // so that we are not stucked in the loop
                     if (!File.Exists(source))
                         return null;
+                    if (sourceInfo.Directory == null)
+                        return null;
 
-                    if (inSourceFolder)
-                        backup = Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name, i));
-                    else 
-                        backup =  (ServerExecutionContext.Current != null)
-                                     ? Path.Combine(ServerExecutionContext.Current.BackupDirectory, String.Format("{0}.bak({1})", sourceInfo.Name, i))
-                                     : Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name, i));
-                
+                    backup = Path.Combine(string.IsNullOrEmpty(backupDirectory)
+                                              ? sourceInfo.Directory.FullName
+                                              : backupDirectory, 
+                                          String.Format("{0}.bak({1})", sourceInfo.Name, i));
+
                     try
                     {
                     	using (FileStream stream =
@@ -204,19 +197,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 }
             }
 
-            return null;
-                
-        }
-
-        /// <summary>
-        /// Creates copy of the specified file and returns the path to the backup file.
-        /// This method allows a file to be backed up more than once with different extensions.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns>The path to the backup file. Null if the file is not backed up.</returns>
-        static public string Backup(string source)
-        {
-            return Backup(source, false);
+            return null;     
         }
 	}
 }

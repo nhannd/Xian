@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Command;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
@@ -46,11 +47,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 
 				try
 				{
-					using (
-						ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Deleting {0}", uid.SopInstanceUid)))
+					using (var processor = new ServerCommandProcessor(String.Format("Deleting {0}", uid.SopInstanceUid)))
 					{
-						FileDeleteCommand deleteFile = new FileDeleteCommand(imagePath, true);
-						DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);
+						var deleteFile = new FileDeleteCommand(imagePath, true);
+						var deleteUid = new DeleteWorkQueueUidCommand(uid);
 						processor.AddCommand(deleteFile);
 						processor.AddCommand(deleteUid);
 						Platform.Log(ServerPlatform.InstanceLogLevel, deleteFile.ToString());

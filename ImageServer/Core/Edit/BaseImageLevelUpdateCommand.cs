@@ -12,7 +12,6 @@
 using System.Xml.Serialization;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Helpers;
 
 namespace ClearCanvas.ImageServer.Core.Edit

@@ -15,21 +15,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Command;
-using ClearCanvas.ImageServer.Common.Diagnostics;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Command;
+using ClearCanvas.ImageServer.Core.Diagnostics;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
-using Settings=ClearCanvas.ImageServer.Common.Diagnostics.Settings;
+using Settings=ClearCanvas.ImageServer.Core.Diagnostics.Settings;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {

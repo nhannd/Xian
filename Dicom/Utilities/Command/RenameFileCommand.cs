@@ -9,14 +9,12 @@
 
 #endregion
 
-using System.Diagnostics;
+using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Utilities.Command;
-using System;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
 	/// <summary>
 	/// A ServerCommand derived class for renaming a file.
@@ -62,24 +60,16 @@ namespace ClearCanvas.ImageServer.Common.Command
 
             File.Move(_sourceFile, _destinationFile);
 		    _sourceRenamed = true;
-
-		    SimulatePostOperationError();
 		}
-
-        [Conditional("DEBUG")]
-        private void SimulatePostOperationError()
-	    {
-            Diagnostics.RandomError.Generate(Diagnostics.Settings.SimulateFileIOError, "Post File Rename Error", delegate { File.Delete(_destinationFile); });
-	    }
 
 	    private void Backup()
         {
 			//backup source
-			_srcBackupFile = FileUtils.Backup(_sourceFile);
+            _srcBackupFile = FileUtils.Backup(_sourceFile, ProcessorContext.BackupDirectory);
 
             if (File.Exists(_destinationFile))
             {
-				_destBackupFile = FileUtils.Backup(_sourceFile);
+                _destBackupFile = FileUtils.Backup(_sourceFile, ProcessorContext.BackupDirectory);
             }
         }
 

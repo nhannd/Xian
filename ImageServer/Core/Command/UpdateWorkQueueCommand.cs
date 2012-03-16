@@ -14,11 +14,12 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.ImageServer.Core.Command
 {
     public class UpdateWorkQueueCommand : ServerDatabaseCommand
     {
@@ -60,17 +61,17 @@ namespace ClearCanvas.ImageServer.Common.Command
 
         protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
-            IInsertWorkQueue insert = updateContext.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters parms = new InsertWorkQueueParameters
-                          	{
-                          		WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess,
-                          		StudyStorageKey = _storageLocation.GetKey(),
-                          		ServerPartitionKey = _storageLocation.ServerPartitionKey,
-                          		SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty),
-                          		SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty),
-                          		ScheduledTime = Platform.Time,
-                          		WorkQueueGroupID = _uidGroupId
-                          	};
+            var insert = updateContext.GetBroker<IInsertWorkQueue>();
+            var parms = new InsertWorkQueueParameters
+                            {
+                                WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess,
+                                StudyStorageKey = _storageLocation.GetKey(),
+                                ServerPartitionKey = _storageLocation.ServerPartitionKey,
+                                SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty),
+                                SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty),
+                                ScheduledTime = Platform.Time,
+                                WorkQueueGroupID = _uidGroupId
+                            };
 
         	if (_duplicate)
             {

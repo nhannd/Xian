@@ -14,12 +14,13 @@ using System.IO;
 using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.ImageServer.Core.Command
 {
     /// <summary>
     /// Insert DICOM file into a <see cref="StudyXml"/> file and save to disk.
@@ -33,7 +34,7 @@ namespace ClearCanvas.ImageServer.Common.Command
         private readonly string _gzPath;
         private string _xmlBackupPath;
         private string _gzBackupPath;
-        private bool _fileSaved = false;
+        private bool _fileSaved;
         #endregion
 
         #region Private Static Members
@@ -75,7 +76,7 @@ namespace ClearCanvas.ImageServer.Common.Command
             {
                 try
                 {
-                    Random random = new Random();
+                    var random = new Random();
                     _xmlBackupPath = String.Format("{0}.bak.{1}", _xmlPath, random.Next());
                     File.Copy(_xmlPath, _xmlBackupPath);
                 }
@@ -89,7 +90,7 @@ namespace ClearCanvas.ImageServer.Common.Command
             {
                 try
                 {
-                    Random random = new Random();
+                    var random = new Random();
                     _gzBackupPath = String.Format("{0}.bak.{1}", _gzPath, random.Next());
                     File.Copy(_gzPath, _gzBackupPath);
                 }
@@ -106,7 +107,7 @@ namespace ClearCanvas.ImageServer.Common.Command
             XmlDocument doc = theStream.GetMemento(_outputSettings);
 
             // allocate the random number generator here, in case we need it below
-            Random rand = new Random();
+            var rand = new Random();
             string tmpStreamFile = streamFile + "_tmp";
             string tmpGzStreamFile = gzStreamFile + "_tmp";
             for (int i = 0; ; i++)

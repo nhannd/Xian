@@ -40,9 +40,14 @@ namespace ClearCanvas.Dicom.Utilities.Command
         void Rollback();
 
         /// <summary>
-        /// Temporary directory path that can be used be <see cref="ICommand"/> instances to store
+        /// Temporary directory path that can be used by <see cref="ICommand"/> instances to store
         /// temporary files.
         /// </summary>
         String TempDirectory { get; }
+
+        /// <summary>
+        /// Directory to backup directory that can be used by <see cref="ICommand"/> instances to store backup files.
+        /// </summary>
+        string BackupDirectory { get; set; }
     }
 }

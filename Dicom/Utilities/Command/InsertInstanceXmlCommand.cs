@@ -12,11 +12,9 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
 	/// <summary>
 	/// Insert DICOM file into a <see cref="StudyXml"/> file and save to disk.
@@ -49,17 +47,16 @@ namespace ClearCanvas.ImageServer.Common.Command
 
 		protected override void OnExecute(CommandProcessor theProcessor)
 		{
-			long fileSize;
-			if (!File.Exists(_path))
+		    if (!File.Exists(_path))
 			{
 				Platform.Log(LogLevel.Error, "Unexpected error finding file to add to XML {0}", _path);
 				throw new ApplicationException("Unexpected error finding file to add to XML {0}" + _path);
 			}
 
-			FileInfo finfo = new FileInfo(_path);
-			fileSize = finfo.Length;
+			var finfo = new FileInfo(_path);
+			long fileSize = finfo.Length;
 
-			DicomFile dicomFile = new DicomFile(_path);
+			var dicomFile = new DicomFile(_path);
 			dicomFile.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
 
 			// Setup the insert parameters

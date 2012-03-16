@@ -11,12 +11,12 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common.Command
 {
-    /// <summary>
+    /// <summary>C:\Projects\Jin\Xian\ImageServer\Common\Command\DeleteFileCommand.cs
     /// Command to delete a file.
     /// </summary>
     public class DeleteFileCommand : CommandBase, IDisposable
@@ -42,14 +42,13 @@ namespace ClearCanvas.ImageServer.Common.Command
                 Backup();
             }
 
-            FileInfo fileInfo = new FileInfo(_originalFile);
+            var fileInfo = new FileInfo(_originalFile);
             if (fileInfo.Exists)
             {
                 fileInfo.Delete();
             }
         }
 
-        
         protected override void OnUndo()
         {
             if (!File.Exists(_originalFile))
@@ -65,7 +64,7 @@ namespace ClearCanvas.ImageServer.Common.Command
         {
             if (File.Exists(_originalFile))
             {
-                _backupFile = FileUtils.Backup(_originalFile);
+                _backupFile = FileUtils.Backup(_originalFile,ProcessorContext.BackupDirectory);
             }
         }
 

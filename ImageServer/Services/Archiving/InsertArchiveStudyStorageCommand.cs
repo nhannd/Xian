@@ -63,26 +63,31 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// <param name="theProcessor">The processor executing the command.</param>
 		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
-			ArchiveStudyStorageUpdateColumns columns = new ArchiveStudyStorageUpdateColumns();
+		    var columns = new ArchiveStudyStorageUpdateColumns
+		                      {
+		                          ArchiveTime = Platform.Time,
+		                          PartitionArchiveKey = _partitionArchiveKey,
+		                          StudyStorageKey = _studyStorageKey,
+		                          ArchiveXml = _archiveXml,
+		                          ServerTransferSyntaxKey = _serverTransferSyntaxKey
+		                      };
 
-			columns.ArchiveTime = Platform.Time;
-			columns.PartitionArchiveKey = _partitionArchiveKey;
-			columns.StudyStorageKey = _studyStorageKey;
-			columns.ArchiveXml = _archiveXml;
-			columns.ServerTransferSyntaxKey = _serverTransferSyntaxKey;
 
-			IArchiveStudyStorageEntityBroker insertBroker = updateContext.GetBroker<IArchiveStudyStorageEntityBroker>();
+		    var insertBroker = updateContext.GetBroker<IArchiveStudyStorageEntityBroker>();
 
 			ArchiveStudyStorage storage = insertBroker.Insert(columns);
 
 
-			UpdateArchiveQueueParameters parms = new UpdateArchiveQueueParameters();
-			parms.ArchiveQueueKey = _archiveQueueKey;
-			parms.ArchiveQueueStatusEnum = ArchiveQueueStatusEnum.Completed;
-			parms.ScheduledTime = Platform.Time;
-			parms.StudyStorageKey = _studyStorageKey;		
+		    var parms = new UpdateArchiveQueueParameters
+		                    {
+		                        ArchiveQueueKey = _archiveQueueKey,
+		                        ArchiveQueueStatusEnum = ArchiveQueueStatusEnum.Completed,
+		                        ScheduledTime = Platform.Time,
+		                        StudyStorageKey = _studyStorageKey
+		                    };
 
-			IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
+
+		    var broker = updateContext.GetBroker<IUpdateArchiveQueue>();
 
             if (!broker.Execute(parms))
                 throw new ApplicationException("InsertArchiveStudyStorageCommand failed");

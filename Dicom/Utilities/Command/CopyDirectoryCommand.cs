@@ -13,10 +13,9 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
     public class CopyDirectoryCommand : CommandBase, IDisposable
     {
@@ -86,6 +85,7 @@ namespace ClearCanvas.ImageServer.Common.Command
                     catch
                     {
                     	// ignore it, will overwrite anyway
+                        Platform.Log(LogLevel.Warn, "Unexpected exeception attempting to delete: {0}", _dest);
                     }
 
                     // restore
@@ -109,9 +109,7 @@ namespace ClearCanvas.ImageServer.Common.Command
             if (Directory.Exists(_dest))
             {
                 BackupTime.Start();
-                var context = ProcessorContext as ServerExecutionContext;
-                if (context != null)
-                    _backupDestDir = Path.Combine(context.BackupDirectory, "DestFolder");
+                _backupDestDir = Path.Combine(ProcessorContext.BackupDirectory, "DestFolder");
                 Directory.CreateDirectory(_backupDestDir);
                 Platform.Log(LogLevel.Info, "Backing up original destination folder {0}", _dest);
                 DirectoryUtility.Copy(_dest, _backupDestDir);
@@ -132,6 +130,7 @@ namespace ClearCanvas.ImageServer.Common.Command
             catch
             {
             	//ignore
+                Platform.Log(LogLevel.Warn, "Unexpected exeception attempting to delete: {0}", _dest);
             }
         }
 

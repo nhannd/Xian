@@ -11,7 +11,6 @@
 
 using System.IO;
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageServer.Common.Command;
 using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm

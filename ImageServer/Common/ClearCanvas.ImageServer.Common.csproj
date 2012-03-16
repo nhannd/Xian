@@ -76,27 +76,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert.cs" />
+    <Compile Include="Command\ServerCommandProcessor.cs" />
+    <Compile Include="Command\ServerDatabaseCommand.cs" />
+    <Compile Include="Command\ServerExecutionContext.cs" />
     <Compile Include="ConstantResourceManager.cs" />
     <Compile Include="ExceptionLogAdviceAttribute.cs" />
     <Compile Include="Exceptions\AutoReconcileException.cs" />
-    <Compile Include="Command\CopyDirectoryCommand.cs" />
-    <Compile Include="Command\CreateDirectoryCommand.cs" />
-    <Compile Include="Command\CreateTempDirectoryCommand.cs" />
-    <Compile Include="Command\DeleteDirectoryCommand.cs" />
-    <Compile Include="Command\DeleteFileCommand.cs" />
-    <Compile Include="Command\DeleteWorkQueueUidCommand.cs" />
-    <Compile Include="Command\DicomCompressCommand.cs" />
-    <Compile Include="Command\ServerExecutionContext.cs" />
-    <Compile Include="Command\InsertInstanceXmlCommand.cs" />
-    <Compile Include="Command\LockStudyCommand.cs" />
-    <Compile Include="Command\UpdateWorkQueueCommand.cs" />
-    <Compile Include="Diagnostics\DiagnosticSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>DiagnosticSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Diagnostics\RandomError.cs" />
-    <Compile Include="Diagnostics\Settings.cs" />
     <Compile Include="EnumInfoAttribute.cs" />
     <Compile Include="Exceptions\FilesystemNotReadableException.cs" />
     <Compile Include="Exceptions\FilesystemNotWritableException.cs" />
@@ -108,9 +93,6 @@
     <Compile Include="Exceptions\StudyNotFoundException.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />
-    <Compile Include="Command\FileDeleteCommand.cs" />
-    <Compile Include="Command\InsertArchiveQueueCommand.cs" />
-    <Compile Include="Command\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="InProcessImageServerServiceProvider.cs" />
     <Compile Include="ServerAuditHelper.cs" />
@@ -125,9 +107,6 @@
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="ImageServerLogWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Command\RenameFileCommand.cs" />
-    <Compile Include="Command\SaveDicomFileCommand.cs" />
-    <Compile Include="Command\SaveXmlCommand.cs" />
     <Compile Include="RemoteImageServerServiceProvider.cs" />
     <Compile Include="RemoteImageServerServiceSettings.cs" />
     <Compile Include="RemoteImageServerServiceSettings.Designer.cs">
@@ -136,12 +115,9 @@
       <DependentUpon>RemoteImageServerServiceSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerAddress.cs" />
-    <Compile Include="Command\ServerCommandProcessor.cs" />
-    <Compile Include="Command\ServerDatabaseCommand.cs" />
     <Compile Include="ServerCache.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />
-    <Compile Include="FileStreamOpener.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -153,10 +129,8 @@
     <Compile Include="ThreadedService.cs" />
     <Compile Include="Utilities\CustomXmlTextWriter.cs" />
     <Compile Include="Utilities\DicomNameUtils.cs" />
-    <Compile Include="Utilities\DirectoryUtility.cs" />
     <Compile Include="Utilities\FilesystemInfo.cs" />
     <Compile Include="Utilities\FilesystemUtils.cs" />
-    <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\StringUtils.cs" />
     <Compile Include="Utilities\Test\DicomNameUtilsTest.cs" />
     <Compile Include="Utilities\XmlUtils.cs" />
@@ -200,10 +174,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Diagnostics\DiagnosticSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DiagnosticSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="RemoteImageServerServiceSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>RemoteImageServerServiceSettings.Designer.cs</LastGenOutput>

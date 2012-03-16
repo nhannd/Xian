@@ -12,6 +12,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Command;
@@ -20,6 +21,8 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Command;
+using ClearCanvas.ImageServer.Core.Diagnostics;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -363,7 +366,7 @@ namespace ClearCanvas.ImageServer.Core
                 new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
 
             #region SPECIAL CODE FOR TESTING
-            if (Common.Diagnostics.Settings.SimulateFileCorruption)
+            if (Diagnostics.Settings.SimulateFileCorruption)
             {
                 commandProcessor.AddCommand(new CorruptDicomFileCommand(path));
             }
@@ -467,11 +470,11 @@ namespace ClearCanvas.ImageServer.Core
 
 		protected override void OnExecute(CommandProcessor theProcessor)
 		{
-			Random rand = new Random();
+			var rand = new Random();
 
-			if (Common.Diagnostics.Settings.SimulateFileCorruption)
+			if (Diagnostics.Settings.SimulateFileCorruption)
 			{
-				Common.Diagnostics.RandomError.Generate(
+				RandomError.Generate(
 					rand.Next()%2 == 0,
 					String.Format("Corrupting the file {0}", _path),
 					delegate
