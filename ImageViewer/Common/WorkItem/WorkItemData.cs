@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem

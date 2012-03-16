@@ -56,6 +56,9 @@ namespace ClearCanvas.Dicom.ServiceModel
 		[DataMember(IsRequired = false)]
 		public string Location { get; set; }
 
+	    // TODO (CR Mar 2012): see if we can get rid of this later.
+        public virtual bool IsStreaming { get { return false; } }
+
 		#endregion
 	}
 }

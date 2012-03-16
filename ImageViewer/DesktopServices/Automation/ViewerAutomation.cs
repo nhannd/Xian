@@ -16,13 +16,13 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.Automation;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ApplicationEntity=ClearCanvas.ImageViewer.StudyManagement.ApplicationEntity;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
@@ -348,7 +348,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		private static IImageViewer LaunchViewer(OpenStudiesRequest request, string primaryStudyInstanceUid)
 		{
 			CompleteOpenStudyInfo(request.StudiesToOpen);
-			IDictionary<string, ApplicationEntity> serverMap = GetServerMap(request.StudiesToOpen);
+			var serverMap = GetServerMap(request.StudiesToOpen);
 
 		    ImageViewerComponent viewer;
             if (!request.LoadPriors.HasValue || request.LoadPriors.Value)
@@ -362,7 +362,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			{
 				//None of the servers should be empty now, but if they are, assume local.
 				//The worst that will happen is it will fail to load when it doesn't exist.
-				ApplicationEntity server = null;
+				IApplicationEntity server = null;
 				string loader = "DICOM_LOCAL";
 
 				if (!String.IsNullOrEmpty(info.SourceAETitle) && serverMap.ContainsKey(info.SourceAETitle))
@@ -430,9 +430,9 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(), "The primary study could not be loaded.");
 		}
 
-		private static IDictionary<string, ApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
+		private static IDictionary<string, IDicomServerApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
 		{
-			Dictionary<string, ApplicationEntity> serverMap = new Dictionary<string, ApplicationEntity>();
+            var serverMap = new Dictionary<string, IDicomServerApplicationEntity>();
 
 			string localAE = ServerTree.GetClientAETitle();
 			serverMap[localAE] = null;
@@ -444,18 +444,11 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			{
 				if (!String.IsNullOrEmpty(info.SourceAETitle) && !serverMap.ContainsKey(info.SourceAETitle))
 				{
-					Server server = servers.Find(delegate(IServerTreeNode node)
-								{
-									return ((Server)node).AETitle == info.SourceAETitle;
-								}) as Server;
+					Server server = servers.Find(node => ((Server) node).AETitle == info.SourceAETitle) as Server;
 
 					//only add streaming servers.
 					if (server != null && server.IsStreaming)
-					{
-						serverMap[info.SourceAETitle] =
-							new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port, 
-							server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
-					}
+					    serverMap[info.SourceAETitle] = server.ToApplicationEntity();
 				}
 			}
 

@@ -15,7 +15,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 
-namespace ClearCanvas.ImageViewer.Services
+namespace ClearCanvas.ImageViewer.Common
 {
 	internal class DefaultAuthorityGroups
 	{

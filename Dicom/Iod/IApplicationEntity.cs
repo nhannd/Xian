@@ -9,10 +9,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Dicom.Iod
 {
 	public interface IApplicationEntity
@@ -27,7 +23,10 @@ namespace ClearCanvas.Dicom.Iod
 	{
 		string HostName { get; }
 		int Port { get; }
-	}
+
+        // TODO (CR Mar 2012): Try to get rid of this later.
+        bool IsStreaming { get; }
+    }
 
 	public interface IStreamingServerApplicationEntity : IDicomServerApplicationEntity
 	{

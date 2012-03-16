@@ -16,7 +16,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
-using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore

@@ -10,6 +10,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;

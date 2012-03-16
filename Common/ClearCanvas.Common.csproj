@@ -381,7 +381,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>UpgradeSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="DataContractBase.cs" />
+    <Compile Include="Serialization\DataContractBase.cs" />
     <Compile Include="ExtensionSettings.cs" />
     <Compile Include="ExtensionSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -399,6 +399,8 @@
     </Compile>
     <Compile Include="Scripting\ScriptEngineOptionsAttribute.cs" />
     <Compile Include="Scripting\SynchronizedScriptEngineWrapper.cs" />
+    <Compile Include="Serialization\PolymorphicDataContractAttribute.cs" />
+    <Compile Include="Serialization\PolymorphicDataContractHook.cs" />
     <Compile Include="Shreds\IShred.cs" />
     <Compile Include="Shreds\QueueProcessor.cs" />
     <Compile Include="Shreds\QueueProcessorShred.cs" />
@@ -427,8 +429,8 @@
     <Compile Include="Utilities\IRemoteFileTransfer.cs" />
     <Compile Include="Utilities\HttpFileTransfer.cs" />
     <Compile Include="Utilities\EnvironmentUtilities.cs" />
-    <Compile Include="Utilities\JsmlSerializer.cs" />
-    <Compile Include="Utilities\Tests\JsmlSerializerTests.cs" />
+    <Compile Include="Serialization\JsmlSerializer.cs" />
+    <Compile Include="Serialization\Tests\JsmlSerializerTests.cs" />
     <Compile Include="Utilities\UnitTestExtensionFactory.cs" />
   </ItemGroup>
   <ItemGroup>

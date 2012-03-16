@@ -6,8 +6,5 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         [OperationContract(IsOneWay = true)]
         void WorkItemChanged(WorkItemData progressItem);
-
-        [OperationContract(IsOneWay = true)]
-        void LocalDataStoreCleared();
     }
 }

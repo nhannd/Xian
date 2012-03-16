@@ -18,7 +18,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.ServerTree;
-using ClearCanvas.ImageViewer.Services;
 using System.Linq;
 
 namespace ClearCanvas.ImageViewer.Configuration

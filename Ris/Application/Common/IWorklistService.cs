@@ -10,7 +10,7 @@
 #endregion
 
 using System.ServiceModel;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common
 {

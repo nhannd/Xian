@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	//[IconSet("activate", "", "Icons.DicomFileImportActivityMedium.png", "Icons.DicomFileImportActivityLarge.png")]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-	[ViewerActionPermission("activate", ImageViewer.Services.AuthorityTokens.Study.Import)]
+	[ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Import)]
 
 	public class DicomFileImportActivityTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
 	{

@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService

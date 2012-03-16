@@ -19,7 +19,6 @@ using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DiskspaceManager;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
-using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {

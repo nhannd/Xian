@@ -17,9 +17,10 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 using NUnit.Framework;
 
-namespace ClearCanvas.Common.Utilities.Tests
+namespace ClearCanvas.Common.Serialization.Tests
 {
 	[TestFixture]
 	public class JsmlSerializerTests
@@ -161,6 +162,56 @@ namespace ClearCanvas.Common.Utilities.Tests
 			[DataMember]
 			public string Value;
 		}
+
+		class TestPolyDataContractAttribute : PolymorphicDataContractAttribute
+		{
+			public TestPolyDataContractAttribute(string dataContractGuid) : base(dataContractGuid)
+			{
+			}
+		}
+
+		[DataContract]
+		class TestContract4
+		{
+			[DataMember]
+			public string Data { get; set; }
+
+			[DataMember]
+			public TestContract4 Child { get; set; }
+		}
+
+		[DataContract]
+		[TestPolyDataContractAttribute("851f5c87-52d5-4543-b4ec-7fa4a820ee24")]
+		class TestContract4_A : TestContract4
+		{
+			[DataMember]
+			public string DataA { get; set; }
+		}
+
+		[DataContract]
+		[TestPolyDataContractAttribute("6f406a66-f9a4-44e4-aceb-22374022dde8")]
+		class TestContract4_B : TestContract4
+		{
+			[DataMember]
+			public string DataB { get; set; }
+		}
+
+		[DataContract]
+		public enum TestEnumWithDataContract { Enum1, Enum2 }
+
+		[DataContract]
+		class TestContract5
+		{
+			[DataMember]
+			public TestEnumWithDataContract Data { get; set; }
+
+			public override bool Equals(object obj)
+			{
+				var that = obj as TestContract5;
+				return that != null && that.Data == this.Data;
+			}
+		}
+
 
 		public JsmlSerializerTests()
 		{
@@ -559,6 +610,41 @@ namespace ClearCanvas.Common.Utilities.Tests
 
 			var jsmlWithoutDouble = contract2.GetJsml(true);
 			SerializeHelper(contract2, jsmlWithoutDouble, options);
+		}
+
+		[Test]
+		public void Test_Polymorhpic_data_contracts()
+		{
+			// normally it isn't necessary to explicitly add subtypes, if those types are defined in *plugins*
+			// but since Common is not a plugin, we need to explicitly add the types
+			PolymorphicDataContractHook<TestPolyDataContractAttribute>.RegisterKnownType(typeof(TestContract4_A));
+			PolymorphicDataContractHook<TestPolyDataContractAttribute>.RegisterKnownType(typeof(TestContract4_B));
+
+
+			TestContract4 input, output;
+			input = new TestContract4_A() {Data = "foo", DataA = "bar", Child = new TestContract4_B {Data = "x", DataB = "b"}};
+			var serialized = JsmlSerializer.Serialize(input, "data",
+				new JsmlSerializer.SerializeOptions { Hook = new PolymorphicDataContractHook<TestPolyDataContractAttribute>() });
+
+
+			output = JsmlSerializer.Deserialize<TestContract4>(serialized,
+				new JsmlSerializer.DeserializeOptions { Hook = new PolymorphicDataContractHook<TestPolyDataContractAttribute>() });
+
+			Assert.IsInstanceOfType(typeof(TestContract4_A), output);
+			Assert.AreEqual("foo", output.Data);
+
+			Assert.AreEqual("bar", ((TestContract4_A) output).DataA);
+			Assert.IsInstanceOfType(typeof(TestContract4_B), output.Child);
+			Assert.AreEqual("x", output.Child.Data);
+			Assert.AreEqual("b", ((TestContract4_B)output.Child).DataB);
+		}
+
+		[Test]
+		public void Test_Enum_with_DataContract_attribute_processed_as_enum()
+		{
+			var value = new TestContract5() {Data = TestEnumWithDataContract.Enum2};
+			SerializeHelper(value, "<Tag type=\"hash\">\r\n  <Data>Enum2</Data>\r\n</Tag>");
+			DeserializeHelper(value, "<Tag type=\"hash\">\r\n  <Data>Enum2</Data>\r\n</Tag>");
 		}
 
 		#region Private helpers

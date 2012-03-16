@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -80,11 +81,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 				}
 
-				OpenStudyHelper helper = new OpenStudyHelper();
-				helper.WindowBehaviour = ViewerLaunchSettings.WindowBehaviour;
-				helper.AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
+				var helper = new OpenStudyHelper
+				                 {
+				                     WindowBehaviour = ViewerLaunchSettings.WindowBehaviour,
+				                     AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer
+				                 };
 
-				if (Context.SelectedServerGroup.IsLocalDatastore)
+			    if (Context.SelectedServerGroup.IsLocalDatastore)
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
 						helper.AddStudy(study.StudyInstanceUid, study.Server, LocalStudyLoaderName);
@@ -93,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
 					{
-						ApplicationEntity server = study.Server as ApplicationEntity;
+						var server = study.Server as IDicomServerApplicationEntity;
 						if (server != null)
 						{
 							if (server.IsStreaming)
@@ -180,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 				foreach (StudyItem study in Context.SelectedStudies)
 				{
-					ApplicationEntity server = study.Server as ApplicationEntity;
+                    var server = study.Server as IDicomServerApplicationEntity;
 					if (server != null)
 					{
 						if (server.IsStreaming && IsStreamingStudyLoaderSupported)

@@ -176,7 +176,6 @@
     <Compile Include="Configuration\SetConfigurationDocumentRequest.cs" />
     <Compile Include="Configuration\SetConfigurationDocumentResponse.cs" />
     <Compile Include="EnterpriseCoreServiceAttribute.cs" />
-    <Compile Include="DataContractBase.cs" />
     <Compile Include="EnterpriseConfigurationStore.cs" />
     <Compile Include="EnterpriseSettingsStore.cs" />
     <Compile Include="EnterpriseTimeProvider.cs" />
