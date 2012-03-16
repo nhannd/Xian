@@ -17,6 +17,8 @@ using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
+    // TODO (Marmot): remove this stuff, but will have to write something to take it's place first.
+
 	public static class DicomServerConfigurationHelper
 	{
 		[Serializable]
@@ -312,11 +314,17 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 
 		public static void Update(string hostName, string aeTitle, int port, string interimStorageDirectory)
 		{
-			DicomServerServiceClient client = new DicomServerServiceClient();
+			var client = new DicomServerServiceClient();
 
 			try
 			{
-				DicomServerConfiguration configuration = new DicomServerConfiguration(hostName, aeTitle, port, interimStorageDirectory);
+			    var configuration = new DicomServerConfiguration
+			                            {
+			                                HostName = hostName,
+			                                AETitle = aeTitle,
+			                                Port = port,
+			                                InterimStorageDirectory = interimStorageDirectory
+			                            };
 
 				client.UpdateServerConfiguration(configuration);
 				client.Close();

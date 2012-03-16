@@ -1,268 +1,49 @@
-#region License
-
-// Copyright (c) 2011, ClearCanvas Inc.
-// All rights reserved.
-// http://www.clearcanvas.ca
-//
-// This software is licensed under the Open Software License v3.0.
-// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
-
-#endregion
-
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using ClearCanvas.ImageViewer.Common;
+﻿using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-	public enum DeletionBehaviour
-	{
-		None = 0,
-		DeleteOnSuccess,
-		DeleteAlways
-	}
+    public static class DicomServerNamespace
+    {
+        public const string Value = ImageViewerNamespace.Value + "/dicomServer";
+    }
 
-	[DataContract]
-	public class SendOperationReference
-	{
-		private Guid _identifier;
-		private bool _isBackground;
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class GetDicomServerConfigurationResult
+    {
+        [DataMember(IsRequired = true)]
+        public DicomServerConfiguration Configuration { get; set; }
+    }
 
-		public SendOperationReference(Guid identifier)
-		{
-			_identifier = identifier;
-		}
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class GetDicomServerConfigurationRequest
+    {}
 
-		public SendOperationReference()
-		{
-		}
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class UpdateDicomServerConfigurationResult
+    {
+    }
 
-		[DataMember(IsRequired = true)]
-		public Guid Identifier
-		{
-			get { return _identifier; }
-			set { _identifier = value; }
-		}
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class UpdateDicomServerConfigurationRequest
+    {
+        [DataMember(IsRequired = true)]
+        public DicomServerConfiguration Configuration { get; set; }
+    }
 
-		[DataMember(IsRequired = true)]
-		public bool IsBackground
-		{
-			get { return _isBackground; }
-			set { _isBackground = value; }
-		}
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class DicomServerConfiguration
+    {
+        [DataMember(IsRequired = true)]
+        public string HostName { get; set; }
 
-		public override bool Equals(object obj)
-		{
-			if (obj is SendOperationReference)
-				return ((SendOperationReference) obj).Identifier == Identifier;
+        [DataMember(IsRequired = true)]
+        public string AETitle { get; set; }
 
-			return base.Equals(obj);
-		}
+        [DataMember(IsRequired = true)]
+        public int Port { get; set; }
 
-		public override int GetHashCode()
-		{
-			return Identifier.GetHashCode();
-		}
-
-		public static bool operator == (SendOperationReference ref1, SendOperationReference ref2)
-		{
-			return Object.Equals(ref1, ref2);
-		}
-
-		public static bool operator !=(SendOperationReference ref1, SendOperationReference ref2)
-		{
-			return !Object.Equals(ref1, ref2);
-		}
-	}
-
-	[DataContract]
-	public abstract class SendInstancesRequest
-	{
-		private AEInformation _destinationAEInformation;
-		private bool _isBackground;
-
-		public SendInstancesRequest()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public AEInformation DestinationAEInformation
-		{
-			get { return _destinationAEInformation; }
-			set { _destinationAEInformation = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public bool IsBackground
-		{
-			get { return _isBackground; }
-			set { _isBackground = value; }
-		}
-	}
-
-	[DataContract]
-	public class SendStudiesRequest : SendInstancesRequest
-	{
-		private IEnumerable<string> _studyInstanceUids;
-
-		public SendStudiesRequest()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public IEnumerable<string> StudyInstanceUids
-		{
-			get { return _studyInstanceUids; }
-			set { _studyInstanceUids = value; }
-		}
-	}
-
-	[DataContract]
-	public class SendSeriesRequest : SendInstancesRequest
-	{
-		private string _studyInstanceUid;
-		private IEnumerable<string> _seriesInstanceUids;
-
-		public SendSeriesRequest()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public IEnumerable<string> SeriesInstanceUids
-		{
-			get { return _seriesInstanceUids; }
-			set { _seriesInstanceUids = value; }
-		}
-	}
-
-	[DataContract]
-	public class SendSopInstancesRequest : SendInstancesRequest
-	{
-		private string _studyInstanceUid;
-		private string _seriesInstanceUid;
-		private IEnumerable<string> _sopInstanceUids;
-
-		public SendSopInstancesRequest()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string SeriesInstanceUid
-		{
-			get { return _seriesInstanceUid; }
-			set { _seriesInstanceUid = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public IEnumerable<string> SopInstanceUids
-		{
-			get { return _sopInstanceUids; }
-			set { _sopInstanceUids = value; }
-		}
-	}
-
-	[DataContract]
-	public class SendFilesRequest : SendInstancesRequest
-	{
-		private IEnumerable<string> _fileExtensions;
-		private IEnumerable<string> _filePaths;
-		private bool _recursive;
-		private DeletionBehaviour _deletionBehaviour;
-
-		public SendFilesRequest()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public IEnumerable<string> FilePaths
-		{
-			get { return _filePaths; }
-			set { _filePaths = value; }
-		}
-
-		[DataMember(IsRequired = false)]
-		public IEnumerable<string> FileExtensions
-		{
-			get { return _fileExtensions; }
-			set { _fileExtensions = value; }
-		}
-
-		[DataMember(IsRequired = false)]
-		public bool Recursive
-		{
-			get { return _recursive; }
-			set { _recursive = value; }
-		}
-
-		[DataMember(IsRequired = false)]
-		public DeletionBehaviour DeletionBehaviour
-		{
-			get { return _deletionBehaviour; }
-			set { _deletionBehaviour  = value; }
-		}
-	}
-
-	[DataContract]
-	public class DicomServerConfiguration
-	{
-		private string _hostName;
-		private string _AETitle;
-		private int _port;
-		private string _interimStorageDirectory;
-
-		public DicomServerConfiguration(string hostName, string aeTitle, int port, string interimStorageDirectory)
-		{
-			_hostName = hostName;
-			_AETitle = aeTitle;
-			_port = port;
-			_interimStorageDirectory = interimStorageDirectory;
-		}
-
-		public DicomServerConfiguration()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public string HostName
-		{
-			get { return _hostName; }
-			set { _hostName = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string AETitle
-		{
-			get { return _AETitle; }
-			set { _AETitle = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public int Port
-		{
-			get { return _port; }
-			set { _port = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string InterimStorageDirectory
-		{
-			get { return _interimStorageDirectory; }
-			set { _interimStorageDirectory = value; }
-		}
-	}
+        // TODO (Marmot): Gonzo.
+        [DataMember(IsRequired = true)]
+        public string InterimStorageDirectory { get; set; }
+    }
 }

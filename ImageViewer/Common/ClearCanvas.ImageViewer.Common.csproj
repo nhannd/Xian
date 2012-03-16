@@ -86,10 +86,12 @@
     <Compile Include="Diagnostics.cs" />
     <Compile Include="DicomFilePublisher.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
+    <Compile Include="DicomServer\DataContractsOld.cs" />
     <Compile Include="DicomServer\DicomSendServiceClient.cs" />
     <Compile Include="DicomServer\DicomServerConfigurationHelper.cs" />
     <Compile Include="DicomServer\DicomServerServiceClient.cs" />
     <Compile Include="DicomServer\IDicomSendService.cs" />
+    <Compile Include="DicomServer\IDicomServerConfiguration.cs" />
     <Compile Include="DicomServer\IDicomServerService.cs" />
     <Compile Include="DiskspaceManager\DataContracts.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerServiceClient.cs" />
@@ -122,6 +124,12 @@
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="RetryableCommandExecutor.cs" />
     <Compile Include="ImageViewerNamespace.cs" />
+    <Compile Include="ServerDirectory\DataContracts.cs" />
+    <Compile Include="ServerDirectory\Extensions.cs" />
+    <Compile Include="ServerDirectory\IServerDirectory.cs" />
+    <Compile Include="ServerDirectory\PersistedDicomServiceNode.cs" />
+    <Compile Include="ServerDirectory\ServerDirectoryBridge.cs" />
+    <Compile Include="ServiceNode.cs" />
     <Compile Include="ServerTree\AEServerGroup.cs" />
     <Compile Include="ServerTree\IServerTreeNode.cs" />
     <Compile Include="ServerTree\LocalDataStore.cs" />
@@ -132,6 +140,8 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="StudyManagement\Storage\DataContracts.cs" />
+    <Compile Include="StudyManagement\Storage\IStudyStorageConfiguration.cs" />
     <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
     <Compile Include="WorkItem\IWorkItemService.cs" />
     <Compile Include="WorkItem\WorkItemData.cs" />
@@ -163,9 +173,6 @@
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="StudyManagement\Storage\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -16,9 +16,11 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.ServerTree;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+    // TODO (Marmot): Gonzo.
 	public static class DefaultServers
 	{
 		public static List<Server> SelectFrom(IEnumerable<Server> candidates)
@@ -63,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     yield return localDataStoreQuery;
             }
 
-            string localAE = Common.ServerTree.ServerTree.GetClientAETitle();
+            string localAE = DicomServerConfigurationHelper.GetOfflineAETitle(false);
 
 			List<Server> defaultServers = DefaultServers.SelectFrom(new Common.ServerTree.ServerTree());
 			List<Server> streamingServers = CollectionUtils.Select(defaultServers, 

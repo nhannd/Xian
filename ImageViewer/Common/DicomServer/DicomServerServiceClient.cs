@@ -16,6 +16,8 @@ using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
+    // TODO (Marmot): remove this stuff.
+    
 	public partial class DicomServerServiceClient : ClientBase<IDicomServerService>, IDicomServerService
 	{
 		public DicomServerServiceClient()

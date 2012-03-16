@@ -13,6 +13,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DiskspaceManager
 {
+    // TODO (Marmot): refactor for new configuration.
 	[ServiceContract(ConfigurationName = "IDiskspaceManagerService")]
 	public interface IDiskspaceManagerService
 	{

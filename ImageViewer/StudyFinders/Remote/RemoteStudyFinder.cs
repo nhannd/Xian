@@ -20,6 +20,7 @@ using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 {
@@ -177,7 +178,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 					{
 						requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(modalityFilter);
 
-						IList<DicomAttributeCollection> results = scu.Find(ServerTree.GetClientAETitle(),
+						IList<DicomAttributeCollection> results = scu.Find(DicomServerConfigurationHelper.GetOfflineAETitle(false),
 							server.AETitle, server.HostName, server.Port,
 							requestCollection);
 

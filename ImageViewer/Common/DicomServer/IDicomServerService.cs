@@ -15,6 +15,8 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
+    // TODO (Marmot): remove this stuff.
+
 	/// <summary>
 	/// WCF service interface to the Dicom Server.  The Dicom Server runs in a Shred, and the WCF interface allows
 	/// external processes, such as the Viewer, to make requests via this interface.

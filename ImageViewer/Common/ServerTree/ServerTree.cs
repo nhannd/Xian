@@ -96,12 +96,6 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
 
 		#region Public Methods
 
-		public static string GetClientAETitle()
-		{
-			ServerTree serverTree = new ServerTree();
-			return serverTree.RootNode.LocalDataStoreNode.GetClientAETitle();
-		}
-
     	public void FireServerTreeUpdatedEvent()
         {
             EventsHelper.Fire(_serverTreeUpdated, this, EventArgs.Empty);
@@ -703,4 +697,3 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
 		event EventHandler Changed;
 	}
 }
-

@@ -211,10 +211,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (!_active)
 					throw new InvalidOperationException("The Dicom Server service is not active.");
 
-				return new DicomServerConfiguration(DicomServerSettings.Instance.HostName,
-												DicomServerSettings.Instance.AETitle,
-												DicomServerSettings.Instance.Port,
-												DicomServerSettings.Instance.InterimStorageDirectory);
+                return new DicomServerConfiguration
+                    {
+                        HostName = DicomServerSettings.Instance.HostName,
+                        AETitle = DicomServerSettings.Instance.AETitle,
+                        Port = DicomServerSettings.Instance.Port,
+                        InterimStorageDirectory = DicomServerSettings.Instance.InterimStorageDirectory
+                    };
 			}
 		}
 

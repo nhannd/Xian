@@ -19,6 +19,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using System.Linq;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -197,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		private static bool StudyExistsOnRemote(Server server, string studyInstanceUid)
 		{
-			var srq = new DicomStudyRootQuery(Common.ServerTree.ServerTree.GetClientAETitle(), server.AETitle, server.Host, server.Port);
+			var srq = new DicomStudyRootQuery(DicomServerConfigurationHelper.GetOfflineAETitle(false), server.AETitle, server.Host, server.Port);
 			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
 			return result.Count > 0;
 		}
