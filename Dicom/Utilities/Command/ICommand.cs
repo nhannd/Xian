@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -29,11 +29,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// <summary>
         /// Gets a value describing if the ServerCommand requires a rollback of the operation its included in if it fails during execution.
         /// </summary>
-        bool RequiresRollback
-        {
-            get;
-            set;
-        }
+        bool RequiresRollback { get; set; }
 
         /// <summary>
         /// Execute the ServerCommand.
@@ -45,6 +41,4 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// </summary>
         void Undo();
     }
-
-
 }

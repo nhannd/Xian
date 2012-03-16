@@ -18,7 +18,7 @@ namespace ClearCanvas.Dicom.Utilities.Rules
     /// Rules engine for applying rules against DICOM files and performing actions.
     /// </summary>
     /// <remarks>
-    /// The ServerRulesEngine encapsulates code to apply rules against DICOM file 
+    /// The SRulesEngine encapsulates code to apply rules against DICOM file 
     /// objects.  It will load the rules from the persistent store, maintain them by type,
     /// and then can apply them against specific files.
     /// </remarks>
@@ -37,13 +37,13 @@ namespace ClearCanvas.Dicom.Utilities.Rules
     /// </rule>
     /// </code>
     /// </example>
-    public class RulesEngine<TContext, TTypeEnum>
-        where TContext : ActionContext
+    public class RulesEngine<TActionContext, TTypeEnum>
+        where TActionContext : ActionContext
     {
         protected readonly List<TTypeEnum> _omitList = new List<TTypeEnum>();
         protected readonly List<TTypeEnum> _includeList = new List<TTypeEnum>();
-        protected readonly Dictionary<TTypeEnum, RuleTypeCollection<TContext, TTypeEnum>> _typeList =
-            new Dictionary<TTypeEnum, RuleTypeCollection<TContext, TTypeEnum>>();
+        protected readonly Dictionary<TTypeEnum, RuleTypeCollection<TActionContext, TTypeEnum>> _typeList =
+            new Dictionary<TTypeEnum, RuleTypeCollection<TActionContext, TTypeEnum>>();
 
         #region Constructors
 
@@ -97,11 +97,11 @@ namespace ClearCanvas.Dicom.Utilities.Rules
         /// Execute the rules against the context for the rules.
         /// </summary>
         /// <param name="context">A class containing the context for applying the rules.</param>
-        public void Execute(TContext context)
+        public void Execute(TActionContext context)
         {
             Statistics.ExecutionTime.Start();
 
-            foreach (RuleTypeCollection<TContext, TTypeEnum> typeCollection in _typeList.Values)
+            foreach (RuleTypeCollection<TActionContext, TTypeEnum> typeCollection in _typeList.Values)
             {
                 typeCollection.Execute(context, false);
             }
@@ -114,11 +114,11 @@ namespace ClearCanvas.Dicom.Utilities.Rules
         /// </summary>
         /// <param name="context">A class containing the context for applying the rules.</param>
         /// <param name="stopOnFirst">Stop on first valid rule of type.</param>
-        public void Execute(TContext context, bool stopOnFirst)
+        public void Execute(TActionContext context, bool stopOnFirst)
         {
             Statistics.ExecutionTime.Start();
 
-            foreach (RuleTypeCollection<TContext, TTypeEnum> typeCollection in _typeList.Values)
+            foreach (RuleTypeCollection<TActionContext, TTypeEnum> typeCollection in _typeList.Values)
             {
                 typeCollection.Execute(context, stopOnFirst);
             }

@@ -19,32 +19,52 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.Utilities.Rules
 {
-    public class Rule<TContext,TTypeEnum>
-        where TContext : ActionContext
+    /// <summary>
+    /// Representation of a rule.
+    /// </summary>
+    /// <typeparam name="TActionContext">The context passed to the <see cref="IActionSet{TActionContext}"/> when executing the action.</typeparam>
+    /// <typeparam name="TTypeEnum">A type enum that represents the type of rule.</typeparam>
+    public class Rule<TActionContext, TTypeEnum>
+        where TActionContext : ActionContext
     {
-        private IActionSet<TContext> _actions;
+        private IActionSet<TActionContext> _actions;
         private ISpecification _conditions;
-
-        #region Constructors
-
-        #endregion
 
         #region Public Properties
 
+        /// <summary>
+        /// The name of the rule.
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// A description of the rule.
+        /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Is the rule a default rule?
+        /// </summary>
         public bool IsDefault { get; set; }
 
+        /// <summary>
+        /// Is the rule an Exempt rule that exempts other rules from applying.
+        /// </summary>
         public bool IsExempt { get; set; }
 
         #endregion
 
         #region Public Methods
 
+        /// <summary>
+        /// Compile the rule.
+        /// </summary>
+        /// <param name="ruleNode">XML representation of the rule.</param>
+        /// <param name="ruleType">The type of the rule.</param>
+        /// <param name="specCompiler">An <see cref="XmlSpecificationCompiler"/>.</param>
+        /// <param name="actionCompiler">An <see cref="XmlActionCompiler{TActionContext,TTypeEnum}"/>.</param>
         public void Compile(XmlNode ruleNode, TTypeEnum ruleType, XmlSpecificationCompiler specCompiler,
-                            XmlActionCompiler<TContext, TTypeEnum> actionCompiler)
+                            XmlActionCompiler<TActionContext, TTypeEnum> actionCompiler)
         {
             var conditionNode =
                 CollectionUtils.SelectFirst(ruleNode.ChildNodes,
@@ -66,15 +86,15 @@ namespace ClearCanvas.Dicom.Utilities.Rules
             else if (!IsExempt)
                 throw new ApplicationException("No action element defined for the rule.");
             else
-                _actions = new ActionSet<TContext>(new List<IActionItem<TContext>>());
+                _actions = new ActionSet<TActionContext>(new List<IActionItem<TActionContext>>());
         }
 
         /// <summary>
         /// Returns true if the rule condition is passed for the specified context
         /// </summary>
         /// <param name="context"></param>
-        /// <returns></returns>
-        public TestResult Test(TContext context)
+        /// <returns>A <see cref="TestResult"/> representing if the conditions apply.</returns>
+        public TestResult Test(TActionContext context)
         {
             if (IsDefault)
                 return new TestResult(true);
@@ -82,8 +102,14 @@ namespace ClearCanvas.Dicom.Utilities.Rules
             return _conditions.Test(context.Message);
         }
 
-
-        public void Execute(TContext context, bool defaultRule, out bool ruleApplied, out bool ruleSuccess)
+        /// <summary>
+        /// Execute the rule.
+        /// </summary>
+        /// <param name="context">The context to pass to the action compiler.</param>
+        /// <param name="defaultRule">Is the rule a default rule?</param>
+        /// <param name="ruleApplied">Was the rule applied?</param>
+        /// <param name="ruleSuccess">Was the rule successful?</param>
+        public void Execute(TActionContext context, bool defaultRule, out bool ruleApplied, out bool ruleSuccess)
         {
             ruleApplied = false;
             ruleSuccess = true;
@@ -120,10 +146,10 @@ namespace ClearCanvas.Dicom.Utilities.Rules
         public static bool ValidateRule(TTypeEnum type, XmlDocument rule, out string errorDescription)
         {
             var specCompiler = new XmlSpecificationCompiler("dicom");
-            var actionCompiler = new XmlActionCompiler<TContext, TTypeEnum>();
+            var actionCompiler = new XmlActionCompiler<TActionContext, TTypeEnum>();
 
 
-            var theRule = new Rule<TContext, TTypeEnum>
+            var theRule = new Rule<TActionContext, TTypeEnum>
                               {
                                   Name = string.Empty
                               };

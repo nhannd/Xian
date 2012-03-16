@@ -41,8 +41,9 @@ namespace ClearCanvas.Dicom.Utilities.Command
     /// <para>
     /// The CommandProcessor also supports executing commands that implement the 
     /// <see cref="IAggregateCommand"/> interface.  It is assumed that these commands 
-    /// are an aggregate of several sub-commands.  When a <see cref="Rollback"/> occurs
-    /// for an <see cref="IAggregateCommand"/> command, the base command is first
+    /// are an aggregate of several sub-commands.  The aggregate commands can be created when
+    /// the command is executing.  When a <see cref="Rollback"/> occurs for 
+    /// an <see cref="IAggregateCommand"/> command, the base command is first
     /// rolled back, then the sub-commands for the <see cref="IAggregateCommand"/>
     /// are rolled back.  Note that classes implementing <see cref="IAggregateCommand"/>
     /// should use the <see cref="ExecuteSubCommand"/> method to execute sub-commands.
@@ -59,6 +60,11 @@ namespace ClearCanvas.Dicom.Utilities.Command
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="description">Description of the CommandProcessor</param>
+        /// <param name="context">Context for the CommandProcessor</param>
         protected CommandProcessor(string description, ICommandProcessorContext context)
         {
             Description = description;
@@ -73,7 +79,9 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// </summary>
         public string Description { get; private set; }
 
-
+        /// <summary>
+        /// Exception that caused the failure.
+        /// </summary>
         public Exception FailureException { get; protected set; }
 
         /// <summary>
@@ -84,6 +92,9 @@ namespace ClearCanvas.Dicom.Utilities.Command
             get { return _queue.Count; }
         }
 
+        /// <summary>
+        /// Context for the <see cref="CommandProcessor"/>.
+        /// </summary>
         public ICommandProcessorContext ProcessorContext { get; private set; }
 
         /// <summary>
@@ -110,7 +121,6 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// <returns>false on failure, true on success</returns>
         public bool Execute()
         {
-
             while (_queue.Count > 0)
             {
                 ICommand command = _queue.Dequeue();
@@ -139,12 +149,9 @@ namespace ClearCanvas.Dicom.Utilities.Command
                                  "Unexpected exception on command {0} that doesn't require rollback", command.Description);
                     _stack.Pop(); // Pop it off the stack, since it failed.
                 }
-
-
             }
 
             ProcessorContext.Commit();
-
             return true;
         }
 
@@ -157,8 +164,8 @@ namespace ClearCanvas.Dicom.Utilities.Command
         public bool ExecuteSubCommand(IAggregateCommand baseCommand, ICommand subCommand)
         {
             subCommand.ProcessorContext = ProcessorContext;
-
             baseCommand.AggregateCommands.Push(subCommand);
+
             try
             {
                 ProcessorContext.PreExecute(subCommand);
@@ -212,6 +219,9 @@ namespace ClearCanvas.Dicom.Utilities.Command
             }
         }
 
+        /// <summary>
+        /// Dispose.
+        /// </summary>
         public virtual void Dispose()
         {
             DisposeCommandList(_list);
@@ -274,6 +284,5 @@ namespace ClearCanvas.Dicom.Utilities.Command
             }
         }
         #endregion
-
     }
 }

@@ -1,4 +1,14 @@
-﻿
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
 using ClearCanvas.Common.Statistics;
 
 namespace ClearCanvas.Dicom.Utilities.Rules
@@ -7,16 +17,20 @@ namespace ClearCanvas.Dicom.Utilities.Rules
     /// Stores the engine statistics of a rule engine.
     /// </summary>
     public class RulesEngineStatistics : StatisticsSet
-    {
-        #region Private members
+    {    
+        #region Constructors
 
-        #endregion Private members
-
-        public void Reset()
+        public RulesEngineStatistics()
         {
-            LoadTime.Reset();
-            ExecutionTime.Reset();
         }
+
+        public RulesEngineStatistics(string name, string description)
+            : base(name, description)
+        {
+            Context = new StatisticsContext(name);
+        }
+
+        #endregion
 
         #region Public Properties
 
@@ -51,16 +65,15 @@ namespace ClearCanvas.Dicom.Utilities.Rules
 
         #endregion Public Properties
 
-        #region Constructors
+        #region Public Methods
 
-        public RulesEngineStatistics()
+        /// <summary>
+        /// Reset the timer.
+        /// </summary>
+        public void Reset()
         {
-        }
-
-        public RulesEngineStatistics(string name, string description)
-            : base(name, description)
-        {
-            Context = new StatisticsContext(name);
+            LoadTime.Reset();
+            ExecutionTime.Reset();
         }
 
         #endregion

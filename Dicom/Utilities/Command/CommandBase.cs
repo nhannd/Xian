@@ -28,9 +28,8 @@ namespace ClearCanvas.Dicom.Utilities.Command
     {
         #region Private Members
 
-        private readonly CommandStatistics _stats;
-
         private EventHandler _executingEventHandlers;
+
         #endregion
 
         #region Public property
@@ -38,10 +37,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// <summary>
         /// Gets the <see cref="CommandStatistics"/> of the command.
         /// </summary>
-        public CommandStatistics Statistics
-        {
-            get { return _stats; }
-        }
+        public CommandStatistics Statistics { get; private set; }
 
         #endregion
 
@@ -55,7 +51,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         {
             Description = description;
             RequiresRollback = requiresRollback;
-            _stats = new CommandStatistics(this);
+            Statistics = new CommandStatistics(this);
         }
         #endregion
 
@@ -68,7 +64,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets a value describing if the ServerCommand requires a rollback of the operation its included in if it fails during execution.
+        /// Gets a value describing if the <see cref="CommandBase"/> requires a rollback of the operation its included in if it fails during execution.
         /// </summary>
         [XmlIgnore]
         public bool RequiresRollback { get; set; }
@@ -83,7 +79,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         public ICommandProcessorContext ProcessorContext { get; set; }
 
         /// <summary>
-        /// Simple flag that tells if a rollback / Undo has been requested for the command.
+        /// Simple flag that tells if a rollback / Undo has been requested for the <see cref="CommandBase"/>.
         /// </summary>
         [XmlIgnore]
         protected bool RollBackRequested { get; private set; }
@@ -103,24 +99,23 @@ namespace ClearCanvas.Dicom.Utilities.Command
 
         #region Public Methods
         /// <summary>
-        /// Execute the ServerCommand.
+        /// Execute the <see cref="CommandBase"/>.
         /// </summary>
         /// <param name="theProcessor">The <see cref="CommandProcessor"/> executing the command.</param>
         public void Execute(CommandProcessor theProcessor)
         {
             try
             {
-                _stats.Start();
+                Statistics.Start();
                 EventsHelper.Fire(_executingEventHandlers, this, new EventArgs());
                 OnExecute(theProcessor);
             }
             finally
             {
-                _stats.End();
+                Statistics.End();
             }
 
         }
-
 
         /// <summary>
         /// Undo the operation done by <see cref="Execute"/>.
@@ -129,7 +124,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         {
             RollBackRequested = true;
             OnUndo();
-            _stats.End();
+            Statistics.End();
         }
         #endregion
 
@@ -137,8 +132,8 @@ namespace ClearCanvas.Dicom.Utilities.Command
 
         protected abstract void OnExecute(CommandProcessor theProcessor);
         protected abstract void OnUndo();
-        #endregion
 
+        #endregion
     }
 
     /// <summary>
@@ -148,7 +143,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
     /// <para> 
     /// </para>
     /// </remarks>
-    public abstract class ServerCommand<TContext> : CommandBase
+    public abstract class CommandBase<TContext> : CommandBase
         where TContext : class
     {
         #region Private Fields
@@ -162,7 +157,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// <param name="description"></param>
         /// <param name="requiresRollback"></param>
         /// <param name="context"></param>
-        protected ServerCommand(string description, bool requiresRollback, TContext context)
+        protected CommandBase(string description, bool requiresRollback, TContext context)
             : base(description, requiresRollback)
         {
             _context = context;
@@ -188,7 +183,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
     /// <para> 
     /// </para>
     /// </remarks>
-    public abstract class ServerCommand<TContext, TParameters> : ServerCommand<TContext>
+    public abstract class CommandBase<TContext, TParameters> : CommandBase<TContext>
         where TContext : class
         where TParameters : class
     {
@@ -204,7 +199,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// <param name="requiresRollback"></param>
         /// <param name="context"></param>
         /// <param name="parameters"></param>
-        protected ServerCommand(string description, bool requiresRollback, TContext context, TParameters parameters)
+        protected CommandBase(string description, bool requiresRollback, TContext context, TParameters parameters)
             : base(description, requiresRollback, context)
         {
             _parms = parameters;

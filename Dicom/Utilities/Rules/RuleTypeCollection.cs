@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -15,6 +15,11 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Utilities.Rules
 {
+    /// <summary>
+    /// A collection of rules of similar types.
+    /// </summary>
+    /// <typeparam name="TContext">The context for the rules.</typeparam>
+    /// <typeparam name="TTypeEnum">The type of the rule.</typeparam>
     public class RuleTypeCollection<TContext, TTypeEnum>
         where TContext : ActionContext
     {
@@ -32,14 +37,24 @@ namespace ClearCanvas.Dicom.Utilities.Rules
 
         #region Public Properties
 
+        /// <summary>
+        /// The type of rule for the collection.
+        /// </summary>
         public TTypeEnum Type { get; private set; }
 
+        /// <summary>
+        /// The identified default rule for the collection of rules.
+        /// </summary>
         public Rule<TContext, TTypeEnum> DefaultRule { get; private set; }
 
         #endregion
 
         #region Public Methods
 
+        /// <summary>
+        /// Add a rule to the collection.
+        /// </summary>
+        /// <param name="rule"></param>
         public void AddRule(Rule<TContext, TTypeEnum> rule)
         {
             if (rule.IsDefault)
@@ -59,6 +74,11 @@ namespace ClearCanvas.Dicom.Utilities.Rules
                 _ruleList.Add(rule);
         }
 
+        /// <summary>
+        /// Execute the rules within the <see cref="RuleTypeCollection{TActionContext,TTypeEnum}"/>
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="stopOnFirst"></param>
         public void Execute(TContext context, bool stopOnFirst)
         {
             bool doDefault = true;

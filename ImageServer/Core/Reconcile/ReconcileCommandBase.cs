@@ -24,7 +24,7 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-	internal abstract class ReconcileCommandBase : ServerCommand<ReconcileStudyProcessorContext>, IReconcileServerCommand, IDisposable
+	internal abstract class ReconcileCommandBase : CommandBase<ReconcileStudyProcessorContext>, IReconcileServerCommand, IDisposable
 	{
 	    
 
