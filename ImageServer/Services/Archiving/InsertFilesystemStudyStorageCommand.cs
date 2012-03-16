@@ -10,8 +10,9 @@
 #endregion
 
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -45,7 +46,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 													 string folder,
 													 ServerEntityKey filesystemKey,
 													 TransferSyntax transferSyntax)
-			: base("Insert FilesystemStudyStorage", true)
+			: base("Insert FilesystemStudyStorage")
 		{
 			_serverPartitionKey = serverPartitionKey;
 			_studyInstanceUid = studyInstanceUid;
@@ -66,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// Execute the insert.
 		/// </summary>
 		/// <param name="updateContext">The persistent store connection to use for the update.</param>
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
 			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();

@@ -10,7 +10,6 @@
 #endregion
 
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 {

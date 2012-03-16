@@ -10,10 +10,10 @@
 #endregion
 
 using System;
-using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 
 		#region Overidden Protected Methods
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
 			Platform.CheckForNullReference(Context.ReconcileWorkQueueData, "Context.ReconcileWorkQueueData");

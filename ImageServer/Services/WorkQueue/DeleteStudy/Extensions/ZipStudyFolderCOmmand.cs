@@ -12,13 +12,13 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
 {
-    internal class ZipStudyFolderCommand : ServerCommand, IDisposable
+    internal class ZipStudyFolderCommand : CommandBase, IDisposable
     {
         private readonly string _source;
         private readonly string _dest;
@@ -33,14 +33,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             _dest = dest;
         }
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			if (RequiresRollback)
 			{
 				Backup();
 			}
 
-			using (ZipFile zip = new ZipFile(_dest))
+			using (var zip = new ZipFile(_dest))
 			{
 				zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
 				zip.Comment = String.Format("Archive for deleted study from path {0}", _source);

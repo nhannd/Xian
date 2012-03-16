@@ -10,7 +10,7 @@
 #endregion
 
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
@@ -25,81 +25,44 @@ namespace ClearCanvas.ImageServer.Rules
     /// information to apply a given Action for a rule.
     /// </remarks>
     /// <seealso cref="ServerRulesEngine"/>
-    public class ServerActionContext
+    public class ServerActionContext : ActionContext
 	{
-		#region Private Members
-        private DicomMessageBase _msg;
-        private readonly ServerEntityKey _serverPartitionKey;
-        private readonly ServerEntityKey _studyLocationKey;
-        private readonly ServerEntityKey _filesystemKey;
-    	private readonly ServerPartition _partition;
-    	private ServerCommandProcessor _commandProcessor;
-        #endregion
-
         #region Constructors
 
         public ServerActionContext(DicomMessageBase msg, ServerEntityKey filesystemKey,
                                    ServerPartition partition, ServerEntityKey studyLocationKey)
         {
-            _msg = msg;
-            _serverPartitionKey = partition.Key;
-            _studyLocationKey = studyLocationKey;
-            _filesystemKey = filesystemKey;
-        	_partition = partition;
+            Message = msg;
+            ServerPartitionKey = partition.Key;
+            StudyLocationKey = studyLocationKey;
+            FilesystemKey = filesystemKey;
+        	ServerPartition = partition;
         }
 
         #endregion
 
         #region Public Properties
-		/// <summary>
-		/// The message being worked against.
-		/// </summary>
-        public DicomMessageBase Message
-        {
-            get { return _msg; }
-			set { _msg = value; }
-        }
 
-		/// <summary>
-		/// The command processor.
-		/// </summary>
-        public ServerCommandProcessor CommandProcessor
-        {
-            get { return _commandProcessor; }
-            set { _commandProcessor = value; }
-        }
-
-		/// <summary>
-		/// The partition of the object.
-		/// </summary>
-        public ServerEntityKey ServerPartitionKey
-        {
-            get { return _serverPartitionKey; }
-        }
+        /// <summary>
+        /// The partition of the object.
+        /// </summary>
+        public ServerEntityKey ServerPartitionKey { get; private set; }      
 
 		/// <summary>
 		/// The key of the filesystem being worked with..
 		/// </summary>
-        public ServerEntityKey FilesystemKey
-        {
-            get { return _filesystemKey; }
-        }
+        public ServerEntityKey FilesystemKey { get; private set; } 
 
 		/// <summary>
 		/// The study location key.
 		/// </summary>
-        public ServerEntityKey StudyLocationKey
-        {
-            get { return _studyLocationKey; }
-        }
+        public ServerEntityKey StudyLocationKey { get; private set; }  
 
 		/// <summary>
 		/// The server partition itself.
 		/// </summary>
-    	public ServerPartition ServerPartition
-    	{
-			get { return _partition; }
-    	}
+    	public ServerPartition ServerPartition { get; private set; }  
+
         #endregion
     }
 }

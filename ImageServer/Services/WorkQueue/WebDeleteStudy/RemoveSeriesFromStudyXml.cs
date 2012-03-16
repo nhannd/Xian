@@ -11,12 +11,12 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 {
-    internal class RemoveSeriesFromStudyXml : ServerCommand
+    internal class RemoveSeriesFromStudyXml : CommandBase
     {
         private readonly StudyXml _studyXml;
         private readonly string _seriesUid;
@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             _studyInstanceUid = studyXml.StudyInstanceUid;
         }
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
         {
             // backup
             if (_studyXml.Contains(_seriesUid))

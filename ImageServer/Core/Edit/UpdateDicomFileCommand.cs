@@ -15,7 +15,7 @@ using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Core.Edit
@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	/// <remark>
 	/// A dicom file level update command consists of one or more <see cref="IDicomFileUpdateCommandAction"/>
 	/// </remark>
-	public class UpdateDicomFileCommand : ServerCommand, IDisposable
+	public class UpdateDicomFileCommand : CommandBase, IDisposable
 	{
 		#region Private Members
 		private readonly DicomFileUpdateCommandActionList _actionList;
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				FileUtils.Delete(_backupExistingFileName); 
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(DicomFile, "DicomFile");
 

@@ -52,7 +52,7 @@
     <Compile Include="ApplySopRulesCommand.cs" />
     <Compile Include="AutoReconciler.cs" />
     <Compile Include="BasePreprocessor.cs" />
-    <Compile Include="CommandProcessor\UpdateStudySizeInDBCommand.cs" />
+    <Compile Include="Command\UpdateStudySizeInDBCommand.cs" />
     <Compile Include="Data\ProcessDuplicateChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyQueueData.cs" />
@@ -82,7 +82,7 @@
     <Compile Include="Edit\WebEditStudyContext.cs" />
     <Compile Include="Edit\WebEditStudyHistoryRecord.cs" />
     <Compile Include="Process\StudyReprocessor.cs" />
-    <Compile Include="CommandProcessor\RebuildStudyXmlCommand.cs" />
+    <Compile Include="Command\RebuildStudyXmlCommand.cs" />
     <Compile Include="Rebuild\StudyXmlRebuilder.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommand.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommandProcessor.cs" />

@@ -12,12 +12,12 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageServer.Core.Edit;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 {
-    internal class UpdateDuplicateSopCommand : ServerCommand
+    internal class UpdateDuplicateSopCommand : CommandBase
     {
         #region Private Members
 
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         #region Overridden Protected Methods
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor)
+        protected override void OnExecute(CommandProcessor theProcessor)
         {
             if (_commands!=null)
             {
@@ -56,7 +56,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         
         protected override void OnUndo()
         {
-
         }
 
         #endregion

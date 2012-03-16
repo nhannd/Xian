@@ -11,7 +11,8 @@
 
 using System.Xml.Serialization;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Helpers;
 
 namespace ClearCanvas.ImageServer.Core.Edit
@@ -72,7 +73,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 	}
 
-	public abstract class BaseImageLevelUpdateCommand : ServerCommand, IUpdateImageTagCommand
+	public abstract class BaseImageLevelUpdateCommand : CommandBase, IUpdateImageTagCommand
 	{
 		protected BaseImageLevelUpdateCommand()
 			: base("ImageLevelUpdateCommand", true)
@@ -110,7 +111,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		#endregion
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			if (File != null)
 				Apply(File);

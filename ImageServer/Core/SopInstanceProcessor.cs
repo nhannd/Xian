@@ -18,7 +18,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageServer.Core
                 {
                     lock (_syncLock)
                     {
-                        _study = _storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);    
+                        _study = _storageLocation.LoadStudy(ServerExecutionContext.Current.PersistenceContext);    
                     }
                     
                 }

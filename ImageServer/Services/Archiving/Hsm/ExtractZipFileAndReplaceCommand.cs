@@ -11,7 +11,8 @@
 
 using System;
 using System.IO;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageServer.Common.Command;
 using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
@@ -20,12 +21,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 	/// Class for extracting a file from a zip over the top of another file, and preserving
 	/// the old file for restoring on failure.
 	/// </summary>
-	public class ExtractZipFileAndReplaceCommand : ServerCommand, IDisposable
+	public class ExtractZipFileAndReplaceCommand : CommandBase, IDisposable
 	{
 		private readonly string _zipFile;
 		private readonly string _destinationFolder;
 		private readonly string _sourceFile;
-		private bool _fileBackedup = false;
+		private bool _fileBackedup;
 		private string _storageFile = String.Empty;
 		private string _backupFile = String.Empty;
 
@@ -37,13 +38,13 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			_sourceFile = sourceFile;
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			_storageFile = Path.Combine(_destinationFolder, _sourceFile);
-			_backupFile = Path.Combine(ExecutionContext.TempDirectory, _sourceFile);
+			_backupFile = Path.Combine(ProcessorContext.TempDirectory, _sourceFile);
 
 
-			string baseDirectory = _backupFile.Substring(0, _backupFile.LastIndexOfAny(new char[] { Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar }));
+			string baseDirectory = _backupFile.Substring(0, _backupFile.LastIndexOfAny(new [] { Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar }));
 			if (!Directory.Exists(baseDirectory))
 				Directory.CreateDirectory(baseDirectory);
 
@@ -52,7 +53,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				File.Move(_storageFile, _backupFile);
 				_fileBackedup = true;
 			}
-			using (ZipFile zip = new ZipFile(_zipFile))
+			using (var zip = new ZipFile(_zipFile))
 			{
 				zip.Extract(_sourceFile, _destinationFolder, true);
 			}

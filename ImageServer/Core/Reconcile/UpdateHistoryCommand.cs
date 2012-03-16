@@ -9,8 +9,9 @@
 
 #endregion
 
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
@@ -30,14 +31,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	    private readonly StudyStorageLocation _destStudy;
 
 	    public UpdateHistorySeriesMappingCommand(StudyHistory studyHistory, StudyStorageLocation destStudy, UidMapper map) 
-            : base("Update Study History Series Mapping", true)
+            : base("Update Study History Series Mapping")
         {
             _map = map;
             _studyHistory = studyHistory;
             _destStudy = destStudy;
         }
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
             IStudyHistoryEntityBroker historyUpdateBroker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
         	StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns {DestStudyStorageKey = _destStudy.Key};

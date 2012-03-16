@@ -79,18 +79,17 @@
     <Compile Include="ConstantResourceManager.cs" />
     <Compile Include="ExceptionLogAdviceAttribute.cs" />
     <Compile Include="Exceptions\AutoReconcileException.cs" />
-    <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\DeleteFileCommand.cs" />
-    <Compile Include="CommandProcessor\DeleteWorkQueueUidCommand.cs" />
-    <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
-    <Compile Include="CommandProcessor\ExecutionContext.cs" />
-    <Compile Include="CommandProcessor\IAggregateServerCommand.cs" />
-    <Compile Include="CommandProcessor\InsertInstanceXmlCommand.cs" />
-    <Compile Include="CommandProcessor\LockStudyCommand.cs" />
-    <Compile Include="CommandProcessor\UpdateWorkQueueCommand.cs" />
+    <Compile Include="Command\CopyDirectoryCommand.cs" />
+    <Compile Include="Command\CreateDirectoryCommand.cs" />
+    <Compile Include="Command\CreateTempDirectoryCommand.cs" />
+    <Compile Include="Command\DeleteDirectoryCommand.cs" />
+    <Compile Include="Command\DeleteFileCommand.cs" />
+    <Compile Include="Command\DeleteWorkQueueUidCommand.cs" />
+    <Compile Include="Command\DicomCompressCommand.cs" />
+    <Compile Include="Command\ServerExecutionContext.cs" />
+    <Compile Include="Command\InsertInstanceXmlCommand.cs" />
+    <Compile Include="Command\LockStudyCommand.cs" />
+    <Compile Include="Command\UpdateWorkQueueCommand.cs" />
     <Compile Include="Diagnostics\DiagnosticSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -109,10 +108,9 @@
     <Compile Include="Exceptions\StudyNotFoundException.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />
-    <Compile Include="CommandProcessor\FileDeleteCommand.cs" />
-    <Compile Include="CommandProcessor\InsertArchiveQueueCommand.cs" />
-    <Compile Include="CommandProcessor\IServerCommand.cs" />
-    <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
+    <Compile Include="Command\FileDeleteCommand.cs" />
+    <Compile Include="Command\InsertArchiveQueueCommand.cs" />
+    <Compile Include="Command\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="InProcessImageServerServiceProvider.cs" />
     <Compile Include="ServerAuditHelper.cs" />
@@ -127,9 +125,9 @@
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="ImageServerLogWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CommandProcessor\RenameFileCommand.cs" />
-    <Compile Include="CommandProcessor\SaveDicomFileCommand.cs" />
-    <Compile Include="CommandProcessor\SaveXmlCommand.cs" />
+    <Compile Include="Command\RenameFileCommand.cs" />
+    <Compile Include="Command\SaveDicomFileCommand.cs" />
+    <Compile Include="Command\SaveXmlCommand.cs" />
     <Compile Include="RemoteImageServerServiceProvider.cs" />
     <Compile Include="RemoteImageServerServiceSettings.cs" />
     <Compile Include="RemoteImageServerServiceSettings.Designer.cs">
@@ -138,10 +136,8 @@
       <DependentUpon>RemoteImageServerServiceSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerAddress.cs" />
-    <Compile Include="CommandProcessor\ServerCommand.cs" />
-    <Compile Include="CommandProcessor\ServerCommandProcessor.cs" />
-    <Compile Include="CommandProcessor\ServerCommandStatistics.cs" />
-    <Compile Include="CommandProcessor\ServerDatabaseCommand.cs" />
+    <Compile Include="Command\ServerCommandProcessor.cs" />
+    <Compile Include="Command\ServerDatabaseCommand.cs" />
     <Compile Include="ServerCache.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />

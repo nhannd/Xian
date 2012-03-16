@@ -11,8 +11,9 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -40,13 +41,13 @@ namespace ClearCanvas.ImageServer.Core
 		private readonly DicomFile _file;
 
 		public UpdateStudyStatusCommand(StudyStorageLocation location, DicomFile file)
-			: base("Update StudyStorage and FilesystemStudyStorage", false)
+			: base("Update StudyStorage and FilesystemStudyStorage")
 		{
 			_location = location;
 			_file = file;
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			// Check if the File is the same syntax as the 
 			TransferSyntax fileSyntax = _file.TransferSyntax;

@@ -14,9 +14,10 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Process;
@@ -199,7 +200,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             string uidGroup,
             ReconcileStorage reconcileImageStorage
             )
-            :base("Insert SIQ Command", true)
+            :base("Insert SIQ Command")
         {
             _storageLocation = studyStorage;
             _reconcileImageStorage = reconcileImageStorage;
@@ -216,7 +217,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             get { return _siqItem; }
         }
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
             string seriesUid = _file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             string sopUid = _file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);

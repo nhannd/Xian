@@ -9,12 +9,13 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core
 {
-	public class ApplySopRulesCommand : ServerCommand
+	public class ApplySopRulesCommand : CommandBase
 	{
 		private readonly ServerActionContext _context;
 		private readonly ServerRulesEngine _engine;
@@ -26,7 +27,7 @@ namespace ClearCanvas.ImageServer.Core
 			_engine = engine;
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			// Run the rules engine against the object.
 			_engine.Execute(_context);

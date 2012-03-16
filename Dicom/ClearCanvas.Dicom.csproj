@@ -451,6 +451,17 @@
     <Compile Include="Tests\ScuTests.cs" />
     <Compile Include="Tests\UnknowVrTests.cs" />
     <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />
+    <Compile Include="Utilities\Command\CommandProcessor.cs" />
+    <Compile Include="Utilities\Command\IAggregateCommand.cs" />
+    <Compile Include="Utilities\Command\ICommandProcessorContext.cs" />
+    <Compile Include="Utilities\Command\ICommand.cs" />
+    <Compile Include="Utilities\Command\CommandBase.cs" />
+    <Compile Include="Utilities\Command\CommandStatistics.cs" />
+    <Compile Include="Utilities\Rules\ActionContext.cs" />
+    <Compile Include="Utilities\Rules\Rule.cs" />
+    <Compile Include="Utilities\Rules\RulesEngineStatistics.cs" />
+    <Compile Include="Utilities\Rules\RulesEngine.cs" />
+    <Compile Include="Utilities\Rules\RuleTypeCollection.cs" />
     <Compile Include="Utilities\StudyBuilder\DicomConverter.cs" />
     <Compile Include="Utilities\StudyBuilder\IUidCollection.cs" />
     <Compile Include="Utilities\StudyBuilder\PatientNode.cs" />

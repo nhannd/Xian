@@ -11,7 +11,7 @@
 
 using System.Xml;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 {

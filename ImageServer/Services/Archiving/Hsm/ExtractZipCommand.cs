@@ -10,15 +10,16 @@
 #endregion
 
 using System.IO;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageServer.Common.Command;
 using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
 	/// <summary>
-	/// <see cref="ServerCommand"/> for extracting a zip file containing study files to a specific directory.
+	/// <see cref="CommandBase"/> for extracting a zip file containing study files to a specific directory.
 	/// </summary>
-	public class ExtractZipCommand : ServerCommand
+	public class ExtractZipCommand : CommandBase
 	{
 		private readonly string _zipFile;
 		private readonly string _destinationFolder;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <summary>
 		/// Do the unzip.
 		/// </summary>
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			using (ZipFile zip = new ZipFile(_zipFile))
 			{

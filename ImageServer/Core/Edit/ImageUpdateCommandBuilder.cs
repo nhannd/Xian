@@ -19,7 +19,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             if (studyXml.NumberOfStudyRelatedInstances == 0)
             {
                 // StudyXml is empty, resort to the db instead.
-                Study study = storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
+                Study study = storageLocation.LoadStudy(ServerExecutionContext.Current.PersistenceContext);
                 IList<BaseImageLevelUpdateCommand> cmds = BuildCommandsFromEntity(study, originalDicomAttributeProvider);
 
                 // find the original values from originalDicomAttributeProvider 

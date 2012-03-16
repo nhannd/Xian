@@ -11,8 +11,9 @@
 
 using System.Diagnostics;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -27,7 +28,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
         #endregion
 
         public TierMigrateDatabaseUpdateCommand(TierMigrationContext context)
-            : base("TierMigrateDatabaseUpdateCommand", true)
+            : base("TierMigrateDatabaseUpdateCommand")
         {
             Context = context;
         }
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             }
         }
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
             // update FilesystemStudyStorage
             if (Context != null)

@@ -11,7 +11,8 @@
 
 using System;
 using System.IO;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
@@ -21,7 +22,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
     /// <summary>
     /// Command to save the <see cref="UidMapper"/> used in the reconciliation.
     /// </summary>
-    public class SaveUidMapXmlCommand : ServerCommand, IDisposable
+    public class SaveUidMapXmlCommand : CommandBase, IDisposable
     {
         #region Private Members
         private readonly UidMapper _map;
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         #endregion
 
         #region Overridden Protected Methods
-        protected override void OnExecute(ServerCommandProcessor theProcessor)
+        protected override void OnExecute(CommandProcessor theProcessor)
         {
             if (_map == null)
                 return;// nothing to save

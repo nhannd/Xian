@@ -12,9 +12,10 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
@@ -40,7 +41,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			_complete = complete;
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
 			

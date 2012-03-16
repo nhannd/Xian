@@ -12,8 +12,9 @@
 using System;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -34,7 +35,7 @@ namespace ClearCanvas.ImageServer.Rules
 
         public InsertFilesystemQueueCommand(FilesystemQueueTypeEnum queueType, ServerEntityKey filesystemKey,
                                             ServerEntityKey studyStorageKey, DateTime scheduledTime, XmlDocument queueXml)
-            : base("Insert FilesystemQueue Record of type " + queueType, true)
+            : base("Insert FilesystemQueue Record of type " + queueType)
         {
             _queueType = queueType;
             _filesystemKey = filesystemKey;
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageServer.Rules
         	_queueXml = queueXml;
         }
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
             FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
 

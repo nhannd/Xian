@@ -18,7 +18,7 @@ using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 {
                     if (_device==null)
                     {
-						using (ExecutionContext context = new ExecutionContext())
+						using (ServerExecutionContext context = new ServerExecutionContext())
 							_device = Device.Load(context.ReadContext, WorkQueueItem.DeviceKey);
                     }
                 }
@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             int sendCounter = 0;
 			using (ImageServerStorageScu scu = new ImageServerStorageScu(ServerPartition, device))
 			{
-				using (ExecutionContext context = new ExecutionContext())
+				using (ServerExecutionContext context = new ServerExecutionContext())
 					// set the preferred syntax lists
 					scu.LoadPreferredSyntaxes(context.ReadContext);
 

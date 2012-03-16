@@ -12,6 +12,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using ClearCanvas.ImageServer.Common.Command;
 
 namespace ClearCanvas.ImageServer.Common.Utilities
 {
@@ -175,8 +176,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                     if (inSourceFolder)
                         backup = Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name, i));
                     else 
-                        backup =  (CommandProcessor.ExecutionContext.Current != null)
-                                     ? Path.Combine(CommandProcessor.ExecutionContext.Current.BackupDirectory, String.Format("{0}.bak({1})", sourceInfo.Name, i))
+                        backup =  (ServerExecutionContext.Current != null)
+                                     ? Path.Combine(ServerExecutionContext.Current.BackupDirectory, String.Format("{0}.bak({1})", sourceInfo.Name, i))
                                      : Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name, i));
                 
                     try

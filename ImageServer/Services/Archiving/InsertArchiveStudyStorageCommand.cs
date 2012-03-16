@@ -12,8 +12,9 @@
 using System;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		                                        ServerEntityKey archiveQueueKey,
 		                                        ServerEntityKey serverTransferSyntaxKey,
 		                                        XmlDocument archiveXml)
-			: base("Insert ArchiveStudyStorage", true)
+			: base("Insert ArchiveStudyStorage")
 		{
 			_studyStorageKey = studyStorageKey;
 			_partitionArchiveKey = partitionArchiveKey;
@@ -60,7 +61,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// </summary>
 		/// <param name="updateContext">Database update context.</param>
 		/// <param name="theProcessor">The processor executing the command.</param>
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			ArchiveStudyStorageUpdateColumns columns = new ArchiveStudyStorageUpdateColumns();
 

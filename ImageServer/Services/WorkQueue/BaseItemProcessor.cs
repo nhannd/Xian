@@ -22,6 +22,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
@@ -31,7 +32,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 using System.Text;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     		{
     			if (_workQueueProperties == null)
     			{
-					using (ExecutionContext context = new ExecutionContext())
+					using (ServerExecutionContext context = new ServerExecutionContext())
 					{
 						IWorkQueueTypePropertiesEntityBroker broker = context.ReadContext.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
 						WorkQueueTypePropertiesSelectCriteria criteria = new WorkQueueTypePropertiesSelectCriteria();
@@ -285,7 +285,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
 				UidsLoadTime.Add(delegate
 				                 	{
-				                 		using (ExecutionContext context = new ExecutionContext())
+				                 		using (ServerExecutionContext context = new ServerExecutionContext())
 				                 		{
 
 				                 			IWorkQueueUidEntityBroker select = context.ReadContext.GetBroker<IWorkQueueUidEntityBroker>();
@@ -1270,7 +1270,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                                             WorkQueueItemKey = item.Key.ToString()
                                                         };
 
-            StudyStorage storage = StudyStorage.Load(ExecutionContext.Current.PersistenceContext, item.StudyStorageKey);
+            StudyStorage storage = StudyStorage.Load(ServerExecutionContext.Current.PersistenceContext, item.StudyStorageKey);
             IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(storage);
 
             if (locations != null && locations.Count > 0)
@@ -1317,7 +1317,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             Platform.CheckTrue(storageLocations.Count >= 1, "storageLocations.Count>=1");
 
             StudyStorageLocation storageLocation = storageLocations[0];
-            Study study = storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
+            Study study = storageLocation.LoadStudy(ServerExecutionContext.Current.PersistenceContext);
 
             Platform.Log(LogLevel.Info, "{4} failed. Reason:{5}. Attempting to perform auto-recovery for Study:{0}, A#:{1}, Patient:{2}, ID:{3}",
                          study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId, item.WorkQueueTypeEnum.ToString(), reason);
@@ -1475,7 +1475,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             
             if (Completed)
             {
-                Study theStudy = Study ?? Study.Find(ExecutionContext.Current.ReadContext, item.StudyStorageKey);
+                Study theStudy = Study ?? Study.Find(ServerExecutionContext.Current.ReadContext, item.StudyStorageKey);
                 if (theStudy!=null)
                 {
 					if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.MigrateStudy))
@@ -1649,7 +1649,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             if (mode != StudyIntegrityValidationModes.None)
             {
                 Platform.Log(LogLevel.Info, "Verifying study {0}", studyStorage.StudyInstanceUid);
-                using (new ExecutionContext())
+                using (new ServerExecutionContext())
                 {
                     StudyIntegrityValidator validator = new StudyIntegrityValidator();
                     validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), studyStorage, mode);

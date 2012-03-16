@@ -11,8 +11,9 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 		#endregion
 
 		public InsertInstanceCommand(DicomFile file, StudyStorageLocation location)
-			: base("Insert Instance into Database", true)
+			: base("Insert Instance into Database")
 		{
 			Platform.CheckForNullReference(file, "Dicom File object");
 			Platform.CheckForNullReference(location, "Study Storage Location");
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 			_storageLocation = location;
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			// Setup the insert parameters
 			var parms = new InsertInstanceParameters();
@@ -77,7 +78,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 			if (_file.DataSet.Contains(DicomTags.RequestAttributesSequence))
 			{
 				var attribute = _file.DataSet[DicomTags.RequestAttributesSequence] as DicomAttributeSQ;
-				if (!attribute.IsEmpty)
+				if (attribute != null && !attribute.IsEmpty)
 				{
 					foreach (DicomSequenceItem sequenceItem in (DicomSequenceItem[]) attribute.Values)
 					{
