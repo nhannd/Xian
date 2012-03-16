@@ -409,10 +409,10 @@ namespace ClearCanvas.ImageViewer.Web
 	            int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
 	            int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
 
-	            var serverAe = new StudyManagement.ApplicationEntity(host,
-	                                                                 identifier.RetrieveAeTitle,
-	                                                                 identifier.RetrieveAeTitle, port, true,
-	                                                                 headerPort, wadoPort);
+	            var serverAe =
+	                new ClearCanvas.Dicom.ServiceModel.StreamingServerApplicationEntity(identifier.RetrieveAeTitle, host,
+	                                                                                    port,
+	                                                                                    headerPort, wadoPort);
 
 	            return new LoadStudyArgs(identifier.StudyInstanceUid, serverAe, WebViewerServices.Default.StudyLoaderName);
 	        }

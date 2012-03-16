@@ -15,6 +15,7 @@ using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -166,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 		private StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
 		{
 			string studyLoaderName;
-			ApplicationEntity applicationEntity;
+		    IDicomServerApplicationEntity applicationEntity;
 
 		    ServerPartition partiton = ServerPartitionMonitor.Instance.GetPartition(study.RetrieveAeTitle);
 			if (partiton != null)
@@ -176,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 int port = WebViewerServices.Default.ArchiveServerPort;
                 int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
                 int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
-                applicationEntity = new ApplicationEntity(host, study.RetrieveAeTitle, study.RetrieveAeTitle, port, true, headerPort, wadoPort);
+                applicationEntity = new StreamingServerApplicationEntity(study.RetrieveAeTitle,host, port, headerPort, wadoPort);
 
 			}
             else
@@ -187,9 +188,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 			    {
 		            studyLoaderName = "DICOM_REMOTE";
 
-			        applicationEntity = new ApplicationEntity(theDevice.IpAddress, theDevice.AeTitle, theDevice.Description,
-			                                                  theDevice.Port,
-			                                                  false, 0, 0);
+			        applicationEntity = new DicomServerApplicationEntity(theDevice.AeTitle, theDevice.IpAddress, theDevice.Port);
 			    }
 			    else // (node == null)
 			    {
