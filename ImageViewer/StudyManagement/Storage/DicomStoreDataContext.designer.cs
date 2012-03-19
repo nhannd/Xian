@@ -1425,7 +1425,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemPriorityEnum _Priority;
 		
-		private System.Data.Linq.Binary _StudyInstanceUid;
+		private string _StudyInstanceUid;
 		
 		private System.Nullable<long> _StudyOid;
 		
@@ -1459,7 +1459,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnTypeChanged();
     partial void OnPriorityChanging(global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemPriorityEnum value);
     partial void OnPriorityChanged();
-    partial void OnStudyInstanceUidChanging(System.Data.Linq.Binary value);
+    partial void OnStudyInstanceUidChanging(string value);
     partial void OnStudyInstanceUidChanged();
     partial void OnStudyOidChanging(System.Nullable<long> value);
     partial void OnStudyOidChanged();
@@ -1638,8 +1638,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[Column(Storage="_StudyInstanceUid", DbType="VarBinary(64)")]
-		public System.Data.Linq.Binary StudyInstanceUid
+		[Column(Storage="_StudyInstanceUid", DbType="NVarChar(64)")]
+		public string StudyInstanceUid
 		{
 			get
 			{

@@ -46,7 +46,7 @@
         <classShapeMoniker Id="c305dcb7-4d2f-4362-8990-a9ecc2737e09" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(7.375 : 3.98000325520833); (2.75 : 3.98000325520833)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(7.375 : 3.98000325520833); (2.75 : 3.98000325520833)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/DicomStoreDataContext/Study/Study_WorkItem" />
       <nodes>
         <classShapeMoniker Id="b8b17ee5-881b-4daf-bbc6-a4c11f2874e3" />

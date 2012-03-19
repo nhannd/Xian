@@ -122,6 +122,10 @@
       <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
       <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Dicom\Core\ClearCanvas.ImageViewer.Dicom.Core.csproj">
+      <Project>{0F0F30A1-189F-4F5F-BF59-A50D2004EFF4}</Project>
+      <Name>ClearCanvas.ImageViewer.Dicom.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DicomServer\ImageSopClasses.xml" />

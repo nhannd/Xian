@@ -70,7 +70,7 @@
       <Column Name="Status" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemStatusEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="Type" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemTypeEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="Priority" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemPriorityEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />
-      <Column Name="StudyInstanceUid" Type="System.Data.Linq.Binary" DbType="VarBinary(64)" CanBeNull="true" />
+      <Column Name="StudyInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="StudyOid" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
       <Column Name="SerializedStudy" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="SerializedPatient" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />

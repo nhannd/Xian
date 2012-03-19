@@ -9,10 +9,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -40,5 +38,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		{
 			return this.Context.WorkItems.First(w => w.Oid == oid);
 		}
+
+        public WorkItem GetPendingWorkItemForStudy(WorkItemTypeEnum type, string studyInstanceUid)
+        {
+            return this.Context.WorkItems.First(w => w.StudyInstanceUid == studyInstanceUid 
+                && w.Type == type 
+                && w.Status != WorkItemStatusEnum.Complete
+                && w.Status != WorkItemStatusEnum.Deleted
+                && w.Status != WorkItemStatusEnum.Canceled);
+        }
 	}
 }

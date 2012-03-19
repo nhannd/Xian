@@ -113,7 +113,6 @@ namespace ClearCanvas.ImageServer.Core.Command
 					throw new InstanceAlreadyExistsException(String.Format("DICOM File unexpectedly already exists: {0}", _path));
 				try
 				{
-
                     _backupSpeed.Start();
                     var fi = new FileInfo(_path);
                     _backupPath = FileUtils.Backup(_path, ProcessorContext.BackupDirectory);
@@ -219,14 +218,15 @@ namespace ClearCanvas.ImageServer.Core.Command
 
 		protected override void OnUndo()
 		{
-            if (File.Exists(_path) && _fileCreated) 
-                File.Delete(_path); 
-            
-            if (false==String.IsNullOrEmpty(_backupPath) && File.Exists(_backupPath))
+            if (false == String.IsNullOrEmpty(_backupPath) && File.Exists(_backupPath))
             {
                 // restore original file
                 File.Copy(_backupPath, _path, true);
-            }            
+                File.Delete(_backupPath);
+                _backupPath = null;
+            }
+            else if (File.Exists(_path) && _fileCreated)
+                File.Delete(_path);           
 		}
 
         #region IDisposable Members

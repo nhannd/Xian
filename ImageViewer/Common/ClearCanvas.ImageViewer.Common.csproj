@@ -134,6 +134,11 @@
     </Compile>
     <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
     <Compile Include="WorkItem\IWorkItemService.cs" />
+    <Compile Include="WorkItem\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="WorkItem\WorkItemData.cs" />
     <Compile Include="WorkItem\WorkItemRequestDataContractAttribute.cs" />
     <Compile Include="WorkItem\WorkItemProgress.cs" />
@@ -162,6 +167,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorkItem\SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

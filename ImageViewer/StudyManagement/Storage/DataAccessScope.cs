@@ -81,6 +81,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			return new WorkItemBroker(_context);
 		}
 
+        public WorkItemUidBroker GetWorkItemUidBroker()
+        {
+            return new WorkItemUidBroker(_context);
+        }
+
 		public RuleBroker GetRuleBroker()
 		{
 			return new RuleBroker(_context);

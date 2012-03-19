@@ -40,12 +40,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember]
         public WorkItemTypeEnum Type { get; set; }
 
-        //TODO:  We may not be able to localize this, if its included here, however, for things input by the service.
-        [DataMember]
-        public string ActivityType { get; set; }
+        public abstract string ActivityType { get; }
 
-        [DataMember]
-        public string ActivityDescription { get; set; }
+        public abstract string ActivityDescription { get; }
 
     }
 
@@ -56,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 	[WorkItemRequestDataContract("c6a4a14e-e877-45a3-871d-bb06054dd837")]
     public class DicomSendRequest : WorkItemRequest
     {
-        DicomSendRequest()
+        public DicomSendRequest()
         {
             Type = WorkItemTypeEnum.DicomSend;
             Priority = WorkItemPriorityEnum.Normal;
@@ -76,6 +73,40 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [DataMember]
         public string TransferSyntaxUid { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public StudyIdentifier Study { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public PatientRootPatientIdentifier Patient { get; set; }
+
+        public override string ActivityType
+        {
+            get { return SR.DicomSendRequest_ActivityType; }
+        }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DicomSendRequest_ActivityDescription, AeTitle, Patient.PatientsName); }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="WorkItemRequest"/> for sending a study to a DICOM AE.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("{1c63c863-aa4e-4672-bee5-8aa3db16edd5}")]
+    public class DicomAutoRouteRequest : DicomSendRequest
+    {
+        public override string ActivityType
+        {
+            get { return SR.DicomAutoRouteRequest_ActivityType; }
+        }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, AeTitle, Patient.PatientsName); }
+        }
     }
 
     /// <summary>
@@ -83,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
 	[WorkItemRequestDataContract("02b7d427-1107-4458-ade3-67ee6779a766")]
-	public class DicomImportRequest : WorkItemRequest
+	public abstract class DicomImportRequest : WorkItemRequest
     {
         DicomImportRequest()
         {
@@ -108,10 +139,86 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 	[WorkItemRequestDataContract("0e04fa53-3f45-4ae2-9444-f3208047757c")]
 	public class DicomRetreiveRequest : WorkItemRequest
     {
+        DicomRetreiveRequest()
+        {
+            Type = WorkItemTypeEnum.DicomRetrieve;
+            Priority = WorkItemPriorityEnum.Normal;
+        }
+
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
 
         [DataMember(IsRequired = true)]
-        public IStudyIdentifier StudyInformation { get; set; }
+        public StudyIdentifier Study { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public PatientRootPatientIdentifier Patient { get; set; }
+
+        public override string ActivityType
+        {
+            get { return SR.DicomRetreiveRequest_ActivityType; }
+        }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, FromAETitle, Patient.PatientsName); }
+        }
+    }
+
+    /// <summary>
+    /// Abstract Study Process Request
+    /// </summary>
+    [WorkItemRequestDataContract("4d22984a-e750-467c-ab89-f680be38c6c1")]
+    public abstract class StudyProcessRequest : WorkItemRequest
+    {
+        protected StudyProcessRequest()
+        {
+            Type = WorkItemTypeEnum.StudyProcess;
+            Priority = WorkItemPriorityEnum.Stat;
+        }
+
+        [DataMember(IsRequired = true)]
+        public StudyIdentifier Study { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public PatientRootPatientIdentifier Patient { get; set; }
+    }
+
+
+    /// <summary>
+    /// DICOM Receive Study Request
+    /// </summary>
+    [WorkItemRequestDataContract("146cc54f-7b98-468b-948a-415eeffd3d7f")]
+    public class DicomReceiveRequest : StudyProcessRequest
+    {
+        [DataMember(IsRequired = true)]
+        public string FromAETitle { get; set; }
+
+        public override string ActivityType
+        {
+            get { return SR.DicomReceiveRequest_ActivityType; }
+        }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DicomReceiveRequest_ActivityDescription, FromAETitle, Patient.PatientsName); }
+        }
+    }
+
+    /// <summary>
+    /// DICOM Import Study Request
+    /// </summary>
+    [WorkItemRequestDataContract("591c7b3c-fab-4c25-b699-a82eef8e9935")]
+    public class ImportStudyRequest : StudyProcessRequest
+    {
+        public override string ActivityType
+        {
+            get { return SR.ImportStudyRequest_ActivityType; }
+        }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.ImportStudyRequest_AcitivityDescription, Patient.PatientsName); }
+        }
     }
 }

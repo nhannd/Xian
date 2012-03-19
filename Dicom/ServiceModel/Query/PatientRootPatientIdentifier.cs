@@ -16,11 +16,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 {
 	//NOTE: internal for now because we don't actually implement IPatientRootQuery anywhere.
 
-	internal interface IPatientRootPatientIdentifier : IPatientRootData, IIdentifier
+	public interface IPatientRootPatientIdentifier : IPatientRootData, IIdentifier
 	{ }
 
 	[DataContract(Namespace = QueryNamespace.Value)]
-	internal class PatientRootPatientIdentifier : Identifier, IPatientRootData
+	public class PatientRootPatientIdentifier : Identifier, IPatientRootData
 	{
 		#region Private Fields
 

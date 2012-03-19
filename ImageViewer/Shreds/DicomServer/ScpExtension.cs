@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			return DicomPresContextResult.Accept;
 		}
 
-		public abstract bool OnReceiveRequest(Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message);
+		public abstract bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message);
 
 		public IList<SupportedSop> GetSupportedSopClasses()
 		{

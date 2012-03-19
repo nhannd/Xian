@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			yield return sop;
 		}
 
-		public override bool OnReceiveRequest(Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
+        public override bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
 		{
 			server.SendCEchoResponse(presentationID, message.MessageId, DicomStatuses.Success);
 			return true;

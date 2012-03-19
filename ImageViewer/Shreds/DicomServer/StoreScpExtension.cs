@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		}
 
 		public override bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, 
-			ClearCanvas.Dicom.Network.ServerAssociationParameters association, byte presentationID, DicomMessage message)
+			ServerAssociationParameters association, byte presentationID, DicomMessage message)
 		{
 			string studyInstanceUid = null;
 			string seriesInstanceUid = null;
@@ -171,26 +171,33 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static void OnFileReceived(string fromAE, string filename)
 		{
-			StoreScpReceivedFileInformation info = new StoreScpReceivedFileInformation();
-			info.AETitle = fromAE;
-			info.FileName = filename;
-			LocalDataStoreEventPublisher.Instance.FileReceived(info);
+		    var info = new StoreScpReceivedFileInformation
+		                   {
+		                       AETitle = fromAE,
+                               FileName = filename
+		                   };
+		    LocalDataStoreEventPublisher.Instance.FileReceived(info);
 		}
 
 		private static void OnReceiveError(DicomMessage message, string error, string fromAE)
 		{
-			ReceiveErrorInformation info = new ReceiveErrorInformation();
-			info.FromAETitle = fromAE;
-			info.ErrorMessage = error;
+		    var info = new ReceiveErrorInformation
+		                   {
+		                       FromAETitle = fromAE,
+		                       ErrorMessage = error,
+		                       StudyInformation =
+		                           new StudyInformation
+		                               {
+		                                   PatientId = message.DataSet[DicomTags.PatientId].GetString(0, ""),
+		                                   PatientsName = message.DataSet[DicomTags.PatientsName].GetString(0, ""),
+		                                   StudyDate = DateParser.Parse(message.DataSet[DicomTags.StudyDate].GetString(0, "")),
+		                                   StudyDescription = message.DataSet[DicomTags.StudyDescription].GetString(0, ""),
+		                                   StudyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "")
+		                               }
+		                   };
 
-			info.StudyInformation = new StudyInformation();
-			info.StudyInformation.PatientId = message.DataSet[DicomTags.PatientId].GetString(0, "");
-			info.StudyInformation.PatientsName = message.DataSet[DicomTags.PatientsName].GetString(0, "");
-			info.StudyInformation.StudyDate = DateParser.Parse(message.DataSet[DicomTags.StudyDate].GetString(0, ""));
-			info.StudyInformation.StudyDescription = message.DataSet[DicomTags.StudyDescription].GetString(0, "");
-			info.StudyInformation.StudyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 
-			LocalDataStoreEventPublisher.Instance.ReceiveError(info);
+		    LocalDataStoreEventPublisher.Instance.ReceiveError(info);
 		}
 	}
 }

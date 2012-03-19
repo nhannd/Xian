@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			return remoteHostName;
 		}
 
-		public override bool OnReceiveRequest(Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
+        public override bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
 		{
 			String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, "").Trim();
 

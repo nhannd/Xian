@@ -159,8 +159,6 @@ namespace ClearCanvas.Common.Utilities
                 bool filenameAbtained = false;
                 while(true)
                 {
-                    string backup;
-
                     // check if the file still exists every time in case it is moved/deleted 
                     // so that we are not stucked in the loop
                     if (!File.Exists(source))
@@ -168,10 +166,10 @@ namespace ClearCanvas.Common.Utilities
                     if (sourceInfo.Directory == null)
                         return null;
 
-                    backup = Path.Combine(string.IsNullOrEmpty(backupDirectory)
-                                              ? sourceInfo.Directory.FullName
-                                              : backupDirectory, 
-                                          String.Format("{0}.bak({1})", sourceInfo.Name, i));
+                    string backup = Path.Combine(string.IsNullOrEmpty(backupDirectory)
+                                                     ? sourceInfo.Directory.FullName
+                                                     : backupDirectory, 
+                                                 String.Format("{0}.bak({1})", sourceInfo.Name, i));
 
                     try
                     {
