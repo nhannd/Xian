@@ -72,7 +72,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Broker.cs" />
-    <Compile Include="DataAccessScope.cs" />
     <Compile Include="RuleAction.cs" />
     <Compile Include="RuleBroker.cs" />
     <Compile Include="RuleCondition.cs" />
@@ -83,12 +82,12 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleActionType.cs" />
+    <Compile Include="DataAccessContext.cs" />
     <Compile Include="StudyBroker.cs" />
     <Compile Include="WorkItemBroker.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
     <Compile Include="WorkItem.cs" />
     <Compile Include="Serializer.cs" />
-    <Compile Include="WorkItemUidBroker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

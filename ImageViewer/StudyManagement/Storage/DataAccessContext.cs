@@ -10,85 +10,64 @@
 #endregion
 
 using System;
+using System.Data;
 using System.Data.SqlServerCe;
 using System.IO;
-using System.Data;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
 	/// <summary>
-	/// Manages creation and lifetime of data context objects.
+	/// Manages a data-access unit of work, valid for a single transaction.
 	/// </summary>
 	/// <remarks>
 	/// As per this blog post (http://matthewmanela.com/blog/sql-ce-3-5-with-linq-to-sql/), there are
 	/// some performance considerations to take into account when using linq-to-sql with sql-ce. Basically
 	/// we don't want to allow L2S to manage the connection, but rather we manage it ourselves.
 	/// </remarks>
-	public class DataAccessScope : IDisposable
+	public class DataAccessContext
 	{
 		private const string DefaultDatabaseFileName = "dicom_store.sdf";
 
-		[ThreadStatic]
-		private static DataAccessScope _head;
-
-		/// <summary>
-		/// Gets the currently active <see cref="DataAccessScope"/>, or null if none exists.
-		/// </summary>
-		public static DataAccessScope Current
-		{
-			get { return _head; }
-		}
-
-		private readonly DataAccessScope _parent;
-		private readonly bool _ownsContext;
 		private readonly DicomStoreDataContext _context;
 		private readonly IDbConnection _connection;
 		private readonly IDbTransaction _transaction;
+		private bool _transactionCommitted;
 		private bool _disposed;
 
-		/// <summary>
-		/// Creates a new data access scope, re-using an existing open context if one exists for the current thread.
-		/// </summary>
-		public DataAccessScope()
-			:this(false)
+		public DataAccessContext()
 		{
+			// initialize a connection and transaction
+			_connection = CreateConnection();
+			_transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
+			_context = new DicomStoreDataContext(_connection);
 		}
 
-		private DataAccessScope(bool newContext)
+		#region Implementation of IDisposable
+
+		public void Dispose()
 		{
-			if(newContext || _head == null)
+			if(_disposed)
+				throw new InvalidOperationException("Already disposed.");
+
+			_disposed = true;
+
+			if(!_transactionCommitted)
 			{
-				// initialize a connection and transaction
-				_connection = CreateConnection();
-				_transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
-				_context = new DicomStoreDataContext(_connection);
-				_ownsContext = true;
-			}
-			else
-			{
-				// inherit an existing context
-				_context = _head._context;
-				_ownsContext = false;
+				_transaction.Rollback();
 			}
 
-			_parent = _head;
-			_head = this;
+			_context.Dispose();
+			_connection.Close();
+			_connection.Dispose();
 		}
+
+		#endregion
+
 
 		public WorkItemBroker GetWorkItemBroker()
 		{
 			return new WorkItemBroker(_context);
-		}
-
-        public WorkItemUidBroker GetWorkItemUidBroker()
-        {
-            return new WorkItemUidBroker(_context);
-        }
-
-		public RuleBroker GetRuleBroker()
-		{
-			return new RuleBroker(_context);
 		}
 
 		public StudyBroker GetStudyBroker()
@@ -96,46 +75,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			return new StudyBroker(_context);
 		}
 
-		/// <summary>
-		/// Submits any pending changes to the database, but does not commit the transaction.
-		/// </summary>
-		public void SubmitChanges()
+		public RuleBroker GetRuleBroker()
 		{
+			return new RuleBroker(_context);
+		}
+
+		/// <summary>
+		/// Commits the transaction.
+		/// </summary>
+		/// <remarks>
+		/// After a successful call to this method, this context instance should be disposed.
+		/// </remarks>
+		public void Commit()
+		{
+			if(_transactionCommitted)
+				throw new InvalidOperationException("Transaction already committed.");
 			_context.SubmitChanges();
+			_transaction.Commit();
+			_transactionCommitted = true;
 		}
 
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		/// <filterpriority>2</filterpriority>
-		public void Dispose()
-		{
-			if (_disposed)
-				return;
-
-			_disposed = true;
-			_head = _parent;
-			if (_ownsContext)
-			{
-				try
-				{
-					_context.SubmitChanges();
-					_transaction.Commit();
-				}
-				finally
-				{
-					// dispose of connection, since we own it
-					_context.Dispose();
-					_connection.Close();
-					_connection.Dispose();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets the connection to the default database.
-		/// </summary>
-		/// <returns></returns>
 		private static IDbConnection CreateConnection()
 		{
 			return CreateConnection(Path.Combine(Platform.ApplicationDataDirectory, DefaultDatabaseFileName));
