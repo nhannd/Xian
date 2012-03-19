@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\DataAccessCommand.cs" />
     <Compile Include="Command\InsertWorkItemCommand.cs" />
     <Compile Include="Command\ViewerCommandProcessor.cs" />
     <Compile Include="Command\ViewerCommandProcessorContext.cs" />

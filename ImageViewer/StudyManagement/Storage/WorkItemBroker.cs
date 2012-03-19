@@ -47,5 +47,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 && w.Status != WorkItemStatusEnum.Deleted
                 && w.Status != WorkItemStatusEnum.Canceled);
         }
+
+        public void Insert(WorkItem entity)
+        {
+            Context.WorkItems.InsertOnSubmit(entity);
+        }  
 	}
 }

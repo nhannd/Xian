@@ -49,10 +49,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                     && w.SopInstanceUid == sopInstanceUid
                     select w).Count() > 1;
         }
-
-		public void Insert(WorkItemUid entity)
-		{
-		    Context.WorkItemUids.InsertOnSubmit(entity);
-		}
 	}
 }

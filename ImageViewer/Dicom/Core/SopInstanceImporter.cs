@@ -249,8 +249,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
                         WorkItem workItem;
                         command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem) 
-                            ? new InsertWorkItemCommand(workItem, seriesInstanceUid, sopInstanceUid, dupName) 
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), seriesInstanceUid, sopInstanceUid, dupName);
+                            ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName) 
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);
                     }
                     else
                     {
@@ -258,8 +258,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
                         WorkItem workItem;
                         command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem) 
-                            ? new InsertWorkItemCommand(workItem, seriesInstanceUid, sopInstanceUid) 
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), seriesInstanceUid, sopInstanceUid);
+                            ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid) 
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid);
                     }
 
                     commandProcessor.AddCommand(command);

@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.IO;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
@@ -17,37 +18,46 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
     public class ViewerCommandProcessorContext : ICommandProcessorContext
     {
-        private DataAccessScope _scope;
 
+        public DataAccessContext DataAccessContext { get; private set; }
         public ViewerCommandProcessorContext()
         {
-            _scope = new DataAccessScope();
+            DataAccessContext = new DataAccessContext();
         }
 
         public void Dispose()
         {
-            _scope.Dispose();
-            _scope = null;
+            DataAccessContext.Dispose();
+            DataAccessContext = null;
         }
 
         public void PreExecute(ICommand command)
         {
-            // No need for this in the viewer, we just use the scope internally for now
+            var dataAccessComand = command as DataAccessCommand;
+            if (dataAccessComand != null)
+                dataAccessComand.DataAccessContext = DataAccessContext;
         }
 
         public void Commit()
         {
-            _scope.SubmitChanges();
+            if (DataAccessContext == null) 
+                throw new ApplicationException("Unable to commit, no DataAccessContext.");
+
+            DataAccessContext.Commit();
         }
 
         public void Rollback()
         {
-            throw new NotImplementedException();
+            if (DataAccessContext != null)
+            {
+                DataAccessContext.Dispose();
+                DataAccessContext = null;
+            }
         }
 
         public string TempDirectory
         {
-            get { throw new NotImplementedException(); }
+            get { return Path.GetTempPath(); }
         }
 
         public string BackupDirectory
