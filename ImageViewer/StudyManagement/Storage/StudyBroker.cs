@@ -23,6 +23,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		{
 		}
 
+		public void AddStudy(Study study)
+		{
+			this.Context.Studies.InsertOnSubmit(study);
+		}
+
 		public Study GetStudy(int oid)
 		{
 			return this.Context.Studies.First(s => s.Oid == oid);
