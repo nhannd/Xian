@@ -1,4 +1,4 @@
-﻿namespace ClearCanvas.Ris.Client.View.WinForms
+﻿namespace ClearCanvas.Desktop.View.WinForms
 {
 	partial class ComboBoxCellEditorControl
 	{

@@ -11,9 +11,8 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms
 {
 	[ExtensionOf(typeof(ComboBoxCellEditorViewExtensionPoint))]
 	public class ComboBoxCellEditorView : WinFormsView, ITableCellEditorView

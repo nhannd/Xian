@@ -10,9 +10,9 @@
 #endregion
 
 using System.Windows.Forms;
-using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Desktop.Tables;
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms
 {
 	public partial class ComboBoxCellEditorControl : UserControl
 	{
