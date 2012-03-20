@@ -130,7 +130,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DicomDataStoreFiles Include="$(TrunkDirectory)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
+    <DicomDataStoreFiles Include="$(TrunkDirectory)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />    
   </ItemGroup>
 
   <ItemGroup>
@@ -174,7 +174,7 @@
   </ItemGroup>
 
 
-<ItemGroup>
+  <ItemGroup>
     <StudyBrowserFiles Include="$(TrunkDirectory)\Controls\WinForms\bin\$(Configuration)\ClearCanvas.Controls.WinForms.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\Desktop\Explorer\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.View.WinForms.dll" />
@@ -323,6 +323,11 @@
 
     <!-- Manifest -->
     <PluginFiles Include="$(TrunkDirectory)\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
+
+    <!-- DICOM Services -->
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Dicom\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.Dicom.Core.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" />
+
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">

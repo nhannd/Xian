@@ -93,6 +93,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="WorkItem\WorkItemService.cs" />
+    <Compile Include="WorkItem\WorkItemServiceExtension.cs" />
+    <Compile Include="WorkItem\WorkItemServiceType.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -126,14 +129,15 @@
       <Project>{0F0F30A1-189F-4F5F-BF59-A50D2004EFF4}</Project>
       <Name>ClearCanvas.ImageViewer.Dicom.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\StudyManagement\Storage\ClearCanvas.ImageViewer.StudyManagement.Storage.csproj">
+      <Project>{E2907284-E484-4128-8499-0DA9A7B00669}</Project>
+      <Name>ClearCanvas.ImageViewer.StudyManagement.Storage</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DicomServer\ImageSopClasses.xml" />
     <EmbeddedResource Include="DicomServer\NonImageSopClasses.xml" />
     <EmbeddedResource Include="DicomServer\TransferSyntaxes.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="StudyManagement\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 	/// some performance considerations to take into account when using linq-to-sql with sql-ce. Basically
 	/// we don't want to allow L2S to manage the connection, but rather we manage it ourselves.
 	/// </remarks>
-	public class DataAccessContext
+	public class DataAccessContext : IDisposable
 	{
 		private const string DefaultDatabaseFileName = "dicom_store.sdf";
 

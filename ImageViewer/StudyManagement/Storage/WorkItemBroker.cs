@@ -34,11 +34,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					select w).Take(n).ToList();
 		}
 
+        /// <summary>
+        /// Gets the specified number of pending work items.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="status"></param>
+        /// <param name="studyInstanceUid"></param>
+        /// <returns></returns>
+        public IList<WorkItem> GetWorkItems(WorkItemTypeEnum? type, WorkItemStatusEnum? status, string studyInstanceUid)
+        {
+            IQueryable<WorkItem> query = from w in Context.WorkItems select w;
+
+            if (type.HasValue)
+                query = query.Where(w => w.Type == type.Value);
+            if (status.HasValue)
+                query = query.Where(w => w.Status == status.Value);
+            if (!string.IsNullOrEmpty(studyInstanceUid))
+                query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
+
+            return query.ToList();
+        }
+
+        /// <summary>
+        /// Get a specific WorkItem
+        /// </summary>
+        /// <param name="oid"></param>
+        /// <returns></returns>
 		public WorkItem GetWorkItem(int oid)
 		{
 			return this.Context.WorkItems.First(w => w.Oid == oid);
 		}
 
+        /// <summary>
+        /// Get a pending WorkItem of a specific type for a specific study.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="studyInstanceUid"></param>
+        /// <returns></returns>
         public WorkItem GetPendingWorkItemForStudy(WorkItemTypeEnum type, string studyInstanceUid)
         {
             return this.Context.WorkItems.First(w => w.StudyInstanceUid == studyInstanceUid 
@@ -48,6 +80,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 && w.Status != WorkItemStatusEnum.Canceled);
         }
 
+        /// <summary>
+        /// Insert a WorkItem
+        /// </summary>
+        /// <param name="entity"></param>
         public void Insert(WorkItem entity)
         {
             Context.WorkItems.InsertOnSubmit(entity);
