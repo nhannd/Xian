@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
@@ -20,9 +21,11 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.Automation;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
@@ -434,21 +437,20 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
             var serverMap = new Dictionary<string, IDicomServerApplicationEntity>();
 
-			string localAE = ServerTree.GetClientAETitle();
+		    string localAE = DicomServerConfigurationHelper.GetOfflineAETitle(false);
 			serverMap[localAE] = null;
-
-			ServerTree serverTree = new ServerTree();
-			List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
 
 			foreach (OpenStudyInfo info in openStudies)
 			{
 				if (!String.IsNullOrEmpty(info.SourceAETitle) && !serverMap.ContainsKey(info.SourceAETitle))
 				{
-					Server server = servers.Find(node => ((Server) node).AETitle == info.SourceAETitle) as Server;
-
-					//only add streaming servers.
-					if (server != null && server.IsStreaming)
-					    serverMap[info.SourceAETitle] = server.ToApplicationEntity();
+                    using (var bridge = new ServerDirectoryBridge())
+                    {
+                        var server = bridge.GetServersByAETitle(info.SourceAETitle).FirstOrDefault();
+                        //only add streaming servers.
+                        if (server != null && server.IsStreaming)
+                            serverMap[info.SourceAETitle] = server;
+                    }
 				}
 			}
 

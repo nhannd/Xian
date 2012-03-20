@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     [KnownType(typeof(DicomServerApplicationEntity))]
     [KnownType(typeof(StreamingServerApplicationEntity))]
     //[KnownType(typeof(ApplicationEntity))]
-    public abstract class PersistedServerEntry : DataContractBase
+    public class ServerDirectoryEntry : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Int64 Oid { get; set; }
@@ -30,7 +30,13 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class GetServersRequest: DataContractBase
     {
         /// <summary>
-        /// Specify an exact AE Title to find one or more servers with that AE.
+        /// Specify an exact name to find one server.
+        /// </summary>
+        [DataMember(IsRequired = false)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Specify an exact AE Title to find one or more servers.
         /// </summary>
         [DataMember(IsRequired = false)]
         public string AETitle { get; set; }
@@ -40,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class GetServersResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public List<PersistedServerEntry> ServerEntries { get; set; }
+        public List<ServerDirectoryEntry> DirectoryEntries { get; set; }
     }
 
     #endregion
@@ -51,14 +57,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class UpdateServerRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public PersistedServerEntry ServerEntry { get; set; }
+        public ServerDirectoryEntry DirectoryEntry { get; set; }
     }
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
     public class UpdateServerResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public PersistedServerEntry ServerEntry { get; set; }
+        public ServerDirectoryEntry DirectoryEntry { get; set; }
     }
 
     #endregion
@@ -69,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class DeleteServerRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public PersistedServerEntry ServerEntry { get; set; }
+        public ServerDirectoryEntry DirectoryEntry { get; set; }
     }
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
@@ -92,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class AddServerResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public PersistedServerEntry ServerEntry { get; set; }
+        public ServerDirectoryEntry DirectoryEntry { get; set; }
     }
 
     #endregion

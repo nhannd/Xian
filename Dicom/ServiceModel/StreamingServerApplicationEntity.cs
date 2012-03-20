@@ -20,6 +20,13 @@ namespace ClearCanvas.Dicom.ServiceModel
 		public StreamingServerApplicationEntity()
 		{}
 
+        public StreamingServerApplicationEntity(IStreamingServerApplicationEntity other)
+            : base(other)
+        {
+            this.HeaderServicePort = other.HeaderServicePort;
+            this.WadoServicePort = other.WadoServicePort;
+        }
+
 		public StreamingServerApplicationEntity(string aeTitle, string hostName, int port, int headerServicePort, int wadoServicePort)
 			: this(aeTitle, hostName, port, headerServicePort, wadoServicePort, "", "", "")
 		{

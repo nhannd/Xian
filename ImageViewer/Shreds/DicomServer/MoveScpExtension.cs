@@ -17,6 +17,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -154,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 									 (ushort)operation.WarningSubOperations);
 		}
 
-		private void OnReceiveMoveStudiesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, AEInformation remoteAEInfo)
+		private void OnReceiveMoveStudiesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, DicomServerApplicationEntity remoteAEInfo)
 		{
 			IEnumerable<string> studyUids = (string[])message.DataSet[DicomTags.StudyInstanceUid].Values;
 			SendStudiesRequest request = new SendStudiesRequest();
@@ -186,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		private void OnReceiveMoveSeriesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, AEInformation remoteAEInfo)
+        private void OnReceiveMoveSeriesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, DicomServerApplicationEntity remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			string[] seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
@@ -220,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		private void OnReceiveMoveImageRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, AEInformation remoteAEInfo)
+        private void OnReceiveMoveImageRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, DicomServerApplicationEntity remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
@@ -287,8 +288,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return true;
 			}
 
-			AEInformation remoteAEInfo = RemoteServerDirectory.Lookup(message.MoveDestination);
-			if (remoteAEInfo == null)
+			var remoteAE = RemoteServerDirectory.Lookup(message.MoveDestination);
+            if (remoteAE == null)
 			{
 				server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
 					DicomStatuses.QueryRetrieveMoveDestinationUnknown);
@@ -301,15 +302,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				if (level.Equals("STUDY"))
 				{
-					OnReceiveMoveStudiesRequest(server, presentationID, message, remoteAEInfo);
+                    OnReceiveMoveStudiesRequest(server, presentationID, message, remoteAE.ToDataContract());
 				}
 				else if (level.Equals("SERIES"))
 				{
-					OnReceiveMoveSeriesRequest(server, presentationID, message, remoteAEInfo);
+                    OnReceiveMoveSeriesRequest(server, presentationID, message, remoteAE.ToDataContract());
 				}
 				else if (level.Equals("IMAGE"))
 				{
-					OnReceiveMoveImageRequest(server, presentationID, message, remoteAEInfo);
+                    OnReceiveMoveImageRequest(server, presentationID, message, remoteAE.ToDataContract());
 				}
 				else
 				{

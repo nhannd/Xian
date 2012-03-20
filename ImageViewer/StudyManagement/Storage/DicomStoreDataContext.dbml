@@ -90,4 +90,21 @@
       <Association Name="WorkItem_WorkItemUid" Member="WorkItem" ThisKey="WorkItemOid" OtherKey="Oid" Type="WorkItem" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="Device" Member="Devices">
+    <Type Name="Device">
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="AETitle" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="Location" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="true" />
+      <Column Name="Port" Type="System.Int32" DbType="Int" CanBeNull="false" />
+      <Column Name="StreamingHeaderPort" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="StreamingImagePort" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="Configuration" Member="Configurations">
+    <Type Name="Configuration">
+      <Column Name="Name" AutoSync="OnInsert" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Value" Type="System.String" DbType="NText" CanBeNull="false" UpdateCheck="Never" />
+    </Type>
+  </Table>
 </Database>

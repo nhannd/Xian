@@ -127,7 +127,7 @@
     <Compile Include="ServerDirectory\DataContracts.cs" />
     <Compile Include="ServerDirectory\Extensions.cs" />
     <Compile Include="ServerDirectory\IServerDirectory.cs" />
-    <Compile Include="ServerDirectory\PersistedDicomServiceNode.cs" />
+    <Compile Include="ServerDirectory\DicomServiceNode.cs" />
     <Compile Include="ServerDirectory\ServerDirectoryBridge.cs" />
     <Compile Include="ServiceNode.cs" />
     <Compile Include="ServerTree\AEServerGroup.cs" />

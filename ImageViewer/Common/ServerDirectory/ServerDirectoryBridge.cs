@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
@@ -20,16 +21,36 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             _serverDirectory = serverDirectory;
         }
 
-        public List<IServiceNode> GetServers()
+        public IDicomServiceNode GetLocalServer()
         {
-            var servers = _serverDirectory.GetServers(new GetServersRequest()).ServerEntries;
-            return servers.Select(s => s.ToServiceNode()).ToList();
+            try
+            {
+                DicomServerConfigurationHelper.Refresh(true);
+                return new DicomServiceNode(DicomServerConfigurationHelper.DicomServerConfiguration);
+            }
+            catch (Exception)
+            {
+                return new DicomServiceNode(new DicomServerConfiguration
+                                             {AETitle = DicomServerConfigurationHelper.GetOfflineAETitle(false)});
+            }
         }
 
-        public List<IServiceNode> GetServerByAETitle(string aeTitle)
+        public List<IDicomServiceNode> GetServers()
         {
-            var servers = _serverDirectory.GetServers(new GetServersRequest{AETitle = aeTitle}).ServerEntries;
-            return servers.Select(s => s.ToServiceNode()).ToList();
+            var servers = _serverDirectory.GetServers(new GetServersRequest()).DirectoryEntries;
+            return servers.Select(s => s.ToServiceNode()).OfType<IDicomServiceNode>().ToList();
+        }
+
+        public List<IDicomServiceNode> GetServersByAETitle(string aeTitle)
+        {
+            var servers = _serverDirectory.GetServers(new GetServersRequest{AETitle = aeTitle}).DirectoryEntries;
+            return servers.Select(s => s.ToServiceNode()).OfType<IDicomServiceNode>().ToList();
+        }
+
+        public List<IDicomServiceNode> GetServerByName(string name)
+        {
+            var servers = _serverDirectory.GetServers(new GetServersRequest { Name = name}).DirectoryEntries;
+            return servers.Select(s => s.ToServiceNode()).OfType<IDicomServiceNode>().ToList();
         }
 
         protected virtual void Dispose(bool disposing)

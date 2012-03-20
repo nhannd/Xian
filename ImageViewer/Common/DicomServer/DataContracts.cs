@@ -34,13 +34,14 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
     public class DicomServerConfiguration
     {
         [DataMember(IsRequired = true)]
-        public string HostName { get; set; }
-
-        [DataMember(IsRequired = true)]
         public string AETitle { get; set; }
 
         [DataMember(IsRequired = true)]
         public int Port { get; set; }
+
+        // TODO (Marmot): Gonzo?
+        [DataMember(IsRequired = true)]
+        public string HostName { get; set; }
 
         // TODO (Marmot): Gonzo.
         [DataMember(IsRequired = true)]

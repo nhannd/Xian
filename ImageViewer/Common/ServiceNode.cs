@@ -1,15 +1,17 @@
 ﻿using System;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-    public interface IPersistedServiceNode : IServiceNode
-    {
-        Int64 Oid { get; }
-    }
+    //public interface IPersistedServiceNode : IServiceNode
+    //{
+    //    Int64 Oid { get; }
+    //}
 
     public interface IDicomServiceNode : IServiceNode, IDicomServerApplicationEntity
     {
+        bool IsLocal { get; }
     }
 
     public interface IStreamingDicomServiceNode : IServiceNode, IStreamingServerApplicationEntity
@@ -30,6 +32,23 @@ namespace ClearCanvas.ImageViewer.Common
         public abstract T GetService<T>() where T : class;
 
         #endregion
+    }
+
+    public static class ServiceNodeExtensions
+    {
+        public static DicomServerApplicationEntity ToDataContract(this IDicomServiceNode serviceNode)
+        {
+            if (serviceNode.IsStreaming)
+            {
+                var ae = (IStreamingServerApplicationEntity) serviceNode;
+                return new StreamingServerApplicationEntity(ae);
+            }
+            else
+            {
+                var ae = (IDicomServerApplicationEntity)serviceNode;
+                return new DicomServerApplicationEntity(ae);
+            }
+        }
     }
 
     // TODO (CR Mar 2012): Later, so services provided by service nodes can be extended.

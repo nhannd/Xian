@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -101,12 +102,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
 				{
-					SendStudiesRequest request = new SendStudiesRequest();
-					AEInformation aeInformation = new AEInformation();
-					aeInformation.AETitle = destinationAE.AETitle;
-					aeInformation.HostName = destinationAE.Host;
-					aeInformation.Port = destinationAE.Port;
-					request.DestinationAEInformation = aeInformation;
+					var request = new SendStudiesRequest();
+                    var aeInformation = new DicomServerApplicationEntity
+                                            {
+                                                AETitle = destinationAE.AETitle,
+                                                HostName = destinationAE.Host,
+                                                Port = destinationAE.Port
+                                            };
+				    request.DestinationAEInformation = aeInformation;
 					request.StudyInstanceUids = studyUids;
 					client.SendStudies(request);
 				}

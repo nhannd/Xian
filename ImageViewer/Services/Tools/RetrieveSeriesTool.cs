@@ -17,6 +17,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
@@ -62,12 +63,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				client.Open();
 
-				var aeInformation = new AEInformation();
-				aeInformation.AETitle = applicationEntity.AETitle;
-				aeInformation.HostName = applicationEntity.HostName;
-				aeInformation.Port = applicationEntity.Port;
+                var aeInformation = new DicomServerApplicationEntity
+                                        {
+                                            AETitle = applicationEntity.AETitle,
+                                            HostName = applicationEntity.HostName,
+                                            Port = applicationEntity.Port
+                                        };
 
-				client.RetrieveSeries(aeInformation, studyInformation, seriesToRetrieve);
+			    client.RetrieveSeries(aeInformation, studyInformation, seriesToRetrieve);
 
 				client.Close();
 

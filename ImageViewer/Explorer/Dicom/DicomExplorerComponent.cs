@@ -198,6 +198,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+	    // TODO (Marmot): take this away.
 		private static void SelectDefaultServers(ServerTreeComponent serverTreeComponent)
 		{
 			ServerTree serverTree = serverTreeComponent.ServerTree;

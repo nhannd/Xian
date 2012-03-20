@@ -2,20 +2,13 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
-    public interface IPersistedStreamingDicomServiceNode : IPersistedServiceNode, IStreamingDicomServiceNode
+    internal class StreamingDicomServiceNode : DicomServiceNode, IStreamingDicomServiceNode
     {
-    }
-
-    public interface IPersistedDicomServiceNode : IPersistedServiceNode, IDicomServiceNode
-    {
-    }
-
-    internal class PersistedStreamingDicomServiceNode : PersistedDicomServiceNode, IPersistedStreamingDicomServiceNode
-    {
-        internal PersistedStreamingDicomServiceNode(PersistedServerEntry entry)
+        internal StreamingDicomServiceNode(ServerDirectoryEntry entry)
             : base(entry)
         {
             Platform.CheckExpectedType(entry.Server, typeof(StreamingServerApplicationEntity));
@@ -36,11 +29,18 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         #endregion
     }
 
-    internal class PersistedDicomServiceNode : ServiceNode, IPersistedDicomServiceNode
+    internal class DicomServiceNode : ServiceNode, IDicomServiceNode
     {
         private readonly Int64 _oid;
 
-        internal PersistedDicomServiceNode(PersistedServerEntry entry)
+        internal DicomServiceNode(DicomServerConfiguration localConfiguration)
+        {
+            Real = new DicomServerApplicationEntity(
+                localConfiguration.AETitle, localConfiguration.HostName, localConfiguration.Port, "<local>", "", "");
+            IsLocal = true;
+        }
+
+        internal DicomServiceNode(ServerDirectoryEntry entry)
         {
             Platform.CheckForNullReference(entry, "entry");
             Platform.CheckExpectedType(entry.Server, typeof(DicomServerApplicationEntity));
@@ -51,6 +51,11 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         protected DicomServerApplicationEntity Real { get; private set; }
         public Int64 Oid { get { return _oid; } }
+
+        #region Implementation of IApplicationEntity
+        
+        public bool IsLocal { get; private set; }
+        #endregion
 
         #region Implementation of IApplicationEntity
 

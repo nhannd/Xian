@@ -13,8 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -26,26 +28,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 	internal class RetrieveStudiesRequest
 	{
-		public RetrieveStudiesRequest(AEInformation remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
+        public RetrieveStudiesRequest(DicomServerApplicationEntity remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
 			this.RemoteAEInfo = remoteAEInfo;
 			this.StudiesToRetrieve = studiesToRetrieve;
 		}
 
-		public readonly AEInformation RemoteAEInfo;
+        public readonly DicomServerApplicationEntity RemoteAEInfo;
 		public readonly IEnumerable<StudyInformation> StudiesToRetrieve;
 	}
 
 	internal class RetrieveSeriesRequest
 	{
-		public RetrieveSeriesRequest(AEInformation remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+        public RetrieveSeriesRequest(DicomServerApplicationEntity remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
 		{
 			this.RemoteAEInfo = remoteAEInfo;
 			StudyInformation = studyInformation;
 			this.SeriesInstanceUids = seriesInstanceUids;
 		}
 
-		public readonly AEInformation RemoteAEInfo;
+        public readonly DicomServerApplicationEntity RemoteAEInfo;
 		public readonly StudyInformation StudyInformation;
 		public readonly IEnumerable<string> SeriesInstanceUids;
 	}
@@ -89,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			#endregion
 
-			public RetrieveScu(string localAETitle, AEInformation remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
+            public RetrieveScu(string localAETitle, IDicomServerApplicationEntity remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
 				:base(localAETitle, remoteAEInfo.AETitle, remoteAEInfo.HostName, remoteAEInfo.Port, localAETitle)
 			{
 				Platform.CheckForEmptyString(localAETitle, "localAETitle");
@@ -104,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					remoteAEInfo.HostName, remoteAEInfo.AETitle, remoteAEInfo.Port);
 			}
 
-			public RetrieveScu(string localAETitle, AEInformation remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+            public RetrieveScu(string localAETitle, IDicomServerApplicationEntity remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
 				: this(localAETitle, remoteAEInfo, Enumerate(studyInformation))
 			{
 				_seriesInstanceUids = seriesInstanceUids;

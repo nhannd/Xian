@@ -91,6 +91,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			return new StudyBroker(_context);
 		}
 
+        public DeviceBroker GetDeviceBroker()
+        {
+            return new DeviceBroker(_context);
+        }
+
+        public ConfigurationBroker GetConfigurationBroker()
+        {
+            return new ConfigurationBroker(_context);
+        }
+
 		/// <summary>
 		/// Submits any pending changes to the database, but does not commit the transaction.
 		/// </summary>

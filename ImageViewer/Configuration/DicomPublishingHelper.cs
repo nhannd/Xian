@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
@@ -221,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
-				var destination = new AEInformation {AETitle = server.AETitle, HostName = server.Host, Port = server.Port};
+                var destination = new DicomServerApplicationEntity { AETitle = server.AETitle, HostName = server.Host, Port = server.Port };
 
 			    DicomFilePublisher.PublishRemote(files, destination, true);
 				return true;

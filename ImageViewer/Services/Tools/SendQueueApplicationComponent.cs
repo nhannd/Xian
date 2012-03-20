@@ -11,7 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
@@ -22,6 +22,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
@@ -95,17 +96,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				_serverName = "";
 				try
 				{
-					ServerTree serverTree = new ServerTree();
-					List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
-					foreach (Server server in servers)
-					{
-						if (server.AETitle == progressItem.ToAETitle)
-						{
-							_serverName = server.Name;
-							break;
-						}
-					}
-				}
+                    using (var bridge = new ServerDirectoryBridge())
+                    {
+                        var server = bridge.GetServersByAETitle(progressItem.ToAETitle).FirstOrDefault();
+                        if (server != null)
+                            _serverName = server.Name;
+                    }
+                }
 				catch (Exception ex)
 				{
 					Platform.Log(LogLevel.Error, ex);

@@ -15,6 +15,7 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Common;
@@ -102,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				Initialize(callback);
 			}
 
-			public SendScu(string localAETitle, AEInformation destinationAEInfo, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
+            public SendScu(string localAETitle, DicomServerApplicationEntity destinationAEInfo, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
 				: base(localAETitle, destinationAEInfo.AETitle, destinationAEInfo.HostName, destinationAEInfo.Port)
 			{
 				Platform.CheckForEmptyString(localAETitle, "localAETitle");
@@ -526,7 +527,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		private SendOperationReference Send(AEInformation destinationAEInformation, bool isBackground, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
+        private SendOperationReference Send(DicomServerApplicationEntity destinationAEInformation, bool isBackground, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
 		{
 			lock (_syncLock)
 			{

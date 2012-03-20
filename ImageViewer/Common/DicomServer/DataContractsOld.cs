@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
@@ -80,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 	[DataContract]
 	public abstract class SendInstancesRequest
 	{
-		private AEInformation _destinationAEInformation;
+        private DicomServerApplicationEntity _destinationAEInformation;
 		private bool _isBackground;
 
 		public SendInstancesRequest()
@@ -88,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		}
 
 		[DataMember(IsRequired = true)]
-		public AEInformation DestinationAEInformation
+        public DicomServerApplicationEntity DestinationAEInformation
 		{
 			get { return _destinationAEInformation; }
 			set { _destinationAEInformation = value; }

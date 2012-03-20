@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
@@ -83,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
                 foreach (KeyValuePair<IDicomServerApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
 				{
-					var aeInformation = new AEInformation
+                    var aeInformation = new DicomServerApplicationEntity
 					                        {
 					                            AETitle = kvp.Key.AETitle,
 					                            HostName = kvp.Key.HostName,

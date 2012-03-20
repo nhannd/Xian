@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -154,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 		}
 
-		public static void PublishRemote(ICollection<DicomFile> files, AEInformation destinationServer, bool isBackground)
+		public static void PublishRemote(ICollection<DicomFile> files, DicomServerApplicationEntity destinationServer, bool isBackground)
 		{
 			if (files == null || files.Count == 0)
 				return;
