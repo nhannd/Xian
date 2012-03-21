@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -22,17 +23,34 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		{
 		}
 
-		/// <summary>
-		/// Gets the specified number of pending work items.
-		/// </summary>
-		/// <param name="n"></param>
-		/// <returns></returns>
-		public IList<WorkItem> GetPendingWorkItems(int n)
-		{
-			return (from w in this.Context.WorkItems
-					where w.Status == WorkItemStatusEnum.Pending
-					select w).Take(n).ToList();
-		}
+        /// <summary>
+        /// Gets the specified number of pending work items.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public List<WorkItem> GetStatPendingWorkItems(int n)
+        {
+            return (from w in this.Context.WorkItems
+                    where w.Status == WorkItemStatusEnum.Pending
+                          && w.ScheduledTime < DateTime.Now
+                          && w.Priority == WorkItemPriorityEnum.Stat            
+                    orderby w.ScheduledTime ascending 
+                    select w).Take(n).ToList();
+        }
+
+        /// <summary>
+        /// Gets the specified number of pending work items.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public List<WorkItem> GetPendingWorkItems(int n)
+        {
+            return (from w in this.Context.WorkItems
+                    where w.Status == WorkItemStatusEnum.Pending
+                          && w.ScheduledTime < DateTime.Now
+                    orderby w.ScheduledTime ascending
+                    select w).Take(n).ToList();
+        }
 
         /// <summary>
         /// Gets the specified number of pending work items.
@@ -51,6 +69,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 query = query.Where(w => w.Status == status.Value);
             if (!string.IsNullOrEmpty(studyInstanceUid))
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
+
+            query = query.OrderBy(w => w.ScheduledTime);
 
             return query.ToList();
         }
@@ -87,6 +107,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         public void Insert(WorkItem entity)
         {
             Context.WorkItems.InsertOnSubmit(entity);
-        }  
+        }
+
+        /// <summary>
+        /// Insert a WorkItem
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Update(WorkItem entity)
+        {
+            Context.WorkItems.Attach(entity, true);
+        } 
 	}
 }
