@@ -47,55 +47,47 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponentView.cs" />
     <Compile Include="AddressEditorControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AddressEditorControl.designer.cs">
       <DependentUpon>AddressEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="BiographyDemographicComponentControl.designer.cs">
       <DependentUpon>BiographyDemographicComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponentView.cs" />
     <Compile Include="BiographyNoteComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="BiographyNoteComponentControl.designer.cs">
       <DependentUpon>BiographyNoteComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyNoteComponentView.cs" />
     <Compile Include="BiographyOrderHistoryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="BiographyOrderHistoryComponentControl.designer.cs">
       <DependentUpon>BiographyOrderHistoryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyOrderHistoryComponentView.cs" />
     <Compile Include="BiographyOrderReportsComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="BiographyOrderReportsComponentControl.Designer.cs">
       <DependentUpon>BiographyOrderReportsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyOrderReportsComponentView.cs" />
     <Compile Include="BiographyOverviewComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="BiographyOverviewComponentControl.designer.cs">
       <DependentUpon>BiographyOverviewComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyOverviewComponentView.cs" />
     <Compile Include="BiographyVisitHistoryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="BiographyVisitHistoryComponentControl.Designer.cs">
       <DependentUpon>BiographyVisitHistoryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyVisitHistoryComponentView.cs" />
     <Compile Include="CannedTextCategoryEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CannedTextCategoryEditorComponentControl.Designer.cs">
       <DependentUpon>CannedTextCategoryEditorComponentControl.cs</DependentUpon>
@@ -109,21 +101,18 @@
       <DependentUpon>CannedTextInplaceLookupControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CannedTextSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CannedTextSummaryComponentControl.Designer.cs">
       <DependentUpon>CannedTextSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CannedTextSummaryComponentView.cs" />
     <Compile Include="CannedTextEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CannedTextEditorComponentControl.Designer.cs">
       <DependentUpon>CannedTextEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CannedTextEditorComponentView.cs" />
     <Compile Include="ContactPersonEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ContactPersonEditorComponentControl.Designer.cs">
       <DependentUpon>ContactPersonEditorComponentControl.cs</DependentUpon>
@@ -137,7 +126,6 @@
     </Compile>
     <Compile Include="ChangePasswordDialog.cs" />
     <Compile Include="DateTimeEntryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DateTimeEntryComponentControl.Designer.cs">
       <DependentUpon>DateTimeEntryComponentControl.cs</DependentUpon>
@@ -150,39 +138,28 @@
       <DependentUpon>DescriptiveSpinControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DiagnosticServiceEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DiagnosticServiceEditorComponentControl.Designer.cs">
       <DependentUpon>DiagnosticServiceEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DiagnosticServiceEditorComponentView.cs" />
     <Compile Include="DiagnosticServiceSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DiagnosticServiceSummaryComponentControl.Designer.cs">
       <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DiagnosticServiceSummaryComponentView.cs" />
-    <Compile Include="ComboBoxCellEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComboBoxCellEditorControl.Designer.cs">
-      <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComboBoxCellEditorView.cs" />
     <Compile Include="DynamicCustomControlTable.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DynamicTableCommonControlFactory.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponentControl.Designer.cs">
       <DependentUpon>ExternalPractitionerContactPointDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponentView.cs" />
     <Compile Include="ExternalPractitionerContactPointSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerContactPointSummaryComponentControl.Designer.cs">
       <DependentUpon>ExternalPractitionerContactPointSummaryComponentControl.cs</DependentUpon>
@@ -192,7 +169,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerMergePropertiesComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerMergePropertiesComponentControl.Designer.cs">
       <DependentUpon>ExternalPractitionerMergePropertiesComponentControl.cs</DependentUpon>
@@ -205,35 +181,30 @@
       <DependentUpon>ExternalPractitionerReplaceDisabledContactPointsTableItemControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponentControl.Designer.cs">
       <DependentUpon>ExternalPractitionerReplaceDisabledContactPointsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponentView.cs" />
     <Compile Include="ExternalPractitionerSelectDisabledContactPointsComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerSelectDisabledContactPointsComponentControl.Designer.cs">
       <DependentUpon>ExternalPractitionerSelectDisabledContactPointsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerSelectDisabledContactPointsComponentView.cs" />
     <Compile Include="ExternalPractitionerMergeSelectedDuplicateComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerMergeSelectedDuplicateComponentControl.Designer.cs">
       <DependentUpon>ExternalPractitionerMergeSelectedDuplicateComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerMergeSelectedDuplicateComponentView.cs" />
     <Compile Include="FolderExplorerConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FolderExplorerConfigurationComponentControl.Designer.cs">
       <DependentUpon>FolderExplorerConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderExplorerConfigurationComponentView.cs" />
     <Compile Include="HomepageConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="HomepageConfigurationComponentControl.Designer.cs">
       <DependentUpon>HomepageConfigurationComponentControl.cs</DependentUpon>
@@ -256,34 +227,29 @@
     </Compile>
     <Compile Include="LookupHandlerCellEditorView.cs" />
     <Compile Include="MergeComponentBaseControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MergeComponentBaseControl.Designer.cs">
       <DependentUpon>MergeComponentBaseControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MergeComponentBaseView.cs" />
     <Compile Include="FolderContentsComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FolderContentsComponentControl.Designer.cs">
       <DependentUpon>FolderContentsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderContentsComponentView.cs" />
     <Compile Include="FolderExplorerComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FolderExplorerComponentControl.Designer.cs">
       <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderExplorerComponentView.cs" />
     <Compile Include="ExternalPractitionerSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerSummaryComponentControl.designer.cs">
       <DependentUpon>ExternalPractitionerSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerDetailsEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExternalPractitionerDetailsEditorComponentControl.designer.cs">
       <DependentUpon>ExternalPractitionerDetailsEditorComponentControl.cs</DependentUpon>
@@ -291,28 +257,24 @@
     <Compile Include="ExternalPractitionerDetailsEditorComponentView.cs" />
     <Compile Include="ExternalPractitionerSummaryComponentView.cs" />
     <Compile Include="EmailAddressEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="EmailAddressEditorComponentControl.Designer.cs">
       <DependentUpon>EmailAddressEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="EmailAddressEditorComponentView.cs" />
     <Compile Include="DHtmlComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DHtmlComponentControl.Designer.cs">
       <DependentUpon>DHtmlComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DHtmlComponentView.cs" />
     <Compile Include="FolderExplorerGroupComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FolderExplorerGroupComponentControl.Designer.cs">
       <DependentUpon>FolderExplorerGroupComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderExplorerGroupComponentView.cs" />
     <Compile Include="AttachedDocumentPreviewComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AttachedDocumentPreviewComponentControl.Designer.cs">
       <DependentUpon>AttachedDocumentPreviewComponentControl.cs</DependentUpon>
@@ -332,42 +294,36 @@
       <DependentUpon>LookupField.cs</DependentUpon>
     </Compile>
     <Compile Include="MergeOutcomeReportComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MergeOutcomeReportComponentControl.Designer.cs">
       <DependentUpon>MergeOutcomeReportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MergeOutcomeReportComponentView.cs" />
     <Compile Include="MultipleProceduresEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MultipleProceduresEditorComponentControl.Designer.cs">
       <DependentUpon>MultipleProceduresEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MultipleProceduresEditorComponentView.cs" />
     <Compile Include="OrderNoteboxConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="OrderNoteboxConfigurationComponentControl.Designer.cs">
       <DependentUpon>OrderNoteboxConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderNoteboxConfigurationComponentView.cs" />
     <Compile Include="OrderNoteEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="OrderNoteEditorComponentControl.Designer.cs">
       <DependentUpon>OrderNoteEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderNoteEditorComponentView.cs" />
     <Compile Include="PatientNoteEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PatientNoteEditorComponentControl.Designer.cs">
       <DependentUpon>PatientNoteEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientNoteEditorComponentView.cs" />
     <Compile Include="PatientProfileAdditionalInfoEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PatientProfileAdditionalInfoEditorComponentControl.Designer.cs">
       <DependentUpon>PatientProfileAdditionalInfoEditorComponentControl.cs</DependentUpon>
@@ -375,13 +331,11 @@
     <Compile Include="PatientProfileAdditionalInfoEditorComponentView.cs" />
     <Compile Include="PatientProfileDetailsEditorComponentView.cs" />
     <Compile Include="PatientProfileDetailsEditorControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PatientProfileDetailsEditorControl.Designer.cs">
       <DependentUpon>PatientProfileDetailsEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientSearchComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PatientSearchComponentControl.Designer.cs">
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
@@ -389,27 +343,23 @@
     <Compile Include="PatientSearchComponentView.cs" />
     <Compile Include="PhoneNumberEditorComponentView.cs" />
     <Compile Include="PhoneNumberEditorControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PhoneNumberEditorControl.designer.cs">
       <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderNoteConversationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="OrderNoteConversationComponentControl.Designer.cs">
       <DependentUpon>OrderNoteConversationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderNoteConversationComponentView.cs" />
     <Compile Include="ProcedureEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ProcedureEditorComponentControl.Designer.cs">
       <DependentUpon>ProcedureEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProcedureEditorComponentView.cs" />
     <Compile Include="ProcedureTypeEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ProcedureTypeEditorComponentControl.Designer.cs">
       <DependentUpon>ProcedureTypeEditorComponentControl.cs</DependentUpon>
@@ -422,14 +372,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PublishReportComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PublishReportComponentControl.Designer.cs">
       <DependentUpon>PublishReportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PublishReportComponentView.cs" />
     <Compile Include="SearchComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SearchComponentControl.designer.cs">
       <DependentUpon>SearchComponentControl.cs</DependentUpon>
@@ -447,77 +395,66 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StaffDetailsEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="StaffDetailsEditorComponentControl.designer.cs">
       <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffDetailsEditorComponentView.cs" />
     <Compile Include="StaffGroupDetailsEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="StaffGroupDetailsEditorComponentControl.Designer.cs">
       <DependentUpon>StaffGroupDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffGroupDetailsEditorComponentView.cs" />
     <Compile Include="StaffOrStaffGroupSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="StaffOrStaffGroupSummaryComponentControl.Designer.cs">
       <DependentUpon>StaffOrStaffGroupSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffOrStaffGroupSummaryComponentView.cs" />
     <Compile Include="StaffStaffGroupEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="StaffStaffGroupEditorComponentControl.Designer.cs">
       <DependentUpon>StaffStaffGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffStaffGroupEditorComponentView.cs" />
     <Compile Include="StaffSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="StaffSummaryComponentControl.designer.cs">
       <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffSummaryComponentView.cs" />
     <Compile Include="WorkflowHistoryComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="WorkflowHistoryComponentControl.Designer.cs">
       <DependentUpon>WorkflowHistoryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorkflowHistoryComponentView.cs" />
     <Compile Include="WorklistDetailEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="WorklistDetailEditorComponentControl.Designer.cs">
       <DependentUpon>WorklistDetailEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistDetailEditorComponentView.cs" />
     <Compile Include="WorklistFilterEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="WorklistFilterEditorComponentControl.Designer.cs">
       <DependentUpon>WorklistFilterEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistFilterEditorComponentView.cs" />
     <Compile Include="WorklistMultiDetailEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="WorklistMultiDetailEditorComponentControl.Designer.cs">
       <DependentUpon>WorklistMultiDetailEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistMultiDetailEditorComponentView.cs" />
     <Compile Include="SelectorEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SelectorEditorComponentControl.Designer.cs">
       <DependentUpon>SelectorEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SelectorEditorComponentView.cs" />
     <Compile Include="WorklistTimeWindowEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="WorklistTimeWindowEditorComponentControl.Designer.cs">
       <DependentUpon>WorklistTimeWindowEditorComponentControl.cs</DependentUpon>
@@ -753,9 +690,6 @@
     <EmbeddedResource Include="DiagnosticServiceSummaryComponentControl.resx">
       <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComboBoxCellEditorControl.resx">
-      <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerMergePropertiesComponentControl.resx">
       <DependentUpon>ExternalPractitionerMergePropertiesComponentControl.cs</DependentUpon>

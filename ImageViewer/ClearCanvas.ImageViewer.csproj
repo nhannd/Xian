@@ -208,6 +208,8 @@
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
     <Compile Include="Rendering\RenderingException.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorComponent.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorTool.cs" />
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />

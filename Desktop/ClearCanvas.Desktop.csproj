@@ -120,6 +120,7 @@
     <Compile Include="ApplicationThemeResourceResolver.cs" />
     <Compile Include="Async.cs" />
     <Compile Include="AsyncTask.cs" />
+    <Compile Include="Tables\ComboBoxCellEditor.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafAction.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafClickAction.cs" />

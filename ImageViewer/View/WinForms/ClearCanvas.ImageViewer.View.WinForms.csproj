@@ -154,6 +154,13 @@
       <SubType>Designer</SubType>
       <DependentUpon>TileControl.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="ActivityMonitorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ActivityMonitorComponentControl.Designer.cs">
+      <DependentUpon>ActivityMonitorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityMonitorComponentView.cs" />
     <Compile Include="EditBoxControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -203,6 +210,9 @@
     <None Include="ClassDiagrams\Rendering.cd" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ActivityMonitorComponentControl.resx">
+      <DependentUpon>ActivityMonitorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ImageBoxControl.resx">
       <DependentUpon>ImageBoxControl.cs</DependentUpon>
       <SubType>Designer</SubType>

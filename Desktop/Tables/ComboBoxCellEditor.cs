@@ -14,7 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Desktop.Tables
 {
 	/// <summary>
 	/// Defines an extension point for views onto a <see cref="ComboBoxCellEditor"/>.

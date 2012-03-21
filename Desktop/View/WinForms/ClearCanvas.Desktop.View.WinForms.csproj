@@ -69,6 +69,13 @@
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CloseHelperComponentView.cs" />
+    <Compile Include="ComboBoxCellEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ComboBoxCellEditorControl.Designer.cs">
+      <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComboBoxCellEditorView.cs" />
     <Compile Include="CommonDialogHook.cs" />
     <Compile Include="Configuration\ActionModelConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -571,6 +578,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ClearFilterMini.png" />
+    <EmbeddedResource Include="ComboBoxCellEditorControl.resx">
+      <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Configuration\ActionModelConfigurationComponentControl.resx">
       <DependentUpon>ActionModelConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
