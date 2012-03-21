@@ -93,9 +93,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="WorkItem\BaseItemProcessor.cs" />
+    <Compile Include="WorkItem\IWorkItemProcessor.cs" />
+    <Compile Include="WorkItem\IWorkItemProcessorFactory.cs" />
+    <Compile Include="WorkItem\WorkItemFactoryExtensionPoint.cs" />
+    <Compile Include="WorkItem\WorkItemProcessor.cs" />
     <Compile Include="WorkItem\WorkItemService.cs" />
     <Compile Include="WorkItem\WorkItemServiceExtension.cs" />
+    <Compile Include="WorkItem\WorkItemServiceSettings.cs" />
     <Compile Include="WorkItem\WorkItemServiceType.cs" />
+    <Compile Include="WorkItem\WorkItemStatusProxy.cs" />
+    <Compile Include="WorkItem\WorkItemThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
