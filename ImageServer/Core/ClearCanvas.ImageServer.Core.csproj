@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -42,6 +42,7 @@
       <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -68,6 +69,9 @@
     <Compile Include="Edit\IWebEditStudyProcessorExtension.cs" />
     <Compile Include="Edit\PatientInfo.cs" />
     <Compile Include="Edit\StudyEditorHelper.cs" />
+    <Compile Include="Edit\Test\SetDicomTagTestBase.cs" />
+    <Compile Include="Edit\Test\SetDicomTagTest_UnicodeConversionAllowed.cs" />
+    <Compile Include="Edit\Test\SetDicomTagTest_UnicodeConversionNotAllowed.cs" />
     <Compile Include="Edit\UpdateStudyCommand.cs" />
     <Compile Include="Edit\UpdateStudyStatistics.cs" />
     <Compile Include="Edit\WebDeleteWorkQueueEntryData.cs" />
