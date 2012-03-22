@@ -268,10 +268,26 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <param name="s1"></param>
         /// <param name="s2"></param>
         /// <returns></returns>
-        private static int Diff(string s1, string s2)
+        private static int Diff(DicomTag tag, string s1, string s2)
         {
-            if (s1.Equals(s2))
+            if (s1 != null)
+            {
+                s1 = s1.Trim(new char[] { tag.VR.PadChar, '\0' });
+            }
+            if (s2 != null)
+            {
+                s2 = s2.Trim(new char[] { tag.VR.PadChar, '\0' });
+            }
+
+            
+            if (string.Equals(s1,s2)) 
                 return -1;
+
+            if (s1==null || s2==null)
+            {
+                // Because we call string.Equals(), if one of them is null, the other is not null
+                return 0;
+            }
 
             int index = 0;
             for (; index < s1.Length && index < s2.Length; index++)
@@ -296,7 +312,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
         private void EnsureCharacterSetIsGood(DicomFile file, DicomAttribute attr, string desiredValue)
         {
             var encodedValue = attr.GetEncodedString(file.TransferSyntax, file.DataSet.SpecificCharacterSet);
-            var diff = Diff(encodedValue.Trim(), desiredValue.Trim());
+
+            var diff = Diff(attr.Tag, encodedValue, desiredValue);
             if (diff < 0)
             {
                 // it's all good
@@ -330,7 +347,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             // Before we commit the change, let's verify again if that's good.
             Platform.Log(LogLevel.Debug, "'{0}'cannot be encoded using current Character Set and Unicode is allowed. Checking for value consistency if switching to Unicode encoding", desiredValue);
             encodedValue = attr.GetEncodedString(file.TransferSyntax, newSpecificCharacterSet);
-            diff = Diff(encodedValue.Trim(), desiredValue.Trim());
+            diff = Diff(attr.Tag, encodedValue, desiredValue);
             if (diff >= 0)
             {
                 // not ok?
