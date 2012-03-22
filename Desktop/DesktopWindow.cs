@@ -387,6 +387,9 @@ namespace ClearCanvas.Desktop
     				tags.Add(LabelModifiedInstallation);
 
     			var name = ProductInformation.GetName(false, true);
+    			var oemConfig = OemConfiguration.Load();
+				if (!string.IsNullOrEmpty(oemConfig.ProductName))
+					name = oemConfig.ProductName;
     			if (tags.Count == 0)
     				return name;
 
