@@ -16,13 +16,20 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 {
 	public partial class ActivityMonitorComponentControl : ApplicationComponentUserControl
 	{
-		private ActivityMonitorComponent _component;
+		private readonly ActivityMonitorComponent _component;
 
 		public ActivityMonitorComponentControl(ActivityMonitorComponent component)
 			:base(component)
 		{
 			_component = component;
 			InitializeComponent();
+
+			_workItemsTableView.Table = _component.WorkItemTable;
+		}
+
+		private void _searchButton_Click(object sender, System.EventArgs e)
+		{
+			_component.Search();
 		}
 	}
 }

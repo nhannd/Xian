@@ -226,6 +226,12 @@
     <EmbeddedResource Include="TrackSliderResources\TrackHorizontal.png" />
     <EmbeddedResource Include="TrackSliderResources\TrackVertical.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Clear.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>

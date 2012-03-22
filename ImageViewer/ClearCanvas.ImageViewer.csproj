@@ -111,6 +111,9 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -213,6 +216,7 @@
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
+    <Compile Include="StudyManagement\ProgressBarIconSet.cs" />
     <Compile Include="StudyManagement\RescaleUnits.cs" />
     <Compile Include="StudyManagement\SopInstanceFactory.cs" />
     <Compile Include="StudyManagement\StudyExtensions.cs" />
