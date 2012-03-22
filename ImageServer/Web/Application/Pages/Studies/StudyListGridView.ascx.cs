@@ -267,47 +267,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
                         if(study.IsLocked)
                         {
+                            button.Visible = true;
+									
 							if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.RestoreScheduled))
 							{
-								if (Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.RestoreQueue.Search))
-								{
-									button.PostBackUrl = ImageServerConstants.PageURLs.RestoreQueuePage +
-														 "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
-									                     study.ThePartition.Key;
-									button.Visible = true;
-									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
-									label.Visible = true;
-								}								
+                                button.PostBackUrl = ImageServerConstants.PageURLs.RestoreQueuePage +
+                                                         "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
+                                                         study.ThePartition.Key;
+                                button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
+							    button.Enabled = Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.RestoreQueue.Search);
 							}
 							else if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ArchiveScheduled))
 							{
-								if (Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.ArchiveQueue.Search))
-								{
-									button.PostBackUrl = ImageServerConstants.PageURLs.ArchiveQueuePage +
-														 "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
-														 study.ThePartition.Key;
-									button.Visible = true;
-									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
-									label.Visible = true;									
-								}
+                                button.PostBackUrl = ImageServerConstants.PageURLs.ArchiveQueuePage +
+                                                         "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
+                                                         study.ThePartition.Key;
+                                button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
+							    button.Enabled = Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.ArchiveQueue.Search);
 							}
 							else
 							{
-								if (Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.WorkQueue.Search))
-								{
-									button.PostBackUrl = ImageServerConstants.PageURLs.WorkQueuePage +
-									                     "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
-									                     study.ThePartition.Key;
-									button.Visible = true;
-									button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
-									label.Visible = true;
-								}
+                                button.PostBackUrl = ImageServerConstants.PageURLs.WorkQueuePage +
+                                                         "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
+                                                         study.ThePartition.Key;
+                                button.Text = ServerEnumDescription.GetLocalizedDescription(study.QueueStudyStateEnum);
+							    button.Enabled = Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.WorkQueue.Search);
 							}
                         } else
                         {
                             button.Visible = false;
-                            label.Visible = false;
                         }
+
+                        label.Visible = button.Visible;
                     }
                 }
             }

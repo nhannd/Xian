@@ -28,7 +28,7 @@
 <div class="DashboardBody">
 
 <table width="100%" border="0" >
-<tr><td valign="top" style="border-right: dashed 1px #cccccc;" width="265">
+<tr><td valign="top" style="border-right: dashed 1px #cccccc;">
 
 <div class="DashboardItemContainer">
 <div class="DashboardItemHeader"><a href="../../Studies/Default.aspx"><%= Labels.Dashboard_Studies%></a></div>
