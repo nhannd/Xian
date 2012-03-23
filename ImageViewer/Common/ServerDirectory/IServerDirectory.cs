@@ -1,4 +1,5 @@
 ﻿using System.ServiceModel;
+using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
@@ -9,20 +10,19 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         GetServersResult GetServers(GetServersRequest request);
 
         [OperationContract]
+        [FaultContract(typeof(ServerExistsFault))]
         AddServerResult AddServer(AddServerRequest request);
 
         [OperationContract]
+        [FaultContract(typeof(ServerNotFoundFault))]
         UpdateServerResult UpdateServer(UpdateServerRequest request);
 
         [OperationContract]
+        [FaultContract(typeof(ServerNotFoundFault))]
         DeleteServerResult DeleteServer(DeleteServerRequest request);
-    }
 
-    /// <summary>
-    /// Validation service for operations on the servers.
-    /// </summary>
-    [ServiceContract(SessionMode = SessionMode.Allowed, ConfigurationName = "IServerDirectoryValidation", Namespace = ServerDirectoryNamespace.Value)]
-    public interface IServerDirectoryValidation
-    {
+        [OperationContract]
+        [FaultContract(typeof(ServerNotFoundFault))]
+        DeleteAllServersResult DeleteAllServers(DeleteAllServersRequest request);
     }
 }

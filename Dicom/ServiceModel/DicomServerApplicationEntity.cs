@@ -9,13 +9,14 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Dicom.Iod;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel
 {
 	[DataContract(Namespace = DicomNamespace.Value)]
-	public class DicomServerApplicationEntity : ApplicationEntity, IDicomServerApplicationEntity
+    public class DicomServerApplicationEntity : ApplicationEntity, IDicomServerApplicationEntity, IEquatable<DicomServerApplicationEntity>
 	{
 		public DicomServerApplicationEntity()
 		{}
@@ -46,6 +47,40 @@ namespace ClearCanvas.Dicom.ServiceModel
 
 		#endregion
 
-        public override bool IsStreaming { get { return true; } }
+        public override bool IsStreaming { get { return false; } }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is DicomServerApplicationEntity)
+                return Equals((DicomServerApplicationEntity) obj);
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 0x26578912;
+            hash ^= HostName.GetHashCode();
+            hash ^= Port.GetHashCode();
+            hash ^= base.GetHashCode();
+            return hash;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{0}\nHostName: {1}\nPort:{2}",
+                                 base.ToString(), HostName, Port);
+        }
+
+        #region IEquatable<DicomServerApplicationEntity> Members
+
+        public bool Equals(DicomServerApplicationEntity other)
+        {
+            return (HostName ?? "" ) == (other.HostName ?? "")
+                   && Port == other.Port
+                   && base.Equals(other);
+        }
+
+        #endregion
     }
 }

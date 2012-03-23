@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (serverTreeComponent.ShowLocalDataStoreNode &&
 				!DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup)
 			{
-				serverTreeComponent.SetSelection(serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode);
+				serverTreeComponent.SetSelection(serverTreeComponent.ServerTree.LocalServer);
 			}
 			else
 			{
@@ -201,70 +201,71 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	    // TODO (Marmot): take this away.
 		private static void SelectDefaultServers(ServerTreeComponent serverTreeComponent)
 		{
-			ServerTree serverTree = serverTreeComponent.ServerTree;
+            //ServerTree serverTree = serverTreeComponent.ServerTree;
 
-			List<Server> defaultServers = DefaultServers.SelectFrom(serverTree);
-			CheckDefaultServers(serverTree, defaultServers);
-			IServerTreeNode initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootNode.ServerGroupNode);
-			UncheckAllServers(serverTree);
+            //List<Server> defaultServers = DefaultServers.SelectFrom(serverTree);
+            //CheckDefaultServers(serverTree, defaultServers);
+            //IServerTreeNode initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootNode.ServerGroupNode);
+            //UncheckAllServers(serverTree);
 
-			if (initialSelection == null)
-			{
-				if (serverTreeComponent.ShowLocalDataStoreNode)
-					initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
-				else
-					initialSelection = serverTreeComponent.ServerTree.RootNode.ServerGroupNode;
-			}
+            //if (initialSelection == null)
+            //{
+            //    if (serverTreeComponent.ShowLocalDataStoreNode)
+            //        initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
+            //    else
+            //        initialSelection = serverTreeComponent.ServerTree.RootNode.ServerGroupNode;
+            //}
 
-			serverTreeComponent.SetSelection(initialSelection);
+            //serverTreeComponent.SetSelection(initialSelection);
 		}
 
-		private static IServerTreeNode GetFirstDefaultServerOrGroup(ServerGroup serverGroup)
-		{
-			if (serverGroup.IsEntireGroupChecked())
-				return serverGroup;
+        //private static IServerTreeNode GetFirstDefaultServerOrGroup(ServerGroup serverGroup)
+        //{
+        //    if (serverGroup.IsEntireGroupChecked())
+        //        return serverGroup;
 
-			//consider groups and servers at this level
-			foreach (ServerGroup group in serverGroup.ChildGroups)
-			{
-				if (group.IsEntireGroupChecked())
-					return group;
-			}
+        //    //consider groups and servers at this level
+        //    foreach (ServerGroup group in serverGroup.ChildGroups)
+        //    {
+        //        if (group.IsEntireGroupChecked())
+        //            return group;
+        //    }
 
-			foreach (Server server in serverGroup.ChildServers)
-			{
-				if (server.IsChecked)
-					return server;
-			}
+        //    foreach (Server server in serverGroup.ChildServers)
+        //    {
+        //        if (server.IsChecked)
+        //            return server;
+        //    }
 
-			//repeat for children of the groups at this level
-			foreach (ServerGroup group in serverGroup.ChildGroups)
-			{
-				IServerTreeNode defaultServerOrGroup = GetFirstDefaultServerOrGroup(group);
-				if (defaultServerOrGroup != null)
-					return defaultServerOrGroup;
-			}
+        //    //repeat for children of the groups at this level
+        //    foreach (ServerGroup group in serverGroup.ChildGroups)
+        //    {
+        //        IServerTreeNode defaultServerOrGroup = GetFirstDefaultServerOrGroup(group);
+        //        if (defaultServerOrGroup != null)
+        //            return defaultServerOrGroup;
+        //    }
 
-			return null;
-		}
+        //    return null;
+        //}
 
-		private static void CheckDefaultServers(ServerTree serverTree, List<Server> defaultServers)
-		{
-			foreach (Server server in serverTree.FindChildServers())
-			{
-				if (defaultServers.Contains(server))
-					server.IsChecked = true;
-			}
-		}
+        //private static void CheckDefaultServers(ServerTree serverTree, List<Server> defaultServers)
+        //{
+        //    foreach (Server server in serverTree.FindChildServers())
+        //    {
+        //        if (defaultServers.Contains(server))
+        //            server.IsChecked = true;
+        //    }
+        //}
 
-		private static void UncheckAllServers(ServerTree serverTree)
-		{
-			foreach (Server server in serverTree.FindChildServers())
-				server.IsChecked = false;
-		}
+        //private static void UncheckAllServers(ServerTree serverTree)
+        //{
+        //    foreach (Server server in serverTree.FindChildServers())
+        //        server.IsChecked = false;
+        //}
 
 		internal static bool HasLocalDatastoreSupport()
 		{
+		    //TODO (Marmot): This can come from the tree itself, no?
 			try
 			{
 				StudyFinderExtensionPoint finders = new StudyFinderExtensionPoint();

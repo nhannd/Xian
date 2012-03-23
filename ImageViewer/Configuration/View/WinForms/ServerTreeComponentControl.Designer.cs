@@ -51,8 +51,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 				if (_component.ShowLocalDataStoreNode)
 				{
-					_aeTreeView.MouseEnter -= new EventHandler(OnLocalDataStoreNodeUpdated);
-					_component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Changed -= new EventHandler(OnLocalDataStoreNodeUpdated);
+					_aeTreeView.MouseEnter -= new EventHandler(OnLocalServerConfigurationChanged);
+					_component.ServerTree.LocalServer.ConfigurationChanged -= OnLocalServerConfigurationChanged;
 				}
 
 			}

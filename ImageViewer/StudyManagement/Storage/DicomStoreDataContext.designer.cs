@@ -2073,8 +2073,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private long _Oid;
-		
 		private string _Name;
 		
 		private string _AETitle;
@@ -2087,12 +2085,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private System.Nullable<int> _StreamingImagePort;
 		
+		private string _HostName;
+		
+		private string _Description;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnOidChanging(long value);
-    partial void OnOidChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
     partial void OnAETitleChanging(string value);
@@ -2105,6 +2105,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnStreamingHeaderPortChanged();
     partial void OnStreamingImagePortChanging(System.Nullable<int> value);
     partial void OnStreamingImagePortChanged();
+    partial void OnHostNameChanging(string value);
+    partial void OnHostNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
     #endregion
 		
 		public Device()
@@ -2112,27 +2116,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public long Oid
-		{
-			get
-			{
-				return this._Oid;
-			}
-			set
-			{
-				if ((this._Oid != value))
-				{
-					this.OnOidChanging(value);
-					this.SendPropertyChanging();
-					this._Oid = value;
-					this.SendPropertyChanged("Oid");
-					this.OnOidChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_Name", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		[Column(Storage="_Name", DbType="NVarChar(64) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
 		public string Name
 		{
 			get
@@ -2248,6 +2232,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._StreamingImagePort = value;
 					this.SendPropertyChanged("StreamingImagePort");
 					this.OnStreamingImagePortChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_HostName", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		public string HostName
+		{
+			get
+			{
+				return this._HostName;
+			}
+			set
+			{
+				if ((this._HostName != value))
+				{
+					this.OnHostNameChanging(value);
+					this.SendPropertyChanging();
+					this._HostName = value;
+					this.SendPropertyChanged("HostName");
+					this.OnHostNameChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Description", DbType="NVarChar(64) NOT NULL")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
 				}
 			}
 		}

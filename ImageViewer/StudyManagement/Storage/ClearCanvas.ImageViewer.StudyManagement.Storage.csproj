@@ -91,7 +91,7 @@
     <Compile Include="ServiceProviders\DicomServerConfiguration.cs" />
     <Compile Include="ServiceProviders\DicomServerConfiguration2.cs" />
     <Compile Include="ServiceProviders\ServerDirectory.cs" />
-    <Compile Include="ServiceProviders\ConfigureDicomServerApplication.cs" />
+    <Compile Include="ServiceProviders\Tests\ServerDirectoryTests.cs" />
     <Compile Include="StudyBroker.cs" />
     <Compile Include="WorkItemBroker.cs" />
     <Compile Include="Tests\SerializationTests.cs" />

@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (Context.SelectedServerGroup.IsLocalDatastore && base.IsLocalStudyLoaderSupported)
 				return true;
 
-			foreach (Server server in base.Context.SelectedServerGroup.Servers)
+			foreach (IServerTreeDicomServer server in base.Context.SelectedServerGroup.Servers)
 			{
 				if (server.IsStreaming && base.IsStreamingStudyLoaderSupported)
 					return true;

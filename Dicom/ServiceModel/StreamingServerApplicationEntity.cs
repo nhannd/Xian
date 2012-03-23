@@ -9,13 +9,14 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel
 {
 	[DataContract(Namespace = DicomNamespace.Value)]
-	public class StreamingServerApplicationEntity : DicomServerApplicationEntity, IStreamingServerApplicationEntity
+    public class StreamingServerApplicationEntity : DicomServerApplicationEntity, IStreamingServerApplicationEntity, IEquatable<StreamingServerApplicationEntity>
 	{
 		public StreamingServerApplicationEntity()
 		{}
@@ -44,5 +45,41 @@ namespace ClearCanvas.Dicom.ServiceModel
 
 		[DataMember(IsRequired = true)]
 		public int WadoServicePort { get; set; }
-	}
+
+        public override bool IsStreaming { get { return true; } }
+
+        public override string ToString()
+        {
+            return String.Format("{0}\nHeaderServicePort: {1}\nWadoServicePort: {2}",
+                                 base.ToString(), HeaderServicePort, WadoServicePort);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is StreamingServerApplicationEntity)
+                return Equals((StreamingServerApplicationEntity)obj);
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 0x9872357;
+            hash ^= HeaderServicePort.GetHashCode();
+            hash ^= WadoServicePort.GetHashCode();
+            hash ^= base.GetHashCode();
+            return hash;
+        }
+
+        #region IEquatable<StreamingServerApplicationEntity> Members
+
+        public bool Equals(StreamingServerApplicationEntity other)
+        {
+            return HeaderServicePort == other.HeaderServicePort
+                   && WadoServicePort == other.WadoServicePort
+                   && base.Equals(other);
+        }
+
+        #endregion
+    }
 }

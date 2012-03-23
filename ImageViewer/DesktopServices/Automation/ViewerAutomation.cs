@@ -433,11 +433,12 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(), "The primary study could not be loaded.");
 		}
 
+	    //TODO (Marmot): Can use dicom service nodes and GetService.
 		private static IDictionary<string, IDicomServerApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
 		{
             var serverMap = new Dictionary<string, IDicomServerApplicationEntity>();
 
-		    string localAE = DicomServerConfigurationHelper.GetOfflineAETitle(false);
+		    string localAE = DicomServerConfigurationHelper.AETitle;
 			serverMap[localAE] = null;
 
 			foreach (OpenStudyInfo info in openStudies)

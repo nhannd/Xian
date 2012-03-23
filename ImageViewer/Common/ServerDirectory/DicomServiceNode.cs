@@ -1,5 +1,6 @@
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -8,22 +9,22 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
     internal class StreamingDicomServiceNode : DicomServiceNode, IStreamingDicomServiceNode
     {
-        internal StreamingDicomServiceNode(ServerDirectoryEntry entry)
-            : base(entry)
+        internal StreamingDicomServiceNode(IStreamingServerApplicationEntity server)
+            : base(server)
         {
-            Platform.CheckExpectedType(entry.Server, typeof(StreamingServerApplicationEntity));
+            Platform.CheckExpectedType(server, typeof(IStreamingServerApplicationEntity));
         }
 
         #region Implementation of IStreamingServerApplicationEntity
 
         public int HeaderServicePort
         {
-            get { return ((StreamingServerApplicationEntity)Real).HeaderServicePort; }
+            get { return ((IStreamingServerApplicationEntity)Real).HeaderServicePort; }
         }
 
         public int WadoServicePort
         {
-            get { return ((StreamingServerApplicationEntity)Real).WadoServicePort; }
+            get { return ((IStreamingServerApplicationEntity)Real).WadoServicePort; }
         }
 
         #endregion
@@ -31,8 +32,6 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
     internal class DicomServiceNode : ServiceNode, IDicomServiceNode
     {
-        private readonly Int64 _oid;
-
         internal DicomServiceNode(DicomServerConfiguration localConfiguration)
         {
             Real = new DicomServerApplicationEntity(
@@ -40,17 +39,15 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             IsLocal = true;
         }
 
-        internal DicomServiceNode(ServerDirectoryEntry entry)
+        internal DicomServiceNode(IDicomServerApplicationEntity server)
         {
-            Platform.CheckForNullReference(entry, "entry");
-            Platform.CheckExpectedType(entry.Server, typeof(DicomServerApplicationEntity));
+            Platform.CheckForNullReference(server, "server");
+            Platform.CheckExpectedType(server, typeof(DicomServerApplicationEntity));
 
-            _oid = entry.Oid;
-            Real = (DicomServerApplicationEntity)entry.Server;
+            Real = (DicomServerApplicationEntity) server;
         }
 
         protected DicomServerApplicationEntity Real { get; private set; }
-        public Int64 Oid { get { return _oid; } }
 
         #region Implementation of IApplicationEntity
         

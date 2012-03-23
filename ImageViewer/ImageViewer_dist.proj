@@ -131,6 +131,7 @@
 
   <ItemGroup>
     <DicomDataStoreFiles Include="$(TrunkDirectory)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
+    <DicomStorageFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -367,7 +368,8 @@
     <Copy SourceFiles="@(SqlCEFiles)" DestinationFolder="$(CommonDirectory)" />
     <Copy SourceFiles="@(HibernateFiles)" DestinationFolder="$(CommonDirectory)" />
     <Copy SourceFiles="@(DicomDataStoreFiles)" DestinationFolder="$(CommonDirectory)" />
-    
+    <Copy SourceFiles="@(DicomStorageFiles)" DestinationFolder="$(PluginsDirectory)" />
+
     <!-- Copy Hibernate configuration file -->
     <Copy SourceFiles="$(HibernateConfigurationFileSource)" DestinationFolder="$(DistributionDirectory)" />
     <!-- Run the replace text task-->

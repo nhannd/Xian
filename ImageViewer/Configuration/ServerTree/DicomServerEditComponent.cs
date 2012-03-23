@@ -107,11 +107,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 			if (_serverTree.CurrentNode.IsServer)
 			{
-				Server server = (Server)_serverTree.CurrentNode;
+                IServerTreeDicomServer server = (IServerTreeDicomServer)_serverTree.CurrentNode;
 				_serverName = server.Name;
 				_serverLocation = server.Location;
 				_serverAE = server.AETitle;
-				_serverHost = server.Host;
+				_serverHost = server.HostName;
 				_serverPort = server.Port;
 				_isStreaming = server.IsStreaming;
 				_headerServicePort = server.HeaderServicePort;
@@ -298,7 +298,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			}
 			else
 			{
-				Server newServer = new Server(
+                var newServer = new ServerTreeDicomServer(
 					_serverName, 
 					_serverLocation, 
 					_serverHost, 
@@ -316,12 +316,12 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 					// add new server
 				else if (_serverTree.CurrentNode.IsServerGroup)
 				{
-					((ServerGroup) _serverTree.CurrentNode).AddChild(newServer);
+					((IServerTreeGroup) _serverTree.CurrentNode).AddChild(newServer);
 					_serverTree.CurrentNode = newServer;
 				}
 
-				_serverTree.Save();
-				_serverTree.FireServerTreeUpdatedEvent();
+                _serverTree.Save();
+                _serverTree.FireServerTreeUpdatedEvent();
 
 				this.ExitCode = ApplicationComponentExitCode.Accepted;
 				Host.Exit();

@@ -36,6 +36,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		Common.ServerTree.ServerTree ServerTree { get; }
 
+	    // TODO (Marmot): Change to use Dicom Service Nodes?
 		AEServerGroup SelectedServers { get; }
 		event EventHandler SelectedServerChanged;
 
@@ -219,7 +220,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			else if (dataNode.IsServerGroup)
 			{
 				_selectedServers = new AEServerGroup();
-				_selectedServers.Servers = _serverTree.FindChildServers(dataNode as ServerGroup);
+				_selectedServers.Servers = _serverTree.FindChildServers(dataNode as IServerTreeGroup);
 				_selectedServers.GroupID = dataNode.Path;
 				_selectedServers.Name = dataNode.DisplayName;
 				_serverTree.CurrentNode = dataNode;
@@ -235,20 +236,20 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 			if (movingDataNode.IsServer)
 			{
-				Server movingServer = (Server)movingDataNode;
 				_serverTree.CurrentNode = movingDataNode;
-				_serverTree.DeleteDicomServer();
+				_serverTree.DeleteServer();
 
-				((ServerGroup)destinationNode).AddChild(movingDataNode);
+				((IServerTreeGroup)destinationNode).AddChild(movingDataNode);
 				SetSelection(movingDataNode);
 			}
 			else if (movingDataNode.IsServerGroup)
 			{
-				ServerGroup movingGroup = (ServerGroup)movingDataNode;
+                var movingGroup = (IServerTreeGroup)movingDataNode;
 				_serverTree.CurrentNode = movingGroup;
-				_serverTree.DeleteServerGroup();
+				_serverTree.DeleteGroup();
+                _serverTree.Save();
 
-				((ServerGroup)destinationNode).AddChild(movingGroup);
+                ((IServerTreeGroup)destinationNode).AddChild(movingGroup);
 				SetSelection(movingGroup);
 			}
 			_serverTree.Save();

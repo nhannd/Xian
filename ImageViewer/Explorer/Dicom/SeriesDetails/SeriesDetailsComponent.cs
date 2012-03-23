@@ -319,9 +319,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}
 			else
 			{
-				Server server = (Server)_server;
+                var server = (IServerTreeDicomServer)_server;
 				query = new DicomStudyRootQuery(
-                    DicomServerConfigurationHelper.GetOfflineAETitle(false), server.AETitle, server.Host, server.Port);
+                    DicomServerConfigurationHelper.AETitle, server.AETitle, server.HostName, server.Port);
 			}
 
 			try

@@ -1,4 +1,15 @@
-﻿using System.Runtime.Serialization;
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
@@ -43,8 +54,8 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         [DataMember(IsRequired = true)]
         public string HostName { get; set; }
 
-        // TODO (Marmot): Gonzo.
+        //TODO (Marmot) will this actually be how we store the file store location? Probably.
         [DataMember(IsRequired = true)]
-        public string InterimStorageDirectory { get; set; }
+        public string FileStoreLocation { get; set; }
     }
 }

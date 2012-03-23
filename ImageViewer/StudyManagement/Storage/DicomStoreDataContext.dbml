@@ -92,13 +92,14 @@
   </Table>
   <Table Name="Device" Member="Devices">
     <Type Name="Device">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="AETitle" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="Location" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="true" />
       <Column Name="Port" Type="System.Int32" DbType="Int" CanBeNull="false" />
       <Column Name="StreamingHeaderPort" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="StreamingImagePort" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HostName" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="Configuration" Member="Configurations">

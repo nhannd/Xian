@@ -13,12 +13,27 @@ using System;
 using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-    // TODO (Marmot): remove this stuff, but will have to write something to take it's place first.
+    // TODO (Marmot): Try to get rid of this?
+    public interface IDicomServerConfigurationProvider
+    {
+        string Host { get; }
+        string AETitle { get; }
+        int Port { get; }
+        string FileStoreLocation { get; }
 
+        bool NeedsRefresh { get; }
+        bool ConfigurationExists { get; }
+
+        void Refresh();
+        void RefreshAsync();
+
+        event EventHandler Changed;
+    }
+
+    //TODO (Marmot): this stuff need to change?
 	public static class DicomServerConfigurationHelper
 	{
 		[Serializable]
@@ -72,14 +87,14 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 				get { return DicomServerConfigurationHelper.Port; }
 			}
 
-			public string InterimStorageDirectory
+            public string FileStoreLocation
 			{
-				get { return DicomServerConfigurationHelper.InterimStorageDirectory; }
+				get { return DicomServerConfigurationHelper.FileStoreLocation; }
 			}
 
 			public bool ConfigurationExists
 			{
-				get { return DicomServerConfigurationHelper.DicomServerConfiguration != null; }
+				get { return DicomServerConfiguration != null; }
 			}
 
 			public bool NeedsRefresh
@@ -110,7 +125,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		private static DicomServerConfiguration _configuration;
 		private static event EventHandler _changed;
 		private static bool _refreshing;
-		private static string _offlineAeTitle = null;
 
 		internal static event EventHandler Changed
 		{
@@ -184,60 +198,32 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 			}
 		}
 		
-		public static string Host
+        [Obsolete("Just use the AETitle property instead.")]
+        public static string OfflineAETitle
+        {
+            get { return AETitle; }
+        }
+        
+        public static string AETitle
 		{
 			get
 			{
-				Refresh(false);
-				return DicomServerConfiguration.HostName; 
-			}
-		}
-
-		public static string AETitle
-		{
-			get
-			{
+			    //TODO (Marmot): Is it really ok to throw here?
 				Refresh(false);
 				return DicomServerConfiguration.AETitle; 
 			}
 		}
 
-		/// <summary>
-		/// Gets the current AETitle if the server is running, or the last known AETitle if the server is not running.
-		/// </summary>
-		public static string OfflineAETitle
-		{
-			get { return GetOfflineAETitle(true); }
-		}
-
-		public static string GetOfflineAETitle(bool wait)
-		{
-			if (wait)
-			{
-				try
-				{
-					Refresh(false);
-					_offlineAeTitle = DicomServerConfiguration.AETitle;
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Debug, e);
-				}
-			}
-			else
-			{
-				RefreshAsync();
-				if (DicomServerConfiguration != null)
-					_offlineAeTitle = DicomServerConfiguration.AETitle;
-			}
-
-			if (_offlineAeTitle == null)
-				_offlineAeTitle = new ServerTree.ServerTree().RootNode.LocalDataStoreNode.OfflineAE;
-
-			return _offlineAeTitle;
-		}
-
-		public static int Port
+        public static string Host
+        {
+            get
+            {
+                Refresh(false);
+                return DicomServerConfiguration.HostName;
+            }
+        }
+        
+        public static int Port
 		{
 			get
 			{
@@ -246,12 +232,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 			}
 		}
 
-		public static string InterimStorageDirectory
+        public static string FileStoreLocation
 		{
 			get 
 			{
 				Refresh(false);
-				return DicomServerConfiguration.InterimStorageDirectory; 
+				return DicomServerConfiguration.FileStoreLocation; 
 			}
 		}
 
@@ -265,7 +251,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 			if (Refreshing)
 				return;
 				
-			WaitCallback del = delegate(object nothing)
+			WaitCallback del = delegate
 			{
 				try
 				{
@@ -291,16 +277,14 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 				_refreshing = true;
 			}
 
-			DicomServerServiceClient client = new DicomServerServiceClient();
-
 			try
 			{
-				DicomServerConfiguration = client.GetServerConfiguration();
-				client.Close();
+			    var request = new GetDicomServerConfigurationRequest();
+                Platform.GetService<IDicomServerConfiguration>(s => 
+                            DicomServerConfiguration = s.GetConfiguration(request).Configuration);
 			}
 			catch (Exception e)
 			{
-				client.Abort();
 				throw new RefreshException("Failed to get the DICOM server configuration; the service may not be running.", e);
 			}
 			finally
@@ -318,16 +302,20 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 
 			try
 			{
-			    var configuration = new DicomServerConfiguration
-			                            {
-			                                HostName = hostName,
-			                                AETitle = aeTitle,
-			                                Port = port,
-			                                InterimStorageDirectory = interimStorageDirectory
-			                            };
+			    Platform.GetService<IDicomServerConfiguration>(s =>
+                                   {
+                                       var configuration = new DicomServerConfiguration
+                                                               {
+                                                                   HostName = hostName,
+                                                                   AETitle = aeTitle,
+                                                                   Port = port,
+                                                                   FileStoreLocation = interimStorageDirectory
+                                                               };
 
-				client.UpdateServerConfiguration(configuration);
-				client.Close();
+                                       var request = new UpdateDicomServerConfigurationRequest
+                                                         {Configuration = configuration};
+                                       s.UpdateConfiguration(request);
+                                   });
 			}
 			catch (Exception e)
 			{
@@ -344,5 +332,11 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		{
 			return new DicomServerConfigurationProvider();
 		}
-	}
+
+        [Obsolete("Just use the AETitle property instead.")]
+        public static string GetOfflineAETitle(bool wait)
+        {
+            return AETitle;
+        }
+    }
 }

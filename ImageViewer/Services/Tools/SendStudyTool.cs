@@ -100,14 +100,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				client.Open();
 
-				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
+                foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
 				{
 					var request = new SendStudiesRequest();
                     var aeInformation = new DicomServerApplicationEntity
                                             {
-                                                AETitle = destinationAE.AETitle,
-                                                HostName = destinationAE.Host,
-                                                Port = destinationAE.Port
+                                                AETitle = destination.AETitle,
+                                                HostName = destination.HostName,
+                                                Port = destination.Port
                                             };
 				    request.DestinationAEInformation = aeInformation;
 					request.StudyInstanceUids = studyUids;
@@ -131,8 +131,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			finally
 			{
-				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
-					AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.Host, sentInstances, EventSource.CurrentUser, result);
+                foreach (IServerTreeDicomServer destinationAE in serverTreeComponent.SelectedServers.Servers)
+					AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.HostName, sentInstances, EventSource.CurrentUser, result);
 			}
 		}
 

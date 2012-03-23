@@ -51,27 +51,34 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 				return;
 			}
 
-			string myAE = DicomServerConfigurationHelper.GetOfflineAETitle(false);
+		    try
+		    {
+                string myAE = DicomServerConfigurationHelper.AETitle;
 
-			StringBuilder msgText = new StringBuilder();
-			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
-			foreach (Server server in this.Context.SelectedServers.Servers)
-			{
-				using (VerificationScu scu = new VerificationScu())
-				{
-					VerificationResult result = scu.Verify(myAE, server.AETitle, server.Host, server.Port);
-					if (result == VerificationResult.Success)
-						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
-					else
-						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
+                StringBuilder msgText = new StringBuilder();
+                msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
+                foreach (IServerTreeDicomServer server in this.Context.SelectedServers.Servers)
+                {
+                    using (VerificationScu scu = new VerificationScu())
+                    {
+                        VerificationResult result = scu.Verify(myAE, server.AETitle, server.HostName, server.Port);
+                        if (result == VerificationResult.Success)
+                            msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
+                        else
+                            msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
 
-					// must wait for the SCU thread to release the connection properly before disposal, otherwise we might end up aborting the connection instead
-					scu.Join(new TimeSpan(0, 0, 2));
-				}
-			}
+                        // must wait for the SCU thread to release the connection properly before disposal, otherwise we might end up aborting the connection instead
+                        scu.Join(new TimeSpan(0, 0, 2));
+                    }
+                }
 
-			msgText.AppendFormat("\r\n");
-			this.Context.DesktopWindow.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+                msgText.AppendFormat("\r\n");
+                this.Context.DesktopWindow.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+		    }
+		    catch (Exception e)
+		    {
+                ExceptionHandler.Report(e, base.Context.DesktopWindow);
+		    }
 		}
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)

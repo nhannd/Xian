@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Dicom.Iod;
 
@@ -24,7 +25,7 @@ namespace ClearCanvas.Dicom.ServiceModel
 	[KnownType(typeof(DicomServerApplicationEntity))]
 	[KnownType(typeof(StreamingServerApplicationEntity))]
 	//[DataContract(Namespace = DicomNamespace.Value)]
-	public class ApplicationEntity : IApplicationEntity
+    public class ApplicationEntity : IApplicationEntity, IEquatable<ApplicationEntity>
 	{
 		public ApplicationEntity()
 		{}
@@ -59,6 +60,43 @@ namespace ClearCanvas.Dicom.ServiceModel
 	    // TODO (CR Mar 2012): see if we can get rid of this later.
         public virtual bool IsStreaming { get { return false; } }
 
+        public override string ToString()
+        {
+            return String.Format("Name: {0}\nAE: {1}\nDescription: {2}\nLocation:{3}",
+                                 Name, AETitle, Description, Location);
+        }
+
 		#endregion
-	}
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ApplicationEntity)
+                return Equals((ApplicationEntity)obj);
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 0x3568932;
+            hash ^= AETitle.GetHashCode();
+            hash ^= Name.GetHashCode();
+            hash ^= Description.GetHashCode();
+            hash ^= Location.GetHashCode();
+            return hash;
+        }
+
+        #region IEquatable<ApplicationEntity> Members
+
+        public bool Equals(ApplicationEntity other)
+        {
+            return (AETitle ?? "" ) == (other.AETitle ?? "") &&
+                   (Name ?? "") == (other.Name ?? "") &&
+                   (Description ?? "") == (other.Description ?? "") &&
+                   (Location ?? "") == (other.Location ?? "") &&
+                   IsStreaming == IsStreaming;
+        }
+
+        #endregion
+    }
 }

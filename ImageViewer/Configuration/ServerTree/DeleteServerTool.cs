@@ -37,8 +37,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 					return;
 
 				this.Context.UpdateType = (int)ServerUpdateType.Delete;
-				serverTree.DeleteDicomServer();
-				this.Context.UpdateType = (int)ServerUpdateType.None; 
+                serverTree.DeleteCurrentNode();
+                serverTree.Save();
+                this.Context.UpdateType = (int)ServerUpdateType.None; 
 			}
 			else if (serverTree.CurrentNode.IsServerGroup)
 			{
@@ -46,8 +47,17 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 					return;
 
 				this.Context.UpdateType = (int)ServerUpdateType.Delete;
-				serverTree.DeleteServerGroup();
-				this.Context.UpdateType = (int)ServerUpdateType.None; 
+                try
+                {
+                    serverTree.DeleteCurrentNode();
+                    serverTree.Save();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, Context.DesktopWindow);
+                }
+
+                this.Context.UpdateType = (int)ServerUpdateType.None; 
 			}
 		}
 
@@ -61,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			{
 				//enable only if it's a server or server group, and is not the "My Servers" root node.
 				this.Enabled = (this.Context.ServerTree.CurrentNode.IsServer || this.Context.ServerTree.CurrentNode.IsServerGroup) &&
-				               this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootNode.ServerGroupNode;
+				               this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootServerGroup;
 			}
 		}
 	}

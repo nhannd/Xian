@@ -73,8 +73,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			{
 				// A bit cheap, but by doing this we can force a refresh of the tooltip text if the Dicom
 				// Server WCF service hadn't quite started yet when this component was first created.
-				_aeTreeView.MouseEnter += new EventHandler(OnLocalDataStoreNodeUpdated);
-				_component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Changed += new EventHandler(OnLocalDataStoreNodeUpdated);
+				_aeTreeView.MouseEnter += new EventHandler(OnLocalServerConfigurationChanged);
+                _component.ServerTree.LocalServer.ConfigurationChanged += OnLocalServerConfigurationChanged;
 			}
 
 			BuildServerTreeView(_aeTreeView, _component.ServerTree);
@@ -85,13 +85,13 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 		private void OnServerChecked(TreeNode serverNode)
 		{
-			SetServerCheck(serverNode, !((Server)serverNode.Tag).IsChecked);
+			SetServerCheck(serverNode, !((IServerTreeNode)serverNode.Tag).IsChecked);
 			UpdateServerGroups();
 		}
 
 		private void OnServerGroupChecked(TreeNode serverGroupNode)
 		{
-			ServerGroup group = (ServerGroup)serverGroupNode.Tag;
+            var group = (IServerTreeGroup)serverGroupNode.Tag;
 			SetGroupCheck(serverGroupNode, !group.IsEntireGroupChecked());
 			UpdateServerGroups();
 		}
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			if (!_component.ShowCheckBoxes)
 				return;
 
-			Server server = (Server)serverNode.Tag;
+            var server = (IServerTreeNode)serverNode.Tag;
 			server.IsChecked = isChecked;
 			serverNode.StateImageIndex = (int)(isChecked ? CheckState.Checked : CheckState.Unchecked);
 		}
@@ -120,9 +120,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 			foreach (TreeNode node in serverGroupNode.Nodes)
 			{
-				if (node.Tag is ServerGroup)
+				if (node.Tag is IServerTreeGroup)
 					SetGroupCheck(node, isChecked);
-				else if (node.Tag is Server) 
+                else if (node.Tag is IServerTreeDicomServer) 
 					SetServerCheck(node, isChecked);
 			}
 		}
@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 			foreach (TreeNode node in nodes)
 			{
-				if (node.Tag is ServerGroup)
+                if (node.Tag is IServerTreeGroup)
 				{
 					UpdateServerGroups(CollectionUtils.Cast<TreeNode>(node.Nodes));
 					UpdateServerGroup(node);
@@ -155,9 +155,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			if (!_component.ShowCheckBoxes)
 				return;
 
-			if (serverGroupNode.Tag is ServerGroup)
+			if (serverGroupNode.Tag is IServerTreeGroup)
 			{
-				ServerGroup group = (ServerGroup)serverGroupNode.Tag;
+				var group = (IServerTreeGroup)serverGroupNode.Tag;
 
 				bool isEntireGroupChecked = group.IsEntireGroupChecked();
 				bool isEntireGroupUnchecked = group.IsEntireGroupUnchecked();
@@ -220,7 +220,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 				else
 					SelectRootServerGroupNode();
 			}
-			else if (_component.ServerTree.CurrentNode is ServerGroup)
+			else if (_component.ServerTree.CurrentNode is IServerTreeGroup)
 			{
 				//expand if it's a group
 				this._aeTreeView.SelectedNode.Expand();
@@ -238,12 +238,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 		private void SelectLocalDataStoreNode()
 		{
-			SelectServerTreeNode(_component.ServerTree.RootNode.LocalDataStoreNode);
+			SelectServerTreeNode(_component.ServerTree.LocalServer);
 		}
 
 		private void SelectRootServerGroupNode()
 		{
-			SelectServerTreeNode(_component.ServerTree.RootNode.ServerGroupNode);
+			SelectServerTreeNode(_component.ServerTree.RootServerGroup);
 		}
 
 		private void SelectCurrentServerTreeNode()
@@ -298,15 +298,15 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			}
 		}
 
-		private void OnLocalDataStoreNodeUpdated(object sender, EventArgs e)
+		private void OnLocalServerConfigurationChanged(object sender, EventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler(OnLocalDataStoreNodeUpdated));
+				Invoke(new EventHandler(OnLocalServerConfigurationChanged));
 			}
 			else
 			{
-				_aeTreeView.Nodes[0].ToolTipText = _component.ServerTree.RootNode.LocalDataStoreNode.ToString();
+				_aeTreeView.Nodes[0].ToolTipText = _component.ServerTree.LocalServer.ToString();
 			}
 		}
 
@@ -360,10 +360,10 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 			if (hitTest.Node.StateImageIndex >= 0 && hitTest.Location == TreeViewHitTestLocations.StateImage)
 			{
-				if (hitTest.Node.Tag is Server)
-					OnServerChecked(hitTest.Node);
-				else if (hitTest.Node.Tag is ServerGroup)
+				if (hitTest.Node.Tag is IServerTreeGroup)
 					OnServerGroupChecked(hitTest.Node);
+                else if (hitTest.Node.Tag is IServerTreeDicomServer)
+					OnServerChecked(hitTest.Node);
 			
 				_component.ServerTree.FireServerTreeUpdatedEvent();
 			}
@@ -389,18 +389,18 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			if (_component.ShowLocalDataStoreNode)
 			{
 				// build the localdatastorenode
-				TreeNode localDataStoreTreeNode = new TreeNode(dicomServerTree.RootNode.LocalDataStoreNode.DisplayName);
-				localDataStoreTreeNode.Tag = dicomServerTree.RootNode.LocalDataStoreNode;
-				localDataStoreTreeNode.ToolTipText = dicomServerTree.RootNode.LocalDataStoreNode.ToString();
-				SetIcon(dicomServerTree.RootNode.LocalDataStoreNode, localDataStoreTreeNode);
+				TreeNode localDataStoreTreeNode = new TreeNode(dicomServerTree.LocalServer.DisplayName);
+				localDataStoreTreeNode.Tag = dicomServerTree.LocalServer;
+				localDataStoreTreeNode.ToolTipText = dicomServerTree.LocalServer.ToString();
+				SetIcon(dicomServerTree.LocalServer, localDataStoreTreeNode);
 				treeView.Nodes.Add(localDataStoreTreeNode);
 			}
 
             // build the default server group
-            TreeNode firstServerGroup = new TreeNode(dicomServerTree.RootNode.ServerGroupNode.DisplayName);
-            firstServerGroup.Tag = dicomServerTree.RootNode.ServerGroupNode;
-            firstServerGroup.ToolTipText = dicomServerTree.RootNode.ServerGroupNode.ToString();
-            SetIcon(dicomServerTree.RootNode.ServerGroupNode, firstServerGroup);
+            TreeNode firstServerGroup = new TreeNode(dicomServerTree.RootServerGroup.DisplayName);
+            firstServerGroup.Tag = dicomServerTree.RootServerGroup;
+            firstServerGroup.ToolTipText = dicomServerTree.RootServerGroup.ToString();
+            SetIcon(dicomServerTree.RootServerGroup, firstServerGroup);
             treeView.Nodes.Add(firstServerGroup);
             BuildNextTreeLevel(firstServerGroup);
 			
@@ -411,17 +411,17 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
         private void BuildNextTreeLevel(TreeNode serverGroupUITreeNode)
         {
-            ServerGroup serverGroupNode = serverGroupUITreeNode.Tag as ServerGroup;
+            IServerTreeGroup serverGroupNode = serverGroupUITreeNode.Tag as IServerTreeGroup;
             if (null == serverGroupNode)
                 return;
 
-            foreach (ServerGroup childServerGroup in serverGroupNode.ChildGroups)
+            foreach (IServerTreeGroup childServerGroup in serverGroupNode.ChildGroups)
             {
                 TreeNode childServerGroupUINode = AddTreeNode(serverGroupUITreeNode, childServerGroup);
                 BuildNextTreeLevel(childServerGroupUINode);
             }
 
-            foreach (Server server in serverGroupNode.ChildServers)
+            foreach (IServerTreeNode server in serverGroupNode.Servers)
             {
                 AddTreeNode(serverGroupUITreeNode, server);
             }
@@ -434,7 +434,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             treeChild.Tag = dataChild;
             treeChild.ToolTipText = dataChild.ToString();
 
-			if (treeChild.Tag is Server)
+			if (treeChild.Tag is IServerTreeDicomServer)
 				SetServerCheck(treeChild);
 
 			treeNode.Nodes.Add(treeChild);

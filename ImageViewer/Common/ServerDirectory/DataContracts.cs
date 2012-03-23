@@ -14,12 +14,8 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
     [KnownType(typeof(DicomServerApplicationEntity))]
     [KnownType(typeof(StreamingServerApplicationEntity))]
-    //[KnownType(typeof(ApplicationEntity))]
     public class ServerDirectoryEntry : DataContractBase
     {
-        [DataMember(IsRequired = true)]
-        public Int64 Oid { get; set; }
-
         [DataMember(IsRequired = true)]
         public ApplicationEntity Server { get; set; }
     }
@@ -46,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class GetServersResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public List<ServerDirectoryEntry> DirectoryEntries { get; set; }
+        public List<ApplicationEntity> Servers { get; set; }
     }
 
     #endregion
@@ -57,14 +53,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class UpdateServerRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ServerDirectoryEntry DirectoryEntry { get; set; }
+        public ApplicationEntity Server { get; set; }
     }
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
     public class UpdateServerResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ServerDirectoryEntry DirectoryEntry { get; set; }
+        public ApplicationEntity Server { get; set; }
     }
 
     #endregion
@@ -75,11 +71,21 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class DeleteServerRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ServerDirectoryEntry DirectoryEntry { get; set; }
+        public ApplicationEntity Server { get; set; }
     }
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
     public class DeleteServerResult : DataContractBase
+    {
+    }
+
+    [DataContract(Namespace = ServerDirectoryNamespace.Value)]
+    public class DeleteAllServersRequest : DataContractBase
+    {
+    }
+
+    [DataContract(Namespace = ServerDirectoryNamespace.Value)]
+    public class DeleteAllServersResult : DataContractBase
     {
     }
 
@@ -98,7 +104,21 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class AddServerResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ServerDirectoryEntry DirectoryEntry { get; set; }
+        public ApplicationEntity Server { get; set; }
+    }
+
+    #endregion
+
+    #region Faults
+
+    [DataContract(Namespace = ServerDirectoryNamespace.Value)]
+    public class ServerNotFoundFault : DataContractBase
+    {
+    }
+
+    [DataContract(Namespace = ServerDirectoryNamespace.Value)]
+    public class ServerExistsFault : DataContractBase
+    {
     }
 
     #endregion
