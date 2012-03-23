@@ -49,21 +49,21 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public enum WorkItemTypeEnum
     {
         [EnumMember]
-        StudyProcess,
+        StudyProcess = 1,
         [EnumMember]
-        StudyDelete,
+        StudyDelete = 2,
         [EnumMember]
-        SeriesDelete,
+        SeriesDelete = 3,
         [EnumMember]
-        Import,
+        Import = 4,
         [EnumMember]
-        DicomSend,
+        DicomSend = 5,
         [EnumMember]
-        DicomRetrieve,
+        DicomRetrieve = 6,
         [EnumMember]
-        ReIndex,
+        ReIndex = 7,
         [EnumMember]
-        ReapplyRules,
+        ReapplyRules = 8,
     }
 
     /// <summary>

@@ -26,13 +26,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		}
 
 		public Study GetStudy(int oid)
-		{
-			return this.Context.Studies.First(s => s.Oid == oid);
+		{	
+            var list = (from s in this.Context.Studies
+                        where s.Oid == oid                            
+                        select s).ToList();
+
+            if (!list.Any()) return null;
+
+            return list.First();
 		}
 
 		public Study GetStudy(string studyInstanceUid)
 		{
-			return this.Context.Studies.First(s => s.StudyInstanceUid == studyInstanceUid);
+            var list = (from s in this.Context.Studies
+                        where s.StudyInstanceUid == studyInstanceUid
+                        select s).ToList();
+
+            if (!list.Any()) return null;
+
+            return list.First();
 		}
 	}
 }

@@ -56,6 +56,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             using (var context = new DataAccessContext())
             {
                 var workItemBroker = context.GetWorkItemBroker();
+
+                Item = workItemBroker.GetWorkItem(Item.Oid);
                 DateTime now = Platform.Time;
 
                 Item.FailureCount = Item.FailureCount + 1;
@@ -72,8 +74,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     Item.ExpirationTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
                 }
 
-                workItemBroker.Update(Item);
-
                 context.Commit();
             }
         }
@@ -84,12 +84,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds));
             using (var context = new DataAccessContext())
             {
+                var workItemBroker = context.GetWorkItemBroker();
+
+                Item = workItemBroker.GetWorkItem(Item.Oid);
                 Item.ScheduledTime = newScheduledTime;
                 Item.ExpirationTime = expireTime;
 
-                var broker = context.GetWorkItemBroker();
-
-                broker.Update(Item);
                 context.Commit();
             }
         }
@@ -113,6 +113,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {            
             using (var dataContext = new DataAccessContext())
             {
+                var workItemBroker = dataContext.GetWorkItemBroker();
+
+                Item = workItemBroker.GetWorkItem(Item.Oid);
+                
                 Item.ScheduledTime = Item.ScheduledTime.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
 
                 var now = Platform.Time;
@@ -156,28 +160,41 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
-
         public void Complete()
         {
             using (var context = new DataAccessContext())
             {
+                var broker = context.GetWorkItemBroker();
+                Item = broker.GetWorkItem(Item.Oid);
+
                 DateTime now = Platform.Time;
 
-                if (now < Item.ExpirationTime)
+                Item.ScheduledTime = now;
+                Item.ExpirationTime = now;
+                Item.Status = WorkItemStatusEnum.Complete;
+
+                var uidBroker = context.GetWorkItemUidBroker();
+                foreach (var entity in Item.WorkItemUids)
                 {
-                    Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-                    Item.Status = WorkItemStatusEnum.Idle;
-                }
-                else
-                {
-                    Item.ScheduledTime = now;
-                    Item.ExpirationTime = now;
-                    Item.Status = WorkItemStatusEnum.Complete;
+                    uidBroker.Delete(entity);
                 }
 
+                context.Commit();
+            }
+        }
+
+        public void Idle()
+        {
+            using (var context = new DataAccessContext())
+            {
                 var broker = context.GetWorkItemBroker();
+                Item = broker.GetWorkItem(Item.Oid);
 
-                broker.Update(Item);
+                DateTime now = Platform.Time;
+
+                Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                Item.Status = WorkItemStatusEnum.Idle;
+
                 context.Commit();
             }
         }
@@ -186,15 +203,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             using (var context = new DataAccessContext())
             {
+                var broker = context.GetWorkItemBroker();
+                Item = broker.GetWorkItem(Item.Oid);
+                
                 DateTime now = Platform.Time;
 
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
                 Item.Status = WorkItemStatusEnum.Canceled;
 
-                var broker = context.GetWorkItemBroker();
-
-                broker.Update(Item);
                 context.Commit();
             }
         }

@@ -35,7 +35,6 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             {
                 Complete = false,
                 FailureCount = 0,
-                WorkItemOid = WorkItem.Oid,
                 SeriesInstanceUid = seriesInstanceUid,
                 SopInstanceUid = sopInstanceUid,
                 Failed = false
@@ -73,7 +72,6 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             {
                 Complete = false,
                 FailureCount = 0,
-                WorkItemOid = WorkItem.Oid,
                 SeriesInstanceUid = seriesInstanceUid,
                 SopInstanceUid = sopInstanceUid,
                 Failed = false,

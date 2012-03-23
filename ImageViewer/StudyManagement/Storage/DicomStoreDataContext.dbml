@@ -2,7 +2,7 @@
 <Database Name="dicom_store" EntityNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" ContextNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" Class="DicomStoreDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="RuleAction" Member="RuleActions">
     <Type Name="RuleAction">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="RuleConditionOid" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
       <Column Name="Type" Type="RuleActionType" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="SerializedAction" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
@@ -11,7 +11,7 @@
   </Table>
   <Table Name="RuleCondition" Member="RuleConditions">
     <Type Name="RuleCondition">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="SerializedCondition" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="AllStudies" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
@@ -20,7 +20,7 @@
   </Table>
   <Table Name="Study" Member="Studies">
     <Type Name="Study">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="StudyId" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
       <Column Name="StudyTimeRaw" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
       <Column Name="StudyDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
@@ -62,7 +62,7 @@
   </Table>
   <Table Name="WorkItem" Member="WorkItems">
     <Type Name="WorkItem">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="InsertTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="ScheduledTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="ExpirationTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
@@ -81,13 +81,13 @@
   </Table>
   <Table Name="WorkItemUid" Member="WorkItemUids">
     <Type Name="WorkItemUid">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="WorkItemOid" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
       <Column Name="SeriesInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="SopInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="Complete" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="FailureCount" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
-      <Column Name="File" Type="System.String" DbType="NVarChar(128)" CanBeNull="false" />
+      <Column Name="File" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
       <Column Name="Failed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="WorkItem_WorkItemUid" Member="WorkItem" ThisKey="WorkItemOid" OtherKey="Oid" Type="WorkItem" IsForeignKey="true" />
     </Type>

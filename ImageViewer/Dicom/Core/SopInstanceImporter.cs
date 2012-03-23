@@ -227,7 +227,6 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 {
                     var studyLocation = new StudyLocation(message);
 
-                	String path = studyLocation.StudyFolder;
                 	String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
                     
                     DicomFile file = ConvertToDicomFile(message, finalDest, _context.SourceAE);
@@ -254,7 +253,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                     }
                     else
                     {
-                        commandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
+                        commandProcessor.AddCommand(new SaveDicomFileCommand(finalDest, file, true));
 
                         WorkItem workItem;
                         command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem) 

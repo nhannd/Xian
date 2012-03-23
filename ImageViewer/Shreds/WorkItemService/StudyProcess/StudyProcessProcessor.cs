@@ -53,13 +53,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                         complete = false;
                 }
 
+                DateTime now = Platform.Time;
+
                 if (failed)
                     Proxy.Fail("",WorkItemFailureType.NonFatal);
                 else if (!complete)
                     Proxy.Postpone();
+                else if (now > Proxy.Item.ExpirationTime)
+                {
+                    // Need to apply Study Level Rules here!
+
+                    Proxy.Complete();
+                }
                 else
                 {
-                    Proxy.Complete();
+                    Proxy.Idle();
                 }
             }
             else
@@ -97,6 +105,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                 lastSuccessProcessCount = successfulProcessCount;
 
                 LoadUids();
+
                 foreach (WorkItemUid sop in WorkQueueUidList)
                 {
                     if (sop.Failed)

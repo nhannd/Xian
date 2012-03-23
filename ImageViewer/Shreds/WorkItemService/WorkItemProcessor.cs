@@ -91,7 +91,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		/// a thread pool to process the entries.
 		/// </remarks>
         protected override void RunCore()
-        {		 
+        {
+            // Reset any in progress WorkItems if we crashed while processing.
+		    ResetInProgressWorkItems();
+
 		    if (!_threadPool.Active)
 		        _threadPool.Start();
 
@@ -107,7 +110,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 {
                     list = GetWorkItems(_threadPool.StatThreadsAvailable, true);
                 }
-                else if (_threadPool.NormalThreadsAvailable > 0)
+                
+                if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
                 {
                     list = GetWorkItems(_threadPool.NormalThreadsAvailable, false);
                 }
@@ -243,17 +247,36 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
-                var statItems = stat
-                                    ? workItemBroker.GetStatPendingWorkItems(count)
-                                    : workItemBroker.GetPendingWorkItems(count);
+                List<WorkItem> workItems;
+                if (stat)
+                    workItems = workItemBroker.GetStatPendingWorkItems(count);
+                else
+                
+                    workItems = workItemBroker.GetPendingWorkItems(count);
 
-                foreach (var item in statItems)
+                foreach (var item in workItems)
                 {
                     item.Status = WorkItemStatusEnum.InProgress;
                 }
 
                 context.Commit();
-                return statItems;
+                return workItems;
+            }
+        }
+
+        private void ResetInProgressWorkItems()
+        {
+            using (var context = new DataAccessContext())
+            {
+                var workItemBroker = context.GetWorkItemBroker();
+                var list = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.InProgress, null);
+
+                foreach (var item in list)
+                {
+                    item.Status = WorkItemStatusEnum.Pending;
+                }
+
+                context.Commit();
             }
         }
 

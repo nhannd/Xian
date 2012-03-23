@@ -19,6 +19,7 @@ using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -131,41 +132,31 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return true;
 			}
 
-			string fileName = Path.GetRandomFileName();
-			string path = String.Format("{0}\\{1}.dcm", Context.InterimStorageDirectory, fileName);
+		    var context = new DicomReceiveImportContext(association.CalledAE);
+		    var importer = new SopInstanceImporter(context);
 
-			try
-			{
-				DicomFile dicomFile = new DicomFile(message, path);
+		    var result = importer.Import(message);
+            if (result.Successful)
+            {
+                if (!String.IsNullOrEmpty(result.AccessionNumber))
+                    Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} (A#:{3} StudyUid:{4})",
+                                 result.SopInstanceUid, association.CallingAE, association.CalledAE, result.AccessionNumber,
+                                 result.StudyInstanceUid);
+                else
+                    Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} (StudyUid:{3})",
+                                 result.SopInstanceUid, association.CallingAE, association.CalledAE,
+                                 result.StudyInstanceUid);
 
-				if (message.TransferSyntax.Encapsulated)
-					dicomFile.TransferSyntax = message.TransferSyntax;
-				else
-					dicomFile.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                OnFileReceived(association.CallingAE,string.Empty);
+            }
+            else
+            {
+                Platform.Log(LogLevel.Warn, "Failure importing sop: {0}", result.ErrorMessage);
+                OnReceiveError(message, result.ErrorMessage, association.CallingAE);
+            }
 
-				dicomFile.MediaStorageSopInstanceUid = sopInstanceUid.UID;
-				dicomFile.ImplementationClassUid = DicomImplementation.ClassUID.UID;
-				dicomFile.ImplementationVersionName = DicomImplementation.Version;
-				dicomFile.SourceApplicationEntityTitle = association.CallingAE;
-				dicomFile.MediaStorageSopClassUid = message.SopClass.Uid;
-
-				dicomFile.Save(DicomWriteOptions.None);
-
-				OnFileReceived(association.CallingAE, dicomFile.Filename);
-
-				server.SendCStoreResponse(presentationID, message.MessageId,
-				                          sopInstanceUid.UID, DicomStatuses.Success);
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Failed to save file to interim directory ({0}).", path);
-
-				server.SendCStoreResponse(presentationID, message.MessageId, sopInstanceUid.UID,
-					DicomStatuses.ProcessingFailure);
-
-				OnReceiveError(message, e.Message, association.CallingAE);
-			}
-
+		    server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, result.DicomStatus);
+               
 			return true;
 		}
 

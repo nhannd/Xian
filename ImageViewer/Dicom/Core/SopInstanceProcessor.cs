@@ -84,8 +84,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                     processor.AddCommand(insertStudyXmlCommand);
 
                     // Insert into the database, but only if its not a duplicate so the counts don't get off
-                    var insertInstanceCommand = new InsertOrUpdateStudyCommand(file, studyXml);
-                    processor.AddCommand(insertInstanceCommand);
+                    var insertStudyCommand = new InsertOrUpdateStudyCommand(file, studyXml);
+                    processor.AddCommand(insertStudyCommand);
 
                     if (uid != null)
                         processor.AddCommand(new CompleteWorkItemUidCommand(uid));

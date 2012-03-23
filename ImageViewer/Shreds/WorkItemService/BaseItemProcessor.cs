@@ -90,46 +90,44 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         protected void LoadUids()
         {
-            if (_uidList == null)
+            using (var context = new DataAccessContext())
             {
-                using (var context = new DataAccessContext())
-                {
-                    var broker = context.GetWorkItemUidBroker();
+                var broker = context.GetWorkItemUidBroker();
 
-                    _uidList = broker.GetWorkItemUidsForWorkItem(Proxy.Item.Oid);
-                }
+                _uidList = broker.GetWorkItemUidsForWorkItem(Proxy.Item.Oid);
             }
         }
 
-        /// <summary>
+       /// <summary>
         /// Routine for failing a work queue uid record.
         /// </summary>
-        /// <param name="sop">The WorkQueueUid record to fail.</param>
+        /// <param name="uid">The WorkItemUid entry to fail.</param>
         /// <param name="retry">A boolean value indicating whether a retry will be attempted later.</param>
-        protected void FailWorkItemUid(WorkItemUid sop, bool retry)
+        protected WorkItemUid FailWorkItemUid(WorkItemUid uid, bool retry)
         {
             using (var context = new DataAccessContext())
             {
-                sop.Complete = true;
+                var broker = context.GetWorkItemUidBroker();
+                var sop = broker.GetWorkItemUid(uid.Oid);
+
                 if (!sop.FailureCount.HasValue)
                     sop.FailureCount = 1;
                 else
                     sop.FailureCount = (byte) (sop.FailureCount.Value + 1);
 
                 if (sop.FailureCount > WorkItemServiceSettings.Instance.RetryCount)
-                    sop.Complete = true; // TODO
-
-                var broker = context.GetWorkItemUidBroker();
-                broker.Update(sop);
+                    sop.Failed = true;
+                
                 context.Commit();
+                return sop;
             }
         }
 
         /// <summary>
         /// Delete an entry in the <see cref="WorkItemUid"/> table.
         /// </summary>
-        /// <param name="sop">The <see cref="WorkItemUid"/> entry to delete.</param>
-        protected virtual void CompleteWorkItemUid(WorkItemUid sop)
+        /// <param name="uid">The <see cref="WorkItemUid"/> entry to delete.</param>
+        protected virtual WorkItemUid CompleteWorkItemUid(WorkItemUid uid)
         {
             // Must retry in case of db error.
             // Failure to do so may lead to orphaned WorkQueueUid and FileNotFoundException 
@@ -141,12 +139,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 {
                     using (var context = new DataAccessContext())
                     {
-                        sop.Complete = true;
                         var broker = context.GetWorkItemUidBroker();
-                        broker.Update(sop);
+                        var sop = broker.GetWorkItemUid(uid.Oid);
+                        sop.Complete = true;
                         context.Commit();
+                        return sop;
                     }
-                    break; // done
                 }
                 catch (Exception ex)
                 {
@@ -160,11 +158,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                 String.Format(
                                     "Error occurred when deleting WorkItemUid. Max db retry count has been reached."),
                                 WorkItemFailureType.Fatal);
-                            return;
+                            return uid;
                         }
 
                         Platform.Log(LogLevel.Error, ex,
-                                     "Error occurred when calling DeleteWorkQueueUid(). Retry later. OID={0}", sop.Oid);
+                                     "Error occurred when calling DeleteWorkQueueUid(). Retry later. OID={0}", uid.Oid);
                         SleepForRetry();
 
 
@@ -180,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         throw;
                 }
             }
-
+            return uid;
         }
 
 

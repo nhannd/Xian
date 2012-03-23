@@ -50,9 +50,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                     select w).Count() > 1;
         }
 
-        public void Update(WorkItemUid uid)
+
+        /// <summary>
+        /// Get a specific WorkItemUid
+        /// </summary>
+        /// <param name="oid"></param>
+        /// <returns></returns>
+        public WorkItemUid GetWorkItemUid(long oid)
         {
-            Context.WorkItemUids.Attach(uid);
+            var list = (from w in this.Context.WorkItemUids
+                        where w.Oid == oid
+                        select w).ToList();
+
+            if (!list.Any()) return null;
+
+            return list.First();
+        }
+
+        /// <summary>
+        /// Delete WorkItemUid entity.
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Delete(WorkItemUid entity)
+        {
+            this.Context.WorkItemUids.DeleteOnSubmit(entity);
         }
     }
 }

@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Oid
 		{
 			get
@@ -323,7 +323,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Oid
 		{
 			get
@@ -617,7 +617,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Oid
 		{
 			get
@@ -1478,7 +1478,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Oid
 		{
 			get
@@ -1874,7 +1874,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Oid
 		{
 			get
@@ -1998,7 +1998,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[Column(Storage="_File", DbType="NVarChar(128)", CanBeNull=false)]
+		[Column(Storage="_File", DbType="NVarChar(128)")]
 		public string File
 		{
 			get

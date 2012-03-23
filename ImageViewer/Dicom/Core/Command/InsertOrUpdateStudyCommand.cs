@@ -34,17 +34,16 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         protected override void OnExecute(CommandProcessor theProcessor)
         {
-            var studyBroker = DataAccessContext.GetStudyBroker();
-
-            Study = studyBroker.GetStudy(_studyInstanceUid);
-
+            var broker = DataAccessContext.GetStudyBroker();
+            Study = broker.GetStudy(_studyInstanceUid);
             bool created = false;
 
             if (Study == null)
             {
                 Study = new Study();
                 created = true;
-
+                Study.DeleteTime = DateTime.Now.AddDays(1);
+                Study.Deleted = false;
             }
 
             Study.Initialize(_messageBase);
@@ -53,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             Study.NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
 
             if (created)
-                studyBroker.AddStudy(Study);
+                broker.AddStudy(Study);
         }
     }
 }

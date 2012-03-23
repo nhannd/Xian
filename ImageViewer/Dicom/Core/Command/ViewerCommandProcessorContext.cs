@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         public ViewerCommandProcessorContext()
         {
             DataAccessContext = new DataAccessContext();
+            BackupDirectory = Path.GetTempPath();
         }
 
         public void Dispose()
@@ -62,8 +63,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         public string BackupDirectory
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get;
+            set;
         }
     }
 }

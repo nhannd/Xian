@@ -332,6 +332,8 @@
 
   <ItemGroup Condition="$(ShredHostBuild)">
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Shreds\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Dicom\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.Dicom.Core.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" />
   </ItemGroup>
 
   <ItemGroup>

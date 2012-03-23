@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
     public class CompleteWorkItemUidCommand : DataAccessCommand
     {
-        private readonly WorkItemUid _uid;
+        private WorkItemUid _uid;
 
         public CompleteWorkItemUidCommand(WorkItemUid uid) : base("Complete WorkItemUid")
         {
@@ -26,8 +26,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         protected override void OnExecute(CommandProcessor theProcessor)
         {
             var broker = DataAccessContext.GetWorkItemUidBroker();
+            _uid = broker.GetWorkItemUid(_uid.Oid);
             _uid.Complete = true;
-            broker.Update(_uid);
         }
 
         protected override void OnUndo()
