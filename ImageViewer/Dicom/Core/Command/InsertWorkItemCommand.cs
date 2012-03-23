@@ -37,7 +37,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 FailureCount = 0,
                 WorkItemOid = WorkItem.Oid,
                 SeriesInstanceUid = seriesInstanceUid,
-                SopInstanceUid = sopInstanceUid
+                SopInstanceUid = sopInstanceUid,
+                Failed = false
             };
         }
 
@@ -55,7 +56,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 FailureCount = 0,
                 WorkItemOid = WorkItem.Oid,
                 SeriesInstanceUid = seriesInstanceUid,
-                SopInstanceUid = sopInstanceUid
+                SopInstanceUid = sopInstanceUid,
+                Failed = false
             };
 
         }
@@ -73,7 +75,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 FailureCount = 0,
                 WorkItemOid = WorkItem.Oid,
                 SeriesInstanceUid = seriesInstanceUid,
-                SopInstanceUid = sopInstanceUid
+                SopInstanceUid = sopInstanceUid,
+                Failed = false,
+                File = filename
             };
         }
 
@@ -91,7 +95,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 FailureCount = 0,
                 WorkItemOid = WorkItem.Oid,
                 SeriesInstanceUid = seriesInstanceUid,
-                SopInstanceUid = sopInstanceUid
+                SopInstanceUid = sopInstanceUid,
+                Failed = false,
+                File = filename
             };
 
         }
@@ -119,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                                        ExpirationTime = now.AddMinutes(2),
                                        StudyInstanceUid = _studyInstanceUid,
                                    };
-                    workItemBroker.Insert(WorkItem);
+                    workItemBroker.AddWorkItem(WorkItem);
                 }
             }
             else
@@ -129,11 +135,6 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
             // Assign the WorkItem over so that it gets committed properly
             WorkItemUid.WorkItem = WorkItem;
-        }
-
-        protected override void OnUndo()
-        {
-            // Handle automatically via a rollback
         }
     }
 }

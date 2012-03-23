@@ -72,9 +72,9 @@
       <Column Name="Priority" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemPriorityEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="StudyInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="StudyOid" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
-      <Column Name="SerializedStudy" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
-      <Column Name="SerializedPatient" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="SerializedProgress" Storage="_SerializedPatient" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="SerializedRequest" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="FailureCount" Type="System.Int32" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Association Name="WorkItem_WorkItemUid" Member="WorkItemUids" ThisKey="Oid" OtherKey="WorkItemOid" Type="WorkItemUid" />
       <Association Name="Study_WorkItem" Member="Study" ThisKey="StudyOid" OtherKey="Oid" Type="Study" IsForeignKey="true" />
     </Type>
@@ -87,6 +87,8 @@
       <Column Name="SopInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="Complete" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="FailureCount" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="File" Type="System.String" DbType="NVarChar(128)" CanBeNull="false" />
+      <Column Name="Failed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="WorkItem_WorkItemUid" Member="WorkItem" ThisKey="WorkItemOid" OtherKey="Oid" Type="WorkItem" IsForeignKey="true" />
     </Type>
   </Table>

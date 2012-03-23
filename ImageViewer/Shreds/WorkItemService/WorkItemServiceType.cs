@@ -13,11 +13,10 @@ using System;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Shreds.LocalDataStore;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
     [Serializable]
     internal class WorkItemServiceException : Exception

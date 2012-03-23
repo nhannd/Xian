@@ -48,7 +48,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\CompleteWorkItemUidCommand.cs" />
     <Compile Include="Command\DataAccessCommand.cs" />
+    <Compile Include="Command\InsertOrUpdateStudyCommand.cs" />
+    <Compile Include="Command\InsertStudyXmlCommand.cs" />
     <Compile Include="Command\InsertWorkItemCommand.cs" />
     <Compile Include="Command\ViewerCommandProcessor.cs" />
     <Compile Include="Command\ViewerCommandProcessorContext.cs" />
@@ -56,6 +59,7 @@
     <Compile Include="Rules\ViewerActionContext.cs" />
     <Compile Include="Rules\ViewerRulesEngine.cs" />
     <Compile Include="SopInstanceImporter.cs" />
+    <Compile Include="SopInstanceProcessor.cs" />
     <Compile Include="StudyLocation.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -13,13 +13,13 @@ using System;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
 	internal class Serializer
 	{
 		private static readonly IJsmlSerializerHook _workItemRequestHook = new PolymorphicDataContractHook<WorkItemRequestDataContractAttribute>();
+        private static readonly IJsmlSerializerHook _workItemProgressHook = new PolymorphicDataContractHook<WorkItemProgressDataContractAttribute>();
 
 		public static string SerializeWorkItemRequest(WorkItemRequest data)
 		{
@@ -33,15 +33,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 				new JsmlSerializer.DeserializeOptions { Hook = _workItemRequestHook, DataContractTest = IsWorkItemRequestContract });
 		}
 
-		public static string SerializeStudyData(StudyIdentifier data)
+		public static string SerializeWorkItemProgress(WorkItemProgress data)
 		{
-			return JsmlSerializer.Serialize(data, "data");
+			return JsmlSerializer.Serialize(data, "data",
+                new JsmlSerializer.SerializeOptions { Hook = _workItemProgressHook, DataContractTest = IsWorkItemProgressContract });
 		}
+        public static WorkItemProgress DeserializeWorkItemProgress(string data)
+        {
+            return JsmlSerializer.Deserialize<WorkItemProgress>(data,
+                new JsmlSerializer.DeserializeOptions { Hook = _workItemProgressHook, DataContractTest = IsWorkItemProgressContract });
+        }
 
-		public static StudyIdentifier DeserializeStudyData(string data)
-		{
-			return JsmlSerializer.Deserialize<StudyIdentifier>(data);
-		}
+        private static bool IsWorkItemProgressContract(Type t)
+        {
+            return AttributeUtils.HasAttribute<WorkItemProgressDataContractAttribute>(t);
+        }
 
 		private static bool IsWorkItemRequestContract(Type t)
 		{

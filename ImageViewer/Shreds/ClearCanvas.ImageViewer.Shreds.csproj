@@ -93,9 +93,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="WorkItem\WorkItemService.cs" />
-    <Compile Include="WorkItem\WorkItemServiceExtension.cs" />
-    <Compile Include="WorkItem\WorkItemServiceType.cs" />
+    <Compile Include="WorkItemService\BaseItemProcessor.cs" />
+    <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
+    <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
+    <Compile Include="WorkItemService\StudyProcess\StudyProcessFactory.cs" />
+    <Compile Include="WorkItemService\StudyProcess\StudyProcessProcessor.cs" />
+    <Compile Include="WorkItemService\WorkItemFactoryExtensionPoint.cs" />
+    <Compile Include="WorkItemService\WorkItemProcessor.cs" />
+    <Compile Include="WorkItemService\WorkItemProcessorExtension.cs" />
+    <Compile Include="WorkItemService\WorkItemService.cs" />
+    <Compile Include="WorkItemService\WorkItemServiceExtension.cs" />
+    <Compile Include="WorkItemService\WorkItemServiceSettings.cs" />
+    <Compile Include="WorkItemService\WorkItemServiceType.cs" />
+    <Compile Include="WorkItemService\WorkItemStatusProxy.cs" />
+    <Compile Include="WorkItemService\ProcessorThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -138,6 +149,11 @@
     <EmbeddedResource Include="DicomServer\ImageSopClasses.xml" />
     <EmbeddedResource Include="DicomServer\NonImageSopClasses.xml" />
     <EmbeddedResource Include="DicomServer\TransferSyntaxes.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WorkItemService\DicomSend\" />
+    <Folder Include="WorkItemService\Import\" />
+    <Folder Include="WorkItemService\StudyDelete\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

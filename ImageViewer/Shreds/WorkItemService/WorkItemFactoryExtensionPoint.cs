@@ -9,13 +9,15 @@
 
 #endregion
 
-using System.ServiceModel;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Common.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
-    public interface IWorkItemActivityCallback
+    /// <summary>
+    /// Plugin for WorkQueue item processors.
+    /// </summary>
+    [ExtensionPoint]
+    public class WorkItemFactoryExtensionPoint : ExtensionPoint<IWorkItemProcessorFactory>
     {
-        [OperationContract(IsOneWay = true)]
-        void WorkItemChanged(WorkItemData progressItem);
     }
 }
