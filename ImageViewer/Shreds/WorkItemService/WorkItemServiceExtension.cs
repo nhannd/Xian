@@ -15,7 +15,7 @@ using ClearCanvas.Common.Shreds;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
     [ExtensionOf(typeof(ShredExtensionPoint))]
     public class WorkItemServiceExtension : WcfShred

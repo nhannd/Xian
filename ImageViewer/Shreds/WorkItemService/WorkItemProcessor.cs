@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -13,33 +13,31 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Shreds;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
     /// <summary>
     /// Engine for acquiring WorkQueue items and finding plugins to process them.
     /// </summary>
-    sealed public class WorkItemProcessor
+    sealed public class WorkItemProcessor : QueueProcessor
     {
         #region Members
 
         private readonly Dictionary<WorkItemTypeEnum, IWorkItemProcessorFactory> _extensions = new Dictionary<WorkItemTypeEnum, IWorkItemProcessorFactory>();
-		private readonly WorkItemThreadPool _threadPool;
+		private readonly ProcessorThreadPool _threadPool;
         private readonly ManualResetEvent _threadStop;
-        private readonly ManualResetEvent _terminateEvent;
-        private bool _stop;
 
         #endregion
 
 		#region Constructor
-        public WorkItemProcessor(int numberStatThreads, int numberNormalThreads, ManualResetEvent terminateEvent, string name)
+        public WorkItemProcessor(int numberStatThreads, int numberNormalThreads, string name)
         {
-            _terminateEvent = terminateEvent;
             _threadStop = new ManualResetEvent(false);
 
-			_threadPool = new WorkItemThreadPool(numberStatThreads,numberNormalThreads)
+			_threadPool = new ProcessorThreadPool(numberStatThreads,numberNormalThreads)
 			                  {
 			                      ThreadPoolName = name + " Pool"
 			                  };
@@ -74,13 +72,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 		/// <summary>
 		/// Stop the WorkQueue processor
 		/// </summary>
-		public void Stop()
+		public override void RequestStop()
 		{
-            // Set both events, just in case.
-			_terminateEvent.Set();
-		    _threadStop.Set();
+            base.RequestStop();
 
-			_stop = true;
+            // Set both events, just in case.
+			_threadStop.Set();
+
 			if (_threadPool.Active)
 				_threadPool.Stop();
 		}
@@ -92,8 +90,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 		/// This method queries the database for WorkQueue entries to work on, and then uses
 		/// a thread pool to process the entries.
 		/// </remarks>
-        public void Run()
-		{		 
+        protected override void RunCore()
+        {		 
 		    if (!_threadPool.Active)
 		        _threadPool.Start();
 
@@ -101,10 +99,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 
             while (true)
             {
-                if (_stop)
+                if (StopRequested)
                     return;
 
-                List<StudyManagement.Storage.WorkItem> list = null;
+                List<WorkItem> list = null;
                 if (_threadPool.StatThreadsAvailable > 0)
                 {
                     list = GetWorkItems(_threadPool.StatThreadsAvailable, true);
@@ -123,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                 if  (list.Count == 0)
                 {
                     /* No result found */
-                    _terminateEvent.WaitOne(2000, false);
+                    _threadStop.WaitOne(2000, false);
                     continue;
                 }
 
@@ -164,7 +162,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                 {
                     // Wait for only 3 seconds
                     Platform.Log(LogLevel.Error, e, "Exception occured when processing WorkItem item.");
-                    _terminateEvent.WaitOne(3000, false);
+                    _threadStop.WaitOne(3000, false);
                 }
             }
 		}
@@ -185,16 +183,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 		/// </summary>
 		/// <param name="processor"></param>
 		/// <param name="queueItem"></param>
-        private void ExecuteProcessor(IWorkItemProcessor processor, StudyManagement.Storage.WorkItem queueItem)
+        private void ExecuteProcessor(IWorkItemProcessor processor, WorkItem queueItem)
 		{
 		    var proxy = new WorkItemStatusProxy(queueItem);
 
 			try
 			{
              	string failureDescription;
-                if (!processor.Intialize(proxy))
+                if (!processor.Initialize(proxy))
                 {
-                	proxy.Postpone(string.Empty);
+                	proxy.Postpone();
                 	return;
                 }
 
@@ -204,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                 }
                 else
                 {
-                    proxy.Postpone(failureDescription);
+                    proxy.Postpone();
                 }
 			}
 			catch (Exception e)
@@ -239,7 +237,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 		/// <returns>
 		/// A <see cref="StudyManagement.Storage.WorkItem"/> entry if found, or else null;
 		/// </returns>
-        public List<StudyManagement.Storage.WorkItem> GetWorkItems(int count, bool stat)
+        public List<WorkItem> GetWorkItems(int count, bool stat)
         {
             using (var context = new DataAccessContext())
             {

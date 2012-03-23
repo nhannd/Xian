@@ -140,6 +140,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="WorkItem\WorkItemData.cs" />
+    <Compile Include="WorkItem\WorkItemProgressDataContractAttribute.cs" />
     <Compile Include="WorkItem\WorkItemRequestDataContractAttribute.cs" />
     <Compile Include="WorkItem\WorkItemProgress.cs" />
     <Compile Include="WorkItem\WorkItemRequest.cs" />

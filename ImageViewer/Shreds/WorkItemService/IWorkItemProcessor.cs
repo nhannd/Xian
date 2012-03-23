@@ -11,7 +11,7 @@
 
 using System;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {   
     /// <summary>
     /// Interface for processors of WorkItem items
@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 
         #region Methods
 
-        bool Intialize(WorkItemStatusProxy proxy);
+        bool Initialize(WorkItemStatusProxy proxy);
 
         bool CanStart(WorkItemStatusProxy proxy, out string reason);
 

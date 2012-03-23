@@ -1429,11 +1429,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private System.Nullable<long> _StudyOid;
 		
-		private string _SerializedStudy;
-		
 		private string _SerializedPatient;
 		
 		private string _SerializedRequest;
+		
+		private int _FailureCount;
 		
 		private EntitySet<WorkItemUid> _WorkItemUids;
 		
@@ -1463,12 +1463,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnStudyInstanceUidChanged();
     partial void OnStudyOidChanging(System.Nullable<long> value);
     partial void OnStudyOidChanged();
-    partial void OnSerializedStudyChanging(string value);
-    partial void OnSerializedStudyChanged();
-    partial void OnSerializedPatientChanging(string value);
-    partial void OnSerializedPatientChanged();
+    partial void OnSerializedProgressChanging(string value);
+    partial void OnSerializedProgressChanged();
     partial void OnSerializedRequestChanging(string value);
     partial void OnSerializedRequestChanged();
+    partial void OnFailureCountChanging(int value);
+    partial void OnFailureCountChanged();
     #endregion
 		
 		public WorkItem()
@@ -1682,28 +1682,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[Column(Storage="_SerializedStudy", DbType="NText", UpdateCheck=UpdateCheck.Never)]
-		public string SerializedStudy
-		{
-			get
-			{
-				return this._SerializedStudy;
-			}
-			set
-			{
-				if ((this._SerializedStudy != value))
-				{
-					this.OnSerializedStudyChanging(value);
-					this.SendPropertyChanging();
-					this._SerializedStudy = value;
-					this.SendPropertyChanged("SerializedStudy");
-					this.OnSerializedStudyChanged();
-				}
-			}
-		}
-		
 		[Column(Storage="_SerializedPatient", DbType="NText", UpdateCheck=UpdateCheck.Never)]
-		public string SerializedPatient
+		public string SerializedProgress
 		{
 			get
 			{
@@ -1713,11 +1693,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			{
 				if ((this._SerializedPatient != value))
 				{
-					this.OnSerializedPatientChanging(value);
+					this.OnSerializedProgressChanging(value);
 					this.SendPropertyChanging();
 					this._SerializedPatient = value;
-					this.SendPropertyChanged("SerializedPatient");
-					this.OnSerializedPatientChanged();
+					this.SendPropertyChanged("SerializedProgress");
+					this.OnSerializedProgressChanged();
 				}
 			}
 		}
@@ -1738,6 +1718,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._SerializedRequest = value;
 					this.SendPropertyChanged("SerializedRequest");
 					this.OnSerializedRequestChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_FailureCount", DbType="SmallInt NOT NULL")]
+		public int FailureCount
+		{
+			get
+			{
+				return this._FailureCount;
+			}
+			set
+			{
+				if ((this._FailureCount != value))
+				{
+					this.OnFailureCountChanging(value);
+					this.SendPropertyChanging();
+					this._FailureCount = value;
+					this.SendPropertyChanged("FailureCount");
+					this.OnFailureCountChanged();
 				}
 			}
 		}
@@ -1840,6 +1840,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private System.Nullable<byte> _FailureCount;
 		
+		private string _File;
+		
+		private bool _Failed;
+		
 		private EntityRef<WorkItem> _WorkItem;
 		
     #region Extensibility Method Definitions
@@ -1858,6 +1862,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCompleteChanged();
     partial void OnFailureCountChanging(System.Nullable<byte> value);
     partial void OnFailureCountChanged();
+    partial void OnFileChanging(string value);
+    partial void OnFileChanged();
+    partial void OnFailedChanging(bool value);
+    partial void OnFailedChanged();
     #endregion
 		
 		public WorkItemUid()
@@ -1986,6 +1994,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._FailureCount = value;
 					this.SendPropertyChanged("FailureCount");
 					this.OnFailureCountChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_File", DbType="NVarChar(128)", CanBeNull=false)]
+		public string File
+		{
+			get
+			{
+				return this._File;
+			}
+			set
+			{
+				if ((this._File != value))
+				{
+					this.OnFileChanging(value);
+					this.SendPropertyChanging();
+					this._File = value;
+					this.SendPropertyChanged("File");
+					this.OnFileChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Failed", DbType="Bit NOT NULL")]
+		public bool Failed
+		{
+			get
+			{
+				return this._Failed;
+			}
+			set
+			{
+				if ((this._Failed != value))
+				{
+					this.OnFailedChanging(value);
+					this.SendPropertyChanging();
+					this._Failed = value;
+					this.SendPropertyChanged("Failed");
+					this.OnFailedChanged();
 				}
 			}
 		}

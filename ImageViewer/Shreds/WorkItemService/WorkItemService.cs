@@ -15,7 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
     public class WorkItemService : IWorkItemService
     {
@@ -80,9 +80,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 
             using (var context = new DataAccessContext())
             {
-                var item = new StudyManagement.Storage.WorkItem
+                var item = new WorkItem
                                {
                                    Request = request.Request,
+                                   Progress =  new WorkItemProgress(),
                                    Type = request.Request.Type,
                                    Priority = request.Request.Priority,
                                    InsertTime = Platform.Time,
@@ -93,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                                };
 
                 var broker = context.GetWorkItemBroker();
-                broker.Insert(item);
+                broker.AddWorkItem(item);
                 
                 context.Commit();
 

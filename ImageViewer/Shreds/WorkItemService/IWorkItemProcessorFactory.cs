@@ -9,15 +9,14 @@
 
 #endregion
 
-using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
-    /// <summary>
-    /// Plugin for WorkQueue item processors.
-    /// </summary>
-    [ExtensionPoint]
-    public class WorkItemFactoryExtensionPoint : ExtensionPoint<IWorkItemProcessorFactory>
+    public interface IWorkItemProcessorFactory
     {
+        WorkItemTypeEnum GetWorkQueueType();
+
+        IWorkItemProcessor GetItemProcessor();
     }
 }

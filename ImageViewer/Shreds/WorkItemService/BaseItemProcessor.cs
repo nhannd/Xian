@@ -1,4 +1,15 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
@@ -11,22 +22,20 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
 
 
    public abstract class BaseItemProcessor: IWorkItemProcessor
     {
         #region Private Fields
+
         private const int MAX_DB_RETRY = 5;
         private string _name = "Work Item";
         private IList<WorkItemUid> _uidList;
-     	private bool _cancelPending;
+     	private volatile bool _cancelPending;
+        private volatile bool _stopPending;
     	private readonly object _syncRoot = new object();
-
-        #endregion
-
-        #region Constructors
 
         #endregion
 
@@ -38,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
             {
                 if (_uidList==null)
                 {
-                    LoadUids(Proxy.Item);
+                    LoadUids();
                 }
                 return _uidList;
             }
@@ -52,29 +61,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 
         public WorkItemStatusProxy Proxy { get; set; }
 
+        public StudyLocation Location { get; set; }
+
         protected bool CancelPending
         {
-            get { lock (_syncRoot) return _cancelPending; }
+            get {  return _cancelPending; }
         }
 
-        /// <summary>
-        /// Gets or sets a boolean value indicating whether the Work Queue Item is completed.
-        /// </summary>
-        protected bool Completed
+        protected bool StopPending
         {
-            get;
-            set;
+            get {   return _stopPending; }
         }
- 
         #endregion
 
-        #region Protected Methods
-
-        public virtual bool Intialize(WorkItemStatusProxy proxy)
-        {
-            Proxy = proxy;
-            return true;
-        }
+        #region Protected Methods     
 
         public virtual bool CanStart(WorkItemStatusProxy proxy, out string reason)
         {
@@ -88,8 +88,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
         /// <summary>
         /// Load the specific SOP Instance Uids in the database for the WorkQueue item.
         /// </summary>
-        /// <param name="item">The WorkQueue item.</param>
-        protected void LoadUids(StudyManagement.Storage.WorkItem item)
+        protected void LoadUids()
         {
             if (_uidList == null)
             {
@@ -97,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                 {
                     var broker = context.GetWorkItemUidBroker();
 
-                    _uidList = broker.GetWorkItemUidsForWorkItem(item.Oid);
+                    _uidList = broker.GetWorkItemUidsForWorkItem(Proxy.Item.Oid);
                 }
             }
         }
@@ -214,14 +213,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
        /// <summary>
         /// Load a <see cref="StudyXml"/> file for a given <see cref="StudyLocation"/>
         /// </summary>
-        /// <param name="location">The location a study is stored.</param>
         /// <returns>The <see cref="StudyXml"/> instance for <paramref name="location"/></returns>
-        protected virtual StudyXml LoadStudyXml(StudyLocation location)
+        protected virtual StudyXml LoadStudyXml()
         {
             var theXml = new StudyXml();
 
 
-            String streamFile = Path.Combine(location.StudyFolder, location.Study.StudyInstanceUid + ".xml");
+            String streamFile = Path.Combine(Location.StudyFolder, Location.Study.StudyInstanceUid + ".xml");
             if (File.Exists(streamFile))
             {
                 using (Stream fileStream = FileStreamOpener.OpenForRead(streamFile, FileMode.Open))
@@ -246,17 +244,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
         /// <param name="types"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        protected IList<StudyManagement.Storage.WorkItem> FindRelatedWorkItems(IEnumerable<WorkItemTypeEnum> types, IEnumerable<WorkItemStatusEnum> status)
+        protected IList<WorkItem> FindRelatedWorkItems(IEnumerable<WorkItemTypeEnum> types, IEnumerable<WorkItemStatusEnum> status)
         {
-            IList<StudyManagement.Storage.WorkItem> list;
+            IList<WorkItem> list;
 
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
 
                 list = broker.GetWorkItems(null, null, Proxy.Item.StudyInstanceUid);
-
-
             }
 
             if (list==null)
@@ -298,9 +294,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
         /// <summary>
         /// Called by the base to initialize the processor.
         /// </summary>
-        protected virtual bool Initialize(StudyManagement.Storage.WorkItem item, out string failureDescription)
+        public virtual bool Initialize(WorkItemStatusProxy proxy)
         {
-        	failureDescription = string.Empty;
+            Proxy = proxy;
+            Location = new StudyLocation(proxy.Item.StudyInstanceUid);
         	return true;
         }
 

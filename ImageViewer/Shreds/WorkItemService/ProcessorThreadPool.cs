@@ -16,25 +16,25 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
 	/// <summary>
-	/// Delegate used with <see cref="WorkItemThreadPool"/> class.
+	/// Delegate used with <see cref="ProcessorThreadPool"/> class.
 	/// </summary>
 	/// <param name="processor">The WorkItem processor.</param>
 	/// <param name="queueItem">The actual WorkItem item.</param>
-	public delegate void WorkItemThreadDelegate(IWorkItemProcessor processor, StudyManagement.Storage.WorkItem queueItem);
+	internal delegate void WorkItemThreadDelegate(IWorkItemProcessor processor, WorkItem queueItem);
 
 	/// <summary>
-	/// Class used to pass parameters to threads in the <see cref="WorkItemThreadPool"/>.
+    /// Class used to pass parameters to threads in the <see cref="ProcessorThreadPool"/>.
 	/// </summary>
-	public class WorkItemThreadParameter
+	internal class WorkItemThreadParameter
 	{
 		private readonly IWorkItemProcessor _processor;
-		private readonly StudyManagement.Storage.WorkItem _item;
+		private readonly WorkItem _item;
 		private readonly WorkItemThreadDelegate _del;
 
-		public WorkItemThreadParameter(IWorkItemProcessor processor, StudyManagement.Storage.WorkItem item, WorkItemThreadDelegate del)
+		public WorkItemThreadParameter(IWorkItemProcessor processor, WorkItem item, WorkItemThreadDelegate del)
 		{
 			_item = item;
 			_processor = processor;
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 			get { return _processor; }
 		}
 
-        public StudyManagement.Storage.WorkItem Item
+        public WorkItem Item
 		{
 			get { return _item; }
 		}
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 	/// This class is used to keep track of the current types of WorkItem entries being processed and 
 	/// for requested new queue entries based on the current types being processed.
 	/// </remarks>
-	public class WorkItemThreadPool : ItemProcessingThreadPool<WorkItemThreadParameter>
+	internal class ProcessorThreadPool : ItemProcessingThreadPool<WorkItemThreadParameter>
 	{
 		#region Private Members
 		private readonly object _syncLock = new object();
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 		/// </summary>
         /// <param name="statThreadCount">Total threads to be put in the thread pool.</param>
         /// <param name="normalThreadCount"></param>
-		public WorkItemThreadPool(int statThreadCount, int normalThreadCount)
+		public ProcessorThreadPool(int statThreadCount, int normalThreadCount)
 			: base(statThreadCount + normalThreadCount)
 		{
 		    _normalThreads = normalThreadCount;
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 		/// Method called when a <see cref="WorkItem"/> item completes.
 		/// </summary>
 		/// <param name="item">The work item completing.</param>
-        private void ThreadComplete(StudyManagement.Storage.WorkItem item)
+        private void ThreadComplete(WorkItem item)
 		{
 			lock (_syncLock)
 			{
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 		/// <param name="processor"></param>
 		/// <param name="item"></param>
 		/// <param name="del"></param>
-        public void Enqueue(IWorkItemProcessor processor, StudyManagement.Storage.WorkItem item, WorkItemThreadDelegate del)
+        public void Enqueue(IWorkItemProcessor processor, WorkItem item, WorkItemThreadDelegate del)
 		{
 			var parameter = new WorkItemThreadParameter(processor, item, del);
 

@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         /// Insert a WorkItem
         /// </summary>
         /// <param name="entity"></param>
-        public void Insert(WorkItem entity)
+        public void AddWorkItem(WorkItem entity)
         {
             Context.WorkItems.InsertOnSubmit(entity);
         }

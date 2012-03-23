@@ -12,15 +12,15 @@
 using System.Configuration;
 using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
 	internal sealed class WorkItemServiceSettings : ShredConfigSection
 	{
-		public const uint DefaultNormalThreadCount = 4;
-		public const uint DefaultStatThreadCount = 4;
+		public const int DefaultNormalThreadCount = 4;
+		public const int DefaultStatThreadCount = 4;
         public const uint DefaultPostponeSeconds = 30;
         public const uint DefaultExpireDelaySeconds = 90;
-        public const uint DefaultRetryCount = 3;
+        public const int DefaultRetryCount = 3;
 
 		private static WorkItemServiceSettings _instance;
 
@@ -39,11 +39,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 			{
 				if (_instance == null)
 				{
-                    _instance = ShredConfigManager.GetConfigSection(WorkItemServiceSettings.SettingName) as WorkItemServiceSettings;
+                    _instance = ShredConfigManager.GetConfigSection(SettingName) as WorkItemServiceSettings;
 					if (_instance == null)
 					{
                         _instance = new WorkItemServiceSettings();
-                        ShredConfigManager.UpdateConfigSection(WorkItemServiceSettings.SettingName, _instance);
+                        ShredConfigManager.UpdateConfigSection(SettingName, _instance);
 					}
 				}
 
@@ -53,43 +53,43 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 
 		public static void Save()
 		{
-            ShredConfigManager.UpdateConfigSection(WorkItemServiceSettings.SettingName, _instance);
+            ShredConfigManager.UpdateConfigSection(SettingName, _instance);
 		}
 
 		#region Public Properties
 
-        [ConfigurationProperty("NormalThreadCount", DefaultValue = WorkItemServiceSettings.DefaultNormalThreadCount)]
-        public uint NormalThreadCount
+        [ConfigurationProperty("NormalThreadCount", DefaultValue = DefaultNormalThreadCount)]
+        public int NormalThreadCount
 		{
-			get { return (uint)this["NormalThreadCount"]; }
+			get { return (int)this["NormalThreadCount"]; }
             set { this["NormalThreadCount"] = value; }
 		}
 
-        [ConfigurationProperty("StatThreadCount", DefaultValue = WorkItemServiceSettings.DefaultStatThreadCount)]
-        public uint StatThreadCount
+        [ConfigurationProperty("StatThreadCount", DefaultValue = DefaultStatThreadCount)]
+        public int StatThreadCount
 		{
-            get { return (uint)this["StatThreadCount"]; }
+            get { return (int)this["StatThreadCount"]; }
             set { this["StatThreadCount"] = value; }
 		}
 
-        [ConfigurationProperty("PostponeSeconds", DefaultValue = WorkItemServiceSettings.DefaultPostponeSeconds)]
+        [ConfigurationProperty("PostponeSeconds", DefaultValue = DefaultPostponeSeconds)]
         public uint PostponeSeconds
 		{
             get { return (uint)this["PostponeSeconds"]; }
             set { this["PostponeSeconds"] = value; }
 		}
 
-        [ConfigurationProperty("ExpireDelaySeconds", DefaultValue = WorkItemServiceSettings.DefaultExpireDelaySeconds)]
+        [ConfigurationProperty("ExpireDelaySeconds", DefaultValue = DefaultExpireDelaySeconds)]
         public uint ExpireDelaySeconds
         {
             get { return (uint)this["ExpireDelaySeconds"]; }
             set { this["ExpireDelaySeconds"] = value; }
         }
 
-        [ConfigurationProperty("RetryCount", DefaultValue = WorkItemServiceSettings.DefaultRetryCount)]
-        public uint RetryCount
+        [ConfigurationProperty("RetryCount", DefaultValue = DefaultRetryCount)]
+        public int RetryCount
         {
-            get { return (uint)this["RetryCount"]; }
+            get { return (int)this["RetryCount"]; }
             set { this["RetryCount"] = value; }
         }
 

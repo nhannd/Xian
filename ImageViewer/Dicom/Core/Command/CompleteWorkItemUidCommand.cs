@@ -14,17 +14,25 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
-    public abstract class DataAccessCommand : CommandBase
+    public class CompleteWorkItemUidCommand : DataAccessCommand
     {
-        public DataAccessContext DataAccessContext { get; set; }
+        private readonly WorkItemUid _uid;
 
-        protected DataAccessCommand(string description) : base(description, true)
+        public CompleteWorkItemUidCommand(WorkItemUid uid) : base("Complete WorkItemUid")
         {
+            _uid = uid;
+        }
+
+        protected override void OnExecute(CommandProcessor theProcessor)
+        {
+            var broker = DataAccessContext.GetWorkItemUidBroker();
+            _uid.Complete = true;
+            broker.Update(_uid);
         }
 
         protected override void OnUndo()
         {
-            // Handle automatically via a rollback
+            _uid.Complete = false;
         }
     }
 }

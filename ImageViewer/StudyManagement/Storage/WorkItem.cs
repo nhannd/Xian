@@ -9,7 +9,6 @@
 
 #endregion
 
-using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -28,17 +27,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 
-		public StudyIdentifier StudyData
+		public WorkItemProgress Progress
 		{
 			get
 			{
-				return Serializer.DeserializeStudyData(this.SerializedStudy);
+				return Serializer.DeserializeWorkItemProgress(this.SerializedProgress);
 			}
 			set
 			{
-				this.SerializedStudy = Serializer.SerializeStudyData(value);
+                this.SerializedProgress = Serializer.SerializeWorkItemProgress(value);
 			}
 		}
-
 	}
 }

@@ -1,12 +1,21 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItem
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
-
-
     /// <summary>
     /// Enum telling if a work queue entry had a fatal or nonfatal error.
     /// </summary>
@@ -30,9 +39,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
 
     public class WorkItemStatusProxy
     {
-        public StudyManagement.Storage.WorkItem Item { get; private set; }
+        public WorkItem Item { get; private set; }
 
-        public WorkItemStatusProxy(StudyManagement.Storage.WorkItem item)
+        public WorkItemStatusProxy(WorkItem item)
         {
             Item = item;
         }
@@ -49,10 +58,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                 var workItemBroker = context.GetWorkItemBroker();
                 DateTime now = Platform.Time;
 
-                //item.FailureCount = item.FailureCount + 1;
+                Item.FailureCount = Item.FailureCount + 1;
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-                //if ((item.FailureCount + 1) > prop.MaxFailureCount)
+                if (Item.FailureCount >= WorkItemServiceSettings.Instance.RetryCount)
                 if (failureType == WorkItemFailureType.Fatal)
                 {
                     Item.Status = WorkItemStatusEnum.Failed;
@@ -69,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
             }
         }
 
-        public void Postpone(string reasonText)
+        public void Postpone()
         {
             DateTime newScheduledTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
             DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds));
@@ -90,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This routine will set the status of the <paramref name="item"/> to one of the followings
+        /// This routine will set the status of the <see cref="WorkItem"/> to one of the followings
         /// <list type="bullet">
         /// <item>Failed: if the current process failed and number of retries has been reached.</item>
         /// <item>Pending: if the current batch has been processed successfully</item>
@@ -101,15 +110,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
         /// </remarks>
         /// <param name="status">Indicates if complete.</param>
         protected virtual void PostProcessing(WorkItemProcessStatus status)
-        {
-            bool completed = status == WorkItemProcessStatus.Complete
-                        || (status == WorkItemProcessStatus.Idle && Item.ExpirationTime < Platform.Time);
-
+        {            
             using (var dataContext = new DataAccessContext())
             {
                 Item.ScheduledTime = Item.ScheduledTime.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
 
-                DateTime scheduledTime;
                 var now = Platform.Time;
 
                 if (Item.ScheduledTime > Item.ExpirationTime)
@@ -118,23 +123,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                 if (status == WorkItemProcessStatus.CompleteDelayDelete)
                 {
                     Item.Status = WorkItemStatusEnum.Idle;
-                    item.FailureDescription = string.Empty;
                     Item.ScheduledTime =
-                        Item.ExpirationTime = now.AddSeconds(WorkQueueProperties.DeleteDelaySeconds);
+                        Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds);
                 }
                 else if (status == WorkItemProcessStatus.Complete
                          || (status == WorkItemProcessStatus.Idle && Item.ExpirationTime < now))
                 {
                     Item.Status = WorkItemStatusEnum.Complete;
                     Item.FailureCount = Item.FailureCount;
-                    Item.ScheduledTime = scheduledTime;
-
-                    completed = true;
+                    Item.ScheduledTime = now;
                 }
                 else if (status == WorkItemProcessStatus.Idle
                          || status == WorkItemProcessStatus.IdleNoDelete)
                 {
-                    scheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                    DateTime scheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
                     if (scheduledTime > Item.ExpirationTime)
                         scheduledTime = Item.ExpirationTime;
 
@@ -145,16 +147,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                 {
                     Item.Status = WorkItemStatusEnum.Pending;
 
-                    Item.ExpirationTime = scheduledTime.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds);
-                    Item.ScheduledTime = scheduledTime;
+                    Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds);
+                    Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
                 }
 
 
                 dataContext.Commit();
             }
-
-
-
         }
 
 
@@ -175,6 +174,23 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItem
                     Item.ExpirationTime = now;
                     Item.Status = WorkItemStatusEnum.Complete;
                 }
+
+                var broker = context.GetWorkItemBroker();
+
+                broker.Update(Item);
+                context.Commit();
+            }
+        }
+
+        public void Cancel()
+        {
+            using (var context = new DataAccessContext())
+            {
+                DateTime now = Platform.Time;
+
+                Item.ScheduledTime = now;
+                Item.ExpirationTime = now;
+                Item.Status = WorkItemStatusEnum.Canceled;
 
                 var broker = context.GetWorkItemBroker();
 
