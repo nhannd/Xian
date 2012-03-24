@@ -120,14 +120,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     workItem.ScheduledTime = request.ScheduledTime.Value;
                 
                 if (request.Cancel.HasValue && request.Cancel.Value)
-                {
-                
+                {                
                     if (workItem.Status.Equals(WorkItemStatusEnum.Idle)
                         ||workItem.Status.Equals(WorkItemStatusEnum.Pending))
                         workItem.Status = WorkItemStatusEnum.Canceled;
                     else if (workItem.Status.Equals(WorkItemStatusEnum.InProgress))
                     {
                         // Abort the WorkItem
+                        WorkItemProcessor.Instance.Cancel(workItem.Oid);
                     }
                 }
                 context.Commit();

@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			                       	});
 		}
 
-        public void Cancel(int workQueueOid)
+        public void Cancel(long workQueueOid)
         {
             foreach (WorkItemThreadParameter queuedItem in _queuedItems)
             {

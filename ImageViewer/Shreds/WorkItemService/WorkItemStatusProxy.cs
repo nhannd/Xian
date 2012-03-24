@@ -94,72 +94,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
-        /// <summary>
-        /// Set a status of <see cref="WorkItem"/> item after batch processing has been completed.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// This routine will set the status of the <see cref="WorkItem"/> to one of the followings
-        /// <list type="bullet">
-        /// <item>Failed: if the current process failed and number of retries has been reached.</item>
-        /// <item>Pending: if the current batch has been processed successfully</item>
-        /// <item>Idle : if current batch size = 0.</item>
-        /// <item>Completed: if batch size =0 (idle) and the item has expired.</item>
-        /// </list>
-        /// </para>
-        /// </remarks>
-        /// <param name="status">Indicates if complete.</param>
-        protected virtual void PostProcessing(WorkItemProcessStatus status)
-        {            
-            using (var dataContext = new DataAccessContext())
-            {
-                var workItemBroker = dataContext.GetWorkItemBroker();
-
-                Item = workItemBroker.GetWorkItem(Item.Oid);
-                
-                Item.ScheduledTime = Item.ScheduledTime.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-
-                var now = Platform.Time;
-
-                if (Item.ScheduledTime > Item.ExpirationTime)
-                    Item.ScheduledTime = Item.ExpirationTime;
-
-                if (status == WorkItemProcessStatus.CompleteDelayDelete)
-                {
-                    Item.Status = WorkItemStatusEnum.Idle;
-                    Item.ScheduledTime =
-                        Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds);
-                }
-                else if (status == WorkItemProcessStatus.Complete
-                         || (status == WorkItemProcessStatus.Idle && Item.ExpirationTime < now))
-                {
-                    Item.Status = WorkItemStatusEnum.Complete;
-                    Item.FailureCount = Item.FailureCount;
-                    Item.ScheduledTime = now;
-                }
-                else if (status == WorkItemProcessStatus.Idle
-                         || status == WorkItemProcessStatus.IdleNoDelete)
-                {
-                    DateTime scheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-                    if (scheduledTime > Item.ExpirationTime)
-                        scheduledTime = Item.ExpirationTime;
-
-                    Item.Status = WorkItemStatusEnum.Idle;
-                    Item.ScheduledTime = scheduledTime;
-                }
-                else
-                {
-                    Item.Status = WorkItemStatusEnum.Pending;
-
-                    Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds);
-                    Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-                }
-
-
-                dataContext.Commit();
-            }
-        }
-
         public void Complete()
         {
             using (var context = new DataAccessContext())
@@ -211,6 +145,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
                 Item.Status = WorkItemStatusEnum.Canceled;
+
+                context.Commit();
+            }
+        }
+
+        public void Delete()
+        {
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetWorkItemBroker();
+
+                Item = broker.GetWorkItem(Item.Oid);
+                broker.Delete(Item);
 
                 context.Commit();
             }

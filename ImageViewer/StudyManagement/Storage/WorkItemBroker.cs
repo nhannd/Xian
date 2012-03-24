@@ -40,6 +40,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         }
 
         /// <summary>
+        /// Gets WorkItems to delete.
+        /// </summary>
+        /// <returns></returns>
+        public List<WorkItem> GetWorkItemsToDelete()
+        {
+            return (from w in this.Context.WorkItems
+                    where (w.Status == WorkItemStatusEnum.Complete
+                           || w.Status == WorkItemStatusEnum.Canceled)
+                          && w.DeleteTime < DateTime.Now
+                    select w).ToList();
+        }
+
+        /// <summary>
         /// Gets the specified number of pending work items.
         /// </summary>
         /// <param name="n"></param>
@@ -123,5 +136,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             Context.WorkItems.InsertOnSubmit(entity);
         }
 
+        /// <summary>
+        /// Delete WorkItemUid entity.
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Delete(WorkItem entity)
+        {
+            this.Context.WorkItems.DeleteOnSubmit(entity);
+        }
 	}
 }

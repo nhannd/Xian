@@ -30,7 +30,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         protected override IList<QueueProcessor> GetProcessors()
         {
-            return new List<QueueProcessor> {new WorkItemProcessor(WorkItemServiceSettings.Instance.StatThreadCount,WorkItemServiceSettings.Instance.NormalThreadCount,GetDisplayName())};
+            WorkItemProcessor.CreateProcessor(WorkItemServiceSettings.Instance.StatThreadCount, WorkItemServiceSettings.Instance.NormalThreadCount, GetDisplayName());
+            return new List<QueueProcessor> { WorkItemProcessor.Instance };
         }
     }
 }

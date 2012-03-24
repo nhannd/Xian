@@ -383,7 +383,7 @@ Please check the service logs for more details.</value>
     <value>Failed to process WorkItem Update request.</value>
   </data>
   <data name="WorkItemService" xml:space="preserve">
-    <value>Work Item Service</value>
+    <value>Work Item</value>
   </data>
   <data name="WorkItemServiceDescription" xml:space="preserve">
     <value>Hosts the WorkItem Services</value>
@@ -392,6 +392,6 @@ Please check the service logs for more details.</value>
     <value>Hosts the WorkItem Processor Service</value>
   </data>
   <data name="WorkItemProcessorService" xml:space="preserve">
-    <value>Work Item Processor Service</value>
+    <value>Work Item Processor</value>
   </data>
 </root>

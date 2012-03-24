@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         #endregion
 
 		#region Constructor
-        public WorkItemProcessor(int numberStatThreads, int numberNormalThreads, string name)
+        private WorkItemProcessor(int numberStatThreads, int numberNormalThreads, string name)
         {
             _threadStop = new ManualResetEvent(false);
 
@@ -68,8 +68,24 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 	    }
 		#endregion
 
+        #region Public Properties
+
+        public static WorkItemProcessor Instance { get; private set; }
+
+        #endregion
+
+        #region Public Static Method
+        public static void CreateProcessor(int numberStatThreads, int numberNormalThreads, string name)
+        {
+            if (Instance != null) throw new ApplicationException("Processor already created!");
+
+            Instance = new WorkItemProcessor(numberStatThreads, numberNormalThreads, name);
+        }
+        #endregion
+
+
         #region Public Methods
-		/// <summary>
+        /// <summary>
 		/// Stop the WorkQueue processor
 		/// </summary>
 		public override void RequestStop()
@@ -124,7 +140,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
                 if  (list.Count == 0)
                 {
-                    /* No result found */
+                    // Cleanup work items that have aged off
+                    DeleteWorkItems();
+
+                    // No result found 
                     _threadStop.WaitOne(2000, false);
                     continue;
                 }
@@ -175,7 +194,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// Cancel a current running WorkItem
         /// </summary>
         /// <param name="workItemOid"></param>
-        public void Cancel(int workItemOid)
+        public void Cancel(long workItemOid)
         {
             _threadPool.Cancel(workItemOid);
         }
@@ -229,6 +248,32 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			}
 		}
 
+        /// <summary>
+        /// Cleanup WorkItems that have been marked for deletion or have aged off.
+        /// </summary>
+        private void DeleteWorkItems()
+        {
+            List<WorkItem> itemsToDelete;
+
+            using (var context = new DataAccessContext())
+            {
+                var workItemBroker = context.GetWorkItemBroker();
+
+                itemsToDelete = workItemBroker.GetWorkItemsToDelete();
+            } 
+
+            foreach (var item in itemsToDelete)
+            {
+                var proxy = new WorkItemStatusProxy(item);
+                if (item.Status == WorkItemStatusEnum.Complete)
+                    proxy.Delete();
+                else
+                {
+                    //TODO, need to do something special in case there's files on disk to cleanup
+                    // Prob. need to do this in another thread.
+                }
+            }
+        }
     
 
         /// <summary>
@@ -241,7 +286,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		/// <returns>
 		/// A <see cref="StudyManagement.Storage.WorkItem"/> entry if found, or else null;
 		/// </returns>
-        public List<WorkItem> GetWorkItems(int count, bool stat)
+        private List<WorkItem> GetWorkItems(int count, bool stat)
         {
             using (var context = new DataAccessContext())
             {
@@ -250,8 +295,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 List<WorkItem> workItems;
                 if (stat)
                     workItems = workItemBroker.GetStatPendingWorkItems(count);
-                else
-                
+                else                
                     workItems = workItemBroker.GetPendingWorkItems(count);
 
                 foreach (var item in workItems)

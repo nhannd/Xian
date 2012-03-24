@@ -863,7 +863,7 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Work Item Processor Service.
+        ///   Looks up a localized string similar to Work Item Processor.
         /// </summary>
         internal static string WorkItemProcessorService {
             get {
@@ -872,7 +872,7 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Work Item Service.
+        ///   Looks up a localized string similar to Work Item.
         /// </summary>
         internal static string WorkItemService {
             get {
