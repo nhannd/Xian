@@ -84,6 +84,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public abstract void Process(WorkItemStatusProxy proxy);
 
+        public abstract void Delete(WorkItemStatusProxy proxy);
 
         /// <summary>
         /// Load the specific SOP Instance Uids in the database for the WorkQueue item.

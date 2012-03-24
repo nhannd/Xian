@@ -147,12 +147,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                                  result.SopInstanceUid, association.CallingAE, association.CalledAE,
                                  result.StudyInstanceUid);
 
-                OnFileReceived(association.CallingAE,string.Empty);
+                //OnFileReceived(association.CallingAE,string.Empty);
             }
             else
             {
                 Platform.Log(LogLevel.Warn, "Failure importing sop: {0}", result.ErrorMessage);
-                OnReceiveError(message, result.ErrorMessage, association.CallingAE);
+                //OnReceiveError(message, result.ErrorMessage, association.CallingAE);
             }
 
 		    server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, result.DicomStatus);

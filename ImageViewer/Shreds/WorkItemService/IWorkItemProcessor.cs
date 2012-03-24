@@ -36,6 +36,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         void Stop();
 
+        void Delete(WorkItemStatusProxy proxy);
+
         #endregion
     }
 }

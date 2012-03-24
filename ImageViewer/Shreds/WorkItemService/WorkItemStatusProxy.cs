@@ -72,6 +72,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 else
                 {
                     Item.ExpirationTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                    Item.Status = WorkItemStatusEnum.Pending;
                 }
 
                 context.Commit();
@@ -89,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item = workItemBroker.GetWorkItem(Item.Oid);
                 Item.ScheduledTime = newScheduledTime;
                 Item.ExpirationTime = expireTime;
-
+                Item.Status = WorkItemStatusEnum.Pending;
                 context.Commit();
             }
         }

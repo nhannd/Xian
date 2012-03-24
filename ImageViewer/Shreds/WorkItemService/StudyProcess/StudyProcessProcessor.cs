@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -23,6 +24,35 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 {
     public class StudyProcessProcessor : BaseItemProcessor
     {
+        /// <summary>
+        /// Cleanup any failed items in the queue and delete the queue entry.
+        /// </summary>
+        /// <param name="proxy"></param>
+        public override void Delete(WorkItemStatusProxy proxy)
+        {
+            LoadUids();
+            foreach (WorkItemUid sop in WorkQueueUidList)
+            {
+                if (sop.Failed)
+                {
+                    try
+                    {
+                        string file = !string.IsNullOrEmpty(sop.File)
+                                          ? Location.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid)
+                                          : Path.Combine(Location.StudyFolder, sop.File);
+                        FileUtils.Delete(file);
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(LogLevel.Error, e, "Unexpected exception attempting to cleanup file for Work Item {0}",
+                                     proxy.Item.Oid);
+                    }
+                }
+            }
+
+            Proxy.Delete();
+        }
+
         public override void Process(WorkItemStatusProxy proxy)
         {
             int count = ProcessUidList();
@@ -85,7 +115,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 
             return true;
         }
-
 
         /// <summary>
         /// Process all of the SOP Instances associated with a <see cref="WorkItem"/> item.

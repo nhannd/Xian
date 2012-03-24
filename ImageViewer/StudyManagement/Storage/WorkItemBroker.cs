@@ -43,13 +43,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         /// Gets WorkItems to delete.
         /// </summary>
         /// <returns></returns>
-        public List<WorkItem> GetWorkItemsToDelete()
+        public List<WorkItem> GetWorkItemsToDelete(int n)
         {
             return (from w in this.Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Complete
                            || w.Status == WorkItemStatusEnum.Canceled)
                           && w.DeleteTime < DateTime.Now
-                    select w).ToList();
+                    select w).Take(n).ToList();
         }
 
         /// <summary>

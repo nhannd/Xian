@@ -131,6 +131,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 {
                     list = GetWorkItems(_threadPool.NormalThreadsAvailable, false);
                 }
+
+                if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
+                {
+                    list = GetWorkItemsToDelete(_threadPool.NormalThreadsAvailable);
+                }
                 
                 if ( list == null)
                 {
@@ -140,9 +145,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
                 if  (list.Count == 0)
                 {
-                    // Cleanup work items that have aged off
-                    DeleteWorkItems();
-
                     // No result found 
                     _threadStop.WaitOne(2000, false);
                     continue;
@@ -212,7 +214,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
 			try
 			{
-             	string failureDescription;
+                if (proxy.Item.Status == WorkItemStatusEnum.Deleted)
+                {
+                    processor.Initialize(proxy);
+
+                    // Delete the entry
+                    processor.Delete(proxy);
+                    return;
+                }
+
+			    string failureDescription;
                 if (!processor.Initialize(proxy))
                 {
                 	proxy.Postpone();
@@ -249,34 +260,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		}
 
         /// <summary>
-        /// Cleanup WorkItems that have been marked for deletion or have aged off.
-        /// </summary>
-        private void DeleteWorkItems()
-        {
-            List<WorkItem> itemsToDelete;
-
-            using (var context = new DataAccessContext())
-            {
-                var workItemBroker = context.GetWorkItemBroker();
-
-                itemsToDelete = workItemBroker.GetWorkItemsToDelete();
-            } 
-
-            foreach (var item in itemsToDelete)
-            {
-                var proxy = new WorkItemStatusProxy(item);
-                if (item.Status == WorkItemStatusEnum.Complete)
-                    proxy.Delete();
-                else
-                {
-                    //TODO, need to do something special in case there's files on disk to cleanup
-                    // Prob. need to do this in another thread.
-                }
-            }
-        }
-    
-
-        /// <summary>
         /// Method for getting next <see cref="StudyManagement.Storage.WorkItem"/> entry.
 		/// </summary>
 		/// <param name="count">The count.</param>
@@ -301,6 +284,36 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 foreach (var item in workItems)
                 {
                     item.Status = WorkItemStatusEnum.InProgress;
+                }
+
+                context.Commit();
+                return workItems;
+            }
+        }
+
+
+        /// <summary>
+        /// Method for getting next <see cref="StudyManagement.Storage.WorkItem"/> entry.
+        /// </summary>
+        /// <param name="count">The count.</param>
+        /// <param name="stat">Search for stat items.</param>
+        /// <remarks>
+        /// </remarks>
+        /// <returns>
+        /// A <see cref="StudyManagement.Storage.WorkItem"/> entry if found, or else null;
+        /// </returns>
+        private List<WorkItem> GetWorkItemsToDelete(int count)
+        {
+            using (var context = new DataAccessContext())
+            {
+                var workItemBroker = context.GetWorkItemBroker();
+
+                List<WorkItem> workItems;
+                workItems = workItemBroker.GetWorkItemsToDelete(count);
+
+                foreach (var item in workItems)
+                {
+                    item.Status = WorkItemStatusEnum.Deleted;
                 }
 
                 context.Commit();
