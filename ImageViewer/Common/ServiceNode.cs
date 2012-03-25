@@ -1,21 +1,11 @@
-﻿using System;
-using ClearCanvas.Dicom.Iod;
+﻿using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-    //public interface IPersistedServiceNode : IServiceNode
-    //{
-    //    Int64 Oid { get; }
-    //}
-
-    public interface IDicomServiceNode : IServiceNode, IDicomServerApplicationEntity
+    public interface IDicomServiceNode : IServiceNode, IApplicationEntity
     {
         bool IsLocal { get; }
-    }
-
-    public interface IStreamingDicomServiceNode : IServiceNode, IStreamingServerApplicationEntity
-    {
     }
 
     public interface IServiceNode
@@ -36,18 +26,9 @@ namespace ClearCanvas.ImageViewer.Common
 
     public static class ServiceNodeExtensions
     {
-        public static DicomServerApplicationEntity ToDataContract(this IDicomServiceNode serviceNode)
+        public static ApplicationEntity ToDataContract(this IDicomServiceNode serviceNode)
         {
-            if (serviceNode.IsStreaming)
-            {
-                var ae = (IStreamingServerApplicationEntity) serviceNode;
-                return new StreamingServerApplicationEntity(ae);
-            }
-            else
-            {
-                var ae = (IDicomServerApplicationEntity)serviceNode;
-                return new DicomServerApplicationEntity(ae);
-            }
+            return new ApplicationEntity(serviceNode);
         }
     }
 

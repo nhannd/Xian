@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                         var theServer = server as IServerTreeDicomServer;
 						if (theServer != null)
 						{
-                            var ae = studyItem.Server as IDicomServerApplicationEntity;
+                            var ae = studyItem.Server as IApplicationEntity;
 							if (ae != null)
 								return theServer.AETitle == ae.AETitle;
 						}

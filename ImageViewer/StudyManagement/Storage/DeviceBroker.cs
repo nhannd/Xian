@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -22,50 +23,40 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         public static ApplicationEntity ToDataContract(this Device device)
         {
             bool isStreaming = device.StreamingHeaderPort != null && device.StreamingImagePort != null;
-            ApplicationEntity server = isStreaming
-                                           ?
-                                               new StreamingServerApplicationEntity
-                                                   {
-                                                       Name = device.Name,
-                                                       AETitle = device.AETitle,
-                                                       Port = device.Port,
-                                                       HostName = device.HostName,
-                                                       HeaderServicePort = device.StreamingHeaderPort.Value,
-                                                       WadoServicePort = device.StreamingImagePort.Value,
-                                                       Location = device.Location,
-                                                       Description = device.Description
-                                                   }
-                                           :
-                                               new DicomServerApplicationEntity
-                                                   {
-                                                       Name = device.Name,
-                                                       AETitle = device.AETitle,
-                                                       Port = device.Port,
-                                                       HostName = device.HostName,
-                                                       Location = device.Location,
-                                                       Description = device.Description
-                                                   };
+            var server = new ApplicationEntity
+                                           {
+                                               Name = device.Name,
+                                               AETitle = device.AETitle,
+                                               ScpParameters = new ScpParameters(device.HostName, device.Port),
+                                               Location = device.Location,
+                                               Description = device.Description
+                                           };
 
+            if (isStreaming)
+                server.StreamingParameters = new StreamingParameters(device.StreamingHeaderPort.Value, device.StreamingImagePort.Value);
+            
             return server;
         }
 
-        public static Device ToDevice(this IDicomServerApplicationEntity server)
+        public static Device ToDevice(this IApplicationEntity server)
         {
+            Platform.CheckForNullReference(server, "server");
+            Platform.CheckMemberIsSet(server.ScpParameters, "ScpParameters");
+
             int? streamingHeaderPort = null;
             int? streamingImagePort = null;
-            if (server.IsStreaming)
+            if (server.StreamingParameters != null)
             {
-                var streaming = (IStreamingServerApplicationEntity) server;
-                streamingHeaderPort = streaming.HeaderServicePort;
-                streamingImagePort = streaming.WadoServicePort;
+                streamingHeaderPort = server.StreamingParameters.HeaderServicePort;
+                streamingImagePort = server.StreamingParameters.WadoServicePort;
             }
             
             return new Device
                        {
                            Name = server.Name,
                            AETitle = server.AETitle,
-                           HostName = server.HostName,
-                           Port = server.Port,
+                           HostName = server.ScpParameters.HostName,
+                           Port = server.ScpParameters.Port,
                            Location = server.Location,
                            Description = server.Description,
                            StreamingHeaderPort = streamingHeaderPort,

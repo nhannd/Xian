@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Configuration
         private static IDicomServiceNode ResolveRemoteServer(string aetitle)
 		{
             using (var bridge = new ServerDirectoryBridge())
-                return bridge.GetServersByAETitle(aetitle).FirstOrDefault();
+                return bridge.GetServersByAETitle(aetitle).FirstOrDefault(s => s.ScpParameters != null);
 		}
 
 		private static bool StudyExistsOnLocal(string studyInstanceUid)
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Configuration
         private static bool StudyExistsOnRemote(IDicomServiceNode server, string studyInstanceUid)
 		{
             //TODO (Marmot): Can use the GetService method now.
-			var srq = new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle, server.AETitle, server.HostName, server.Port);
+			var srq = new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
 			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
 			return result.Count > 0;
 		}
@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return false;
 		}
 
-        private static bool PublishFilesToRemote(DicomServerApplicationEntity destination, ICollection<DicomFile> files)
+        private static bool PublishFilesToRemote(ApplicationEntity destination, ICollection<DicomFile> files)
 		{
 			try
 			{

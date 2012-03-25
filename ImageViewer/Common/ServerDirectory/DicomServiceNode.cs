@@ -1,56 +1,33 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
-    internal class StreamingDicomServiceNode : DicomServiceNode, IStreamingDicomServiceNode
-    {
-        internal StreamingDicomServiceNode(IStreamingServerApplicationEntity server)
-            : base(server)
-        {
-            Platform.CheckExpectedType(server, typeof(IStreamingServerApplicationEntity));
-        }
-
-        #region Implementation of IStreamingServerApplicationEntity
-
-        public int HeaderServicePort
-        {
-            get { return ((IStreamingServerApplicationEntity)Real).HeaderServicePort; }
-        }
-
-        public int WadoServicePort
-        {
-            get { return ((IStreamingServerApplicationEntity)Real).WadoServicePort; }
-        }
-
-        #endregion
-    }
-
     internal class DicomServiceNode : ServiceNode, IDicomServiceNode
     {
         internal DicomServiceNode(DicomServerConfiguration localConfiguration)
         {
-            Real = new DicomServerApplicationEntity(
-                localConfiguration.AETitle, localConfiguration.HostName, localConfiguration.Port, "<local>", "", "");
+            Real = new ApplicationEntity(localConfiguration.AETitle, "<local>", "", "")
+                       {
+                           ScpParameters = new ScpParameters(localConfiguration.HostName, localConfiguration.Port)
+                       };
             IsLocal = true;
         }
 
-        internal DicomServiceNode(IDicomServerApplicationEntity server)
+        internal DicomServiceNode(IApplicationEntity server)
         {
             Platform.CheckForNullReference(server, "server");
-            Platform.CheckExpectedType(server, typeof(DicomServerApplicationEntity));
-
-            Real = (DicomServerApplicationEntity) server;
+            Real = (ApplicationEntity) server;
         }
 
-        protected DicomServerApplicationEntity Real { get; private set; }
+        protected ApplicationEntity Real { get; private set; }
 
-        #region Implementation of IApplicationEntity
-        
+        #region Implementation of IDicomServiceNode
+
         public bool IsLocal { get; private set; }
         #endregion
 
@@ -76,24 +53,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             get { return Real.AETitle; }
         }
 
-        #endregion
-
-        #region Implementation of IDicomServerApplicationEntity
-
-        public string HostName
+        public IScpParameters ScpParameters
         {
-            get { return Real.HostName; }
+            get { return Real.ScpParameters; }
         }
 
-        public int Port
+        public IStreamingParameters StreamingParameters
         {
-            get { return Real.Port; }
-        }
-
-        // TODO (Marmot): try to get rid of this.
-        public bool IsStreaming
-        {
-            get { return Real.IsStreaming; }
+            get { return Real.StreamingParameters; }
         }
 
         #endregion
@@ -101,19 +68,27 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         public override bool IsSupported<T>()
         {
             if (typeof(T).Equals(typeof(IStudyRootQuery)))
-                return true;
+                return ScpParameters != null;
+
+            //if (typeof(T).Equals(typeof(IHeaderStreamingService)))
+            //    return StreamingParameters != null;
 
             return false;
         }
 
         public override T GetService<T>()
         {
-            // TODO (Marmot): Fix this.
-            string localAE = "Whatever";
-            if (typeof(T).Equals(typeof(IStudyRootQuery)))
-                return new DicomStudyRootQuery(localAE, AETitle, HostName, Port) as T;
+            if (!IsSupported<T>())
+                throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
 
-            throw new NotSupportedException();
+            //TODO (Marmot): Add an extension mechanism.
+            if (typeof(T).Equals(typeof(IStudyRootQuery)))
+                return new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle,
+                                    AETitle, ScpParameters.HostName, ScpParameters.Port) as T;
+
+            throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
+            //if (typeof(T).Equals(typeof(IHeaderStreamingService)))
+            //    return new HeaderStreamingClient
         }
     }
 }

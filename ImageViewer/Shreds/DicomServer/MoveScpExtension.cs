@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 									 (ushort)operation.WarningSubOperations);
 		}
 
-		private void OnReceiveMoveStudiesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, DicomServerApplicationEntity remoteAEInfo)
+		private void OnReceiveMoveStudiesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
 		{
 			IEnumerable<string> studyUids = (string[])message.DataSet[DicomTags.StudyInstanceUid].Values;
 			SendStudiesRequest request = new SendStudiesRequest();
@@ -182,12 +182,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				finally
 				{
-					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
+					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName, instances, EventSource.CurrentProcess, result);
 				}
 			}
 		}
 
-        private void OnReceiveMoveSeriesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, DicomServerApplicationEntity remoteAEInfo)
+        private void OnReceiveMoveSeriesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			string[] seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
@@ -216,12 +216,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				finally
 				{
-					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
+					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName, instances, EventSource.CurrentProcess, result);
 				}
 			}
 		}
 
-        private void OnReceiveMoveImageRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, DicomServerApplicationEntity remoteAEInfo)
+        private void OnReceiveMoveImageRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				finally
 				{
-					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
+					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName, instances, EventSource.CurrentProcess, result);
 				}
 			}
 		}

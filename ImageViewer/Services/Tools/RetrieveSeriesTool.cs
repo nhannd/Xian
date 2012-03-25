@@ -45,29 +45,30 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			var result = EventResult.Success;
 
-			var applicationEntity = Server as IDicomServerApplicationEntity;
-			if (applicationEntity == null)
+			var applicationEntity = Server as IApplicationEntity;
+			if (applicationEntity == null || applicationEntity.ScpParameters == null)
 				return;
 
-			var studyInformation = new StudyInformation();
-			studyInformation.PatientId = Patient.PatientId;
-			studyInformation.PatientsName = Patient.PatientsName;
-			studyInformation.StudyDate = ParseDicomDate(Study.StudyDate);
-			studyInformation.StudyDescription = Study.StudyDescription;
-			studyInformation.StudyInstanceUid = Study.StudyInstanceUid;
+			var studyInformation = new StudyInformation
+			                           {
+			                               PatientId = Patient.PatientId,
+			                               PatientsName = Patient.PatientsName,
+			                               StudyDate = ParseDicomDate(Study.StudyDate),
+			                               StudyDescription = Study.StudyDescription,
+			                               StudyInstanceUid = Study.StudyInstanceUid
+			                           };
 
-			var seriesToRetrieve = new List<string>(CollectionUtils.Map<ISeriesIdentifier, string>(SelectedSeries, s => s.SeriesInstanceUid));
+		    var seriesToRetrieve = new List<string>(CollectionUtils.Map<ISeriesIdentifier, string>(SelectedSeries, s => s.SeriesInstanceUid));
 
 			var client = new DicomServerServiceClient();
 			try
 			{
 				client.Open();
 
-                var aeInformation = new DicomServerApplicationEntity
+                var aeInformation = new ApplicationEntity
                                         {
                                             AETitle = applicationEntity.AETitle,
-                                            HostName = applicationEntity.HostName,
-                                            Port = applicationEntity.Port
+                                            ScpParameters = new ScpParameters(applicationEntity.ScpParameters)
                                         };
 
 			    client.RetrieveSeries(aeInformation, studyInformation, seriesToRetrieve);
@@ -91,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				var requestedInstances = new AuditedInstances();
 				requestedInstances.AddInstance(studyInformation.PatientId, studyInformation.PatientsName, studyInformation.StudyInstanceUid);
-				AuditHelper.LogBeginReceiveInstances(applicationEntity.AETitle, applicationEntity.HostName, requestedInstances, EventSource.CurrentUser, result);
+				AuditHelper.LogBeginReceiveInstances(applicationEntity.AETitle, applicationEntity.ScpParameters.HostName, requestedInstances, EventSource.CurrentUser, result);
 
 			}
 

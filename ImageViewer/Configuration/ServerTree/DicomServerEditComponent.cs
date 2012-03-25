@@ -82,10 +82,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		public static readonly int MinimumPort = 1;
 		public static readonly int MaximumPort = 65535;
-		public static readonly int DefaultPort = 104;
-		public static readonly int DefaultHeaderServicePort = 50221;
-		public static readonly int DefaultWadoServicePort = 1000;
-
 
 		#region Private Fields
 
@@ -104,30 +100,15 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		public DicomServerEditComponent(Common.ServerTree.ServerTree dicomServerTree)
 		{
 			_serverTree = dicomServerTree;
-
-			if (_serverTree.CurrentNode.IsServer)
-			{
-                IServerTreeDicomServer server = (IServerTreeDicomServer)_serverTree.CurrentNode;
-				_serverName = server.Name;
-				_serverLocation = server.Location;
-				_serverAE = server.AETitle;
-				_serverHost = server.HostName;
-				_serverPort = server.Port;
-				_isStreaming = server.IsStreaming;
-				_headerServicePort = server.HeaderServicePort;
-				_wadoServicePort = server.WadoServicePort;
-			}
-			else
-			{
-				_serverName = "";
-				_serverLocation = "";
-				_serverAE = "";
-				_serverHost = "";
-				_serverPort = DefaultPort;
-				_isStreaming = false;
-				_headerServicePort = DefaultHeaderServicePort;
-				_wadoServicePort = DefaultWadoServicePort;
-			}
+            var server = (IServerTreeDicomServer)_serverTree.CurrentNode;
+			_serverName = server.Name;
+			_serverLocation = server.Location;
+			_serverAE = server.AETitle;
+			_serverHost = server.HostName;
+			_serverPort = server.Port;
+			_isStreaming = server.IsStreaming;
+			_headerServicePort = server.HeaderServicePort;
+			_wadoServicePort = server.WadoServicePort;
 		}
 
 		public override void Start()

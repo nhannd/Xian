@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree.Tests
         [Test]
         public void TestCreateStoredTreeFromDirectory()
         {
-            List<DicomServerApplicationEntity> directoryServers;
+            List<ApplicationEntity> directoryServers;
             var tree = CreateTestTree1(out directoryServers);
 
             Assert.AreEqual(2, tree.RootServerGroup.ChildGroups.Count);
@@ -92,11 +92,11 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree.Tests
 
         private static ServerTree CreateTestTree1()
         {
-            List<DicomServerApplicationEntity> dummy;
+            List<ApplicationEntity> dummy;
             return CreateTestTree1(out dummy);
         }
 
-        private static ServerTree CreateTestTree1(out List<DicomServerApplicationEntity> directoryServers)
+        private static ServerTree CreateTestTree1(out List<ApplicationEntity> directoryServers)
         {
             var rootGroup = CreateStoredServerGroup1();
             directoryServers = CreateDirectoryServers1();
@@ -128,37 +128,33 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree.Tests
                        };
         }
 
-        private static List<DicomServerApplicationEntity> CreateDirectoryServers1()
+        private static List<ApplicationEntity> CreateDirectoryServers1()
         {
-            return new List<DicomServerApplicationEntity>
+            return new List<ApplicationEntity>
                        {
-                           new DicomServerApplicationEntity
+                           new ApplicationEntity
                                {
                                    Name = "server1",
                                    AETitle = "server1",
-                                   HostName = "server1",
-                                   Port = 104
+                                   ScpParameters = new ScpParameters("server1", 104)
                                },
-                           new DicomServerApplicationEntity
+                           new ApplicationEntity
                                {
                                    Name = "server2",
                                    AETitle = "server2",
-                                   HostName = "server2",
-                                   Port = 104
+                                   ScpParameters = new ScpParameters("server2", 104)
                                },
-                           new DicomServerApplicationEntity
+                           new ApplicationEntity
                                {
                                    Name = "server3",
                                    AETitle = "server3",
-                                   HostName = "server3",
-                                   Port = 104
+                                   ScpParameters = new ScpParameters("server3", 104)
                                },
-                           new DicomServerApplicationEntity
+                           new ApplicationEntity
                                {
                                    Name = "server4",
                                    AETitle = "server4",
-                                   HostName = "server4",
-                                   Port = 104
+                                   ScpParameters = new ScpParameters("server4", 104)
                                }
                        };
         }

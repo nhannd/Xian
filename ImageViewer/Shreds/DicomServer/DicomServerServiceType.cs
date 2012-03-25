@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
     	#region IDicomServerService Members
 
-        public void Send(DicomServerApplicationEntity destinationAEInformation, IEnumerable<string> studyInstanceUids)
+        public void Send(ApplicationEntity destinationAEInformation, IEnumerable<string> studyInstanceUids)
 		{
 			try
 			{
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-        public void RetrieveStudies(DicomServerApplicationEntity sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
+        public void RetrieveStudies(ApplicationEntity sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
 			try
 			{
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-        public void RetrieveSeries(DicomServerApplicationEntity sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+        public void RetrieveSeries(ApplicationEntity sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
 		{
 			try
 			{

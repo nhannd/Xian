@@ -408,7 +408,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-                if (_server != null && _server is IDicomServerApplicationEntity)
+                if (_server != null && _server is IApplicationEntity)
 					return ((IApplicationEntity)_server).AETitle;
 				else
 					return "";

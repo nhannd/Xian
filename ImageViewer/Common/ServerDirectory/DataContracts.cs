@@ -11,9 +11,8 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         public const string Value = ImageViewerNamespace.Value + "/serverDirectory";
     }
 
+    //TODO (Marmot): Device Directory?
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
-    [KnownType(typeof(DicomServerApplicationEntity))]
-    [KnownType(typeof(StreamingServerApplicationEntity))]
     public class ServerDirectoryEntry : DataContractBase
     {
         [DataMember(IsRequired = true)]

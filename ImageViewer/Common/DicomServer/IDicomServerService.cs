@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		/// </summary>
 		[Obsolete("Use IDicomSendService instead.")]
 		[OperationContract(IsOneWay = true)]
-        void Send(DicomServerApplicationEntity destinationAEInformation, IEnumerable<string> studyInstanceUids);
+        void Send(ApplicationEntity destinationAEInformation, IEnumerable<string> studyInstanceUids);
 
 		/// <summary>
 		/// Performs a study level retrieve from another Dicom Server.  Image level retrieves will not
@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		/// <param name="studiesToRetrieve">The studies to retrieve.  At an absolute minimum, each <see cref="StudyInformation"/>
 		/// object passed in must have the <see cref="StudyInformation.StudyInstanceUid"/> field populated.</param>
 		[OperationContract(IsOneWay = true)]
-        void RetrieveStudies(DicomServerApplicationEntity sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve);
+        void RetrieveStudies(ApplicationEntity sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve);
 
 		/// <summary>
 		/// Performs a series level retrieve from another Dicom Server.  Image level retrieves will not
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		/// object passed in must have the <see cref="SeriesInformation.StudyInstanceUid"/> and <see cref="SeriesInformation.SeriesInstanceUid"/> 
 		/// fields populated.</param>
 		[OperationContract(IsOneWay = true)]
-        void RetrieveSeries(DicomServerApplicationEntity sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids);
+        void RetrieveSeries(ApplicationEntity sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids);
 
 		/// <summary>
 		/// Retrieve the local Dicom Server configuration.

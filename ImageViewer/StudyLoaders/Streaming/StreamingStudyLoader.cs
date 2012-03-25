@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
         private const string _loaderName = "CC_STREAMING";
 
         private IEnumerator<InstanceXml> _instances;
-        private IStreamingServerApplicationEntity _serverAe;
+        private IApplicationEntity _serverAe;
 
         public StreamingStudyLoader()
             : this(_loaderName)
@@ -83,8 +83,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
         {
-            var serverAe = studyLoaderArgs.Server as IStreamingServerApplicationEntity;
+            var serverAe = studyLoaderArgs.Server as IApplicationEntity;
             Platform.CheckForNullReference(serverAe, "Server");
+            Platform.CheckMemberIsSet(serverAe.StreamingParameters, "StreamingParameters");
             _serverAe = serverAe;
 
             EventResult result = EventResult.Success;
@@ -125,7 +126,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             if (!_instances.MoveNext())
                 return null;
 
-            return new StreamingSopDataSource(_instances.Current, _serverAe.HostName, _serverAe.AETitle, StreamingSettings.Default.FormatWadoUriPrefix, _serverAe.WadoServicePort);
+            return new StreamingSopDataSource(_instances.Current, _serverAe.ScpParameters.HostName,
+                            _serverAe.AETitle, StreamingSettings.Default.FormatWadoUriPrefix,
+                            _serverAe.StreamingParameters.WadoServicePort);
         }
 
         private XmlDocument RetrieveHeaderXml(StudyLoaderArgs studyLoaderArgs)
@@ -141,7 +144,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             try
             {
 
-                string uri = String.Format(StreamingSettings.Default.FormatHeaderServiceUri, _serverAe.HostName, _serverAe.HeaderServicePort);
+                string uri = String.Format(StreamingSettings.Default.FormatHeaderServiceUri, 
+                                            _serverAe.ScpParameters.HostName, _serverAe.StreamingParameters.HeaderServicePort);
                 var endpoint = new EndpointAddress(uri);
 
                 client = new HeaderStreamingServiceClient();

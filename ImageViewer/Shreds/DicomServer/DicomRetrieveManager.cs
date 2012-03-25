@@ -28,26 +28,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 	internal class RetrieveStudiesRequest
 	{
-        public RetrieveStudiesRequest(DicomServerApplicationEntity remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
+        public RetrieveStudiesRequest(ApplicationEntity remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
 			this.RemoteAEInfo = remoteAEInfo;
 			this.StudiesToRetrieve = studiesToRetrieve;
 		}
 
-        public readonly DicomServerApplicationEntity RemoteAEInfo;
+        public readonly ApplicationEntity RemoteAEInfo;
 		public readonly IEnumerable<StudyInformation> StudiesToRetrieve;
 	}
 
 	internal class RetrieveSeriesRequest
 	{
-        public RetrieveSeriesRequest(DicomServerApplicationEntity remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+        public RetrieveSeriesRequest(ApplicationEntity remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
 		{
 			this.RemoteAEInfo = remoteAEInfo;
 			StudyInformation = studyInformation;
 			this.SeriesInstanceUids = seriesInstanceUids;
 		}
 
-        public readonly DicomServerApplicationEntity RemoteAEInfo;
+        public readonly ApplicationEntity RemoteAEInfo;
 		public readonly StudyInformation StudyInformation;
 		public readonly IEnumerable<string> SeriesInstanceUids;
 	}
@@ -91,28 +91,28 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			#endregion
 
-            public RetrieveScu(string localAETitle, IDicomServerApplicationEntity remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
-				:base(localAETitle, remoteAEInfo.AETitle, remoteAEInfo.HostName, remoteAEInfo.Port, localAETitle)
+            public RetrieveScu(string localAETitle, IApplicationEntity remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
+				:base(localAETitle, remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName, remoteAEInfo.ScpParameters.Port, localAETitle)
 			{
 				Platform.CheckForEmptyString(localAETitle, "localAETitle");
-				Platform.CheckForEmptyString(remoteAEInfo.AETitle, "remoteAEInfo.AETitle");
-				Platform.CheckForEmptyString(remoteAEInfo.HostName, "remoteAEInfo.HostName");
+				Platform.CheckForEmptyString(remoteAEInfo.AETitle, "AETitle");
+				Platform.CheckForEmptyString(remoteAEInfo.ScpParameters.HostName, "HostName");
 				Platform.CheckForNullReference(studiesToRetrieve, "studiesToRetrieve");
 
 				_studiesToRetrieve = studiesToRetrieve;
 
 				_thread = new Thread(RetrieveInternal);
 				_thread.Name = String.Format("Retrieve from {0}/{1}:{2}", 
-					remoteAEInfo.HostName, remoteAEInfo.AETitle, remoteAEInfo.Port);
+					remoteAEInfo.ScpParameters.HostName, remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.Port);
 			}
 
-            public RetrieveScu(string localAETitle, IDicomServerApplicationEntity remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+            public RetrieveScu(string localAETitle, IApplicationEntity remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
 				: this(localAETitle, remoteAEInfo, Enumerate(studyInformation))
 			{
 				_seriesInstanceUids = seriesInstanceUids;
 				_thread = new Thread(RetrieveInternal);
 				_thread.Name = String.Format("Retrieve from {0}/{1}:{2}",
-					remoteAEInfo.HostName, remoteAEInfo.AETitle, remoteAEInfo.Port);
+					remoteAEInfo.ScpParameters.HostName, remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.Port);
 			}
 
 			private static IEnumerable<T> Enumerate<T>(T item)

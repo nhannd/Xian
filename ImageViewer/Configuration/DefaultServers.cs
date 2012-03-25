@@ -68,21 +68,21 @@ namespace ClearCanvas.ImageViewer.Configuration
                     yield return localDataStoreQuery;
             }
 
-            string localAE = DicomServerConfigurationHelper.GetOfflineAETitle(false);
+            string localAE = DicomServerConfigurationHelper.AETitle;
 
 			var defaultServers = SelectFrom(new Common.ServerTree.ServerTree());
-            var streamingServers = defaultServers.Where(s => s.IsStreaming).ToList();
-            var nonStreamingServers = defaultServers.Where(s => !s.IsStreaming).ToList();
+            var streamingServers = defaultServers.Where(s => s.StreamingParameters != null).ToList();
+            var nonStreamingServers = defaultServers.Where(s => s.StreamingParameters == null).ToList();
 
             foreach (var server in streamingServers)
 			{
-				var remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.HostName, server.Port);
+				var remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
 				yield return remoteQuery;
 			}
 
             foreach (var server in nonStreamingServers)
 			{
-                var remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.HostName, server.Port);
+                var remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
 				yield return remoteQuery;
 			}
 		}

@@ -514,7 +514,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						else if (serverNode.IsServer)
 						{
                             var server = (IServerTreeDicomServer)serverNode;
-                            IDicomServerApplicationEntity ae = server.ToDataContract();
+                            IApplicationEntity ae = server.ToDataContract();
 
 							var studyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
 							serverStudyItemList.AddRange(studyItemList);

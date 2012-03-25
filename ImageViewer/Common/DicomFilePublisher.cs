@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 		}
 
-		public static void PublishRemote(ICollection<DicomFile> files, DicomServerApplicationEntity destinationServer, bool isBackground)
+		public static void PublishRemote(ICollection<DicomFile> files, ApplicationEntity destinationServer, bool isBackground)
 		{
 			if (files == null || files.Count == 0)
 				return;

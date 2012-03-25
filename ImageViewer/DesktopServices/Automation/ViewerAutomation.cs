@@ -434,9 +434,9 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		}
 
 	    //TODO (Marmot): Can use dicom service nodes and GetService.
-		private static IDictionary<string, IDicomServerApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
+		private static IDictionary<string, IApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
 		{
-            var serverMap = new Dictionary<string, IDicomServerApplicationEntity>();
+            var serverMap = new Dictionary<string, IApplicationEntity>();
 
 		    string localAE = DicomServerConfigurationHelper.AETitle;
 			serverMap[localAE] = null;
@@ -449,7 +449,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
                     {
                         var server = bridge.GetServersByAETitle(info.SourceAETitle).FirstOrDefault();
                         //only add streaming servers.
-                        if (server != null && server.IsStreaming)
+                        if (server != null && server.StreamingParameters != null)
                             serverMap[info.SourceAETitle] = server;
                     }
 				}

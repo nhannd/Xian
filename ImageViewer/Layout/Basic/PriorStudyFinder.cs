@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private static StudyItem ConvertToStudyItem(IStudyRootStudyIdentifier study)
 		{
 			string studyLoaderName;
-            IDicomServerApplicationEntity applicationEntity = null;
+            IApplicationEntity applicationEntity = null;
 
 		    // TODO (Marmot): Change to use the node to determine capabilities.
 			var node = FindServer(study.RetrieveAeTitle);
@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 			else
 			{
-				studyLoaderName = node.IsStreaming ? "CC_STREAMING" : "DICOM_REMOTE";
+				studyLoaderName = node.StreamingParameters != null ? "CC_STREAMING" : "DICOM_REMOTE";
 			    applicationEntity = node.ToDataContract();
 			}
 

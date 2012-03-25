@@ -62,8 +62,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             directory.AddServer(new AddServerRequest { Server = server });
 
             server.AETitle = "ae2";
-            server.HostName = "host2";
-            server.Port = 100;
+            server.ScpParameters = new ScpParameters("host2", 100);
             server.Description = "blah";
             server.Location = "blah";
 
@@ -127,30 +126,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             directory.DeleteServer(new DeleteServerRequest { Server = server });
         }
 
-        private DicomServerApplicationEntity CreateServer(string name, bool streaming)
+        private ApplicationEntity CreateServer(string name, bool streaming)
         {
-            if (streaming)
-            return new StreamingServerApplicationEntity
+            var ae = new ApplicationEntity
             {
                 Name = name,
                 AETitle = "ae",
-                HostName = "host",
-                Port = 104,
-                HeaderServicePort = 100,
-                WadoServicePort = 100,
+                ScpParameters = new ScpParameters{HostName = "host", Port = 104},
                 Description = "Some server",
                 Location = "Room 101"
             };
 
-            return new DicomServerApplicationEntity
-            {
-                Name = name,
-                AETitle = "ae",
-                HostName = "host",
-                Port = 104,
-                Description = "Some server",
-                Location = "Room 101"
-            };
+            if (streaming)
+                ae.StreamingParameters = new StreamingParameters(50221, 1000);
+            return ae;
         }
     }
 }

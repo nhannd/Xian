@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
         public override StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
-            var selectedServer = (IDicomServerApplicationEntity)targetServer;
+            var selectedServer = (IApplicationEntity)targetServer;
 
             //.NET strings are unicode, therefore, so is all the query data.
             const string utf8 = "ISO_IR 192";
@@ -140,14 +140,14 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				studyItemList.Add(item);
 			}
 
-        	AuditHelper.LogQueryIssued(selectedServer.AETitle, selectedServer.HostName, EventSource.CurrentUser,
+        	AuditHelper.LogQueryIssued(selectedServer.AETitle, selectedServer.ScpParameters.HostName, EventSource.CurrentUser,
         	                           EventResult.Success, SopClass.StudyRootQueryRetrieveInformationModelFindUid,
         	                           requestCollection);
 
 			return studyItemList;
         }
 
-        protected static IList<DicomAttributeCollection> Query(IDicomServerApplicationEntity server, DicomAttributeCollection requestCollection)
+        protected static IList<DicomAttributeCollection> Query(IApplicationEntity server, DicomAttributeCollection requestCollection)
 		{
 			//special case code for ModalitiesInStudy.  An IStudyFinder must accept a multi-valued
 			//string for ModalitiesInStudy (e.g. "MR\\CT") and process it appropriately for the 
@@ -178,8 +178,8 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 					{
 						requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(modalityFilter);
 
-						IList<DicomAttributeCollection> results = scu.Find(DicomServerConfigurationHelper.GetOfflineAETitle(false),
-							server.AETitle, server.HostName, server.Port,
+						IList<DicomAttributeCollection> results = scu.Find(DicomServerConfigurationHelper.AETitle,
+							server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port,
 							requestCollection);
 
 						scu.Join(new TimeSpan(0, 0, 0, 0, 1000));

@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     if (existing != null)
                         throw new ArgumentException();
 
-                    var server = (IDicomServerApplicationEntity)request.Server;
+                    var server = (IApplicationEntity)request.Server;
                     var device = server.ToDevice();
                     broker.AddDevice(device);
 
@@ -109,19 +109,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     if (existing == null)
                         throw new ArgumentException();
 
-                    var ae = (IDicomServerApplicationEntity) request.Server;
+                    var ae = (IApplicationEntity) request.Server;
 
                     existing.AETitle = ae.AETitle;
-                    existing.HostName = ae.HostName;
-                    existing.Port = ae.Port;
+                    existing.HostName = ae.ScpParameters.HostName;
+                    existing.Port = ae.ScpParameters.Port;
                     existing.Location = ae.Location;
                     existing.Description = ae.Description;
                     
-                    if (ae.IsStreaming)
+                    if (ae.StreamingParameters != null)
                     {
-                        var streaming = (IStreamingServerApplicationEntity) ae;
-                        existing.StreamingHeaderPort = streaming.HeaderServicePort;
-                        existing.StreamingImagePort = streaming.WadoServicePort;
+                        existing.StreamingHeaderPort = ae.StreamingParameters.HeaderServicePort;
+                        existing.StreamingImagePort = ae.StreamingParameters.WadoServicePort;
+                    }
+                    else
+                    {
+                        existing.StreamingHeaderPort = null;
+                        existing.StreamingImagePort = null;
                     }
 
                     scope.SubmitChanges();

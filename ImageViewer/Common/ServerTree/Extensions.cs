@@ -19,15 +19,18 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
 {
     public static class Extensions
     {
-        public static DicomServerApplicationEntity ToDataContract(this IServerTreeDicomServer server)
+        public static ApplicationEntity ToDataContract(this IServerTreeDicomServer server)
         {
             Platform.CheckForNullReference(server, "server");
-            if (server.IsStreaming)
-                return new StreamingServerApplicationEntity(server.AETitle, server.HostName, server.Port,
-                                                            server.HeaderServicePort, server.WadoServicePort,
-                                                            server.Name, "", server.Location);
+            var ae = new ApplicationEntity(server.AETitle, server.Name, "", server.Location)
+                         {
+                             ScpParameters = new ScpParameters(server.HostName, server.Port)
+                         };
 
-            return new DicomServerApplicationEntity(server.AETitle, server.HostName, server.Port, server.Name, "", server.Location);
+            if (server.IsStreaming)
+                ae.StreamingParameters = new StreamingParameters(server.HeaderServicePort, server.WadoServicePort);
+            
+            return ae;
         }
 
         public static IDicomServiceNode ToDicomServiceNode(this IServerTreeDicomServer server)
@@ -49,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
             return storedServerGroup;
         }
 
-        internal static ServerTreeGroup ToServerTreeGroup(this StoredServerGroup storedServerGroup, List<DicomServerApplicationEntity> servers)
+        internal static ServerTreeGroup ToServerTreeGroup(this StoredServerGroup storedServerGroup, List<ApplicationEntity> servers)
         {
             var serverTreeGroup = new ServerTreeGroup(storedServerGroup.Name);
             foreach (var childGroup in storedServerGroup.ChildGroups)
@@ -61,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                 var foundServerIndex = servers.FindIndex(d => d.Name == reference.Name);
                 if (foundServerIndex >= 0)
                 {
-                    var server = (IDicomServerApplicationEntity)servers[foundServerIndex];
+                    var server = (IApplicationEntity)servers[foundServerIndex];
                     servers.RemoveAt(foundServerIndex);
                     serverTreeGroup.Servers.Add(new ServerTreeDicomServer(server));
                 }

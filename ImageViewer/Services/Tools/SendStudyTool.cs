@@ -103,11 +103,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
                 foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
 				{
 					var request = new SendStudiesRequest();
-                    var aeInformation = new DicomServerApplicationEntity
+                    var aeInformation = new ApplicationEntity
                                             {
                                                 AETitle = destination.AETitle,
-                                                HostName = destination.HostName,
-                                                Port = destination.Port
+                                                ScpParameters = new ScpParameters(destination.HostName, destination.Port)
                                             };
 				    request.DestinationAEInformation = aeInformation;
 					request.StudyInstanceUids = studyUids;

@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 	[DataContract]
 	public abstract class SendInstancesRequest
 	{
-        private DicomServerApplicationEntity _destinationAEInformation;
+        private ApplicationEntity _destinationAEInformation;
 		private bool _isBackground;
 
 		public SendInstancesRequest()
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		}
 
 		[DataMember(IsRequired = true)]
-        public DicomServerApplicationEntity DestinationAEInformation
+        public ApplicationEntity DestinationAEInformation
 		{
 			get { return _destinationAEInformation; }
 			set { _destinationAEInformation = value; }

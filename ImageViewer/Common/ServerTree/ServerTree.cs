@@ -26,14 +26,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
         {
         }
 
-        internal ServerTree(StoredServerGroup rootGroup, List<DicomServerApplicationEntity> directoryServers)
+        internal ServerTree(StoredServerGroup rootGroup, List<ApplicationEntity> directoryServers)
         {
             LocalServer = new ServerTreeLocalServer();
 
             //Create a copy because we will modify it.
             directoryServers = directoryServers == null
-                ? new List<DicomServerApplicationEntity>()
-                : new List<DicomServerApplicationEntity>(directoryServers);
+                ? new List<ApplicationEntity>()
+                : new List<ApplicationEntity>(directoryServers);
 
             var directoryServerCount = directoryServers.Count;
 
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                 //rootGroup.ToServerTreeGroup above deletes the entries from the list of servers,
                 //so if there are any left, that means there was no match in the tree. So,
                 //we will just add those servers to the root.
-                foreach (DicomServerApplicationEntity server in directoryServers)
+                foreach (ApplicationEntity server in directoryServers)
                     RootServerGroup.Servers.Add(new ServerTreeDicomServer(server));
             }
 
@@ -101,14 +101,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
             RootServerGroup.Servers.Add(exampleServer);
         }
 
-        internal static List<DicomServerApplicationEntity> GetServersFromDirectory()
+        internal static List<ApplicationEntity> GetServersFromDirectory()
         {
             try
             {
                 List<ApplicationEntity> servers = null;
                 Platform.GetService<IServerDirectory>(
                     directory => servers = directory.GetServers(new GetServersRequest()).Servers);
-                return servers.OfType<DicomServerApplicationEntity>().ToList();
+                return servers.OfType<ApplicationEntity>().ToList();
             }
             catch (Exception e)
             {
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                 Platform.Log(LogLevel.Warn, e, "Failed to load servers from directory.");
             }
 
-            return new List<DicomServerApplicationEntity>();
+            return new List<ApplicationEntity>();
         }
 
         public void DeleteCurrentNode()
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
         {
             //Get all the DICOM servers from the directory.
             var directoryServers = directory.GetServers(new GetServersRequest()).Servers
-                                        .OfType<DicomServerApplicationEntity>().ToList();
+                                        .OfType<ApplicationEntity>().ToList();
 
             //Convert the tree items to data contracts.
             var treeServers = RootServerGroup.GetAllServers()
@@ -213,7 +213,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
             //Figure out which items are new.
             var added = (from t in treeServers where !directoryServers.Any(d => t.Name == d.Name) select t);
             //Figure out which items have changed.
-            var changed = (from t in directoryServers where treeServers.Any(d => t.Name == d.Name && !t.Equals(d)) select t);
+            var changed = (from t in treeServers where directoryServers.Any(d => t.Name == d.Name && !t.Equals(d)) select t);
 
             //Most updates are done one server at a time, anyway, so we'll just do this.
             //Could implement bulk update methods on the service, too.

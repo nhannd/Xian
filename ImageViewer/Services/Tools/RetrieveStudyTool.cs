@@ -58,11 +58,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			EventResult result = EventResult.Success;
 
-            var retrieveInformation = new Dictionary<IDicomServerApplicationEntity, List<StudyInformation>>();
+            var retrieveInformation = new Dictionary<IApplicationEntity, List<StudyInformation>>();
 			foreach (StudyItem item in Context.SelectedStudies)
 			{
-                var applicationEntity = item.Server as IDicomServerApplicationEntity;
-				if (applicationEntity != null && !retrieveInformation.ContainsKey(applicationEntity))
+                var applicationEntity = item.Server as IApplicationEntity;
+                if (applicationEntity != null && applicationEntity.ScpParameters != null && !retrieveInformation.ContainsKey(applicationEntity))
 					retrieveInformation[applicationEntity] = new List<StudyInformation>();
                 else continue;
 
@@ -82,13 +82,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				client.Open();
 
-                foreach (KeyValuePair<IDicomServerApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
+                foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
 				{
-                    var aeInformation = new DicomServerApplicationEntity
+                    var aeInformation = new ApplicationEntity
 					                        {
 					                            AETitle = kvp.Key.AETitle,
-					                            HostName = kvp.Key.HostName,
-					                            Port = kvp.Key.Port
+                                                ScpParameters = new ScpParameters(kvp.Key.ScpParameters)
 					                        };
 
 				    client.RetrieveStudies(aeInformation, kvp.Value);
@@ -112,12 +111,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			finally
 			{
-                foreach (KeyValuePair<IDicomServerApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
+                foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
 				{
 					var requestedInstances = new AuditedInstances();
 					foreach (StudyInformation study in kvp.Value)
 						requestedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
-					AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.HostName, requestedInstances, EventSource.CurrentUser, result);
+					AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.ScpParameters.HostName, requestedInstances, EventSource.CurrentUser, result);
 				}
 			}
 		}

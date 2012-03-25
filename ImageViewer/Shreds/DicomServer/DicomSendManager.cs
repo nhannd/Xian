@@ -94,8 +94,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			public SendScu(string localAETitle, SendFilesRequest sendFilesRequest, SendOperationProgressCallback callback)
 				: base(localAETitle, sendFilesRequest.DestinationAEInformation.AETitle, 
-									sendFilesRequest.DestinationAEInformation.HostName, 
-									sendFilesRequest.DestinationAEInformation.Port)
+									sendFilesRequest.DestinationAEInformation.ScpParameters.HostName, 
+									sendFilesRequest.DestinationAEInformation.ScpParameters.Port)
 			{
 				Platform.CheckForEmptyString(localAETitle, "localAETitle");
 
@@ -103,12 +103,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				Initialize(callback);
 			}
 
-            public SendScu(string localAETitle, DicomServerApplicationEntity destinationAEInfo, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
-				: base(localAETitle, destinationAEInfo.AETitle, destinationAEInfo.HostName, destinationAEInfo.Port)
+            public SendScu(string localAETitle, ApplicationEntity destinationAEInfo, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
+				: base(localAETitle, destinationAEInfo.AETitle, destinationAEInfo.ScpParameters.HostName, destinationAEInfo.ScpParameters.Port)
 			{
 				Platform.CheckForEmptyString(localAETitle, "localAETitle");
 				Platform.CheckForEmptyString(destinationAEInfo.AETitle, "destinationAEInfo.AETitle");
-				Platform.CheckForEmptyString(destinationAEInfo.HostName, "destinationAEInfo.HostName");
+				Platform.CheckForEmptyString(destinationAEInfo.ScpParameters.HostName, "destinationAEInfo.HostName");
 				Platform.CheckForNullReference(instancesToSend, "instancesToSend");
 
 				Initialize(callback);
@@ -527,7 +527,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-        private SendOperationReference Send(DicomServerApplicationEntity destinationAEInformation, bool isBackground, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
+        private SendOperationReference Send(ApplicationEntity destinationAEInformation, bool isBackground, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
 		{
 			lock (_syncLock)
 			{

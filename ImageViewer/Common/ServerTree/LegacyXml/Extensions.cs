@@ -15,15 +15,17 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree.LegacyXml
 {
     public static class Extensions
     {
-        public static DicomServerApplicationEntity ToDataContract(this Server server)
+        public static ApplicationEntity ToDataContract(this Server server)
         {
-            if (server.IsStreaming)
-                return new StreamingServerApplicationEntity(server.AETitle, server.Host, server.Port,
-                                                            server.HeaderServicePort, server.WadoServicePort,
-                                                            server.NameOfServer, "", server.Location);
+            var ae = new ApplicationEntity(server.AETitle, server.Host, "", server.Location)
+                         {
+                             ScpParameters = new ScpParameters(server.Host, server.Port)
+                         };
 
-            return new DicomServerApplicationEntity(server.AETitle, server.Host, server.Port,
-                                                    server.NameOfServer, "", server.Location);
+            if (server.IsStreaming)
+                ae.StreamingParameters = new StreamingParameters(server.HeaderServicePort, server.WadoServicePort);
+
+            return ae;
         }
 
         internal static ServerTreeGroup ToServerTreeGroup(this ServerGroup legacyGroup)

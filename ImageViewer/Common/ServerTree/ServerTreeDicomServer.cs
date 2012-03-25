@@ -11,11 +11,16 @@
 
 using System.Text;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.ServerTree
 {
     public class ServerTreeDicomServer : IServerTreeDicomServer
     {
+        public static readonly int DefaultPort = 104;
+        public static readonly int DefaultHeaderServicePort = 50221;
+        public static readonly int DefaultWadoServicePort = 1000;
+
         #region Private Fields
 
         private string _parentPath;
@@ -25,21 +30,29 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
         public ServerTreeDicomServer(string name)
         {
             Name = name;
+            Port = DefaultPort;
+            HeaderServicePort = DefaultHeaderServicePort;
+            WadoServicePort = DefaultWadoServicePort;
         }
 
-        internal ServerTreeDicomServer(IDicomServerApplicationEntity entity)
+        internal ServerTreeDicomServer(IApplicationEntity entity)
         {
+            Platform.CheckMemberIsSet(entity.ScpParameters, "ScpParameters");
             Name = entity.Name;
             Location = entity.Location;
-            HostName = entity.HostName;
             AETitle = entity.AETitle;
-            Port = entity.Port;
-            IsStreaming = entity.IsStreaming;
+            HostName = entity.ScpParameters.HostName;
+            Port = entity.ScpParameters.Port;
+            IsStreaming = entity.StreamingParameters != null;
             if (IsStreaming)
             {
-                var streamingServer = (IStreamingServerApplicationEntity)entity;
-                HeaderServicePort = streamingServer.HeaderServicePort;
-                WadoServicePort = streamingServer.WadoServicePort;
+                HeaderServicePort = entity.StreamingParameters.HeaderServicePort;
+                WadoServicePort = entity.StreamingParameters.WadoServicePort;
+            }
+            else
+            {
+                HeaderServicePort = DefaultHeaderServicePort;
+                WadoServicePort = DefaultWadoServicePort;
             }
         }
 
