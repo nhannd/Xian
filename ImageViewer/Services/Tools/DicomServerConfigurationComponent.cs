@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
     			_aeTitle = DicomServerConfigurationHelper.AETitle;
     			_port = DicomServerConfigurationHelper.Port;
-				_storageDirectory = DicomServerConfigurationHelper.InterimStorageDirectory;
+				_storageDirectory = DicomServerConfigurationHelper.FileStoreLocation;
 
     			Enabled = true;
     		}

@@ -162,13 +162,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				StudyItem existing;
 				if (uniqueStudies.TryGetValue(study.StudyInstanceUid, out existing))
 				{
-                    var server = study.Server as IDicomServerApplicationEntity;
+                    var server = study.Server as IApplicationEntity;
 					//we will only replace an existing entry if this study's server is streaming.
-					if (server != null && server.IsStreaming)
+					if (server != null && server.StreamingParameters != null)
 					{
 						//only replace existing entry if it is on a non-streaming server.
-                        server = existing.Server as IDicomServerApplicationEntity;
-						if (server == null || !server.IsStreaming)
+                        server = existing.Server as IApplicationEntity;
+                        if (server == null || server.StreamingParameters == null)
 						{
 							removed.Add(existing);
 							uniqueStudies[study.StudyInstanceUid] = study;

@@ -12,37 +12,42 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.ServerTree;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+    // TODO (Marmot): Gonzo.
 	public static class DefaultServers
 	{
-		public static List<Server> SelectFrom(IEnumerable<Server> candidates)
+        internal static List<IDicomServiceNode> SelectFrom(IEnumerable<IServerTreeDicomServer> candidates)
 		{
 			StringCollection defaultServerPaths = DefaultServerSettings.Default.DefaultServerPaths;
-
 			if (defaultServerPaths == null)
-				return new List<Server>();
+                return new List<IDicomServiceNode>();
 
-			return CollectionUtils.Select(candidates, delegate(Server node) { return defaultServerPaths.Contains(node.Path); });
+            var matches = candidates.OfType<IServerTreeDicomServer>().Where(s => defaultServerPaths.Contains(s.Path)).Cast<IServerTreeDicomServer>();
+            var results = matches.Select(m => m.ToDataContract().ToServiceNode());
+            return results.ToList();
 		}
 
-		public static List<Server> SelectFrom(Common.ServerTree.ServerTree serverTree)
+        internal static List<IDicomServiceNode> SelectFrom(Common.ServerTree.ServerTree serverTree)
 		{
-			List<Server> allServers = CollectionUtils.Map(serverTree.FindChildServers(),
-				delegate(IServerTreeNode server) { return (Server) server; });
-			
+            var allServers = serverTree.FindChildServers().OfType<IServerTreeDicomServer>();
 			return SelectFrom(allServers);
 		}
 
-		public static List<Server> GetAll()
+        public static List<IDicomServiceNode> GetAll()
 		{
-			Common.ServerTree.ServerTree tree = new Common.ServerTree.ServerTree();
-			return SelectFrom(tree);
+			var tree = new Common.ServerTree.ServerTree();
+            return SelectFrom(tree);
 		}
 
         public static IEnumerable<IStudyRootQuery> GetQueryInterfaces(bool includeLocal)
@@ -63,24 +68,21 @@ namespace ClearCanvas.ImageViewer.Configuration
                     yield return localDataStoreQuery;
             }
 
-            string localAE = Common.ServerTree.ServerTree.GetClientAETitle();
+            string localAE = DicomServerConfigurationHelper.AETitle;
 
-			List<Server> defaultServers = DefaultServers.SelectFrom(new Common.ServerTree.ServerTree());
-			List<Server> streamingServers = CollectionUtils.Select(defaultServers, 
-				delegate(Server server) { return server.IsStreaming; });
+			var defaultServers = SelectFrom(new Common.ServerTree.ServerTree());
+            var streamingServers = defaultServers.Where(s => s.StreamingParameters != null).ToList();
+            var nonStreamingServers = defaultServers.Where(s => s.StreamingParameters == null).ToList();
 
-			List<Server> nonStreamingServers = CollectionUtils.Select(defaultServers,
-				delegate(Server server) { return !server.IsStreaming; });
-
-			foreach (Server server in streamingServers)
+            foreach (var server in streamingServers)
 			{
-				DicomStudyRootQuery remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.Host, server.Port);
+				var remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
 				yield return remoteQuery;
 			}
 
-			foreach (Server server in nonStreamingServers)
+            foreach (var server in nonStreamingServers)
 			{
-				DicomStudyRootQuery remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.Host, server.Port);
+                var remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
 				yield return remoteQuery;
 			}
 		}

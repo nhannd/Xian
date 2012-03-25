@@ -77,13 +77,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}
 			else
 			{
-				return CollectionUtils.SelectFirst(base.Context.SelectedServerGroup.Servers,
+				return CollectionUtils.SelectFirst(Context.SelectedServerGroup.Servers,
 					delegate(IServerTreeNode server)
 					{
-						Server theServer = server as Server;
+                        var theServer = server as IServerTreeDicomServer;
 						if (theServer != null)
 						{
-                            var ae = studyItem.Server as IDicomServerApplicationEntity;
+                            var ae = studyItem.Server as IApplicationEntity;
 							if (ae != null)
 								return theServer.AETitle == ae.AETitle;
 						}

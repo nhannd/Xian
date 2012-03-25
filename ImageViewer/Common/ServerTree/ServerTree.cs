@@ -11,195 +11,152 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
+using System.Linq;
+using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.ImageViewer.Common.ServerTree.LegacyXml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Common.ServerTree
 {
-    public class ServerTree
-	{
-		internal static readonly string MyServersXmlFile = "DicomAEServers.xml";
-		
-		#region Private fields
-
-		private ServerTreeRoot _rootNode;
-		private IServerTreeNode _currentNode;
-		private event EventHandler _serverTreeUpdated;
-
-    	private static readonly XmlSerializer _serializer;
-
-		#endregion
-
-		static ServerTree()
-		{
-			DicomServerConfigurationHelper.Changed += new EventHandler(OnServerConfigurationChanged);
-
-			_serializer = new XmlSerializer(typeof(ServerTreeRoot), new Type[] { 
-                    typeof(ServerGroup),
-                    typeof(Server),
-                    typeof(List<ServerGroup>),
-                    typeof(List<Server>)
-                });
-		}
-
-		internal static string GetServersXmlFileName()
-		{
-			return Path.Combine(Platform.InstallDirectory, MyServersXmlFile);
-		}
-
-    	private static void OnServerConfigurationChanged(object sender, EventArgs e)
-		{
-			try
-			{
-				ServerTree serverTree = new ServerTree();
-				if (serverTree.RootNode.LocalDataStoreNode.OfflineAE != DicomServerConfigurationHelper.AETitle)
-				{
-					serverTree.RootNode.LocalDataStoreNode.OfflineAE = DicomServerConfigurationHelper.AETitle;
-					serverTree.Save();
-				}
-			}
-			catch(Exception ex)
-			{
-				Platform.Log(LogLevel.Error, ex, "Failed to save the server tree.");
-			}
-		}
-
-    	public ServerTree()
-    	{
-    		LoadServers();
-    		CurrentNode = _rootNode.LocalDataStoreNode;
-    	}
-
-    	#region Public Properties / Events
-
-    	public IServerTreeNode CurrentNode
-    	{
-    		get { return _currentNode; }
-    		set { _currentNode = value; }
-    	}
-
-    	public ServerTreeRoot RootNode
-    	{
-    		get { return _rootNode; }
-    	}
-
-    	public event EventHandler ServerTreeUpdated
-    	{
-    		add { _serverTreeUpdated += value; }
-    		remove { _serverTreeUpdated -= value; }
-    	}
-
-    	#endregion
-
-		#region Public Methods
-
-		public static string GetClientAETitle()
-		{
-			ServerTree serverTree = new ServerTree();
-			return serverTree.RootNode.LocalDataStoreNode.GetClientAETitle();
-		}
-
-    	public void FireServerTreeUpdatedEvent()
+    public partial class ServerTree
+    {
+        public ServerTree()
+            : this(ServerTreeSettings.Default.GetSharedServers(), GetServersFromDirectory())
         {
-            EventsHelper.Fire(_serverTreeUpdated, this, EventArgs.Empty);
         }
 
-		public bool CanMoveOrAdd(IServerTreeNode destinationNode, IServerTreeNode addMoveNode)
-		{
-			if (destinationNode.IsServer)
-				return false;
-
-			if (destinationNode == addMoveNode)
-				return false;
-
-			if (addMoveNode == this.RootNode.ServerGroupNode || addMoveNode == this.RootNode.LocalDataStoreNode)
-				return false;
-
-			if (addMoveNode.IsServer)
-			{
-				Server server = (Server)addMoveNode;
-				string conflictingPath;
-				if (IsConflictingServerInGroup((ServerGroup)destinationNode, server.Name, false, server.AETitle, server.Host, server.Port, out conflictingPath))
-					return false;
-			}
-			else if (addMoveNode is ServerGroup)
-			{
-				string conflictingPath;
-				if (IsConflictingServerGroupInGroup((ServerGroup)destinationNode, addMoveNode.Name, false, out conflictingPath))
-					return false;
-
-				if (addMoveNode.ParentPath == destinationNode.Path)
-					return false;
-
-				// if the node that's being added is actually a direct parent of
-				// the destination node, then it's not possible for it to be added as a child
-				// direct parent:
-				//      destination - ./a/b/c/destination
-				//      direct parents - ./a/b/c; ./a/b; ./a
-				//      non-d parents - ./a/b/d; ./a/b/c/e
-				// thus, if the proposed node's path is NOT wholly contained in the destination node's
-				// path, then it's okay to add the proposed node
-				return (destinationNode.Path.IndexOf(addMoveNode.Path) == -1);
-			}
-
-			return true;
-		}
-		
-		public bool CanAddServerToCurrentGroup(string serverName, string AETitle, string serverHost, int port, out string conflictingServerPath)
+        internal ServerTree(StoredServerGroup rootGroup, List<ApplicationEntity> directoryServers)
         {
-			if (!CurrentNode.IsServerGroup)
-			{
-				conflictingServerPath = "";
-				return false;
-			}
+            LocalServer = new ServerTreeLocalServer();
 
-			return IsConflictingServerInGroup((ServerGroup)this.CurrentNode, serverName, false, AETitle, serverHost, port, out conflictingServerPath);
-        }
+            //Create a copy because we will modify it.
+            directoryServers = directoryServers == null
+                ? new List<ApplicationEntity>()
+                : new List<ApplicationEntity>(directoryServers);
 
-		public bool CanEditCurrentServer(string serverName, string AETitle, string serverHost, int port, out string conflictingServerPath)
-		{
-			if (!CurrentNode.IsServer)
-			{
-				conflictingServerPath = "";
-				return false;
-			}
+            var directoryServerCount = directoryServers.Count;
 
-			return IsConflictingServerInGroup(FindParentGroup(this.CurrentNode), serverName, true, AETitle, serverHost, port, out conflictingServerPath);
-		}
-
-		public bool CanAddGroupToCurrentGroup(string newGroupName, out string conflictingGroupPath)
-        {
-            if (!CurrentNode.IsServerGroup)
+            if (rootGroup == null)
             {
-                conflictingGroupPath = "";
-                return false;
+                InitializeRootGroup();
+            }
+            else
+            {
+                //ToServerTreeGroup eliminates the items from the passed in list of
+                //servers as the references are found in the tree.
+                RootServerGroup = rootGroup.ToServerTreeGroup(directoryServers);
             }
 
-			return IsConflictingServerGroupInGroup((ServerGroup)CurrentNode, newGroupName, false, out conflictingGroupPath);
-		}
+            if (directoryServerCount == 0)
+            {
+                AddExamples();
+            }
+            else
+            {
+                //rootGroup.ToServerTreeGroup above deletes the entries from the list of servers,
+                //so if there are any left, that means there was no match in the tree. So,
+                //we will just add those servers to the root.
+                foreach (ApplicationEntity server in directoryServers)
+                    RootServerGroup.Servers.Add(new ServerTreeDicomServer(server));
+            }
 
-		public bool CanEditCurrentGroup(string newGroupName, out string conflictingGroupPath)
-		{
-			if (!CurrentNode.IsServerGroup)
-			{
-				conflictingGroupPath = "";
-				return false;
-			}
+            InitializePaths();
+            CurrentNode = LocalServer;
+        }
 
-			return IsConflictingServerGroupInGroup(FindParentGroup(CurrentNode), newGroupName, true, out conflictingGroupPath);
-		}
-		
-		public void DeleteServerGroup()
+        internal ServerTree(ServerTreeRoot legacyRoot)
         {
-			if (!CurrentNode.IsServerGroup)
+            LocalServer = new ServerTreeLocalServer();
+            
+            if (legacyRoot == null)
+            {
+                InitializeRootGroup();
+                AddExamples();
+            }
+            else
+            {
+                RootServerGroup = legacyRoot.ServerGroupNode.ToServerTreeGroup();
+            }
+
+            InitializePaths();
+            CurrentNode = LocalServer;
+        }
+
+        private void InitializeRootGroup()
+        {
+            RootServerGroup = new ServerTreeGroup(@"My Servers");
+        }
+
+        private void InitializePaths()
+        {
+            ((ServerTreeLocalServer)LocalServer).ChangeParentPath(_rootPath);
+            ((ServerTreeGroup)RootServerGroup).ChangeParentPath(_rootPath);
+        }
+
+        private void AddExamples()
+        {
+            RootServerGroup.ChildGroups.Add(new ServerTreeGroup(SR.ExampleGroup));
+            var exampleServer = new ServerTreeDicomServer(SR.ExampleServer, "", "localhost", "SAMPLE", 104, false, 50221, 1000);
+            RootServerGroup.Servers.Add(exampleServer);
+        }
+
+        internal static List<ApplicationEntity> GetServersFromDirectory()
+        {
+            try
+            {
+                List<ApplicationEntity> servers = null;
+                Platform.GetService<IServerDirectory>(
+                    directory => servers = directory.GetServers(new GetServersRequest()).Servers);
+                return servers.OfType<ApplicationEntity>().ToList();
+            }
+            catch (Exception e)
+            {
+                //TODO (Marmot): Should this throw?
+                Platform.Log(LogLevel.Warn, e, "Failed to load servers from directory.");
+            }
+
+            return new List<ApplicationEntity>();
+        }
+
+        public void DeleteCurrentNode()
+        {
+            if (CurrentNode.IsServer)
+                DeleteServer();
+            else if (CurrentNode.IsServerGroup)
+                DeleteGroup();
+        }
+
+        public void DeleteServer()
+        {
+            if (!CurrentNode.IsServer)
+                return;
+
+            var parentGroup = FindParentGroup(CurrentNode);
+            if (parentGroup == null)
+                return;
+
+            for (int i = 0; i < parentGroup.Servers.Count; i++)
+            {
+                if (parentGroup.Servers[i].Name == CurrentNode.Name)
+                {
+                    parentGroup.Servers.RemoveAt(i);
+                    CurrentNode = parentGroup;
+                    FireServerTreeUpdatedEvent();
+                    break;
+                }
+            }
+        }
+
+        public void DeleteGroup()
+        {
+            if (!CurrentNode.IsServerGroup)
 				return;
 			
-			ServerGroup parentGroup = FindParentGroup(CurrentNode);
+			var parentGroup = FindParentGroup(CurrentNode);
             if (null == parentGroup)
                 return;	
+
 
             for (int i = 0; i < parentGroup.ChildGroups.Count; ++i)
             {
@@ -207,500 +164,75 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                 {
                     parentGroup.ChildGroups.RemoveAt(i);
                     CurrentNode = parentGroup;
-                    Save();
                     FireServerTreeUpdatedEvent();
                     break;
                 }
             }
         }
 
-        public void DeleteDicomServer()
+        public void ReplaceDicomServerInCurrentGroup(IServerTreeDicomServer newServer)
         {
-			if (!CurrentNode.IsServer)
-				return;
-
-            ServerGroup parentGroup = FindParentGroup(CurrentNode);
-            if (parentGroup == null)
+            if (!CurrentNode.IsServer)
                 return;
 
-            for (int i = 0; i < parentGroup.ChildServers.Count; i++)
+            var serverGroup = FindParentGroup(CurrentNode);
+            if (serverGroup == null)
+                return;
+
+            for (int i = 0; i < serverGroup.Servers.Count; i++)
             {
-                if (parentGroup.ChildServers[i].Name == CurrentNode.Name)
+                if (serverGroup.Servers[i].Name == CurrentNode.Name)
                 {
-                    parentGroup.ChildServers.RemoveAt(i);
-                    CurrentNode = parentGroup;
-                    Save();
+                    serverGroup.Servers[i] = newServer;
+                    ((ServerTreeDicomServer)newServer).ChangeParentPath(serverGroup.Path);
+                    CurrentNode = newServer;
                     FireServerTreeUpdatedEvent();
                     break;
                 }
             }
         }
 
-		public void ReplaceDicomServerInCurrentGroup(Server newServer)
-		{
-			if (!CurrentNode.IsServer)
-				return;
-
-			ServerGroup serverGroup = FindParentGroup(CurrentNode);
-			if (serverGroup == null)
-				return;
-
-			for (int i = 0; i < serverGroup.ChildServers.Count; i++)
-			{
-				if (serverGroup.ChildServers[i].Name == CurrentNode.Name)
-				{
-					serverGroup.ChildServers[i] = newServer;
-					newServer.ChangeParentPath(serverGroup.Path);
-					CurrentNode = newServer;
-					Save();
-					FireServerTreeUpdatedEvent();
-					break;
-				}
-			}
-		}
-
-		public void Save()
-		{
-			Stream fStream = new FileStream(GetServersXmlFileName(), FileMode.Create, FileAccess.Write, FileShare.Read);
-			_serializer.Serialize(fStream, _rootNode);
-            fStream.Close();
-            return;
+        public void Save()
+        {
+            Platform.GetService<IServerDirectory>(SaveToDirectory);
+            ServerTreeSettings.Default.UpdateSharedServers(RootServerGroup.ToStoredServerGroup());
         }
 
-		public Server FindServer(string path)
-		{
-			return FindServer(this.RootNode.ServerGroupNode, path);
-		}
-
-		public Server FindServer(ServerGroup group, string path)
-		{
-			foreach (Server server in group.ChildServers)
-			{
-				if (server.Path == path)
-					return server;
-			}
-
-			foreach (ServerGroup childGroup in group.ChildGroups)
-			{
-				Server server = FindServer(childGroup, path);
-				if (server != null)
-					return server;
-			}
-
-			return null;
-		}
-		
-		public List<IServerTreeNode> FindChildServers()
-		{
-			return FindChildServers(this.RootNode.ServerGroupNode);
-		}
-
-    	public List<IServerTreeNode> FindChildServers(ServerGroup serverGroup)
+        internal void SaveToDirectory(IServerDirectory directory)
         {
-            List<IServerTreeNode> listOfChildrenServers = new List<IServerTreeNode>();
-            FindChildServers(serverGroup, listOfChildrenServers);
-            return listOfChildrenServers;
-		}
-		
-    	public ServerGroup FindServerGroup(string path)
-		{
-			return FindServerGroup(this.RootNode.ServerGroupNode, path);
-		}
+            //Get all the DICOM servers from the directory.
+            var directoryServers = directory.GetServers(new GetServersRequest()).Servers
+                                        .OfType<ApplicationEntity>().ToList();
 
-    	public ServerGroup FindServerGroup(ServerGroup startNode, string path)
-		{
-			if (!startNode.IsServerGroup)
-				return null;
+            //Convert the tree items to data contracts.
+            var treeServers = RootServerGroup.GetAllServers()
+                                    .OfType<IServerTreeDicomServer>().Select(a => a.ToDataContract());
+            
+            //Figure out which items have been deleted.
+            var deleted = from d in directoryServers where !treeServers.Any(t => t.Name == d.Name) select d;
+            //Figure out which items are new.
+            var added = (from t in treeServers where !directoryServers.Any(d => t.Name == d.Name) select t);
+            //Figure out which items have changed.
+            var changed = (from t in treeServers where directoryServers.Any(d => t.Name == d.Name && !t.Equals(d)) select t);
 
-			if (startNode.Path == path)
-				return startNode;
-
-			foreach (ServerGroup childrenServerGroup in startNode.ChildGroups)
-			{
-				ServerGroup foundNode = FindServerGroup(childrenServerGroup, path);
-				if (null != foundNode)
-					return foundNode;
-			}
-
-			return null;
-		}
-		
-		#endregion
-
-		#region Private methods
-
-		private void LoadServers()
-        {
-            _rootNode = new ServerTreeRoot();
-
-			string file = GetServersXmlFileName();
-			if (File.Exists(file))
+            //Most updates are done one server at a time, anyway, so we'll just do this.
+            //Could implement bulk update methods on the service, too.
+            foreach (var d in deleted)
             {
-				Stream fStream = File.OpenRead(file);
-
-                using (fStream)
+                try
                 {
-					ServerTreeRoot serverTreeRoot = (ServerTreeRoot)_serializer.Deserialize(fStream);
-					_rootNode = serverTreeRoot;
+                    directory.DeleteServer(new DeleteServerRequest { Server = d });
                 }
-            }
-            else
-            {
-                // create default entries and save them to disk
-                _rootNode.ServerGroupNode = new ServerGroup(@"My Servers");
-				_rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup(SR.ExampleGroup));
-                _rootNode.ServerGroupNode.ChildServers.Add(
-					new Server(SR.ExampleServer, "", "localhost", "SAMPLE", 104, false, 50221, 1000));
-            	Save();
-            }
-
-			_rootNode.InitializeChildPaths();
-        }
-
-		private ServerGroup FindParentGroup(IServerTreeNode node)
-        {
-            return FindServerGroup(_rootNode.ServerGroupNode, node.ParentPath);
-        }
-
-    	private bool IsConflictingServerInGroup(ServerGroup serverGroup, string toFindServerName, bool excludeCurrentNode, string toFindServerAE, string toFindServerHost, int toFindServerPort, out string conflictingServerPath)
-        {
-            foreach (Server server in serverGroup.ChildServers)
-            {
-				if (excludeCurrentNode && server == this.CurrentNode)
-					continue;
-
-				if (String.Compare(server.Name, toFindServerName, true) == 0 || 
-						(server.AETitle == toFindServerAE &&
-						String.Compare(server.Host, toFindServerHost, true) == 0 &&
-						server.Port == toFindServerPort))
-				{
-					conflictingServerPath = server.Path;
-                    return true;
-                }
-            }
-
-            conflictingServerPath = "";
-            return false;
-        }
-		private bool IsConflictingServerGroupInGroup(ServerGroup searchSite, string toFindServerGroupName, bool excludeCurrentNode, out string conflictingGroupPath)
-        {
-            foreach (ServerGroup serverGroup in searchSite.ChildGroups)
-            {
-				if (excludeCurrentNode && serverGroup == this.CurrentNode)
-					continue;
-
-				if (String.Compare(serverGroup.Name, toFindServerGroupName, true) == 0)
+                catch (Exception e)
                 {
-                    conflictingGroupPath = serverGroup.Path;
-                    return true;
+                    Platform.Log(LogLevel.Warn, e, "Server being deleted ('{0}') does not exist in directory.", d.Name);
                 }
             }
 
-            conflictingGroupPath = "";
-            return false;
+            foreach (var c in changed)
+              directory.UpdateServer(new UpdateServerRequest{Server = c});
+            foreach (var a in added)
+              directory.AddServer(new AddServerRequest { Server = a });
         }
-        private void FindChildServers(ServerGroup serverGroup, List<IServerTreeNode> list)
-        {
-            foreach (ServerGroup group in serverGroup.ChildGroups)
-            {
-                FindChildServers(group, list);
-            }
-
-            foreach (Server server in serverGroup.ChildServers)
-            {
-                list.Add(server);
-            }
-        }
-
-        #endregion
-	}
-
-    [Serializable]
-    public class ServerTreeRoot : IServerTreeNode
-	{
-		#region Private Fields
-		private LocalDataStore _localDataStoreNode;
-		#endregion
-
-		public ServerTreeRoot()
-        {
-        }
-
-		public LocalDataStore LocalDataStoreNode
-    	{
-			get
-			{
-				if (_localDataStoreNode == null)
-					_localDataStoreNode = new LocalDataStore();
-
-				return _localDataStoreNode;
-			}
-			set
-			{
-				_localDataStoreNode = value;
-			}
-    	}
-
-		/// <summary>
-		/// Public field for serialization only; do not modify directly.
-		/// </summary>
-		public ServerGroup ServerGroupNode;
-
-        #region IServerTreeNode Members
-
-        public bool IsLocalDataStore
-        {
-            get { return false; }
-        }
-
-    	public bool IsChecked
-    	{
-			get { return false; }
-    	}
-
-        public bool IsServer
-        {
-            get { return false; }
-        }
-
-        public bool IsServerGroup
-        {
-            get { return false; }
-        }
-
-        public string Path
-        {
-            get { return "./"; }
-        }
-
-        public bool IsRoot
-        {
-            get { return true; }
-        }
-
-        public string Name
-        {
-            get { return @"Root"; }
-        }
-
-        string IServerTreeNode.DisplayName
-        {
-            get { return string.Empty; }
-        }
-
-        public string ParentPath
-        {
-            get { return ""; }
-        }
-
-        #endregion
-
-		internal void InitializeChildPaths()
-		{
-			this.LocalDataStoreNode.ChangeParentPath(Path);
-			this.ServerGroupNode.ChangeParentPath(Path);
-		}
-	}
-
-    [Serializable]
-    public class ServerGroup : IServerTreeNode
-	{
-		#region Private Fields
-		private const string _rootServersGroupPath = @"./My Servers/";
-		private string _parentPath;
-		private string _path;
-    	private string _nameOfGroup;
-		#endregion
-		protected ServerGroup()
-		{
-		}
-
-		public ServerGroup(string name)
-        {
-			_nameOfGroup = name;
-            ChildGroups = new List<ServerGroup>();
-            ChildServers = new List<Server>();
-		}
-
-		#region Public Properties/Fields
-
-		public String NameOfGroup
-    	{
-			get { return _nameOfGroup; }
-			set
-			{
-				_nameOfGroup = value;
-				ChangeParentPath(_parentPath);
-			}
-    	}
-
-		/// <summary>
-		/// Public field for serialization only; use the <see cref="AddChild"/> method instead.
-		/// </summary>
-		public List<ServerGroup> ChildGroups;
-		/// <summary>
-		/// Public field for serialization only; use the <see cref="AddChild"/> method instead.
-		/// </summary>
-		public List<Server> ChildServers;
-		
-		#endregion
-
-		#region IServerTreeNode Members
-
-    	public bool IsChecked
-    	{
-			get { return false; }
-    	}
-
-		public bool IsLocalDataStore
-        {
-            get { return false; }
-        }
-
-        public bool IsServer
-        {
-            get { return false; }
-        }
-
-        public bool IsServerGroup
-        {
-            get { return true; }
-        }
-
-        public string Path
-        {
-			get { return _path; }
-        }
-
-        public bool IsRoot
-        {
-            get { return false; }
-        }
-
-        public string Name
-        {
-            get { return NameOfGroup; }
-        }
-
-        public string DisplayName
-        {
-            // if this group is the default "My Servers" node (and not manually customized by user), display the localized name
-            get { return Path == _rootServersGroupPath ? SR.MyServersTitle : Name; }
-        }
-
-        public string ParentPath
-        {
-			get { return _parentPath; }
-        }
-
-        #endregion
-
-    	internal void ChangeParentPath(string newParentPath)
-    	{
-    		// change the parent path of myself and all my children
-    		_parentPath = newParentPath ?? "";
-    		_path = _parentPath + this.NameOfGroup + "/";
-
-    		foreach (Server server in ChildServers)
-    			server.ChangeParentPath(_path);
-
-    		foreach (ServerGroup serverGroup in ChildGroups)
-    			serverGroup.ChangeParentPath(_path);
-    	}
-
-    	public void AddChild(IServerTreeNode child)
-    	{
-    		if (child.IsServer)
-    		{
-    			Server childServer = (Server) child;
-    			ChildServers.Add(childServer);
-    			childServer.ChangeParentPath(_path);
-    		}
-    		else if (child.IsServerGroup)
-    		{
-    			ServerGroup childServerGroup = (ServerGroup)child;
-    			ChildGroups.Add(childServerGroup);
-    			childServerGroup.ChangeParentPath(_path);
-    		}
-    	}
-
-		public bool IsEntireGroupChecked()
-		{
-			return IsEntireGroupChecked(this);
-		}
-
-		public bool IsEntireGroupUnchecked()
-		{
-			return IsEntireGroupUnchecked(this);
-		}
-
-		public List<Server> GetCheckedServers(bool recursive)
-		{
-			List<Server> checkedServers = new List<Server>();
-			if (recursive)
-			{
-				foreach (ServerGroup childGroup in ChildGroups)
-					checkedServers.AddRange(childGroup.GetCheckedServers(true));
-			}
-
-			checkedServers.AddRange(CollectionUtils.Select(ChildServers, delegate(Server server) { return server.IsChecked; }));
-			return checkedServers;
-		}
-
-		private static bool IsEntireGroupChecked(ServerGroup group)
-		{
-			foreach (Server server in group.ChildServers)
-			{
-				if (!server.IsChecked)
-					return false;
-			}
-
-			foreach (ServerGroup subGroup in group.ChildGroups)
-			{
-				if (!IsEntireGroupChecked(subGroup))
-					return false;
-			}
-
-			return true;
-		}
-
-		private static bool IsEntireGroupUnchecked(ServerGroup group)
-		{
-			foreach (Server server in group.ChildServers)
-			{
-				if (server.IsChecked)
-					return false;
-			}
-
-			foreach (ServerGroup subGroup in group.ChildGroups)
-			{
-				if (!IsEntireGroupUnchecked(subGroup))
-					return false;
-			}
-
-			return true;
-		}
-
-    	public override string ToString()
-    	{
-			return Path.StartsWith(_rootServersGroupPath) ? string.Format(@"./{0}/{1}", SR.MyServersTitle, Path.Substring(_rootServersGroupPath.Length)) : Path;
-    	}
     }
-
-    public interface IDicomServerConfigurationProvider
-	{
-		string Host { get; }
-		string AETitle { get; }
-		int Port { get; }
-		string InterimStorageDirectory { get; }
-
-		bool NeedsRefresh { get; }
-		bool ConfigurationExists { get; }
-		
-		void Refresh();
-		void RefreshAsync();
-
-		event EventHandler Changed;
-	}
 }
-

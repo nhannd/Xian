@@ -53,5 +53,17 @@
         <classShapeMoniker Id="2eb947bf-f453-440e-bd84-c4a2a00ffce7" />
       </nodes>
     </associationConnector>
+    <classShape Id="ef86e219-c873-4fb9-93a0-ea0294e466fe" absoluteBounds="3.75, 7.25, 3, 2.3478011067708326">
+      <DataClassMoniker Name="/DicomStoreDataContext/Device" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4604e8db-b823-4dd3-8318-c0492c3107ac" absoluteBounds="3.765, 7.7100000000000009, 2.9699999999999998, 1.7878011067708333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="acf03b42-edf7-449e-8f9b-11bcacc909bb" absoluteBounds="1.125, 7.25, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/DicomStoreDataContext/Configuration" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e2589df5-e331-4bce-86c1-01096ecc2230" absoluteBounds="1.1400000000000001, 7.7100000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

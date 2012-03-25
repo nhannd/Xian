@@ -45,6 +45,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void InsertWorkItemUid(WorkItemUid instance);
     partial void UpdateWorkItemUid(WorkItemUid instance);
     partial void DeleteWorkItemUid(WorkItemUid instance);
+    partial void InsertDevice(Device instance);
+    partial void UpdateDevice(Device instance);
+    partial void DeleteDevice(Device instance);
+    partial void InsertConfiguration(Configuration instance);
+    partial void UpdateConfiguration(Configuration instance);
+    partial void DeleteConfiguration(Configuration instance);
     #endregion
 		
 		public DicomStoreDataContext(string connection) : 
@@ -108,6 +114,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			get
 			{
 				return this.GetTable<WorkItemUid>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Device> Devices
+		{
+			get
+			{
+				return this.GetTable<Device>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Configuration> Configurations
+		{
+			get
+			{
+				return this.GetTable<Configuration>();
 			}
 		}
 	}
@@ -2068,6 +2090,322 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 						this._WorkItemOid = default(Nullable<long>);
 					}
 					this.SendPropertyChanged("WorkItem");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[Table()]
+	public partial class Device : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _Name;
+		
+		private string _AETitle;
+		
+		private string _Location;
+		
+		private int _Port;
+		
+		private System.Nullable<int> _StreamingHeaderPort;
+		
+		private System.Nullable<int> _StreamingImagePort;
+		
+		private string _HostName;
+		
+		private string _Description;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnAETitleChanging(string value);
+    partial void OnAETitleChanged();
+    partial void OnLocationChanging(string value);
+    partial void OnLocationChanged();
+    partial void OnPortChanging(int value);
+    partial void OnPortChanged();
+    partial void OnStreamingHeaderPortChanging(System.Nullable<int> value);
+    partial void OnStreamingHeaderPortChanged();
+    partial void OnStreamingImagePortChanging(System.Nullable<int> value);
+    partial void OnStreamingImagePortChanged();
+    partial void OnHostNameChanging(string value);
+    partial void OnHostNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    #endregion
+		
+		public Device()
+		{
+			OnCreated();
+		}
+		
+		[Column(Storage="_Name", DbType="NVarChar(64) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_AETitle", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		public string AETitle
+		{
+			get
+			{
+				return this._AETitle;
+			}
+			set
+			{
+				if ((this._AETitle != value))
+				{
+					this.OnAETitleChanging(value);
+					this.SendPropertyChanging();
+					this._AETitle = value;
+					this.SendPropertyChanged("AETitle");
+					this.OnAETitleChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Location", DbType="NVarChar(64) NOT NULL")]
+		public string Location
+		{
+			get
+			{
+				return this._Location;
+			}
+			set
+			{
+				if ((this._Location != value))
+				{
+					this.OnLocationChanging(value);
+					this.SendPropertyChanging();
+					this._Location = value;
+					this.SendPropertyChanged("Location");
+					this.OnLocationChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Port", DbType="Int")]
+		public int Port
+		{
+			get
+			{
+				return this._Port;
+			}
+			set
+			{
+				if ((this._Port != value))
+				{
+					this.OnPortChanging(value);
+					this.SendPropertyChanging();
+					this._Port = value;
+					this.SendPropertyChanged("Port");
+					this.OnPortChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_StreamingHeaderPort", DbType="Int")]
+		public System.Nullable<int> StreamingHeaderPort
+		{
+			get
+			{
+				return this._StreamingHeaderPort;
+			}
+			set
+			{
+				if ((this._StreamingHeaderPort != value))
+				{
+					this.OnStreamingHeaderPortChanging(value);
+					this.SendPropertyChanging();
+					this._StreamingHeaderPort = value;
+					this.SendPropertyChanged("StreamingHeaderPort");
+					this.OnStreamingHeaderPortChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_StreamingImagePort", DbType="Int")]
+		public System.Nullable<int> StreamingImagePort
+		{
+			get
+			{
+				return this._StreamingImagePort;
+			}
+			set
+			{
+				if ((this._StreamingImagePort != value))
+				{
+					this.OnStreamingImagePortChanging(value);
+					this.SendPropertyChanging();
+					this._StreamingImagePort = value;
+					this.SendPropertyChanged("StreamingImagePort");
+					this.OnStreamingImagePortChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_HostName", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		public string HostName
+		{
+			get
+			{
+				return this._HostName;
+			}
+			set
+			{
+				if ((this._HostName != value))
+				{
+					this.OnHostNameChanging(value);
+					this.SendPropertyChanging();
+					this._HostName = value;
+					this.SendPropertyChanged("HostName");
+					this.OnHostNameChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Description", DbType="NVarChar(64) NOT NULL")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[Table()]
+	public partial class Configuration : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _Name;
+		
+		private string _Value;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnValueChanging(string value);
+    partial void OnValueChanged();
+    #endregion
+		
+		public Configuration()
+		{
+			OnCreated();
+		}
+		
+		[Column(Storage="_Name", AutoSync=AutoSync.OnInsert, DbType="NVarChar(100) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_Value", DbType="NText", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public string Value
+		{
+			get
+			{
+				return this._Value;
+			}
+			set
+			{
+				if ((this._Value != value))
+				{
+					this.OnValueChanging(value);
+					this.SendPropertyChanging();
+					this._Value = value;
+					this.SendPropertyChanged("Value");
+					this.OnValueChanged();
 				}
 			}
 		}

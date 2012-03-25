@@ -10,37 +10,23 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.ServerTree;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	public static class RemoteServerDirectory
 	{
-		public static AEInformation Lookup(string aeTitle)
+        public static IDicomServiceNode Lookup(string aeTitle)
 		{
 			aeTitle = aeTitle.Trim();
 
 			try
 			{
-				ServerTree serverTree = new ServerTree();
-				List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
-
-				Common.ServerTree.Server server = servers.Find(delegate(IServerTreeNode node)
-												{
-													return ((Common.ServerTree.Server)node).AETitle == aeTitle;
-												}) as Common.ServerTree.Server;
-
-				if (server != null)
-				{
-					AEInformation information = new AEInformation();
-					information.AETitle = aeTitle;
-					information.HostName = server.Host;
-					information.Port = server.Port;
-					return information;
-				}
+                using (var bridge = new ServerDirectoryBridge())
+                    return bridge.GetServersByAETitle(aeTitle).FirstOrDefault();
 			}
 			catch (Exception e)
 			{

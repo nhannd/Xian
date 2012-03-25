@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
     	#region IDicomServerService Members
 
-		public void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids)
+        public void Send(ApplicationEntity destinationAEInformation, IEnumerable<string> studyInstanceUids)
 		{
 			try
 			{
@@ -63,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-    	public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
+        public void RetrieveStudies(ApplicationEntity sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
 			try
 			{
@@ -81,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		public void RetrieveSeries(AEInformation sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+        public void RetrieveSeries(ApplicationEntity sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
 		{
 			try
 			{

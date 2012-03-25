@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				request.SearchCriteria = new DicomExplorerSearchCriteria();
 
 			//Select the local data store node.
-			explorerComponent.ServerTreeComponent.SetSelection(explorerComponent.ServerTreeComponent.ServerTree.RootNode.LocalDataStoreNode);
+			explorerComponent.ServerTreeComponent.SetSelection(explorerComponent.ServerTreeComponent.ServerTree.LocalServer);
 
 			SynchronizationContext.Current.Post(
 				delegate
@@ -102,14 +102,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			else
 			{
-				Server server = CollectionUtils.SelectFirst(explorerComponent.ServerTreeComponent.ServerTree.FindChildServers(),
+				var server = CollectionUtils.SelectFirst(explorerComponent.ServerTreeComponent.ServerTree.FindChildServers(),
 													 delegate(IServerTreeNode node)
 													 {
-														 if (node is Server)
-															 return ((Server)node).AETitle == aeTitle;
+														 if (node.IsServer)
+                                                             return ((IServerTreeDicomServer)node).AETitle == aeTitle;
 
 														 return false;
-													 }) as Server;
+                                                     });
 				if (server == null)
 					throw new FaultException<ServerNotFoundFault>(new ServerNotFoundFault(), String.Format("Server '{0}' not found.", aeTitle));
 

@@ -408,7 +408,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-                if (_server != null && _server is IDicomServerApplicationEntity)
+                if (_server != null && _server is IApplicationEntity)
 					return ((IApplicationEntity)_server).AETitle;
 				else
 					return "";
@@ -416,6 +416,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
+
+	    // TODO (Marmot): Change to IDicomServiceNode
 
 		/// <summary>
 		/// Gets or sets the server.
@@ -425,6 +427,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _server; }
 			set { _server = value; }
 		}
+
+	    // TODO (Marmot): Get rid of this.
 
 		/// <summary>
 		/// Gets or sets the study loader name.

@@ -13,6 +13,9 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
+    // TODO (Marmot): remove this stuff.
+
+
 	public class DicomSendServiceClient : ClientBase<IDicomSendService>, IDicomSendService
 	{
 		public DicomSendServiceClient()

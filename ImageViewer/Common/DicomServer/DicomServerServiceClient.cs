@@ -12,10 +12,13 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
+    // TODO (Marmot): remove this stuff.
+    
 	public partial class DicomServerServiceClient : ClientBase<IDicomServerService>, IDicomServerService
 	{
 		public DicomServerServiceClient()
@@ -23,17 +26,17 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		}
 
 		[Obsolete("Use the SendStudies method instead.")]
-		public void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids)
+        public void Send(ApplicationEntity destinationAEInformation, IEnumerable<string> studyInstanceUids)
 		{
 			base.Channel.Send(destinationAEInformation, studyInstanceUids);
 		}
 
-		public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
+        public void RetrieveStudies(ApplicationEntity sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
 			base.Channel.RetrieveStudies(sourceAEInformation, studiesToRetrieve);
 		}
 
-		public void RetrieveSeries(AEInformation sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+        public void RetrieveSeries(ApplicationEntity sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
 		{
 			base.Channel.RetrieveSeries(sourceAEInformation, studyInformation, seriesInstanceUids);
 		}

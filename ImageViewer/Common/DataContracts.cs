@@ -14,42 +14,7 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-    // TODO (Marmot): remove.
-	[DataContract]
-	public class AEInformation
-	{
-		private string _hostName;
-		private string _aeTitle;
-		private int _port;
-
-		public AEInformation()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public string HostName
-		{
-			get { return _hostName; }
-			set { _hostName = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string AETitle
-		{
-			get { return _aeTitle; }
-			set { _aeTitle = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public int Port
-		{
-			get { return _port; }
-			set { _port = value; }
-		}
-	}
-
     // TODO (Marmot): Remove.
-
 	[DataContract]
 	public class StudyInformation
 	{

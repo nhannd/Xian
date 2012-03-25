@@ -61,6 +61,9 @@
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -72,6 +75,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Broker.cs" />
+    <Compile Include="ConfigurationBroker.cs" />
+    <Compile Include="DeviceBroker.cs" />
     <Compile Include="RuleAction.cs" />
     <Compile Include="RuleBroker.cs" />
     <Compile Include="RuleCondition.cs" />
@@ -84,13 +89,15 @@
     <Compile Include="RuleActionType.cs" />
     <Compile Include="DataAccessContext.cs" />
     <Compile Include="Study.cs" />
+    <Compile Include="ServiceProviders\DicomServerConfiguration.cs" />
+    <Compile Include="ServiceProviders\DicomServerConfiguration2.cs" />
+    <Compile Include="ServiceProviders\ServerDirectory.cs" />
+    <Compile Include="ServiceProviders\Tests\ServerDirectoryTests.cs" />
     <Compile Include="StudyBroker.cs" />
     <Compile Include="WorkItemBroker.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
     <Compile Include="WorkItem.cs" />
     <Compile Include="Serializer.cs" />
-    <Compile Include="WorkItemHelper.cs" />
-    <Compile Include="WorkItemUidBroker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

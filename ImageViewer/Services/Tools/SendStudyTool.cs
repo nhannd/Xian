@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -99,14 +100,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				client.Open();
 
-				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
+                foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
 				{
-					SendStudiesRequest request = new SendStudiesRequest();
-					AEInformation aeInformation = new AEInformation();
-					aeInformation.AETitle = destinationAE.AETitle;
-					aeInformation.HostName = destinationAE.Host;
-					aeInformation.Port = destinationAE.Port;
-					request.DestinationAEInformation = aeInformation;
+					var request = new SendStudiesRequest();
+                    var aeInformation = new ApplicationEntity
+                                            {
+                                                AETitle = destination.AETitle,
+                                                ScpParameters = new ScpParameters(destination.HostName, destination.Port)
+                                            };
+				    request.DestinationAEInformation = aeInformation;
 					request.StudyInstanceUids = studyUids;
 					client.SendStudies(request);
 				}
@@ -128,8 +130,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			finally
 			{
-				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
-					AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.Host, sentInstances, EventSource.CurrentUser, result);
+                foreach (IServerTreeDicomServer destinationAE in serverTreeComponent.SelectedServers.Servers)
+					AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.HostName, sentInstances, EventSource.CurrentUser, result);
 			}
 		}
 

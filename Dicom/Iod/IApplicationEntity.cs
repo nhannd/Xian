@@ -13,25 +13,25 @@ namespace ClearCanvas.Dicom.Iod
 {
 	public interface IApplicationEntity
 	{
-		string AETitle { get; }
-		string Name { get; }
+        string Name { get; }
+        string AETitle { get; }
 		string Description { get; }
 		string Location { get; }
-	}
 
-	public interface IDicomServerApplicationEntity : IApplicationEntity
-	{
-		string HostName { get; }
-		int Port { get; }
-
-        // TODO (CR Mar 2012): Try to get rid of this later.
-        bool IsStreaming { get; }
+	    // TODO (CR Mar 2012): Unsure about this
+        IScpParameters ScpParameters { get; }
+        IStreamingParameters StreamingParameters { get; }
     }
 
-	public interface IStreamingServerApplicationEntity : IDicomServerApplicationEntity
-	{
-		int HeaderServicePort { get; }
+    public interface IScpParameters
+    {
+        string HostName { get; }
+        int Port { get; }
+    }
 
-		int WadoServicePort { get; }
-	}
+    public interface IStreamingParameters
+    {
+        int HeaderServicePort { get; }
+        int WadoServicePort { get; }
+    }
 }

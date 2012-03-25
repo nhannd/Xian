@@ -17,6 +17,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using System.IO;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 
@@ -126,7 +127,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					T queryResult = Identifier.FromDicomAttributeCollection<T>(result);
 
 					queryResult.InstanceAvailability = "ONLINE";
-					queryResult.RetrieveAeTitle = ServerTree.GetClientAETitle();
+					queryResult.RetrieveAeTitle = DicomServerConfigurationHelper.GetOfflineAETitle(false);
 					queryResults.Add(queryResult);
 				}
 

@@ -37,6 +37,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -85,11 +89,14 @@
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />
     <Compile Include="DicomFilePublisher.cs" />
+    <Compile Include="DicomServer\ConfigureDicomServerApplication.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
+    <Compile Include="DicomServer\DataContractsOld.cs" />
     <Compile Include="DicomServer\DicomSendServiceClient.cs" />
     <Compile Include="DicomServer\DicomServerConfigurationHelper.cs" />
     <Compile Include="DicomServer\DicomServerServiceClient.cs" />
     <Compile Include="DicomServer\IDicomSendService.cs" />
+    <Compile Include="DicomServer\IDicomServerConfiguration.cs" />
     <Compile Include="DicomServer\IDicomServerService.cs" />
     <Compile Include="DiskspaceManager\DataContracts.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerServiceClient.cs" />
@@ -122,16 +129,40 @@
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="RetryableCommandExecutor.cs" />
     <Compile Include="ImageViewerNamespace.cs" />
+    <Compile Include="ServerDirectory\DataContracts.cs" />
+    <Compile Include="ServerDirectory\Extensions.cs" />
+    <Compile Include="ServerDirectory\IServerDirectory.cs" />
+    <Compile Include="ServerDirectory\DicomServiceNode.cs" />
+    <Compile Include="ServerDirectory\ServerDirectoryBridge.cs" />
     <Compile Include="ServerTree\AEServerGroup.cs" />
+    <Compile Include="ServerTree\Extensions.cs" />
+    <Compile Include="ServerTree\LegacyXml\SerializationHelper.cs" />
+    <Compile Include="ServerTree\LegacyXml\Extensions.cs" />
+    <Compile Include="ServerTree\ServerTree2.cs" />
+    <Compile Include="ServerTree\ServerTreeSettings.cs" />
+    <Compile Include="ServerTree\ServerTreeSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ServerTreeSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ServerTree\ServerTreeDicomServer.cs" />
+    <Compile Include="ServerTree\ServerTreeGroup.cs" />
+    <Compile Include="ServerTree\ServerTreeLocalServer.cs" />
+    <Compile Include="ServerTree\LegacyXml\ServerTreeRoot.cs" />
+    <Compile Include="ServerTree\Tests\ServerTreeTests.cs" />
+    <Compile Include="ServiceNode.cs" />
+    <Compile Include="ServerTree\LegacyXml\ServerGroup.cs" />
     <Compile Include="ServerTree\IServerTreeNode.cs" />
-    <Compile Include="ServerTree\LocalDataStore.cs" />
-    <Compile Include="ServerTree\Server.cs" />
+    <Compile Include="ServerTree\LegacyXml\LocalDataStore.cs" />
+    <Compile Include="ServerTree\LegacyXml\Server.cs" />
     <Compile Include="ServerTree\ServerTree.cs" />
     <Compile Include="SR.Designer.cs">
       <DependentUpon>SR.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="StudyManagement\Storage\DataContracts.cs" />
+    <Compile Include="StudyManagement\Storage\IStudyStorageConfiguration.cs" />
     <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
     <Compile Include="WorkItem\IWorkItemService.cs" />
     <Compile Include="WorkItem\SR.Designer.cs">
@@ -151,6 +182,10 @@
     <None Include="MemoryManagementSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MemoryManagementSettings1.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ServerTree\ServerTreeSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ServerTreeSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -173,9 +208,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="StudyManagement\Storage\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

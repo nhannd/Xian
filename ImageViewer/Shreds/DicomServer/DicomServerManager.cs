@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				Trace.WriteLine("Starting Dicom server.");
 
 				server = new DicomServer(configuration.AETitle, configuration.HostName,
-				                         configuration.Port, configuration.InterimStorageDirectory);
+				                         configuration.Port, configuration.FileStoreLocation);
 				server.Start();
 			}
 			catch (Exception e)
@@ -211,10 +211,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (!_active)
 					throw new InvalidOperationException("The Dicom Server service is not active.");
 
-				return new DicomServerConfiguration(DicomServerSettings.Instance.HostName,
-												DicomServerSettings.Instance.AETitle,
-												DicomServerSettings.Instance.Port,
-												DicomServerSettings.Instance.InterimStorageDirectory);
+                return new DicomServerConfiguration
+                    {
+                        HostName = DicomServerSettings.Instance.HostName,
+                        AETitle = DicomServerSettings.Instance.AETitle,
+                        Port = DicomServerSettings.Instance.Port,
+                        FileStoreLocation = DicomServerSettings.Instance.InterimStorageDirectory
+                    };
 			}
 		}
 
@@ -228,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				DicomServerSettings.Instance.HostName = newConfiguration.HostName;
 				DicomServerSettings.Instance.AETitle = newConfiguration.AETitle;
 				DicomServerSettings.Instance.Port = newConfiguration.Port;
-				DicomServerSettings.Instance.InterimStorageDirectory = newConfiguration.InterimStorageDirectory;
+				DicomServerSettings.Instance.InterimStorageDirectory = newConfiguration.FileStoreLocation;
 				DicomServerSettings.Save();
 
 				OnConfigurationChanged();

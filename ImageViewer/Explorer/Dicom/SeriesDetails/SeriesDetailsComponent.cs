@@ -20,6 +20,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -318,9 +319,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}
 			else
 			{
-				Server server = (Server)_server;
+                var server = (IServerTreeDicomServer)_server;
 				query = new DicomStudyRootQuery(
-					ServerTree.GetClientAETitle(), server.AETitle, server.Host, server.Port);
+                    DicomServerConfigurationHelper.AETitle, server.AETitle, server.HostName, server.Port);
 			}
 
 			try

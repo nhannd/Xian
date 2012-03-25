@@ -52,9 +52,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 				bool valid = true; 
 				string conflictingPath = "";
-				if (groupComponent._isNewServerGroup && serverTree.CanAddGroupToCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
+				if (groupComponent._isNewServerGroup && !serverTree.CanAddGroupToCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
 					valid = false;
-				else if (!groupComponent._isNewServerGroup && serverTree.CanEditCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
+				else if (!groupComponent._isNewServerGroup && !serverTree.CanEditCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
 					valid = false;
 
 				if (!valid)
@@ -142,19 +142,20 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			{
 				if (!_isNewServerGroup)
 				{
-					ServerGroup serverGroup = (ServerGroup) _serverTree.CurrentNode;
-					serverGroup.NameOfGroup = _serverGroupName;
+                    var serverGroup = (IServerTreeGroup)_serverTree.CurrentNode;
+					serverGroup.Name = _serverGroupName;
 				}
 				else
 				{
-					ServerGroup serverGroup = new ServerGroup(_serverGroupName);
-					((ServerGroup) _serverTree.CurrentNode).AddChild(serverGroup);
+                    var serverGroup = new ServerTreeGroup(_serverGroupName);
+                    ((ServerTreeGroup)_serverTree.CurrentNode).AddChild(serverGroup);
 					_serverTree.CurrentNode = serverGroup;
 				}
 
-				_serverTree.Save();
-				_serverTree.FireServerTreeUpdatedEvent();
-				this.ExitCode = ApplicationComponentExitCode.Accepted;
+			    _serverTree.Save();
+			    _serverTree.FireServerTreeUpdatedEvent();
+                
+                this.ExitCode = ApplicationComponentExitCode.Accepted;
 				Host.Exit();
 			}
 		}

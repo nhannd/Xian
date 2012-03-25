@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 			foreach (string path in paths)
 			{
-				Server server = _serverTreeComponent.ServerTree.FindServer(path);
+				var server = _serverTreeComponent.ServerTree.FindServer(path);
 				if (server != null && !_selectedServerPaths.Contains(path))
 				{
 					_selectedServerPaths.Add(path);
@@ -83,10 +83,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		private void OnServerTreeUpdated(object sender, EventArgs e)
 		{
-			List<Server> selectedServers = 
-				_serverTreeComponent.ServerTree.RootNode.ServerGroupNode.GetCheckedServers(true);
+			var checkedServers = _serverTreeComponent.ServerTree.RootServerGroup.GetCheckedServers(true);
 
-			List<string> selectedPaths = CollectionUtils.Map<IServerTreeNode, string>(selectedServers,
+            List<string> selectedPaths = CollectionUtils.Map(checkedServers,
 												delegate(IServerTreeNode node) { return node.Path; });
 
 			if (!CollectionUtils.Equal<string>(_selectedServerPaths, selectedPaths, false))

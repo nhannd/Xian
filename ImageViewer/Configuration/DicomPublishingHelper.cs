@@ -14,11 +14,15 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using System.Linq;
+using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -86,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			// check that user has permissions to publish to remote servers
 			if (PermissionsHelper.IsInRole(AuthorityTokens.Publishing))
 			{
-				var servers = new List<Server>();
+				var servers = new List<IDicomServiceNode>();
 
 				// if configured to publish to default servers, add those to list of destinations
 				if (PublishingSettings.Default.PublishToDefaultServers)
@@ -133,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 					}
 
 					// publish remote files now
-					if (remoteFiles.Count > 0 && !PublishFilesToRemote(server, remoteFiles))
+					if (remoteFiles.Count > 0 && !PublishFilesToRemote(server.ToDataContract(), remoteFiles))
 						hasErrors = true;
 				}
 			}
@@ -168,24 +172,15 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return !hasErrors;
 		}
 
-		private static bool ContainsServer(IEnumerable<Server> servers, Server server)
+        private static bool ContainsServer(IEnumerable<IDicomServiceNode> servers, IDicomServiceNode server)
 		{
-			return server != null && CollectionUtils.Contains(servers, s => s.Path == server.Path);
+			return server != null && CollectionUtils.Contains(servers, s => s.Name == server.Name);
 		}
 
-		private static Server ResolveRemoteServer(string aetitle)
+        private static IDicomServiceNode ResolveRemoteServer(string aetitle)
 		{
-			if (string.IsNullOrEmpty(aetitle))
-				return null;
-
-			var tree = new Common.ServerTree.ServerTree();
-			foreach (var node in tree.FindChildServers(tree.RootNode.ServerGroupNode))
-			{
-				var server = node as Server;
-				if (server != null && !server.IsLocalDataStore && server.AETitle == aetitle) // yes, AETitle is case sensitive
-					return server;
-			}
-			return null;
+            using (var bridge = new ServerDirectoryBridge())
+                return bridge.GetServersByAETitle(aetitle).FirstOrDefault(s => s.ScpParameters != null);
 		}
 
 		private static bool StudyExistsOnLocal(string studyInstanceUid)
@@ -195,9 +190,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return result.Count > 0;
 		}
 
-		private static bool StudyExistsOnRemote(Server server, string studyInstanceUid)
+        private static bool StudyExistsOnRemote(IDicomServiceNode server, string studyInstanceUid)
 		{
-			var srq = new DicomStudyRootQuery(Common.ServerTree.ServerTree.GetClientAETitle(), server.AETitle, server.Host, server.Port);
+            //TODO (Marmot): Can use the GetService method now.
+			var srq = new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
 			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
 			return result.Count > 0;
 		}
@@ -216,18 +212,16 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return false;
 		}
 
-		private static bool PublishFilesToRemote(Server server, ICollection<DicomFile> files)
+        private static bool PublishFilesToRemote(ApplicationEntity destination, ICollection<DicomFile> files)
 		{
 			try
 			{
-				var destination = new AEInformation {AETitle = server.AETitle, HostName = server.Host, Port = server.Port};
-
 			    DicomFilePublisher.PublishRemote(files, destination, true);
 				return true;
 			}
 			catch (DicomFilePublishingException ex)
 			{
-				Platform.Log(LogLevel.Error, ex, "An error occurred while attempting to publish files to server {0}.", server.AETitle);
+				Platform.Log(LogLevel.Error, ex, "An error occurred while attempting to publish files to server {0}.", destination.AETitle);
 			}
 			return false;
 		}

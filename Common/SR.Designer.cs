@@ -358,15 +358,6 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No service provider was found that can provide the service {0}.
-        /// </summary>
-        public static string ExceptionNoServiceProviderCanProvide {
-            get {
-                return ResourceManager.GetString("ExceptionNoServiceProviderCanProvide", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Assembly {0} is not a plugin..
         /// </summary>
         public static string ExceptionNotAPlugin {

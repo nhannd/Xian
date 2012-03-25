@@ -96,10 +96,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
 					{
-						var server = study.Server as IDicomServerApplicationEntity;
+						var server = study.Server as IApplicationEntity;
 						if (server != null)
 						{
-							if (server.IsStreaming)
+							if (server.StreamingParameters != null)
 								helper.AddStudy(study.StudyInstanceUid, study.Server, StreamingStudyLoaderName);
 							else
 								helper.AddStudy(study.StudyInstanceUid, study.Server, RemoteStudyLoaderName);
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (Context.SelectedServerGroup.IsLocalDatastore && base.IsLocalStudyLoaderSupported)
 				return true;
 
-			foreach (Server server in base.Context.SelectedServerGroup.Servers)
+			foreach (IServerTreeDicomServer server in base.Context.SelectedServerGroup.Servers)
 			{
 				if (server.IsStreaming && base.IsStreamingStudyLoaderSupported)
 					return true;
@@ -183,12 +183,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 				foreach (StudyItem study in Context.SelectedStudies)
 				{
-                    var server = study.Server as IDicomServerApplicationEntity;
+                    var server = study.Server as IApplicationEntity;
 					if (server != null)
 					{
-						if (server.IsStreaming && IsStreamingStudyLoaderSupported)
+                        if (server.StreamingParameters != null && IsStreamingStudyLoaderSupported)
 							++number;
-						else if (!server.IsStreaming && IsRemoteStudyLoaderSupported)
+                        else if (server.StreamingParameters == null && IsRemoteStudyLoaderSupported)
 							++number;
 					}
 				}

@@ -11,15 +11,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -239,26 +242,18 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private static StudyItem ConvertToStudyItem(IStudyRootStudyIdentifier study)
 		{
 			string studyLoaderName;
-            IDicomServerApplicationEntity applicationEntity = null;
+            IApplicationEntity applicationEntity = null;
 
-			IServerTreeNode node = FindServer(study.RetrieveAeTitle);
-			if (node.IsLocalDataStore)
+		    // TODO (Marmot): Change to use the node to determine capabilities.
+			var node = FindServer(study.RetrieveAeTitle);
+			if (node.IsLocal)
 			{
 				studyLoaderName = "DICOM_LOCAL";
 			}
-			else if (node.IsServer)
+			else
 			{
-				var server = (Server) node;
-				studyLoaderName = server.IsStreaming ? "CC_STREAMING" : "DICOM_REMOTE";
-			    applicationEntity = server.ToApplicationEntity();
-			}
-			else // (node == null)
-			{
-				Platform.Log(LogLevel.Warn,
-				             String.Format("Unable to find server information '{0}' in order to load study '{1}'",
-				                           study.RetrieveAeTitle, study.StudyInstanceUid));
-
-				return null;
+				studyLoaderName = node.StreamingParameters != null ? "CC_STREAMING" : "DICOM_REMOTE";
+			    applicationEntity = node.ToDataContract();
 			}
 
 			var item = new StudyItem(study, applicationEntity, studyLoaderName){ InstanceAvailability = study.InstanceAvailability };
@@ -268,20 +263,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			return item;
 		}
 
-		private static IServerTreeNode FindServer(string retrieveAETitle)
+		private static IDicomServiceNode FindServer(string aeTitle)
 		{
-			var serverTree = new ServerTree();
-			if (retrieveAETitle == serverTree.RootNode.LocalDataStoreNode.GetClientAETitle())
-				return serverTree.RootNode.LocalDataStoreNode;
+            using (var bridge = new ServerDirectoryBridge())
+            {
+                var local = bridge.GetLocalServer();
+                if (local.AETitle == aeTitle)
+                    return local;
+            }
 
-			List<Server> remoteServers = DefaultServers.SelectFrom(serverTree);
-			foreach (Server server in remoteServers)
-			{
-				if (server.AETitle == retrieveAETitle)
-					return server;
-			}
-
-			return null;
+            using (var bridge = new ServerDirectoryBridge())
+                return bridge.GetServersByAETitle(aeTitle).FirstOrDefault();
 		}
 	}
 }
