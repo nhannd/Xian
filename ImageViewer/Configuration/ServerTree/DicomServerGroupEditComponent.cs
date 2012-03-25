@@ -52,9 +52,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 				bool valid = true; 
 				string conflictingPath = "";
-				if (groupComponent._isNewServerGroup && serverTree.CanAddGroupToCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
+				if (groupComponent._isNewServerGroup && !serverTree.CanAddGroupToCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
 					valid = false;
-				else if (!groupComponent._isNewServerGroup && serverTree.CanEditCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
+				else if (!groupComponent._isNewServerGroup && !serverTree.CanEditCurrentGroup(groupComponent._serverGroupName, out conflictingPath))
 					valid = false;
 
 				if (!valid)

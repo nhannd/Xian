@@ -493,7 +493,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
             // highlight node only if the target node is a potential place
             // for us to drop a node for moving
-			if (_component.CanMoveOrAdd(underPointerDataNode, lastClickedDataNode))
+			if (_component.CanMove(underPointerDataNode, lastClickedDataNode))
             {
                 underPointerNode.BackColor = Color.DarkBlue;
                 underPointerNode.ForeColor = Color.White;
@@ -525,7 +525,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
                 //    !destinationDataNode.IsServerGroup ||
                 //    draggingDataNode.Path.IndexOf(destinationDataNode.Path) == -1)  // don't allow dropping a node into one of its own children
 
-				if (!_component.CanMoveOrAdd(destinationDataNode, draggingDataNode))
+				if (!_component.CanMove(destinationDataNode, draggingDataNode))
                     return;
 
 				if (!_component.NodeMoved(destinationDataNode, draggingDataNode))

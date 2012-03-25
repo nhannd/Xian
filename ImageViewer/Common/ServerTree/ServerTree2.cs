@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common.ServerTree
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
 
         #region Editing Rules
 
-        public bool CanMoveOrAdd(IServerTreeNode destinationNode, IServerTreeNode addMoveNode)
+        public bool CanMove(IServerTreeNode destinationNode, IServerTreeNode addMoveNode)
         {
             if (destinationNode.IsServer)
                 return false;
@@ -53,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
             {
                 var server = (ServerTreeDicomServer)addMoveNode;
                 string conflictingPath;
-                if (IsConflictingServerInGroup((ServerTreeGroup)destinationNode, server.Name, false, server.AETitle, server.HostName, server.Port, out conflictingPath))
+                if (IsConflictingServerInGroup((ServerTreeGroup)destinationNode, false, server.AETitle, server.HostName, server.Port, out conflictingPath))
                     return false;
             }
             else if (addMoveNode is ServerTreeGroup)
@@ -87,7 +88,8 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                 return false;
             }
 
-            return IsConflictingServerInGroup((IServerTreeGroup)CurrentNode, serverName, false, AETitle, serverHost, port, out conflictingServerPath);
+            return !IsConflictingServerNameInTree(serverName, false, out conflictingServerPath) &&
+                !IsConflictingServerInGroup((IServerTreeGroup)CurrentNode, false, AETitle, serverHost, port, out conflictingServerPath);
         }
 
         public bool CanEditCurrentServer(string serverName, string AETitle, string serverHost, int port, out string conflictingServerPath)
@@ -98,7 +100,8 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                 return false;
             }
 
-            return IsConflictingServerInGroup(FindParentGroup(CurrentNode), serverName, true, AETitle, serverHost, port, out conflictingServerPath);
+            return !IsConflictingServerNameInTree(serverName, true, out conflictingServerPath) &&
+                !IsConflictingServerInGroup(FindParentGroup(CurrentNode), true, AETitle, serverHost, port, out conflictingServerPath);
         }
 
         public bool CanAddGroupToCurrentGroup(string newGroupName, out string conflictingGroupPath)
@@ -109,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                 return false;
             }
 
-            return IsConflictingServerTreeGroupInGroup((ServerTreeGroup)CurrentNode, newGroupName, false, out conflictingGroupPath);
+            return !IsConflictingServerTreeGroupInGroup((ServerTreeGroup)CurrentNode, newGroupName, false, out conflictingGroupPath);
         }
 
         public bool CanEditCurrentGroup(string newGroupName, out string conflictingGroupPath)
@@ -120,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                 return false;
             }
 
-            return IsConflictingServerTreeGroupInGroup(FindParentGroup(CurrentNode), newGroupName, true, out conflictingGroupPath);
+            return !IsConflictingServerTreeGroupInGroup(FindParentGroup(CurrentNode), newGroupName, true, out conflictingGroupPath);
         }
 
         #endregion
@@ -194,17 +197,35 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
             return FindServerTreeGroup(RootServerGroup, node.ParentPath);
         }
 
-        private bool IsConflictingServerInGroup(IServerTreeGroup serverGroup, string toFindServerName, bool excludeCurrentNode, string toFindServerAE, string toFindServerHost, int toFindServerPort, out string conflictingServerPath)
+        private bool IsConflictingServerNameInTree(string name, bool excludeCurrentNode, out string conflictingServerPath)
+        {
+            var allServers = RootServerGroup.GetAllServers();
+            if (excludeCurrentNode)
+                allServers = allServers.Where(s => s != CurrentNode).ToList();
+
+            foreach (var server in allServers)
+            {
+                if (String.Compare(server.Name, name, true) == 0)
+                {
+                    conflictingServerPath = server.Path;
+                    return true;
+                }
+            }
+
+            conflictingServerPath = "";
+            return false;
+        }
+
+        private bool IsConflictingServerInGroup(IServerTreeGroup serverGroup, bool excludeCurrentNode, string toFindServerAE, string toFindServerHost, int toFindServerPort, out string conflictingServerPath)
         {
             foreach (IServerTreeDicomServer server in serverGroup.Servers)
             {
                 if (excludeCurrentNode && server == CurrentNode)
                     continue;
 
-                if (String.Compare(server.Name, toFindServerName, true) == 0 ||
-                        (server.AETitle == toFindServerAE &&
+                if (server.AETitle == toFindServerAE &&
                         String.Compare(server.HostName, toFindServerHost, true) == 0 &&
-                        server.Port == toFindServerPort))
+                        server.Port == toFindServerPort)
                 {
                     conflictingServerPath = server.Path;
                     return true;

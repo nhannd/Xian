@@ -55,14 +55,14 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 				if (serverTree.CurrentNode.IsServer)
 				{
-					isConflicted = serverTree.CanEditCurrentServer(serverComponent.ServerName, 
+					isConflicted = !serverTree.CanEditCurrentServer(serverComponent.ServerName, 
 					                                               serverComponent.ServerAE, 
 					                                               serverComponent.ServerHost, 
 					                                               serverComponent.ServerPort, out conflictingServerPath);
 				}
 				else
 				{
-					isConflicted = serverTree.CanAddServerToCurrentGroup(serverComponent.ServerName, 
+					isConflicted = !serverTree.CanAddServerToCurrentGroup(serverComponent.ServerName, 
 					                                                     serverComponent.ServerAE, 
 					                                                     serverComponent.ServerHost, 
 					                                                     serverComponent.ServerPort, out conflictingServerPath);
@@ -87,6 +87,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		private readonly Common.ServerTree.ServerTree _serverTree;
 		private string _serverName;
+        private bool _serverNameReadOnly;
 		private string _serverLocation;
 		private string _serverAE;
 		private string _serverHost;
@@ -100,15 +101,31 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		public DicomServerEditComponent(Common.ServerTree.ServerTree dicomServerTree)
 		{
 			_serverTree = dicomServerTree;
-            var server = (IServerTreeDicomServer)_serverTree.CurrentNode;
-			_serverName = server.Name;
-			_serverLocation = server.Location;
-			_serverAE = server.AETitle;
-			_serverHost = server.HostName;
-			_serverPort = server.Port;
-			_isStreaming = server.IsStreaming;
-			_headerServicePort = server.HeaderServicePort;
-			_wadoServicePort = server.WadoServicePort;
+            if (_serverTree.CurrentNode.IsServer)
+            {
+                _serverNameReadOnly = true;
+                var server = (IServerTreeDicomServer) _serverTree.CurrentNode;
+                _serverName = server.Name;
+                _serverLocation = server.Location;
+                _serverAE = server.AETitle;
+                _serverHost = server.HostName;
+                _serverPort = server.Port;
+                _isStreaming = server.IsStreaming;
+                _headerServicePort = server.HeaderServicePort;
+                _wadoServicePort = server.WadoServicePort;
+            }
+            else
+            {
+                _serverNameReadOnly = false;
+                _serverName = String.Empty;
+                _serverLocation = String.Empty;
+                _serverAE = String.Empty;
+                _serverHost = String.Empty;
+                _serverPort = ServerTreeDicomServer.DefaultPort;
+                _isStreaming = false;
+                _headerServicePort = ServerTreeDicomServer.DefaultHeaderServicePort;
+                _wadoServicePort = ServerTreeDicomServer.DefaultWadoServicePort;
+            }
 		}
 
 		public override void Start()
@@ -131,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			get { return _serverName; }
 			set
 			{
-				if (_serverName == value)
+                if (_serverName == value || _serverNameReadOnly)
 					return;
 
 				_serverName = value;
@@ -139,6 +156,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 				NotifyPropertyChanged("ServerName");
 			}
 		}
+
+        public bool ServerNameReadOnly
+	    {
+            get { return _serverNameReadOnly; }
+	    }
 
 		public string ServerLocation
 		{
@@ -259,11 +281,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 				this.Modified = value;
 				NotifyPropertyChanged("AcceptEnabled");
 			}
-		}
-
-		public bool FieldReadonly
-		{
-			get { return _serverTree.CurrentNode.IsLocalDataStore; }
 		}
 
 		public void Accept()

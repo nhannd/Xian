@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Net;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -153,6 +154,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     configuration = new DicomServerConfigurationContract
                     {
                         AETitle = DefaultAE,
+                        HostName = Dns.GetHostName(),
                         Port = DefaultPort
                     };
             }

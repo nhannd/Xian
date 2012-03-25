@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		public bool NodeMoved(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
 		{
-			if (!CanMoveOrAdd(destinationNode, movingDataNode))
+			if (!CanMove(destinationNode, movingDataNode))
 				return false;
 
 			if (movingDataNode.IsServer)
@@ -256,12 +256,12 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			return true;
 		}
 
-		public bool CanMoveOrAdd(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
+		public bool CanMove(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
 		{
 			if (IsReadOnly)
 				return false;
 
-			return _serverTree.CanMoveOrAdd(destinationNode, movingDataNode);
+			return _serverTree.CanMove(destinationNode, movingDataNode);
 		}
 		
 		public event EventHandler SelectedServerChanged
