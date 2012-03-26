@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                     file.Load(DicomReadOptions.StorePixelDataReferences);
                 }
 
-                SopInstanceProcessor processor = new SopInstanceProcessor(Location);
+				var processor = new ClearCanvas.ImageViewer.Dicom.Core.SopInstanceProcessor(Location);
 
                 processor.ProcessFile(file, studyXml, sop);
 

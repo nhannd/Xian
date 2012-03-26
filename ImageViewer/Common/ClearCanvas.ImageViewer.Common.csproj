@@ -161,6 +161,16 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="StudyManagement\Rules\ComparisonOperator.cs" />
+    <Compile Include="StudyManagement\Rules\CompressionType.cs" />
+    <Compile Include="StudyManagement\Rules\RuleCondition.cs" />
+    <Compile Include="StudyManagement\Rules\IStudyRulesService.cs" />
+    <Compile Include="StudyManagement\Rules\JunctionType.cs" />
+    <Compile Include="StudyManagement\Rules\RuleData.cs" />
+    <Compile Include="StudyManagement\Rules\RuleAction.cs" />
+    <Compile Include="StudyManagement\Rules\StudyRuleDataContractAttribute.cs" />
+    <Compile Include="StudyManagement\Rules\TimeOrigin.cs" />
+    <Compile Include="StudyManagement\Rules\TimeUnit.cs" />
     <Compile Include="StudyManagement\Storage\DataContracts.cs" />
     <Compile Include="StudyManagement\Storage\IStudyStorageConfiguration.cs" />
     <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
