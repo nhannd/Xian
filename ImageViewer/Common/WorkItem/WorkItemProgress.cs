@@ -28,4 +28,31 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public bool IsCancelable { get; set; }
     }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemProgressDataContract("{9745ef5c-766e-4e99-8229-e332acbed2ec}")]
+    public class ImportWorkItemProgress : WorkItemProgress
+    {
+        [DataMember(IsRequired = true)]
+        public string Description { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int TotalFilesToImport { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int NumberOfFilesImported { get; set; }
+   
+        [DataMember(IsRequired = true)]
+        public int NumberOfImportFailures { get; set; }
+
+        public int TotalImportsProcessed
+        {
+            get { return NumberOfFilesImported + NumberOfImportFailures; }
+        }
+
+        public bool IsImportComplete()
+        {
+            return TotalFilesToImport == TotalImportsProcessed;
+        }
+    }
 }

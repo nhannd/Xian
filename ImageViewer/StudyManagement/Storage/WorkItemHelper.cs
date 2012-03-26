@@ -26,7 +26,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                            Identifier = item.Oid,
                            InsertTime = item.InsertTime,
                            Priority = item.Priority,
-                           StudyInstanceUid = item.StudyInstanceUid
+                           StudyInstanceUid = item.StudyInstanceUid,
+                           Request = item.Request,
+                           Progress = item.Progress
                        };
         }
     }
