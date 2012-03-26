@@ -57,9 +57,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
+                // Save the progress
+                var progress = Item.Progress;
+
                 Item = workItemBroker.GetWorkItem(Item.Oid);
                 DateTime now = Platform.Time;
 
+                Item.Progress = progress;
                 Item.FailureCount = Item.FailureCount + 1;
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
@@ -87,7 +91,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
+                // Save the progress
+                var progress = Item.Progress;
+
                 Item = workItemBroker.GetWorkItem(Item.Oid);
+                Item.Progress = progress;
                 Item.ScheduledTime = newScheduledTime;
                 Item.ExpirationTime = expireTime;
                 Item.Status = WorkItemStatusEnum.Pending;
@@ -100,10 +108,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
+                // Save the progress
+                var progress = Item.Progress;
+
                 Item = broker.GetWorkItem(Item.Oid);
 
                 DateTime now = Platform.Time;
 
+                Item.Progress = progress;
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
                 Item.Status = WorkItemStatusEnum.Complete;
@@ -123,10 +135,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
+                // Save the progress
+                var progress = Item.Progress;
+
                 Item = broker.GetWorkItem(Item.Oid);
 
                 DateTime now = Platform.Time;
 
+                Item.Progress = progress;
                 Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
                 Item.Status = WorkItemStatusEnum.Idle;
 
@@ -139,6 +155,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
+                
+                // Save the progress
+                var progress = Item.Progress;
+
                 Item = broker.GetWorkItem(Item.Oid);
                 
                 DateTime now = Platform.Time;
@@ -146,7 +166,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
                 Item.Status = WorkItemStatusEnum.Canceled;
-
+                Item.Progress = progress;
+                
                 context.Commit();
             }
         }
@@ -159,6 +180,23 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 Item = broker.GetWorkItem(Item.Oid);
                 broker.Delete(Item);
+
+                context.Commit();
+            }
+        }
+
+        public void UpdateProgress()
+        {
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetWorkItemBroker();
+                
+                // Save the progress
+                var progress = Item.Progress;
+
+                Item = broker.GetWorkItem(Item.Oid);
+
+                Item.Progress = progress;
 
                 context.Commit();
             }
