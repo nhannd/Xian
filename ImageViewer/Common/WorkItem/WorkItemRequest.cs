@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <see cref="WorkItemRequest"/> for sending a study to a DICOM AE.
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
-    [WorkItemRequestDataContract("{1c63c863-aa4e-4672-bee5-8aa3db16edd5}")]
+    [WorkItemRequestDataContract("1c63c863-aa4e-4672-bee5-8aa3db16edd5")]
     public class DicomAutoRouteRequest : DicomSendRequest
     {
         public override string ActivityType
@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// DICOM Import Study Request
     /// </summary>
-    [WorkItemRequestDataContract("591c7b3c-fab-4c25-b699-a82eef8e9935")]
+    [WorkItemRequestDataContract("3dfc3764-aa4a-4d22-9f47-0c902ba530bc")]
     public class ImportStudyRequest : StudyProcessRequest
     {
         public override string ActivityType

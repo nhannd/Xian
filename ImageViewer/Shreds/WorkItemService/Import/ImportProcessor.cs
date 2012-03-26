@@ -95,14 +95,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 throw new ArgumentNullException(SR.ExceptionNoFilesHaveBeenSpecifiedToImport);
 
             int paths = 0;
-            int badPaths = 0;
 
             foreach (string path in request.FilePaths)
             {
                 if (Directory.Exists(path) || File.Exists(path))
                     ++paths;
-                else
-                    ++badPaths;
             }
 
             if (paths == 0)
@@ -127,9 +124,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
                 extensions.Add(extension);
             }
-
-
-            bool cancelled = false;
 
             foreach (string path in filePaths)
             {
@@ -175,8 +169,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         private void ImportFiles()
         {
-            // TODO: Get real AE Title
-            var context = new ImportStudyContext("AE");
+            var configuration = GetServerConfiguration();
+
+            var context = new ImportStudyContext(configuration.AETitle);
 
             foreach (string file in FilesToImport)
             {

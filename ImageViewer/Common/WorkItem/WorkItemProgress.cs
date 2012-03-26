@@ -16,7 +16,7 @@ using ClearCanvas.Common.Serialization;
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
     [DataContract(Namespace = ImageViewerNamespace.Value)]
-    [WorkItemProgressDataContract("{b2dcf1f6-6e1a-48cd-b807-b720811a6575}")]
+    [WorkItemProgressDataContract("b2dcf1f6-6e1a-48cd-b807-b720811a6575")]
     public class WorkItemProgress : DataContractBase
     {
         [DataMember(IsRequired = false)]
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     }
 
     [DataContract(Namespace = ImageViewerNamespace.Value)]
-    [WorkItemProgressDataContract("{9745ef5c-766e-4e99-8229-e332acbed2ec}")]
+    [WorkItemProgressDataContract("D3B84BE6-EDC7-40e1-911F-F6EC30C2A128")]
     public class ImportWorkItemProgress : WorkItemProgress
     {
         [DataMember(IsRequired = true)]

@@ -18,6 +18,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
@@ -308,9 +309,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            lock (_syncRoot)
+                _stopPending = true;
         }
 
+        protected static DicomServerConfiguration GetServerConfiguration()
+        {
+            DicomServerConfiguration configuration = null;
+            var request = new GetDicomServerConfigurationRequest();
+            Platform.GetService<IDicomServerConfiguration>(s =>
+                                configuration = s.GetConfiguration(request).Configuration);
+
+            return configuration;
+        }
 
         /// <summary>
         /// Dispose of any native resources.
@@ -319,6 +330,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
 
         }
+
+
 
         #endregion
 
