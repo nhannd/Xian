@@ -1,21 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Database Name="dicom_store" EntityNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" ContextNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" Class="DicomStoreDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Table Name="RuleAction" Member="RuleActions">
-    <Type Name="RuleAction">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
-      <Column Name="RuleConditionOid" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
-      <Column Name="Type" Type="RuleActionType" DbType="SmallInt NOT NULL" CanBeNull="false" />
-      <Column Name="SerializedAction" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
-      <Association Name="RuleCondition_RuleAction" Member="Condition" Storage="_RuleCondition" ThisKey="RuleConditionOid" OtherKey="Oid" Type="RuleCondition" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="RuleCondition" Member="RuleConditions">
-    <Type Name="RuleCondition">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
+  <Table Name="Rule" Member="Rules">
+    <Type Name="Rule">
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RuleId" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="SerializedCondition" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
-      <Column Name="AllStudies" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Association Name="RuleCondition_RuleAction" Member="Actions" Storage="_RuleActions" ThisKey="Oid" OtherKey="RuleConditionOid" Type="RuleAction" />
+      <Column Name="SerializedRule" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" UpdateCheck="Never" />
     </Type>
   </Table>
   <Table Name="Study" Member="Studies">

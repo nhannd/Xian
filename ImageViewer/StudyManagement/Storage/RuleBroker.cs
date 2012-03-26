@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,15 +21,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		{
 		}
 
-		public IList<RuleCondition> GetRules()
+		public IList<Rule> GetRules()
 		{
-			return (from r in this.Context.RuleConditions
+			return (from r in this.Context.Rules
 			        select r).ToList();
 		}
 
-		public RuleCondition GetRule(int oid)
+		public Rule GetRule(string ruleId)
 		{
-			return this.Context.RuleConditions.First(r => r.Oid == oid);
+			return this.Context.Rules.First(r => r.RuleId == ruleId);
+		}
+
+		public void AddRule(Rule rule)
+		{
+			this.Context.Rules.InsertOnSubmit(rule);
+		}
+
+		public void DeleteRule(string ruleId)
+		{
+			var rule = this.Context.Rules.First(r => r.RuleId == ruleId);
+			this.Context.Rules.DeleteOnSubmit(rule);
 		}
 	}
 }

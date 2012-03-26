@@ -13,10 +13,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
-	partial class RuleCondition
+	partial class Rule
 	{
+		public RuleData RuleData
+		{
+			get
+			{
+				return Serializer.DeserializeRule(this.SerializedRule);
+			}
+			set
+			{
+				this.SerializedRule = Serializer.SerializeRule(value);
+			}
+		}
 	}
 }

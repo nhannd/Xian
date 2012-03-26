@@ -30,12 +30,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertRuleAction(RuleAction instance);
-    partial void UpdateRuleAction(RuleAction instance);
-    partial void DeleteRuleAction(RuleAction instance);
-    partial void InsertRuleCondition(RuleCondition instance);
-    partial void UpdateRuleCondition(RuleCondition instance);
-    partial void DeleteRuleCondition(RuleCondition instance);
+    partial void InsertRule(Rule instance);
+    partial void UpdateRule(Rule instance);
+    partial void DeleteRule(Rule instance);
     partial void InsertStudy(Study instance);
     partial void UpdateStudy(Study instance);
     partial void DeleteStudy(Study instance);
@@ -77,19 +74,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<RuleAction> RuleActions
+		public System.Data.Linq.Table<Rule> Rules
 		{
 			get
 			{
-				return this.GetTable<RuleAction>();
-			}
-		}
-		
-		public System.Data.Linq.Table<RuleCondition> RuleConditions
-		{
-			get
-			{
-				return this.GetTable<RuleCondition>();
+				return this.GetTable<Rule>();
 			}
 		}
 		
@@ -135,195 +124,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 	}
 	
 	[Table()]
-	public partial class RuleAction : INotifyPropertyChanging, INotifyPropertyChanged
+	public partial class Rule : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private long _Oid;
 		
-		private long _RuleConditionOid;
-		
-		private RuleActionType _Type;
-		
-		private string _SerializedAction;
-		
-		private EntityRef<RuleCondition> _RuleCondition;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnOidChanging(long value);
-    partial void OnOidChanged();
-    partial void OnRuleConditionOidChanging(long value);
-    partial void OnRuleConditionOidChanged();
-    partial void OnTypeChanging(RuleActionType value);
-    partial void OnTypeChanged();
-    partial void OnSerializedActionChanging(string value);
-    partial void OnSerializedActionChanged();
-    #endregion
-		
-		public RuleAction()
-		{
-			this._RuleCondition = default(EntityRef<RuleCondition>);
-			OnCreated();
-		}
-		
-		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
-		public long Oid
-		{
-			get
-			{
-				return this._Oid;
-			}
-			set
-			{
-				if ((this._Oid != value))
-				{
-					this.OnOidChanging(value);
-					this.SendPropertyChanging();
-					this._Oid = value;
-					this.SendPropertyChanged("Oid");
-					this.OnOidChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_RuleConditionOid", DbType="BigInt NOT NULL")]
-		public long RuleConditionOid
-		{
-			get
-			{
-				return this._RuleConditionOid;
-			}
-			set
-			{
-				if ((this._RuleConditionOid != value))
-				{
-					if (this._RuleCondition.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnRuleConditionOidChanging(value);
-					this.SendPropertyChanging();
-					this._RuleConditionOid = value;
-					this.SendPropertyChanged("RuleConditionOid");
-					this.OnRuleConditionOidChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_Type", DbType="SmallInt NOT NULL", CanBeNull=false)]
-		public RuleActionType Type
-		{
-			get
-			{
-				return this._Type;
-			}
-			set
-			{
-				if ((this._Type != value))
-				{
-					this.OnTypeChanging(value);
-					this.SendPropertyChanging();
-					this._Type = value;
-					this.SendPropertyChanged("Type");
-					this.OnTypeChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_SerializedAction", DbType="NText", UpdateCheck=UpdateCheck.Never)]
-		public string SerializedAction
-		{
-			get
-			{
-				return this._SerializedAction;
-			}
-			set
-			{
-				if ((this._SerializedAction != value))
-				{
-					this.OnSerializedActionChanging(value);
-					this.SendPropertyChanging();
-					this._SerializedAction = value;
-					this.SendPropertyChanged("SerializedAction");
-					this.OnSerializedActionChanged();
-				}
-			}
-		}
-		
-		[Association(Name="RuleCondition_RuleAction", Storage="_RuleCondition", ThisKey="RuleConditionOid", OtherKey="Oid", IsForeignKey=true)]
-		public RuleCondition Condition
-		{
-			get
-			{
-				return this._RuleCondition.Entity;
-			}
-			set
-			{
-				RuleCondition previousValue = this._RuleCondition.Entity;
-				if (((previousValue != value) 
-							|| (this._RuleCondition.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._RuleCondition.Entity = null;
-						previousValue.Actions.Remove(this);
-					}
-					this._RuleCondition.Entity = value;
-					if ((value != null))
-					{
-						value.Actions.Add(this);
-						this._RuleConditionOid = value.Oid;
-					}
-					else
-					{
-						this._RuleConditionOid = default(long);
-					}
-					this.SendPropertyChanged("Condition");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[Table()]
-	public partial class RuleCondition : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private long _Oid;
+		private string _RuleId;
 		
 		private string _Name;
 		
-		private string _SerializedCondition;
-		
-		private bool _AllStudies;
-		
-		private EntitySet<RuleAction> _RuleActions;
+		private string _SerializedRule;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -331,21 +143,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCreated();
     partial void OnOidChanging(long value);
     partial void OnOidChanged();
+    partial void OnRuleIdChanging(string value);
+    partial void OnRuleIdChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnSerializedConditionChanging(string value);
-    partial void OnSerializedConditionChanged();
-    partial void OnAllStudiesChanging(bool value);
-    partial void OnAllStudiesChanged();
+    partial void OnSerializedRuleChanging(string value);
+    partial void OnSerializedRuleChanged();
     #endregion
 		
-		public RuleCondition()
+		public Rule()
 		{
-			this._RuleActions = new EntitySet<RuleAction>(new Action<RuleAction>(this.attach_RuleActions), new Action<RuleAction>(this.detach_RuleActions));
 			OnCreated();
 		}
 		
-		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
+		[Column(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public long Oid
 		{
 			get
@@ -361,6 +172,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._Oid = value;
 					this.SendPropertyChanged("Oid");
 					this.OnOidChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_RuleId", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		public string RuleId
+		{
+			get
+			{
+				return this._RuleId;
+			}
+			set
+			{
+				if ((this._RuleId != value))
+				{
+					this.OnRuleIdChanging(value);
+					this.SendPropertyChanging();
+					this._RuleId = value;
+					this.SendPropertyChanged("RuleId");
+					this.OnRuleIdChanged();
 				}
 			}
 		}
@@ -385,56 +216,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[Column(Storage="_SerializedCondition", DbType="NText", UpdateCheck=UpdateCheck.Never)]
-		public string SerializedCondition
+		[Column(Storage="_SerializedRule", DbType="NText NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public string SerializedRule
 		{
 			get
 			{
-				return this._SerializedCondition;
+				return this._SerializedRule;
 			}
 			set
 			{
-				if ((this._SerializedCondition != value))
+				if ((this._SerializedRule != value))
 				{
-					this.OnSerializedConditionChanging(value);
+					this.OnSerializedRuleChanging(value);
 					this.SendPropertyChanging();
-					this._SerializedCondition = value;
-					this.SendPropertyChanged("SerializedCondition");
-					this.OnSerializedConditionChanged();
+					this._SerializedRule = value;
+					this.SendPropertyChanged("SerializedRule");
+					this.OnSerializedRuleChanged();
 				}
-			}
-		}
-		
-		[Column(Storage="_AllStudies", DbType="Bit NOT NULL")]
-		public bool AllStudies
-		{
-			get
-			{
-				return this._AllStudies;
-			}
-			set
-			{
-				if ((this._AllStudies != value))
-				{
-					this.OnAllStudiesChanging(value);
-					this.SendPropertyChanging();
-					this._AllStudies = value;
-					this.SendPropertyChanged("AllStudies");
-					this.OnAllStudiesChanged();
-				}
-			}
-		}
-		
-		[Association(Name="RuleCondition_RuleAction", Storage="_RuleActions", ThisKey="Oid", OtherKey="RuleConditionOid")]
-		public EntitySet<RuleAction> Actions
-		{
-			get
-			{
-				return this._RuleActions;
-			}
-			set
-			{
-				this._RuleActions.Assign(value);
 			}
 		}
 		
@@ -456,18 +254,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_RuleActions(RuleAction entity)
-		{
-			this.SendPropertyChanging();
-			entity.Condition = this;
-		}
-		
-		private void detach_RuleActions(RuleAction entity)
-		{
-			this.SendPropertyChanging();
-			entity.Condition = null;
 		}
 	}
 	

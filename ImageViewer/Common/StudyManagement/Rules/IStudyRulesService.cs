@@ -45,13 +45,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 	[DataContract]
 	public class AddRuleResponse : DataContractBase
 	{
-		public AddRuleResponse(RuleData rule)
-		{
-			Rule = rule;
-		}
-
-		[DataMember]
-		public RuleData Rule { get; set; }
 	}
 
 	[DataContract]
@@ -64,25 +57,18 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 	[DataContract]
 	public class UpdateRuleResponse : DataContractBase
 	{
-		public UpdateRuleResponse(RuleData rule)
-		{
-			Rule = rule;
-		}
-
-		[DataMember]
-		public RuleData Rule { get; set; }
 	}
 
 	[DataContract]
 	public class DeleteRuleRequest : DataContractBase
 	{
-		public DeleteRuleRequest(int ruleId)
+		public DeleteRuleRequest(string ruleId)
 		{
 			RuleId = ruleId;
 		}
 
 		[DataMember]
-		public int RuleId { get; set; }
+		public string RuleId { get; set; }
 	}
 
 	[DataContract]

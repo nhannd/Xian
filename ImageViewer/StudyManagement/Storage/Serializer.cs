@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -20,6 +21,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 	{
 		private static readonly IJsmlSerializerHook _workItemRequestHook = new PolymorphicDataContractHook<WorkItemRequestDataContractAttribute>();
         private static readonly IJsmlSerializerHook _workItemProgressHook = new PolymorphicDataContractHook<WorkItemProgressDataContractAttribute>();
+		private static readonly IJsmlSerializerHook _ruleHook = new PolymorphicDataContractHook<StudyRuleDataContractAttribute>();
 
 		public static string SerializeWorkItemRequest(WorkItemRequest data)
 		{
@@ -44,7 +46,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 new JsmlSerializer.DeserializeOptions { Hook = _workItemProgressHook, DataContractTest = IsWorkItemProgressContract });
         }
 
-        private static bool IsWorkItemProgressContract(Type t)
+		public static string SerializeRule(RuleData data)
+		{
+			return JsmlSerializer.Serialize(data, "data",
+				new JsmlSerializer.SerializeOptions { Hook = _ruleHook, DataContractTest = IsStudyRuleContract });
+		}
+
+		public static RuleData DeserializeRule(string data)
+		{
+			return JsmlSerializer.Deserialize<RuleData>(data,
+				new JsmlSerializer.DeserializeOptions { Hook = _ruleHook, DataContractTest = IsStudyRuleContract });
+		}
+		
+		private static bool IsWorkItemProgressContract(Type t)
         {
             return AttributeUtils.HasAttribute<WorkItemProgressDataContractAttribute>(t);
         }
@@ -52,6 +66,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		private static bool IsWorkItemRequestContract(Type t)
 		{
 			return AttributeUtils.HasAttribute<WorkItemRequestDataContractAttribute>(t);
+		}
+
+		private static bool IsStudyRuleContract(Type t)
+		{
+			return AttributeUtils.HasAttribute<StudyRuleDataContractAttribute>(t);
 		}
 	}
 }
