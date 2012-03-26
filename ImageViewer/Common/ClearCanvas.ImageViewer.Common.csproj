@@ -118,7 +118,7 @@
     <Compile Include="LocalDataStore\LocalStudyRootQueryExtensionPoint.cs" />
     <Compile Include="MemoryCollector.cs" />
     <Compile Include="MemoryManagementSettings.cs" />
-    <Compile Include="MemoryManagementSettings1.Designer.cs">
+    <Compile Include="MemoryManagementSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>MemoryManagementSettings.settings</DependentUpon>
@@ -150,8 +150,6 @@
     <Compile Include="StudyManagement\Rules\StudyRuleDataContractAttribute.cs" />
     <Compile Include="StudyManagement\Rules\TimeOrigin.cs" />
     <Compile Include="StudyManagement\Rules\TimeUnit.cs" />
-    <Compile Include="StudyManagement\Storage\DataContracts.cs" />
-    <Compile Include="StudyManagement\Storage\IStudyStorageConfiguration.cs" />
     <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
     <Compile Include="WorkItem\IWorkItemService.cs" />
     <Compile Include="WorkItem\SR.Designer.cs">
