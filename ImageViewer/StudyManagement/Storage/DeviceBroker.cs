@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         public Device GetDeviceByName(string name)
         {
             var devices = from d in Context.Devices where d.Name == name select d;
-            return devices.FirstOrDefault();
+            return devices.SingleOrDefault();
         }
 
         public List<Device> GetDevicesByAETitle(string aeTitle)

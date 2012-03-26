@@ -16,7 +16,7 @@ using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-    //TODO (Marmot): Rename to IDicomServer. Get rid of send/retrieve methods?
+    //TODO (Marmot): Rename to IDicomServer. Get rid of send/retrieve methods.
 
     /// <summary>
 	/// WCF service interface to the Dicom Server.  The Dicom Server runs in a Shred, and the WCF interface allows

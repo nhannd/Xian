@@ -13,7 +13,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-    // TODO (Marmot): keep this one, or something like it?
+    // TODO (Marmot): remove. Add bridge for equivalent work queue stuff.
 
     [ServiceContract(ConfigurationName = "IDicomSendService")]
 	public interface IDicomSendService

@@ -29,6 +29,8 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         #region Implementation of IDicomServiceNode
 
         public bool IsLocal { get; private set; }
+        public bool SupportsStreaming { get { return StreamingParameters != null; } }
+        
         #endregion
 
         #region Implementation of IApplicationEntity
@@ -76,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             return false;
         }
 
-        public override T GetService<T>()
+        protected override T GetService<T>()
         {
             if (!IsSupported<T>())
                 throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));

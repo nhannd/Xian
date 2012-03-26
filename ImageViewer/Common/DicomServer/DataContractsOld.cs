@@ -16,8 +16,7 @@ using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-    // TODO (Marmot): remove this stuff or at least refactor it.
-
+    // TODO (Marmot): remove this stuff.
 	public enum DeletionBehaviour
 	{
 		None = 0,

@@ -97,6 +97,7 @@
     <Compile Include="Tests\SerializationTests.cs" />
     <Compile Include="WorkItem.cs" />
     <Compile Include="Serializer.cs" />
+    <Compile Include="WorkItemHelper.cs" />
     <Compile Include="WorkItemUidBroker.cs" />
   </ItemGroup>
   <ItemGroup>

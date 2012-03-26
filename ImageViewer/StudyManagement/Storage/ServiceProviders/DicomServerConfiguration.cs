@@ -18,8 +18,7 @@ using DicomServerConfigurationContract = ClearCanvas.ImageViewer.Common.DicomSer
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 {
-    // TODO (Marmot): This is probably not the best place for this, but not sure where else to put it right now.
-
+    // TODO (Marmot): This seems like the best place for this, since it has to be available (in process) whenever the database is present.
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
     [ExtensionOf(typeof(DuplexServiceProviderExtensionPoint))]
     internal class DicomServerConfigurationServiceProvider : IServiceProvider, IDuplexServiceProvider
@@ -29,7 +28,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         public object GetService(Type serviceType, object callback)
         {
             if (serviceType == typeof(IDicomServerConfiguration))
-                //return new DicomServerConfigurationProxy(new DicomServerConfiguration((IDicomServerConfigurationCallback)callback));
                 return new DicomServerConfigurationProxy(new DicomServerConfiguration());
 
             return null;
@@ -99,18 +97,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
     internal class DicomServerConfiguration : IDicomServerConfiguration
     {
-        // TODO (Marmot): How to deal with this? Settings?
+        // TODO (Marmot): How to deal with this? Maybe figure it out from the host name? 
         private const string _defaultServerAE = "AETITLE";
         private const int _defaultPort = 104;
-
+        
         private const string _configurationKey = "DicomServer";
 
         private string DefaultAE
         {
+            //TODO (Marmot): Do something smarter, like determine it from the host name?
             get { return _defaultServerAE; }
         }
 
         private string DefaultHostname
+        {
+            get { return Dns.GetHostName(); }
+        }
+
+        private string DefaultFileStoreLocation
         {
             get { return Dns.GetHostName(); }
         }
@@ -137,17 +141,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     };
             }
 
+            if (String.IsNullOrEmpty(configuration.AETitle))
+                configuration.AETitle = DefaultAE;
+            if (String.IsNullOrEmpty(configuration.HostName))
+                configuration.AETitle = DefaultHostname;
+            if (String.IsNullOrEmpty(configuration.FileStoreLocation))
+                configuration.AETitle = DefaultFileStoreLocation;
+
             return new GetDicomServerConfigurationResult { Configuration = configuration };
         }
 
         public UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request)
         {
+            Platform.CheckForEmptyString(request.Configuration.AETitle, "AETitle");
+
             using (var context = new DataAccessContext())
             {
                 context.GetConfigurationBroker().SetDataContractValue(_configurationKey, request.Configuration);
                 context.Commit();
             }
 
+            //TODO (Marmot): This really the right place to do this? Guess it does no harm, but perhaps not
+            //obvious that this will happen automatically.
             try
             {
                 Platform.GetService<IDicomServerService>(s => s.RestartListener(new RestartListenerRequest()));
@@ -158,7 +173,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             catch(Exception e)
             {
                 Platform.Log(LogLevel.Warn, e, "Failed to restart the DICOM Server.");
-                throw new FaultException();
+                throw;
             }
 
             return new UpdateDicomServerConfigurationResult();

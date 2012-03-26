@@ -11,14 +11,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Policy;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -198,85 +201,85 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-	    // TODO (Marmot): take this away.
+	    // TODO (Marmot): take this away?
 		private static void SelectDefaultServers(ServerTreeComponent serverTreeComponent)
 		{
-            //ServerTree serverTree = serverTreeComponent.ServerTree;
+            ServerTree serverTree = serverTreeComponent.ServerTree;
 
-            //List<Server> defaultServers = DefaultServers.SelectFrom(serverTree);
-            //CheckDefaultServers(serverTree, defaultServers);
-            //IServerTreeNode initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootNode.ServerGroupNode);
-            //UncheckAllServers(serverTree);
+            var defaultServers = DefaultServers.GetAll();
+            CheckDefaultServers(serverTree, defaultServers);
+            IServerTreeNode initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootServerGroup);
+            UncheckAllServers(serverTree);
 
-            //if (initialSelection == null)
-            //{
-            //    if (serverTreeComponent.ShowLocalDataStoreNode)
-            //        initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
-            //    else
-            //        initialSelection = serverTreeComponent.ServerTree.RootNode.ServerGroupNode;
-            //}
+            if (initialSelection == null)
+            {
+                if (serverTreeComponent.ShowLocalDataStoreNode)
+                    initialSelection = serverTreeComponent.ServerTree.LocalServer;
+                else
+                    initialSelection = serverTreeComponent.ServerTree.RootServerGroup;
+            }
 
-            //serverTreeComponent.SetSelection(initialSelection);
+            serverTreeComponent.SetSelection(initialSelection);
 		}
 
-        //private static IServerTreeNode GetFirstDefaultServerOrGroup(ServerGroup serverGroup)
-        //{
-        //    if (serverGroup.IsEntireGroupChecked())
-        //        return serverGroup;
+        private static IServerTreeNode GetFirstDefaultServerOrGroup(IServerTreeGroup serverGroup)
+        {
+            if (serverGroup.IsEntireGroupChecked())
+                return serverGroup;
 
-        //    //consider groups and servers at this level
-        //    foreach (ServerGroup group in serverGroup.ChildGroups)
-        //    {
-        //        if (group.IsEntireGroupChecked())
-        //            return group;
-        //    }
+            //consider groups and servers at this level
+            foreach (IServerTreeGroup group in serverGroup.ChildGroups)
+            {
+                if (group.IsEntireGroupChecked())
+                    return group;
+            }
 
-        //    foreach (Server server in serverGroup.ChildServers)
-        //    {
-        //        if (server.IsChecked)
-        //            return server;
-        //    }
+            foreach (IServerTreeDicomServer server in serverGroup.Servers)
+            {
+                if (server.IsChecked)
+                    return server;
+            }
 
-        //    //repeat for children of the groups at this level
-        //    foreach (ServerGroup group in serverGroup.ChildGroups)
-        //    {
-        //        IServerTreeNode defaultServerOrGroup = GetFirstDefaultServerOrGroup(group);
-        //        if (defaultServerOrGroup != null)
-        //            return defaultServerOrGroup;
-        //    }
+            //repeat for children of the groups at this level
+            foreach (IServerTreeGroup group in serverGroup.ChildGroups)
+            {
+                IServerTreeNode defaultServerOrGroup = GetFirstDefaultServerOrGroup(group);
+                if (defaultServerOrGroup != null)
+                    return defaultServerOrGroup;
+            }
 
-        //    return null;
-        //}
+            return null;
+        }
 
-        //private static void CheckDefaultServers(ServerTree serverTree, List<Server> defaultServers)
-        //{
-        //    foreach (Server server in serverTree.FindChildServers())
-        //    {
-        //        if (defaultServers.Contains(server))
-        //            server.IsChecked = true;
-        //    }
-        //}
+        private static void CheckDefaultServers(ServerTree serverTree, List<IDicomServiceNode> defaultServers)
+        {
+            foreach (IServerTreeDicomServer server in serverTree.FindChildServers())
+            {
+                var treeServer = server;
+                if (defaultServers.Any(s => s.Name == treeServer.Name))
+                    server.IsChecked = true;
+            }
+        }
 
-        //private static void UncheckAllServers(ServerTree serverTree)
-        //{
-        //    foreach (Server server in serverTree.FindChildServers())
-        //        server.IsChecked = false;
-        //}
+        private static void UncheckAllServers(ServerTree serverTree)
+        {
+            foreach (IServerTreeDicomServer server in serverTree.FindChildServers())
+                server.IsChecked = false;
+        }
 
 		internal static bool HasLocalDatastoreSupport()
 		{
-		    //TODO (Marmot): This can come from the tree itself, no?
-			try
-			{
-				StudyFinderExtensionPoint finders = new StudyFinderExtensionPoint();
-				return null != CollectionUtils.SelectFirst(finders.CreateExtensions(),
-								delegate(object extension) { return ((IStudyFinder)extension).Name == "DICOM_LOCAL"; });
-			}
-			catch (NotSupportedException)
-			{
-				Platform.Log(LogLevel.Warn, "Local data store study finder not found.");
-				return false;
-			}
+		    try
+		    {
+		        Platform.GetService<IDicomServerConfiguration>(
+		            s => s.GetConfiguration(new GetDicomServerConfigurationRequest()));
+
+                return true;
+		    }
+		    catch (NotSupportedException)
+		    {
+		        return false;
+		    }
 		}
 
 		private static TComponent CreateComponentFromExtensionPoint<TExtensionPoint, TComponent>()

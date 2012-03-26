@@ -16,7 +16,6 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
 {
     public interface IServerTreeLocalServer : IServerTreeNode
     {
-        // TODO (Marmot): Get rid of this.
         string AETitle { get; }
         string HostName { get; }
         int? Port { get; }

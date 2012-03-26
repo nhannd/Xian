@@ -58,11 +58,9 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         [DataMember(IsRequired = true)]
         public int Port { get; set; }
 
-        // TODO (Marmot): Gonzo?
         [DataMember(IsRequired = true)]
         public string HostName { get; set; }
 
-        //TODO (Marmot) will this actually be how we store the file store location? Probably.
         [DataMember(IsRequired = true)]
         public string FileStoreLocation { get; set; }
     }

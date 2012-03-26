@@ -201,8 +201,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 	#endregion
 
-    //TODO (Marmot): Remove and put it in the database?
-
 	internal class DicomServerSettings : ShredConfigSection, IMigrateSettings
     {
         private static DicomServerSettings _instance;
@@ -248,6 +246,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			set { this["AllowUnknownCaller"] = value; }
 		}
 
+        [ConfigurationProperty("QueryResponsesInUtf8", DefaultValue = false)]
+        public bool QueryResponsesInUtf8
+        {
+            get { return (bool)this["QueryResponsesInUtf8"]; }
+            set { this["QueryResponsesInUtf8"] = value; }
+        }
+
 		[ConfigurationProperty("ImageStorageSopClasses")]
 		public ImageSopClassConfigurationElementCollection ImageStorageSopClasses
 		{
@@ -269,24 +274,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			set { this["StorageTransferSyntaxes"] = value; }
 		}
 
-        [ConfigurationProperty("QueryResponsesInUtf8", DefaultValue = false)]
-        public bool QueryResponsesInUtf8
-        {
-            get { return (bool)this["QueryResponsesInUtf8"]; }
-            set { this["QueryResponsesInUtf8"] = value; }
-        }
-
 		#endregion
 
         public override object Clone()
         {
             DicomServerSettings clone = new DicomServerSettings();
 
+            //TODO (Marmot): These 2 to the data contract so they could be set from the UI?
 			clone.AllowUnknownCaller = _instance.AllowUnknownCaller;
-			clone.StorageTransferSyntaxes = _instance.StorageTransferSyntaxes;
+            clone.QueryResponsesInUtf8 = _instance.QueryResponsesInUtf8;
+
+            //TODO (Marmot): Should these go in the database, too?
+            clone.StorageTransferSyntaxes = _instance.StorageTransferSyntaxes;
 			clone.ImageStorageSopClasses = _instance.ImageStorageSopClasses;
 			clone.NonImageStorageSopClasses = _instance.NonImageStorageSopClasses;
-            clone.QueryResponsesInUtf8 = _instance.QueryResponsesInUtf8;
 
             return clone;
         }
@@ -297,10 +298,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			switch (migrationValues.PropertyName)
 			{
-				case "HostName":
-				case "AETitle":
-				case "Port":
-				case "InterimStorageDirectory":
 				case "AllowUnknownCaller":
                 case "QueryResponsesInUtf8":
                     migrationValues.CurrentValue = migrationValues.PreviousValue;

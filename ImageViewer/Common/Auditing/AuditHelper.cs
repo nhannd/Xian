@@ -587,7 +587,7 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
                 catch(Exception e)
                 {
                     Platform.Log(LogLevel.Warn, e, "Unable to retrieve local AE title for auditing.");
-                    return "<unknown>";
+                    return "<unavailable>";
                 }
 			}
 		}

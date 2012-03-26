@@ -16,7 +16,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-    // TODO (Marmot): Try to get rid of this?
+    // Note (Marmot): Leave this for now because it's not that bad, and it's tied into
+    // the "My Studies" node in the Server Tree. Could change it later.
     public interface IDicomServerConfigurationProvider
     {
         string Host { get; }
@@ -33,7 +34,8 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         event EventHandler Changed;
     }
 
-    //TODO (Marmot): this stuff need to change?
+    //NOTE (Marmot): Leave this stuff for now, as it serves a purpose for the "My Studies" node
+    //of the server tree and also, it's an easy way to get the local AE title for auditing, etc.
 	public static class DicomServerConfigurationHelper
 	{
 		[Serializable]
@@ -208,7 +210,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		{
 			get
 			{
-			    //TODO (Marmot): Is it really ok to throw here?
+			    //TODO (Marmot): Make sure usages of this are handling the (unlikely) possibility of an exception being thrown.
 				Refresh(false);
 				return DicomServerConfiguration.AETitle; 
 			}

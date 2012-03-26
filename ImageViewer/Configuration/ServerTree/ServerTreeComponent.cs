@@ -36,7 +36,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		Common.ServerTree.ServerTree ServerTree { get; }
 
-	    // TODO (Marmot): Change to use Dicom Service Nodes?
 		AEServerGroup SelectedServers { get; }
 		event EventHandler SelectedServerChanged;
 

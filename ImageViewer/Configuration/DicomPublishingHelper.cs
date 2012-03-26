@@ -190,11 +190,11 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return result.Count > 0;
 		}
 
-        private static bool StudyExistsOnRemote(IDicomServiceNode server, string studyInstanceUid)
+        private static bool StudyExistsOnRemote(IServiceNode server, string studyInstanceUid)
 		{
-            //TODO (Marmot): Can use the GetService method now.
-			var srq = new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
-			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
+            IList<StudyRootStudyIdentifier> result = null;
+            server.GetService<IStudyRootQuery>(s => result = 
+                s.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid}));
 			return result.Count > 0;
 		}
 

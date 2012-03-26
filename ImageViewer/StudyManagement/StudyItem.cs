@@ -418,7 +418,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#endregion
 
 	    // TODO (Marmot): Change to IDicomServiceNode
-
 		/// <summary>
 		/// Gets or sets the server.
 		/// </summary>
@@ -429,7 +428,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 	    // TODO (Marmot): Get rid of this.
-
 		/// <summary>
 		/// Gets or sets the study loader name.
 		/// </summary>

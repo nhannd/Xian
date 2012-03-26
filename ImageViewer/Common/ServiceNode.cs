@@ -1,17 +1,21 @@
-﻿using ClearCanvas.Dicom.Iod;
+﻿using System;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common
 {
+    //TODO (Marmot): Find places where IApplicationEntity is used and see if we can switch to using these.
     public interface IDicomServiceNode : IServiceNode, IApplicationEntity
     {
         bool IsLocal { get; }
+        bool SupportsStreaming { get; }
     }
 
     public interface IServiceNode
     {
         bool IsSupported<T>() where T : class;
-        T GetService<T>() where T : class;
+        void GetService<T>(Action<T> service) where T : class;
     }
 
     public abstract class ServiceNode : IServiceNode
@@ -19,9 +23,35 @@ namespace ClearCanvas.ImageViewer.Common
         #region IServiceNode Members
 
         public abstract bool IsSupported<T>() where T : class;
-        public abstract T GetService<T>() where T : class;
+        public void GetService<T>(Action<T> withService) where T : class
+        {
+            var service = GetService<T>();
+
+            try
+            {
+                withService(service);    
+            }
+            catch (Exception)
+            {
+                if (service is IDisposable)
+                {
+                    try
+                    {
+                        ((IDisposable)service).Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        Platform.Log(LogLevel.Warn, ex, "Error disposing service object of type '{0}'", typeof(T).FullName);
+                    }
+                }
+
+                throw;
+            }
+        }
 
         #endregion
+
+        protected abstract T GetService<T>() where T : class;
     }
 
     public static class ServiceNodeExtensions
