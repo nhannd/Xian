@@ -42,6 +42,14 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
     }
 
     [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class RestartListenerRequest
+    { }
+
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class RestartListenerResult
+    { }
+
+    [DataContract(Namespace = DicomServerNamespace.Value)]
     public class DicomServerConfiguration
     {
         [DataMember(IsRequired = true)]

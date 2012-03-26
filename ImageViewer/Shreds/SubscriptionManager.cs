@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.ServiceModel;
 
-namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
+namespace ClearCanvas.ImageViewer.Shreds
 {
 	internal static class SubscriptionManager<T>
 		where T : class 

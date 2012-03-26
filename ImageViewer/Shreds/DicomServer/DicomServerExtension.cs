@@ -36,24 +36,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
 			try
 			{
-				LocalDataStoreEventPublisher.Instance.Start();
-				DicomSendManager.Instance.Start();
-				DicomRetrieveManager.Instance.Start();
-				DicomServerManager.Instance.Start();
-
-				string message = String.Format(SR.FormatServiceStartedSuccessfully, SR.DicomServer);
-				Platform.Log(LogLevel.Info, message);
-				Console.WriteLine(message);
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				Console.WriteLine(String.Format(SR.FormatServiceFailedToStart, SR.DicomServer));
-				return;
-			}
-
-			try
-			{
 				StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_dicomServerEndpointName, SR.DicomServer);
 				_dicomServerWcfInitialized = true;
 				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.DicomServer);
@@ -65,6 +47,32 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				Platform.Log(LogLevel.Error, e);
 				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.DicomServer));
 			}
+
+            //NOTE: in a lot of cases, we start all the internal services before the WCF service,
+            //but in this case, the (shared/offline) DICOM service configuration will call RestartListener
+            //right after a change is made in the database, so we want to start the internal services
+            //after the WCF service us up and running. That way, although unlikely, if the server configuration
+            //were changed just as this service were starting up, we will always start up the listener
+            //with the right AE title and Port, even if the listener starts then restarts in quick succession.
+            //These internal services all nicely handle the possibility of a service calling into them when
+            //they're not running yet, anyway.
+            try
+            {
+                LocalDataStoreEventPublisher.Instance.Start();
+                DicomSendManager.Instance.Start();
+                DicomRetrieveManager.Instance.Start();
+                DicomServerManager.Instance.Start();
+
+                string message = String.Format(SR.FormatServiceStartedSuccessfully, SR.DicomServer);
+                Platform.Log(LogLevel.Info, message);
+                Console.WriteLine(message);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+                Console.WriteLine(String.Format(SR.FormatServiceFailedToStart, SR.DicomServer));
+                return;
+            }
 
 			try
 			{

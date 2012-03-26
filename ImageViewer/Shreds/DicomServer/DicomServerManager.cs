@@ -46,6 +46,16 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Private Methods
 
+        private static DicomServerConfiguration GetServerConfiguration()
+        {
+            DicomServerConfiguration configuration = null;
+            var request = new GetDicomServerConfigurationRequest();
+            Platform.GetService<IDicomServerConfiguration>(s =>
+                                configuration = s.GetConfiguration(request).Configuration);
+
+            return configuration;
+        }
+
 		private void StartServerAsync(object nothing)
 		{
 			DicomServerConfiguration configuration;
@@ -168,19 +178,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		private void OnConfigurationChanged()
-		{
-			lock (_syncLock)
-			{
-				if (_active)
-				{
-					Trace.WriteLine("Configuration change detected - restarting Dicom server.");
-					_restart = true;
-					StopServer(false);
-				}
-			}
-		}
-
 		#endregion
 
 		#region Public Methods
@@ -204,39 +201,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		public DicomServerConfiguration GetServerConfiguration()
-		{
-			lock (_syncLock)
-			{
-				if (!_active)
-					throw new InvalidOperationException("The Dicom Server service is not active.");
-
-                return new DicomServerConfiguration
-                    {
-                        HostName = DicomServerSettings.Instance.HostName,
-                        AETitle = DicomServerSettings.Instance.AETitle,
-                        Port = DicomServerSettings.Instance.Port,
-                        FileStoreLocation = DicomServerSettings.Instance.InterimStorageDirectory
-                    };
-			}
-		}
-
-		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
-		{
-			lock (_syncLock)
-			{
-				if (!_active)
-					throw new InvalidOperationException("The Dicom Server service is not active.");
-
-				DicomServerSettings.Instance.HostName = newConfiguration.HostName;
-				DicomServerSettings.Instance.AETitle = newConfiguration.AETitle;
-				DicomServerSettings.Instance.Port = newConfiguration.Port;
-				DicomServerSettings.Instance.InterimStorageDirectory = newConfiguration.FileStoreLocation;
-				DicomServerSettings.Save();
-
-				OnConfigurationChanged();
-			}
-		}
+        public void Restart()
+        {
+            lock (_syncLock)
+            {
+                if (_active)
+                {
+                    Trace.WriteLine("DICOM server listener restart requested.");
+                    _restart = true;
+                    StopServer(false);
+                }
+            }
+        }
 
 		#endregion
 	}

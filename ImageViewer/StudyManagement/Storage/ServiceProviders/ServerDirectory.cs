@@ -43,15 +43,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         {
             try
             {
-                using (var scope = new DataAccessScope())
+                using (var context = new DataAccessContext())
                 {
                     List<Device> devices;
                     if (!String.IsNullOrEmpty(request.Name))
-                        devices = new List<Device> { scope.GetDeviceBroker().GetDeviceByName(request.Name) };
+                        devices = new List<Device> { context.GetDeviceBroker().GetDeviceByName(request.Name) };
                     else if (!String.IsNullOrEmpty(request.AETitle))
-                        devices = scope.GetDeviceBroker().GetDevicesByAETitle(request.AETitle);
+                        devices = context.GetDeviceBroker().GetDevicesByAETitle(request.AETitle);
                     else
-                        devices = scope.GetDeviceBroker().GetDevices();
+                        devices = context.GetDeviceBroker().GetDevices();
 
                     var converted = devices.Select(d => d.ToDataContract()).ToList();
                     return new GetServersResult {Servers = converted };
@@ -68,9 +68,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         {
             try
             {
-                using (var scope = new DataAccessScope())
+                using (var context = new DataAccessContext())
                 {
-                    var broker = scope.GetDeviceBroker();
+                    var broker = context.GetDeviceBroker();
 
                     var existing = broker.GetDeviceByName(request.Server.Name);
                     if (existing != null)
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     var device = server.ToDevice();
                     broker.AddDevice(device);
 
-                    scope.SubmitChanges();
+                    context.Commit();
 
                     return new AddServerResult { Server = device.ToDataContract() };
                 }
@@ -101,9 +101,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         {
             try
             {
-                using (var scope = new DataAccessScope())
+                using (var context = new DataAccessContext())
                 {
-                    var broker = scope.GetDeviceBroker();
+                    var broker = context.GetDeviceBroker();
 
                     var existing = broker.GetDeviceByName(request.Server.Name);
                     if (existing == null)
@@ -128,8 +128,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                         existing.StreamingImagePort = null;
                     }
 
-                    scope.SubmitChanges();
-                    return new UpdateServerResult {Server = existing.ToDataContract()};
+                    context.Commit();
+                    return new UpdateServerResult { Server = existing.ToDataContract() };
                 }
             }
             catch (ArgumentException e)
@@ -148,16 +148,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         {
             try
             {
-                using (var scope = new DataAccessScope())
+                using (var context = new DataAccessContext())
                 {
-                    var broker = scope.GetDeviceBroker();
+                    var broker = context.GetDeviceBroker();
                     var existing = broker.GetDeviceByName(request.Server.Name);
                     if (existing == null)
                         throw new ArgumentException();
                     
                     broker.DeleteDevice(existing);
-                    
-                    scope.SubmitChanges();
+
+                    context.Commit();
                     return new DeleteServerResult();
                 }
             }
@@ -177,11 +177,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         {
             try
             {
-                using (var scope = new DataAccessScope())
+                using (var scope = new DataAccessContext())
                 {
                     var broker = scope.GetDeviceBroker();
                     broker.DeleteAllDevices();
-                    scope.SubmitChanges();
+                    scope.Commit();
                     return new DeleteAllServersResult();
                 }
             }

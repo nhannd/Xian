@@ -518,8 +518,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (!_active)
 					throw new InvalidOperationException("The Dicom Send service is not active.");
 
-				DicomServerConfiguration configuration = DicomServerManager.Instance.GetServerConfiguration();
-				SendScu scu = new SendScu(configuration.AETitle, request, callback);
+				SendScu scu = new SendScu(DicomServerConfigurationHelper.AETitle, request, callback);
 				scu.Reference.IsBackground = request.IsBackground;
 				_scus.Add(scu);
 				scu.Send();
@@ -534,8 +533,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (!_active)
 					throw new InvalidOperationException("The Dicom Send service is not active.");
 
-				DicomServerConfiguration configuration = DicomServerManager.Instance.GetServerConfiguration();
-				SendScu scu = new SendScu(configuration.AETitle, destinationAEInformation, instancesToSend, callback);
+                SendScu scu = new SendScu(DicomServerConfigurationHelper.AETitle, destinationAEInformation, instancesToSend, callback);
 				scu.Reference.IsBackground = isBackground;
 				_scus.Add(scu);
 				scu.Send();

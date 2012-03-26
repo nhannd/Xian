@@ -82,11 +82,11 @@
     <Compile Include="LocalDataStore\LocalDataStoreServiceExtension.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceType.cs" />
-    <Compile Include="LocalDataStore\PublishManager.cs" />
+    <Compile Include="PublishManager.cs" />
     <Compile Include="LocalDataStore\ReceivedFileProcessor.cs" />
     <Compile Include="LocalDataStore\ReindexProcessor.cs" />
     <Compile Include="LocalDataStore\SentFileProcessor.cs" />
-    <Compile Include="LocalDataStore\SubscriptionManager.cs" />
+    <Compile Include="SubscriptionManager.cs" />
     <Compile Include="StudyInformationFieldExchanger.cs" />
     <Compile Include="ServiceClientImpersonationContext.cs" />
     <Compile Include="UserIdentityContext.cs" />

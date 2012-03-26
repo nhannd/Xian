@@ -198,9 +198,6 @@
   <data name="ExceptionFailedToDeleteStudy" xml:space="preserve">
     <value>Failed to delete study (StudyInstanceUid = {0}) from the data store.  Please check the service log for details.</value>
   </data>
-  <data name="ExceptionFailedToGetServerConfiguration" xml:space="preserve">
-    <value>Failed to get Server configuration.</value>
-  </data>
   <data name="ExceptionFailedToImportFile" xml:space="preserve">
     <value>An error has occurred while attempting to import the file into the local file store.</value>
   </data>
@@ -212,9 +209,6 @@
   </data>
   <data name="ExceptionFailedToRemoveSubscriber" xml:space="preserve">
     <value>Failed to remove subscriber from the Local DataStore Activity Monitor service.</value>
-  </data>
-  <data name="ExceptionFailedToUpdateServerConfiguration" xml:space="preserve">
-    <value>Failed to update Server configuration.</value>
   </data>
   <data name="ExceptionImporterAlreadyStarted" xml:space="preserve">
     <value>The file importer has already been started.</value>
@@ -393,5 +387,14 @@ Please check the service logs for more details.</value>
   </data>
   <data name="WorkItemProcessorService" xml:space="preserve">
     <value>Work Item Processor</value>
+  </data>
+  <data name="ExceptionErrorRestartingDICOMServer" xml:space="preserve">
+    <value>Error restarting DICOM server.</value>
+  </data>
+  <data name="ExceptionFailedToGetServerConfiguration" xml:space="preserve">
+    <value>Failed to get Server configuration.</value>
+  </data>
+  <data name="ExceptionFailedToUpdateServerConfiguration" xml:space="preserve">
+    <value>Failed to update Server configuration.</value>
   </data>
 </root>

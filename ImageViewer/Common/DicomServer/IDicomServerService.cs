@@ -16,9 +16,9 @@ using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-    // TODO (Marmot): remove this stuff.
+    //TODO (Marmot): Rename to IDicomServer. Get rid of send/retrieve methods?
 
-	/// <summary>
+    /// <summary>
 	/// WCF service interface to the Dicom Server.  The Dicom Server runs in a Shred, and the WCF interface allows
 	/// external processes, such as the Viewer, to make requests via this interface.
 	/// </summary>
@@ -53,19 +53,11 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 		[OperationContract(IsOneWay = true)]
         void RetrieveSeries(ApplicationEntity sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids);
 
-		/// <summary>
-		/// Retrieve the local Dicom Server configuration.
-		/// </summary>
-		/// <returns>The server's current configuration.</returns>
-		[OperationContract]
-		DicomServerConfiguration GetServerConfiguration();
-
-		/// <summary>
-		/// Set the Dicom Server configuration.  The Dicom server should automatically restart using the new settings,
-		/// but it may not do so immediately.  It may wait until it is idle before making the changes.
-		/// </summary>
-		/// <param name="newConfiguration">The server's new configuration</param>
-		[OperationContract]
-		void UpdateServerConfiguration(DicomServerConfiguration newConfiguration);
+        /// <summary>
+        /// Requests that the DICOM listener be restarted. Would normally be called
+        /// after a server configuration change via <see cref="IDicomServerConfiguration.UpdateConfiguration"/>.
+        /// </summary>
+        [OperationContract]
+        RestartListenerResult RestartListener(RestartListenerRequest request);
 	}
 }

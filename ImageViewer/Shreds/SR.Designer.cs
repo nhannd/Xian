@@ -313,6 +313,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error restarting DICOM server..
+        /// </summary>
+        internal static string ExceptionErrorRestartingDICOMServer {
+            get {
+                return ResourceManager.GetString("ExceptionErrorRestartingDICOMServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to retrieve the Local Data Store configuration parameters..
         /// </summary>
         internal static string ExceptionErrorRetrievingLocalDataStoreConfiguration {

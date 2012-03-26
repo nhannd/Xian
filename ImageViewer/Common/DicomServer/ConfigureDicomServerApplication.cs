@@ -22,11 +22,17 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
     {
         private class CommandLine : ClearCanvas.Common.Utilities.CommandLine
         {
-            [CommandLineParameter("ae", "Sets the AE title of dicom server.")]
+            [CommandLineParameter("ae", "Sets the AE title of dicom server.", Required = true)]
             public string AETitle { get; set;}
 
-            [CommandLineParameter("port", "Sets the listening port of the dicom server.")]
+            [CommandLineParameter("host", "Sets the host name of the DICOM server.", Required = false)]
+            public string HostName { get; set; }
+
+            [CommandLineParameter("port", "Sets the listening port of the dicom server.", Required = true)]
             public int Port { get; set; }
+
+            [CommandLineParameter("filestore", "Sets the location of the file store.", Required = false)]
+            public string FileStoreLocation { get; set; }
         }
 
         #region Implementation of IApplicationRoot
@@ -40,7 +46,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
                 s => s.UpdateConfiguration(new UpdateDicomServerConfigurationRequest
                                           {
                                               Configuration = new DicomServerConfiguration
-                                                      {AETitle = commandLine.AETitle, Port = commandLine.Port}
+                                                      {
+                                                          AETitle = commandLine.AETitle, 
+                                                          HostName = commandLine.HostName,
+                                                          Port = commandLine.Port,
+                                                          FileStoreLocation = commandLine.FileStoreLocation
+                                                      }
                                           }));
         }
 

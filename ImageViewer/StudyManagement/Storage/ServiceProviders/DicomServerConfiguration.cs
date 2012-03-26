@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
     // TODO (Marmot): Later, maybe implement something a little more robust that can convert an exception
     // to the correct Fault contract object for "in process" services.
-    internal class DicomServerConfigurationProxy : IDicomServerConfiguration, IDisposable
+    internal class DicomServerConfigurationProxy : IDicomServerConfiguration
     {
         private DicomServerConfiguration _real;
 
@@ -95,22 +95,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         }
 
         #endregion
-
-        #region Implementation of IDisposable
-
-        public void Dispose()
-        {
-            if (_real == null)
-                return;
-
-            _real.Dispose();
-            _real = null;
-        }
-
-        #endregion
     }
 
-    internal partial class DicomServerConfiguration : IDicomServerConfiguration, IDisposable
+    internal class DicomServerConfiguration : IDicomServerConfiguration
     {
         // TODO (Marmot): How to deal with this? Settings?
         private const string _defaultServerAE = "AETITLE";
@@ -118,23 +105,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         private const string _configurationKey = "DicomServer";
 
-        //private IDicomServerConfigurationCallback _callback;
-
-        public DicomServerConfiguration()
-        {
-            //_callback = callback;
-            //if (_callback != null)
-            //    ChangePublisher.Instance.ConfigurationChanged += OnConfigurationChanged;
-        }
-
-        //private void OnConfigurationChanged(object sender, EventArgs e)
-        //{
-        //    _callback.ConfigurationChanged();
-        //}
-
         private string DefaultAE
         {
             get { return _defaultServerAE; }
+        }
+
+        private string DefaultHostname
+        {
+            get { return Dns.GetHostName(); }
         }
 
         private int DefaultPort
@@ -147,14 +125,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
         {
             DicomServerConfigurationContract configuration;
-            using (var scope = new DataAccessScope())
+            using (var context = new DataAccessContext())
             {
-                configuration = scope.GetConfigurationBroker().GetDataContractValue<DicomServerConfigurationContract>(_configurationKey);
+                configuration = context.GetConfigurationBroker().GetDataContractValue<DicomServerConfigurationContract>(_configurationKey);
                 if (configuration == null)
                     configuration = new DicomServerConfigurationContract
                     {
                         AETitle = DefaultAE,
-                        HostName = Dns.GetHostName(),
+                        HostName = DefaultHostname,
                         Port = DefaultPort
                     };
             }
@@ -164,25 +142,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         public UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request)
         {
-            using (var scope = new DataAccessScope())
+            using (var context = new DataAccessContext())
             {
-                scope.GetConfigurationBroker().SetDataContractValue(_configurationKey, request.Configuration);
+                context.GetConfigurationBroker().SetDataContractValue(_configurationKey, request.Configuration);
+                context.Commit();
+            }
+
+            try
+            {
+                Platform.GetService<IDicomServerService>(s => s.RestartListener(new RestartListenerRequest()));
+            }
+            catch (EndpointNotFoundException)
+            {
+            }
+            catch(Exception e)
+            {
+                Platform.Log(LogLevel.Warn, e, "Failed to restart the DICOM Server.");
+                throw new FaultException();
             }
 
             return new UpdateDicomServerConfigurationResult();
-        }
-
-        #endregion
-
-        #region Implementation of IDisposable
-
-        public void Dispose()
-        {
-            //if (_callback == null)
-            //    return;
-
-            //ChangePublisher.Instance.ConfigurationChanged -= OnConfigurationChanged;
-            //_callback = null;
         }
 
         #endregion

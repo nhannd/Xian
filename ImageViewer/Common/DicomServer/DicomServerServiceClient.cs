@@ -12,14 +12,27 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-    // TODO (Marmot): remove this stuff.
-    
-	public partial class DicomServerServiceClient : ClientBase<IDicomServerService>, IDicomServerService
+    [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
+    internal class ServiceProvider : IServiceProvider
+    {
+        #region IServiceProvider Members
+
+        public object GetService(Type serviceType)
+        {
+            if (serviceType == typeof(IDicomServerService))
+                return new DicomServerServiceClient();
+            return null;
+        }
+
+        #endregion
+    }
+
+	internal class DicomServerServiceClient : ClientBase<IDicomServerService>, IDicomServerService
 	{
 		public DicomServerServiceClient()
 		{
@@ -41,14 +54,9 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 			base.Channel.RetrieveSeries(sourceAEInformation, studyInformation, seriesInstanceUids);
 		}
 
-		public DicomServerConfiguration GetServerConfiguration()
-		{
-			return base.Channel.GetServerConfiguration();
-		}
-
-		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
-		{
-			base.Channel.UpdateServerConfiguration(newConfiguration);
-		}
-	}
+        public RestartListenerResult RestartListener(RestartListenerRequest request)
+        {
+            return base.Channel.RestartListener(request);
+        }
+    }
 }

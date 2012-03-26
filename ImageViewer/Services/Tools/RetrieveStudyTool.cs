@@ -76,31 +76,27 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				retrieveInformation[applicationEntity].Add(studyInformation);
 			}
 
-			var client = new DicomServerServiceClient();
-
 			try
 			{
-				client.Open();
+			    Platform.GetService(delegate(IDicomServerService service)
+			                            {
+			                                foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
+			                                {
+			                                    var aeInformation = new ApplicationEntity
+			                                                            {
+			                                                                AETitle = kvp.Key.AETitle,
+			                                                                ScpParameters = new ScpParameters(kvp.Key.ScpParameters)
+			                                                            };
 
-                foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
-				{
-                    var aeInformation = new ApplicationEntity
-					                        {
-					                            AETitle = kvp.Key.AETitle,
-                                                ScpParameters = new ScpParameters(kvp.Key.ScpParameters)
-					                        };
-
-				    client.RetrieveStudies(aeInformation, kvp.Value);
-				}
-
-				client.Close();
+			                                    service.RetrieveStudies(aeInformation, kvp.Value);
+			                                }
+			                            });
 
 			    // TODO (Marmot): What will we show now? Nothing?
 				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{
-				client.Abort();
 				result = EventResult.MajorFailure;
 				Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
 			}

@@ -12,6 +12,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+[assembly: ClearCanvas.Common.Plugin]
+
 [assembly: AssemblyTitle("ClearCanvas ImageViewer Common")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]

@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Threading;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
+namespace ClearCanvas.ImageViewer.Shreds
 {
 	internal static class PublishManager<T>
 		where T : class

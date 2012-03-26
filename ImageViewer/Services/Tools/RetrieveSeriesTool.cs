@@ -60,26 +60,23 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		    var seriesToRetrieve = new List<string>(CollectionUtils.Map<ISeriesIdentifier, string>(SelectedSeries, s => s.SeriesInstanceUid));
 
-			var client = new DicomServerServiceClient();
 			try
 			{
-				client.Open();
+			    Platform.GetService(delegate(IDicomServerService service)
+			            {
+			                var source = new ApplicationEntity
+			                                 {
+			                                     AETitle = applicationEntity.AETitle,
+			                                     ScpParameters = new ScpParameters(applicationEntity.ScpParameters)
+			                                 };
 
-                var aeInformation = new ApplicationEntity
-                                        {
-                                            AETitle = applicationEntity.AETitle,
-                                            ScpParameters = new ScpParameters(applicationEntity.ScpParameters)
-                                        };
-
-			    client.RetrieveSeries(aeInformation, studyInformation, seriesToRetrieve);
-
-				client.Close();
+			                service.RetrieveSeries(source, studyInformation, seriesToRetrieve);
+			            });
 
 				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{
-				client.Abort();
 				result = EventResult.MajorFailure;
 				Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
 			}

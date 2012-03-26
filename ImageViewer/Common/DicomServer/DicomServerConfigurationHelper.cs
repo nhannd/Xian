@@ -298,8 +298,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 
 		public static void Update(string hostName, string aeTitle, int port, string interimStorageDirectory)
 		{
-			var client = new DicomServerServiceClient();
-
 			try
 			{
 			    Platform.GetService<IDicomServerConfiguration>(s =>
@@ -319,7 +317,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 			}
 			catch (Exception e)
 			{
-				client.Abort();
 				throw new UpdateException("Failed to update the DICOM server configuration; the service may not be running.", e);
 			}
 			finally

@@ -201,6 +201,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 	#endregion
 
+    //TODO (Marmot): Remove and put it in the database?
+
 	internal class DicomServerSettings : ShredConfigSection, IMigrateSettings
     {
         private static DicomServerSettings _instance;
@@ -238,34 +240,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         }
 
         #region Public Properties
-
-        [ConfigurationProperty("HostName", DefaultValue = "localhost")]
-        public string HostName
-        {
-            get { return (string)this["HostName"]; }
-            set { this["HostName"] = value; }
-        }
-
-        [ConfigurationProperty("AETitle", DefaultValue = "CLEARCANVAS")]
-        public string AETitle
-        {
-            get { return (string)this["AETitle"]; }
-            set { this["AETitle"] = value; }
-        }
-
-        [ConfigurationProperty("Port", DefaultValue = "104")]
-        public int Port
-        {
-            get { return (int)this["Port"]; }
-            set { this["Port"] = value; }
-        }
-
-        [ConfigurationProperty("InterimStorageDirectory", DefaultValue = ".\\dicom_interim")]
-        public string InterimStorageDirectory
-        {
-            get { return (string)this["InterimStorageDirectory"]; }
-            set { this["InterimStorageDirectory"] = value; }
-        }
 
 		[ConfigurationProperty("AllowUnknownCaller", DefaultValue = true)]
 		public bool AllowUnknownCaller
@@ -308,12 +282,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
             DicomServerSettings clone = new DicomServerSettings();
 
-            clone.HostName = _instance.HostName;
-            clone.AETitle = _instance.AETitle;
-            clone.Port = _instance.Port;
 			clone.AllowUnknownCaller = _instance.AllowUnknownCaller;
-            
-			clone.InterimStorageDirectory = _instance.InterimStorageDirectory;
 			clone.StorageTransferSyntaxes = _instance.StorageTransferSyntaxes;
 			clone.ImageStorageSopClasses = _instance.ImageStorageSopClasses;
 			clone.NonImageStorageSopClasses = _instance.NonImageStorageSopClasses;

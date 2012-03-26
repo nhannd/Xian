@@ -316,14 +316,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (!_active)
 					throw new InvalidOperationException("The Retrieve service is not running.");
 
-				DicomServerConfiguration configuration = DicomServerManager.Instance.GetServerConfiguration();
 				foreach (StudyInformation study in request.StudiesToRetrieve)
 				{
 					//Some servers seems to have a problem with C-MOVE-RQs that have more than one study uid,
 					//so we'll just do them one at a time.
 					List<StudyInformation> retrieveStudy = new List<StudyInformation>();
 					retrieveStudy.Add(study);
-					RetrieveScu scu = new RetrieveScu(configuration.AETitle, request.RemoteAEInfo, retrieveStudy);
+					RetrieveScu scu = new RetrieveScu(DicomServerConfigurationHelper.AETitle, request.RemoteAEInfo, retrieveStudy);
 
 					_scus.Add(scu);
 					//don't block the calling thread to do this.
@@ -339,8 +338,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (!_active)
 					throw new InvalidOperationException("The Retrieve service is not running.");
 
-				DicomServerConfiguration configuration = DicomServerManager.Instance.GetServerConfiguration();
-				RetrieveScu scu = new RetrieveScu(configuration.AETitle, request.RemoteAEInfo, request.StudyInformation, request.SeriesInstanceUids);
+				RetrieveScu scu = new RetrieveScu(DicomServerConfigurationHelper.AETitle, request.RemoteAEInfo, request.StudyInformation, request.SeriesInstanceUids);
 
 				_scus.Add(scu);
 				//don't block the calling thread to do this.

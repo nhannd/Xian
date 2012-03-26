@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private class SendOperationInfo
 		{
-			public SendOperationInfo(SendOperationReference reference, ushort messageId, byte presentationId, Dicom.Network.DicomServer server)
+			public SendOperationInfo(SendOperationReference reference, ushort messageId, byte presentationId, ClearCanvas.Dicom.Network.DicomServer server)
 			{
 				this.PresentationId = presentationId;
 				this.Server = server;
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			public readonly ushort MessageId;
 			public readonly byte PresentationId;
-			public readonly Dicom.Network.DicomServer Server;
+			public readonly ClearCanvas.Dicom.Network.DicomServer Server;
 		}
 
 		#endregion
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 									 (ushort)operation.WarningSubOperations);
 		}
 
-		private void OnReceiveMoveStudiesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
+		private void OnReceiveMoveStudiesRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
 		{
 			IEnumerable<string> studyUids = (string[])message.DataSet[DicomTags.StudyInstanceUid].Values;
 			SendStudiesRequest request = new SendStudiesRequest();
@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-        private void OnReceiveMoveSeriesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
+        private void OnReceiveMoveSeriesRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			string[] seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-        private void OnReceiveMoveImageRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
+        private void OnReceiveMoveImageRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Overrides
 
-		public override bool OnReceiveRequest(Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
+		public override bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
 		{
 			//// Check for a Cancel message, and cancel the SCU.
 			if (message.CommandField == DicomCommandField.CCancelRequest)

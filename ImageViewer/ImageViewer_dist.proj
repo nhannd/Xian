@@ -138,10 +138,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <CommonFiles Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
   	<ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
     <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.config" />
   </ItemGroup>
@@ -151,8 +147,12 @@
     <ShredHostAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_Shreds_dist.config" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$(DesktopBuild)">
     <CriticalConfigFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_critical.config" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(ShredHostBuild)">
+    <CriticalConfigFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_Shreds_critical.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -291,7 +291,12 @@
     <ExternalsPluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.dll" />
     <ExternalsPluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.View.WinForms.dll" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(DesktopBuild)">
     <!-- Core Viewer -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
@@ -326,14 +331,12 @@
 
     <!-- DICOM Services -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Dicom\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.Dicom.Core.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" />
 
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Shreds\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Dicom\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.Dicom.Core.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -366,6 +369,7 @@
   <Target Name="Copy ShredHost App Config">
     <CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionShredHostConfig)" />
     <FileReplaceText FilePath="$(DistributionShredHostConfig)" TextToReplace="!filestore!" ReplacementText="$(FileStoreDirectory)"/>
+    <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionShredHostCriticalConfig)" />
   </Target>
 
   <Target Name="Copy Database Files">

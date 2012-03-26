@@ -37,11 +37,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     [ServiceBehavior(InstanceContextMode=InstanceContextMode.PerCall)]
     public class DicomServerServiceType : IDicomServerService
     {
-		public DicomServerServiceType()
-        {
-		}
-
-
     	#region IDicomServerService Members
 
         public void Send(ApplicationEntity destinationAEInformation, IEnumerable<string> studyInstanceUids)
@@ -100,40 +95,24 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		public DicomServerConfiguration GetServerConfiguration()
-		{
-			try
-			{
-				return DicomServerManager.Instance.GetServerConfiguration();
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				//we throw a serializable, non-FaultException-derived exception so that the 
-				//client channel *does* get closed.
-				string message = SR.ExceptionFailedToGetServerConfiguration;
-				message += "\nDetail: " + e.Message;
-				throw new DicomServerException(message);
-			}
-		}
+        public RestartListenerResult RestartListener(RestartListenerRequest request)
+        {
+            try
+            {
+                DicomServerManager.Instance.Restart();
+                return new RestartListenerResult();
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+                //we throw a serializable, non-FaultException-derived exception so that the 
+                //client channel *does* get closed.
+                string message = SR.ExceptionErrorRestartingDICOMServer;
+                message += "\nDetail: " + e.Message;
+                throw new DicomServerException(message);
+            }
+        }
 
-		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
-		{
-			try
-			{
-				DicomServerManager.Instance.UpdateServerConfiguration(newConfiguration);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				//we throw a serializable, non-FaultException-derived exception so that the 
-				//client channel *does* get closed.
-				string message = SR.ExceptionFailedToUpdateServerConfiguration;
-				message += "\nDetail: " + e.Message;
-				throw new DicomServerException(message);
-			}
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }
