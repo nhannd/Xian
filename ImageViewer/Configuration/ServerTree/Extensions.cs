@@ -12,10 +12,11 @@
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using System.Collections.Generic;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
     public static class Extensions
     {

@@ -3,8 +3,9 @@ using System.Linq;
 using ClearCanvas.Dicom.ServiceModel;
 using NUnit.Framework;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree.Tests
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
 {
+    //TODO (Marmot): Expand on these tests a bit. Write for legacy xml.
     [TestFixture]
     public class ServerTreeTests
     {

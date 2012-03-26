@@ -13,7 +13,7 @@ using System.Text;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
     public class ServerTreeDicomServer : IServerTreeDicomServer
     {

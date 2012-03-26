@@ -13,14 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Common.ServerDirectory;
-using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Configuration.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -38,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             return results.ToList();
 		}
 
-        internal static List<IDicomServiceNode> SelectFrom(Common.ServerTree.ServerTree serverTree)
+        internal static List<IDicomServiceNode> SelectFrom(ServerTree.ServerTree serverTree)
 		{
             var allServers = serverTree.FindChildServers().OfType<IServerTreeDicomServer>();
 			return SelectFrom(allServers);
@@ -46,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public static List<IDicomServiceNode> GetAll()
 		{
-			var tree = new Common.ServerTree.ServerTree();
+            var tree = new ServerTree.ServerTree();
             return SelectFrom(tree);
 		}
 
@@ -70,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
             string localAE = DicomServerConfigurationHelper.AETitle;
 
-			var defaultServers = SelectFrom(new Common.ServerTree.ServerTree());
+            var defaultServers = SelectFrom(new ServerTree.ServerTree());
             var streamingServers = defaultServers.Where(s => s.StreamingParameters != null).ToList();
             var nonStreamingServers = defaultServers.Where(s => s.StreamingParameters == null).ToList();
 

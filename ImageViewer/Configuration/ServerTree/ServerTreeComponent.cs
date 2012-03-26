@@ -15,7 +15,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -34,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		IDesktopWindow DesktopWindow { get; }
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 
-		Common.ServerTree.ServerTree ServerTree { get; }
+		ServerTree ServerTree { get; }
 
 		AEServerGroup SelectedServers { get; }
 		event EventHandler SelectedServerChanged;
@@ -58,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 			#region IServerTreeToolContext Members
 
-			public Common.ServerTree.ServerTree ServerTree
+			public ServerTree ServerTree
 			{
 				get { return _component._serverTree; }
 			}
@@ -101,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		#region Fields
 
-		private Common.ServerTree.ServerTree _serverTree;
+		private ServerTree _serverTree;
 		private event EventHandler _selectedServerChanged;
 		private AEServerGroup _selectedServers;
 		private int _updateType;
@@ -122,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		public ServerTreeComponent()
 		{
 			_selectedServers = new AEServerGroup();
-			_serverTree = new Common.ServerTree.ServerTree();
+			_serverTree = new ServerTree();
 
 			if (_serverTree.CurrentNode != null && (_serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore))
 			{
@@ -147,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			}
 		}
 
-		public Common.ServerTree.ServerTree ServerTree
+		public ServerTree ServerTree
 		{
 			get { return _serverTree; }
 		}

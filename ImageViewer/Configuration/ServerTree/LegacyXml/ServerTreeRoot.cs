@@ -11,7 +11,7 @@
 
 using System;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree.LegacyXml
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml
 {
     [Serializable]
     public class ServerTreeRoot

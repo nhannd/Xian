@@ -17,7 +17,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
-using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {

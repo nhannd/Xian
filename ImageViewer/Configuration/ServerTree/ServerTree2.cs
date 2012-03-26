@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
     public partial class ServerTree
     {

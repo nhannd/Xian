@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Net;
 using System.ServiceModel;
 using ClearCanvas.Common;
@@ -116,7 +117,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         private string DefaultFileStoreLocation
         {
-            get { return Dns.GetHostName(); }
+            get { return Path.Combine(Platform.ApplicationDataDirectory, "filestore"); }
         }
 
         private int DefaultPort
@@ -144,9 +145,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             if (String.IsNullOrEmpty(configuration.AETitle))
                 configuration.AETitle = DefaultAE;
             if (String.IsNullOrEmpty(configuration.HostName))
-                configuration.AETitle = DefaultHostname;
-            if (String.IsNullOrEmpty(configuration.FileStoreLocation))
-                configuration.AETitle = DefaultFileStoreLocation;
+                configuration.HostName = DefaultHostname;
+            if (String.IsNullOrEmpty(configuration.FileStoreDirectory))
+                configuration.FileStoreDirectory = DefaultFileStoreLocation;
 
             return new GetDicomServerConfigurationResult { Configuration = configuration };
         }

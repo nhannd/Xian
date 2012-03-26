@@ -13,12 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.ImageViewer.Common.ServerTree.LegacyXml;
+using ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
+    // TODO (CR Mar 2012): One day, maybe merge this into the ServerTreeComponent, but it's probably not worth it ... it works.
     public partial class ServerTree
     {
         public ServerTree()
@@ -194,11 +195,16 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
 
         public void Save()
         {
-            Platform.GetService<IServerDirectory>(SaveToDirectory);
-            ServerTreeSettings.Default.UpdateSharedServers(RootServerGroup.ToStoredServerGroup());
+            SaveServersToDirectory();
+            SaveToSettings();
         }
 
-        internal void SaveToDirectory(IServerDirectory directory)
+        internal void SaveServersToDirectory()
+        {
+            Platform.GetService<IServerDirectory>(SaveServersToDirectory);
+        }
+
+        internal void SaveServersToDirectory(IServerDirectory directory)
         {
             //Get all the DICOM servers from the directory.
             var directoryServers = directory.GetServers(new GetServersRequest()).Servers
@@ -233,6 +239,11 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
               directory.UpdateServer(new UpdateServerRequest{Server = c});
             foreach (var a in added)
               directory.AddServer(new AddServerRequest { Server = a });
+        }
+
+        private void SaveToSettings()
+        {
+            ServerTreeSettings.Default.UpdateSharedServers(RootServerGroup.ToStoredServerGroup());
         }
     }
 }

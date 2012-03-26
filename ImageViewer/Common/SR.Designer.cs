@@ -61,88 +61,6 @@ namespace ClearCanvas.ImageViewer.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Example Group.
-        /// </summary>
-        internal static string ExampleGroup {
-            get {
-                return ResourceManager.GetString("ExampleGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Rm 101.
-        /// </summary>
-        internal static string ExampleLocation {
-            get {
-                return ResourceManager.GetString("ExampleLocation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Example Server.
-        /// </summary>
-        internal static string ExampleServer {
-            get {
-                return ResourceManager.GetString("ExampleServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} (Offline)
-        ///The configuration is currently unavailable.
-        ///Please ensure all required services are running..
-        /// </summary>
-        internal static string FormatLocalDataStoreConfigurationUnavailable {
-            get {
-                return ResourceManager.GetString("FormatLocalDataStoreConfigurationUnavailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Server Name: {0}
-        ///AE Title: {1}
-        ///Host: {2}
-        ///Listening Port: {3}
-        ///Interim Storage Directory: {4}.
-        /// </summary>
-        internal static string FormatLocalDataStoreDetails {
-            get {
-                return ResourceManager.GetString("FormatLocalDataStoreDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Server Name: {0}
-        ///AE Title: {1}
-        ///Host: {2}
-        ///Listening Port: {3}.
-        /// </summary>
-        internal static string FormatServerDetails {
-            get {
-                return ResourceManager.GetString("FormatServerDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Streaming Header Port: {0}
-        ///Streaming Image Port: {1}.
-        /// </summary>
-        internal static string FormatStreamingDetails {
-            get {
-                return ResourceManager.GetString("FormatStreamingDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Location: {0}.
-        /// </summary>
-        internal static string Location {
-            get {
-                return ResourceManager.GetString("Location", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Activity Monitor service is currently unavailable.
         /// </summary>
         internal static string MessageActivityMonitorServiceUnavailable {
@@ -166,24 +84,6 @@ namespace ClearCanvas.ImageViewer.Common {
         internal static string MessageReindexStatusUnknown {
             get {
                 return ResourceManager.GetString("MessageReindexStatusUnknown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Studies.
-        /// </summary>
-        internal static string MyDataStoreTitle {
-            get {
-                return ResourceManager.GetString("MyDataStoreTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Servers.
-        /// </summary>
-        internal static string MyServersTitle {
-            get {
-                return ResourceManager.GetString("MyServersTitle", resourceCulture);
             }
         }
     }

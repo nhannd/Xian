@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
             public int Port { get; set; }
 
             [CommandLineParameter("filestore", "Sets the location of the file store.", Required = false)]
-            public string FileStoreLocation { get; set; }
+            public string FileStoreDirectory { get; set; }
         }
 
         #region Implementation of IApplicationRoot
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
                                                           AETitle = commandLine.AETitle, 
                                                           HostName = commandLine.HostName,
                                                           Port = commandLine.Port,
-                                                          FileStoreLocation = commandLine.FileStoreLocation
+                                                          FileStoreDirectory = commandLine.FileStoreDirectory
                                                       }
                                           }));
         }

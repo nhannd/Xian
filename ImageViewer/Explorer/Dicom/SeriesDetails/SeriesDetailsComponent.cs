@@ -22,7 +22,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
-using ClearCanvas.ImageViewer.Common.ServerTree;
+using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Utilities;

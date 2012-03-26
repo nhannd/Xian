@@ -14,14 +14,11 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
-using ClearCanvas.ImageViewer.Common.ServerTree;
 using System.Linq;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Configuration

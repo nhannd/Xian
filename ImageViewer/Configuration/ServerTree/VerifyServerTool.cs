@@ -16,7 +16,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {

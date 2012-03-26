@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Common.ServerTree;
+using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom

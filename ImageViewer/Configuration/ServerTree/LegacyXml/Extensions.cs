@@ -11,7 +11,7 @@
 
 using ClearCanvas.Dicom.ServiceModel;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree.LegacyXml
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml
 {
     public static class Extensions
     {

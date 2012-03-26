@@ -20,10 +20,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
     // the "My Studies" node in the Server Tree. Could change it later.
     public interface IDicomServerConfigurationProvider
     {
-        string Host { get; }
         string AETitle { get; }
+        [Obsolete("Use HostName instead.")]
+        string Host { get; }
+        string HostName { get; }
         int Port { get; }
-        string FileStoreLocation { get; }
+        string FileStoreDirectory { get; }
 
         bool NeedsRefresh { get; }
         bool ConfigurationExists { get; }
@@ -74,24 +76,29 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 
 			#region IDicomServerConfigurationProvider Members
 
-			public string Host
-			{
-				get { return DicomServerConfigurationHelper.Host; }
-			}
-
 			public string AETitle
 			{
 				get { return DicomServerConfigurationHelper.AETitle; }
 			}
+
+            public string Host
+            {
+                get { return HostName; }
+            }
+
+            public string HostName
+            {
+                get { return DicomServerConfigurationHelper.HostName; }
+            }
 
 			public int Port
 			{
 				get { return DicomServerConfigurationHelper.Port; }
 			}
 
-            public string FileStoreLocation
+            public string FileStoreDirectory
 			{
-				get { return DicomServerConfigurationHelper.FileStoreLocation; }
+				get { return DicomServerConfigurationHelper.FileStoreDirectory; }
 			}
 
 			public bool ConfigurationExists
@@ -184,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 
 				lock (_syncLock)
 				{
-					if (_configuration == value)
+					if (Equals(value, _configuration))
 						return;
 
 					_configuration = value;
@@ -215,8 +222,14 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 				return DicomServerConfiguration.AETitle; 
 			}
 		}
+        
+        [Obsolete("Use HostName instead.")]
+	    public static string Host
+	    {
+            get { return HostName; }
+	    }
 
-        public static string Host
+        public static string HostName
         {
             get
             {
@@ -234,12 +247,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 			}
 		}
 
-        public static string FileStoreLocation
+        public static string FileStoreDirectory
 		{
 			get 
 			{
 				Refresh(false);
-				return DicomServerConfiguration.FileStoreLocation; 
+				return DicomServerConfiguration.FileStoreDirectory; 
 			}
 		}
 
@@ -309,11 +322,10 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
                                                                    HostName = hostName,
                                                                    AETitle = aeTitle,
                                                                    Port = port,
-                                                                   FileStoreLocation = interimStorageDirectory
+                                                                   FileStoreDirectory = interimStorageDirectory
                                                                };
 
-                                       var request = new UpdateDicomServerConfigurationRequest
-                                                         {Configuration = configuration};
+                                       var request = new UpdateDicomServerConfigurationRequest {Configuration = configuration};
                                        s.UpdateConfiguration(request);
                                    });
 			}
@@ -327,7 +339,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 			}
 		}
 
-		internal static IDicomServerConfigurationProvider GetDicomServerConfigurationProvider()
+		public static IDicomServerConfigurationProvider GetConfigurationProvider()
 		{
 			return new DicomServerConfigurationProvider();
 		}
