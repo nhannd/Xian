@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree.LegacyXml
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml
 {
     [Serializable]
     public class ServerGroup

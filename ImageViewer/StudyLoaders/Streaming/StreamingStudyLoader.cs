@@ -20,7 +20,6 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common.Auditing;
-using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -41,7 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
     {
         public string GetClientAETitle()
         {
-            return DicomServerConfigurationHelper.GetOfflineAETitle(false);
+            return DicomServerConfigurationHelper.AETitle;
         }
     }
 

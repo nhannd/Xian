@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
     public class ServerTreeGroup : IServerTreeGroup
     {

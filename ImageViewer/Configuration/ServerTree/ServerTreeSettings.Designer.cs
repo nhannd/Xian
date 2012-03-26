@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree {
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -30,9 +30,9 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree {
         [global::System.Configuration.SettingsDescriptionAttribute("Currently a list of servers shared between all users, although that may change in" +
             " the future.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::ClearCanvas.ImageViewer.Common.ServerTree.StoredServerGroup SharedServers {
+        public global::ClearCanvas.ImageViewer.Configuration.ServerTree.StoredServerGroup SharedServers {
             get {
-                return ((global::ClearCanvas.ImageViewer.Common.ServerTree.StoredServerGroup)(this["SharedServers"]));
+                return ((global::ClearCanvas.ImageViewer.Configuration.ServerTree.StoredServerGroup)(this["SharedServers"]));
             }
         }
     }

@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
     public interface IServerTreeLocalServer : IServerTreeNode
     {

@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
@@ -50,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
     { }
 
     [DataContract(Namespace = DicomServerNamespace.Value)]
-    public class DicomServerConfiguration
+    public class DicomServerConfiguration : IEquatable<DicomServerConfiguration>
     {
         [DataMember(IsRequired = true)]
         public string AETitle { get; set; }
@@ -62,6 +63,41 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         public string HostName { get; set; }
 
         [DataMember(IsRequired = true)]
-        public string FileStoreLocation { get; set; }
+        public string FileStoreDirectory { get; set; }
+
+        public override int GetHashCode()
+        {
+            int hash = 0x5467912;
+
+            if (AETitle != null)
+                hash ^= AETitle.GetHashCode();
+            if (HostName != null)
+                hash ^= HostName.GetHashCode();
+            if (FileStoreDirectory != null)
+                hash ^= FileStoreDirectory.GetHashCode();
+
+            hash ^= Port.GetHashCode();
+            return hash;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is DicomServerConfiguration)
+                return Equals((DicomServerConfiguration) obj);
+
+            return false;
+        }
+
+        #region IEquatable<DicomServerConfiguration> Members
+
+        public bool Equals(DicomServerConfiguration other)
+        {
+            return AETitle == other.AETitle &&
+                   HostName == other.HostName &&
+                   Port == other.Port &&
+                   FileStoreDirectory == other.FileStoreDirectory;
+        }
+
+        #endregion
     }
 }

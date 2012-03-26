@@ -12,6 +12,8 @@
 using System.IO;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core
 {
@@ -29,14 +31,14 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 StudyInstanceUid = studyInstanceUid
             };
 
-            StudyFolder = Path.Combine(".\\filestore", studyInstanceUid);
+            StudyFolder = Path.Combine(GetFileStoreDirectory(), studyInstanceUid);
         }
 
         public StudyLocation(DicomMessageBase message)
         {
             Study = new StudyIdentifier(message.DataSet);
 
-            StudyFolder = Path.Combine(".\\filestore", Study.StudyInstanceUid);
+            StudyFolder = Path.Combine(GetFileStoreDirectory(), Study.StudyInstanceUid);
         }
 
         #endregion
@@ -58,5 +60,17 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         }
 
         #endregion
+
+        private static string GetFileStoreDirectory()
+        {
+            string directory = null;
+            Platform.GetService<IDicomServerConfiguration>(
+                s => directory = s.GetConfiguration(new GetDicomServerConfigurationRequest()).Configuration.FileStoreDirectory);
+
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            return directory;
+        }
     }
 }

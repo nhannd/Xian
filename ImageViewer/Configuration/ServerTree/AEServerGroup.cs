@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
     // TODO (Marmot): Try to remove.
     public class AEServerGroup

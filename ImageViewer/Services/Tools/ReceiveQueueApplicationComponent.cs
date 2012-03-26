@@ -21,7 +21,6 @@ using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Common.ServerTree;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Services.Tools

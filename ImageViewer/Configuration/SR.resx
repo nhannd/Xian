@@ -126,13 +126,44 @@
   <data name="DicomConfiguration" xml:space="preserve">
     <value>DICOM</value>
   </data>
+  <data name="ExampleGroup" xml:space="preserve">
+    <value>Example Group</value>
+  </data>
+  <data name="ExampleLocation" xml:space="preserve">
+    <value>Rm 101</value>
+  </data>
+  <data name="ExampleServer" xml:space="preserve">
+    <value>Example Server</value>
+  </data>
+  <data name="FormatLocalDataStoreConfigurationUnavailable" xml:space="preserve">
+    <value>{0} (Offline)
+The configuration is currently unavailable.
+Please ensure all required services are running.</value>
+  </data>
+  <data name="FormatLocalDataStoreDetails" xml:space="preserve">
+    <value>Server Name: {0}
+AE Title: {1}
+Host: {2}
+Listening Port: {3}
+File Store: {4}</value>
+  </data>
   <data name="FormatServerConflict" xml:space="preserve">
     <value>The server properties conflict with an existing entry ({0}).
 Each server must have a unique Name and cannot have the same AE Title, Host and Port as another server.</value>
   </data>
+  <data name="FormatServerDetails" xml:space="preserve">
+    <value>Server Name: {0}
+AE Title: {1}
+Host: {2}
+Listening Port: {3}</value>
+  </data>
   <data name="FormatServerGroupConflict" xml:space="preserve">
     <value>The Server Group '{0}' conflicts with '{1}'.
 Please choose another Server Group Name.</value>
+  </data>
+  <data name="FormatStreamingDetails" xml:space="preserve">
+    <value>Streaming Header Port: {0}
+Streaming Image Port: {1}</value>
   </data>
   <data name="LabelContextMenu" xml:space="preserve">
     <value>Context Menu</value>
@@ -142,6 +173,9 @@ Please choose another Server Group Name.</value>
   </data>
   <data name="LabelToolbar" xml:space="preserve">
     <value>Toolbar</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location: {0}</value>
   </data>
   <data name="MenuAddServer" xml:space="preserve">
     <value>Add server</value>
@@ -220,6 +254,12 @@ Please choose another Server Group Name.</value>
   </data>
   <data name="MonitorConfiguration" xml:space="preserve">
     <value>Window Configuration</value>
+  </data>
+  <data name="MyDataStoreTitle" xml:space="preserve">
+    <value>My Studies</value>
+  </data>
+  <data name="MyServersTitle" xml:space="preserve">
+    <value>My Servers</value>
   </data>
   <data name="PathContextMenuConfiguration" xml:space="preserve">
     <value>Context Menu (Image)</value>

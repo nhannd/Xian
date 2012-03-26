@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (WorkItemRequest),
                                                           typeof (DicomSendRequest),
                                                           typeof (DicomImportRequest),
-                                                          typeof (DicomRetreiveRequest),
+                                                          typeof (DicomRetrieveRequest),
                                                       };
 
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider ignored)
@@ -148,9 +148,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// DICOM Retrieve Request
     /// </summary>
 	[WorkItemRequestDataContract("0e04fa53-3f45-4ae2-9444-f3208047757c")]
-	public class DicomRetreiveRequest : WorkItemRequest
+	public class DicomRetrieveRequest : WorkItemRequest
     {
-        DicomRetreiveRequest()
+        DicomRetrieveRequest()
         {
             Type = WorkItemTypeEnum.DicomRetrieve;
             Priority = WorkItemPriorityEnum.Normal;

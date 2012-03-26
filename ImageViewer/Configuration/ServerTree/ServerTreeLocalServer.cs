@@ -13,7 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
     internal class ServerTreeLocalServer : IServerTreeLocalServer
     {
@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
         private string _parentPath;
 
         private static readonly IDicomServerConfigurationProvider _dicomServerConfigurationProvider =
-            DicomServerConfigurationHelper.GetDicomServerConfigurationProvider();
+            DicomServerConfigurationHelper.GetConfigurationProvider();
 
         internal IDicomServerConfigurationProvider DicomServerConfigurationProvider
         {
@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
             get
             {
                 RefreshConfiguration();
-                return _dicomServerConfigurationProvider.ConfigurationExists ? _dicomServerConfigurationProvider.Host : null;
+                return _dicomServerConfigurationProvider.ConfigurationExists ? _dicomServerConfigurationProvider.HostName : null;
             }
         }
 
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
             get
             {
                 RefreshConfiguration();
-                return _dicomServerConfigurationProvider.ConfigurationExists ? _dicomServerConfigurationProvider.FileStoreLocation : null;
+                return _dicomServerConfigurationProvider.ConfigurationExists ? _dicomServerConfigurationProvider.FileStoreDirectory : null;
             }
         }
 
@@ -127,9 +127,9 @@ namespace ClearCanvas.ImageViewer.Common.ServerTree
                     return String.Format(SR.FormatLocalDataStoreDetails, 
                         DisplayName, 
                         _dicomServerConfigurationProvider.AETitle, 
-                        _dicomServerConfigurationProvider.Host, 
+                        _dicomServerConfigurationProvider.HostName, 
                         _dicomServerConfigurationProvider.Port, 
-                        _dicomServerConfigurationProvider.FileStoreLocation);
+                        _dicomServerConfigurationProvider.FileStoreDirectory);
             }
             catch (Exception e)
             {

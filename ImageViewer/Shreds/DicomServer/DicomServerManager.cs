@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				Trace.WriteLine("Starting Dicom server.");
 
 				server = new DicomServer(configuration.AETitle, configuration.HostName,
-				                         configuration.Port, configuration.FileStoreLocation);
+				                         configuration.Port, configuration.FileStoreDirectory);
 				server.Start();
 			}
 			catch (Exception e)

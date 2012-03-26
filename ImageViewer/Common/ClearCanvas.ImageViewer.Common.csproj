@@ -134,35 +134,12 @@
     <Compile Include="ServerDirectory\IServerDirectory.cs" />
     <Compile Include="ServerDirectory\DicomServiceNode.cs" />
     <Compile Include="ServerDirectory\ServerDirectoryBridge.cs" />
-    <Compile Include="ServerTree\AEServerGroup.cs" />
-    <Compile Include="ServerTree\Extensions.cs" />
-    <Compile Include="ServerTree\LegacyXml\SerializationHelper.cs" />
-    <Compile Include="ServerTree\LegacyXml\Extensions.cs" />
-    <Compile Include="ServerTree\ServerTree2.cs" />
-    <Compile Include="ServerTree\ServerTreeSettings.cs" />
-    <Compile Include="ServerTree\ServerTreeSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ServerTreeSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="ServerTree\ServerTreeDicomServer.cs" />
-    <Compile Include="ServerTree\ServerTreeGroup.cs" />
-    <Compile Include="ServerTree\ServerTreeLocalServer.cs" />
-    <Compile Include="ServerTree\LegacyXml\ServerTreeRoot.cs" />
-    <Compile Include="ServerTree\Tests\ServerTreeTests.cs" />
     <Compile Include="ServiceNode.cs" />
-    <Compile Include="ServerTree\LegacyXml\ServerGroup.cs" />
-    <Compile Include="ServerTree\IServerTreeNode.cs" />
-    <Compile Include="ServerTree\LegacyXml\LocalDataStore.cs" />
-    <Compile Include="ServerTree\LegacyXml\Server.cs" />
-    <Compile Include="ServerTree\ServerTree.cs" />
     <Compile Include="SR.Designer.cs">
       <DependentUpon>SR.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="StudyManagement\Storage\DataContracts.cs" />
-    <Compile Include="StudyManagement\Storage\IStudyStorageConfiguration.cs" />
     <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
     <Compile Include="WorkItem\IWorkItemService.cs" />
     <Compile Include="WorkItem\SR.Designer.cs">
@@ -182,10 +159,6 @@
     <None Include="MemoryManagementSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MemoryManagementSettings1.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ServerTree\ServerTreeSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ServerTreeSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

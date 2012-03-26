@@ -117,40 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExampleGroup" xml:space="preserve">
-    <value>Example Group</value>
-  </data>
-  <data name="ExampleLocation" xml:space="preserve">
-    <value>Rm 101</value>
-  </data>
-  <data name="ExampleServer" xml:space="preserve">
-    <value>Example Server</value>
-  </data>
-  <data name="FormatLocalDataStoreConfigurationUnavailable" xml:space="preserve">
-    <value>{0} (Offline)
-The configuration is currently unavailable.
-Please ensure all required services are running.</value>
-  </data>
-  <data name="FormatLocalDataStoreDetails" xml:space="preserve">
-    <value>Server Name: {0}
-AE Title: {1}
-Host: {2}
-Listening Port: {3}
-Interim Storage Directory: {4}</value>
-  </data>
-  <data name="FormatServerDetails" xml:space="preserve">
-    <value>Server Name: {0}
-AE Title: {1}
-Host: {2}
-Listening Port: {3}</value>
-  </data>
-  <data name="FormatStreamingDetails" xml:space="preserve">
-    <value>Streaming Header Port: {0}
-Streaming Image Port: {1}</value>
-  </data>
-  <data name="Location" xml:space="preserve">
-    <value>Location: {0}</value>
-  </data>
   <data name="MessageActivityMonitorServiceUnavailable" xml:space="preserve">
     <value>The Activity Monitor service is currently unavailable</value>
   </data>
@@ -159,11 +125,5 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="MessageReindexStatusUnknown" xml:space="preserve">
     <value>Reindex status unknown</value>
-  </data>
-  <data name="MyDataStoreTitle" xml:space="preserve">
-    <value>My Studies</value>
-  </data>
-  <data name="MyServersTitle" xml:space="preserve">
-    <value>My Servers</value>
   </data>
 </root>

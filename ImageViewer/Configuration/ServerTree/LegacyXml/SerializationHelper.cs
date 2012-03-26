@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Common.ServerTree.LegacyXml
+namespace ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml
 {
     internal static class SerializationHelper
     {
