@@ -2,6 +2,15 @@
 
 namespace ClearCanvas.Common.Serialization
 {
+	public class PolymorphicDataContractException : Exception
+	{
+		public PolymorphicDataContractException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+	}
+
+
 	/// <summary>
 	/// Assigns a GUID to a class to enable robust polymorphic de/serialization.
 	/// </summary>
@@ -29,7 +38,14 @@ namespace ClearCanvas.Common.Serialization
 			{
 				if(_guid == Guid.Empty)
 				{
-					_guid = new Guid(_guidString);
+					try
+					{
+						_guid = new Guid(_guidString);
+					}
+					catch (FormatException e)
+					{
+						throw new PolymorphicDataContractException(string.Format("{0} is not a valid GUID.", _guidString), e);
+					}
 				}
 				return _guid.ToString("N");
 			}

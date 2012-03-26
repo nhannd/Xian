@@ -19,14 +19,14 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 	#region Request/Response classes
 
 	[DataContract]
-	public class ListRulesRequest : DataContractBase
+	public class GetRulesRequest : DataContractBase
 	{
 	}
 
 	[DataContract]
-	public class ListRulesResponse : DataContractBase
+	public class GetRulesResponse : DataContractBase
 	{
-		public ListRulesResponse(List<RuleData> rules)
+		public GetRulesResponse(List<RuleData> rules)
 		{
 			Rules = rules;
 		}
@@ -36,26 +36,43 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 	}
 
 	[DataContract]
-	public class AddRuleRequest : DataContractBase
+	public class GetRuleRequest : DataContractBase
 	{
+		public GetRuleRequest(string ruleId)
+		{
+			RuleId = ruleId;
+		}
+
+		[DataMember]
+		public string RuleId { get; set; }
+	}
+
+	[DataContract]
+	public class GetRuleResponse : DataContractBase
+	{
+		public GetRuleResponse(RuleData rule)
+		{
+			Rule = rule;
+		}
+
 		[DataMember]
 		public RuleData Rule { get; set; }
 	}
 
 	[DataContract]
-	public class AddRuleResponse : DataContractBase
+	public class PutRuleRequest : DataContractBase
 	{
-	}
+		public PutRuleRequest(RuleData rule)
+		{
+			Rule = rule;
+		}
 
-	[DataContract]
-	public class UpdateRuleRequest : DataContractBase
-	{
 		[DataMember]
 		public RuleData Rule { get; set; }
 	}
 
 	[DataContract]
-	public class UpdateRuleResponse : DataContractBase
+	public class PutRuleResponse : DataContractBase
 	{
 	}
 
@@ -80,9 +97,9 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 
 	public interface IStudyRulesService
 	{
-		ListRulesResponse ListRules(ListRulesRequest request);
-		AddRuleResponse AddRule(AddRuleRequest request);
-		UpdateRuleResponse UpdateRule(UpdateRuleRequest request);
+		GetRulesResponse GetRules(GetRulesRequest request);
+		GetRuleResponse GetRule(GetRuleRequest request);
+		PutRuleResponse PutRule(PutRuleRequest request);
 		DeleteRuleResponse DeleteRule(DeleteRuleRequest request);
 	}
 }

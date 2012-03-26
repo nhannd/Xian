@@ -26,43 +26,47 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 	{
 		#region Implementation of IStudyRulesService
 
-		public ListRulesResponse ListRules(ListRulesRequest request)
+		public GetRulesResponse GetRules(GetRulesRequest request)
 		{
 			using (var context = new DataAccessContext())
 			{
 				var broker = context.GetRuleBroker();
 				var rules = broker.GetRules();
-				return new ListRulesResponse(rules.Select(r => r.RuleData).ToList());
+				return new GetRulesResponse(rules.Select(r => r.RuleData).ToList());
 			}
 		}
 
-		public AddRuleResponse AddRule(AddRuleRequest request)
+		public GetRuleResponse GetRule(GetRuleRequest request)
 		{
 			using (var context = new DataAccessContext())
 			{
-				var rule = new Rule
-							{
-								RuleId = request.Rule.Id,
-								Name = request.Rule.Name,
-								RuleData = request.Rule
-							};
-				context.GetRuleBroker().AddRule(rule);
-				context.Commit();
-
-				return new AddRuleResponse();
+				var broker = context.GetRuleBroker();
+				var rule = broker.GetRule(request.RuleId);
+				return new GetRuleResponse(rule.RuleData);
 			}
 		}
 
-		public UpdateRuleResponse UpdateRule(UpdateRuleRequest request)
+		public PutRuleResponse PutRule(PutRuleRequest request)
 		{
 			using (var context = new DataAccessContext())
 			{
 				var broker = context.GetRuleBroker();
 				var rule = broker.GetRule(request.Rule.Id);
+				if(rule == null)
+				{
+					rule = new Rule
+							{
+								RuleId = request.Rule.Id,
+								Name = request.Rule.Name,
+							};
+
+					broker.AddRule(rule);
+				}
+
 				rule.RuleData = request.Rule;
 				context.Commit();
 
-				return new UpdateRuleResponse();
+				return new PutRuleResponse();
 			}
 		}
 

@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// DICOM Import Study Request
     /// </summary>
-    [WorkItemRequestDataContract("591c7b3c-fab-4c25-b699-a82eef8e9935")]
+	[WorkItemRequestDataContract("2def790a-8039-4fc5-85d6-f4d3be3f2d8e")]
     public class ImportStudyRequest : StudyProcessRequest
     {
         public override string ActivityType

@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 	internal class Serializer
 	{
 		private static readonly IJsmlSerializerHook _workItemRequestHook = new PolymorphicDataContractHook<WorkItemRequestDataContractAttribute>();
-        private static readonly IJsmlSerializerHook _workItemProgressHook = new PolymorphicDataContractHook<WorkItemProgressDataContractAttribute>();
+		private static readonly IJsmlSerializerHook _workItemProgressHook = new PolymorphicDataContractHook<WorkItemProgressDataContractAttribute>();
 		private static readonly IJsmlSerializerHook _ruleHook = new PolymorphicDataContractHook<StudyRuleDataContractAttribute>();
 
 		public static string SerializeWorkItemRequest(WorkItemRequest data)
@@ -38,13 +38,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		public static string SerializeWorkItemProgress(WorkItemProgress data)
 		{
 			return JsmlSerializer.Serialize(data, "data",
-                new JsmlSerializer.SerializeOptions { Hook = _workItemProgressHook, DataContractTest = IsWorkItemProgressContract });
+				new JsmlSerializer.SerializeOptions { Hook = _workItemProgressHook, DataContractTest = IsWorkItemProgressContract });
 		}
-        public static WorkItemProgress DeserializeWorkItemProgress(string data)
-        {
-            return JsmlSerializer.Deserialize<WorkItemProgress>(data,
-                new JsmlSerializer.DeserializeOptions { Hook = _workItemProgressHook, DataContractTest = IsWorkItemProgressContract });
-        }
+		public static WorkItemProgress DeserializeWorkItemProgress(string data)
+		{
+			return JsmlSerializer.Deserialize<WorkItemProgress>(data,
+				new JsmlSerializer.DeserializeOptions { Hook = _workItemProgressHook, DataContractTest = IsWorkItemProgressContract });
+		}
 
 		public static string SerializeRule(RuleData data)
 		{
@@ -57,11 +57,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			return JsmlSerializer.Deserialize<RuleData>(data,
 				new JsmlSerializer.DeserializeOptions { Hook = _ruleHook, DataContractTest = IsStudyRuleContract });
 		}
-		
+
 		private static bool IsWorkItemProgressContract(Type t)
-        {
-            return AttributeUtils.HasAttribute<WorkItemProgressDataContractAttribute>(t);
-        }
+		{
+			return AttributeUtils.HasAttribute<WorkItemProgressDataContractAttribute>(t);
+		}
 
 		private static bool IsWorkItemRequestContract(Type t)
 		{

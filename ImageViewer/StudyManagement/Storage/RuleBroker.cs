@@ -24,12 +24,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		public IList<Rule> GetRules()
 		{
 			return (from r in this.Context.Rules
+					orderby r.Name 
 			        select r).ToList();
 		}
 
 		public Rule GetRule(string ruleId)
 		{
-			return this.Context.Rules.First(r => r.RuleId == ruleId);
+			return this.Context.Rules.FirstOrDefault(r => r.RuleId == ruleId);
 		}
 
 		public void AddRule(Rule rule)
