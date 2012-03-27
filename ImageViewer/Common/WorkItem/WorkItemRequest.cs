@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using ClearCanvas.Common.Serialization;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
@@ -35,9 +36,31 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider ignored)
         {
-            foreach (var type in List)
-                yield return type;
+            return List;
         }
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("00e165d6-44db-4bf4-b607-a8e82a395964")]
+    public class WorkItemPatient : PatientRootPatientIdentifier
+    {
+        public WorkItemPatient()
+        {}
+
+        public WorkItemPatient(DicomAttributeCollection c) : base(c)
+        {}
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("3366be52-823c-484e-b0a7-7344fed16457")]
+    public class WorkItemStudy : StudyIdentifier
+    {
+        public WorkItemStudy()
+        {}
+
+        public WorkItemStudy(DicomAttributeCollection c)
+            : base(c)
+        {}
     }
 
     /// <summary>
@@ -95,10 +118,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public string TransferSyntaxUid { get; set; }
 
         [DataMember(IsRequired = true)]
-        public StudyIdentifier Study { get; set; }
+        public WorkItemStudy Study { get; set; }
 
         [DataMember(IsRequired = true)]
-        public PatientRootPatientIdentifier Patient { get; set; }
+        public WorkItemPatient Patient { get; set; }
 
         public override string ActivityType
         {
@@ -192,7 +215,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// DICOM Retrieve Request
     /// </summary>
-	[WorkItemRequestDataContract("0e04fa53-3f45-4ae2-9444-f3208047757c")]
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("0e04fa53-3f45-4ae2-9444-f3208047757c")]
 	public class DicomRetrieveRequest : WorkItemRequest
     {
         DicomRetrieveRequest()
@@ -205,10 +229,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public string FromAETitle { get; set; }
 
         [DataMember(IsRequired = true)]
-        public StudyIdentifier Study { get; set; }
+        public WorkItemStudy Study { get; set; }
 
         [DataMember(IsRequired = true)]
-        public PatientRootPatientIdentifier Patient { get; set; }
+        public WorkItemPatient Patient { get; set; }
 
         public override string ActivityType
         {
@@ -224,6 +248,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// Abstract Study Process Request
     /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemRequestDataContract("4d22984a-e750-467c-ab89-f680be38c6c1")]
     public abstract class StudyProcessRequest : WorkItemRequest
     {
@@ -234,16 +259,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         [DataMember(IsRequired = true)]
-        public StudyIdentifier Study { get; set; }
+        public WorkItemStudy Study { get; set; }
 
         [DataMember(IsRequired = true)]
-        public PatientRootPatientIdentifier Patient { get; set; }
+        public WorkItemPatient Patient { get; set; }
     }
 
 
     /// <summary>
     /// DICOM Receive Study Request
     /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemRequestDataContract("146cc54f-7b98-468b-948a-415eeffd3d7f")]
     public class DicomReceiveRequest : StudyProcessRequest
     {
@@ -264,7 +290,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// DICOM Import Study Request
     /// </summary>
-	[WorkItemRequestDataContract("2def790a-8039-4fc5-85d6-f4d3be3f2d8e")]
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("2def790a-8039-4fc5-85d6-f4d3be3f2d8e")]
     public class ImportStudyRequest : StudyProcessRequest
     {
         public override string ActivityType

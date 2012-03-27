@@ -26,18 +26,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	{
 		#region Private Fields
 
-		private string _studyInstanceUid;
-		private string[] _modalitiesInStudy;
-		private string _studyDescription;
-		private string _studyId;
-		private string _studyDate;
-		private string _studyTime;
-		private string _accessionNumber;
-		private string _referringPhysiciansName;
-		private int? _numberOfStudyRelatedSeries;
-		private int? _numberOfStudyRelatedInstances;
-
-		#endregion
+	    #endregion
 
 		#region Public Constructors
 
@@ -99,118 +88,68 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			get { return "STUDY"; }
 		}
 
-		/// <summary>
-		/// Gets or sets the Study Instance Uid of the identified study.
-		/// </summary>
-		[DicomField(DicomTags.StudyInstanceUid, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = true)]
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the Study Instance Uid of the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.StudyInstanceUid, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = true)]
+	    public string StudyInstanceUid { get; set; }
 
-		/// <summary>
-		/// Gets or sets the modalities in the identified study.
-		/// </summary>
-		[DicomField(DicomTags.ModalitiesInStudy, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string[] ModalitiesInStudy
-		{
-			get { return _modalitiesInStudy; }
-			set { _modalitiesInStudy = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the modalities in the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.ModalitiesInStudy, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public string[] ModalitiesInStudy { get; set; }
 
-		/// <summary>
-		/// Gets or sets the study description of the identified study.
-		/// </summary>
-		[DicomField(DicomTags.StudyDescription, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string StudyDescription
-		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the study description of the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.StudyDescription, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public string StudyDescription { get; set; }
 
-		/// <summary>
-		/// Gets or sets the study id of the identified study.
-		/// </summary>
-		[DicomField(DicomTags.StudyId, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string StudyId
-		{
-			get { return _studyId; }
-			set { _studyId = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the study id of the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.StudyId, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public string StudyId { get; set; }
 
-		/// <summary>
-		/// Gets or sets the study date of the identified study.
-		/// </summary>
-		[DicomField(DicomTags.StudyDate, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string StudyDate
-		{
-			get { return _studyDate; }
-			set { _studyDate = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the study date of the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.StudyDate, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public string StudyDate { get; set; }
 
-		/// <summary>
-		/// Gets or sets the study time of the identified study.
-		/// </summary>
-		[DicomField(DicomTags.StudyTime, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string StudyTime
-		{
-			get { return _studyTime; }
-			set { _studyTime = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the study time of the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.StudyTime, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public string StudyTime { get; set; }
 
-		/// <summary>
-		/// Gets or sets the accession number of the identified study.
-		/// </summary>
-		[DicomField(DicomTags.AccessionNumber, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string AccessionNumber
-		{
-			get { return _accessionNumber; }
-			set { _accessionNumber = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the accession number of the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.AccessionNumber, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public string AccessionNumber { get; set; }
 
-		[DicomField(DicomTags.ReferringPhysiciansName, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string ReferringPhysiciansName
-		{
-			get { return _referringPhysiciansName; }
-			set { _referringPhysiciansName = value; }
-		}
+	    [DicomField(DicomTags.ReferringPhysiciansName, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public string ReferringPhysiciansName { get; set; }
 
-		/// <summary>
-		/// Gets or sets the number of series belonging to the identified study.
-		/// </summary>
-		[DicomField(DicomTags.NumberOfStudyRelatedSeries, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public int? NumberOfStudyRelatedSeries
-		{
-			get { return _numberOfStudyRelatedSeries; }
-			set { _numberOfStudyRelatedSeries = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the number of series belonging to the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.NumberOfStudyRelatedSeries, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public int? NumberOfStudyRelatedSeries { get; set; }
 
-		/// <summary>
-		/// Gets or sets the number of composite object instances belonging to the identified study.
-		/// </summary>
-		[DicomField(DicomTags.NumberOfStudyRelatedInstances, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public int? NumberOfStudyRelatedInstances
-		{
-			get { return _numberOfStudyRelatedInstances; }
-			set { _numberOfStudyRelatedInstances = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the number of composite object instances belonging to the identified study.
+	    /// </summary>
+	    [DicomField(DicomTags.NumberOfStudyRelatedInstances, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+	    public int? NumberOfStudyRelatedInstances { get; set; }
 
-		#endregion
+	    #endregion
 
 		public override string ToString()
 		{
-			return String.Format("{0} | {1}", this.StudyDescription, this.StudyInstanceUid);
+			return String.Format("{0} | {1}", StudyDescription, StudyInstanceUid);
 		}
 	}
 }
