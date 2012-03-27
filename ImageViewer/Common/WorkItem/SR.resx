@@ -141,6 +141,12 @@
   <data name="DicomSendRequest_ActivityType" xml:space="preserve">
     <value>DICOM Send</value>
   </data>
+  <data name="ImportFilesRequest_ActivityDescription" xml:space="preserve">
+    <value>Importing Files</value>
+  </data>
+  <data name="ImportFilesRequest_ActivityType" xml:space="preserve">
+    <value>Importing Files</value>
+  </data>
   <data name="ImportStudyRequest_AcitivityDescription" xml:space="preserve">
     <value>Import Study for Patient {0}</value>
   </data>

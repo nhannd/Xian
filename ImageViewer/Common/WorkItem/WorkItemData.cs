@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         ReapplyRules = 8,
     }
-
+    
     /// <summary>
     /// Base WorkItem representing a unit of Work to be done.
     /// </summary>

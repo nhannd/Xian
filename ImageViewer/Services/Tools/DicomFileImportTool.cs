@@ -18,7 +18,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.Auditing;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Local;
 using System.ServiceModel;
 
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public void Import()
 		{
-			List<string> filePaths = new List<string>();
+			var filePaths = new List<string>();
 
 			foreach (string path in this.Context.SelectedPaths)
 			{
@@ -85,31 +85,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (filePaths.Count == 0)
 				return;
 
-			FileImportRequest request = new FileImportRequest();
-			request.FilePaths = filePaths;
-			request.BadFileBehaviour = BadFileBehaviour.Ignore;
-			request.Recursive = true;
-			request.FileImportBehaviour = FileImportBehaviour.Copy;
+            var request = new ImportFilesRequest
+		                      {
+		                          FilePaths = filePaths,
+		                          Recursive = true,
+		                          BadFileBehaviour = BadFileBehaviourEnum.Ignore,
+		                          FileImportBehaviour = FileImportBehaviourEnum.Copy
+		                      };
 
-			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
 			try
 			{
-				client.Open();
-				client.Import(request);
-				client.Close();
-
+                WorkItemMonitor.Insert(new WorkItemInsertRequest { Request = request });
+		
+                //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
 				AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
 
-				LocalDataStoreActivityMonitorComponentManager.ShowImportComponent(this.Context.DesktopWindow);
+				//LocalDataStoreActivityMonitorComponentManager.ShowImportComponent(this.Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{
-				client.Abort();
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageImportLocalDataStoreServiceNotRunning, MessageBoxActions.Ok);
+				Context.DesktopWindow.ShowMessageBox(SR.MessageImportLocalDataStoreServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (Exception e)
 			{
-				client.Abort();
 				ExceptionHandler.Report(e, SR.MessageFailedToImportSelection, this.Context.DesktopWindow);
 			}
 		}

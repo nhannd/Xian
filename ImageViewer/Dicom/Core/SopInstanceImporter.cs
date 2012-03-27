@@ -15,7 +15,6 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core.Command;
@@ -72,8 +71,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                   FromAETitle = SourceAE,
                                   Type = ImportType,
                                   Priority = WorkItemPriorityEnum.Stat,
-                                  Patient = new PatientRootPatientIdentifier(message.DataSet),
-                                  Study = new StudyRootStudyIdentifier(message.DataSet)
+                                  Patient = new WorkItemPatient(message.DataSet),
+                                  Study = new WorkItemStudy(message.DataSet)
                               };
 
             return request;
@@ -104,8 +103,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                               {
                                   Type = ImportType,
                                   Priority = WorkItemPriorityEnum.Stat,
-                                  Patient = new PatientRootPatientIdentifier(message.DataSet),
-                                  Study = new StudyRootStudyIdentifier(message.DataSet)
+                                  Patient = new WorkItemPatient(message.DataSet),
+                                  Study = new WorkItemStudy(message.DataSet)
                               };
             return request;
         }

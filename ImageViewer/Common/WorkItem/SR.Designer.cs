@@ -133,6 +133,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Importing Files.
+        /// </summary>
+        internal static string ImportFilesRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("ImportFilesRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing Files.
+        /// </summary>
+        internal static string ImportFilesRequest_ActivityType {
+            get {
+                return ResourceManager.GetString("ImportFilesRequest_ActivityType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import Study for Patient {0}.
         /// </summary>
         internal static string ImportStudyRequest_AcitivityDescription {
