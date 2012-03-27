@@ -19,6 +19,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemProgressDataContract("b2dcf1f6-6e1a-48cd-b807-b720811a6575")]
     public class WorkItemProgress : DataContractBase
     {
+        public WorkItemProgress()
+        {}
+
         [DataMember(IsRequired = false)]
         public string StatusDescription { get; set; }
 
@@ -30,9 +33,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     }
 
     [DataContract(Namespace = ImageViewerNamespace.Value)]
-    [WorkItemProgressDataContract("D3B84BE6-EDC7-40e1-911F-F6EC30C2A128")]
+    [WorkItemProgressDataContract("d3b84be6-edc7-40e1-911f-f6ec30c2a128")]
     public class ImportWorkItemProgress : WorkItemProgress
     {
+        public ImportWorkItemProgress()
+        {}
+
         [DataMember(IsRequired = true)]
         public string Description { get; set; }
 

@@ -67,8 +67,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item.FailureCount = Item.FailureCount + 1;
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-                if (Item.FailureCount >= WorkItemServiceSettings.Instance.RetryCount)
-                if (failureType == WorkItemFailureType.Fatal)
+                if (Item.FailureCount >= WorkItemServiceSettings.Instance.RetryCount
+                    || failureType == WorkItemFailureType.Fatal )
                 {
                     Item.Status = WorkItemStatusEnum.Failed;
                     Item.ExpirationTime = now;

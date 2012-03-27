@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         public override void Process(WorkItemStatusProxy proxy)
         {
-            var request = proxy.Item.Request as DicomImportRequest;
+            var request = proxy.Item.Request as ImportFilesRequest;
             if (request == null)
                 throw new Exception("Internal error, ImportRequest in invalid format");
 
@@ -89,14 +89,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 Proxy.Complete();
         }
 
-        private void ValidateRequest(DicomImportRequest request)
+        private void ValidateRequest(ImportFilesRequest filesRequest)
         {
-            if (request.FilePaths == null)
+            if (filesRequest.FilePaths == null)
                 throw new ArgumentNullException(SR.ExceptionNoFilesHaveBeenSpecifiedToImport);
 
             int paths = 0;
 
-            foreach (string path in request.FilePaths)
+            foreach (string path in filesRequest.FilePaths)
             {
                 if (Directory.Exists(path) || File.Exists(path))
                     ++paths;

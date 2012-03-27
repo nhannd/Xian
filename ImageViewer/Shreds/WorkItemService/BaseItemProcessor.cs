@@ -297,7 +297,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         public virtual bool Initialize(WorkItemStatusProxy proxy)
         {
             Proxy = proxy;
-            Location = new StudyLocation(proxy.Item.StudyInstanceUid);
+
+            if (!string.IsNullOrEmpty(proxy.Item.StudyInstanceUid))
+                Location = new StudyLocation(proxy.Item.StudyInstanceUid);
+
         	return true;
         }
 

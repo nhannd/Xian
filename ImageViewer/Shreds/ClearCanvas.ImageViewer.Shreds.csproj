@@ -156,6 +156,9 @@
     <EmbeddedResource Include="DicomServer\TransferSyntaxes.xml" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="WorkItemService\DicomSend\" />
     <Folder Include="WorkItemService\StudyDelete\" />
   </ItemGroup>
