@@ -249,12 +249,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                         LinkButton button = (LinkButton) row.FindControl("ReconcileLinkButton");
                         Label label = (Label)row.FindControl("SeparatorLabel");
 
-                        if (study.IsReconcileRequired && Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.StudyIntegrityQueue.Search))
+                        if (study.IsReconcileRequired)
                         {
+                            button.Visible = true;
+							label.Visible = true;
+
                             button.PostBackUrl = ImageServerConstants.PageURLs.StudyIntegrityQueuePage +
                                                  "?PatientID=" + study.PatientId + "&PatientName=" + study.PatientsName + "&PartitionKey=" + study.ThePartition.GetKey();
-                            button.Visible = true;
-                            label.Visible = true;
+
+                            button.Enabled = Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.StudyIntegrityQueue.Search);
                         }
                         else
                         {
