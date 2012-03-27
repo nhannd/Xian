@@ -24,9 +24,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 		public bool Enabled { get; set; }
 
 		[DataMember]
-		public bool MatchAllStudies { get; set; }
-
-		[DataMember]
 		public JunctionType Junction { get; set; }
 
 		[DataMember]
