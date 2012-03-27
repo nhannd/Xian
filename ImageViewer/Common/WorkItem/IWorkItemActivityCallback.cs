@@ -16,6 +16,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public interface IWorkItemActivityCallback
     {
         [OperationContract(IsOneWay = true)]
-        void WorkItemChanged(WorkItemData progressItem);
+        void WorkItemChanged(WorkItemData workItemData);
     }
 }

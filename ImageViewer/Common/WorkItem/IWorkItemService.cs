@@ -90,6 +90,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember]
         public WorkItemTypeEnum? Type { get; set; }
 
+        // TODO (CR Mar 2012): Probably more complicated than we want to get right now.
         [DataMember]
         public Guid? Identifier { get; set; }
     }
@@ -135,6 +136,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request);
 
         [OperationContract]
-        WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest type);
+        WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request);
     }
 }
