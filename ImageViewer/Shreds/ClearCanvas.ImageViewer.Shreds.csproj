@@ -97,6 +97,8 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="WorkItemService\BaseItemProcessor.cs" />
+    <Compile Include="WorkItemService\Import\ImportFactory.cs" />
+    <Compile Include="WorkItemService\Import\ImportProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
     <Compile Include="WorkItemService\StudyProcess\StudyProcessFactory.cs" />
@@ -154,8 +156,10 @@
     <EmbeddedResource Include="DicomServer\TransferSyntaxes.xml" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="WorkItemService\DicomSend\" />
-    <Folder Include="WorkItemService\Import\" />
     <Folder Include="WorkItemService\StudyDelete\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

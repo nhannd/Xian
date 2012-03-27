@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class WorkItemUpdateRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public int Identifier { get; set; }
+        public long Identifier { get; set; }
 
         [DataMember]
         public WorkItemPriorityEnum? Priority { get; set; }

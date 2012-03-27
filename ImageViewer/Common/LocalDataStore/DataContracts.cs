@@ -768,14 +768,16 @@ namespace ClearCanvas.ImageViewer.Common.LocalDataStore
 		}
 	}
 
-	public enum BadFileBehaviour
+    [DataContract(Name = "BadFileBehaviour", Namespace = ImageViewerNamespace.Value)]
+    public enum BadFileBehaviour
 	{ 
 		Ignore = 0,
 		Move,
 		Delete
 	}
 
-	public enum FileImportBehaviour
+    [DataContract(Name = "FileImportBehaviour", Namespace = ImageViewerNamespace.Value)]
+    public enum FileImportBehaviour
 	{ 
 		Move = 0,
 		Copy
