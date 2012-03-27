@@ -25,8 +25,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                       {
                                                           typeof (WorkItemRequest),
                                                           typeof (DicomSendRequest),
-                                                          typeof (DicomImportRequest),
+                                                          typeof (DicomAutoRouteRequest),
+                                                          typeof (ImportFilesRequest),
                                                           typeof (DicomRetrieveRequest),
+                                                          typeof (StudyProcessRequest),
+                                                          typeof (DicomReceiveRequest),
+                                                          typeof (ImportStudyRequest)
                                                       };
 
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider ignored)
@@ -40,7 +44,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// Base Request object for the creation of <see cref="WorkItem"/>s.
     /// </summary>
     [XmlInclude(typeof(DicomSendRequest))]
-    [XmlInclude(typeof(DicomImportRequest))]
+    [XmlInclude(typeof(ImportFilesRequest))]
+    [XmlInclude(typeof(DicomAutoRouteRequest))]
+    [XmlInclude(typeof(DicomRetrieveRequest))]
+    [XmlInclude(typeof(StudyProcessRequest))]
+    [XmlInclude(typeof(DicomReceiveRequest))]
+    [XmlInclude(typeof(ImportStudyRequest))]
     [DataContract(Namespace = ImageViewerNamespace.Value)]
 	[WorkItemRequestDataContract("b2d86945-96b7-4563-8281-02142e84ffc3")]
     public abstract class WorkItemRequest : DataContractBase
@@ -120,14 +129,34 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
+    [DataContract(Name = "BadFileBehaviour", Namespace = ImageViewerNamespace.Value)]
+    public enum BadFileBehaviourEnum
+    {
+        [EnumMember]
+        Ignore = 0,
+        [EnumMember]
+        Move,
+        [EnumMember]
+        Delete
+    }
+
+    [DataContract(Name = "FileImportBehaviour", Namespace = ImageViewerNamespace.Value)]
+    public enum FileImportBehaviourEnum
+    {
+        [EnumMember]
+        Move = 0,
+        [EnumMember]
+        Copy
+    }
+
     /// <summary>
     /// <see cref="WorkItemRequest"/> for importing files/studies.
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
 	[WorkItemRequestDataContract("02b7d427-1107-4458-ade3-67ee6779a766")]
-	public abstract class DicomImportRequest : WorkItemRequest
+	public class ImportFilesRequest : WorkItemRequest
     {
-        DicomImportRequest()
+        public ImportFilesRequest()
         {
             Type = WorkItemTypeEnum.Import;
             Priority = WorkItemPriorityEnum.Stat;
@@ -137,10 +166,26 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public bool Recursive { get; set; }
 
         [DataMember(IsRequired = true)]
-        public IEnumerable<string> FileExtensions { get; set; }
+        public List<string> FileExtensions { get; set; }
 
         [DataMember(IsRequired = true)]
-        public IEnumerable<string> FilePaths { get; set; }
+        public List<string> FilePaths { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public BadFileBehaviourEnum BadFileBehaviour { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public FileImportBehaviourEnum FileImportBehaviour { get; set; }
+
+        public override string ActivityType
+        {
+            get { return SR.ImportFilesRequest_ActivityType; }
+        }
+
+        public override string ActivityDescription
+        {
+            get { return SR.ImportFilesRequest_ActivityDescription; }
+        }
     }
 
 

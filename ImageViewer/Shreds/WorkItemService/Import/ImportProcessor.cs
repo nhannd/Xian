@@ -117,13 +117,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
             var extensions = new List<string>();
 
-            foreach (string extension in fileExtensions)
-            {
-                if (String.IsNullOrEmpty(extension))
-                    continue;
+            if (fileExtensions != null)
+                foreach (string extension in fileExtensions)
+                {
+                    if (String.IsNullOrEmpty(extension))
+                        continue;
 
-                extensions.Add(extension);
-            }
+                    extensions.Add(extension);
+                }
 
             foreach (string path in filePaths)
             {

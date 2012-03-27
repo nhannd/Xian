@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (filePaths.Count == 0)
 				return;
 
-		    var request = new ImportFilesRequest
+            var request = new ImportFilesRequest
 		                      {
 		                          FilePaths = filePaths,
 		                          Recursive = true,
