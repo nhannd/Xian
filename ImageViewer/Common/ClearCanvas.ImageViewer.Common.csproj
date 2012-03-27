@@ -157,6 +157,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="WorkItem\WorkItemClient.cs" />
     <Compile Include="WorkItem\WorkItemData.cs" />
     <Compile Include="WorkItem\WorkItemMonitor.cs" />
     <Compile Include="WorkItem\WorkItemProgressDataContractAttribute.cs" />

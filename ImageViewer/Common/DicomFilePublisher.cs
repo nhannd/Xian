@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel;
@@ -19,6 +20,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Common
 {
@@ -127,32 +129,9 @@ namespace ClearCanvas.ImageViewer.Common
 			var result = EventResult.Success;
 			var auditedInstances = GetAuditedInstances(files, true);
 
-			var client = new LocalDataStoreServiceClient();
-			try
-			{
-				var request = new FileImportRequest();
-				request.FilePaths = new[] {tempFileDirectory};
-				request.Recursive = true;
-				request.FileImportBehaviour = FileImportBehaviour.Move;
-				request.IsBackground = isBackground;
+		    var importClient = new DicomFileImportClient();
 
-				client.Open();
-				client.Import(request);
-				client.Close();
-			}
-			catch (Exception ex)
-			{
-				client.Abort();
-				result = EventResult.MajorFailure;
-
-				var message = string.Format("Failed to connect to the local data store service to import files.  The files must be imported manually (location: {0})", tempFileDirectory);
-				throw new DicomFilePublishingException(message, ex);
-			}
-			finally
-			{
-				// audit attempt to import these instances to local store
-				AuditHelper.LogImportStudies(auditedInstances, EventSource.CurrentUser, result);
-			}
+            importClient.PublishLocal(tempFileDirectory,auditedInstances,BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
 		}
 
 		public static void PublishRemote(ICollection<DicomFile> files, ApplicationEntity destinationServer, bool isBackground)

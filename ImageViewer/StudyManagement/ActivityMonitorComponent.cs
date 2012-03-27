@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Activity", w => w.Type.ToString()));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Activity Desc.", w => "TODO"));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Status", w => w.Status.ToString()));
-			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Status Desc.", w => w.Progress != null ? w.Progress.StatusDescription : null));
+			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Status Desc.", w => w.Progress != null ? w.Progress.Status : null));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, DateTime>("Sched. Time", w => w.ScheduledTime));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Priority", w => w.Priority.ToString()));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, IconSet>("Progress", w => GetProgressIcon(w.Progress)));
