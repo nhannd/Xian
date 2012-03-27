@@ -42,6 +42,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private const int CELL_SUBROW_HEIGHT = 18;
         private readonly int _rowHeight = 0;
+		private Font _subRowFont;
 
     	private ISelection _selectionBeforeSort;
 
@@ -249,6 +250,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			get { return _columnHeaderTooltipBase; }
 			set { _columnHeaderTooltipBase = value; }
 		}
+
+		[DefaultValue(null)]
+		[Description("Specifies the font to be used by sub-rows.")]
+		public Font SubRowFont
+    	{
+			get { return _subRowFont; }
+			set { _subRowFont = value; }
+    	}
 
         public event EventHandler SelectionChanged
         {
@@ -875,10 +884,6 @@ namespace ClearCanvas.Desktop.View.WinForms
                         var oldClip = e.Graphics.ClipBounds;
                         e.Graphics.SetClip(clip);
 
-                        // Use a different font for subrows
-                        // TODO: Make this a parameter of the Table
-                        //Font subRowFont = new Font(e.InheritedRowStyle.Font, FontStyle.Italic);
-
                         var format = new StringFormat
                                      	{
                                      		FormatFlags = StringFormatFlags.NoWrap,
@@ -886,7 +891,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                                      	};
 
                     	// Draw the content that spans multiple columns.
-                        e.Graphics.DrawString(text, e.InheritedRowStyle.Font, forebrush, textArea, format);
+                        e.Graphics.DrawString(text, _subRowFont ?? e.InheritedRowStyle.Font, forebrush, textArea, format);
 
                         e.Graphics.SetClip(oldClip);
                     }
