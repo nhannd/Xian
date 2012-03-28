@@ -24,6 +24,19 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_component = component;
 			InitializeComponent();
 
+
+			_aeTitle.DataBindings.Add("Text", _component, "AeTitle");
+			_hostName.DataBindings.Add("Text", _component, "HostName");
+			_port.DataBindings.Add("Text", _component, "Port");
+			_fileStore.DataBindings.Add("Text", _component, "FileStore");
+			_totalStudies.DataBindings.Add("Text", _component, "TotalStudies");
+			_failures.DataBindings.Add("Text", _component, "Failures");
+
+			_diskSpace.DataBindings.Add("Text", _component, "DiskspaceUsed");
+			_diskSpaceBar.DataBindings.Add("Value", _component, "DiskspaceUsedPercent");
+
+
+
 			_workItemsTableView.Table = _component.WorkItemTable;
 		}
 
