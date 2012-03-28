@@ -95,7 +95,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			try
 			{
-                WorkItemMonitor.Insert(new WorkItemInsertRequest { Request = request });
+			    //TODO (Marmot): change to use bridge class?
+                Platform.GetService<IWorkItemService>(s => s.Insert(new WorkItemInsertRequest { Request = request }));
 		
                 //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
 				AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);

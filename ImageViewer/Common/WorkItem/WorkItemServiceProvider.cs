@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
     [ExtensionOf(typeof(DuplexServiceProviderExtensionPoint))]
-    public class WorkItemServiceProvider : IDuplexServiceProvider
+    [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
+    public class WorkItemServiceProvider : IServiceProvider, IDuplexServiceProvider
     {
         #region Implementation of IDuplexServiceProvider
 
@@ -25,6 +23,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 client.Open();
 
             return client;
+        }
+
+        #endregion
+
+        #region IServiceProvider Members
+
+        public object GetService(Type serviceType)
+        {
+            return GetService(serviceType, WorkItemActivityCallback.Nil);
         }
 
         #endregion

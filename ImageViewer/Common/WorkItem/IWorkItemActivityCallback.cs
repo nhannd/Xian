@@ -18,4 +18,22 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [OperationContract(IsOneWay = true)]
         void WorkItemChanged(WorkItemData workItemData);
     }
+
+    public abstract class WorkItemActivityCallback : IWorkItemActivityCallback
+    {
+        private class NilCallback : WorkItemActivityCallback
+        {
+            public override void WorkItemChanged(WorkItemData workItemData)
+            {
+            }
+        }
+
+        public static readonly IWorkItemActivityCallback Nil = new NilCallback();
+
+        #region IWorkItemActivityCallback Members
+
+        public abstract void WorkItemChanged(WorkItemData workItemData);
+
+        #endregion
+    }
 }

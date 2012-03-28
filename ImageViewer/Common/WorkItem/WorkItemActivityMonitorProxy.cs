@@ -57,8 +57,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             _eventProxies = new Dictionary<WorkItemChangedEventProxyKey, WorkItemChangedEventProxy>();
         }
 
-        internal bool Testing { get; set; }
-
         public override bool IsConnected
         {
             get
@@ -144,8 +142,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (_isConnectedChanged != null)
                 _real.IsConnectedChanged -= OnIsConnectedChanged;
 
-            if (!Testing)
-                OnProxyDisposed();
+            OnProxyDisposed();
         }
     }
 }

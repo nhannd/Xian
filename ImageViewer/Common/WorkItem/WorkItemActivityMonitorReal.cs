@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     internal class RealWorkItemActivityMonitor : WorkItemActivityMonitor
     {
         [CallbackBehavior(UseSynchronizationContext = false)]
-        private class Callback : IWorkItemActivityCallback
+        private class Callback : WorkItemActivityCallback
         {
             private readonly RealWorkItemActivityMonitor _realActivityMonitor;
 
@@ -19,20 +19,19 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 _realActivityMonitor = real;
             }
 
-            #region IWorkItemActivityCallback Members
-
-            void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
+            public override void WorkItemChanged(WorkItemData workItemData)
             {
                 _realActivityMonitor.OnWorkItemChanged(workItemData);
             }
-
-            #endregion
         }
+
+        internal static TimeSpan ConnectionRetryInterval = TimeSpan.FromSeconds(5);
 
         private readonly object _syncLock = new object();
 
         private Thread _connectionThread;
         private bool _disposed;
+        private bool _updateSubscriptions;
         private event EventHandler _isConnectedChanged;
 
         private readonly WorkItemChangedEventWrappers _workItemChangedEvents;
@@ -78,6 +77,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             lock (_syncLock)
             {
                 _workItemChangedEvents[workItemType].Changed += eventHandler;
+                _updateSubscriptions = true;
                 Monitor.Pulse(_syncLock);
             }
         }
@@ -87,6 +87,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             lock (_syncLock)
             {
                 _workItemChangedEvents[workItemType].Changed -= eventHandler;
+                _updateSubscriptions = true;
                 Monitor.Pulse(_syncLock);
             }
         }
@@ -95,6 +96,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             lock (_syncLock)
             {
+                //TODO (Marmot): Implement some kind of startup connection timeout, or maybe just pulse right away?
+
                 //Try to connect first.
                 Connect();
                 ManageSubscriptions();
@@ -109,8 +112,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 {
                     //Check disposed before and after the wait because it could have changed.
                     if (_disposed) break;
-                    Monitor.Wait(_syncLock, TimeSpan.FromSeconds(5));
-                    if (_disposed) break;
+                    if (!_updateSubscriptions)
+                    {
+                        Monitor.Wait(_syncLock, ConnectionRetryInterval);
+                        if (_disposed) break;
+                    }
                 }
 
                 Connect();
@@ -123,13 +129,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         private void ManageSubscriptions()
         {
-            List<WorkItemChangedEventWrapper> newSubscriptions;
-            List<WorkItemChangedEventWrapper> deadSubscriptions;
+            IList<WorkItemChangedEventWrapper> newSubscriptions;
+            IList<WorkItemChangedEventWrapper> deadSubscriptions;
 
             if (_client == null)
             {
                 lock (_syncLock)
                 {
+                    _updateSubscriptions = false;
                     //No connection means no subscriptions.
                     foreach (var workItemChangedEvent in _workItemChangedEvents.GetActiveWrappers())
                         workItemChangedEvent.IsSubscribedToService = false;
@@ -139,8 +146,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
             lock (_syncLock)
             {
-                newSubscriptions = _workItemChangedEvents.GetWrappersToSubscribeToService().ToList();
-                deadSubscriptions = _workItemChangedEvents.GetWrappersToUnsubscribeFromService().ToList();
+                _updateSubscriptions = false;
+                newSubscriptions = _workItemChangedEvents.GetWrappersToSubscribeToService();
+                deadSubscriptions = _workItemChangedEvents.GetWrappersToUnsubscribeFromService();
             }
 
             foreach (var deadSubscription in deadSubscriptions)
@@ -278,7 +286,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         private void OnWorkItemChanged(WorkItemData workItemData)
         {
-            var delegates = new List<Delegate>();
+            IList<Delegate> delegates;
             lock (_syncLock)
             {
                 if (_disposed)
@@ -286,13 +294,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
                 //The only events we fire are the ones for the matching work item type,
                 //or the ones that are for "all" work item types.
-                var relevantWrappers = _workItemChangedEvents.GetActiveWrappers(workItemData.Type);
-                foreach (var wrapper in relevantWrappers)
-                    delegates.AddRange(wrapper.GetChangedDelegates());
+                delegates = _workItemChangedEvents.GetChangedDelegates(workItemData.Type);
             }
 
-            if (delegates.Count > 0)
-                ThreadPool.QueueUserWorkItem(ignore => CallDelegates(delegates, EventArgs.Empty));
+            if (delegates.Count <= 0)
+                return;
+
+            var args = new WorkItemChangedEventArgs(workItemData);
+            ThreadPool.QueueUserWorkItem(ignore => CallDelegates(delegates, args));
         }
 
         private void CallDelegates(IEnumerable<Delegate> delegates, EventArgs e)

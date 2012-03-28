@@ -1,11 +1,13 @@
-﻿using System;
+﻿#if UNIT_TESTS
+
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 {
-    internal class TestWorkItemService : IWorkItemService, ICommunicationObject
+    internal class TestWorkItemService : IWorkItemService, IWorkItemActivityCallback, ICommunicationObject
     {
         private readonly object _syncLock = new object();
         private readonly Dictionary<WorkItemTypeEnum, WorkItemTypeEnum> _subscribedTypes;
@@ -65,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         #endregion
 
-        public void PublishWorkItemChanged(WorkItemData workItemData)
+        void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
         {
             IWorkItemActivityCallback callback;
             lock (_syncLock)
@@ -113,6 +115,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         public void Close()
         {
+            lock (_subscribedTypes)
+            {
+                _subscribedTypes.Clear();
+                _subscribedToAll = false;
+            }
+
             State = CommunicationState.Closed;
             EventsHelper.Fire(Closed, this, EventArgs.Empty);
         }
@@ -158,8 +166,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         public void Fault()
         {
+            lock (_subscribedTypes)
+            {
+                _subscribedTypes.Clear();
+                _subscribedToAll = false;
+            }
+
             State = CommunicationState.Faulted;
             EventsHelper.Fire(Faulted, this, EventArgs.Empty);
         }
     }
 }
+
+#endif

@@ -15,47 +15,47 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
     {
         private readonly object _syncLock = new object();
 
-        private bool _gotIsConnectedChanged;
+        private int _isConnectedChangedCount;
         private int _workItemChanged1Count;
         private int _workItemChanged2Count;
         private int _workItemChanged3Count;
         private int _workItemChangedCallbackCount;
+
+        private int _expectedAsyncEventCount;
+        private volatile bool _expectingAsyncEvents = false;
 
         [TestFixtureSetUp]
         public void Initialize()
         {
             var factory = new UnitTestExtensionFactory { { typeof(DuplexServiceProviderExtensionPoint), typeof(TestServiceProvider) } };
             Platform.SetExtensionFactory(factory);
+
+            RealWorkItemActivityMonitor.ConnectionRetryInterval = TimeSpan.FromMilliseconds(100);
         }
 
-        private bool GotIsConnectedChanged
+        private int IsConnectedChangedCount
         {
-            get { lock (_syncLock) { return _gotIsConnectedChanged; } }
-            set { lock (_syncLock) { _gotIsConnectedChanged = value; } }
+            get { lock (_syncLock) { return _isConnectedChangedCount; } }
         }
 
         private int WorkItemChanged1Count
         {
             get { lock (_syncLock) { return _workItemChanged1Count; } }
-            set { lock (_syncLock) { _workItemChanged1Count = value; } }
         }
 
         private int WorkItemChanged2Count
         {
             get { lock (_syncLock) { return _workItemChanged2Count; } }
-            set { lock (_syncLock) { _workItemChanged2Count = value; } }
         }
 
         private int WorkItemChanged3Count
         {
             get { lock (_syncLock) { return _workItemChanged3Count; } }
-            set { lock (_syncLock) { _workItemChanged3Count = value; } }
         }
         
         private int WorkItemChangedCallbackCount
         {
             get { lock (_syncLock) { return _workItemChangedCallbackCount; } }
-            set { lock (_syncLock) { _workItemChangedCallbackCount = value; } }
         }
 
         [Test]
@@ -131,72 +131,38 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         [Test]
         public void TestActivityMonitorProxyConnected()
         {
+            ResetCallbackFields();
             var test = new TestActivityMonitor();
             var proxy = new WorkItemActivityMonitorProxy(test, null);
 
-            GotIsConnectedChanged = false;
-
             test.IsConnected = true;
-            Assert.IsFalse(_gotIsConnectedChanged);
+            Assert.AreEqual(0, IsConnectedChangedCount);
 
             proxy.IsConnectedChanged += OnIsConnectedChanged;
             test.IsConnected = true;
 
-            Assert.IsFalse(_gotIsConnectedChanged);
+            Assert.AreEqual(0, IsConnectedChangedCount);
 
             test.IsConnected = false;
-            Assert.IsTrue(_gotIsConnectedChanged);
+            Assert.AreEqual(1, IsConnectedChangedCount);
 
-            _gotIsConnectedChanged = false;
             test.IsConnected = true;
-            Assert.IsTrue(_gotIsConnectedChanged);
+            Assert.AreEqual(2, IsConnectedChangedCount);
 
-            _gotIsConnectedChanged = false;
             proxy.IsConnectedChanged -= OnIsConnectedChanged;
             test.IsConnected = false;
-            Assert.IsFalse(_gotIsConnectedChanged);
+            Assert.AreEqual(2, IsConnectedChangedCount);
         }
 
         [Test]
-        public void TestActivityMonitorProxyChanged()
+        public void TestActivityMonitorProxySubscriptions()
         {
-            ResetCallbackFields();
+            _expectingAsyncEvents = false;
 
-            var test = new TestActivityMonitor();
-            var proxy = new WorkItemActivityMonitorProxy(test, null);
+            var testMonitor = new TestActivityMonitor();
+            var monitorProxy = new WorkItemActivityMonitorProxy(testMonitor, null);
 
-            var item = new WorkItemData {Type = WorkItemTypeEnum.DicomRetrieve};
-            proxy.Subscribe(null, WorkItemChanged1);
-
-            test.OnWorkItemChanged(item);
-            Assert.AreEqual(1, WorkItemChanged1Count);
-            Assert.AreEqual(0, WorkItemChanged2Count);
-            Assert.AreEqual(0, WorkItemChanged3Count);
-
-            proxy.Subscribe(WorkItemTypeEnum.DicomRetrieve, WorkItemChanged2);
-            test.OnWorkItemChanged(item);
-            Assert.AreEqual(2, WorkItemChanged1Count);
-            Assert.AreEqual(1, WorkItemChanged2Count);
-            Assert.AreEqual(0, WorkItemChanged3Count);
-
-            item.Type = WorkItemTypeEnum.DicomSend;
-            test.OnWorkItemChanged(item);
-            Assert.AreEqual(3, WorkItemChanged1Count);
-            Assert.AreEqual(1, WorkItemChanged2Count);
-            Assert.AreEqual(0, WorkItemChanged3Count);
-
-            proxy.Unsubscribe(null, WorkItemChanged1);
-            test.OnWorkItemChanged(item);
-            Assert.AreEqual(3, WorkItemChanged1Count);
-            Assert.AreEqual(1, WorkItemChanged2Count);
-            Assert.AreEqual(0, WorkItemChanged3Count);
-
-            proxy.Subscribe(WorkItemTypeEnum.DicomSend, WorkItemChanged1);
-            proxy.Subscribe(WorkItemTypeEnum.DicomSend, WorkItemChanged3);
-            test.OnWorkItemChanged(item);
-            Assert.AreEqual(4, WorkItemChanged1Count);
-            Assert.AreEqual(1, WorkItemChanged2Count);
-            Assert.AreEqual(1, WorkItemChanged3Count);
+            TestActivityMonitorSubscriptions(monitorProxy, testMonitor);
         }
 
         [Test]
@@ -204,99 +170,213 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         {
             ResetCallbackFields();
             var service = new TestWorkItemService{Callback = this};
+            var callback = (IWorkItemActivityCallback) service;
 
             var item = new WorkItemData { Type = WorkItemTypeEnum.DicomRetrieve };
-            service.PublishWorkItemChanged(item);
+            
+            callback.WorkItemChanged(item);
             Assert.AreEqual(0, WorkItemChangedCallbackCount);
 
             service.Subscribe(new WorkItemSubscribeRequest {Type = null});
 
-            service.PublishWorkItemChanged(item);
+            callback.WorkItemChanged(item);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
 
             service.Subscribe(new WorkItemSubscribeRequest { Type = WorkItemTypeEnum.DicomRetrieve });
-            service.PublishWorkItemChanged(item);
+            callback.WorkItemChanged(item);
             Assert.AreEqual(2, WorkItemChangedCallbackCount);
 
             service.Unsubscribe(new WorkItemUnsubscribeRequest {Type = null});
-            service.PublishWorkItemChanged(item);
+            callback.WorkItemChanged(item);
             Assert.AreEqual(3, WorkItemChangedCallbackCount);
 
             item.Type = WorkItemTypeEnum.DicomSend;
-            service.PublishWorkItemChanged(item);
+            callback.WorkItemChanged(item);
             Assert.AreEqual(3, WorkItemChangedCallbackCount);
 
             item.Type = WorkItemTypeEnum.DicomRetrieve;
             service.Unsubscribe(new WorkItemUnsubscribeRequest { Type = WorkItemTypeEnum.DicomRetrieve });
-            service.PublishWorkItemChanged(item);
+            callback.WorkItemChanged(item);
 
             item.Type = WorkItemTypeEnum.DicomSend;
             service.Subscribe(new WorkItemSubscribeRequest { Type = WorkItemTypeEnum.DicomSend});
-            service.PublishWorkItemChanged(item);
+            callback.WorkItemChanged(item);
             Assert.AreEqual(4, WorkItemChangedCallbackCount);
         }
 
         [Test]
         public void TestRealActivityMonitorConnection()
         {
+            _expectingAsyncEvents = true;
+            //Make sure it's initially open.
+            TestServiceProvider.ServiceInstance.Open();
+
             var monitor = new RealWorkItemActivityMonitor();
-            TestRealActivityMonitorConnection(monitor);
+            TestActivityMonitorConnection(monitor);
             monitor.Dispose();
         }
 
         [Test]
         public void TestRealActivityMonitorConnectionWithProxy()
         {
+            _expectingAsyncEvents = true;
+            //Make sure it's initially open.
+            TestServiceProvider.ServiceInstance.Open();
+
+            var monitor = WorkItemActivityMonitor.Create(false);
+            TestActivityMonitorConnection(monitor);
+            monitor.Dispose();
+            Assert.AreEqual(0, WorkItemActivityMonitor._proxyCount);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestRealActivityMonitorConnectionWithProxy_FailCreate()
+        {
+            _expectingAsyncEvents = true;
+            //Make sure it's initially open.
+            TestServiceProvider.ServiceInstance.Open();
+
             var monitor = WorkItemActivityMonitor.Create();
-            TestRealActivityMonitorConnection(monitor);
+            TestActivityMonitorConnection(monitor);
             monitor.Dispose();
             //TODO: assert proxy count?
         }
 
-        private void TestRealActivityMonitorConnection(IWorkItemActivityMonitor monitor)
+        [Test]
+        public void TestRealActivityMonitorSubscriptions()
+        {
+            _expectingAsyncEvents = true;
+            //Make sure it's initially open.
+            TestServiceProvider.ServiceInstance.Open();
+
+            var monitor = new RealWorkItemActivityMonitor();
+            TestActivityMonitorSubscriptions(monitor, TestServiceProvider.ServiceInstance);
+            monitor.Dispose();
+        }
+
+        [Test]
+        public void TestRealActivityMonitorSubscriptionsWithProxy()
+        {
+            _expectingAsyncEvents = true;
+            //Make sure it's initially open.
+            TestServiceProvider.ServiceInstance.Open();
+
+            var monitor = WorkItemActivityMonitor.Create(false);
+            TestActivityMonitorSubscriptions(monitor, TestServiceProvider.ServiceInstance);
+            monitor.Dispose();
+            Assert.AreEqual(0, WorkItemActivityMonitor._proxyCount);
+        }
+
+        private void TestActivityMonitorConnection(IWorkItemActivityMonitor monitor)
         {
             ResetCallbackFields();
 
-            Assert.AreEqual(CommunicationState.Opened, TestServiceProvider.CurrentService.State);
+            Assert.AreEqual(CommunicationState.Opened, TestServiceProvider.ServiceInstance.State);
             Assert.IsTrue(monitor.IsConnected);
 
             monitor.IsConnectedChanged += OnIsConnectedChanged;
 
-            WaitForEvent(() => TestServiceProvider.CurrentService.Close());
-            Assert.IsTrue(GotIsConnectedChanged);
+            WaitForEvent(() => TestServiceProvider.ServiceInstance.Close());
+            Assert.AreEqual(1, IsConnectedChangedCount);
             Assert.IsFalse(monitor.IsConnected);
 
-            GotIsConnectedChanged = false;
-            WaitForEvent(() => TestServiceProvider.CurrentService.Open());
-            Assert.IsTrue(GotIsConnectedChanged);
+            WaitForEvent(() => TestServiceProvider.ServiceInstance.Open());
+            Assert.AreEqual(2, IsConnectedChangedCount);
             Assert.IsTrue(monitor.IsConnected);
 
             monitor.IsConnectedChanged -= OnIsConnectedChanged;
-            GotIsConnectedChanged = false;
-            WaitForEvent(() => TestServiceProvider.CurrentService.Close());
-            Assert.IsFalse(GotIsConnectedChanged);
+            TestServiceProvider.ServiceInstance.Close();
+            Thread.Sleep(1000); //should be more than enough time; we unsubscribed from the event, so there's nothing to wait for.
+            Assert.AreEqual(2, IsConnectedChangedCount);
             Assert.IsFalse(monitor.IsConnected);
+        }
+
+        private void TestActivityMonitorSubscriptions(IWorkItemActivityMonitor monitor, IWorkItemActivityCallback callback)
+        {
+            ResetCallbackFields();
+
+            var item = new WorkItemData { Type = WorkItemTypeEnum.DicomRetrieve };
+            SubscribeAndPause(monitor, null, WorkItemChanged1);
+
+            WaitForEvents(() => callback.WorkItemChanged(item), 1);
+            Assert.AreEqual(1, WorkItemChanged1Count);
+            Assert.AreEqual(0, WorkItemChanged2Count);
+            Assert.AreEqual(0, WorkItemChanged3Count);
+
+            SubscribeAndPause(monitor, WorkItemTypeEnum.DicomRetrieve, WorkItemChanged2);
+            WaitForEvents(() => callback.WorkItemChanged(item), 2);
+            Assert.AreEqual(2, WorkItemChanged1Count);
+            Assert.AreEqual(1, WorkItemChanged2Count);
+            Assert.AreEqual(0, WorkItemChanged3Count);
+
+            item.Type = WorkItemTypeEnum.DicomSend;
+            WaitForEvents(() => callback.WorkItemChanged(item), 1);
+            Assert.AreEqual(3, WorkItemChanged1Count);
+            Assert.AreEqual(1, WorkItemChanged2Count);
+            Assert.AreEqual(0, WorkItemChanged3Count);
+
+            UnsubscribeAndPause(monitor, null, WorkItemChanged1);
+            Assert.AreEqual(3, WorkItemChanged1Count);
+            Assert.AreEqual(1, WorkItemChanged2Count);
+            Assert.AreEqual(0, WorkItemChanged3Count);
+
+            SubscribeAndPause(monitor, WorkItemTypeEnum.DicomSend, WorkItemChanged1);
+            SubscribeAndPause(monitor, WorkItemTypeEnum.DicomSend, WorkItemChanged3);
+            WaitForEvents(() => callback.WorkItemChanged(item), 2);
+            Assert.AreEqual(4, WorkItemChanged1Count);
+            Assert.AreEqual(1, WorkItemChanged2Count);
+            Assert.AreEqual(1, WorkItemChanged3Count);
+        }
+
+        private void SubscribeAndPause(IWorkItemActivityMonitor monitor, WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        {
+            monitor.Subscribe(workItemType, eventHandler);
+            //It may take a sec for the monitor to subscribe via the actual service.
+            Thread.Sleep(100);
+        }
+
+        private void UnsubscribeAndPause(IWorkItemActivityMonitor monitor, WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        {
+            monitor.Unsubscribe(workItemType, eventHandler);
+            //It may take a sec for the monitor to unsubscribe via the actual service.
+            Thread.Sleep(100);
         }
 
         private void ResetCallbackFields()
         {
             lock (_syncLock)
             {
-                _gotIsConnectedChanged = false;
+                _isConnectedChangedCount = 0;
                 _workItemChanged1Count = 0;
                 _workItemChanged2Count = 0;
                 _workItemChanged3Count = 0;
                 _workItemChangedCallbackCount = 0;
+
+                _expectedAsyncEventCount = 0;
+            }
+        }
+
+        private void WaitForEvents(Action trigger, int count)
+        {
+            if (!_expectingAsyncEvents)
+            {
+                trigger();
+                return;
+            }
+
+            lock (_syncLock)
+            {
+                _expectedAsyncEventCount = count;
+                trigger();
+                while (_expectedAsyncEventCount > 0)
+                    Monitor.Wait(_syncLock);
             }
         }
 
         private void WaitForEvent(Action trigger)
         {
-            lock (_syncLock)
-            {
-                trigger();
-                Monitor.Wait(_syncLock, TimeSpan.FromSeconds(10));
-            }
+            WaitForEvents(trigger, 1);
         }
 
         #region IWorkItemActivityCallback Members
@@ -306,6 +386,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             lock (_syncLock)
             {
                 ++_workItemChangedCallbackCount;
+                --_expectedAsyncEventCount;
                 Monitor.Pulse(_syncLock);
             }
         }
@@ -316,7 +397,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         {
             lock (_syncLock)
             {
-                _gotIsConnectedChanged = true;
+                ++_isConnectedChangedCount;
+                --_expectedAsyncEventCount;
                 Monitor.Pulse(_syncLock);
             }
         }
@@ -326,6 +408,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             lock (_syncLock)
             {
                 ++_workItemChanged1Count;
+                --_expectedAsyncEventCount;
                 Monitor.Pulse(_syncLock);
             }
         }
@@ -335,6 +418,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             lock (_syncLock)
             {
                 ++_workItemChanged2Count;
+                --_expectedAsyncEventCount;
                 Monitor.Pulse(_syncLock);
             }
         }
@@ -344,6 +428,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             lock (_syncLock)
             {
                 ++_workItemChanged3Count;
+                --_expectedAsyncEventCount;
                 Monitor.Pulse(_syncLock);
             }
         }

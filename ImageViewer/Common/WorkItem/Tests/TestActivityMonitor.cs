@@ -1,9 +1,11 @@
+#if UNIT_TESTS
+
 using System;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 {
-    internal class TestActivityMonitor : IWorkItemActivityMonitor
+    internal class TestActivityMonitor : IWorkItemActivityMonitor, IWorkItemActivityCallback
     {
         private bool _isConnected;
         private readonly WorkItemChangedEventWrappers _workItemChangedEvents;
@@ -44,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             wrapper.IsSubscribedToService = false;
         }
 
-        public void OnWorkItemChanged(WorkItemData workItemData)
+        void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
         {
             var args = new WorkItemChangedEventArgs(workItemData);
             var delegates = _workItemChangedEvents.GetChangedDelegates(workItemData.Type);
@@ -63,3 +65,5 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         #endregion
     }
 }
+
+#endif

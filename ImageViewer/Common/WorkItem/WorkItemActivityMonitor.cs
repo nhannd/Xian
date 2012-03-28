@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         private static readonly object _instanceLock = new object();
         private static RealWorkItemActivityMonitor _instance;
-        private static int _proxyCount = 0;
+        internal static volatile int _proxyCount = 0;
 
         internal WorkItemActivityMonitor()
         {

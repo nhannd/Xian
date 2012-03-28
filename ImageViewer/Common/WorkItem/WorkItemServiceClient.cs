@@ -13,7 +13,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    public class WorkItemServiceClient : DuplexClientBase<IWorkItemService>, IWorkItemService
+    internal class WorkItemServiceClient : DuplexClientBase<IWorkItemService>, IWorkItemService
 	{
         public WorkItemServiceClient(InstanceContext callbackInstance)
 			: base(callbackInstance)

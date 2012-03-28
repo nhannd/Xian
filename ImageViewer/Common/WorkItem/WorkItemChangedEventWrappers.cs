@@ -38,8 +38,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public Delegate[] GetChangedDelegates()
         {
             //Don't return any if we're not actually subscribed on the service.
-            if (!IsSubscribedToService)
-                return new Delegate[0];
+            //if (!IsSubscribedToService)
+            //    return new Delegate[0];
 
             return _changed != null ? _changed.GetInvocationList() : new Delegate[0];
         }

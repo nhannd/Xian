@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNIT_TESTS
+
+using System;
 using ClearCanvas.Common;
 using System.ServiceModel;
 
@@ -7,7 +9,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
     [ExtensionOf(typeof(DuplexServiceProviderExtensionPoint))]
     internal class TestServiceProvider : IDuplexServiceProvider
     {
-        internal static volatile TestWorkItemService CurrentService = new TestWorkItemService();
+        internal static readonly TestWorkItemService ServiceInstance = new TestWorkItemService();
 
         #region Implementation of IDuplexServiceProvider
 
@@ -18,13 +20,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
                 return null;
 
             Platform.CheckExpectedType(callback, typeof(IWorkItemActivityCallback));
-            CurrentService.Callback = (IWorkItemActivityCallback)callback;
-            if (CurrentService.State != CommunicationState.Opened)
-                throw new EndpointNotFoundException();
+            if (ServiceInstance.State != CommunicationState.Opened)
+                throw new EndpointNotFoundException("Test service not running.");
 
-            return CurrentService;
+            ServiceInstance.Callback = (IWorkItemActivityCallback)callback;
+            return ServiceInstance;
         }
 
         #endregion
     }
 }
+
+#endif
