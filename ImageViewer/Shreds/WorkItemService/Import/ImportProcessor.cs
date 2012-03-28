@@ -30,14 +30,22 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             get { return Proxy.Item.Progress as ImportFilesProgress; }
         }
 
+        public ImportFilesRequest Request
+        {
+            get { return Proxy.Item.Request as ImportFilesRequest; }
+        }
+
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
+            bool initResult = base.Initialize(proxy);
+
             if (proxy.Item.Progress == null)
                 proxy.Item.Progress = new ImportFilesProgress();
             else if (!(proxy.Item.Progress is ImportFilesProgress))
                 proxy.Item.Progress = new ImportFilesProgress();
             
             FilesToImport = new List<string>();
+            
             
             // Reinit the progress
             Progress.TotalFilesToImport = 0;
@@ -46,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             Progress.StatusDetails = string.Empty;
             Progress.Status = string.Empty;
 
-            return base.Initialize(proxy);
+            return initResult;
         }
 
         public override void Process(WorkItemStatusProxy proxy)
@@ -188,11 +196,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 {
                     var dicomFile = new DicomFile(file);
 
-                    dicomFile.Load();
+                    DicomReadOptions readOptions;
+                    readOptions = Request.FileImportBehaviour == FileImportBehaviourEnum.Save 
+                        ? DicomReadOptions.Default
+                        : DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences;
+                    
+                    dicomFile.Load(readOptions);
 
                     var importer = new SopInstanceImporter(context);
 
-                    DicomProcessingResult result = importer.Import(dicomFile);
+                    DicomProcessingResult result = importer.Import(dicomFile,Request.BadFileBehaviour,Request.FileImportBehaviour);
 
                     if (result.DicomStatus == DicomStatuses.Success)
                     {

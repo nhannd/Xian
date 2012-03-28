@@ -169,7 +169,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         Move = 0,
         [EnumMember]
-        Copy
+        Copy,
+        [EnumMember]
+        Save
     }
 
     /// <summary>
