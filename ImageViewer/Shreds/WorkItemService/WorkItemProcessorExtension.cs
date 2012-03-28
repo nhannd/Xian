@@ -15,8 +15,9 @@ using ClearCanvas.Common.Shreds;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
-    [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class WorkItemProcessorExtension : QueueProcessorShred
+    // Note, although this is specified as a Shred, we don't actual use it as a Shred
+    // due to wanting it to be in the same app domain as the WorkItemActivityMonitorService
+    internal class WorkItemProcessorExtension : QueueProcessorShred
     {
         public override string GetDisplayName()
         {

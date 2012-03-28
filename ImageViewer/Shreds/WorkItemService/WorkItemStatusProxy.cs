@@ -218,7 +218,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private void Publish()
         {
-            //TODO
+            try
+            {
+                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", WorkItemHelper.FromWorkItem(Item));
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
+            }            
         }
     }
 }

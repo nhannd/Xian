@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         private static readonly List<Type> List = new List<Type>
                                                       {
+                                                          // WorkItemRequest related
                                                           typeof (WorkItemRequest),
                                                           typeof (DicomSendRequest),
                                                           typeof (DicomAutoRouteRequest),
@@ -31,7 +32,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (DicomRetrieveRequest),
                                                           typeof (StudyProcessRequest),
                                                           typeof (DicomReceiveRequest),
-                                                          typeof (ImportStudyRequest)
+                                                          typeof (ImportStudyRequest),
+
+                                                          // WorkItemProgress related
+                                                          typeof (WorkItemProgress),
+                                                          typeof (ImportFilesProgress),
+                                                          typeof (StudyProcessProgress)
                                                       };
 
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider ignored)

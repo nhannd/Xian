@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public class ActivityMonitorComponent : ApplicationComponent
 	{
 		private readonly Table<WorkItemData> _workItems = new Table<WorkItemData>();
-		private WorkItemData _data = new WorkItemData {Progress = new WorkItemProgress()};
+		private WorkItemData _data = new WorkItemData {Progress = new ImportFilesProgress()};
 
 		public ActivityMonitorComponent()
 		{

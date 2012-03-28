@@ -38,7 +38,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         private void OnWorkItemChanged(object sender, WorkItemChangedEventArgs e)
         {
-            Console.WriteLine("Received WorkItemChanged event.");
+            if (e.ItemData != null && e.ItemData.Request != null)
+            {
+                Console.WriteLine("Received WorkItemChanged event: {0}:{1}.", e.ItemData.Request.ActivityType,
+                                  e.ItemData.Request.ActivityDescription);
+                if (e.ItemData.Progress != null)
+                    Console.WriteLine("  Progress: {0}, Details: {1}.", e.ItemData.Progress.Status,
+                        e.ItemData.Progress.StatusDetails);
+            }
+            else
+                Console.WriteLine("Received WorkItemChanged event.");
         }
 
         private void OnIsConnectedChanged(object sender, EventArgs e)

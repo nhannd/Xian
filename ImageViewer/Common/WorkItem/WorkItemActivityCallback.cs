@@ -13,6 +13,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
+    [ServiceKnownType("GetKnownTypes", typeof(WorkItemRequestTypeProvider))]
     public interface IWorkItemActivityCallback
     {
         [OperationContract(IsOneWay = true)]

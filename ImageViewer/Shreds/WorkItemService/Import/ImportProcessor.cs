@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             Progress.NumberOfFilesImported = 0;
             Progress.NumberOfImportFailures = 0;
             Progress.StatusDetails = string.Empty;
-            Progress.Status = string.Empty;
 
             return initResult;
         }
@@ -88,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             //it's ok to read this property unsynchronized because this is the only thread that is adding to the queue for the particular job.
             if (FilesToImport.Count == 0)
             {
-                Progress.Status = SR.MessageNoFilesToImport;
+                Progress.StatusDetails = SR.MessageNoFilesToImport;
                 Progress.IsCancelable = false;
             }
             else
@@ -196,10 +195,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 {
                     var dicomFile = new DicomFile(file);
 
-                    DicomReadOptions readOptions;
-                    readOptions = Request.FileImportBehaviour == FileImportBehaviourEnum.Save 
-                        ? DicomReadOptions.Default
-                        : DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences;
+                    DicomReadOptions readOptions = Request.FileImportBehaviour == FileImportBehaviourEnum.Save 
+                                                       ? DicomReadOptions.Default
+                                                       : DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences;
                     
                     dicomFile.Load(readOptions);
 

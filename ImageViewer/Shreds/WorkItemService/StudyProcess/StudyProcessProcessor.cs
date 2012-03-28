@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path ?? string.Empty,
                              sop.SopInstanceUid);
-                Proxy.Item.Progress.Status = e.InnerException != null
+                Proxy.Item.Progress.StatusDetails = e.InnerException != null
                                                             ? String.Format("{0}:{1}", e.GetType().Name,
                                                                             e.InnerException.Message)
                                                             : String.Format("{0}:{1}", e.GetType().Name, e.Message);

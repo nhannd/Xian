@@ -83,7 +83,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 var item = new WorkItem
                                {
                                    Request = request.Request,
-                                   Progress =  new WorkItemProgress(),
                                    Type = request.Request.Type,
                                    Priority = request.Request.Priority,
                                    InsertTime = Platform.Time,
@@ -100,6 +99,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 response.Item = WorkItemHelper.FromWorkItem(item);
             }
+
+            try
+            {
+                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", response.Item);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
+            }            
 
             return response;
         }
@@ -155,24 +163,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
 
                 response.Items = results.ToArray();
-            }
-            return response;
-        }
-
-        public WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request)
-        {
-            var response = new WorkItemSubscribeResponse();
-            using (var context = new DataAccessContext())
-            {
-            }
-            return response;
-        }
-
-        public WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest type)
-        {
-            var response = new WorkItemUnsubscribeResponse();
-            using (var context = new DataAccessContext())
-            {
             }
             return response;
         }

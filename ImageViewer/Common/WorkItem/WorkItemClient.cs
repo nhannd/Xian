@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
@@ -8,10 +9,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         protected WorkItemData InsertRequest(WorkItemRequest request)
         {
-            //TODO Marmot, use a local service provider
-            var result = WorkItemMonitor.Insert(new WorkItemInsertRequest {Request = request});
+            WorkItemInsertResponse response = null;
 
-            return result.Item;
+            Platform.GetService<IWorkItemService>(s => response = s.Insert(new WorkItemInsertRequest { Request = request }));
+
+            if (response == null) return null;
+
+            return response.Item;
         }
     }
 

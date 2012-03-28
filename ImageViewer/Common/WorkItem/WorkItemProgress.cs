@@ -11,16 +11,18 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
+    [XmlInclude(typeof(ImportFilesProgress))]
+    [XmlInclude(typeof(StudyProcessProgress))]
     [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemProgressDataContract("b2dcf1f6-6e1a-48cd-b807-b720811a6575")]
-    public class WorkItemProgress : DataContractBase
+    public abstract class WorkItemProgress : DataContractBase
     {
-        [DataMember(IsRequired = false)]
-        public string Status { get; set; }
+        public virtual string Status { get { return string.Empty; } }
 
         [DataMember(IsRequired = false)]
         public string StatusDetails { get; set; }
@@ -55,15 +57,21 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             return TotalFilesToImport == TotalImportsProcessed;
         }
 
+        public override string Status
+        {
+            get
+            {
+                return string.Format(SR.ImportFilesProgress_Status, NumberOfFilesImported, TotalFilesToImport,
+                                   NumberOfImportFailures);
+            }
+        }
+
         public void UpdateStatus()
         {
             if (TotalFilesToImport > 0)
                 PercentComplete = (Decimal)TotalImportsProcessed / TotalFilesToImport;
             else
                 PercentComplete = new decimal(0.0);
-
-            Status = string.Format(SR.ImportFilesProgress_Status, NumberOfFilesImported, TotalFilesToImport,
-                                   NumberOfImportFailures);
         }
     }
 
@@ -90,6 +98,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             return TotalFilesToProcess == TotalFilesProcessed;
         }
 
+        public override string Status
+        {
+            get
+            {
+                return string.Format(SR.StudyProcessProgress_Status, NumberOfFilesProcessed, TotalFilesToProcess,
+                                   NumberOfProcessingFailures);                
+            }
+        }
         public void UpdateStatus()
         {
             if (TotalFilesToProcess > 0)
@@ -97,8 +113,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             else            
                 PercentComplete = new decimal(0.0);
 
-            Status = string.Format(SR.StudyProcessProgress_Status, NumberOfFilesProcessed, TotalFilesToProcess,
-                                   NumberOfProcessingFailures);
         }
     }
 }
