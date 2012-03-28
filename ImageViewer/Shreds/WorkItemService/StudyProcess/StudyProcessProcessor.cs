@@ -21,27 +21,12 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 {
-    public class StudyProcessProcessor : BaseItemProcessor
+    public class StudyProcessProcessor : BaseItemProcessor<StudyProcessRequest,StudyProcessProgress>
     {
-        public StudyProcessProgress Progress
-        {
-            get { return Proxy.Item.Progress as StudyProcessProgress; }
-        }
-
-        public override bool Initialize(WorkItemStatusProxy proxy)
-        {
-            if (proxy.Item.Progress == null)
-                proxy.Item.Progress = new StudyProcessProgress();
-            else if (!(proxy.Item.Progress is StudyProcessProgress))
-                proxy.Item.Progress = new StudyProcessProgress();
-
-            return base.Initialize(proxy);
-        }
         /// <summary>
         /// Cleanup any failed items in the queue and delete the queue entry.
         /// </summary>
-        /// <param name="proxy"></param>
-        public override void Delete(WorkItemStatusProxy proxy)
+        public override void Delete()
         {
             LoadUids();
             foreach (WorkItemUid sop in WorkQueueUidList)
@@ -58,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                     catch (Exception e)
                     {
                         Platform.Log(LogLevel.Error, e, "Unexpected exception attempting to cleanup file for Work Item {0}",
-                                     proxy.Item.Oid);
+                                     Proxy.Item.Oid);
                     }
                 }
             }
@@ -66,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
             Proxy.Delete();
         }
 
-        public override void Process(WorkItemStatusProxy proxy)
+        public override void Process()
         {
             int count = ProcessUidList();
 
@@ -119,9 +104,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
             }
         }
 
-        protected override bool CanStart()
+        public override bool CanStart(out string reason)
         {
             var relatedList = FindRelatedWorkItems(null, new List<WorkItemStatusEnum> {WorkItemStatusEnum.InProgress});
+            
+            reason = string.Empty;
 
             if (relatedList.Count > 0)
                 return false;

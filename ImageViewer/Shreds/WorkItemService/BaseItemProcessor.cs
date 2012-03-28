@@ -26,27 +26,50 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
 
-
-   public abstract class BaseItemProcessor: IWorkItemProcessor
+    /// <summary>
+    /// Abstract base class for processing WorkItems.
+    /// </summary>
+    /// <typeparam name="TRequest">The request object for the work item.</typeparam>
+    /// <typeparam name="TProgress">The progress object for the work item.</typeparam>
+    public abstract class BaseItemProcessor<TRequest, TProgress> : IWorkItemProcessor
+        where TProgress : WorkItemProgress, new()
+        where TRequest : WorkItemRequest
     {
         #region Private Fields
 
         private const int MAX_DB_RETRY = 5;
         private string _name = "Work Item";
         private IList<WorkItemUid> _uidList;
-     	private volatile bool _cancelPending;
+        private volatile bool _cancelPending;
         private volatile bool _stopPending;
-    	private readonly object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
 
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// The progress object for the WorkItem.  Note that all updates to the progress should
+        /// be done through this object, and not through the <see cref="Proxy"/> property.
+        /// </summary>
+        public TProgress Progress
+        {
+            get { return Proxy.Progress as TProgress; }
+        }
+
+        /// <summary>
+        /// The request object for the WorkItem.
+        /// </summary>
+        public TRequest Request
+        {
+            get { return Proxy.Request as TRequest; }
+        }
+
         protected IList<WorkItemUid> WorkQueueUidList
         {
             get
             {
-                if (_uidList==null)
+                if (_uidList == null)
                 {
                     LoadUids();
                 }
@@ -66,26 +89,73 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         protected bool CancelPending
         {
-            get {  return _cancelPending; }
+            get { return _cancelPending; }
         }
 
         protected bool StopPending
         {
-            get {   return _stopPending; }
+            get { return _stopPending; }
         }
+
         #endregion
 
-        #region Protected Methods     
+        #region Public Methods
 
-        public virtual bool CanStart(WorkItemStatusProxy proxy, out string reason)
+        /// <summary>
+        /// Called by the base to initialize the processor.
+        /// </summary>
+        public virtual bool Initialize(WorkItemStatusProxy proxy)
+        {
+            Proxy = proxy;
+            if (proxy.Progress == null)
+                proxy.Progress = new TProgress();
+            else if (!(proxy.Progress is TProgress))
+                proxy.Progress = new TProgress();
+
+            if (Request == null)
+                throw new ApplicationException(SR.InternalError);
+
+            if (!string.IsNullOrEmpty(proxy.Item.StudyInstanceUid))
+                Location = new StudyLocation(proxy.Item.StudyInstanceUid);
+
+            return true;
+        }
+
+        public void Cancel()
+        {
+            lock (_syncRoot)
+                _cancelPending = true;
+        }
+
+        public void Stop()
+        {
+            lock (_syncRoot)
+                _stopPending = true;
+        }
+
+        public virtual bool CanStart(out string reason)
         {
             reason = string.Empty;
             return true;
         }
 
-        public abstract void Process(WorkItemStatusProxy proxy);
+        public abstract void Process();
 
-        public abstract void Delete(WorkItemStatusProxy proxy);
+        public virtual void Delete()
+        {
+            Proxy.Delete();
+        }
+
+        /// <summary>
+        /// Dispose of any native resources.
+        /// </summary>
+        public virtual void Dispose()
+        {
+        }
+
+        #endregion
+
+        #region Protected Methods
 
         /// <summary>
         /// Load the specific SOP Instance Uids in the database for the WorkQueue item.
@@ -100,7 +170,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
-       /// <summary>
+        /// <summary>
         /// Routine for failing a work queue uid record.
         /// </summary>
         /// <param name="uid">The WorkItemUid entry to fail.</param>
@@ -119,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 if (sop.FailureCount > WorkItemServiceSettings.Instance.RetryCount)
                     sop.Failed = true;
-                
+
                 context.Commit();
                 return sop;
             }
@@ -210,7 +280,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
-       /// <summary>
+        /// <summary>
         /// Load a <see cref="StudyXml"/> file for a given <see cref="StudyLocation"/>
         /// </summary>
         /// <returns>The <see cref="StudyXml"/> instance for <paramref name="location"/></returns>
@@ -235,7 +305,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
             return theXml;
         }
-   
 
         /// <summary>
         /// Returns a list of related <see cref="StudyManagement.Storage.WorkItem"/> with specified types and status (both are optional).
@@ -244,7 +313,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// <param name="types"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        protected IList<WorkItem> FindRelatedWorkItems(IEnumerable<WorkItemTypeEnum> types, IEnumerable<WorkItemStatusEnum> status)
+        protected IList<WorkItem> FindRelatedWorkItems(IEnumerable<WorkItemTypeEnum> types,
+                                                       IEnumerable<WorkItemStatusEnum> status)
         {
             IList<WorkItem> list;
 
@@ -255,7 +325,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 list = broker.GetWorkItems(null, null, Proxy.Item.StudyInstanceUid);
             }
 
-            if (list==null)
+            if (list == null)
                 return null;
 
             // remove the current item 
@@ -281,62 +351,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             return list;
         }
 
-        
-        /// <summary>
-        /// Called by the base before <see cref="Process"/> is invoked to determine 
-        /// if the process can begin.
-        /// </summary>
-        /// <returns>True if the processing can begin. False otherwise.</returns>
-        /// <remarks>
-        /// </remarks>
-        protected abstract bool CanStart();
-
-        /// <summary>
-        /// Called by the base to initialize the processor.
-        /// </summary>
-        public virtual bool Initialize(WorkItemStatusProxy proxy)
-        {
-            Proxy = proxy;
-
-            if (!string.IsNullOrEmpty(proxy.Item.StudyInstanceUid))
-                Location = new StudyLocation(proxy.Item.StudyInstanceUid);
-
-        	return true;
-        }
-
-        public void Cancel()
-        {
-            lock (_syncRoot)
-                _cancelPending = true;
-        }
-
-        public void Stop()
-        {
-            lock (_syncRoot)
-                _stopPending = true;
-        }
-
         protected static DicomServerConfiguration GetServerConfiguration()
         {
             DicomServerConfiguration configuration = null;
             var request = new GetDicomServerConfigurationRequest();
             Platform.GetService<IDicomServerConfiguration>(s =>
-                                configuration = s.GetConfiguration(request).Configuration);
+                                                           configuration = s.GetConfiguration(request).Configuration);
 
             return configuration;
         }
 
-        /// <summary>
-        /// Dispose of any native resources.
-        /// </summary>
-        public virtual void Dispose()
-        {
-
-        }
-
-
-
         #endregion
-
     }
 }

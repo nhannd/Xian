@@ -400,4 +400,7 @@ Please check the service logs for more details.</value>
   <data name="WorkItemActivityMonitorService" xml:space="preserve">
     <value>Work Item Activity Monitor</value>
   </data>
+  <data name="InternalError" xml:space="preserve">
+    <value>Internal error.</value>
+  </data>
 </root>
