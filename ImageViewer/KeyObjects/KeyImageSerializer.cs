@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		private string _manufacturersModelName;
 		private string _deviceSerialNumber;
 		private string _softwareVersions;
+		private string _specificCharacterSet = @"ISO_IR 192";
 		private KeyObjectSelectionDocumentTitle _docTitle = KeyObjectSelectionDocumentTitleContextGroup.OfInterest;
 
 		/// <summary>
@@ -184,6 +185,19 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		}
 
 		/// <summary>
+		/// Gets or sets the DICOM specific character set to be used when encoding SOP instances.
+		/// </summary>
+		/// <remarks>
+		/// By default, text attribute values will be encoded using UTF-8 Unicode (ISO-IR 192).
+		/// If set to NULL or empty, values will be encoded using the default character repertoire (ISO-IR 6).
+		/// </remarks>
+		public string SpecificCharacterSet
+		{
+			get { return _specificCharacterSet; }
+			set { _specificCharacterSet = value; }
+		}
+
+		/// <summary>
 		/// Adds a frame and associated presentation state to the serialization queue.
 		/// </summary>
 		public void AddImage(Frame frame, DicomSoftcopyPresentationState presentationState)
@@ -224,7 +238,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 					DicomFile keyObjectDocument = new DicomFile();
 					keyObjectDocument.SourceApplicationEntityTitle = this.SourceAETitle;
 					
-					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(frame.ParentImageSop.DataSource, keyObjectDocument.DataSet);
+					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(frame.ParentImageSop.DataSource, keyObjectDocument.DataSet, SpecificCharacterSet);
 					
 					iod.GeneralEquipment.Manufacturer = this.Manufacturer ?? string.Empty; // this one is type 2 - all other GenEq attributes are type 3
 					iod.GeneralEquipment.ManufacturersModelName = string.IsNullOrEmpty(this.ManufacturersModelName) ? null : this.ManufacturersModelName;
@@ -371,20 +385,12 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			return maxValue + 1;
 		}
 
-		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(IDicomAttributeProvider source, DicomAttributeCollection target)
+		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(IDicomAttributeProvider source, DicomAttributeCollection target, string specificCharacterSet)
 		{
 			KeyObjectSelectionDocumentIod iod = new KeyObjectSelectionDocumentIod(target);
-			var attribute = source[DicomTags.SpecificCharacterSet];
-			if (attribute.IsEmpty || attribute.IsNull)
-			{
-				target.SpecificCharacterSet = String.Empty;
-				target[DicomTags.SpecificCharacterSet].SetNullValue();
-			}
-			else
-			{
-				target.SpecificCharacterSet = source[DicomTags.SpecificCharacterSet].ToString();
-				target[DicomTags.SpecificCharacterSet].SetStringValue(target.SpecificCharacterSet);
-			}
+			specificCharacterSet = specificCharacterSet ?? string.Empty;
+			target.SpecificCharacterSet = specificCharacterSet;
+			target[DicomTags.SpecificCharacterSet].SetStringValue(specificCharacterSet);
 
 			PatientModuleIod sourcePatient = new PatientModuleIod(source);
 			if (true) // patient module is always required

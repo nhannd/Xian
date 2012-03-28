@@ -123,30 +123,11 @@
   <data name="CheckingConnectionSpeed" xml:space="preserve">
     <value>Checking connection speed...</value>
   </data>
-  <data name="CompanyAddress" xml:space="preserve">
-    <value>ClearCanvas Inc.
-1920-439 University Ave.
-Toronto, ON M5G 1Y8
-Canada</value>
-  </data>
-  <data name="CompanyWebAddress" xml:space="preserve">
-    <value>www.clearcanvas.ca</value>
-  </data>
-  <data name="Copyright" xml:space="preserve">
-    <value>Copyright 2012 ClearCanvas Inc. All rights reserved.</value>
-  </data>
   <data name="Disposing" xml:space="preserve">
     <value>Disposing</value>
   </data>
   <data name="OpeningConnection" xml:space="preserve">
     <value>Opening connection...</value>
-  </data>
-  <data name="PartOfClearCanvasRISPACS" xml:space="preserve">
-    <value>Part of the ClearCanvas RIS/PACS</value>
-  </data>
-  <data name="ProductInfo" xml:space="preserve">
-    <value>ClearCanvas ImageServer {0} {1} [{2}]
-Part of the ClearCanvas RIS/PACS</value>
   </data>
   <data name="SlowConnection" xml:space="preserve">
     <value>Your current connection speed seems too slow.</value>

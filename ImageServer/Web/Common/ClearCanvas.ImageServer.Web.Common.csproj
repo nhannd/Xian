@@ -145,6 +145,7 @@
     <Compile Include="ImageServerConstants.cs" />
     <Compile Include="ImageServerHttpApplication.cs" />
     <Compile Include="KeyedCollectionBase.cs" />
+    <Compile Include="Modules\CultureOverrideModule.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Modules\HttpContextDataManagementModule.cs" />
     <Compile Include="Modules\ApplicationModule.cs" />

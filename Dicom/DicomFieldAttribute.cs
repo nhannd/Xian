@@ -60,6 +60,7 @@ namespace ClearCanvas.Dicom
             get { return _tag; }
         }
 
+        // TODO (CR Mar 2012): This is unused, which means it doesn't work.
     	public DicomTag ParentTag
     	{
     		get { return _parentTag; }

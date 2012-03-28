@@ -12,10 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Web;
 using ClearCanvas.Common;
-using System.Threading;
-using System.Globalization;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Web.Common;
 using Resources;
@@ -41,7 +38,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
                 Page.ClientTarget = "uplevel";
         
         }
-
         
         protected void SetPageTitle(string title)
         {
@@ -54,8 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
             if (!string.IsNullOrEmpty(ProductInformation.Release))
                 tags.Add(Titles.LabelNotForDiagnosticUse);
             if (!ServerPlatform.IsManifestVerified)
-                // should be hardcoded because manifest verification is all that prevents localizing this tag away
-                tags.Add("Modified Installation");
+                tags.Add(ConstantResourceManager.ModifiedInstallation);
 
             var name = ProductInformation.GetName(false, true);
             if (tags.Count == 0)
@@ -80,6 +75,4 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
                     : title + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
 		}
     }
-
-
 }

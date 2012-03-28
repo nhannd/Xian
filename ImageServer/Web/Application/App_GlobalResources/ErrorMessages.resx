@@ -205,6 +205,12 @@ If you would like to report the error, please post to one of the forums listed b
   <data name="MultiplePartitionsExistWithAETitle" xml:space="preserve">
     <value>Unexpected Error: Multiple Partitions exist with AE title {0}</value>
   </data>
+  <data name="PasswordExpired" xml:space="preserve">
+    <value>Your password has expired.</value>
+  </data>
+  <data name="PasswordPolicyNotMet" xml:space="preserve">
+    <value>The password you entered is not acceptable. Please contact the administrator.</value>
+  </data>
   <data name="PasswordResetFailed" xml:space="preserve">
     <value>An error occurred resetting the password. Password has not been changed.</value>
   </data>

@@ -117,9 +117,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			if (!string.IsNullOrEmpty(_specificCharacterSet))
 				attributes.SpecificCharacterSet = _specificCharacterSet;
 
-			attributes[DicomTags.SpecificCharacterSet] = null;
 			attributes[DicomTags.QueryRetrieveLevel].SetStringValue(QueryRetrieveLevel);
-
 			attributes.SaveDicomFields(this);
 
 			return attributes;

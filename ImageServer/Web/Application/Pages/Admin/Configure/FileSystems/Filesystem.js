@@ -112,12 +112,8 @@ function ValidationFilesystemPathParams()
     return params;
 }
 
-function OnLoadFilesystemInfoError(result) {
-
-    // TODO: What is this?
-    if (result.get_message() != "Index was outside the bounds of the array.")
-        alert('Error: ' + result.get_message());
-
+function OnLoadFilesystemInfoError(result) 
+{
     DisableWatermarkInput();
 }
 

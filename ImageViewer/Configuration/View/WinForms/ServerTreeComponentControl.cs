@@ -333,7 +333,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             else if (_component.UpdateType == (int)ServerUpdateType.Edit)
             {
                 IServerTreeNode dataNode = _component.ServerTree.CurrentNode;
-                _lastClickedNode.Text = dataNode.Name;
+                _lastClickedNode.Text = dataNode.DisplayName;
                 _lastClickedNode.Tag = dataNode;
             	SynchronizeTooltips(_lastClickedNode);
             }
@@ -389,7 +389,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			if (_component.ShowLocalDataStoreNode)
 			{
 				// build the localdatastorenode
-				TreeNode localDataStoreTreeNode = new TreeNode(dicomServerTree.RootNode.LocalDataStoreNode.Name);
+				TreeNode localDataStoreTreeNode = new TreeNode(dicomServerTree.RootNode.LocalDataStoreNode.DisplayName);
 				localDataStoreTreeNode.Tag = dicomServerTree.RootNode.LocalDataStoreNode;
 				localDataStoreTreeNode.ToolTipText = dicomServerTree.RootNode.LocalDataStoreNode.ToString();
 				SetIcon(dicomServerTree.RootNode.LocalDataStoreNode, localDataStoreTreeNode);
@@ -397,7 +397,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			}
 
             // build the default server group
-            TreeNode firstServerGroup = new TreeNode(dicomServerTree.RootNode.ServerGroupNode.Name);
+            TreeNode firstServerGroup = new TreeNode(dicomServerTree.RootNode.ServerGroupNode.DisplayName);
             firstServerGroup.Tag = dicomServerTree.RootNode.ServerGroupNode;
             firstServerGroup.ToolTipText = dicomServerTree.RootNode.ServerGroupNode.ToString();
             SetIcon(dicomServerTree.RootNode.ServerGroupNode, firstServerGroup);
@@ -429,7 +429,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
         private TreeNode AddTreeNode(TreeNode treeNode, IServerTreeNode dataChild)
         {
-            TreeNode treeChild = new TreeNode(dataChild.Name);
+            TreeNode treeChild = new TreeNode(dataChild.DisplayName);
             SetIcon(dataChild, treeChild);
             treeChild.Tag = dataChild;
             treeChild.ToolTipText = dataChild.ToString();

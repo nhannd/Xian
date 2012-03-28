@@ -157,13 +157,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 ReasonListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription( reason), reason.Lookup));
             }
 
+            if (!string.IsNullOrEmpty(ReasonFromUrl))
+                ReasonListBox.Items.FindByValue(ReasonFromUrl).Selected = true;
+
             if (!string.IsNullOrEmpty(PatientNameFromUrl) || !string.IsNullOrEmpty(PatientIdFromUrl))
             {
                 PatientName.Text = PatientNameFromUrl;
                 PatientId.Text = PatientIdFromUrl;
-                if (!string.IsNullOrEmpty(ReasonFromUrl))
-                    ReasonListBox.Items.FindByValue(ReasonFromUrl).Selected = true;
-
+                
                 StudyIntegrityQueueItemList.SetDataSource();
                 StudyIntegrityQueueItemList.Refresh();
             }

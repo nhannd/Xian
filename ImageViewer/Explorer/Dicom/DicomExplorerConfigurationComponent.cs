@@ -58,13 +58,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public bool ShowPhoneticName
 		{
-			get { return _resultColumns[SR.ColumnHeadingPhoneticName].Visible; }
+			get { return _resultColumns[SearchResult.ColumnPhoneticName].Visible; }
 			set
 			{
 				if (ShowPhoneticName == value)
 					return;
 
-				_resultColumns[SR.ColumnHeadingPhoneticName].Visible = value;
+				_resultColumns[SearchResult.ColumnPhoneticName].Visible = value;
 				NotifyPropertyChanged("ShowPhoneticName");
 				NotifyPropertyChanged("ShowPhoneticIdeographicNames");
 				Modified = true;
@@ -73,13 +73,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public bool ShowIdeographicName
 		{
-			get { return _resultColumns[SR.ColumnHeadingIdeographicName].Visible; }
+			get { return _resultColumns[SearchResult.ColumnIdeographicName].Visible; }
 			set
 			{
 				if (ShowIdeographicName == value)
 					return;
 
-				_resultColumns[SR.ColumnHeadingIdeographicName].Visible = value;
+				_resultColumns[SearchResult.ColumnIdeographicName].Visible = value;
 				NotifyPropertyChanged("ShowIdeographicName");
 				NotifyPropertyChanged("ShowPhoneticIdeographicNames");
 				Modified = true;
@@ -88,13 +88,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public bool ShowNumberOfImagesInStudy
 		{
-			get { return _resultColumns[SR.ColumnHeadingNumberOfInstances].Visible; }
+			get { return _resultColumns[SearchResult.ColumnNumberOfInstances].Visible; }
 			set
 			{
 				if (ShowNumberOfImagesInStudy == value)
 					return;
 
-				_resultColumns[SR.ColumnHeadingNumberOfInstances].Visible = value;
+				_resultColumns[SearchResult.ColumnNumberOfInstances].Visible = value;
 				NotifyPropertyChanged("ShowNumberOfImagesInStudy");
 				Modified = true;
 			}

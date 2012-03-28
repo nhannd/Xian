@@ -21,17 +21,26 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
-    <link id="Link1" rel="shortcut icon" type="image/ico" runat="server" href="~/Images/favicon.ico" />
+
 </head>
 <body class="LoginBody" runat="server">
     
     <form runat="server">
 
-    <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" />            
+    <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" />          
 
     <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true">
     </asp:ScriptManager>
+    
+    <script type="text/javascript">        
+        function focusOnUserName() 
+        {
+            $get('<%= UserName.ClientID %>').focus();
+        }
+
+        Sys.Application.add_load(focusOnUserName);
+    </script>
                 
     <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server" SkinID="<%$ Image : LoginSplash%>">
         

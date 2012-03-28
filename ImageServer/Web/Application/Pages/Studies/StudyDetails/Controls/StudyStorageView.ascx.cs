@@ -73,12 +73,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 Label statusLabel = StudyStorageViewControl.FindControl("Status") as Label;
                 if (statusLabel != null)
                 {
-                    statusLabel.Text = ssl.StudyStatusEnum.Description;
+                    statusLabel.Text =  ServerEnumDescription.GetLocalizedDescription(ssl.StudyStatusEnum);
                 }
 				Label queueStateLable = StudyStorageViewControl.FindControl("QueueState") as Label;
 				if (queueStateLable != null)
 				{
-					queueStateLable.Text = ssl.QueueStudyStateEnum.Description;
+				    queueStateLable.Text = ServerEnumDescription.GetLocalizedDescription(ssl.QueueStudyStateEnum);
 				}
 				Label studyFolder = StudyStorageViewControl.FindControl("StudyFolder") as Label;
                 if (studyFolder != null)
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 				Label tier = StudyStorageViewControl.FindControl("Tier") as Label;
 				if (tier != null)
 				{
-					tier.Text = ssl.FilesystemTierEnum.Description;
+					tier.Text =  ServerEnumDescription.GetLocalizedDescription(ssl.FilesystemTierEnum);
 				}
 
                 Label studySize = StudyStorageViewControl.FindControl("StudySize") as Label;

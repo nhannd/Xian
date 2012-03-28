@@ -19,6 +19,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.Services.ServerTree;
+using System.Linq;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -78,7 +79,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 		/// <returns>True if the files were published to all relevant destinations successfully; False if publishing to one or more destinations failed.</returns>
 		public bool Publish()
 		{
-			var studyFiles = GetFilesByStudy(Files);
+		    // TODO (CR Mar 2012): Method's getting a bit long now.
+
+			var filesByStudyUid = Files.GroupBy(f => f.DataSet[DicomTags.StudyInstanceUid].ToString());
 			var hasErrors = false;
 
 			// check that user has permissions to publish to remote servers
@@ -114,11 +117,20 @@ namespace ClearCanvas.ImageViewer.Configuration
 				{
 					// generate a list of files to be published
 					var remoteFiles = new List<DicomFile>();
-					foreach (var study in studyFiles)
+					foreach (var studyFiles in filesByStudyUid)
 					{
-						// files are only published to servers which possess the parent study
-						if (StudyExistsOnRemote(server, study.Key))
-							remoteFiles.AddRange(study.Value);
+                        try
+                        {
+                            // files are only published to servers which possess the parent study
+                            if (StudyExistsOnRemote(server, studyFiles.Key))
+                                remoteFiles.AddRange(studyFiles);
+                        }
+                        catch (Exception e)
+                        {
+                            //Consider failure to query an error because we don't know whether or not the study exists.
+                            Platform.Log(LogLevel.Error, e, "Unable to determine if study '{0}' exists on server '{1}'.", studyFiles.Key, server.AETitle);
+                            hasErrors = true;
+                        }
 					}
 
 					// publish remote files now
@@ -133,11 +145,20 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 			// generate a list of files to be published
 			var localFiles = new List<DicomFile>();
-			foreach (var study in studyFiles)
+			foreach (var studyFiles in filesByStudyUid)
 			{
-				// files are only published to the local store if it possesses the parent study
-				if (StudyExistsOnLocal(study.Key))
-					localFiles.AddRange(study.Value);
+			    try
+			    {
+                    // files are only published to the local store if it possesses the parent study
+                    if (StudyExistsOnLocal(studyFiles.Key))
+                        localFiles.AddRange(studyFiles);
+			    }
+			    catch (Exception e)
+			    {
+                    //Consider failure to query an error because we don't know whether or not the study exists.
+                    Platform.Log(LogLevel.Error, e, "Unable to determine if study '{0}' exists locally.", studyFiles.Key);
+			        hasErrors = true;
+			    }
 			}
 
 			// publish local files now
@@ -158,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			if (string.IsNullOrEmpty(aetitle))
 				return null;
 
-			Services.ServerTree.ServerTree tree = new Services.ServerTree.ServerTree();
+			var tree = new Services.ServerTree.ServerTree();
 			foreach (var node in tree.FindChildServers(tree.RootNode.ServerGroupNode))
 			{
 				var server = node as Server;
@@ -168,53 +189,18 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return null;
 		}
 
-		private static IDictionary<string, IList<DicomFile>> GetFilesByStudy(IEnumerable<DicomFile> files)
-		{
-			var studies = new Dictionary<string, IList<DicomFile>>();
-			foreach (var file in files)
-			{
-				if (file == null)
-					continue;
-
-				var studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-				if (!studies.ContainsKey(studyInstanceUid))
-					studies.Add(studyInstanceUid, new List<DicomFile>());
-
-				var studyFiles = studies[studyInstanceUid];
-				if (!studyFiles.Contains(file))
-					studyFiles.Add(file);
-			}
-			return studies;
-		}
-
 		private static bool StudyExistsOnLocal(string studyInstanceUid)
 		{
-			try
-			{
-				var srq = (IStudyRootQuery) new LocalStudyRootQueryExtensionPoint().CreateExtension();
-				var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
-				return result.Count > 0;
-			}
-			catch (Exception)
-			{
-			    /// TODO (CR Nov 2011): This could be a valid error condition that the user should be notified of.
-				return false;
-			}
+			var srq = (IStudyRootQuery) new LocalStudyRootQueryExtensionPoint().CreateExtension();
+			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
+			return result.Count > 0;
 		}
 
 		private static bool StudyExistsOnRemote(Server server, string studyInstanceUid)
 		{
-			try
-			{
-				var srq = new DicomStudyRootQuery(Services.ServerTree.ServerTree.GetClientAETitle(), server.AETitle, server.Host, server.Port);
-				var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
-				return result.Count > 0;
-			}
-			catch (Exception)
-			{
-                /// TODO (CR Nov 2011): This could be a valid error condition that the user should be notified of.
-				return false;
-			}
+			var srq = new DicomStudyRootQuery(Services.ServerTree.ServerTree.GetClientAETitle(), server.AETitle, server.Host, server.Port);
+			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
+			return result.Count > 0;
 		}
 
 		private static bool PublishFilesToLocal(ICollection<DicomFile> files)
@@ -235,12 +221,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
-				var destination = new AEInformation();
-				destination.AETitle = server.AETitle;
-				destination.HostName = server.Host;
-				destination.Port = server.Port;
+				var destination = new AEInformation {AETitle = server.AETitle, HostName = server.Host, Port = server.Port};
 
-				DicomFilePublisher.PublishRemote(files, destination, true);
+			    DicomFilePublisher.PublishRemote(files, destination, true);
 				return true;
 			}
 			catch (DicomFilePublishingException ex)

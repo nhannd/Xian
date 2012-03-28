@@ -690,7 +690,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                     // initialize the necessary properties
                     dgcol.Name = col.Name;
-                    dgcol.HeaderText = col.Name;
+                    dgcol.HeaderText = col.DisplayName;
                     dgcol.DataPropertyName = col.Name;
                     dgcol.ReadOnly = col.ReadOnly;
                     dgcol.MinimumWidth = (int)(col.WidthFactor * _table.BaseColumnWidthChars * fontSize);
@@ -1025,7 +1025,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				foreach (ITableColumn column in _table.Columns)
             	{
-					ToolStripItem item = new ToolStripMenuItem(column.Name, null, _sortButtonDropDownItem_Click, column.Name);
+					ToolStripItem item = new ToolStripMenuItem(column.DisplayName, null, _sortButtonDropDownItem_Click, column.Name);
 					if (_sortButton.DropDownItems.ContainsKey(column.Name) == false)
 						_sortButton.DropDownItems.Add(item);
 				}
@@ -1191,7 +1191,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			var column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
 			e.ToolTipText = e.RowIndex == -1 ? 
-				string.Format("{0}: {1}", _columnHeaderTooltipBase, column.Name)
+				string.Format("{0}: {1}", _columnHeaderTooltipBase, column.DisplayName)
 				: column.GetTooltipText(_table.Items[e.RowIndex]);
 		}
 

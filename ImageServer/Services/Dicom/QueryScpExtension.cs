@@ -207,7 +207,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
             //dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
-            if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
+            var characterSet = GetPreferredCharacterSet();
+            if (!string.IsNullOrEmpty(characterSet))
+            {
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+                dataSet.SpecificCharacterSet = characterSet; 
+            }
+            else if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
                 dataSet[DicomTags.SpecificCharacterSet].SetStringValue(row.SpecificCharacterSet);
                 dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
@@ -301,7 +307,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 			dataSet[DicomTags.InstanceAvailability].SetStringValue(availability);
 
-            if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
+            var characterSet = GetPreferredCharacterSet();
+            if (!string.IsNullOrEmpty(characterSet))
+            {
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+                dataSet.SpecificCharacterSet = characterSet;
+            }
+            else if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
                 dataSet[DicomTags.SpecificCharacterSet].SetStringValue(row.SpecificCharacterSet);
                 dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
@@ -405,7 +417,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                                        ? "NEARLINE"
                                                                        : "ONLINE");
 
-            if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
+            var characterSet = GetPreferredCharacterSet();
+            if (!string.IsNullOrEmpty(characterSet))
+            {
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+                dataSet.SpecificCharacterSet = characterSet;
+            }
+            else if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
 			{
 				dataSet[DicomTags.SpecificCharacterSet].SetStringValue(theStudy.SpecificCharacterSet);
 				dataSet.SpecificCharacterSet = theStudy.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
@@ -495,7 +513,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             DicomAttributeCollection sourceDataSet = theInstanceStream.Collection;
 
-			if (false == sourceDataSet.Contains(DicomTags.SpecificCharacterSet))
+            var characterSet = GetPreferredCharacterSet();
+            if (!string.IsNullOrEmpty(characterSet))
+            {
+                dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
+                dataSet.SpecificCharacterSet = characterSet;
+            }
+            else if (sourceDataSet.Contains(DicomTags.SpecificCharacterSet))
 			{
 				dataSet[DicomTags.SpecificCharacterSet].SetStringValue(sourceDataSet[DicomTags.SpecificCharacterSet].ToString());
 				dataSet.SpecificCharacterSet = sourceDataSet[DicomTags.SpecificCharacterSet].ToString(); // this will ensure the data is encoded using the specified character set
@@ -1117,6 +1141,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
+                    if (attrib.Tag.TagValue.Equals(DicomTags.SpecificCharacterSet)
+                        || attrib.Tag.TagValue.Equals(DicomTags.QueryRetrieveLevel))
+                        continue;
+
                     tagList.Add(attrib.Tag);
                     if (!attrib.IsNull)
                         matchingTagList.Add(attrib.Tag.TagValue);
@@ -1179,6 +1207,20 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 AuditLog(server.AssociationParams, EventIdentificationContentsEventOutcomeIndicator.SeriousFailureActionTerminated, message);
             }
             return;
+        }
+
+        /// <summary>
+        /// Get the prefered character set for the C-FIND-RSP.
+        /// </summary>
+        /// <returns></returns>
+        private static string GetPreferredCharacterSet()
+        {
+            // TODO: In the future, should be device-dependent
+
+            if (DicomSettings.Default.CFINDRspAlwaysInUnicode)
+                return "ISO_IR 192";
+            else
+                return null;
         }
 
         #endregion

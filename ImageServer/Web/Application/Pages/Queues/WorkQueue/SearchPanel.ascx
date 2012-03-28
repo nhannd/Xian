@@ -23,13 +23,11 @@
         function MultiSelect(){
             $("#<%=TypeListBox.ClientID %>").multiSelect({
                 noneSelected: '',
-                oneOrMoreSelected: '*',
-                dropdownStyle: 'width: 260px'
+                oneOrMoreSelected: '*'
             });
             $("#<%=StatusListBox.ClientID %>").multiSelect({
                 noneSelected: '',
-                oneOrMoreSelected: '*',
-                dropdownStyle: 'width: 130px;'
+                oneOrMoreSelected: '*'
             });
         }
         </script>

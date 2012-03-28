@@ -64,9 +64,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
         {
             return new List<ImageComparer>
                        {
-                           new ImageComparer("Instance Number", SR.SortByImageNumberDescription, new InstanceAndFrameNumberComparer()),
-                           new ImageComparer("Acquisition Time", SR.SortByAcquisitionTimeDescription, new AcquisitionTimeComparer()),
-                           new ImageComparer("Slice Location", SR.SortBySliceLocationDescription, new SliceLocationComparer())
+                           new ImageComparer("Instance Number", "SortByImageNumberDescription", new InstanceAndFrameNumberComparer()),
+                           new ImageComparer("Acquisition Time", "SortByAcquisitionTimeDescription", new AcquisitionTimeComparer()),
+                           new ImageComparer("Slice Location", "SortBySliceLocationDescription", new SliceLocationComparer())
                        };
         }
     }

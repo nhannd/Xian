@@ -33,9 +33,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
         public override StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
-			ApplicationEntity selectedServer = (ApplicationEntity)targetServer;
+			var selectedServer = (ApplicationEntity)targetServer;
 
-			DicomAttributeCollection requestCollection = new DicomAttributeCollection();
+            //.NET strings are unicode, therefore, so is all the query data.
+            const string utf8 = "ISO_IR 192";
+            var requestCollection = new DicomAttributeCollection { SpecificCharacterSet = utf8 };
+            requestCollection[DicomTags.SpecificCharacterSet].SetStringValue(utf8);
 
 			requestCollection[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
 			requestCollection[DicomTags.StudyInstanceUid].SetStringValue("");

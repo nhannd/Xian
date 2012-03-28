@@ -1,10 +1,6 @@
-// Helper methods to detect separators on the client machine
-var test = (0.5).toLocaleString();
-var dsep = test.charAt(1);
-var test = (1234.05).toLocaleString();
-var tsep = test.charAt(1);
-if (tsep == '2') tsep = ''; // no separator is used
-
+// Locale is defined in GlobalMasterPage
+var tsep = new Locale().digitGroupSeparator;
+var dsep = new Locale().decimalSeparator;
 
 // normalize the localized numerical string into something usable by IsNaN() and parseFloat()
 function normalize(str) {
@@ -28,7 +24,9 @@ function isNumber(str) {
 // parse a string. Return NaN if the string is not a valid number
 // Use this function instead of parseFloat() to parse a number in non-english number format
 function parseNumber(str) {
-    if (!isNumber(str)) return NaN;
+    if (!isNumber(str)) {
+        return NaN;
+    }
     var value = parseFloat(normalize(str));
     return value;
 }

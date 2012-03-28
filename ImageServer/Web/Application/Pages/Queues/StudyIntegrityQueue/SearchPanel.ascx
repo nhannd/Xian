@@ -26,8 +26,7 @@ function MultiSelect() {
        
         $("#<%=ReasonListBox.ClientID %>").multiSelect({
             noneSelected: '',
-            oneOrMoreSelected: '*',
-            dropdownStyle: 'width: 150px;'
+            oneOrMoreSelected: '*'
         });   
 
 }

@@ -501,7 +501,7 @@
   <data name="_folderView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <assembly alias="ClearCanvas.Controls.WinForms" name="ClearCanvas.Controls.WinForms, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <assembly alias="ClearCanvas.Controls.WinForms" name="ClearCanvas.Controls.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
   <data name="_folderView.FileSizeFormat" type="ClearCanvas.Controls.WinForms.FileSizeFormat, ClearCanvas.Controls.WinForms">
     <value>LegacyOctets</value>
   </data>

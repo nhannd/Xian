@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		public override string ToString()
 		{
 			if (_keyStroke == XKeys.None)
-				return String.Format("({0})", _keyStroke.ToString());
+				return String.Format("({0})", SR.None);
 
 			return _keyStroke.ToString();
 		}

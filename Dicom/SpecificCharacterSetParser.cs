@@ -283,6 +283,34 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// Gets the description of the specific character sets
+        /// </summary>
+        /// <param name="specificCharacterSet"></param>
+        /// <returns></returns>
+        public static string[] GetCharacterSetInfoDescriptions(string specificCharacterSet)
+        {
+            CharacterSetInfo cs;
+                
+            if (string.IsNullOrEmpty(specificCharacterSet))
+            {
+                if (_characterSetInfo.TryGetValue(DefaultCharacterSet, out cs))
+                    return new[]{ cs.Description };
+                else
+                    return null;
+            }
+
+            string[] specificCharacterSetValues = specificCharacterSet.Split('\\');
+            List<string> descriptions = new List<string>();
+            foreach(var value in specificCharacterSetValues)
+            {
+                if (_characterSetInfo.TryGetValue(value, out cs))
+                    descriptions.Add(cs.Description);
+            }
+
+            return descriptions.ToArray();
+        }
+
         private static void GetRepertoires(string specificCharacterSet, out CharacterSetInfo defaultRepertoire, out Dictionary<string, CharacterSetInfo> extensionRepertoires)
         {
             // TODO:

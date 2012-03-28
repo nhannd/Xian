@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		internal class MismatchedFrameOfReferenceFusionImageAnnotationItem : AnnotationItem
 		{
 			public MismatchedFrameOfReferenceFusionImageAnnotationItem()
-				: base("AdvancedImaging.Fusion.MismatchedFrameOfReference", SR.LabelMismatchedFrameOfReference, SR.LabelMismatchedFrameOfReference) {}
+				: base("AdvancedImaging.Fusion.MismatchedFrameOfReference", @"LabelMismatchedFrameOfReference", @"LabelMismatchedFrameOfReference") {}
 
 			public override string GetAnnotationText(IPresentationImage presentationImage)
 			{

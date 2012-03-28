@@ -13,6 +13,10 @@ GO
 BEGIN TRANSACTION
 GO
 
+PRINT N'Truncating ApplicationLog.Message and ApplicationLog.Exception columns to 2000 characters'
+UPDATE ApplicationLog SET Exception = LEFT(Exception,2000), Message = LEFT(Message,2000)
+GO
+
 PRINT N'Changing ApplicationLog.Message column to NVARCHAR'
 GO
 ALTER TABLE dbo.ApplicationLog 

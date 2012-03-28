@@ -200,6 +200,13 @@
     <Compile Include="IWorkspaceDialogBoxView.cs" />
     <Compile Include="IPagingController.cs" />
     <Compile Include="Configuration\IUserUpgradeProgressDialogView.cs" />
+    <Compile Include="LocalePolicy.cs" />
+    <Compile Include="LocalePolicy.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LocalePolicy.settings</DependentUpon>
+    </Compile>
+    <Compile Include="InstalledLocales.cs" />
     <Compile Include="LocaleSettings.cs" />
     <Compile Include="LocaleSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -208,6 +215,7 @@
     </Compile>
     <Compile Include="ModifierFlags.cs" />
     <Compile Include="ModifierFlagsConverter.cs" />
+    <Compile Include="OemConfiguration.cs" />
     <Compile Include="PagingActionModel.cs" />
     <Compile Include="PagingController.cs" />
     <Compile Include="PhoneHome.cs" />
@@ -477,6 +485,10 @@
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ClassDiagrams\Tools.cd" />
+    <None Include="LocalePolicy.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LocalePolicy.Designer.cs</LastGenOutput>
+    </None>
     <None Include="LocaleSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>LocaleSettings.Designer.cs</LastGenOutput>

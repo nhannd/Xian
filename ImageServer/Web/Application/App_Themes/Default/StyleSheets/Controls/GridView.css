@@ -119,18 +119,20 @@
     border-bottom: solid 1px #b8d9ee; 
     padding-top: 1px;
 	padding-bottom: 3px;
-    width: 175px; 
-    text-align: center;
+    padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
 }
 
 #ItemCountContainer_FF
 {
     background: #e1eff7; 
     border-bottom: solid 1px #b8d9ee; 
-    padding-top: 1px;
+    padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 1px;
     padding-bottom: 3px;
-    width: 175px; 
-    text-align: center;
+    text-align: center;    
 }
 
 #ItemCountContainer_Chrome
@@ -139,8 +141,9 @@
     border-bottom: solid 1px #b8d9ee; 
     padding-top: 1px;
     padding-bottom: 4px;
-    width: 175px; 
-    text-align: center;
+    padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
 }
 
 .CurrentPageContainer

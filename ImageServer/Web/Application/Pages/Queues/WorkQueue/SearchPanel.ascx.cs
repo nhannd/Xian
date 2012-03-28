@@ -234,9 +234,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected void Page_Load(object sender, EventArgs e)
         {
             // re-populate the drop down lists and restore their states
-            IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnum.GetAll();
-            IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnum.GetAll();
-            IList<WorkQueuePriorityEnum> workQueuePriorities = WorkQueuePriorityEnum.GetAll();
+            PopulateDropdownLists();
+
+            ViewItemDetailsButton.Roles = AuthorityTokens.WorkQueue.View;
+            DeleteItemButton.Roles = AuthorityTokens.WorkQueue.Delete;
+            ReprocessItemButton.Roles = AuthorityTokens.WorkQueue.Reprocess;
+            ResetItemButton.Roles = AuthorityTokens.WorkQueue.Reset; 
+            RescheduleItemButton.Roles =AuthorityTokens.WorkQueue.Reschedule;
+        }
+
+        private void PopulateDropdownLists()
+        {
+            var workQueueTypes = WorkQueueTypeEnum.GetAll();
+            var workQueueStatuses = WorkQueueStatusEnum.GetAll();
+            var workQueuePriorities = WorkQueuePriorityEnum.GetAll();
 
             if (TypeListBox.Items.Count == 0)
             {
@@ -245,20 +256,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                     TypeListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(t), t.Lookup));
                 }
             }
-            else
-            {
-                ListItem[] typeItems = new ListItem[TypeListBox.Items.Count];
-                TypeListBox.Items.CopyTo(typeItems, 0);
-                TypeListBox.Items.Clear();
-                int count = 0;
-                foreach (WorkQueueTypeEnum t in workQueueTypes)
-                {
-                    TypeListBox.Items.Add(new ListItem(t.Description, t.Lookup));
-                    TypeListBox.Items[count].Selected = typeItems[count].Selected;
-                    count++;
-                }
-            }
-
             if (StatusListBox.Items.Count == 0)
             {
                 foreach (WorkQueueStatusEnum s in workQueueStatuses)
@@ -266,33 +263,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                     StatusListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(s), s.Lookup));
                 }
             }
-            else
-            {
-                ListItem[] statusItems = new ListItem[StatusListBox.Items.Count];
-                StatusListBox.Items.CopyTo(statusItems, 0);
-                StatusListBox.Items.Clear();
-                int count = 0;
-                foreach (WorkQueueStatusEnum s in workQueueStatuses)
-                {
-                    StatusListBox.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(s), s.Lookup));
-                    StatusListBox.Items[count].Selected = statusItems[count].Selected;
-                    count++;
-                }
-            }
-            int prevSelectedIndex = PriorityDropDownList.SelectedIndex;
-            PriorityDropDownList.Items.Clear();
-            PriorityDropDownList.Items.Add(new ListItem(SR.Any, string.Empty));
-            foreach (WorkQueuePriorityEnum p in workQueuePriorities)
-                PriorityDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(p), p.Lookup));
-            PriorityDropDownList.SelectedIndex = prevSelectedIndex;
 
-            ViewItemDetailsButton.Roles = AuthorityTokens.WorkQueue.View;
-            DeleteItemButton.Roles = AuthorityTokens.WorkQueue.Delete;
-            ReprocessItemButton.Roles =
-                AuthorityTokens.WorkQueue.Reprocess;
-            ResetItemButton.Roles = AuthorityTokens.WorkQueue.Reset;
-            RescheduleItemButton.Roles =
-                AuthorityTokens.WorkQueue.Reschedule;
+            if (PriorityDropDownList.Items.Count==0)
+            {
+                PriorityDropDownList.Items.Clear();
+                PriorityDropDownList.Items.Add(new ListItem(SR.Any, string.Empty));
+                foreach (WorkQueuePriorityEnum p in workQueuePriorities)
+                    PriorityDropDownList.Items.Add(new ListItem(ServerEnumDescription.GetLocalizedDescription(p), p.Lookup));
+            }
         }
 
         public void Refresh()

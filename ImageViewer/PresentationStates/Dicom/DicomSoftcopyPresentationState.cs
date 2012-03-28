@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private string _manufacturersModelName;
 		private string _deviceSerialNumber;
 		private string _softwareVersions;
-		private string _specificCharacterSet;
+		private string _specificCharacterSet = @"ISO_IR 192";
 
 		/// <summary>
 		/// Constructs a serialization-capable DICOM softcopy presentation state object.
@@ -106,7 +106,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_dicomFile = dicomFile;
 
 			_serialized = true;
-			_specificCharacterSet = _dicomFile.DataSet.SpecificCharacterSet;
 			_sourceAETitle = _dicomFile.SourceApplicationEntityTitle;
 			_stationName = _dicomFile.DataSet[DicomTags.StationName].ToString();
 			_institution = Institution.GetInstitution(_dicomFile);
@@ -159,6 +158,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// Gets the specific character set for the presentation state's data set.
 		/// </summary>
 		/// <remarks>
+		/// <para>
+		/// By default, text attribute values will be encoded using UTF-8 Unicode (ISO-IR 192).
+		/// If set to NULL or empty, values will be encoded using the default character repertoire (ISO-IR 6).
+		/// </para>
 		/// This property may only be set if the presentation state has not yet been serialized to a file.
 		/// </remarks>
 		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
@@ -436,16 +439,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			_serialized = true;
 
-			if (String.IsNullOrEmpty(_specificCharacterSet))
-			{
-				DataSet.SpecificCharacterSet = String.Empty;
-				DataSet[DicomTags.SpecificCharacterSet].SetNullValue();
-			}
-			else
-			{
-				DataSet.SpecificCharacterSet = _specificCharacterSet;
-				DataSet[DicomTags.SpecificCharacterSet].SetStringValue(_specificCharacterSet);
-			}
+			var specificCharacterSet = _specificCharacterSet ?? string.Empty;
+			DataSet.SpecificCharacterSet = specificCharacterSet;
+			DataSet[DicomTags.SpecificCharacterSet].SetStringValue(specificCharacterSet);
 
 			GeneralEquipmentModuleIod generalEquipmentModule = new GeneralEquipmentModuleIod(this.DataSet);
 			generalEquipmentModule.Manufacturer = this.Manufacturer ?? string.Empty; // this one is type 2 - all other GenEq attributes are type 3

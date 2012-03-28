@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			ManufacturersModelName = ProductInformation.GetName(true, false);
 			DeviceSerialNumber = string.Empty;
 			SoftwareVersions = ProductInformation.GetVersion(true, true, true);
+			SpecificCharacterSet = @"ISO_IR 192";
 		}
 
 		/// <summary>
@@ -61,6 +62,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the manufacturer's designation of software version of the equipment that produced the composite instances.
 		/// </summary>
 		public string SoftwareVersions { get; protected set; }
+
+		/// <summary>
+		/// Gets or sets the DICOM specific character set to be used when encoding SOP instances.
+		/// </summary>
+		/// <remarks>
+		/// By default, text attribute values will be encoded using UTF-8 Unicode (ISO-IR 192).
+		/// If set to NULL or empty, values will be encoded using the default character repertoire (ISO-IR 6).
+		/// </remarks>
+		public string SpecificCharacterSet { get; set; }
 
 		/// <summary>
 		/// Fills basic attributes in the General Equipment module.
@@ -175,14 +185,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected void InitializePrototypeDataSet(IDicomAttributeProvider source, IDicomAttributeProvider target)
 		{
 			// specific character set must be copied first before any other attributes are set!
-			var specificCharacterSet = GetSpecificCharacterSet(source);
+			var specificCharacterSet = SpecificCharacterSet ?? string.Empty;
 			if (target is DicomAttributeCollection)
-				((DicomAttributeCollection) target).SpecificCharacterSet = specificCharacterSet ?? string.Empty;
-
-			if (specificCharacterSet == null)
-				target[DicomTags.SpecificCharacterSet].SetEmptyValue();
-			else
-				target[DicomTags.SpecificCharacterSet].SetStringValue(specificCharacterSet);
+				((DicomAttributeCollection)target).SpecificCharacterSet = specificCharacterSet;
+			target[DicomTags.SpecificCharacterSet].SetStringValue(specificCharacterSet);
 
 			// patient IE
 			CopyPatientModule(source, target);
@@ -302,16 +308,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			targetTrialStudy.ClinicalTrialTimePointDescription = sourceTrialStudy.ClinicalTrialTimePointDescription;
 			targetTrialStudy.ClinicalTrialTimePointId = sourceTrialStudy.ClinicalTrialTimePointId;
 			return true;
-		}
-
-		/// <summary>
-		/// Gets the specific character set of the specified attribute collection.
-		/// Returns NULL if attribute does not exist, or an empty string if attribute exists and is empty.
-		/// </summary>
-		private static string GetSpecificCharacterSet(IDicomAttributeProvider dicomAttributeProvider)
-		{
-			var specificCharacterSetAttribute = dicomAttributeProvider[DicomTags.SpecificCharacterSet];
-			return !specificCharacterSetAttribute.IsEmpty ? specificCharacterSetAttribute.ToString() : null;
 		}
 
 		#region Prototype Factory Implementation

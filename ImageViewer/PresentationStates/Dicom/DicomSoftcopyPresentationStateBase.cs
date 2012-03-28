@@ -377,6 +377,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 							GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
 							if (GraphicAnnotationSerializer.SerializeGraphic(graphic, annotation))
 							{
+								SetAllSpecificCharacterSets(annotation, DataSet.SpecificCharacterSet);
 								annotation.GraphicLayer = layerGraphic.Id.ToUpperInvariant();
 								annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] {CreateImageSopInstanceReference(image.Frame)};
 								annotations.Add(annotation);
@@ -390,6 +391,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
 					if (GraphicAnnotationSerializer.SerializeGraphic(graphic, annotation))
 					{
+						SetAllSpecificCharacterSets(annotation, DataSet.SpecificCharacterSet);
 						annotation.GraphicLayer = _annotationsLayerId;
 						annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] {CreateImageSopInstanceReference(image.Frame)};
 						annotations.Add(annotation);
@@ -399,6 +401,19 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			if (annotations.Count > 0)
 				graphicAnnotationModule.GraphicAnnotationSequence = annotations.ToArray();
+		}
+
+		private static void SetAllSpecificCharacterSets(GraphicAnnotationSequenceItem annotation, string specificCharacterSet)
+		{
+            if (annotation.TextObjectSequence == null)
+                return;
+
+			foreach (var textItem in annotation.TextObjectSequence)
+			{
+			    var attributeCollection = textItem.DicomAttributeProvider as DicomAttributeCollection;
+                if (attributeCollection != null)
+			        attributeCollection.SpecificCharacterSet = specificCharacterSet;
+			}
 		}
 
 		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule, DicomPresentationImageCollection<T> images)

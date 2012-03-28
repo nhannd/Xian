@@ -11,6 +11,7 @@
 
 using System;
 using System.Globalization;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
@@ -42,9 +43,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// </example>
     public class RangeComparisonValidator : BaseValidator
     {
-        private string _compareToInputName;
-        private string _comparisonControlId;
-
         #region Public Properties
 
         /// <summary>
@@ -57,22 +55,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// </summary>
         public int MaxValue { get; set; }
 
-        public string ControlToCompare
-        {
-            get { return _comparisonControlId; }
-            set { _comparisonControlId = value; }
-        }
+        public string ControlToCompare { get; set; }
 
         public bool GreaterThan { get; set; }
-
-        public string CompareToInputName
-        {
-            get
-            {
-                return String.IsNullOrEmpty(_compareToInputName) ? _comparisonControlId : _compareToInputName;
-            }
-            set { _compareToInputName = value; }
-        }
 
         #endregion Public Properties
 
@@ -114,20 +99,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                     }
                 }
 
-                if (result == false && String.IsNullOrEmpty(ErrorMessage))
-                {
-                    ErrorMessage = String.Format("{0} must be between {1} and {2} and {3} {4}",
-                                                 InputName,
-                                                 MinValue,
-                                                 MaxValue,
-                                                 GreaterThan ? "greater than" : "less than",
-                                                 CompareToInputName);
-                }
             }
             else
             {
                 result = false;
-                ErrorMessage = String.Format("{0} is not a valid number.", InputName);
+                ErrorMessage = string.Format(ValidationErrors.IsNotAValidNumber, InputName);
             }
 
             return result;
@@ -138,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             // Register Javascript for client-side validation
             string comparison = GreaterThan ? ">=" : "<=";
-
+            Platform.Log(LogLevel.Error, "RegisterClientSideValidationExtensionScripts = {0}", ErrorMessage); 
             var template =
                 new ScriptTemplate(this,
                                    "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeComparisonValidator.js");
@@ -146,12 +122,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             template.Replace("@@MIN_VALUE@@", MinValue.ToString());
             template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
             template.Replace("@@COMPARISON_OP@@", comparison);
-            template.Replace("@@COMPARE_TO_INPUT_NAME@@", CompareToInputName);
             template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
                              ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
+            template.Replace("@@ERROR_MESSAGE@@", ErrorMessage);
 
+            Platform.Log(LogLevel.Error, template.Script);
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }

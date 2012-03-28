@@ -24,6 +24,7 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 using ClearCanvas.Web.Client.Silverlight;
 using ContextMenu = ClearCanvas.Web.Client.Silverlight.ContextMenu;
 using MenuItem = ClearCanvas.Web.Client.Silverlight.MenuItem;
+using System.Text;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
 {
@@ -115,50 +116,73 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
         private static MenuItem BuildMenuItem(WebActionNode node, ActionDispatcher dispatcher)
         {
             MenuItem thisMenu = null;
-
-            if (node.Children != null)
+            try
             {
-                thisMenu = new MenuItem { Header = node.LocalizedText };
 
-                foreach (WebActionNode subNode in node.Children)
+                if (node.Children != null)
                 {
-                    if (subNode.Children == null || subNode.Children.Count == 0)
-                    {
-                        MenuItem menuItem = BuildActionMenuItem(subNode, dispatcher);
+                    thisMenu = new MenuItem { Header = node.LocalizedText };
 
-                        if (menuItem != null)
+                    foreach (WebActionNode subNode in node.Children)
+                    {
+                        if (subNode.Children == null || subNode.Children.Count == 0)
                         {
-                            if (menuItem.IsChecked)
-                                thisMenu.IsChecked = true;
+                            MenuItem menuItem = BuildActionMenuItem(subNode, dispatcher);
 
                             if (menuItem != null)
-                                thisMenu.Items.Add(menuItem);
-                        }
-                        
-                    }
-                    else
-                    {
-                        MenuItem menuItem = BuildMenuItem(subNode, dispatcher);
-                        if (menuItem != null)
-                        {
-                            if (menuItem.IsChecked)
-                                thisMenu.IsChecked = true;
+                            {
+                                if (menuItem.IsChecked)
+                                    thisMenu.IsChecked = true;
 
-                            thisMenu.Items.Add(menuItem);
+                                if (menuItem != null)
+                                    thisMenu.Items.Add(menuItem);
+                            }
+
+                        }
+                        else
+                        {
+                            MenuItem menuItem = BuildMenuItem(subNode, dispatcher);
+                            if (menuItem != null)
+                            {
+                                if (menuItem.IsChecked)
+                                    thisMenu.IsChecked = true;
+
+                                thisMenu.Items.Add(menuItem);
+                            }
                         }
                     }
+
+                    // Don't show the menu if it has no children
+                    thisMenu.Visibility = node.DesiredVisiblility;
+                }
+                else
+                {
+                    WebAction actionNode = node as WebAction;
+                    thisMenu = BuildActionMenuItem(actionNode, dispatcher);
                 }
 
-                // Don't show the menu if it has no children
-                thisMenu.Visibility = node.DesiredVisiblility;
+                return thisMenu;
             }
-            else
+            catch (Exception ex)
             {
-                WebAction actionNode = node as WebAction;
-                thisMenu = BuildActionMenuItem(actionNode, dispatcher);
-            }
+                // When an error happens here we need as much technical details as possible to diagnose the problem
+                // Also, it's better to capture the error in English
+                var itemName = node.LocalizedText;
+                if (node is WebActionNode)
+                    itemName = (node as WebActionNode).LocalizedText;
+                if (node is WebAction)
+                    itemName = (node as WebAction).Label;
 
-            return thisMenu;
+                var message = new StringBuilder();
+                message.AppendFormat("An expected error has occurred when building menu item labelled: {0}", itemName);
+                message.AppendLine();
+                message.AppendLine(string.Format("Details: {0}", ex.Message));
+                message.AppendLine("Stack:");
+                message.AppendLine(ex.StackTrace);
+
+                var newEx = new Exception(message.ToString(), ex);
+                throw newEx;
+            }
         }
 
         private static MenuItem BuildActionMenuItem(WebActionNode subNode, ActionDispatcher dispatcher)
@@ -271,18 +295,26 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers
             TextBlock label = new TextBlock();
             if (val.Contains("&"))
             {
+                // TODO (10/19/2010)
+                // Commented out for ticket #7344.  When we start supporting hot keys, this
+                // should be uncommented.
+                //FontSize = 14,
+                //Foreground = new SolidColorBrush(ClearCanvasStyle.ClearCanvasDarkBlue)
+
                 int ampIndex = val.IndexOf("&");
+                
                 label.Inlines.Add(new Run { Text = val.Substring(0, ampIndex) });
-                label.Inlines.Add(new Run
+
+                if (ampIndex <= val.Length - 2) // Expecting at least one character after "&" to be used as the shortcut. If there's none, ignore the rest of the label
                 {
-                    Text = val[ampIndex + 1].ToString(),
-                    // TODO (10/19/2010)
-                    // Commented out for ticket #7344.  When we start supporting hot keys, this
-                    // should be uncommented.
-                    //FontSize = 14,
-                    //Foreground = new SolidColorBrush(ClearCanvasStyle.ClearCanvasDarkBlue)
-                });
-                label.Inlines.Add(new Run { Text = val.Substring(ampIndex + 2) });
+                    label.Inlines.Add(new Run
+                    {
+                        Text = val[ampIndex + 1].ToString(),                        
+                    });
+                    label.Inlines.Add(new Run { Text = val.Substring(ampIndex + 2) });
+                }
+                
+                
 
             }
             else
