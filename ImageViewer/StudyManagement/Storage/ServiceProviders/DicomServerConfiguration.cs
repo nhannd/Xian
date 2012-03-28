@@ -21,21 +21,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 {
     // TODO (Marmot): This seems like the best place for this, since it has to be available (in process) whenever the database is present.
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
-    [ExtensionOf(typeof(DuplexServiceProviderExtensionPoint))]
-    internal class DicomServerConfigurationServiceProvider : IServiceProvider, IDuplexServiceProvider
+    internal class DicomServerConfigurationServiceProvider : IServiceProvider
     {
-        #region IDuplexServiceProvider Members
-
-        public object GetService(Type serviceType, object callback)
-        {
-            if (serviceType == typeof(IDicomServerConfiguration))
-                return new DicomServerConfigurationProxy(new DicomServerConfiguration());
-
-            return null;
-        }
-
-        #endregion
-
         #region IServiceProvider Members
 
         public object GetService(Type serviceType)

@@ -21,12 +21,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
     public class WorkItemServiceExtension : WcfShred
     {
         private const string _workItemServiceEndpointName = "WorkItemService";
+        private const string _workItemActivityMonitorServiceEndpointName = "WorkItemActivityMonitor";
 
         private bool _workItemServiceWCFInitialized;
+        private bool _workItemActivityMonitorServiceWCFInitialized;
 
         public WorkItemServiceExtension()
         {
-            _workItemServiceWCFInitialized = false;            
+            _workItemServiceWCFInitialized = false;
+            _workItemActivityMonitorServiceWCFInitialized = false;
         }
 
         public override void Start()
@@ -58,16 +61,44 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Platform.Log(LogLevel.Error, e);
                 Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.WorkItemService));
             }
+
+            try
+            {
+                StartNetPipeHost<WorkItemActivityMonitorServiceType, IWorkItemActivityMonitorService>(_workItemActivityMonitorServiceEndpointName, SR.WorkItemActivityMonitorService);
+                _workItemActivityMonitorServiceWCFInitialized = true;
+                string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.WorkItemActivityMonitorService);
+                Platform.Log(LogLevel.Info, message);
+                Console.WriteLine(message);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+                Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.WorkItemActivityMonitorService));
+            }
         }
 
         public override void Stop()
         {
+            if (_workItemActivityMonitorServiceWCFInitialized)
+            {
+                try
+                {
+                    StopHost(_workItemActivityMonitorServiceEndpointName);
+                    Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.WorkItemActivityMonitorService));
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e);
+                }
+            }
+
+
             if (_workItemServiceWCFInitialized)
             {
                 try
                 {
                     StopHost(_workItemServiceEndpointName);
-                    Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.LocalDataStore));
+                    Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.WorkItemService));
                 }
                 catch (Exception e)
                 {

@@ -9,6 +9,8 @@
 
 #endregion
 
+using ClearCanvas.Dicom.ServiceModel;
+
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
@@ -49,6 +51,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 	}
 
+    //TODO (Marmot): Can this stuff be moved to Common? Arguably almost everything in this namespace could move.
 	/// <summary>
 	/// Defines a study loader.
 	/// </summary>

@@ -14,10 +14,10 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Shreds.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
+    //TODO (Marmot): Shouldn't throw real exceptions across service boundaries.
     [Serializable]
     internal class WorkItemServiceException : Exception
     {
@@ -35,13 +35,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class WorkItemServiceType : IWorkItemService
     {
-        private readonly IWorkItemActivityCallback _callback;
-
-        public WorkItemServiceType()
-        {
-            _callback = OperationContext.Current.GetCallbackChannel<IWorkItemActivityCallback>();
-        }
-
         public WorkItemInsertResponse Insert(WorkItemInsertRequest request)
         {
             try
@@ -82,40 +75,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 Platform.Log(LogLevel.Error, e);
                 var message = SR.ExceptionErrorProcessingQuery;
-                var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-                throw new WorkItemServiceException(exceptionMessage);
-            }
-        }
-
-        public WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request)
-        {
-            try
-            {
-                SubscriptionManager<IWorkItemActivityCallback>.Subscribe(_callback, "WorkItem");
-	
-                return new WorkItemSubscribeResponse();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-                var message = SR.ExceptionErrorProcessingSubscribe;
-                var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-                throw new WorkItemServiceException(exceptionMessage);
-            }
-        }
-
-        public WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request)
-        {
-            try
-            {
-                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(_callback, "WorkItem");
-	
-                return new WorkItemUnsubscribeResponse();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-                var message = SR.ExceptionErrorProcessingUnsubscribe;
                 var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
                 throw new WorkItemServiceException(exceptionMessage);
             }

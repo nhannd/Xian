@@ -1,5 +1,4 @@
 ﻿using System.ServiceModel;
-using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {

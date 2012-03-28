@@ -150,21 +150,29 @@
     <Compile Include="StudyManagement\Rules\StudyRuleDataContractAttribute.cs" />
     <Compile Include="StudyManagement\Rules\TimeOrigin.cs" />
     <Compile Include="StudyManagement\Rules\TimeUnit.cs" />
-    <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
+    <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
+    <Compile Include="WorkItem\Tests\TestServiceProvider.cs" />
+    <Compile Include="WorkItem\Tests\TestWorkItemService.cs" />
+    <Compile Include="WorkItem\WorkItemActivityMonitorReal.cs" />
+    <Compile Include="WorkItem\WorkItemActivityMonitorProxy.cs" />
+    <Compile Include="WorkItem\WorkItemActivityCallback.cs" />
     <Compile Include="WorkItem\IWorkItemService.cs" />
+    <Compile Include="WorkItem\Tests\ActivityMonitorTests.cs" />
+    <Compile Include="WorkItem\Tests\ActivityMonitorTestApplication.cs" />
+    <Compile Include="WorkItem\WorkItemChangedEventArgs.cs" />
+    <Compile Include="WorkItem\WorkItemServiceClient.cs" />
     <Compile Include="WorkItem\SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="WorkItem\WorkItemClient.cs" />
+    <Compile Include="WorkItem\WorkItemActivityMonitor.cs" />
     <Compile Include="WorkItem\WorkItemData.cs" />
-    <Compile Include="WorkItem\WorkItemMonitor.cs" />
     <Compile Include="WorkItem\WorkItemProgressDataContractAttribute.cs" />
     <Compile Include="WorkItem\WorkItemRequestDataContractAttribute.cs" />
     <Compile Include="WorkItem\WorkItemProgress.cs" />
     <Compile Include="WorkItem\WorkItemRequest.cs" />
-    <Compile Include="WorkItem\WorkItemServiceClient.cs" />
+    <Compile Include="WorkItem\WorkItemServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

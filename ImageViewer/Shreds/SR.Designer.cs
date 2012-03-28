@@ -863,6 +863,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Work Item Activity Monitor.
+        /// </summary>
+        internal static string WorkItemActivityMonitorService {
+            get {
+                return ResourceManager.GetString("WorkItemActivityMonitorService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hosts the WorkItem Processor Service.
         /// </summary>
         internal static string WorkitemProcessorDescription {

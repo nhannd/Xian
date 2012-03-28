@@ -103,6 +103,7 @@
     <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
     <Compile Include="WorkItemService\StudyProcess\StudyProcessFactory.cs" />
     <Compile Include="WorkItemService\StudyProcess\StudyProcessProcessor.cs" />
+    <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />
     <Compile Include="WorkItemService\WorkItemFactoryExtensionPoint.cs" />
     <Compile Include="WorkItemService\WorkItemProcessor.cs" />
     <Compile Include="WorkItemService\WorkItemProcessorExtension.cs" />

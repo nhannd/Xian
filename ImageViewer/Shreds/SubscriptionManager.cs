@@ -24,6 +24,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Shreds
 {
+    //TODO (Marmot): Need to change this so we can limit by work item
 	internal static class SubscriptionManager<T>
 		where T : class 
 	{

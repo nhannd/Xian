@@ -84,14 +84,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract]
     public class WorkItemSubscribeRequest : DataContractBase
     {
-        [DataMember]
-        public CultureInfo Culture { get; set; }
-
-        [DataMember]
-        public WorkItemTypeEnum? Type { get; set; }
-
-        [DataMember]
-        public Guid? Identifier { get; set; }
+        //[DataMember]
+        //public CultureInfo Culture { get; set; }
     }
 
     [DataContract]
@@ -110,15 +104,27 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract]
     public class WorkItemUnsubscribeResponse : DataContractBase
     {
+    }
 
+    [ServiceContract(SessionMode = SessionMode.Required,
+                        CallbackContract = typeof(IWorkItemActivityCallback),
+                        ConfigurationName = "IWorkItemActivityMonitorService")]
+    [ServiceKnownType("GetKnownTypes", typeof(WorkItemRequestTypeProvider))]
+    public interface IWorkItemActivityMonitorService
+    {
+        [OperationContract]
+        WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request);
+
+        [OperationContract]
+        WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request);
+
+        //TODO (Marmot): Need Refresh, like local data store?
     }
 
     /// <summary>
     /// Service for the creation, manipulation, and monitoring of WorkItems.
     /// </summary>
-    [ServiceContract(SessionMode = SessionMode.Required,
-                        CallbackContract = typeof(IWorkItemActivityCallback),
-                        ConfigurationName = "IWorkItemService")]
+    [ServiceContract(SessionMode = SessionMode.Required, ConfigurationName = "IWorkItemService")]
     [ServiceKnownType("GetKnownTypes", typeof(WorkItemRequestTypeProvider))]
     public interface IWorkItemService
     {
@@ -130,11 +136,5 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [OperationContract]
         WorkItemQueryResponse Query(WorkItemQueryRequest request);
-
-        [OperationContract]
-        WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request);
-
-        [OperationContract]
-        WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest type);
     }
 }
