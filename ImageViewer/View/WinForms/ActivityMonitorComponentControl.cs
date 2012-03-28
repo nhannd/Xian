@@ -39,10 +39,5 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			_workItemsTableView.Table = _component.WorkItemTable;
 		}
-
-		private void _searchButton_Click(object sender, System.EventArgs e)
-		{
-			_component.Search();
-		}
 	}
 }

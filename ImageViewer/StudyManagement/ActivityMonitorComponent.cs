@@ -20,86 +20,88 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		class WorkItem
 		{
-			private WorkItemData _data;
+			private readonly WorkItemData _data;
 
 			public WorkItem(WorkItemData data)
 			{
 				_data = data;
 			}
 
+			public long Id
+			{
+				get { return _data.Identifier; }
+			}
+
 			public string PatientId
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Patient != null ? _data.Patient.PatientId : null; }
 			}
 
 			public string PatientsName
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Patient != null ? _data.Patient.PatientsName : null; }
 			}
 
 			public string PatientsBirthDate
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Patient != null ? _data.Patient.PatientsBirthDate : null; }
 			}
 
 			public string PatientsSex
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Patient != null ? _data.Patient.PatientsSex : null; }
 			}
 
 			public string StudyDate
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Study != null ? _data.Study.StudyDate : null; }
 			}
 
 			public string AccessionNumber
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Study != null ? _data.Study.AccessionNumber : null; }
 			}
 
 			public string StudyDescription
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Study != null ? _data.Study.StudyDescription : null; }
 			}
 
 			public string Type
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Type.ToString(); }
 			}
 
 			public string Status
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Status.ToString(); }
 			}
 
 			public string StatusDescription
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Progress != null ? _data.Progress.StatusDetails : null; }
 			}
 
 			public DateTime ScheduledTime
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.ScheduledTime; }
 			}
 
 			public string Priority
 			{
-				get { throw new NotImplementedException(); }
+				get { return _data.Priority.ToString(); }
 			}
 
 			public IconSet ProgressIcon
 			{
-				get { throw new NotImplementedException(); }
+				get { return GetProgressIcon(_data.Progress); }
 			}
 		}
 
 		private IWorkItemActivityMonitor _monitor;
-		private readonly Table<WorkItemData> _workItems = new Table<WorkItemData>();
-		private WorkItemData _data = new WorkItemData {Progress = new ImportFilesProgress()};
+		private readonly Table<WorkItem> _workItems = new Table<WorkItem>();
 
 		private IDicomServerConfigurationProvider _dicomConfigProvider;
-		private Diskspace _totalDiskSpace;
-		private Diskspace _usedDiskSpace;
 
 		public ActivityMonitorComponent()
 		{
@@ -130,9 +132,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>("Progress", w => w.ProgressIcon));
 
 			_monitor = WorkItemActivityMonitor.Create(true);
-			_monitor.WorkItemChanged += new EventHandler<WorkItemChangedEventArgs>(WorkItemChanged);
+			_monitor.WorkItemChanged += WorkItemChanged;
+		}
 
-			_workItems.Items.Add(_data);
+		public override void Stop()
+		{
+			_monitor.WorkItemChanged -= WorkItemChanged;
+			_monitor.Dispose();
+			_monitor = null;
+
+			_dicomConfigProvider.Changed -= DicomServerConfigurationChanged;
+			_dicomConfigProvider = null;
+
+			base.Stop();
 		}
 
 		#region Presentation Model
@@ -177,17 +189,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _workItems; }
 		}
 
-		public void Search()
-		{
-			_data.Progress.PercentComplete += 10;
-			_workItems.Items.NotifyItemUpdated(_data);
-		}
-
 		#endregion
 
 		private static IconSet GetProgressIcon(WorkItemProgress progress)
 		{
-			return new ProgressBarIconSet("progress", new Size(60, 10), progress != null ? progress.PercentComplete : 0);
+			if(progress == null)
+				return null;
+
+			return new ProgressBarIconSet("progress", new Size(60, 10), progress.PercentComplete);
 		}
 
 		private void DicomServerConfigurationChanged(object sender, EventArgs e)
@@ -204,6 +213,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void WorkItemChanged(object sender, WorkItemChangedEventArgs e)
 		{
+			var newItem = new WorkItem(e.ItemData);
+			var index = _workItems.Items.FindIndex(w => w.Id == newItem.Id);
+			if(index > -1)
+			{
+				_workItems.Items[index] = newItem;
+			}
+			else
+			{
+				_workItems.Items.Add(newItem);
+			}
 		}
 
 
