@@ -21,57 +21,32 @@ using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 {
-    public class ImportProcessor : BaseItemProcessor
+    public class ImportProcessor : BaseItemProcessor<ImportFilesRequest,ImportFilesProgress>
     {
         public List<string> FilesToImport { get; set; }
 
-        public ImportFilesProgress Progress
-        {
-            get { return Proxy.Item.Progress as ImportFilesProgress; }
-        }
-
-        public ImportFilesRequest Request
-        {
-            get { return Proxy.Item.Request as ImportFilesRequest; }
-        }
 
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
             bool initResult = base.Initialize(proxy);
-
-            if (proxy.Item.Progress == null)
-                proxy.Item.Progress = new ImportFilesProgress();
-            else if (!(proxy.Item.Progress is ImportFilesProgress))
-                proxy.Item.Progress = new ImportFilesProgress();
             
             FilesToImport = new List<string>();
             
-            
-            // Reinit the progress
-            Progress.TotalFilesToImport = 0;
-            Progress.NumberOfFilesImported = 0;
-            Progress.NumberOfImportFailures = 0;
-            Progress.StatusDetails = string.Empty;
-
             return initResult;
         }
 
-        public override void Process(WorkItemStatusProxy proxy)
+        public override void Process()
         {
-            var request = proxy.Item.Request as ImportFilesRequest;
-            if (request == null)
-                throw new Exception("Internal error, ImportRequest in invalid format");
+            ValidateRequest(Request);
 
-            ValidateRequest(request);
-
-            var filePaths = new List<string>(request.FilePaths);
+            var filePaths = new List<string>(Request.FilePaths);
 
             Progress.StatusDetails = filePaths.Count > 1
                                        ? String.Format(SR.FormatMultipleFilesDescription, filePaths[0])
                                        : filePaths[0];
 
             // Get a list of files to import
-            LoadFileList(request.FilePaths, request.FileExtensions, request.Recursive);
+            LoadFileList(Request.FilePaths, Request.FileExtensions, Request.Recursive);
 
             if (CancelPending)
             {
@@ -98,13 +73,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             if (CancelPending)
                 Proxy.Cancel();
             else if (StopPending)
-                proxy.Postpone();
+                Proxy.Postpone();
             else
                 Proxy.Complete();
         }
 
         private void ValidateRequest(ImportFilesRequest filesRequest)
         {
+            if (filesRequest == null)
+                throw new ArgumentNullException(SR.ExceptionNoFilesHaveBeenSpecifiedToImport);
+
             if (filesRequest.FilePaths == null)
                 throw new ArgumentNullException(SR.ExceptionNoFilesHaveBeenSpecifiedToImport);
 
@@ -224,14 +202,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             }
         }
 
-        public override void Delete(WorkItemStatusProxy proxy)
+        public override bool CanStart(out string reason)
         {
-            // Just delete, nothing else to do.
-            Proxy.Delete();
-        }
-
-        protected override bool CanStart()
-        {
+            reason = string.Empty;
             // TODO: Check for ReIndex pending job?
             return true;
         }

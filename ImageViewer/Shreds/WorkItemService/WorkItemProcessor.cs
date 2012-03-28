@@ -216,10 +216,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			{
                 if (proxy.Item.Status == WorkItemStatusEnum.Deleted)
                 {
-                    processor.Initialize(proxy);
+                    if (!processor.Initialize(proxy))
+                    {
+                        Platform.Log(LogLevel.Error, "Unable to intialize WorkItem processor for: {0}.  Directly deleting.", proxy.Request.ActivityType);
+                        proxy.Delete();
+                        return;
+                    }
 
                     // Delete the entry
-                    processor.Delete(proxy);
+                    processor.Delete();
                     return;
                 }
 
@@ -230,12 +235,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 	return;
                 }
 
-                if (processor.CanStart(proxy, out failureDescription))
+                if (processor.CanStart(out failureDescription))
                 {
-                    processor.Process(proxy);
+                    processor.Process();
                 }
                 else
                 {
+                    proxy.Progress.StatusDetails = failureDescription;
                     proxy.Postpone();
                 }
 			}

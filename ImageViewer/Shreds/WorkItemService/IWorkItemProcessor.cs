@@ -28,15 +28,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         bool Initialize(WorkItemStatusProxy proxy);
 
-        bool CanStart(WorkItemStatusProxy proxy, out string reason);
+        bool CanStart(out string reason);
 
-        void Process(WorkItemStatusProxy proxy);
+        void Process();
 
         void Cancel();
 
         void Stop();
 
-        void Delete(WorkItemStatusProxy proxy);
+        void Delete();
 
         #endregion
     }
