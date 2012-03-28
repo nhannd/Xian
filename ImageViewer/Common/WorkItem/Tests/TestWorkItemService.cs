@@ -1,7 +1,6 @@
 ﻿#if UNIT_TESTS
 
 using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common.Utilities;
 
@@ -9,15 +8,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 {
     internal class TestWorkItemService : IWorkItemActivityMonitorService, IWorkItemActivityCallback, ICommunicationObject
     {
-        private readonly object _syncLock = new object();
-        private readonly Dictionary<WorkItemTypeEnum, WorkItemTypeEnum> _subscribedTypes;
-        private volatile bool _subscribedToAll;
+        private volatile bool _isSubscribed;
         private volatile CommunicationState _state;
 
         public TestWorkItemService()
         {
             State = CommunicationState.Opened;
-            _subscribedTypes = new Dictionary<WorkItemTypeEnum, WorkItemTypeEnum>();
         }
 
         public IWorkItemActivityCallback Callback { get; set; }
@@ -26,27 +22,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         public WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request)
         {
-            lock (_syncLock)
-            {
-                if (!request.Type.HasValue)
-                    _subscribedToAll = true;
-                else
-                    _subscribedTypes[request.Type.Value] = request.Type.Value;
-            }
-
+            _isSubscribed = true;
             return new WorkItemSubscribeResponse();
         }
 
         public WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request)
         {
-            lock (_syncLock)
-            {
-                if (!request.Type.HasValue)
-                    _subscribedToAll = false;
-                else
-                    _subscribedTypes.Remove(request.Type.Value);
-            }
-
+            _isSubscribed = false;
             return new WorkItemUnsubscribeResponse();
         }
 
@@ -54,16 +36,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
         {
-            IWorkItemActivityCallback callback;
-            lock (_syncLock)
-            {
-                if (_subscribedToAll || _subscribedTypes.ContainsKey(workItemData.Type))
-                    callback = Callback;
-                else
-                    return;
-            }
-
-            callback.WorkItemChanged(workItemData);
+            if (_isSubscribed)
+                Callback.WorkItemChanged(workItemData);
         }
 
         #region ICommunicationObject Members
@@ -100,12 +74,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         public void Close()
         {
-            lock (_subscribedTypes)
-            {
-                _subscribedTypes.Clear();
-                _subscribedToAll = false;
-            }
-
+            _isSubscribed = false;
             State = CommunicationState.Closed;
             EventsHelper.Fire(Closed, this, EventArgs.Empty);
         }
@@ -151,12 +120,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         public void Fault()
         {
-            lock (_subscribedTypes)
-            {
-                _subscribedTypes.Clear();
-                _subscribedToAll = false;
-            }
-
+            _isSubscribed = false;
             State = CommunicationState.Faulted;
             EventsHelper.Fire(Faulted, this, EventArgs.Empty);
         }

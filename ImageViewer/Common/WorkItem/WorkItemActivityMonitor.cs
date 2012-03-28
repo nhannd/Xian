@@ -1,26 +1,19 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    public class WorkItemChangedEventArgs : EventArgs
-    {
-        public WorkItemChangedEventArgs(WorkItemData itemData)
-        {
-            ItemData = itemData;
-        }
-
-        public WorkItemData ItemData { get; private set; }
-    }
-
     public interface IWorkItemActivityMonitor : IDisposable
     {
         bool IsConnected { get; }
         event EventHandler IsConnectedChanged;
 
-        void Subscribe(WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler);
-        void Unsubscribe(WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler);
+        WorkItemTypeEnum[] WorkItemTypeFilters { get; set; }
+        long[] WorkItemIdFilters { get; set; }
+
+        event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
     }
 
     public abstract class WorkItemActivityMonitor : IWorkItemActivityMonitor
@@ -43,8 +36,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public abstract bool IsConnected { get; }
         public abstract event EventHandler IsConnectedChanged;
 
-        public abstract void Subscribe(WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler);
-        public abstract void Unsubscribe(WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler);
+        public abstract WorkItemTypeEnum[] WorkItemTypeFilters { get; set; }
+        public abstract long[] WorkItemIdFilters { get; set; }
+
+        public abstract event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
 
         #endregion
 
@@ -114,6 +109,26 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         #endregion
+    }
+
+    internal static class WorkItemActivityMonitorExtensions
+    {
+        public static bool WorkItemMatchesFilters(this IWorkItemActivityMonitor activityMonitor, WorkItemData workItemData)
+        {
+            var typeFilters = activityMonitor.WorkItemTypeFilters;
+            bool matchesTypeFilters = typeFilters == null
+                                      || typeFilters.Length == 0
+                                      || typeFilters.Contains(workItemData.Type);
+            if (!matchesTypeFilters)
+                return false;
+
+            var idFilters = activityMonitor.WorkItemIdFilters;
+            bool matchesIdFilters = idFilters == null
+                                      || idFilters.Length == 0
+                                      || idFilters.Contains(workItemData.Identifier);
+
+            return matchesIdFilters;
+        }
     }
 
 }

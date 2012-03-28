@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         private int _workItemChangedCallbackCount;
 
         private int _expectedAsyncEventCount;
-        private volatile bool _expectingAsyncEvents = false;
+        private volatile bool _expectingAsyncEvents;
 
         [TestFixtureSetUp]
         public void Initialize()
@@ -56,76 +56,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         private int WorkItemChangedCallbackCount
         {
             get { lock (_syncLock) { return _workItemChangedCallbackCount; } }
-        }
-
-        [Test]
-        public void TestEventProxyKeyEquality()
-        {
-            var key1 = new WorkItemChangedEventProxyKey(null, WorkItemChanged1);
-            var key2 = new WorkItemChangedEventProxyKey(null, WorkItemChanged1);
-
-            Assert.AreEqual(key1, key2);
-            key2 = new WorkItemChangedEventProxyKey(WorkItemTypeEnum.DicomSend, WorkItemChanged1);
-
-            Assert.AreNotEqual(key1, key2);
-            key1 = new WorkItemChangedEventProxyKey(WorkItemTypeEnum.DicomSend, WorkItemChanged1);
-
-            Assert.AreEqual(key1, key2);
-
-            key2 = new WorkItemChangedEventProxyKey(WorkItemTypeEnum.DicomSend, WorkItemChanged2);
-            Assert.AreNotEqual(key1, key2);
-        }
-
-        [Test]
-        public void TestWorkItemChangedEventWrappers()
-        {
-            var wrappers = new WorkItemChangedEventWrappers();
-            Assert.AreSame(wrappers.AllTypesWrapper, wrappers[null]);
-
-            Assert.IsFalse(wrappers[null].IsActive);
-            wrappers[null].IsSubscribedToService = true;
-
-            Assert.IsTrue(wrappers[null].IsActive);
-            Assert.IsFalse(wrappers[null].ShouldSubscribeToService);
-            Assert.IsTrue(wrappers[null].ShouldUnsubscribeFromService);
-
-            wrappers[null].Changed += WorkItemChanged1;
-            Assert.IsTrue(wrappers[null].IsActive);
-            Assert.IsFalse(wrappers[null].ShouldSubscribeToService);
-            Assert.IsFalse(wrappers[null].ShouldUnsubscribeFromService);
-
-            wrappers[null].IsSubscribedToService = false;
-            Assert.IsTrue(wrappers[null].IsActive);
-            Assert.IsTrue(wrappers[null].ShouldSubscribeToService);
-            Assert.IsFalse(wrappers[null].ShouldUnsubscribeFromService);
-
-            Assert.AreEqual(1, wrappers.GetActiveWrappers().Count());
-
-            wrappers[null].Changed += WorkItemChanged2;
-            Assert.IsTrue(wrappers[null].IsActive);
-            Assert.IsTrue(wrappers[null].ShouldSubscribeToService);
-            Assert.IsFalse(wrappers[null].ShouldUnsubscribeFromService);
-
-            wrappers[null].Changed -= WorkItemChanged1;
-
-            Assert.IsTrue(wrappers[null].IsActive);
-            Assert.IsTrue(wrappers[null].ShouldSubscribeToService);
-            Assert.IsFalse(wrappers[null].ShouldUnsubscribeFromService);
-
-            wrappers[null].Changed -= WorkItemChanged2;
-
-            Assert.IsFalse(wrappers[null].IsActive);
-            Assert.IsFalse(wrappers[null].ShouldSubscribeToService);
-            Assert.IsFalse(wrappers[null].ShouldUnsubscribeFromService);
-
-            Assert.AreEqual(0, wrappers.GetActiveWrappers().Count());
-
-            wrappers[null].IsSubscribedToService = true;
-            wrappers[WorkItemTypeEnum.DicomSend].IsSubscribedToService = true;
-
-            Assert.AreEqual(2, wrappers.GetActiveWrappers().Count());
-
-            //TODO (Marmot): More tests on the Get* methods.
         }
 
         [Test]
@@ -177,31 +107,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             callback.WorkItemChanged(item);
             Assert.AreEqual(0, WorkItemChangedCallbackCount);
 
-            service.Subscribe(new WorkItemSubscribeRequest {Type = null});
+            service.Subscribe(new WorkItemSubscribeRequest());
 
             callback.WorkItemChanged(item);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
 
-            service.Subscribe(new WorkItemSubscribeRequest { Type = WorkItemTypeEnum.DicomRetrieve });
-            callback.WorkItemChanged(item);
-            Assert.AreEqual(2, WorkItemChangedCallbackCount);
-
             service.Unsubscribe(new WorkItemUnsubscribeRequest {Type = null});
             callback.WorkItemChanged(item);
-            Assert.AreEqual(3, WorkItemChangedCallbackCount);
-
-            item.Type = WorkItemTypeEnum.DicomSend;
-            callback.WorkItemChanged(item);
-            Assert.AreEqual(3, WorkItemChangedCallbackCount);
-
-            item.Type = WorkItemTypeEnum.DicomRetrieve;
-            service.Unsubscribe(new WorkItemUnsubscribeRequest { Type = WorkItemTypeEnum.DicomRetrieve });
-            callback.WorkItemChanged(item);
-
-            item.Type = WorkItemTypeEnum.DicomSend;
-            service.Subscribe(new WorkItemSubscribeRequest { Type = WorkItemTypeEnum.DicomSend});
-            callback.WorkItemChanged(item);
-            Assert.AreEqual(4, WorkItemChangedCallbackCount);
+            Assert.AreEqual(1, WorkItemChangedCallbackCount);
         }
 
         [Test]
@@ -297,48 +210,56 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             ResetCallbackFields();
 
             var item = new WorkItemData { Type = WorkItemTypeEnum.DicomRetrieve };
-            SubscribeAndPause(monitor, null, WorkItemChanged1);
+            SubscribeAndPause(monitor, WorkItemChanged1);
 
             WaitForEvents(() => callback.WorkItemChanged(item), 1);
             Assert.AreEqual(1, WorkItemChanged1Count);
             Assert.AreEqual(0, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
-            SubscribeAndPause(monitor, WorkItemTypeEnum.DicomRetrieve, WorkItemChanged2);
+            monitor.WorkItemTypeFilters = new[] {WorkItemTypeEnum.DicomRetrieve};
+            SubscribeAndPause(monitor, WorkItemChanged2);
             WaitForEvents(() => callback.WorkItemChanged(item), 2);
             Assert.AreEqual(2, WorkItemChanged1Count);
             Assert.AreEqual(1, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
             item.Type = WorkItemTypeEnum.DicomSend;
-            WaitForEvents(() => callback.WorkItemChanged(item), 1);
-            Assert.AreEqual(3, WorkItemChanged1Count);
+            callback.WorkItemChanged(item);
+            Thread.Sleep(100);
+            Assert.AreEqual(2, WorkItemChanged1Count);
             Assert.AreEqual(1, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
-            UnsubscribeAndPause(monitor, null, WorkItemChanged1);
-            Assert.AreEqual(3, WorkItemChanged1Count);
+            UnsubscribeAndPause(monitor, WorkItemChanged1);
+            callback.WorkItemChanged(item);
+            Thread.Sleep(100);
+            Assert.AreEqual(2, WorkItemChanged1Count);
             Assert.AreEqual(1, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
-            SubscribeAndPause(monitor, WorkItemTypeEnum.DicomSend, WorkItemChanged1);
-            SubscribeAndPause(monitor, WorkItemTypeEnum.DicomSend, WorkItemChanged3);
+            monitor.WorkItemTypeFilters = new[] { WorkItemTypeEnum.DicomSend};
+            SubscribeAndPause(monitor, WorkItemChanged1);
+            UnsubscribeAndPause(monitor, WorkItemChanged2);
+            SubscribeAndPause(monitor, WorkItemChanged3);
             WaitForEvents(() => callback.WorkItemChanged(item), 2);
-            Assert.AreEqual(4, WorkItemChanged1Count);
+            Assert.AreEqual(3, WorkItemChanged1Count);
             Assert.AreEqual(1, WorkItemChanged2Count);
             Assert.AreEqual(1, WorkItemChanged3Count);
+
+            //TODO (Marmot): Expand to include multiple filters, etc.
         }
 
-        private void SubscribeAndPause(IWorkItemActivityMonitor monitor, WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        private void SubscribeAndPause(IWorkItemActivityMonitor monitor, EventHandler<WorkItemChangedEventArgs> eventHandler)
         {
-            monitor.Subscribe(workItemType, eventHandler);
+            monitor.WorkItemChanged += eventHandler;
             //It may take a sec for the monitor to subscribe via the actual service.
             Thread.Sleep(100);
         }
 
-        private void UnsubscribeAndPause(IWorkItemActivityMonitor monitor, WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        private void UnsubscribeAndPause(IWorkItemActivityMonitor monitor, EventHandler<WorkItemChangedEventArgs> eventHandler)
         {
-            monitor.Unsubscribe(workItemType, eventHandler);
+            monitor.WorkItemChanged -= eventHandler;
             //It may take a sec for the monitor to unsubscribe via the actual service.
             Thread.Sleep(100);
         }

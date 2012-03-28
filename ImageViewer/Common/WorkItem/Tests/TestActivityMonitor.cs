@@ -8,12 +8,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
     internal class TestActivityMonitor : IWorkItemActivityMonitor, IWorkItemActivityCallback
     {
         private bool _isConnected;
-        private readonly WorkItemChangedEventWrappers _workItemChangedEvents;
-
-        public TestActivityMonitor()
-        {
-            _workItemChangedEvents = new WorkItemChangedEventWrappers();
-        }
 
         #region IWorkItemActivityMonitor Members
 
@@ -32,29 +26,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         public event EventHandler IsConnectedChanged;
 
-        public void Subscribe(WorkItemTypeEnum? workItemType, System.EventHandler<WorkItemChangedEventArgs> eventHandler)
-        {
-            var wrapper = _workItemChangedEvents[workItemType];
-            wrapper.Changed += eventHandler;
-            wrapper.IsSubscribedToService = true;
-        }
+        public WorkItemTypeEnum[] WorkItemTypeFilters { get; set; }
+        public long[] WorkItemIdFilters { get; set; }
 
-        public void Unsubscribe(WorkItemTypeEnum? workItemType, System.EventHandler<WorkItemChangedEventArgs> eventHandler)
-        {
-            var wrapper = _workItemChangedEvents[workItemType];
-            wrapper.Changed -= eventHandler;
-            wrapper.IsSubscribedToService = false;
-        }
+        public event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
+
+        #endregion
 
         void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
         {
-            var args = new WorkItemChangedEventArgs(workItemData);
-            var delegates = _workItemChangedEvents.GetChangedDelegates(workItemData.Type);
-            foreach (var @delegate in delegates)
-                @delegate.DynamicInvoke(this, args);
+            if (this.WorkItemMatchesFilters(workItemData))
+                EventsHelper.Fire(WorkItemChanged, this, new WorkItemChangedEventArgs(workItemData));
         }
-
-        #endregion
 
         #region IDisposable Members
 

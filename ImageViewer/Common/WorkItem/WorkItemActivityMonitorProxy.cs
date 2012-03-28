@@ -1,60 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    internal struct WorkItemChangedEventProxyKey
-    {
-        private readonly WorkItemTypeEnum? _workItemType;
-        private readonly EventHandler<WorkItemChangedEventArgs> _realHandler;
-
-        public WorkItemChangedEventProxyKey(WorkItemTypeEnum? workItemType,
-                                            EventHandler<WorkItemChangedEventArgs> realHandler)
-        {
-            _workItemType = workItemType;
-            _realHandler = realHandler;
-        }
-
-        public WorkItemTypeEnum? WorkItemType { get { return _workItemType; } }
-        public EventHandler<WorkItemChangedEventArgs> RealHandler { get { return _realHandler; } }
-    }
-
-    internal class WorkItemChangedEventProxy
-    {
-        private readonly EventHandler<WorkItemChangedEventArgs> _realHandler;
-        private readonly SynchronizationContext _synchronizationContext;
-
-        public WorkItemChangedEventProxy(EventHandler<WorkItemChangedEventArgs> realHandler, SynchronizationContext synchronizationContext)
-        {
-            _realHandler = realHandler;
-            _synchronizationContext = synchronizationContext;
-        }
-
-        public void OnWorkItemChanged(object sender, WorkItemChangedEventArgs e)
-        {
-            if (_synchronizationContext != null)
-                _synchronizationContext.Post(ignore => _realHandler(sender, e), null);
-            else
-                _realHandler(sender, e);
-        }
-    }
-
     internal class WorkItemActivityMonitorProxy : WorkItemActivityMonitor
     {
         private readonly IWorkItemActivityMonitor _real;
         private readonly SynchronizationContext _synchronizationContext;
 
-        private readonly Dictionary<WorkItemChangedEventProxyKey, WorkItemChangedEventProxy> _eventProxies;
         private event EventHandler _isConnectedChanged;
+
+        private IList<WorkItemTypeEnum> _workItemTypeFilters;
+        private IList<long> _workItemIdFilters;
+        private event EventHandler<WorkItemChangedEventArgs> _workItemChanged;
+
         private volatile bool _disposed;
 
         internal WorkItemActivityMonitorProxy(IWorkItemActivityMonitor real, SynchronizationContext synchronizationContext)
         {
             _real = real;
             _synchronizationContext = synchronizationContext;
-            _eventProxies = new Dictionary<WorkItemChangedEventProxyKey, WorkItemChangedEventProxy>();
         }
 
         public override bool IsConnected
@@ -90,26 +58,60 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public override void Subscribe(WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        public override WorkItemTypeEnum[] WorkItemTypeFilters
         {
-            CheckDisposed();
-            var key = new WorkItemChangedEventProxyKey(workItemType, eventHandler);
-            if (_eventProxies.ContainsKey(key))
-                return;
-
-            var eventProxy = new WorkItemChangedEventProxy(eventHandler, _synchronizationContext);
-            _eventProxies[key] = eventProxy;
-            _real.Subscribe(workItemType, eventProxy.OnWorkItemChanged);
+            get
+            {
+                return _workItemTypeFilters == null ? null : _workItemTypeFilters.ToArray();
+            }
+            set
+            {
+                //NOTE (Marmot): We purposely don't set the filters on the "real" monitor because it's shared among proxies.
+                if (value == null || value.Length == 0)
+                    _workItemTypeFilters = null;
+                else
+                    _workItemTypeFilters = value.ToList();
+            }
         }
 
-        public override void Unsubscribe(WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        public override long[] WorkItemIdFilters
         {
-            CheckDisposed();
-            var key = new WorkItemChangedEventProxyKey(workItemType, eventHandler);
-            if (!_eventProxies.ContainsKey(key))
-                return;
+            get
+            {
+                return _workItemIdFilters == null ? null : _workItemIdFilters.ToArray();
+            }
+            set
+            {
+                //NOTE (Marmot): We purposely don't set the filters on the "real" monitor because it's shared among proxies.
+                if (value == null || value.Length == 0)
+                    _workItemIdFilters = null;
+                else
+                    _workItemIdFilters = value.ToList();
+            }
+        }
 
-            _real.Unsubscribe(workItemType, _eventProxies[key].OnWorkItemChanged);
+        public override event EventHandler<WorkItemChangedEventArgs> WorkItemChanged
+        {
+            add
+            {
+                CheckDisposed();
+
+                bool subscribeToReal = _workItemChanged == null;
+                if (subscribeToReal)
+                    _real.WorkItemChanged += OnWorkItemChanged;
+
+                _workItemChanged += value;
+            }
+            remove
+            {
+                CheckDisposed();
+
+                _workItemChanged -= value;
+
+                bool unsubscribeFromReal = _workItemChanged == null;
+                if (unsubscribeFromReal)
+                    _real.WorkItemChanged -= OnWorkItemChanged;
+            }
         }
 
         private void OnIsConnectedChanged(object sender, EventArgs e)
@@ -120,11 +122,26 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 FireIsConnectedChanged();
         }
 
+        private void OnWorkItemChanged(object sender, WorkItemChangedEventArgs e)
+        {
+            if (_synchronizationContext != null)
+                _synchronizationContext.Post(ignore => FireWorkItemChanged(e), null);
+            else
+                FireWorkItemChanged(e);
+        }
+
         private void FireIsConnectedChanged()
         {
             if (!_disposed)
                 EventsHelper.Fire(_isConnectedChanged, this, EventArgs.Empty);
         }
+
+        private void FireWorkItemChanged(WorkItemChangedEventArgs e)
+        {
+            if (!_disposed && this.WorkItemMatchesFilters(e.ItemData))
+                EventsHelper.Fire(_workItemChanged, this, e);
+        }
+
 
         private void CheckDisposed()
         {
@@ -136,11 +153,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             _disposed = true;
 
-            foreach (var eventProxy in _eventProxies)
-                _real.Unsubscribe(eventProxy.Key.WorkItemType, eventProxy.Value.OnWorkItemChanged);
-
             if (_isConnectedChanged != null)
                 _real.IsConnectedChanged -= OnIsConnectedChanged;
+
+            if (_workItemChanged != null)
+                _real.WorkItemChanged -= OnWorkItemChanged;
 
             OnProxyDisposed();
         }

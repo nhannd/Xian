@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
             _workItemActivityMonitor = WorkItemActivityMonitor.Create(false);
             _workItemActivityMonitor.IsConnectedChanged += OnIsConnectedChanged;
-            _workItemActivityMonitor.Subscribe(null, OnWorkItemChanged);
+            _workItemActivityMonitor.WorkItemChanged += OnWorkItemChanged;
             
             Console.WriteLine("Press <Enter> to terminate.");
             Console.WriteLine();
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             Console.ReadLine();
 
             _workItemActivityMonitor.IsConnectedChanged -= OnIsConnectedChanged;
-            _workItemActivityMonitor.Unsubscribe(null, OnWorkItemChanged);
+            _workItemActivityMonitor.WorkItemChanged -= OnWorkItemChanged;
             _workItemActivityMonitor.Dispose();
         }
 

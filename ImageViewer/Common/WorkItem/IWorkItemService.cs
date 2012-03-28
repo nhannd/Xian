@@ -84,15 +84,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract]
     public class WorkItemSubscribeRequest : DataContractBase
     {
-        [DataMember]
-        public CultureInfo Culture { get; set; }
-
-        [DataMember]
-        public WorkItemTypeEnum? Type { get; set; }
-
-        // TODO (CR Mar 2012): Probably more complicated than we want to get right now.
-        [DataMember]
-        public Guid? Identifier { get; set; }
+        //[DataMember]
+        //public CultureInfo Culture { get; set; }
     }
 
     [DataContract]

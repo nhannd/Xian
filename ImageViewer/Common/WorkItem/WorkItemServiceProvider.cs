@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
     [ExtensionOf(typeof(DuplexServiceProviderExtensionPoint))]
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
-    public class WorkItemServiceProvider : IServiceProvider, IDuplexServiceProvider
+    internal class WorkItemServiceProvider : IServiceProvider, IDuplexServiceProvider
     {
         #region Implementation of IDuplexServiceProvider
 

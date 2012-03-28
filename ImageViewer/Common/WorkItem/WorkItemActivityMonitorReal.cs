@@ -31,16 +31,19 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         private Thread _connectionThread;
         private bool _disposed;
-        private bool _updateSubscriptions;
+
+        private bool _subscribedToService;
+        
         private event EventHandler _isConnectedChanged;
 
-        private readonly WorkItemChangedEventWrappers _workItemChangedEvents;
+        private IList<WorkItemTypeEnum> _workItemTypeFilters;
+        private IList<long> _workItemIdFilters;
+        private event EventHandler<WorkItemChangedEventArgs> _workItemChanged;
+
         private volatile IWorkItemActivityMonitorService _client;
 
         internal RealWorkItemActivityMonitor()
         {
-            _workItemChangedEvents = new WorkItemChangedEventWrappers();
-
             _connectionThread = new Thread(MonitorConnection);
             _connectionThread.Start();
             lock (_syncLock)
@@ -61,6 +64,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 lock (_syncLock)
                 {
                     _isConnectedChanged += value;
+                    Monitor.Pulse(_syncLock);
                 }
             }
             remove
@@ -68,29 +72,73 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 lock (_syncLock)
                 {
                     _isConnectedChanged -= value;
+                    Monitor.Pulse(_syncLock);
                 }
             }
         }
 
-        public override void Subscribe(WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        public override WorkItemTypeEnum[] WorkItemTypeFilters
         {
-            lock (_syncLock)
+            get
             {
-                _workItemChangedEvents[workItemType].Changed += eventHandler;
-                _updateSubscriptions = true;
-                Monitor.Pulse(_syncLock);
+                lock(_syncLock)
+                {
+                    return _workItemTypeFilters == null ? null : _workItemTypeFilters.ToArray();
+                }
+            }
+            set
+            {
+                lock (_syncLock)
+                {
+                    if (value == null || value.Length == 0)
+                        _workItemTypeFilters = null;
+                    else
+                        _workItemTypeFilters = value.ToList();
+                }
             }
         }
 
-        public override void Unsubscribe(WorkItemTypeEnum? workItemType, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        public override long[] WorkItemIdFilters
         {
-            lock (_syncLock)
+            get
             {
-                _workItemChangedEvents[workItemType].Changed -= eventHandler;
-                _updateSubscriptions = true;
-                Monitor.Pulse(_syncLock);
+                lock (_syncLock)
+                {
+                    return _workItemIdFilters == null ? null : _workItemIdFilters.ToArray();
+                }
+            }
+            set
+            {
+                lock (_syncLock)
+                {
+                    if (value == null || value.Length == 0)
+                        _workItemIdFilters = null;
+                    else
+                        _workItemIdFilters = value.ToList();
+                }
             }
         }
+
+        public override event EventHandler<WorkItemChangedEventArgs> WorkItemChanged
+        {
+            add
+            {
+                lock (_syncLock)
+                {
+                    _workItemChanged += value;
+                    Monitor.Pulse(_syncLock);
+                }
+            }
+            remove
+            {
+                lock (_syncLock)
+                {
+                    _workItemChanged -= value;
+                    Monitor.Pulse(_syncLock);
+                }
+            }
+        }
+
 
         private void MonitorConnection(object ignore)
         {
@@ -100,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
                 //Try to connect first.
                 Connect();
-                ManageSubscriptions();
+                ManageSubscription();
 
                 //startup pulse.
                 Monitor.Pulse(_syncLock);
@@ -112,90 +160,60 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 {
                     //Check disposed before and after the wait because it could have changed.
                     if (_disposed) break;
-                    if (!_updateSubscriptions)
-                    {
+
+                    var hasListeners = _workItemChanged != null;
+                    bool needsSubscriptionChange = _subscribedToService != hasListeners;
+
+                    if (!needsSubscriptionChange)
                         Monitor.Wait(_syncLock, ConnectionRetryInterval);
-                        if (_disposed) break;
-                    }
+                    if (_disposed) break;
                 }
 
                 Connect();
-                ManageSubscriptions();
+                ManageSubscription();
             }
 
             DropConnection();
-            ManageSubscriptions();
+            ManageSubscription();
         }
 
-        private void ManageSubscriptions()
+        private void ManageSubscription()
         {
-            IList<WorkItemChangedEventWrapper> newSubscriptions;
-            IList<WorkItemChangedEventWrapper> deadSubscriptions;
-
             if (_client == null)
             {
-                lock (_syncLock)
-                {
-                    _updateSubscriptions = false;
-                    //No connection means no subscriptions.
-                    foreach (var workItemChangedEvent in _workItemChangedEvents.GetActiveWrappers())
-                        workItemChangedEvent.IsSubscribedToService = false;
-                }
+                //No need to sync because this variable's only used on one thread.
+                _subscribedToService = false;
                 return;
             }
 
+            bool subscribe;
             lock (_syncLock)
             {
-                _updateSubscriptions = false;
-                newSubscriptions = _workItemChangedEvents.GetWrappersToSubscribeToService();
-                deadSubscriptions = _workItemChangedEvents.GetWrappersToUnsubscribeFromService();
+                var hasListeners = _workItemChanged != null;
+                bool needsSubscriptionChange = _subscribedToService != hasListeners;
+                if (!needsSubscriptionChange)
+                    return;
+
+                subscribe = hasListeners;
             }
 
-            foreach (var deadSubscription in deadSubscriptions)
+            try
             {
-                try
+                if (subscribe)
                 {
-                    _client.Unsubscribe(new WorkItemUnsubscribeRequest { Type = deadSubscription.WorkItemType });
+                    _client.Subscribe(new WorkItemSubscribeRequest());
+                    _subscribedToService = true;
                 }
-                catch (Exception e)
+                else
                 {
-                    var workItemTypeName = deadSubscription.WorkItemType.HasValue
-                                               ? deadSubscription.WorkItemType.ToString()
-                                               : "All";
-
-                    Platform.Log(LogLevel.Debug, e, "Failed to unsubscribe from event type '{0}'", workItemTypeName);
-                }
-                finally
-                {
-                    //Note (Marmot): All we can do is assume we're unsubscribed and try again later if needed.
-                    deadSubscription.IsSubscribedToService = false;
+                    _client.Unsubscribe(new WorkItemUnsubscribeRequest());
+                    _subscribedToService = false;
                 }
             }
-
-            foreach (var newSubscription in newSubscriptions)
+            catch(Exception e)
             {
-                try
-                {
-                    _client.Subscribe(new WorkItemSubscribeRequest
-                    {
-                        //TODO (Marmot): How do we deal with this, or do we need to?
-                        //Culture = Thread.CurrentThread.CurrentUICulture,
-                        Type = newSubscription.WorkItemType
-                    });
-
-                    newSubscription.IsSubscribedToService = true;
-                }
-                catch (Exception e)
-                {
-                    //Note (Marmot): All we can do is assume we're unsubscribed and try again later if needed.
-                    newSubscription.IsSubscribedToService = false;
-
-                    var workItemTypeName = newSubscription.WorkItemType.HasValue
-                                               ? newSubscription.WorkItemType.ToString()
-                                               : "All";
-
-                    Platform.Log(LogLevel.Debug, e, "Failed to subscribe to event type '{0}'", workItemTypeName);
-                }
+                _subscribedToService = false;
+                Platform.Log(LogLevel.Warn, e, "Failed to subscribe/unsubscribe from ActivityMonitorService.");
             }
         }
 
@@ -204,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (_client != null)
                 return;
 
-            Platform.Log(LogLevel.Debug, "Attempting to connect to WorkItemService.");
+            Platform.Log(LogLevel.Debug, "Attempting to connect to ActivityMonitorService.");
 
             try
             {
@@ -217,31 +235,31 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 communication.Closed += OnConnectionClosed;
                 communication.Faulted += OnConnectionFaulted;
 
-                Platform.Log(LogLevel.Debug, "Successfully connected to WorkItemService.");
+                Platform.Log(LogLevel.Debug, "Successfully connected to ActivityMonitorService.");
 
                 _client = client;
                 FireIsConnectedChanged();
             }
             catch (EndpointNotFoundException)
             {
-                Platform.Log(LogLevel.Debug, "WorkItemService is not running.");
+                Platform.Log(LogLevel.Debug, "ActivityMonitorService is not running.");
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Debug, e, "Unexpected error trying to connect to WorkItemService.");
+                Platform.Log(LogLevel.Debug, e, "Unexpected error trying to connect to ActivityMonitorService.");
             }
         }
 
         void OnConnectionFaulted(object sender, EventArgs e)
         {
             DropConnection();
-            ManageSubscriptions();
+            ManageSubscription();
         }
 
         void OnConnectionClosed(object sender, EventArgs e)
         {
             DropConnection();
-            ManageSubscriptions();
+            ManageSubscription();
         }
 
         private void DropConnection()
@@ -249,7 +267,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (_client == null)
                 return;
 
-            Platform.Log(LogLevel.Debug, "Attempting to disconnect from WorkItemService.");
+            Platform.Log(LogLevel.Debug, "Attempting to disconnect from ActivityMonitorService.");
 
             try
             {
@@ -262,7 +280,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Debug, e, "Unexpected error disconnecting from WorkItemService.");
+                Platform.Log(LogLevel.Debug, e, "Unexpected error disconnecting from ActivityMonitorService.");
             }
 
             _client = null;
@@ -289,12 +307,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             IList<Delegate> delegates;
             lock (_syncLock)
             {
-                if (_disposed)
+                if (_disposed || !this.WorkItemMatchesFilters(workItemData))
                     return;
 
-                //The only events we fire are the ones for the matching work item type,
-                //or the ones that are for "all" work item types.
-                delegates = _workItemChangedEvents.GetChangedDelegates(workItemData.Type);
+                delegates = _workItemChanged != null ? _workItemChanged.GetInvocationList() : new Delegate[0];
             }
 
             if (delegates.Count <= 0)
