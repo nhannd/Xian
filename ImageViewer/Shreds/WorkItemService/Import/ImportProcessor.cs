@@ -15,6 +15,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Network;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 
@@ -24,21 +25,35 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
     {
         public List<string> FilesToImport { get; set; }
 
-        public ImportWorkItemProgress Progress
+        public ImportFilesProgress Progress
         {
-            get { return Proxy.Item.Progress as ImportWorkItemProgress; }
+            get { return Proxy.Item.Progress as ImportFilesProgress; }
+        }
+
+        public ImportFilesRequest Request
+        {
+            get { return Proxy.Item.Request as ImportFilesRequest; }
         }
 
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
+            bool initResult = base.Initialize(proxy);
+
             if (proxy.Item.Progress == null)
-                proxy.Item.Progress = new ImportWorkItemProgress();
-            else if (!(proxy.Item.Progress is ImportWorkItemProgress))
-                proxy.Item.Progress = new ImportWorkItemProgress();
+                proxy.Item.Progress = new ImportFilesProgress();
+            else if (!(proxy.Item.Progress is ImportFilesProgress))
+                proxy.Item.Progress = new ImportFilesProgress();
             
             FilesToImport = new List<string>();
+            
+            
+            // Reinit the progress
+            Progress.TotalFilesToImport = 0;
+            Progress.NumberOfFilesImported = 0;
+            Progress.NumberOfImportFailures = 0;
+            Progress.StatusDetails = string.Empty;
 
-            return base.Initialize(proxy);
+            return initResult;
         }
 
         public override void Process(WorkItemStatusProxy proxy)
@@ -51,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
             var filePaths = new List<string>(request.FilePaths);
 
-            Progress.Description = filePaths.Count > 1
+            Progress.StatusDetails = filePaths.Count > 1
                                        ? String.Format(SR.FormatMultipleFilesDescription, filePaths[0])
                                        : filePaths[0];
 
@@ -72,14 +87,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             //it's ok to read this property unsynchronized because this is the only thread that is adding to the queue for the particular job.
             if (FilesToImport.Count == 0)
             {
-                Progress.StatusDescription = SR.MessageNoFilesToImport;
+                Progress.StatusDetails = SR.MessageNoFilesToImport;
                 Progress.IsCancelable = false;
             }
             else
             {
                 ImportFiles();
             }
-
 
             if (CancelPending)
                 Proxy.Cancel();
@@ -152,11 +166,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                                                       return;
                                                   }
 
-                                                  Progress.StatusDescription = String.Format(SR.FormatEnumeratingFile, file);
+                                                  Progress.StatusDetails = String.Format(SR.FormatEnumeratingFile, file);
 
                                                   FilesToImport.Add(file);
 
                                                   ++Progress.TotalFilesToImport;
+                                                  Progress.UpdateStatus();
 
                                                   Proxy.UpdateProgress();
                                               }
@@ -180,14 +195,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 {
                     var dicomFile = new DicomFile(file);
 
-                    dicomFile.Load();
+                    DicomReadOptions readOptions = Request.FileImportBehaviour == FileImportBehaviourEnum.Save 
+                                                       ? DicomReadOptions.Default
+                                                       : DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences;
+                    
+                    dicomFile.Load(readOptions);
 
                     var importer = new SopInstanceImporter(context);
 
-                    importer.Import(dicomFile);
+                    DicomProcessingResult result = importer.Import(dicomFile,Request.BadFileBehaviour,Request.FileImportBehaviour);
 
-                    Progress.NumberOfFilesImported++;
-
+                    if (result.DicomStatus == DicomStatuses.Success)
+                    {
+                        Progress.NumberOfFilesImported++;
+                        Progress.UpdateStatus();
+                    }
                     if (CancelPending || StopPending)
                         return;
                 }
@@ -195,6 +217,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 {
                     Platform.Log(LogLevel.Warn, e, "Unable to import DICOM File: {0}", file);
                     Progress.NumberOfImportFailures++;
+                    Progress.UpdateStatus();
                 }
 
                 Proxy.UpdateProgress();

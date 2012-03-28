@@ -17,13 +17,26 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 {
     public class StudyProcessProcessor : BaseItemProcessor
     {
+        public StudyProcessProgress Progress
+        {
+            get { return Proxy.Item.Progress as StudyProcessProgress; }
+        }
+
+        public override bool Initialize(WorkItemStatusProxy proxy)
+        {
+            if (proxy.Item.Progress == null)
+                proxy.Item.Progress = new StudyProcessProgress();
+            else if (!(proxy.Item.Progress is StudyProcessProgress))
+                proxy.Item.Progress = new StudyProcessProgress();
+
+            return base.Initialize(proxy);
+        }
         /// <summary>
         /// Cleanup any failed items in the queue and delete the queue entry.
         /// </summary>
@@ -135,6 +148,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 
                 LoadUids();
 
+                Progress.TotalFilesToProcess = WorkQueueUidList.Count;
+                Progress.UpdateStatus();
+                Proxy.UpdateProgress();                        
+
                 foreach (WorkItemUid sop in WorkQueueUidList)
                 {
                     if (sop.Failed)
@@ -157,7 +174,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                     }
 
                     if (ProcessWorkQueueUid(sop, studyXml))
+                    {
                         successfulProcessCount++;
+
+                        Progress.NumberOfFilesProcessed++;
+                        Progress.UpdateStatus();
+                        Proxy.UpdateProgress();
+                    }
+                    else if (sop.Failed)
+                    {
+                        Progress.NumberOfProcessingFailures++;
+                        Progress.UpdateStatus();
+                        Proxy.UpdateProgress();                        
+                    }
                 }                
             }
 
@@ -207,11 +236,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
             }
             catch (Exception e)
             {
-                FailWorkItemUid(sop, true);
+                var updatedSop = FailWorkItemUid(sop, true);
+                sop.Failed = updatedSop.Failed;
+                sop.FailureCount = updatedSop.FailureCount;
 
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path ?? string.Empty,
                              sop.SopInstanceUid);
-                Proxy.Item.Progress.StatusDescription = e.InnerException != null
+                Proxy.Item.Progress.StatusDetails = e.InnerException != null
                                                             ? String.Format("{0}:{1}", e.GetType().Name,
                                                                             e.InnerException.Message)
                                                             : String.Format("{0}:{1}", e.GetType().Name, e.Message);

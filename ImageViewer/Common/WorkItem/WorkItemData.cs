@@ -112,9 +112,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public int FailureCount { get; set; }
 
         [DataMember(IsRequired = false)]
-        public string Description { get; set; }
-
-        [DataMember(IsRequired = false)]
         public WorkItemRequest Request { get; set; }
 
         [DataMember(IsRequired = false)]

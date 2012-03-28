@@ -19,6 +19,7 @@ using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
@@ -135,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		    var context = new DicomReceiveImportContext(association.CalledAE);
 		    var importer = new SopInstanceImporter(context);
 
-		    var result = importer.Import(message);
+		    var result = importer.Import(message,BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);
             if (result.Successful)
             {
                 if (!String.IsNullOrEmpty(result.AccessionNumber))

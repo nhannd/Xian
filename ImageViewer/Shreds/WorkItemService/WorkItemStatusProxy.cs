@@ -81,6 +81,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 context.Commit();
             }
+
+            Publish();
         }
 
         public void Postpone()
@@ -101,6 +103,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item.Status = WorkItemStatusEnum.Pending;
                 context.Commit();
             }
+
+            Publish();
         }
 
         public void Complete()
@@ -128,6 +132,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 context.Commit();
             }
+
+            Publish();
         }
 
         public void Idle()
@@ -148,6 +154,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 context.Commit();
             }
+
+            Publish();
         }
 
         public void Cancel()
@@ -170,6 +178,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 
                 context.Commit();
             }
+
+            Publish();
         }
 
         public void Delete()
@@ -183,6 +193,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 context.Commit();
             }
+
+            Publish();
         }
 
         public void UpdateProgress()
@@ -200,6 +212,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 context.Commit();
             }
+
+            Publish();
+        }
+
+        private void Publish()
+        {
+            try
+            {
+                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", WorkItemHelper.FromWorkItem(Item));
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
+            }            
         }
     }
 }

@@ -160,6 +160,7 @@
     <Compile Include="WorkItem\Tests\ActivityMonitorTests.cs" />
     <Compile Include="WorkItem\Tests\ActivityMonitorTestApplication.cs" />
     <Compile Include="WorkItem\WorkItemChangedEventArgs.cs" />
+    <Compile Include="WorkItem\WorkItemClient.cs" />
     <Compile Include="WorkItem\WorkItemServiceClient.cs" />
     <Compile Include="WorkItem\SR.Designer.cs">
       <AutoGen>True</AutoGen>

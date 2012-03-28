@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                            Type = item.Type,
                            DeleteTime = item.DeleteTime,
                            ExpirationTime = item.ExpirationTime,
-                           FailureCount = 0,
+                           FailureCount = item.FailureCount,
                            Identifier = item.Oid,
                            InsertTime = item.InsertTime,
                            Priority = item.Priority,

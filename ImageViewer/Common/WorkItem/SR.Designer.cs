@@ -133,6 +133,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} of {1} files imported, {2} failed..
+        /// </summary>
+        internal static string ImportFilesProgress_Status {
+            get {
+                return ResourceManager.GetString("ImportFilesProgress_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Importing Files.
         /// </summary>
         internal static string ImportFilesRequest_ActivityDescription {
@@ -165,6 +174,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string ImportStudyRequest_ActivityType {
             get {
                 return ResourceManager.GetString("ImportStudyRequest_ActivityType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} of {1} images processed, {2} failed..
+        /// </summary>
+        internal static string StudyProcessProgress_Status {
+            get {
+                return ResourceManager.GetString("StudyProcessProgress_Status", resourceCulture);
             }
         }
     }

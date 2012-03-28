@@ -178,14 +178,17 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         #endregion
 
         #region Public Methods
+
         /// <summary>
         /// Imports the specified <see cref="DicomMessageBase"/> object into the system.
         /// The object will be inserted into the <see cref="WorkItem"/> for processing
         /// </summary>
         /// <param name="message">The DICOM object to be imported.</param>
+        /// <param name="badFileBehavior"> </param>
+        /// <param name="fileImportBehaviour"> </param>
         /// <returns>An instance of <see cref="DicomProcessingResult"/> that describes the result of the processing.</returns>
         /// <exception cref="DicomDataException">Thrown when the DICOM object contains invalid data</exception>
-        public DicomProcessingResult Import(DicomMessageBase message)
+        public DicomProcessingResult Import(DicomMessageBase message, BadFileBehaviourEnum badFileBehavior, FileImportBehaviourEnum fileImportBehaviour)
         {
             Platform.CheckForNullReference(message, "message");
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
@@ -226,40 +229,50 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 {
                     var studyLocation = new StudyLocation(message);
 
-                	String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
+                	String destinationFile = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
                     
-                    DicomFile file = ConvertToDicomFile(message, finalDest, _context.SourceAE);
+                    DicomFile file = ConvertToDicomFile(message, destinationFile, _context.SourceAE);
 
-                    // Create the filestore Folder, if need be
+                    // Create the Study Folder, if need be
                     commandProcessor.AddCommand(new CreateDirectoryCommand(studyLocation.StudyFolder));
 
-                    // Create the Study folder
-                    commandProcessor.AddCommand(new CreateDirectoryCommand(Path.GetDirectoryName(finalDest)));
+                    bool duplicateFile = false;
+                    string dupName = Guid.NewGuid().ToString() + ".dcm";
 
-                    InsertWorkItemCommand command;
-
-                    if (File.Exists(finalDest))
+                    if (File.Exists(destinationFile))
                     {
-                        string dupName = Guid.NewGuid().ToString() + ".dcm";
-                        string dupPath = Path.Combine(Path.GetDirectoryName(finalDest), dupName);
+                        duplicateFile = true;
+                        destinationFile = Path.Combine(Path.GetDirectoryName(destinationFile), dupName);
+                    }
 
-                        commandProcessor.AddCommand(new SaveDicomFileCommand(dupPath, file, true));
+                    if (fileImportBehaviour == FileImportBehaviourEnum.Move)
+                    {
+                        commandProcessor.AddCommand(new RenameFileCommand(file.Filename, destinationFile, true));
+                    }
+                    else if (fileImportBehaviour == FileImportBehaviourEnum.Copy)
+                    {
+                        commandProcessor.AddCommand(new CopyFileCommand(file.Filename, destinationFile, true));
+                    }
+                    else if (fileImportBehaviour == FileImportBehaviourEnum.Save)
+                    {
+                        commandProcessor.AddCommand(new SaveDicomFileCommand(destinationFile, file, true));
+                    }
 
+                    InsertWorkItemCommand command;                 
+                    if (duplicateFile)
+                    {
                         WorkItem workItem;
-                        command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem) 
-                            ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName) 
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);
+                        command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem)
+                            ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName)
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
                     }
                     else
                     {
-                        commandProcessor.AddCommand(new SaveDicomFileCommand(finalDest, file, true));
-
                         WorkItem workItem;
-                        command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem) 
-                            ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid) 
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid);
+                        command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem)
+                            ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid)
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid);                        
                     }
-
                     commandProcessor.AddCommand(command);
 
                 	if (commandProcessor.Execute())

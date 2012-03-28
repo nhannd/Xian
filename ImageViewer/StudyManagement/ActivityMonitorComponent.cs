@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private IWorkItemActivityMonitor _monitor;
 		private readonly Table<WorkItemData> _workItems = new Table<WorkItemData>();
-		private WorkItemData _data = new WorkItemData {Progress = new WorkItemProgress()};
+		private WorkItemData _data = new WorkItemData {Progress = new ImportFilesProgress()};
 
 		private IDicomServerConfigurationProvider _dicomConfigProvider;
 		private Diskspace _totalDiskSpace;

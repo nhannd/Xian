@@ -20,6 +20,7 @@ using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -89,6 +90,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 		private void Anonymize(IBackgroundTaskContext context)
 		{
+            //TODO (Marmot) This probably should be its own WorkItem type and have it done in the background there.
 			StudyItem study = (StudyItem)context.UserState;
 			AuditedInstances anonymizedInstances = new AuditedInstances();
 
@@ -152,28 +154,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 					context.ReportProgress(new BackgroundTaskProgress(progressPercent, progressMessage));
 				}
 
-				//trigger an import of the anonymized files.
-				LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
-				client.Open();
-				try
-				{
-					FileImportRequest request = new FileImportRequest();
-					request.BadFileBehaviour = BadFileBehaviour.Move;
-					request.FileImportBehaviour = FileImportBehaviour.Move;
-					request.FilePaths = new string[] {_tempPath};
-					request.Recursive = false;
-					request.IsBackground = true;
-					client.Import(request);
-					client.Close();
-				}
-				catch
-				{
-					client.Abort();
-					throw;
-				}
-
-				AuditHelper.LogCreateInstances(new string[0], anonymizedInstances, EventSource.CurrentUser, EventResult.Success);
-
+			    var import = new DicomFileImportClient();
+                import.CreateInstances(_tempPath,anonymizedInstances,BadFileBehaviourEnum.Move, FileImportBehaviourEnum.Move);
+				
 				context.Complete();
 			}
 			catch(Exception e)
