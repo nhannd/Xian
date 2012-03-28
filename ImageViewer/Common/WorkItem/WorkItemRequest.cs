@@ -26,14 +26,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                       {
                                                           // WorkItemRequest related
                                                           typeof (WorkItemRequest),
+                                                          //Non-Study related requests
+                                                          typeof (ReindexRequest),
+                                                          typeof (ImportFilesRequest),
+
+                                                          //Study related requests
+                                                          typeof (WorkItemStudyRequest),
                                                           typeof (DicomSendRequest),
                                                           typeof (DicomAutoRouteRequest),
-                                                          typeof (ImportFilesRequest),
                                                           typeof (DicomRetrieveRequest),
                                                           typeof (StudyProcessRequest),
                                                           typeof (DicomReceiveRequest),
                                                           typeof (ImportStudyRequest),
-                                                          typeof (ReindexRequest),
 
                                                           // WorkItemProgress related
                                                           typeof (WorkItemProgress),
@@ -48,34 +52,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
-    [WorkItemRequestDataContract("00e165d6-44db-4bf4-b607-a8e82a395964")]
-    public class WorkItemPatient : PatientRootPatientIdentifier
-    {
-        public WorkItemPatient()
-        {}
-
-        public WorkItemPatient(DicomAttributeCollection c) : base(c)
-        {}
-    }
-
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
-    [WorkItemRequestDataContract("3366be52-823c-484e-b0a7-7344fed16457")]
-    public class WorkItemStudy : StudyIdentifier
-    {
-        public WorkItemStudy()
-        {}
-
-        public WorkItemStudy(DicomAttributeCollection c)
-            : base(c)
-        {}
-    }
 
     /// <summary>
     /// Base Request object for the creation of <see cref="WorkItem"/>s.
     /// </summary>
-    [XmlInclude(typeof(DicomSendRequest))]
+    [XmlInclude(typeof(WorkItemStudyRequest))]
     [XmlInclude(typeof(ImportFilesRequest))]
+    [XmlInclude(typeof(ReindexRequest))]
+    [XmlInclude(typeof(DicomSendRequest))]
     [XmlInclude(typeof(DicomAutoRouteRequest))]
     [XmlInclude(typeof(DicomRetrieveRequest))]
     [XmlInclude(typeof(StudyProcessRequest))]
@@ -97,12 +81,47 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     }
 
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("00e165d6-44db-4bf4-b607-a8e82a395964")]
+    public class WorkItemPatient : PatientRootPatientIdentifier
+    {
+        public WorkItemPatient()
+        { }
+
+        public WorkItemPatient(DicomAttributeCollection c)
+            : base(c)
+        { }
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("3366be52-823c-484e-b0a7-7344fed16457")]
+    public class WorkItemStudy : StudyIdentifier
+    {
+        public WorkItemStudy()
+        { }
+
+        public WorkItemStudy(DicomAttributeCollection c)
+            : base(c)
+        { }
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("E0BF69EF-1854-441c-9C1B-5D334094CB85")]
+    public abstract class WorkItemStudyRequest : WorkItemRequest
+    {
+        [DataMember(IsRequired = true)]
+        public WorkItemStudy Study { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public WorkItemPatient Patient { get; set; }
+    }
+
     /// <summary>
     /// <see cref="WorkItemRequest"/> for sending a study to a DICOM AE.
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
 	[WorkItemRequestDataContract("c6a4a14e-e877-45a3-871d-bb06054dd837")]
-    public class DicomSendRequest : WorkItemRequest
+    public class DicomSendRequest : WorkItemStudyRequest
     {
         public DicomSendRequest()
         {
@@ -124,12 +143,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [DataMember]
         public string TransferSyntaxUid { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public WorkItemStudy Study { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public WorkItemPatient Patient { get; set; }
 
         public override string ActivityType
         {
@@ -227,7 +240,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemRequestDataContract("0e04fa53-3f45-4ae2-9444-f3208047757c")]
-	public class DicomRetrieveRequest : WorkItemRequest
+    public class DicomRetrieveRequest : WorkItemStudyRequest
     {
         DicomRetrieveRequest()
         {
@@ -237,12 +250,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public WorkItemStudy Study { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public WorkItemPatient Patient { get; set; }
 
         public override string ActivityType
         {
@@ -260,19 +267,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemRequestDataContract("4d22984a-e750-467c-ab89-f680be38c6c1")]
-    public abstract class StudyProcessRequest : WorkItemRequest
+    public abstract class StudyProcessRequest : WorkItemStudyRequest
     {
         protected StudyProcessRequest()
         {
             Type = WorkItemTypeEnum.StudyProcess;
             Priority = WorkItemPriorityEnum.Stat;
         }
-
-        [DataMember(IsRequired = true)]
-        public WorkItemStudy Study { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public WorkItemPatient Patient { get; set; }
     }
 
 

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
@@ -21,6 +22,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -134,6 +136,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 
 		    var context = new DicomReceiveImportContext(association.CalledAE);
+            context.StudyWorkItems.ItemAdded +=delegate(object sender, DictionaryEventArgs<string, WorkItem> e)
+                                                   {
+                                                       try
+                                                       {
+                                                           PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", WorkItemHelper.FromWorkItem(e.Item));
+                                                       }
+                                                       catch (Exception x)
+                                                       {
+                                                           Platform.Log(LogLevel.Warn, x, "Unexpected error attempting to publish WorkItem status");
+                                                       }                                                                                                                                      
+                                                   };
+
 		    var importer = new SopInstanceImporter(context);
 
 		    var result = importer.Import(message,BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);

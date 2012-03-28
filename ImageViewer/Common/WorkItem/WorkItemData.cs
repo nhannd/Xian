@@ -117,10 +117,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = false)]
         public WorkItemProgress Progress { get; set; }
 
-        [DataMember(IsRequired = false)]
-        public IPatientData Patient { get; set; }
+        public IPatientData Patient
+        {
+            get
+            {
+                var request = Request as WorkItemStudyRequest;
+                if (request == null) return null;
+                return request.Patient;
+            }
+        }
 
-        [DataMember(IsRequired = false)]
-        public IStudyData Study { get; set; }
+        public IStudyData Study
+        {
+            get
+            {
+                var request = Request as WorkItemStudyRequest;
+                if (request == null) return null;
+                return request.Study;
+            }
+        }
     }
 }

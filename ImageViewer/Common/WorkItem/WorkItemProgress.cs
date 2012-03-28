@@ -27,7 +27,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = false)]
         public string StatusDetails { get; set; }
 
-        [DataMember(IsRequired = true)]
         public virtual Decimal PercentComplete {get { return new decimal(0.0); }}
 
         [DataMember(IsRequired = true)]

@@ -18,6 +18,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 {
@@ -166,7 +167,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             var configuration = GetServerConfiguration();
 
             var context = new ImportStudyContext(configuration.AETitle);
-
+            context.StudyWorkItems.ItemAdded += delegate(object sender, DictionaryEventArgs<string, WorkItem> e)
+                                                    {
+                                                        try
+                                                        {
+                                                            PublishManager<IWorkItemActivityCallback>.Publish(
+                                                                "WorkItemChanged", WorkItemHelper.FromWorkItem(e.Item));
+                                                        }
+                                                        catch (Exception x)
+                                                        {
+                                                            Platform.Log(LogLevel.Warn, x,
+                                                                         "Unexpected error attempting to publish WorkItem status");
+                                                        }
+                                                    };
             foreach (string file in FilesToImport)
             {
                 try
