@@ -33,11 +33,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (StudyProcessRequest),
                                                           typeof (DicomReceiveRequest),
                                                           typeof (ImportStudyRequest),
+                                                          typeof (ReindexRequest),
 
                                                           // WorkItemProgress related
                                                           typeof (WorkItemProgress),
+                                                          typeof (StudyProcessProgress),
                                                           typeof (ImportFilesProgress),
-                                                          typeof (StudyProcessProgress)
+                                                          typeof (ReindexProgress),
                                                       };
 
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider ignored)
@@ -310,6 +312,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override string ActivityDescription
         {
             get { return string.Format(SR.ImportStudyRequest_AcitivityDescription, Patient.PatientsName); }
+        }
+    }
+
+    /// <summary>
+    /// ReindexRequest Request
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("875D13F2-621D-4277-8A32-34D9BF5AE40B")]
+    public class ReindexRequest : WorkItemRequest
+    {
+        public override string ActivityType
+        {
+            get { return SR.ReindexRequest_ActivityType; }
+        }
+
+        public override string ActivityDescription
+        {
+            get { return SR.ReindexRequest_ActivityDescription; }
         }
     }
 }

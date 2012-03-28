@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public ActivityMonitorComponent()
 		{
+            
 			
 		}
 
@@ -35,8 +36,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Study date", w => w.Study != null ? w.Study.StudyDate : null));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Accession", w => w.Study != null ? w.Study.AccessionNumber : null));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Study Desc.", w => w.Study != null ? w.Study.StudyDescription : null));
-			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Activity", w => w.Type.ToString()));
-			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Activity Desc.", w => "TODO"));
+			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Activity", w => w.Request.ActivityType));
+			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Activity Desc.", w => w.Request.ActivityDescription));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Status", w => w.Status.ToString()));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, string>("Status Desc.", w => w.Progress != null ? w.Progress.Status : null));
 			_workItems.Columns.Add(new TableColumn<WorkItemData, DateTime>("Sched. Time", w => w.ScheduledTime));
@@ -55,7 +56,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public void Search()
 		{
-			_data.Progress.PercentComplete += 10;
 			_workItems.Items.NotifyItemUpdated(_data);
 		}
 

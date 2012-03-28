@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             Progress.StatusDetails = filePaths.Count > 1
                                        ? String.Format(SR.FormatMultipleFilesDescription, filePaths[0])
                                        : filePaths[0];
+            Proxy.UpdateProgress();
 
             // Get a list of files to import
             LoadFileList(Request.FilePaths, Request.FileExtensions, Request.Recursive);
@@ -149,8 +150,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                                                   FilesToImport.Add(file);
 
                                                   ++Progress.TotalFilesToImport;
-                                                  Progress.UpdateStatus();
-
+                                                  
                                                   Proxy.UpdateProgress();
                                               }
 
@@ -186,7 +186,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                     if (result.DicomStatus == DicomStatuses.Success)
                     {
                         Progress.NumberOfFilesImported++;
-                        Progress.UpdateStatus();
                     }
                     if (CancelPending || StopPending)
                         return;
@@ -195,7 +194,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 {
                     Platform.Log(LogLevel.Warn, e, "Unable to import DICOM File: {0}", file);
                     Progress.NumberOfImportFailures++;
-                    Progress.UpdateStatus();
                 }
 
                 Proxy.UpdateProgress();
