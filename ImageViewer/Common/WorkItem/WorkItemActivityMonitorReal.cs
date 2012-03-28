@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         private event EventHandler _isConnectedChanged;
 
         private readonly WorkItemChangedEventWrappers _workItemChangedEvents;
-        private volatile IWorkItemService _client;
+        private volatile IWorkItemActivityMonitorService _client;
 
         internal RealWorkItemActivityMonitor()
         {
@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             try
             {
                 var callback = new Callback(this);
-                var client = Platform.GetDuplexService<IWorkItemService, IWorkItemActivityCallback>(callback);
+                var client = Platform.GetDuplexService<IWorkItemActivityMonitorService, IWorkItemActivityCallback>(callback);
                 var communication = (ICommunicationObject)client;
                 if (communication.State == CommunicationState.Created)
                     communication.Open();

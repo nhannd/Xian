@@ -13,12 +13,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public object GetService(Type type, object callback)
         {
             Platform.CheckForNullReference(type, "type");
-            if (type != typeof(IWorkItemService))
+            if (type != typeof(IWorkItemActivityMonitorService))
                 return null;
 
             Platform.CheckExpectedType(callback, typeof(IWorkItemActivityCallback));
             
-            var client = new WorkItemServiceClient(new InstanceContext(callback));
+            var client = new WorkItemActivityMonitorServiceClient(new InstanceContext(callback));
             if (client.State != CommunicationState.Opened)
                 client.Open();
 
@@ -31,6 +31,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public object GetService(Type serviceType)
         {
+            Platform.CheckForNullReference(serviceType, "serviceType");
+            if (serviceType == typeof(IWorkItemService))
+            {
+                var client = new WorkItemServiceClient();
+                if (client.State != CommunicationState.Opened)
+                    client.Open();
+
+                return client;
+            }
+
+            //Someone could be requesting a single-use instance of the activity monitor, I suppose.
             return GetService(serviceType, WorkItemActivityCallback.Nil);
         }
 

@@ -13,13 +13,26 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    internal class WorkItemServiceClient : DuplexClientBase<IWorkItemService>, IWorkItemService
-	{
-        public WorkItemServiceClient(InstanceContext callbackInstance)
-			: base(callbackInstance)
-		{ 
-		}
+    internal class WorkItemActivityMonitorServiceClient : DuplexClientBase<IWorkItemActivityMonitorService>, IWorkItemActivityMonitorService
+    {
+        public WorkItemActivityMonitorServiceClient(InstanceContext callbackInstance)
+            : base(callbackInstance)
+        {
+        }
 
+        public WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request)
+        {
+            return Channel.Subscribe(request);
+        }
+
+        public WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request)
+        {
+            return Channel.Unsubscribe(request);
+        }
+    }
+
+    internal class WorkItemServiceClient : ClientBase<IWorkItemService>, IWorkItemService
+	{
 	    public WorkItemInsertResponse Insert(WorkItemInsertRequest request)
 	    {
 	        return Channel.Insert(request);
@@ -33,16 +46,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 	    public WorkItemQueryResponse Query(WorkItemQueryRequest request)
 	    {
 	        return Channel.Query(request);
-	    }
-
-	    public WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request)
-	    {
-	        return Channel.Subscribe(request);
-	    }
-
-	    public WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request)
-	    {
-	        return Channel.Unsubscribe(request);
 	    }
 	}
 }

@@ -6,7 +6,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 {
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    internal class WorkItemActivityMonitorTestApplication : IApplicationRoot
+    internal class ActivityMonitorTestApplication : IApplicationRoot
     {
         private IWorkItemActivityMonitor _workItemActivityMonitor;
 
@@ -18,18 +18,19 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
             _workItemActivityMonitor = WorkItemActivityMonitor.Create(false);
             _workItemActivityMonitor.IsConnectedChanged += OnIsConnectedChanged;
-            //_workItemActivityMonitor.WorkItemChanged += OnWorkItemChanged;
-
+            _workItemActivityMonitor.Subscribe(null, OnWorkItemChanged);
+            
             Console.WriteLine("Press <Enter> to terminate.");
             Console.WriteLine();
             Console.WriteLine();
 
-            Console.WriteLine("IsConnected={0}");
+            string message = String.Format("IsConnected={0}", _workItemActivityMonitor.IsConnected);
+            Console.WriteLine(message);
 
             Console.ReadLine();
 
             _workItemActivityMonitor.IsConnectedChanged -= OnIsConnectedChanged;
-            //_workItemActivityMonitor.WorkItemChanged -= OnWorkItemChanged;
+            _workItemActivityMonitor.Unsubscribe(null, OnWorkItemChanged);
             _workItemActivityMonitor.Dispose();
         }
 

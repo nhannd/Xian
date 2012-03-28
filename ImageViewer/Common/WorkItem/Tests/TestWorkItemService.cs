@@ -7,7 +7,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 {
-    internal class TestWorkItemService : IWorkItemService, IWorkItemActivityCallback, ICommunicationObject
+    internal class TestWorkItemService : IWorkItemActivityMonitorService, IWorkItemActivityCallback, ICommunicationObject
     {
         private readonly object _syncLock = new object();
         private readonly Dictionary<WorkItemTypeEnum, WorkItemTypeEnum> _subscribedTypes;
@@ -22,22 +22,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         public IWorkItemActivityCallback Callback { get; set; }
 
-        #region IWorkItemService Members
-
-        public WorkItemInsertResponse Insert(WorkItemInsertRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public WorkItemUpdateResponse Update(WorkItemUpdateRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public WorkItemQueryResponse Query(WorkItemQueryRequest request)
-        {
-            throw new NotImplementedException();
-        }
+        #region IWorkItemActivityMonitorService Members
 
         public WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request)
         {

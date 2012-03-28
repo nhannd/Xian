@@ -155,10 +155,10 @@
     <Compile Include="WorkItem\Tests\TestWorkItemService.cs" />
     <Compile Include="WorkItem\WorkItemActivityMonitorReal.cs" />
     <Compile Include="WorkItem\WorkItemActivityMonitorProxy.cs" />
-    <Compile Include="WorkItem\IWorkItemActivityCallback.cs" />
+    <Compile Include="WorkItem\WorkItemActivityCallback.cs" />
     <Compile Include="WorkItem\IWorkItemService.cs" />
-    <Compile Include="WorkItem\Tests\WorkItemActivityMonitorTests.cs" />
-    <Compile Include="WorkItem\Tests\WorkItemActivityMonitorTestApplication.cs" />
+    <Compile Include="WorkItem\Tests\ActivityMonitorTests.cs" />
+    <Compile Include="WorkItem\Tests\ActivityMonitorTestApplication.cs" />
     <Compile Include="WorkItem\WorkItemChangedEventWrappers.cs" />
     <Compile Include="WorkItem\WorkItemServiceClient.cs" />
     <Compile Include="WorkItem\SR.Designer.cs">

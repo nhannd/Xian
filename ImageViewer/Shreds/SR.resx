@@ -397,4 +397,7 @@ Please check the service logs for more details.</value>
   <data name="ExceptionFailedToUpdateServerConfiguration" xml:space="preserve">
     <value>Failed to update Server configuration.</value>
   </data>
+  <data name="WorkItemActivityMonitorService" xml:space="preserve">
+    <value>Work Item Activity Monitor</value>
+  </data>
 </root>

@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         public object GetService(Type type, object callback)
         {
             Platform.CheckForNullReference(type, "type");
-            if (type != typeof(IWorkItemService))
+            if (type != typeof(IWorkItemActivityMonitorService))
                 return null;
 
             Platform.CheckExpectedType(callback, typeof(IWorkItemActivityCallback));

@@ -11,7 +11,7 @@ using System.ServiceModel;
 namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 {
     [TestFixture]
-    public class WorkItemActivityMonitorTests : IWorkItemActivityCallback
+    public class ActivityMonitorTests : IWorkItemActivityCallback
     {
         private readonly object _syncLock = new object();
 
