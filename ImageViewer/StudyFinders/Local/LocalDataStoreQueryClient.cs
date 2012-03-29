@@ -20,7 +20,7 @@ using System.IO;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 
-namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
+namespace ClearCanvas.ImageViewer.StudyFinders.Local
 {
 	[ExtensionOf(typeof(LocalStudyRootQueryExtensionPoint))]
 	internal class LocalDataStoreQueryClient : IStudyRootQuery

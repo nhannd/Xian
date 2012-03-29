@@ -136,7 +136,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                 LoadUids();
 
                 Progress.TotalFilesToProcess = WorkQueueUidList.Count;
-                Progress.UpdateStatus();
                 Proxy.UpdateProgress();                        
 
                 foreach (WorkItemUid sop in WorkQueueUidList)
@@ -165,13 +164,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                         successfulProcessCount++;
 
                         Progress.NumberOfFilesProcessed++;
-                        Progress.UpdateStatus();
                         Proxy.UpdateProgress();
                     }
                     else if (sop.Failed)
                     {
                         Progress.NumberOfProcessingFailures++;
-                        Progress.UpdateStatus();
                         Proxy.UpdateProgress();                        
                     }
                 }                

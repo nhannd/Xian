@@ -32,6 +32,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             return new WorkItemUnsubscribeResponse();
         }
 
+        public WorkItemRefreshResponse Refresh(WorkItemRefreshRequest request)
+        {
+            return new WorkItemRefreshResponse();
+        }
+
         #endregion
 
         void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)

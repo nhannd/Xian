@@ -47,8 +47,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             _connectionThread = new Thread(MonitorConnection);
             lock (_syncLock)
             {
-				_connectionThread.Start();
-				Monitor.Wait(_syncLock); //Wait for the thread to start up.
+                _connectionThread.Start();
+                Monitor.Wait(_syncLock); //Wait for the thread to start up.
             }
         }
 
@@ -299,7 +299,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
 
             if (delegates.Length > 0)
-                ThreadPool.QueueUserWorkItem(ignore => CallDelegates(delegates, EventArgs.Empty));
+            {
+                //ThreadPool.QueueUserWorkItem(ignore => CallDelegates(delegates, EventArgs.Empty));
+                CallDelegates(delegates, EventArgs.Empty);
+            }
         }
 
         private void OnWorkItemChanged(WorkItemData workItemData)
@@ -317,7 +320,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 return;
 
             var args = new WorkItemChangedEventArgs(workItemData);
-            ThreadPool.QueueUserWorkItem(ignore => CallDelegates(delegates, args));
+            //ThreadPool.QueueUserWorkItem(ignore => CallDelegates(delegates, args));
+            CallDelegates(delegates, args);
         }
 
         private void CallDelegates(IEnumerable<Delegate> delegates, EventArgs e)

@@ -152,6 +152,7 @@
     <Compile Include="StudyManagement\Rules\TimeUnit.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
     <Compile Include="WorkItem\Tests\TestServiceProvider.cs" />
+    <Compile Include="WorkItem\Tests\TestUISynchronizationContext.cs" />
     <Compile Include="WorkItem\Tests\TestWorkItemService.cs" />
     <Compile Include="WorkItem\WorkItemActivityMonitorReal.cs" />
     <Compile Include="WorkItem\WorkItemActivityMonitorProxy.cs" />

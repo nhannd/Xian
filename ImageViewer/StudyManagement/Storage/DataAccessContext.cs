@@ -14,6 +14,7 @@ using System.Data;
 using System.Data.SqlServerCe;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -94,7 +95,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			return new RuleBroker(_context);
 		}
 
-		/// <summary>
+        public StudyRootQuery GetStudyRootQuery()
+        {
+            return new StudyRootQuery(_context);
+        }
+
+	    /// <summary>
 		/// Commits the transaction.
 		/// </summary>
 		/// <remarks>

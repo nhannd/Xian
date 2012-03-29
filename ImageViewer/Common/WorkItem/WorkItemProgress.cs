@@ -27,8 +27,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = false)]
         public string StatusDetails { get; set; }
 
-        [DataMember(IsRequired = true)]
-        public Decimal PercentComplete { get; set; }
+        public virtual Decimal PercentComplete {get { return new decimal(0.0); }}
 
         [DataMember(IsRequired = true)]
         public bool IsCancelable { get; set; }
@@ -66,12 +65,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void UpdateStatus()
+        public override Decimal PercentComplete
         {
-            if (TotalFilesToImport > 0)
-                PercentComplete = (Decimal)TotalImportsProcessed / TotalFilesToImport;
-            else
-                PercentComplete = new decimal(0.0);
+            get
+            {
+                if (TotalFilesToImport > 0)
+                    return (Decimal) TotalImportsProcessed/TotalFilesToImport;
+
+                return new decimal(0.0);
+            }
         }
     }
 
@@ -106,13 +108,55 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                    NumberOfProcessingFailures);                
             }
         }
-        public void UpdateStatus()
+        public override Decimal PercentComplete
         {
-            if (TotalFilesToProcess > 0)
-                PercentComplete = (Decimal)TotalFilesProcessed/TotalFilesToProcess;
-            else            
-                PercentComplete = new decimal(0.0);
+            get
+            {
+                if (TotalFilesToProcess > 0)
+                    return (Decimal)TotalFilesProcessed / TotalFilesToProcess;
 
+                return new decimal(0.0);
+            }
+        }
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemProgressDataContract("A1F64C74-FAE9-4a4c-A120-E82EE45EA21B")]
+    public class ReindexProgress : WorkItemProgress
+    {
+        [DataMember(IsRequired = true)]
+        public int NumberOfStudiesToProcess { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int StudiesProcessed { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int NumberOfStudiesImported { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int NumberOfStudiesDeleted { get; set; }
+
+        public override string Status
+        {
+            get
+            {
+                if (NumberOfStudiesDeleted == 0 && NumberOfStudiesToProcess == 0 && NumberOfStudiesImported == 0 && StudiesProcessed == 0)
+                    return SR.Progress_Pending;
+
+                return string.Format(SR.ReindexProgress_Status, StudiesProcessed, NumberOfStudiesToProcess,
+                    NumberOfStudiesDeleted, NumberOfStudiesImported);
+            }
+        }
+
+        public override Decimal PercentComplete
+        {
+            get
+            {
+                if (NumberOfStudiesToProcess > 0)
+                    return (Decimal)StudiesProcessed / NumberOfStudiesToProcess;
+
+                return new decimal(0.0);
+            }
         }
     }
 }

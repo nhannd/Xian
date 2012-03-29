@@ -20,8 +20,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 	{
 		string AETitle { get; }
 		string Host { get; }
-		int Port { get; }
-		string InterimStorageDirectory { get; }
+		int Port { get; }		
 	}
 
 	public abstract class ScpExtension : IDicomScp<IDicomServerContext>

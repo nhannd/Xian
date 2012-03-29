@@ -72,7 +72,6 @@
     <Compile Include="QueryableProperty.cs" />
     <Compile Include="DicomPersistentStore.cs" />
     <Compile Include="DicomPersistentStoreValidator.cs" />
-    <Compile Include="DicomTagPath.cs" />
     <Compile Include="DicomUri.cs" />
     <Compile Include="IDataStoreReader.cs" />
     <Compile Include="IDataStoreStudyRemover.cs" />
@@ -96,7 +95,6 @@
     <Compile Include="Series.cs" />
     <Compile Include="SopInstance.cs" />
     <Compile Include="Study.cs" />
-    <Compile Include="Tests\TypeTests.cs" />
     <Compile Include="Tests\ValidationTests.cs" />
   </ItemGroup>
   <ItemGroup>

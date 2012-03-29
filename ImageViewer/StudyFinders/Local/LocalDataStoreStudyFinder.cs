@@ -19,7 +19,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Iod.Macros;
 
-namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
+namespace ClearCanvas.ImageViewer.StudyFinders.Local
 {
     [ExtensionOf(typeof(StudyFinderExtensionPoint))]
     public class LocalDataStoreStudyFinder : StudyFinder

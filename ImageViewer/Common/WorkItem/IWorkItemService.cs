@@ -90,8 +90,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     [DataContract]
     public class WorkItemSubscribeResponse : DataContractBase
-    {
-        
+    {        
     }
 
     [DataContract]
@@ -103,6 +102,28 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     [DataContract]
     public class WorkItemUnsubscribeResponse : DataContractBase
+    {
+    }
+
+    [DataContract]
+    public class WorkItemRefreshRequest : DataContractBase
+    {
+    }
+
+    [DataContract]
+    public class WorkItemRefreshResponse : DataContractBase
+    {
+    }
+
+    [DataContract]
+    public class WorkItemPublishRequest : DataContractBase
+    {
+        [DataMember]
+        public WorkItemData Item { get; set; }
+    }
+
+    [DataContract]
+    public class WorkItemPublishResponse : DataContractBase
     {
     }
 
@@ -118,7 +139,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [OperationContract]
         WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request);
 
-        //TODO (Marmot): Need Refresh, like local data store?
+        [OperationContract]
+        WorkItemRefreshResponse Refresh(WorkItemRefreshRequest request);
     }
 
     /// <summary>
@@ -136,5 +158,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [OperationContract]
         WorkItemQueryResponse Query(WorkItemQueryRequest request);
+
+        [OperationContract]
+        WorkItemPublishResponse Publish(WorkItemPublishRequest request);
     }
 }

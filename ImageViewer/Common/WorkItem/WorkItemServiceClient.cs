@@ -29,6 +29,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             return Channel.Unsubscribe(request);
         }
+
+        public WorkItemRefreshResponse Refresh(WorkItemRefreshRequest request)
+        {
+            return Channel.Refresh(request);
+        }
     }
 
     internal class WorkItemServiceClient : ClientBase<IWorkItemService>, IWorkItemService
@@ -47,5 +52,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 	    {
 	        return Channel.Query(request);
 	    }
+
+        public WorkItemPublishResponse Publish(WorkItemPublishRequest request)
+        {
+            return Channel.Publish(request);
+        }
 	}
 }

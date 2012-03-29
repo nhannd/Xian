@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
@@ -21,6 +20,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -35,10 +35,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			foreach (SopClass sopClass in GetSopClasses(DicomServerSettings.Instance.ImageStorageSopClasses))
 			{
-				SupportedSop supportedSop = new SupportedSop();
-				supportedSop.SopClass = sopClass;
+			    var supportedSop = new SupportedSop
+			                           {
+			                               SopClass = sopClass
+			                           };
 
-				supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
+			    supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
 				supportedSop.AddSyntax(TransferSyntax.ImplicitVrLittleEndian);
 
 				foreach (TransferSyntax transferSyntax in GetTransferSyntaxes(DicomServerSettings.Instance.StorageTransferSyntaxes))
@@ -66,17 +68,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			foreach (SopClass sopClass in GetSopClasses(DicomServerSettings.Instance.NonImageStorageSopClasses))
 			{
-				SupportedSop supportedSop = new SupportedSop();
-				supportedSop.SopClass = sopClass;
-				supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
+			    var supportedSop = new SupportedSop
+			                           {
+			                               SopClass = sopClass
+			                           };
+			    supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
 				supportedSop.AddSyntax(TransferSyntax.ImplicitVrLittleEndian);
 				yield return supportedSop;
 			}
 		}
 	}
 
-	public abstract class StoreScpExtension : ScpExtension, IDicomScp<IDicomServerContext>
+	public abstract class StoreScpExtension : ScpExtension
 	{
+	    private DicomReceiveImportContext _importContext;
+
 		protected StoreScpExtension(IEnumerable<SupportedSop> supportedSops)
 			: base(supportedSops)
 		{
@@ -115,8 +121,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		public override bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, 
 			ServerAssociationParameters association, byte presentationID, DicomMessage message)
 		{
-			string studyInstanceUid = null;
-			string seriesInstanceUid = null;
+			string studyInstanceUid;
+			string seriesInstanceUid;
 			DicomUid sopInstanceUid;
 
 			bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
@@ -133,8 +139,16 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return true;
 			}
 
-		    var context = new DicomReceiveImportContext(association.CalledAE);
-		    var importer = new SopInstanceImporter(context);
+            if (_importContext == null)
+            {
+                _importContext = new DicomReceiveImportContext(association.CalledAE);
+
+                // Publish new WorkItems as they're added to the context
+                _importContext.StudyWorkItems.ItemAdded +=
+                    (sender, e) => WorkItemPublisher.Publish(WorkItemHelper.FromWorkItem(e.Item));
+            }
+
+		    var importer = new SopInstanceImporter(_importContext);
 
 		    var result = importer.Import(message,BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);
             if (result.Successful)
@@ -147,8 +161,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                     Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} (StudyUid:{3})",
                                  result.SopInstanceUid, association.CallingAE, association.CalledAE,
                                  result.StudyInstanceUid);
-
-                //OnFileReceived(association.CallingAE,string.Empty);
             }
             else
             {
@@ -159,16 +171,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		    server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, result.DicomStatus);
                
 			return true;
-		}
-
-		private static void OnFileReceived(string fromAE, string filename)
-		{
-		    var info = new StoreScpReceivedFileInformation
-		                   {
-		                       AETitle = fromAE,
-                               FileName = filename
-		                   };
-		    LocalDataStoreEventPublisher.Instance.FileReceived(info);
 		}
 
 		private static void OnReceiveError(DicomMessage message, string error, string fromAE)

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
@@ -48,6 +50,35 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
                 throw new WorkItemServiceException(exceptionMessage);
             }
+        }
+
+        public WorkItemRefreshResponse Refresh(WorkItemRefreshRequest request)
+        {
+            try
+            {
+                using (var context = new DataAccessContext())
+                {
+                    var broker = context.GetWorkItemBroker();
+
+                    var dbList = broker.GetWorkItems(null, null, null);
+
+                    var results = new List<WorkItemData>();
+
+                    foreach (var dbItem in dbList)
+                    {
+                        PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", WorkItemHelper.FromWorkItem(dbItem));
+                        results.Add(WorkItemHelper.FromWorkItem(dbItem));
+                    }
+                }
+                return new WorkItemRefreshResponse();
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+                var message = SR.ExceptionErrorProcessingRefresh;
+                var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+                throw new WorkItemServiceException(exceptionMessage);               
+            }            
         }
 
         #endregion

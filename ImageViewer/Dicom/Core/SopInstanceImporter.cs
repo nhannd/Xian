@@ -10,9 +10,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Command;
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// </summary>
         protected SopInstanceImporterContext(string sourceAE)
         {
-            StudyWorkItems = new Dictionary<string, WorkItem>();
+            StudyWorkItems = new ObservableDictionary<string, WorkItem>();
             ImportType = WorkItemTypeEnum.StudyProcess;
             SourceAE = sourceAE;
         }
@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// <summary>
         /// Map of the studies and corresponding WorkItems items for the current context
         /// </summary>
-        public Dictionary<string,WorkItem> StudyWorkItems { get; private set; }
+        public ObservableDictionary<string,WorkItem> StudyWorkItems { get; private set; }
 
         /// <summary>
         /// Abstract method for creating a <see cref="StudyProcessRequest"/> object for the given DICOM message.

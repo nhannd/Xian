@@ -11,6 +11,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.DataStore
 {
