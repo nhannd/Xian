@@ -29,12 +29,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         private readonly Dictionary<WorkItemTypeEnum, IWorkItemProcessorFactory> _extensions = new Dictionary<WorkItemTypeEnum, IWorkItemProcessorFactory>();
 		private readonly ProcessorThreadPool _threadPool;
         private readonly ManualResetEvent _threadStop;
-
+        private readonly string _name;
         #endregion
 
 		#region Constructor
         private WorkItemProcessor(int numberStatThreads, int numberNormalThreads, string name)
         {
+            _name = name;
             _threadStop = new ManualResetEvent(false);
 
 			_threadPool = new ProcessorThreadPool(numberStatThreads,numberNormalThreads)
@@ -71,6 +72,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         #region Public Properties
 
         public static WorkItemProcessor Instance { get; private set; }
+
+        /// <summary>
+        /// The Thread Name.
+        /// </summary>
+        public override string Name
+        {
+            get { return _name; }
+        }
 
         #endregion
 
@@ -214,6 +223,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
 			try
 			{
+			    Platform.Log(proxy.LogLevel, "Starting processing of {0} WorkItem for OID {1}", queueItem.Type, queueItem.Oid);
+
                 if (proxy.Item.Status == WorkItemStatusEnum.Deleted)
                 {
                     if (!processor.Initialize(proxy))
@@ -262,6 +273,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 // Cleanup the processor
                 processor.Dispose();
+                Platform.Log(proxy.LogLevel, "Done processing of {0} WorkItem for OID {1} and status {2}", proxy.Item.Type, proxy.Item.Oid, proxy.Item.Status);
 			}
 		}
 
@@ -277,6 +289,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		/// </returns>
         private List<WorkItem> GetWorkItems(int count, bool stat)
         {
+            try
+            {
+
             using (var context = new DataAccessContext())
             {
                 var workItemBroker = context.GetWorkItemBroker();
@@ -294,6 +309,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 context.Commit();
                 return workItems;
+            }
+            }
+            catch (Exception x)
+            {
+                // Todo, this may be settable to Info by design
+                Platform.Log(LogLevel.Error, x, "Unexpected error querying for {0} {1} priority WorkItems", count, stat ? "Stat" : "Normal");
+                return null;
             }
         }
 

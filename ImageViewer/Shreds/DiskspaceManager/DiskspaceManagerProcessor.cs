@@ -17,6 +17,7 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.DiskspaceManager;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 
@@ -35,9 +36,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 		private volatile DiskUsageInfo _currentDriveInfo;
 		private volatile int _checkingFrequency;
 
-    	private bool _enforceStudyLimit = false;
+    	private bool _enforceStudyLimit;
 		private volatile int _studyLimit = int.MaxValue;
-		private volatile int _lastStudyCount = 0;
+		private volatile int _lastStudyCount;
 
 		private volatile bool _settingsChanged;
 
@@ -230,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				return;
 			}
 
-			DeleteInstancesRequest request = new DeleteInstancesRequest();
+			var request = new DeleteInstancesRequest();
 			request.DeletePriority = DeletePriority.Low;
 			request.InstanceLevel = InstanceLevel.Study;
 			request.InstanceUids = deleteStudyUids;
@@ -246,41 +247,36 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 		private void UpdateCurrentDriveInfo()
 		{
-			string driveName = null;
-			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
+			string driveName;
 			try
 			{
-				client.Open();
+                string directory = null;
+                Platform.GetService<IDicomServerConfiguration>(
+                    s => directory = s.GetConfiguration(new GetDicomServerConfigurationRequest()).Configuration.FileStoreDirectory);
 
-				LocalDataStoreServiceConfiguration configuration = client.GetConfiguration();
-				driveName = System.IO.Path.GetPathRoot(configuration.StorageDirectory);
-				driveName = driveName.TrimEnd(new char[] { Platform.PathSeparator });
+				driveName = Path.GetPathRoot(directory);
+				driveName = driveName.TrimEnd(new[] { Platform.PathSeparator });
 
-				client.Close();
 			}
 			catch
 			{
-				client.Abort();
 				driveName = null;
 				throw;
 			}
 
-			if (driveName != null)
-			{
-				lock (_settingsSyncLock)
-				{
-					try
-					{
-						if (_currentDriveInfo == null || string.Compare(_currentDriveInfo.DiskName, driveName, true) != 0)
-							_currentDriveInfo = new DiskUsageInfo(driveName.ToUpper());
-					}
-					catch (Exception e)
-					{
-						Platform.Log(LogLevel.Error, e);
-						_currentDriveInfo = null;
-					}
-				}
-			}
+		    lock (_settingsSyncLock)
+		    {
+		        try
+		        {
+		            if (_currentDriveInfo == null || string.Compare(_currentDriveInfo.DiskName, driveName, true) != 0)
+		                _currentDriveInfo = new DiskUsageInfo(driveName.ToUpper());
+		        }
+		        catch (Exception e)
+		        {
+		            Platform.Log(LogLevel.Error, e);
+		            _currentDriveInfo = null;
+		        }
+		    }
 		}
 
 		private void CheckConfigurationSettings()
