@@ -31,14 +31,14 @@
 
 using System.Configuration;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
+namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {
-	[SettingsGroupDescription("Settings for pre-loading local data store images.")]
-	[SettingsProvider(typeof(LocalFileSettingsProvider))]
-	internal sealed partial class PreLoadingSettings
-	{
-		private PreLoadingSettings()
-		{
-		}
-	}
+    [SettingsGroupDescription("Settings for pre-loading local data store images.")]
+    [SettingsProvider(typeof(LocalFileSettingsProvider))]
+    internal sealed partial class PreLoadingSettings
+    {
+        private PreLoadingSettings()
+        {
+        }
+    }
 }

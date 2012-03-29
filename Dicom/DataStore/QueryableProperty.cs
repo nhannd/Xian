@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using ClearCanvas.Dicom.Utilities;
 using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.DataStore
