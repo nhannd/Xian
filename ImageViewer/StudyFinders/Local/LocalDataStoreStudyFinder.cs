@@ -16,8 +16,8 @@ using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Iod.Macros;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Local
 {
@@ -85,9 +85,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Local
 			collection[DicomTags.ResponsibleOrganization].SetStringValue(GetString(queryParams, "ResponsibleOrganization"));
 
             StudyItemList studyItemList = new StudyItemList();
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+			using (var context = new DataAccessContext())
 			{
-				foreach (DicomAttributeCollection result in reader.Query(collection))
+				foreach (DicomAttributeCollection result in context.GetStudyRootQuery().Query(collection))
 				{
 					StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].ToString(), null, Name);
 					item.SpecificCharacterSet = result.SpecificCharacterSet;

@@ -11,9 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -33,11 +32,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		public static IEnumerable<IStudy> GetStudies(IEnumerable<string> studyInstanceUids)
 		{
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+            using (var context = new DataAccessContext())
 			{
+			    var broker = context.GetStudyBroker();
 				foreach (string studyInstanceUid in studyInstanceUids)
 				{
-					IStudy study = reader.GetStudy(studyInstanceUid);
+                    IStudy study = broker.GetStudy(studyInstanceUid);
 					if (study == null)
 					{
 						string message =
@@ -52,9 +52,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		public static IEnumerable<ISeries> GetSeries(string studyInstanceUid, IEnumerable<string> seriesInstanceUids)
 		{
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				IStudy study = reader.GetStudy(studyInstanceUid);
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetStudyBroker();
+                IStudy study = broker.GetStudy(studyInstanceUid);
 				if (study == null)
 				{
 					string message = String.Format("The specified study does not exist in the data store (uid = {0}).", studyInstanceUid);
@@ -97,9 +98,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		public static IEnumerable<ISopInstance> GetSopInstances(string studyInstanceUid, string seriesInstanceUid, IEnumerable<string> sopInstanceUids)
 		{
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				IStudy study = reader.GetStudy(studyInstanceUid);
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetStudyBroker();
+                IStudy study = broker.GetStudy(studyInstanceUid);
 				if (study == null)
 				{
 					string message = String.Format("The specified study does not exist in the data store (uid = {0}).", studyInstanceUid);

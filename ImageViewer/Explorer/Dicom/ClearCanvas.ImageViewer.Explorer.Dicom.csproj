@@ -95,10 +95,6 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
-      <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
-      <Name>ClearCanvas.Dicom.DataStore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
