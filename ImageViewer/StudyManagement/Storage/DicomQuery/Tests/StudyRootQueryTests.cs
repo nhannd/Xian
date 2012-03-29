@@ -12,6 +12,7 @@
 #if UNIT_TESTS
 
 using System;
+using System.Linq;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using NUnit.Framework;
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
@@ -49,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
                 var query = context.GetStudyRootQuery();
                 var criteria = new StudyRootStudyIdentifier
                                    {
-                                       PatientId = "1234"
+                                       PatientId = "12345678"
                                    };
                 
                 var results = query.StudyQuery(criteria);
@@ -71,9 +72,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
                 var results = query.StudyQuery(criteria);
                 Assert.AreEqual(2, results.Count);
-                Assert.AreEqual(criteria.PatientId, results[0].PatientId);
+                Assert.IsTrue(results.SingleOrDefault(study => study.PatientId == "1234") != null);
+                Assert.IsTrue(results.SingleOrDefault(study => study.PatientId == "1235") != null);
             }
         }
+
+        [Test]
+        public void SelectPatientIdWildcardSingle()
+        {
+            using (var context = new DataAccessContext())
+            {
+                var query = context.GetStudyRootQuery();
+                var criteria = new StudyRootStudyIdentifier
+                {
+                    PatientId = "123?56?8"
+                };
+
+                var results = query.StudyQuery(criteria);
+                Assert.AreEqual(2, results.Count);
+                Assert.IsTrue(results.SingleOrDefault(study => study.PatientId == "12345678") != null);
+                Assert.IsTrue(results.SingleOrDefault(study => study.PatientId == "123a5698") != null);
+            }
+        }
+
 
         private void InsertTestStudies()
         {
@@ -102,7 +123,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             var study = new Study();
             var identifier = new StudyRootStudyIdentifier
                                  {
-                                     PatientId = "1234",
+                                     PatientId = "12345678",
                                      PatientsName = "Sparky",
                                      PatientsBirthDate = "19760810",
                                      PatientsBirthTime = "110003",
@@ -145,7 +166,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             var study = new Study();
             var identifier = new StudyRootStudyIdentifier
             {
-                PatientId = "1235",
+                PatientId = "123a5698",
                 PatientsName = "Doe^John",
                 PatientsBirthDate = "19860612",
                 PatientsBirthTime = "165602",
