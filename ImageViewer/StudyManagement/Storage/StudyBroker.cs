@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Linq;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -47,9 +48,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             return list.First();
 		}
 
+        public void DeleteStudy(string studyInstanceUid)
+        {
+            //TODO (Marmot): is this how this is even going to work?
+            throw new NotImplementedException();
+        }
+
         internal void DeleteAll()
         {
             this.Context.Studies.DeleteAllOnSubmit(from s in Context.Studies select s);
         }
-    }
+	}
 }

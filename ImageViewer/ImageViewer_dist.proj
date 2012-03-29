@@ -9,7 +9,6 @@
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\</TrunkDirectory>
     <JscriptDirectory>$(TrunkDirectory)\Jscript\bin\$(Configuration)</JscriptDirectory>
-    <EmptyViewerDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf</EmptyViewerDatabaseFile>
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
     <ConsoleBuild>false</ConsoleBuild>
@@ -25,19 +24,11 @@
     <When Condition=" '$(ProjectOutDir)' != '$(DistributionDirectory)' ">
       <PropertyGroup>
         <IsDistributionBuild>true</IsDistributionBuild>
-        <DatabaseDirectory>$(DistributionDirectory)\dicom_datastore</DatabaseDirectory>
-        <FileStoreDirectory>.\filestore</FileStoreDirectory>
-        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
-        <HibernateConfigurationFileDataSource>dicom_datastore\viewer.sdf</HibernateConfigurationFileDataSource>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
         <IsDistributionBuild>false</IsDistributionBuild>
-        <DatabaseDirectory>$(TrunkDirectory)\dicom_datastore</DatabaseDirectory>
-        <FileStoreDirectory>$(TrunkDirectory)\dicom_datastore\filestore</FileStoreDirectory>
-        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
-        <HibernateConfigurationFileDataSource>$(DatabaseFile)</HibernateConfigurationFileDataSource>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -71,14 +62,6 @@
       </PropertyGroup>
     </Otherwise>
   </Choose>
-
-  <PropertyGroup>
-
-    <!--Hibernate Configuration-->
-    <HibernateConfigurationFileName>ClearCanvas.Dicom.DataStore.cfg.xml</HibernateConfigurationFileName>
-    <HibernateConfigurationFileSource>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(HibernateConfigurationFileName)</HibernateConfigurationFileSource>
-
-  </PropertyGroup>
 
   <!--What files get copied depends on which project we are building.  The only other
   way to do this would be to have ImageViewerDesktop_dist.config and ImageViewerShredHost_dist.config, but they would be
@@ -123,14 +106,14 @@
     <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\sqlce*.dll" />
     <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
   </ItemGroup>
+
+  <ItemGroup>
+    <DatabasePlugins Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" />
+  </ItemGroup>
   
   <ItemGroup>
     <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Iesi.Collections.dll" />
     <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Nhibernate.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <DicomDataStoreFiles Include="$(TrunkDirectory)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />    
   </ItemGroup>
 
   <ItemGroup>
@@ -229,8 +212,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Local.dll" />
-    <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Local.dll" />
+    <LocalStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Local.dll" />
+    <LocalStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Local.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -292,9 +275,9 @@
     <ExternalsPluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.View.WinForms.dll" />
   </ItemGroup>
 
+  <!--Plugins common to all-->
   <ItemGroup>
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
@@ -373,22 +356,9 @@
   </Target>
 
   <Target Name="Copy Database Files">
-
     <!-- Copy Hibernate and sql ce files -->
     <Copy SourceFiles="@(SqlCEFiles)" DestinationFolder="$(CommonDirectory)" />
-    <Copy SourceFiles="@(HibernateFiles)" DestinationFolder="$(CommonDirectory)" />
-    <Copy SourceFiles="@(DicomDataStoreFiles)" DestinationFolder="$(CommonDirectory)" />
-    
-    <!-- Copy Hibernate configuration file -->
-    <Copy SourceFiles="$(HibernateConfigurationFileSource)" DestinationFolder="$(DistributionDirectory)" />
-    <!-- Run the replace text task-->
-    <FileReplaceText FilePath="$(DistributionDirectory)\$(HibernateConfigurationFileName)" TextToReplace="!datasource!" ReplacementText="$(HibernateConfigurationFileDataSource)"/>
-
-    <!-- Copy database file -->
-    <MakeDir Condition="!Exists('$(DatabaseDirectory)')" Directories="$(DatabaseDirectory)" />
-    <Copy SkipUnchangedFiles="true" SourceFiles="$(EmptyViewerDatabaseFile)" DestinationFolder="$(DatabaseDirectory)" />
-    <Copy Condition="!Exists('$(DatabaseFile)')" SourceFiles="$(EmptyViewerDatabaseFile)" DestinationFiles="$(DatabaseFile)" />
-  
+    <Copy SourceFiles="@(DatabasePlugins)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
 
   <Target Name="Copy Study Browser">
@@ -430,8 +400,8 @@
     <Copy SourceFiles="@(HelpUpdateFiles)" DestinationFolder="$(PluginsDirectory)" />
     <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\Desktop.HelpUpdate_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
   </Target>
-  <Target Name="Copy Local DataStore Client Files">
-    <Copy SourceFiles="@(LocalDataStoreClientFiles)" DestinationFolder="$(PluginsDirectory)" />
+  <Target Name="Copy Local Store Client Files">
+    <Copy SourceFiles="@(LocalStoreClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
   
   <Target Name="Copy Dicom Remote Client Files">
@@ -523,7 +493,7 @@
     <CallTarget Condition="!$(ExcludeStreaming)" Targets="Copy Streaming Client Files" />
     <CallTarget Condition="!$(ExcludeMpr)" Targets="Copy Mpr Files" />
     <CallTarget Condition="!$(ExcludeFusion)" Targets="Copy Fusion Files" />
-    <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local DataStore Client Files" />
+    <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local Store Client Files" />
     <CallTarget Condition="!$(ExcludeSynchronizationTools)" Targets="Copy Synchronization Plugin" />
     <CallTarget Condition="$(IncludeTestTools)" Targets="Copy Test Tool Files" />
 

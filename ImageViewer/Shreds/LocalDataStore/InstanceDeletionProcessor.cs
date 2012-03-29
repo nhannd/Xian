@@ -14,9 +14,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					FileInfo info;
 					try
 					{
-						info = new FileInfo(sopInstance.GetLocationUri().LocalDiskPath);
+						info = new FileInfo(sopInstance.GetLocationUri());
 						if (info.Exists)
 						{
 							++numberExist;
@@ -172,9 +172,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					try
 					{
-						using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+						using (var context = new DataAccessContext())
 						{
-							IStudy study = reader.GetStudy(instanceUid);
+						    var broker = context.GetStudyBroker();
+							IStudy study = broker.GetStudy(instanceUid);
 							if (study == null)
 							{
 								errorMessage = String.Format(SR.ExceptionCannotDeleteStudyDoesNotExist, instanceUid);
@@ -201,11 +202,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							{
 								FileRemover remover = new FileRemover(Instance.StorageDirectory);
 								remover.DeleteFilesInStudy(study);
-
-								using (IDataStoreStudyRemover studyRemover = DataAccessLayer.GetIDataStoreStudyRemover())
-								{
-									studyRemover.RemoveStudy(study.StudyInstanceUid);
-								}
+							    broker.DeleteStudy(study.StudyInstanceUid);
 								
 								remover.CleanupEmptyDirectories();
 							}

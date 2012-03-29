@@ -21,12 +21,12 @@ using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	[ExtensionOf(typeof(DicomScpExtensionPoint<IDicomServerContext>))]
-	public class MoveScpExtension : ScpExtension, IDicomScp<IDicomServerContext>
+	public class MoveScpExtension : ScpExtension
 	{
 		#region SendOperationInfo class
 

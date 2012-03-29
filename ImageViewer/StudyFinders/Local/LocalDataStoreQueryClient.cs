@@ -14,11 +14,11 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using System.IO;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Local
 {
@@ -116,9 +116,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Local
                 identifier.SpecificCharacterSet = oldCharacterSet;
             }
 
-		    using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+		    using (var context = new DataAccessContext())
 			{
-				IEnumerable<DicomAttributeCollection> results = reader.Query(queryCriteria);
+				IEnumerable<DicomAttributeCollection> results = context.GetStudyRootQuery().Query(queryCriteria);
 
 				List<T> queryResults = new List<T>();
 				foreach (DicomAttributeCollection result in results)

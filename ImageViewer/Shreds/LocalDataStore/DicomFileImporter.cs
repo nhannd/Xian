@@ -12,16 +12,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
-using System.Xml;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -406,8 +404,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private readonly object _uriLocksSync = new object();
 			private readonly List<UriLock> _uriLocks;
 
-			[ThreadStatic]
-			private static IDicomPersistentStoreValidator _persistentStoreValidator;
+            //[ThreadStatic]
+            //private static IDicomPersistentStoreValidator _persistentStoreValidator;
 
 			#endregion
 
@@ -428,16 +426,16 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			#region Private Properties
 			
-			private IDicomPersistentStoreValidator Validator
-			{
-				get
-				{
-					if (_persistentStoreValidator == null)
-						_persistentStoreValidator = DataAccessLayer.GetIDicomPersistentStoreValidator();
+            //private IDicomPersistentStoreValidator Validator
+            //{
+            //    get
+            //    {
+            //        if (_persistentStoreValidator == null)
+            //            _persistentStoreValidator = DataAccessLayer.GetIDicomPersistentStoreValidator();
 
-					return _persistentStoreValidator;
-				}	
-			}
+            //        return _persistentStoreValidator;
+            //    }	
+            //}
 
 			#endregion
 
@@ -502,7 +500,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						setImportInformation.File.Load(DicomTags.PixelData, DicomReadOptions.Default);
 					}
 
-					Validator.Validate(setImportInformation.File);
+					//Validator.Validate(setImportInformation.File);
 					setImportInformation.CompletedStage = ImportStage.FileParsed;
 				}
 				catch (Exception e)
@@ -701,19 +699,27 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 #endif
 				try
 				{
-					using (IDicomPersistentStore store = DataAccessLayer.GetIDicomPersistentStore())
+					using (var context = new DataAccessContext())
 					{
+					    var broker = context.GetStudyBroker();
 						foreach (ImportJobInformation item in items)
 						{
                             IFileImportInformation info = item.FileImportInformation;
-                            store.UpdateSopInstance(info.File);
+                            string studyInstanceUid = info.File.DataSet[DicomTags.StudyInstanceUid];
+                            Study study = broker.GetStudy(studyInstanceUid);
+                            if (study == null)
+                            {
+                                study = new Study();
+                                study.Initialize(info.File.DataSet);
+                                broker.AddStudy(study);
+                            }
 
 							FileImportInformation auditingInfo = item.FileImportInformation;
 							if(auditingInfo.Audit)
 								importedInstances.AddInstance(auditingInfo.PatientId, auditingInfo.PatientsName, auditingInfo.StudyInstanceUid, auditingInfo.FileName);
 						}
 
-						store.Commit();
+                        context.Commit();
 					}
 
 					foreach (ImportJobInformation item in items)

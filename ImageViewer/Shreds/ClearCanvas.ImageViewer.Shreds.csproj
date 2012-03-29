@@ -66,11 +66,6 @@
     <Compile Include="DicomServer\DicomSendManager.cs" />
     <Compile Include="DicomServer\StoreScpExtension.cs" />
     <Compile Include="DicomServer\VerifyScpExtension.cs" />
-    <Compile Include="DiskspaceManager\DiskUsageInfo.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerSettings.cs" />
     <Compile Include="LocalDataStore\DicomFileImporter.cs" />
     <Compile Include="LocalDataStore\FileRemover.cs" />
     <Compile Include="LocalDataStore\ImportProcessor.cs" />
@@ -131,10 +126,6 @@
     <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
-      <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
-      <Name>ClearCanvas.Dicom.DataStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>

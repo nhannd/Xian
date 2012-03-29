@@ -17,7 +17,7 @@ using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	[ExtensionOf(typeof(ShredExtensionPoint))]
+	[ExtensionOf(typeof(ShredExtensionPoint), Enabled = false)]
 	public class LocalDataStoreServiceExtension : WcfShred
 	{
 		private static readonly string _localDataStoreEndpointName = "LocalDataStore";
