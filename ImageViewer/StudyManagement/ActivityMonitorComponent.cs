@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
-			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 500);
+			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
 		}
 
 		public override void Start()
@@ -316,11 +316,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public int DiskspaceUsedPercent
 		{
+			//todo: put this on a timer
 			get { return (int)QueryDiskspace().UsedSpacePercent; }
 		}
 
 		public string DiskspaceUsed
 		{
+			//todo: put this on a timer
 			get { return Diskspace.FormatBytes(QueryDiskspace().UsedSpace); }
 		}
 

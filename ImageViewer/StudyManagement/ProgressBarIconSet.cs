@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
@@ -26,6 +23,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			_dimensions = dimensions;
 			_percent = percent;
+			_state = state;
 		}
 
 		public override Image CreateIcon(IconSize iconSize, IResourceResolver resourceResolver)
@@ -46,7 +44,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			switch (_state)
 			{
 				case ProgressBarState.Active:
-					return Brushes.Green;
+					return Brushes.GreenYellow;
 				case ProgressBarState.Paused:
 					return Brushes.Yellow;
 				case ProgressBarState.Error:
