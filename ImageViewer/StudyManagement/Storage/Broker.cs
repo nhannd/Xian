@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -24,5 +24,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		}
 
 		protected DicomStoreDataContext Context { get; private set; }
+
+        // taken from here: http://stackoverflow.com/questions/2910471/querying-a-single-column-with-linq
+        public List<TResult> GetSingleColumn<T, TResult>(
+            Expression<Func<T, bool>> predicate,
+            Expression<Func<T, TResult>> select) 
+            where T : class
+        {
+                var q = Context.GetTable<T>().AsQueryable();
+                if (predicate != null)
+                    q = q.Where(predicate).AsQueryable();
+                return q.Select(select).ToList();
+            
+        }
 	}
 }

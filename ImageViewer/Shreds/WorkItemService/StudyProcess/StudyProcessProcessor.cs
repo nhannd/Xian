@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
         /// <returns>Number of instances that have been processed successfully.</returns>
         private int ProcessUidList()
         {
-            StudyXml studyXml = LoadStudyXml();
+            StudyXml studyXml = Location.LoadStudyXml();
             
             int successfulProcessCount = 0;
             int lastSuccessProcessCount = -1;
