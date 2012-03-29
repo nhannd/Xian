@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 
@@ -6,69 +7,60 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 {
     internal class StringPropertyFilter<T> : PropertyFilter<T>
     {
+        //These are the VRs DICOM says can't be searched on with wildcards,
+        //therefore any wildcard characters present in the criteria are literal.
         private static readonly string[] WildcardExcludedVRs = { "DA", "TM", "DT", "SL", "SS", "US", "UL", "FL", "FD", "OB", "OW", "UN", "AT", "DS", "IS", "AS", "UI" };
 
-        protected StringPropertyFilter(DicomTagPath path, DicomAttributeCollection inputCriteria) 
-            : base(path, inputCriteria)
+        private bool _parsedCriterion;
+        private string _criterionValue;
+
+        protected StringPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria) 
+            : base(path, criteria)
         {
         }
 
-        protected StringPropertyFilter(DicomTag tag, DicomAttributeCollection inputCriteria)
-            : this(new DicomTagPath(tag), inputCriteria)
+        protected StringPropertyFilter(DicomTag tag, DicomAttributeCollection criteria)
+            : this(new DicomTagPath(tag), criteria)
         {
         }
 
-        protected StringPropertyFilter(uint tag, DicomAttributeCollection inputCriteria)
-            : this(new DicomTagPath(tag), inputCriteria)
+        protected StringPropertyFilter(uint tag, DicomAttributeCollection criteria)
+            : this(new DicomTagPath(tag), criteria)
         {
-        }
-
-        //protected override bool IsCriterionValid
-        //{
-        //    get { return !String.IsNullOrEmpty(CriterionValue) && base.IsCriterionValid; }
-        //}
-
-        protected bool IsCriterionWildcard
-        {
-            get
-            {
-                if (!IsWildcardCriterionAllowed)
-                    return false;
-
-                return ContainsWildcardCharacters(InputCriterion);
-            }
-        }
-
-        protected bool IsWildcardCriterionAllowed
-        {
-            get 
-            {
-                foreach (string excludedVR in WildcardExcludedVRs)
-                {
-                    if (0 == String.Compare(excludedVR, Path.ValueRepresentation.Name, true))
-                        return false;
-                }
-
-                return true;
-            }    
         }
 
         public string CriterionValue
         {
             get
             {
-                var criterionValue = InputCriterion.GetString(0, null);
-                if (criterionValue == null)
-                    return null;
+                if (!_parsedCriterion)
+                {
+                    _criterionValue = Criterion.GetString(0, null);
+                    if (_criterionValue != null)
+                    {
+                        //These are the Linq To SQL wildcard characters.
+                        _criterionValue = _criterionValue.Replace("*", "%").Replace("?", "_");
+                    }
+                }
 
-                //TODO (Marmot): store the value.
-                return criterionValue.Replace("*", "%").Replace("?", "_");
-            }    
+                return _criterionValue;
+            }
         }
 
-        private static bool ContainsWildcardCharacters(string criteria)
+        protected internal bool IsCriterionWildcard
         {
-            return criteria.Contains("*") || criteria.Contains("?");
+            get
+            {
+                if (!IsWildcardCriterionAllowed)
+                    return false;
+
+                return CriterionValue.Contains("%") || CriterionValue.Contains("_");
+            }
+        }
+
+        protected internal bool IsWildcardCriterionAllowed
+        {
+            get { return !WildcardExcludedVRs.Any(excludedVr => excludedVr == Path.ValueRepresentation.Name); }    
         }
     }
 }

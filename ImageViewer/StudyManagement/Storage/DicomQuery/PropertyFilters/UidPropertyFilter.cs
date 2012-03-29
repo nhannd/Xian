@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 
@@ -7,36 +8,40 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 {
     internal abstract class UidPropertyFilter<T> : PropertyFilter<T>
     {
-        protected UidPropertyFilter(DicomTagPath path, DicomAttributeCollection inputCriteria)
-            : base(path, inputCriteria)
+        private string[] _criterionValues;
+
+        protected UidPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria)
+            : base(path, criteria)
         {
+            Platform.CheckTrue(path.ValueRepresentation.Name == "UI", "Path is not VR=UI");
+            if (Criterion != null)
+                Platform.CheckTrue(Criterion.Tag.VR.Name == "UI", "Criteria is not VR=UI");
         }
 
-        protected string[] Uids
+        protected string[] CriterionValues
         {
             get
             {
-                if (InputCriterion == null)
-                    return null;
+                if (_criterionValues != null)
+                    return _criterionValues;
 
-                //TODO (Marmot): store it?
-                return DicomStringHelper.GetStringArray(InputCriterion.ToString());
+                _criterionValues = DicomStringHelper.GetStringArray(Criterion.ToString()) ?? new string[0];
+                return _criterionValues;
             }    
         }
 
-        protected abstract IQueryable<T> AddUidToQuery(IQueryable<T> inputQuery, string uid);
-        protected abstract IQueryable<T> AddUidsToQuery(IQueryable<T> inputQuery, string[] uids);
+        protected abstract IQueryable<T> AddUidToQuery(IQueryable<T> query, string uid);
+        protected abstract IQueryable<T> AddUidsToQuery(IQueryable<T> query, string[] uids);
 
-        public override System.Linq.IQueryable<T> AddToQuery(System.Linq.IQueryable<T> inputQuery)
+        protected override IQueryable<T> AddToQuery(System.Linq.IQueryable<T> query)
         {
-            var uids = Uids;
-            if (uids == null || uids.Length == 0)
-                return base.AddToQuery(inputQuery);
+            if (CriterionValues.Length == 0)
+                return base.AddToQuery(query);
 
-            if (uids.Length == 1)
-                return AddUidToQuery(inputQuery, uids[0]);
+            if (CriterionValues.Length == 1)
+                return AddUidToQuery(query, CriterionValues[0]);
 
-            return AddUidsToQuery(inputQuery, uids);
+            return AddUidsToQuery(query, CriterionValues);
         }
     }
 }

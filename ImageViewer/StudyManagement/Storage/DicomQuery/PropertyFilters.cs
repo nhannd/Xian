@@ -9,12 +9,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
     internal abstract class PropertyFilters<T> where T : class
     {
-        private readonly DicomAttributeCollection _inputCriteria;
+        private readonly DicomAttributeCollection _criteria;
         private readonly IList<IPropertyFilter<T>> _filters;
 
-        protected PropertyFilters(DicomAttributeCollection inputCriteria, IEnumerable<IPropertyFilter<T>> filters)
+        protected PropertyFilters(DicomAttributeCollection criteria, IEnumerable<IPropertyFilter<T>> filters)
         {
-            _inputCriteria = inputCriteria;
+            _criteria = criteria;
             _filters = new ReadOnlyCollection<IPropertyFilter<T>>(filters.ToList());
         }
 
@@ -53,43 +53,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
     internal class StudyPropertyFilters : PropertyFilters<Study>
     {
-        public StudyPropertyFilters(DicomAttributeCollection inputCriteria)
-            : base(inputCriteria, CreateFilters(inputCriteria).Where(f => f.InputCriterion != null))
+        public StudyPropertyFilters(DicomAttributeCollection criteria)
+            : base(criteria, CreateFilters(criteria).Where(f => !f.IsNoOp))
         {
         }
 
-        private static IPropertyFilter<Study>[] CreateFilters(DicomAttributeCollection inputCriteria)
+        private static IPropertyFilter<Study>[] CreateFilters(DicomAttributeCollection criteria)
         {
             return new IPropertyFilter<Study>[]
                        {
                            //TODO (Marmot): Fill this in.
-                           new PatientIdFilter(inputCriteria),
-                           new PatientsNameFilter(inputCriteria),
-                           new PatientsBirthDateFilter(inputCriteria),
-                           new PatientsSexFilter(inputCriteria),
+                           new PatientIdFilter(criteria),
+                           new PatientsNameFilter(criteria),
+                           new PatientsBirthDateFilter(criteria),
+                           new PatientsSexFilter(criteria),
 
-                           new StudyInstanceUidFilter(inputCriteria),
-                           new StudyDateFilter(inputCriteria),
-                           new StudyIdFilter(inputCriteria),
-                           new AccessionNumberFilter(inputCriteria),
-                           new StudyDescriptionFilter(inputCriteria),
+                           new StudyInstanceUidFilter(criteria),
+                           new StudyDateFilter(criteria),
+                           new StudyIdFilter(criteria),
+                           new AccessionNumberFilter(criteria),
+                           new StudyDescriptionFilter(criteria),
                            
-                           new ReferringPhysiciansNameFilter(inputCriteria),
+                           new ReferringPhysiciansNameFilter(criteria),
                            
-                           new NumberOfStudyRelatedInstancesFilter(inputCriteria),
-                           new NumberOfStudyRelatedSeriesFilter(inputCriteria)
+                           new NumberOfStudyRelatedInstancesFilter(criteria),
+                           new NumberOfStudyRelatedSeriesFilter(criteria)
                        };
         }
     }
 
     internal class SeriesPropertyFilters : PropertyFilters<Series>
     {
-        public SeriesPropertyFilters(DicomAttributeCollection inputCriteria)
-            : base(inputCriteria, CreateFilters(inputCriteria).Where(f => f.InputCriterion != null))
+        public SeriesPropertyFilters(DicomAttributeCollection criteria)
+            : base(criteria, CreateFilters(criteria).Where(f => !f.IsNoOp))
         {
         }
 
-        private static IPropertyFilter<Series>[] CreateFilters(DicomAttributeCollection inputCriteria)
+        private static IPropertyFilter<Series>[] CreateFilters(DicomAttributeCollection criteria)
         {
             return new IPropertyFilter<Series>[]
                                           {
@@ -100,12 +100,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
     internal class SopInstancePropertyFilters : PropertyFilters<SopInstance>
     {
-        public SopInstancePropertyFilters(DicomAttributeCollection inputCriteria)
-            : base(inputCriteria, CreateFilters(inputCriteria).Where(f => f.InputCriterion != null))
+        public SopInstancePropertyFilters(DicomAttributeCollection criteria)
+            : base(criteria, CreateFilters(criteria).Where(f => !f.IsNoOp))
         {
         }
 
-        private static IPropertyFilter<SopInstance>[] CreateFilters(DicomAttributeCollection inputCriteria)
+        private static IPropertyFilter<SopInstance>[] CreateFilters(DicomAttributeCollection criteria)
         {
             return new IPropertyFilter<SopInstance>[]
                                           {

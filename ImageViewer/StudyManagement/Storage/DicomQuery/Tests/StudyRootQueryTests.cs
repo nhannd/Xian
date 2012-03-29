@@ -72,8 +72,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
                 var results = query.StudyQuery(criteria);
                 Assert.AreEqual(2, results.Count);
-                Assert.IsTrue(results.SingleOrDefault(study => study.PatientId == "1234") != null);
-                Assert.IsTrue(results.SingleOrDefault(study => study.PatientId == "1235") != null);
+                Assert.IsTrue(results.SingleOrDefault(study => study.PatientId == "12345678") != null);
+                Assert.IsTrue(results.SingleOrDefault(study => study.PatientId == "123a5698") != null);
             }
         }
 

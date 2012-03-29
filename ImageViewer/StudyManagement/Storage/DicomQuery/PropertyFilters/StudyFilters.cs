@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 using System.Data.Linq.SqlClient;
@@ -10,17 +11,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class PatientsNameFilter : StringPropertyFilter<Study>
     {
-        public PatientsNameFilter(DicomAttributeCollection inputCriteria)
-            : base(DicomTags.PatientsName, inputCriteria)
+        public PatientsNameFilter(DicomAttributeCollection criteria)
+            : base(DicomTags.PatientsName, criteria)
         {
         }
 
-        public override IQueryable<Study> AddToQuery(IQueryable<Study> inputQuery)
+        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
         {
             if (!IsCriterionWildcard)
-                return from study in inputQuery where study.PatientsName == CriterionValue select study;
+                return from study in query where study.PatientsName == CriterionValue select study;
 
-            return from study in inputQuery where SqlMethods.Like(study.PatientsName, CriterionValue) select study;
+            return from study in query where SqlMethods.Like(study.PatientsName, CriterionValue) select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -31,17 +32,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class ReferringPhysiciansNameFilter : StringPropertyFilter<Study>
     {
-        public ReferringPhysiciansNameFilter(DicomAttributeCollection inputCriteria)
-            : base(DicomTags.ReferringPhysiciansName, inputCriteria)
+        public ReferringPhysiciansNameFilter(DicomAttributeCollection criteria)
+            : base(DicomTags.ReferringPhysiciansName, criteria)
         {
         }
 
-        public override IQueryable<Study> AddToQuery(IQueryable<Study> inputQuery)
+        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
         {
             if (!IsCriterionWildcard)
-                return from study in inputQuery where study.ReferringPhysiciansName == CriterionValue select study;
+                return from study in query where study.ReferringPhysiciansName == CriterionValue select study;
 
-            return from study in inputQuery
+            return from study in query
                    where SqlMethods.Like(study.ReferringPhysiciansName, CriterionValue)
                    select study;
         }
@@ -54,17 +55,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class PatientIdFilter : StringPropertyFilter<Study>
     {
-        public PatientIdFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.PatientId), inputCriteria)
+        public PatientIdFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.PatientId), criteria)
         {
         }
 
-        public override IQueryable<Study> AddToQuery(IQueryable<Study> inputQuery)
+        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
         {
             if (!IsCriterionWildcard)
-                return from study in inputQuery where study.PatientId == CriterionValue select study;
+                return from study in query where study.PatientId == CriterionValue select study;
 
-            return from study in inputQuery where SqlMethods.Like(study.PatientId, CriterionValue) select study;
+            return from study in query where SqlMethods.Like(study.PatientId, CriterionValue) select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -75,17 +76,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class StudyIdFilter : StringPropertyFilter<Study>
     {
-        public StudyIdFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.StudyId), inputCriteria)
+        public StudyIdFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.StudyId), criteria)
         {
         }
 
-        public override IQueryable<Study> AddToQuery(IQueryable<Study> inputQuery)
+        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
         {
             if (!IsCriterionWildcard)
-                return from study in inputQuery where study.StudyId == CriterionValue select study;
+                return from study in query where study.StudyId == CriterionValue select study;
 
-            return from study in inputQuery where SqlMethods.Like(study.StudyId, CriterionValue) select study;
+            return from study in query where SqlMethods.Like(study.StudyId, CriterionValue) select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -96,17 +97,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class StudyDescriptionFilter : StringPropertyFilter<Study>
     {
-        public StudyDescriptionFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.StudyDescription), inputCriteria)
+        public StudyDescriptionFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.StudyDescription), criteria)
         {
         }
 
-        public override IQueryable<Study> AddToQuery(IQueryable<Study> inputQuery)
+        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
         {
             if (!IsCriterionWildcard)
-                return from study in inputQuery where study.StudyDescription == CriterionValue select study;
+                return from study in query where study.StudyDescription == CriterionValue select study;
 
-            return from study in inputQuery where SqlMethods.Like(study.StudyDescription, CriterionValue) select study;
+            return from study in query where SqlMethods.Like(study.StudyDescription, CriterionValue) select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -117,17 +118,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class AccessionNumberFilter : StringPropertyFilter<Study>
     {
-        public AccessionNumberFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.AccessionNumber), inputCriteria)
+        public AccessionNumberFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.AccessionNumber), criteria)
         {
         }
 
-        public override IQueryable<Study> AddToQuery(IQueryable<Study> inputQuery)
+        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
         {
             if (!IsCriterionWildcard)
-                return from study in inputQuery where study.AccessionNumber == CriterionValue select study;
+                return from study in query where study.AccessionNumber == CriterionValue select study;
 
-            return from study in inputQuery where SqlMethods.Like(study.AccessionNumber, CriterionValue) select study;
+            return from study in query where SqlMethods.Like(study.AccessionNumber, CriterionValue) select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -138,17 +139,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class PatientsSexFilter : StringPropertyFilter<Study>
     {
-        public PatientsSexFilter(DicomAttributeCollection inputCriteria)
-            : base(DicomTags.PatientsSex, inputCriteria)
+        public PatientsSexFilter(DicomAttributeCollection criteria)
+            : base(DicomTags.PatientsSex, criteria)
         {
         }
 
-        public override IQueryable<Study> AddToQuery(IQueryable<Study> inputQuery)
+        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
         {
             if (!IsCriterionWildcard)
-                return from study in inputQuery where study.PatientsSex == CriterionValue select study;
+                return from study in query where study.PatientsSex == CriterionValue select study;
 
-            return from study in inputQuery where SqlMethods.Like(study.PatientsSex, CriterionValue) select study;
+            return from study in query where SqlMethods.Like(study.PatientsSex, CriterionValue) select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -163,19 +164,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class StudyInstanceUidFilter : UidPropertyFilter<Study>
     {
-        public StudyInstanceUidFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.StudyInstanceUid), inputCriteria)
+        public StudyInstanceUidFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.StudyInstanceUid), criteria)
         {
         }
 
-        protected override IQueryable<Study> AddUidToQuery(IQueryable<Study> inputQuery, string uid)
+        protected override IQueryable<Study> AddUidToQuery(IQueryable<Study> query, string uid)
         {
-            return from study in inputQuery where study.StudyInstanceUid == uid select study;
+            return from study in query where study.StudyInstanceUid == uid select study;
         }
 
-        protected override IQueryable<Study> AddUidsToQuery(IQueryable<Study> inputQuery, string[] uids)
+        protected override IQueryable<Study> AddUidsToQuery(IQueryable<Study> query, string[] uids)
         {
-            return from study in inputQuery where uids.Contains(study.StudyInstanceUid) select study;
+            return from study in query where uids.Contains(study.StudyInstanceUid) select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -191,25 +192,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
     //TODO (Marmot): StudyTime, ModalitiesInStudy
     internal class StudyDateFilter : DatePropertyFilter<Study>
     {
-        public StudyDateFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.StudyDate), inputCriteria)
+        public StudyDateFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.StudyDate), criteria)
         {
         }
 
-        protected override IQueryable<Study> AddAfterDateToQuery(IQueryable<Study> inputQuery, System.DateTime date)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, System.DateTime date)
         {
-            return from study in inputQuery where study.StudyDate == null || study.StudyDate >= date select study;
+            return from study in query where study.StudyDate == null || study.StudyDate >= date select study;
         }
 
-        protected override IQueryable<Study> AddBeforeDateToQuery(IQueryable<Study> inputQuery, System.DateTime date)
+        protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, System.DateTime date)
         {
-            return from study in inputQuery where study.StudyDate == null || study.StudyDate <= date select study;
+            return from study in query where study.StudyDate == null || study.StudyDate >= date select study;
         }
 
-        protected override IQueryable<Study> AddBetweenDatesToQuery(IQueryable<Study> inputQuery,
-                                                                    System.DateTime startDate, System.DateTime endDate)
+        protected override IQueryable<Study> AddLessOrEqualToQuery(IQueryable<Study> query, System.DateTime date)
         {
-            return from study in inputQuery
+            return from study in query where study.StudyDate == null || study.StudyDate <= date select study;
+        }
+
+        protected override IQueryable<Study> AddBetweenDatesToQuery(IQueryable<Study> query, DateTime startDate, DateTime endDate)
+        {
+            return from study in query
                    where
                        study.StudyDate == null
                        || (study.StudyDate >= startDate && study.StudyDate <= endDate)
@@ -224,27 +229,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class PatientsBirthDateFilter : DatePropertyFilter<Study>
     {
-        public PatientsBirthDateFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.PatientsBirthDate), inputCriteria)
+        public PatientsBirthDateFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.PatientsBirthDate), criteria)
         {
         }
 
-        protected override IQueryable<Study> AddAfterDateToQuery(IQueryable<Study> inputQuery, System.DateTime date)
+        protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, DateTime date)
         {
-            //return from study in inputQuery where study.PatientsBirthDate == null || study.PatientsBirthDate >= date);
+            //return from study in query where study.PatientsBirthDate == null || study.PatientsBirthDate >= date);
             //TODO (Marmot): add column to database.
-            return inputQuery;
+            return query;
         }
 
-        protected override IQueryable<Study> AddBeforeDateToQuery(IQueryable<Study> inputQuery, System.DateTime date)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, DateTime date)
         {
-            return inputQuery;
+            return query;
         }
 
-        protected override IQueryable<Study> AddBetweenDatesToQuery(IQueryable<Study> inputQuery,
-                                                                    System.DateTime startDate, System.DateTime endDate)
+        protected override IQueryable<Study> AddLessOrEqualToQuery(IQueryable<Study> query, DateTime date)
         {
-            return inputQuery;
+            return query;
+        }
+
+        protected override IQueryable<Study> AddBetweenDatesToQuery(IQueryable<Study> query, DateTime startDate, System.DateTime endDate)
+        {
+            return query;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -259,8 +268,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class NumberOfStudyRelatedInstancesFilter : PropertyFilter<Study>
     {
-        public NumberOfStudyRelatedInstancesFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.NumberOfStudyRelatedInstances), inputCriteria)
+        public NumberOfStudyRelatedInstancesFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.NumberOfStudyRelatedInstances), criteria)
         {
         }
 
@@ -275,8 +284,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class NumberOfStudyRelatedSeriesFilter : PropertyFilter<Study>
     {
-        public NumberOfStudyRelatedSeriesFilter(DicomAttributeCollection inputCriteria)
-            : base(new DicomTagPath(DicomTags.NumberOfStudyRelatedSeries), inputCriteria)
+        public NumberOfStudyRelatedSeriesFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.NumberOfStudyRelatedSeries), criteria)
         {
         }
 

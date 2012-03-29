@@ -82,9 +82,11 @@
     <Compile Include="DicomQuery\PropertyFilters\DatePropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\StringPropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\StudyFilters.cs" />
+    <Compile Include="DicomQuery\PropertyFilters\TimePropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\UidPropertyFilter.cs" />
     <Compile Include="DicomQuery\StudyRootQuery.cs" />
     <Compile Include="DicomQuery\Tests\MiscellaneousTests.cs" />
+    <Compile Include="DicomQuery\Tests\PropertyFilterTests.cs" />
     <Compile Include="DicomQuery\Tests\StudyRootQueryTests.cs" />
     <Compile Include="DicomQuery\Utilities.cs" />
     <Compile Include="ISeries.cs" />

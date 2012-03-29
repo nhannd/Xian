@@ -8,36 +8,66 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
     internal interface IPropertyFilter<T>
     {
         DicomTagPath Path { get; }
-        DicomAttribute InputCriterion { get; }
+        DicomAttribute Criterion { get; }
+        bool IsNoOp { get; }
 
-        IQueryable<T> AddToQuery(IQueryable<T> inputQuery);
+        IQueryable<T> AddToQuery(IQueryable<T> query);
         IEnumerable<T> FilterResults(IEnumerable<T> results);
 
         void SetAttributeValue(T item, DicomAttributeCollection result);
     }
 
-    internal abstract class PropertyFilter<T> : IPropertyFilter<T>
+    internal class PropertyFilter<T> : IPropertyFilter<T>
     {
-        protected PropertyFilter(DicomTagPath path, IDicomAttributeProvider inputCriteria)
+        protected PropertyFilter(DicomTagPath path, IDicomAttributeProvider criteria)
         {
             Path = path;
-            InputCriterion = Path.GetAttribute(inputCriteria);
+            Criterion = Path.GetAttribute(criteria);
         }
 
         public DicomTagPath Path { get; private set; }
-        public DicomAttribute InputCriterion { get; private set; }
+        public DicomAttribute Criterion { get; private set; }
 
-        protected virtual bool IsCriterionValid
+        public virtual bool IsNoOp
         {
-            get { return !InputCriterion.IsEmpty && !InputCriterion.IsNull; }
+            get { return IsCriterionEmpty || IsUniqueId; }
         }
 
-        public virtual IQueryable<T> AddToQuery(IQueryable<T> inputQuery)
+        protected internal virtual bool IsUniqueId { get; set; }
+        protected internal virtual bool IsRequired { get; set; }
+
+        protected internal virtual bool IsCriterionEmpty
         {
-            return inputQuery;
+            get { return Criterion == null || Criterion.IsEmpty; }
         }
 
-        public virtual IEnumerable<T> FilterResults(IEnumerable<T> results)
+        protected internal virtual bool IsCriterionNull
+        {
+            get { return !IsCriterionEmpty && Criterion.IsNull; }
+        }
+
+        protected internal virtual bool ShouldAddToQuery
+        {
+            get { return !IsCriterionNull; }
+        }
+
+        protected internal virtual bool ShouldAddToResult
+        {
+            get
+            {
+                if (IsUniqueId)
+                    return true;
+
+                return !IsCriterionEmpty;
+            }
+        }
+
+        protected virtual IQueryable<T> AddToQuery(IQueryable<T> query)
+        {
+            return query;
+        }
+
+        protected virtual IEnumerable<T> FilterResults(IEnumerable<T> results)
         {
             return results;
         }
@@ -49,22 +79,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         #region IPropertyFilter<T> Members
 
-        IQueryable<T> IPropertyFilter<T>.AddToQuery(IQueryable<T> inputQuery)
+        IQueryable<T> IPropertyFilter<T>.AddToQuery(IQueryable<T> query)
         {
-            if (!IsCriterionValid)
-                return inputQuery;
+            if (!ShouldAddToQuery)
+                return query;
 
-            return AddToQuery(inputQuery);
+            return AddToQuery(query);
         }
 
         IEnumerable<T> IPropertyFilter<T>.FilterResults(IEnumerable<T> results)
         {
+            if (!ShouldAddToQuery)
+                return results;
+
             return FilterResults(results);
         }
 
         void IPropertyFilter<T>.SetAttributeValue(T item, DicomAttributeCollection result)
         {
-            if (InputCriterion.IsEmpty)
+            if (!ShouldAddToResult)
                 return;
 
             var resultAttribute = Path.GetAttribute(result, true);
