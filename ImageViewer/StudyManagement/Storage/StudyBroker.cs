@@ -74,9 +74,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         /// <summary>
         /// Delete Study entity.
         /// </summary>
-        internal void DeleteAll()
+	    public void DeleteStudy(string studyInstanceUid)
         {
-            //this.Context.Studies.DefaultIfEmpty()
-        }
+            this.Context.Studies.DeleteOnSubmit(GetStudy(studyInstanceUid));
+	    }
+
+	    internal void DeleteAll()
+	    {
+            Context.Studies.DeleteAllOnSubmit(from s in Context.Studies select s);
+	    }
 	}
 }
