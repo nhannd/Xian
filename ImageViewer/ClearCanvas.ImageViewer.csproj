@@ -892,6 +892,12 @@
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicScannerMask.png" />
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicTray.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RefreshMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RefreshSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>

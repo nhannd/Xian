@@ -150,6 +150,7 @@
     <Compile Include="StudyManagement\Rules\StudyRuleDataContractAttribute.cs" />
     <Compile Include="StudyManagement\Rules\TimeOrigin.cs" />
     <Compile Include="StudyManagement\Rules\TimeUnit.cs" />
+    <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
     <Compile Include="WorkItem\Tests\TestServiceProvider.cs" />
     <Compile Include="WorkItem\Tests\TestUISynchronizationContext.cs" />

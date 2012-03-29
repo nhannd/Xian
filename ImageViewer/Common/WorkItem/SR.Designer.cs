@@ -221,5 +221,158 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
                 return ResourceManager.GetString("StudyProcessProgress_Status", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Normal.
+        /// </summary>
+        internal static string WorkItemPriorityEnumNormal {
+            get {
+                return ResourceManager.GetString("WorkItemPriorityEnumNormal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stat.
+        /// </summary>
+        internal static string WorkItemPriorityEnumStat {
+            get {
+                return ResourceManager.GetString("WorkItemPriorityEnumStat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Canceled.
+        /// </summary>
+        internal static string WorkItemStatusEnumCanceled {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumCanceled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Complete.
+        /// </summary>
+        internal static string WorkItemStatusEnumComplete {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted.
+        /// </summary>
+        internal static string WorkItemStatusEnumDeleted {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed.
+        /// </summary>
+        internal static string WorkItemStatusEnumFailed {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Idle.
+        /// </summary>
+        internal static string WorkItemStatusEnumIdle {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumIdle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In Progress.
+        /// </summary>
+        internal static string WorkItemStatusEnumInProgress {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pending.
+        /// </summary>
+        internal static string WorkItemStatusEnumPending {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumPending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve.
+        /// </summary>
+        internal static string WorkItemTypeEnumDicomRetrieve {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumDicomRetrieve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        internal static string WorkItemTypeEnumDicomSend {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumDicomSend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        internal static string WorkItemTypeEnumImport {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-apply Rules.
+        /// </summary>
+        internal static string WorkItemTypeEnumReapplyRules {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumReapplyRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-index.
+        /// </summary>
+        internal static string WorkItemTypeEnumReIndex {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumReIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Series.
+        /// </summary>
+        internal static string WorkItemTypeEnumSeriesDelete {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumSeriesDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Study.
+        /// </summary>
+        internal static string WorkItemTypeEnumStudyDelete {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumStudyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Process Study.
+        /// </summary>
+        internal static string WorkItemTypeEnumStudyProcess {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumStudyProcess", resourceCulture);
+            }
+        }
     }
 }

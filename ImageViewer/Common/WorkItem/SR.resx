@@ -171,4 +171,55 @@
   <data name="StudyProcessProgress_Status" xml:space="preserve">
     <value>{0} of {1} images processed, {2} failed.</value>
   </data>
+  <data name="WorkItemPriorityEnumNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="WorkItemPriorityEnumStat" xml:space="preserve">
+    <value>Stat</value>
+  </data>
+  <data name="WorkItemStatusEnumCanceled" xml:space="preserve">
+    <value>Canceled</value>
+  </data>
+  <data name="WorkItemStatusEnumComplete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="WorkItemStatusEnumDeleted" xml:space="preserve">
+    <value>Deleted</value>
+  </data>
+  <data name="WorkItemStatusEnumFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="WorkItemStatusEnumIdle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="WorkItemStatusEnumInProgress" xml:space="preserve">
+    <value>In Progress</value>
+  </data>
+  <data name="WorkItemStatusEnumPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="WorkItemTypeEnumDicomRetrieve" xml:space="preserve">
+    <value>Retrieve</value>
+  </data>
+  <data name="WorkItemTypeEnumDicomSend" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="WorkItemTypeEnumImport" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="WorkItemTypeEnumReapplyRules" xml:space="preserve">
+    <value>Re-apply Rules</value>
+  </data>
+  <data name="WorkItemTypeEnumReIndex" xml:space="preserve">
+    <value>Re-index</value>
+  </data>
+  <data name="WorkItemTypeEnumSeriesDelete" xml:space="preserve">
+    <value>Delete Series</value>
+  </data>
+  <data name="WorkItemTypeEnumStudyDelete" xml:space="preserve">
+    <value>Delete Study</value>
+  </data>
+  <data name="WorkItemTypeEnumStudyProcess" xml:space="preserve">
+    <value>Process Study</value>
+  </data>
 </root>

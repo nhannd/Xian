@@ -39,11 +39,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private readonly ActivityMonitorComponent _component;
 
 		public ActivityMonitorComponentControl(ActivityMonitorComponent component)
-			:base(component)
+			: base(component)
 		{
 			_component = component;
 			InitializeComponent();
 
+			ToolStripBuilder.BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _workItemToolStrip.Items, _component.WorkItemActions.ChildNodes);
 
 			_aeTitle.DataBindings.Add("Text", _component, "AeTitle");
 			_hostName.DataBindings.Add("Text", _component, "HostName");
@@ -65,6 +66,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_statusFilter.SelectedIndex = 0;
 			_statusFilter.SelectedIndexChanged += _statusFilter_SelectedIndexChanged;
 
+			_textFilter.TextChanged += _textFilter_TextChanged;
+
 			_workItemsTableView.Table = _component.WorkItemTable;
 		}
 
@@ -78,5 +81,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_component.StatusFilter = ((FilterItem)_statusFilter.SelectedItem).Item;
 		}
 
+		private void _textFilter_TextChanged(object sender, EventArgs e)
+		{
+			_component.TextFilter = _textFilter.Text;
+		}
 	}
 }

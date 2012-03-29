@@ -53,9 +53,11 @@
 			this._workItemToolStrip = new System.Windows.Forms.ToolStrip();
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this._activityFilter = new System.Windows.Forms.ToolStripComboBox();
-			this._statusFilter = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+			this._statusFilter = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this._textFilter = new System.Windows.Forms.ToolStripTextBox();
+			this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
 			this.groupBox2.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -214,7 +216,6 @@
 			this._diskSpaceBar.Name = "_diskSpaceBar";
 			this._diskSpaceBar.Size = new System.Drawing.Size(155, 23);
 			this._diskSpaceBar.TabIndex = 11;
-			this._diskSpaceBar.Visible = false;
 			// 
 			// label2
 			// 
@@ -346,11 +347,15 @@
 			// 
 			// _workItemToolStrip
 			// 
+			this._workItemToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this._workItemToolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._workItemToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
             this._activityFilter,
             this.toolStripLabel2,
             this._statusFilter,
+            this.toolStripLabel3,
+            this._textFilter,
             this.toolStripSeparator1});
 			this._workItemToolStrip.Location = new System.Drawing.Point(0, 0);
 			this._workItemToolStrip.Name = "_workItemToolStrip";
@@ -370,22 +375,33 @@
 			this._activityFilter.Name = "_activityFilter";
 			this._activityFilter.Size = new System.Drawing.Size(121, 25);
 			// 
-			// _statusFilter
-			// 
-			this._statusFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._statusFilter.Name = "_statusFilter";
-			this._statusFilter.Size = new System.Drawing.Size(121, 25);
-			// 
 			// toolStripLabel2
 			// 
 			this.toolStripLabel2.Name = "toolStripLabel2";
 			this.toolStripLabel2.Size = new System.Drawing.Size(39, 22);
 			this.toolStripLabel2.Text = "Status";
 			// 
+			// _statusFilter
+			// 
+			this._statusFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._statusFilter.Name = "_statusFilter";
+			this._statusFilter.Size = new System.Drawing.Size(121, 25);
+			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+			// 
+			// _textFilter
+			// 
+			this._textFilter.Name = "_textFilter";
+			this._textFilter.Size = new System.Drawing.Size(100, 25);
+			// 
+			// toolStripLabel3
+			// 
+			this.toolStripLabel3.Name = "toolStripLabel3";
+			this.toolStripLabel3.Size = new System.Drawing.Size(42, 22);
+			this.toolStripLabel3.Text = "Search";
 			// 
 			// ActivityMonitorComponentControl
 			// 
@@ -439,6 +455,8 @@
 		private System.Windows.Forms.ToolStripLabel toolStripLabel2;
 		private System.Windows.Forms.ToolStripComboBox _statusFilter;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.ToolStripLabel toolStripLabel3;
+		private System.Windows.Forms.ToolStripTextBox _textFilter;
 
 	}
 }

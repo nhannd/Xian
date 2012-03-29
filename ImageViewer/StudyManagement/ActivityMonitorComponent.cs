@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using System.Collections;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -40,10 +41,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public override ConnectionState Update()
 			{
-				if (this.Component.Monitor.IsConnected)
+				if (this.Component.ActivityMonitor.IsConnected)
 					return this;
 
-				this.Component.Monitor.WorkItemChanged -= this.Component.WorkItemChanged;
+				this.Component.ActivityMonitor.WorkItemChanged -= this.Component.WorkItemChanged;
 				return new DisconnectedState(this.Component);
 			}
 		}
@@ -57,16 +58,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public override ConnectionState Update()
 			{
-				if (!this.Component.Monitor.IsConnected)
+				if (!this.Component.ActivityMonitor.IsConnected)
 					return this;
 
-				this.Component.Refresh();
+				// whatever is on the screen is out-of-date and should be refreshed
+				this.Component.RefreshInternal();
 				return new ConnectedState(this.Component);
 			}
 		}
 
 		#endregion
-
 
 		#region WorkItem class
 
@@ -104,6 +105,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Patient != null ? _data.Patient.PatientsSex : null; }
 			}
 
+			public string PatientInfo
+			{
+				get
+				{
+					// todo: format this like elsewhere in the viewer
+					var p = _data.Patient;
+					if (p == null)
+						return null;
+
+					return string.Format("{0} {1} {2} {3}", p.PatientId, p.PatientsName, p.PatientsBirthDate, p.PatientsSex);
+				}
+			}
+
 			public string StudyDate
 			{
 				get { return _data.Study != null ? _data.Study.StudyDate : null; }
@@ -118,6 +132,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				get { return _data.Study != null ? _data.Study.StudyDescription : null; }
 			}
+
+			public string StudyInfo
+			{
+				get
+				{
+					// todo: format this like elsewhere in the viewer
+					var s = _data.Study;
+					if (s == null)
+						return null;
+
+					return string.Format("{0} {1} {2}", s.AccessionNumber, s.StudyDescription, s.StudyDate);
+				}
+			}
+
 
 			public WorkItemTypeEnum Type
 			{
@@ -161,64 +189,105 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public IconSet ProgressIcon
 			{
-				get { return GetProgressIcon(_data.Progress); }
+				get { return GetProgressIcon(_data.Progress, _data.Status); }
+			}
+
+			public bool ContainsText(string text)
+			{
+				// todo: not sure if we need to include all of these fields or not
+				// would it be better to be a little more selective?
+				return ContainsText(text,
+									w => w.PatientInfo,
+									w => w.StudyInfo,
+									w => w.ActivityType,
+									w => w.ActivityDescription,
+									w => w.ProgressStatus,
+									w => w.ProgressStatusDescription,
+									w => w.Type.GetDescription(),
+									w => w.Priority.GetDescription(),
+									w => w.Status.GetDescription());
+			}
+
+			private bool ContainsText(string text, params Func<WorkItem, string>[] fields)
+			{
+				return fields.Any(f =>
+									{
+										var value = f(this);
+										return value != null && value.Contains(text);
+									});
 			}
 		}
 
 		#endregion
 
+		class WorkItemActionModel : SimpleActionModel
+		{
+			internal ClickAction Refresh { get; private set; }
+
+			public WorkItemActionModel()
+				: base(new ApplicationThemeResourceResolver(typeof(ActivityMonitorComponent).Assembly, new ApplicationThemeResourceResolver(typeof(CrudActionModel).Assembly)))
+			{
+				//todo loc
+				Refresh = AddAction("refresh", "Refresh", "RefreshSmall.png");
+			}
+		}
+
+
 		private static readonly object NoFilter = new object();
 
+		private readonly WorkItemActionModel _workItemActionModel = new WorkItemActionModel();
 		private readonly Table<WorkItem> _workItems = new Table<WorkItem>();
 
 		private IDicomServerConfigurationProvider _dicomConfigProvider;
 		private ConnectionState _connectionState;
 		private WorkItemStatusEnum? _statusFilter;
 		private WorkItemTypeEnum? _activityFilter;
+		private string _textFilter;
+		private readonly Timer _textFilterTimer;
 
 		public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
+			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 500);
 		}
 
 		public override void Start()
 		{
 			base.Start();
 
+			_workItemActionModel.Refresh.SetClickHandler(Refresh);
+
 
 			_dicomConfigProvider = DicomServerConfigurationHelper.GetConfigurationProvider();
 			_dicomConfigProvider.Changed += DicomServerConfigurationChanged;
 
 			// todo loc
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Patient ID", w => w.PatientId));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Name", w => w.PatientsName));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Birthdate", w => w.PatientsBirthDate));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Sex", w => w.PatientsSex));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Study date", w => w.StudyDate));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Accession", w => w.AccessionNumber));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Study Desc.", w => w.StudyDescription));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Patient", w => w.PatientInfo));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Study", w => w.StudyInfo));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Activity", w => w.ActivityType));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Activity Desc.", w => w.ActivityDescription));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Status", w => w.Status.ToString()));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Status", w => w.Status.GetDescription()));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Status Desc.", w => w.ProgressStatus));
 			_workItems.Columns.Add(new TableColumn<WorkItem, DateTime>("Sched. Time", w => w.ScheduledTime));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Priority", w => w.Priority.ToString()));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Priority", w => w.Priority.GetDescription()));
 			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>("Progress", w => w.ProgressIcon));
 
-			this.Monitor = WorkItemActivityMonitor.Create(true);
+			this.ActivityMonitor = WorkItemActivityMonitor.Create(true);
 			_connectionState = _connectionState.Update();
 
-			this.Monitor.IsConnectedChanged += (sender, e) => _connectionState = _connectionState.Update();
+			this.ActivityMonitor.IsConnectedChanged += (sender, e) => _connectionState = _connectionState.Update();
 		}
 
 		public override void Stop()
 		{
-			Monitor.WorkItemChanged -= WorkItemChanged;
-			Monitor.Dispose();
-			Monitor = null;
+			ActivityMonitor.WorkItemChanged -= WorkItemChanged;
+			ActivityMonitor.Dispose();
+			ActivityMonitor = null;
 
 			_dicomConfigProvider.Changed -= DicomServerConfigurationChanged;
 			_dicomConfigProvider = null;
+
+			_textFilterTimer.Dispose();
 
 			base.Stop();
 		}
@@ -259,6 +328,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public int Failures { get; private set; }
 
+		public ActionModelNode WorkItemActions
+		{
+			get { return _workItemActionModel; }
+		}
 
 		public ITable WorkItemTable
 		{
@@ -267,7 +340,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public IList StatusFilterChoices
 		{
-			get { return new [] { NoFilter }.Concat(Enum.GetValues(typeof(WorkItemStatusEnum)).Cast<object>()).ToList(); }
+			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(WorkItemStatusEnum)).Cast<object>()).ToList(); }
 		}
 
 		public string FormatStatusFilter(object value)
@@ -275,7 +348,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			// todo loc
 			if (value == NoFilter)
 				return "(all)";
-			return value.ToString();
+			return ((WorkItemStatusEnum)value).GetDescription();
 		}
 
 		public object StatusFilter
@@ -284,18 +357,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set
 			{
 				var v = (value == NoFilter) ? (WorkItemStatusEnum?)null : (WorkItemStatusEnum)value;
-				if(_statusFilter != v)
+				if (_statusFilter != v)
 				{
 					_statusFilter = v;
 					NotifyPropertyChanged("StatusFilter");
-					Refresh();
+					RefreshInternal();
 				}
 			}
 		}
 
 		public IList ActivityTypeFilterChoices
 		{
-			get { return new [] { NoFilter }.Concat(Enum.GetValues(typeof(WorkItemTypeEnum)).Cast<object>()).ToList(); }
+			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(WorkItemTypeEnum)).Cast<object>()).ToList(); }
 		}
 
 		public string FormatActivityTypeFilter(object value)
@@ -303,7 +376,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			// todo loc
 			if (value == NoFilter)
 				return "(all)";
-			return value.ToString();
+			return ((WorkItemTypeEnum)value).GetDescription();
 		}
 
 		public object ActivityTypeFilter
@@ -312,25 +385,74 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set
 			{
 				var v = (value == NoFilter) ? (WorkItemTypeEnum?)null : (WorkItemTypeEnum)value;
-				if(_activityFilter != v)
+				if (_activityFilter != v)
 				{
 					_activityFilter = v;
 					NotifyPropertyChanged("ActivityTypeFilter");
-					Refresh();
+					RefreshInternal();
 				}
 			}
 		}
 
+		public string TextFilter
+		{
+			get { return _textFilter; }
+			set
+			{
+				if (value != _textFilter)
+				{
+					_textFilter = value;
+					NotifyPropertyChanged("TextFilter");
+
+					// we don't want to do a full refresh on every keystroke, so
+					// rather than refreshing immediately, we just re-start the timer
+					_textFilterTimer.Stop();
+					_textFilterTimer.Start();
+				}
+			}
+		}
+
+		public void Refresh()
+		{
+			if (_connectionState is DisconnectedState)
+			{
+				this.Host.ShowMessageBox("not connected", MessageBoxActions.Ok); // todo loc
+				return;
+			}
+			RefreshInternal();
+		}
+
+
 		#endregion
 
-		private IWorkItemActivityMonitor Monitor { get; set; }
+		private IWorkItemActivityMonitor ActivityMonitor { get; set; }
 
-		private static IconSet GetProgressIcon(WorkItemProgress progress)
+		private static IconSet GetProgressIcon(WorkItemProgress progress, WorkItemStatusEnum status)
 		{
 			if (progress == null)
 				return null;
 
-			return new ProgressBarIconSet("progress", new Size(80, 10), progress.PercentComplete * 100);
+			return new ProgressBarIconSet("progress", new Size(80, 10), progress.PercentComplete * 100, GetProgressState(status));
+		}
+
+		private static ProgressBarState GetProgressState(WorkItemStatusEnum status)
+		{
+			// TODO: not sure exactly how these should map to colors,
+			// but I think keeping the progress bar limited to 3 colors (red, yellow, green) is a good idea
+			switch (status)
+			{
+				case WorkItemStatusEnum.Pending:
+				case WorkItemStatusEnum.InProgress:
+				case WorkItemStatusEnum.Complete:
+				case WorkItemStatusEnum.Deleted:
+				case WorkItemStatusEnum.Canceled:
+					return ProgressBarState.Active;
+				case WorkItemStatusEnum.Idle:
+					return ProgressBarState.Paused;
+				case WorkItemStatusEnum.Failed:
+					return ProgressBarState.Error;
+			}
+			throw new NotImplementedException();
 		}
 
 		private void DicomServerConfigurationChanged(object sender, EventArgs e)
@@ -351,6 +473,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			var index = _workItems.Items.FindIndex(w => w.Id == newItem.Id);
 			if (index > -1)
 			{
+				// the item is currently in the list
+				// if the item is marked deleted, or if it no longer meets the filter criteria, remove it
+				// otherwise update it
 				if (newItem.Status == WorkItemStatusEnum.Deleted || !Include(newItem))
 					_workItems.Items.RemoveAt(index);
 				else
@@ -358,6 +483,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			else
 			{
+				// the item is not currently in the list
+				// if it meets the filter criteria, add it
 				if (Include(newItem))
 				{
 					_workItems.Items.Add(newItem);
@@ -365,9 +492,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		private void Refresh()
+		private void RefreshInternal()
 		{
-			Monitor.WorkItemChanged -= WorkItemChanged;
+			this.ActivityMonitor.WorkItemChanged -= WorkItemChanged;
 			_workItems.Items.Clear();
 
 			try
@@ -386,12 +513,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			catch (Exception e)
 			{
-				// do not show a message box here, since refreshes can happen spontaneously
-				// and the user might not even be on this page
+				// don't show a message box here, since the user may not even be looking at this workspace
 				Platform.Log(LogLevel.Error, e);
 			}
 
-			Monitor.WorkItemChanged += WorkItemChanged;
+			this.ActivityMonitor.WorkItemChanged += WorkItemChanged;
+		}
+
+		private bool Include(WorkItem item)
+		{
+			if (_activityFilter.HasValue && item.Type != _activityFilter.Value)
+				return false;
+
+			if (_statusFilter.HasValue && item.Status != _statusFilter.Value)
+				return false;
+
+			if (!string.IsNullOrEmpty(_textFilter) && !item.ContainsText(_textFilter))
+				return false;
+
+			return true;
+		}
+
+		private void OnTextFilterTimerElapsed(object state)
+		{
+			_textFilterTimer.Stop();
+			RefreshInternal();
 		}
 
 		private Diskspace QueryDiskspace()
@@ -399,15 +545,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return new Diskspace(this.FileStore.Substring(0, 1));
 		}
 
-		private bool Include(WorkItem item)
-		{
-			if(_activityFilter.HasValue && item.Type != _activityFilter.Value)
-				return false;
 
-			if(_statusFilter.HasValue && item.Status != _statusFilter.Value)
-				return false;
-
-			return true;
-		}
 	}
 }
