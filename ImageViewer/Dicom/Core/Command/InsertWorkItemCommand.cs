@@ -109,33 +109,39 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             if (WorkItem == null)
             {
                 WorkItem = workItemBroker.GetPendingWorkItemForStudy(_request.Type, _studyInstanceUid);
+            }
+            if (WorkItem == null)
+            {
+                WorkItem = new WorkItem
+                               {
+                                   InsertTime = now,
+                                   Request = _request,
+                                   ScheduledTime = now.AddSeconds(5),
+                                   Priority = _request.Priority,
+                                   Type = _request.Type,
+                                   DeleteTime = now.AddHours(3),
+                                   ExpirationTime = now.AddMinutes(2),
+                                   StudyInstanceUid = _studyInstanceUid,
+                               };
 
-                if (WorkItem == null)
-                {
-                    WorkItem = new WorkItem
-                                   {
-                                       InsertTime = now,
-                                       Request = _request,
-                                       ScheduledTime = now.AddSeconds(5),
-                                       Priority = _request.Priority,
-                                       Type = _request.Type,
-                                       DeleteTime = now.AddHours(3),
-                                       ExpirationTime = now.AddMinutes(2),
-                                       StudyInstanceUid = _studyInstanceUid,
-                                   };
-                    workItemBroker.AddWorkItem(WorkItem);
-                }
+                workItemBroker.AddWorkItem(WorkItem);
+                WorkItemUid.WorkItem = WorkItem;
+
+                var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
+                workItemUidBroker.AddWorkItemUid(WorkItemUid);
             }
             else
             {
                 // Reload so that the update is committed
                 WorkItem = workItemBroker.GetWorkItem(WorkItem.Oid);
                 WorkItem.ExpirationTime = now.AddMinutes(2);
+
+                WorkItemUid.WorkItemOid = WorkItem.Oid;
+                var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
+                workItemUidBroker.AddWorkItemUid(WorkItemUid);
             }
             
-            WorkItemUid.WorkItemOid = WorkItem.Oid;
-            var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
-            workItemUidBroker.AddWorkItemUid(WorkItemUid);
+            
         }
     }
 }
