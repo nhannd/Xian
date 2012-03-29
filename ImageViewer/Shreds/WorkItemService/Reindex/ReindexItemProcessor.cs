@@ -37,10 +37,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
         public override void Process()
         {
-
-            Progress.IsCancelable = false;
-            Proxy.UpdateProgress();
-
             if (CancelPending)
             {
                 Proxy.Cancel();
@@ -52,11 +48,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                 return;
             }
 
+            Progress.IsCancelable = false;
+            Proxy.UpdateProgress();
+
             var processor = new ClearCanvas.ImageViewer.Dicom.Core.ReindexProcessor();
 
             processor.Initialize();
 
             Progress.NumberOfStudiesToProcess = processor.DatabaseStudiesToScan + processor.StudyFoldersToScan;
+            Proxy.UpdateProgress();
 
             processor.Process();
             

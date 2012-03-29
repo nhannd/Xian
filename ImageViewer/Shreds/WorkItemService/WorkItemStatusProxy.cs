@@ -39,6 +39,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
     public class WorkItemStatusProxy
     {
+        // Hard-coded log level for proxy
+        public LogLevel LogLevel = LogLevel.Info;
+
         public WorkItem Item { get; private set; }
         public WorkItemProgress Progress { get; set; }
         public WorkItemRequest Request { get; set; }
@@ -83,6 +86,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
 
             Publish();
+            Platform.Log(LogLevel, "Failing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
         public void Postpone()
@@ -102,6 +106,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
 
             Publish();
+            Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
         public void Complete()
@@ -129,6 +134,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
 
             Publish();
+            Platform.Log(LogLevel, "Completing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
         public void Idle()
@@ -149,6 +155,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
 
             Publish();
+            Platform.Log(LogLevel, "Idling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
         public void Cancel()
@@ -170,6 +177,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
 
             Publish();
+            Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
         public void Delete()
@@ -185,22 +193,28 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
 
             Publish();
+            Platform.Log(LogLevel, "Deleting {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
         public void UpdateProgress()
         {
-            using (var context = new DataAccessContext())
+            try
             {
-                var broker = context.GetWorkItemBroker();
-                
-                Item = broker.GetWorkItem(Item.Oid);
+                using (var context = new DataAccessContext())
+                {
+                    var broker = context.GetWorkItemBroker();
 
-                Item.Progress = Progress;
+                    Item = broker.GetWorkItem(Item.Oid);
 
-                context.Commit();
+                    Item.Progress = Progress;
+
+                    context.Commit();
+                }
+
+                Publish();
             }
-
-            Publish();
+            catch (Exception)
+            {}
         }
 
         private void Publish()

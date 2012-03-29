@@ -280,31 +280,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
-        /// <summary>
-        /// Load a <see cref="StudyXml"/> file for a given <see cref="StudyLocation"/>
-        /// </summary>
-        /// <returns>The <see cref="StudyXml"/> instance for <paramref name="location"/></returns>
-        protected virtual StudyXml LoadStudyXml()
-        {
-            var theXml = new StudyXml();
-
-
-            String streamFile = Path.Combine(Location.StudyFolder, Location.Study.StudyInstanceUid + ".xml");
-            if (File.Exists(streamFile))
-            {
-                using (Stream fileStream = FileStreamOpener.OpenForRead(streamFile, FileMode.Open))
-                {
-                    var theDoc = new XmlDocument();
-
-                    StudyXmlIo.Read(theDoc, fileStream);
-
-                    theXml.SetMemento(theDoc);
-
-                    fileStream.Close();
-                }
-            }
-            return theXml;
-        }
 
         /// <summary>
         /// Returns a list of related <see cref="StudyManagement.Storage.WorkItem"/> with specified types and status (both are optional).

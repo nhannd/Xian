@@ -14,11 +14,10 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
-using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal sealed partial class LocalDataStoreService : ILocalDataStoreService, IStudyStorageLocator
+	internal sealed partial class LocalDataStoreService : ILocalDataStoreService //, IStudyStorageLocator
 	{
 		public enum ServiceState
 		{ 
@@ -308,7 +307,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						throw new Exception(SR.ExceptionStorageDirectoryDoesNotExist);
 				}
 
-				DataAccessLayer.SetStudyStorageLocator(this);
+				//DataAccessLayer.SetStudyStorageLocator(this);
 
 				_badFileDirectory = InitializeStorageDirectory(LocalDataStoreServiceSettings.Instance.BadFileDirectory);
 				if (_badFileDirectory == null)

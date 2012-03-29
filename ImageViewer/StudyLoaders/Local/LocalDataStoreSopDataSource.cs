@@ -11,7 +11,7 @@
 
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {
@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Local
         private readonly ISopInstance _sop;
 
         public LocalDataStoreSopDataSource(ISopInstance sop)
-            : base(sop.GetLocationUri().LocalDiskPath)
+            : base(sop.GetLocationUri())
         {
             _sop = sop;
         }

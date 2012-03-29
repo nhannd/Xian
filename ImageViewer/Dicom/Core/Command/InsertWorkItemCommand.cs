@@ -106,10 +106,16 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
             DateTime now = Platform.Time;
 
-            if (WorkItem == null)
+            if (WorkItem != null)
+            {
+                // Already have a committed WorkItem, just set the Oid
+                WorkItemUid.WorkItemOid = WorkItem.Oid;
+                var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
+                workItemUidBroker.AddWorkItemUid(WorkItemUid);
+            }
+            else
             {
                 WorkItem = workItemBroker.GetPendingWorkItemForStudy(_request.Type, _studyInstanceUid);
-
                 if (WorkItem == null)
                 {
                     WorkItem = new WorkItem
@@ -123,19 +129,20 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                                        ExpirationTime = now.AddMinutes(2),
                                        StudyInstanceUid = _studyInstanceUid,
                                    };
+
                     workItemBroker.AddWorkItem(WorkItem);
+                    WorkItemUid.WorkItem = WorkItem;
+
+                    var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
+                    workItemUidBroker.AddWorkItemUid(WorkItemUid);
+                }
+                else
+                {
+                    WorkItemUid.WorkItemOid = WorkItem.Oid;
+                    var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
+                    workItemUidBroker.AddWorkItemUid(WorkItemUid);
                 }
             }
-            else
-            {
-                // Reload so that the update is committed
-                WorkItem = workItemBroker.GetWorkItem(WorkItem.Oid);
-                WorkItem.ExpirationTime = now.AddMinutes(2);
-            }
-            
-            WorkItemUid.WorkItemOid = WorkItem.Oid;
-            var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
-            workItemUidBroker.AddWorkItemUid(WorkItemUid);
         }
     }
 }

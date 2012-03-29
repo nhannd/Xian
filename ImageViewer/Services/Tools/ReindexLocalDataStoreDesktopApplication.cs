@@ -35,6 +35,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		void DismissMessageBoxes();
 	}
 
+    // TODO (Marmot) - Use CC.IV.Dicom.Core.ReindexProcessor directly here, bypass the WorkQueue.
 	[AssociateView(typeof(ReindexLocalDataStoreApplicationViewExtensionPoint))]
 	internal class ReindexLocalDataStoreDesktopApplication : Application
 	{

@@ -12,7 +12,7 @@
 using System.IO;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				DeleteFileForSopInstance(sop);
 
-				string directoryName = Path.GetDirectoryName(sop.GetLocationUri().LocalDiskPath);
+				string directoryName = Path.GetDirectoryName(sop.GetLocationUri());
 				if (_directoriesToDelete.Contains(directoryName) == false)
 					_directoriesToDelete.Add(directoryName);
 			}
@@ -52,10 +52,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		private static void DeleteFileForSopInstance(ISopInstance sopIntanceToDelete)
 		{
-			if (sopIntanceToDelete.GetLocationUri().IsFile == false)
+            if (File.Exists(sopIntanceToDelete.GetLocationUri()) == false)
 				return;
 
-			string fileName = sopIntanceToDelete.GetLocationUri().LocalDiskPath;
+			string fileName = sopIntanceToDelete.GetLocationUri();
 			if (File.Exists(fileName))
 				File.Delete(fileName);
 		}

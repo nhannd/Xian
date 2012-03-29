@@ -7,15 +7,36 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
     public abstract class WorkItemClient
     {
-        protected WorkItemData InsertRequest(WorkItemRequest request)
+        public WorkItemData Request { get; set; }
+
+        public void Cancel()
+        {
+            if (Request == null)
+                return;
+
+            if (Request.Status == WorkItemStatusEnum.Canceled) 
+                return;
+
+            if (Request.Progress == null || !Request.Progress.IsCancelable) 
+                return;
+
+            WorkItemUpdateResponse response = null;
+
+            Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest {Cancel = true, Identifier = Request.Identifier}));
+
+            // Cancel the request
+            Request = response.Item;
+        }
+
+        protected void InsertRequest(WorkItemRequest request)
         {
             WorkItemInsertResponse response = null;
 
             Platform.GetService<IWorkItemService>(s => response = s.Insert(new WorkItemInsertRequest { Request = request }));
 
-            if (response == null) return null;
+            if (response == null) return;
 
-            return response.Item;
+            Request = response.Item;
         }
     }
 
@@ -111,6 +132,25 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
                 AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, result);
 
+            }
+        }
+    }
+
+    public class ReindexClient : WorkItemClient
+    {
+        public bool Reindex()
+        {
+            var request = new ReindexRequest();
+
+            try
+            {
+                InsertRequest(request);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToStartReindex);
+                return false;
             }
         }
     }

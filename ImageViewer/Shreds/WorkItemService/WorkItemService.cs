@@ -80,15 +80,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             using (var context = new DataAccessContext())
             {
+                DateTime now = Platform.Time;
+
                 var item = new WorkItem
                                {
                                    Request = request.Request,
                                    Type = request.Request.Type,
                                    Priority = request.Request.Priority,
-                                   InsertTime = Platform.Time,
-                                   DeleteTime = Platform.Time,
-                                   ExpirationTime = Platform.Time,
-                                   ScheduledTime = Platform.Time,
+                                   InsertTime = now,
+                                   ScheduledTime = now.AddSeconds(2), // TODO (Marmot) - Draw delay from a config option
+                                   DeleteTime = now.AddHours(3),
+                                   ExpirationTime = now.AddMinutes(2),
                                    Status = WorkItemStatusEnum.Pending
                                };
 
