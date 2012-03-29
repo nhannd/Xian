@@ -45,10 +45,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         internal RealWorkItemActivityMonitor()
         {
             _connectionThread = new Thread(MonitorConnection);
-            _connectionThread.Start();
             lock (_syncLock)
             {
-                Monitor.Wait(_syncLock); //Wait for the thread to start up.
+				_connectionThread.Start();
+				Monitor.Wait(_syncLock); //Wait for the thread to start up.
             }
         }
 
