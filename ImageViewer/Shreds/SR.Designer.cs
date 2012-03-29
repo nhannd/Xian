@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to process WorkItem Publish request..
+        /// </summary>
+        internal static string ExceptionErrorProcessingPublish {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingPublish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to process WorkItem Query request..
         /// </summary>
         internal static string ExceptionErrorProcessingQuery {
@@ -237,6 +246,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string ExceptionErrorProcessingReceiveError {
             get {
                 return ResourceManager.GetString("ExceptionErrorProcessingReceiveError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to process WorkItem Refresh request..
+        /// </summary>
+        internal static string ExceptionErrorProcessingRefresh {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingRefresh", resourceCulture);
             }
         }
         

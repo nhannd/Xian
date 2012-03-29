@@ -167,19 +167,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             var configuration = GetServerConfiguration();
 
             var context = new ImportStudyContext(configuration.AETitle);
-            context.StudyWorkItems.ItemAdded += delegate(object sender, DictionaryEventArgs<string, WorkItem> e)
-                                                    {
-                                                        try
-                                                        {
-                                                            PublishManager<IWorkItemActivityCallback>.Publish(
-                                                                "WorkItemChanged", WorkItemHelper.FromWorkItem(e.Item));
-                                                        }
-                                                        catch (Exception x)
-                                                        {
-                                                            Platform.Log(LogLevel.Warn, x,
-                                                                         "Unexpected error attempting to publish WorkItem status");
-                                                        }
-                                                    };
+
+            // Publish the creation of the WorkItem
+            context.StudyWorkItems.ItemAdded += (sender, e) => WorkItemPublisher.Publish(WorkItemHelper.FromWorkItem(e.Item));
+            
             foreach (string file in FilesToImport)
             {
                 try

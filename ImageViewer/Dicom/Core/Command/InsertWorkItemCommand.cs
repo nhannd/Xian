@@ -128,11 +128,14 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             }
             else
             {
+                // Reload so that the update is committed
+                WorkItem = workItemBroker.GetWorkItem(WorkItem.Oid);
                 WorkItem.ExpirationTime = now.AddMinutes(2);
             }
-
-            // Assign the WorkItem over so that it gets committed properly
-            WorkItemUid.WorkItem = WorkItem;
+            
+            WorkItemUid.WorkItemOid = WorkItem.Oid;
+            var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
+            workItemUidBroker.AddWorkItemUid(WorkItemUid);
         }
     }
 }

@@ -403,4 +403,10 @@ Please check the service logs for more details.</value>
   <data name="InternalError" xml:space="preserve">
     <value>Internal error.</value>
   </data>
+  <data name="ExceptionErrorProcessingPublish" xml:space="preserve">
+    <value>Failed to process WorkItem Publish request.</value>
+  </data>
+  <data name="ExceptionErrorProcessingRefresh" xml:space="preserve">
+    <value>Failed to process WorkItem Refresh request.</value>
+  </data>
 </root>

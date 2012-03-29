@@ -185,6 +185,7 @@ namespace ClearCanvas.Common.Utilities
 						//NOTE: this method would cause an infinite loop if the filesystem cannot be written to.
                         
 						// try another file name
+                        i++;
                     }
 
                     if (filenameAbtained)

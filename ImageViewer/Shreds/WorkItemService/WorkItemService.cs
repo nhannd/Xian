@@ -166,5 +166,22 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
             return response;
         }
+
+
+        public WorkItemPublishResponse Publish(WorkItemPublishRequest request)
+        {
+            try
+            {
+                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", request.Item);
+                return new WorkItemPublishResponse();
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+                var message = SR.ExceptionErrorProcessingUnsubscribe;
+                var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+                throw new WorkItemServiceException(exceptionMessage);
+            }
+        }
     }
 }

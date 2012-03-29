@@ -68,6 +68,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         }
 
         /// <summary>
+        /// Insert a WorkItemUid
+        /// </summary>
+        /// <param name="entity"></param>
+        public void AddWorkItemUid(WorkItemUid entity)
+        {
+            Context.WorkItemUids.InsertOnSubmit(entity);
+        }
+
+        /// <summary>
         /// Delete WorkItemUid entity.
         /// </summary>
         /// <param name="entity"></param>

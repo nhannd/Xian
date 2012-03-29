@@ -47,11 +47,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				get { return _server.Port; }	
 			}
 
-			public string InterimStorageDirectory
-			{
-				get { return _server.InterimStorageDirectory; }	
-			}
-
 			#endregion
 		}
 
