@@ -465,6 +465,7 @@
     <Compile Include="Utilities\Command\MoveDirectoryCommand.cs" />
     <Compile Include="Utilities\Command\RenameFileCommand.cs" />
     <Compile Include="Utilities\Command\SaveDicomFileCommand.cs" />
+    <Compile Include="Utilities\DicomTagPath.cs" />
     <Compile Include="Utilities\Rules\ActionContext.cs" />
     <Compile Include="Utilities\Rules\Rule.cs" />
     <Compile Include="Utilities\Rules\RulesEngineStatistics.cs" />
@@ -483,6 +484,7 @@
     <Compile Include="Utilities\StudyBuilder\StudyBuilderNode.cs" />
     <Compile Include="Utilities\StudyBuilder\StudyNode.cs" />
     <Compile Include="Utilities\StudyBuilder\StudyNodeCollection.cs" />
+    <Compile Include="Utilities\Tests\DicomTagPathTests.cs" />
     <Compile Include="Utilities\Xml\InstanceXmlDicomAttributeCollection.cs" />
     <Compile Include="Utilities\Xml\Tests\InstanceXmlTests.cs" />
     <Compile Include="Utilities\Xml\Tests\StudyXmlTests.cs" />

@@ -46,5 +46,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
             return list.First();
 		}
-	}
+
+        internal void DeleteAll()
+        {
+            this.Context.Studies.DeleteAllOnSubmit(from s in Context.Studies select s);
+        }
+    }
 }

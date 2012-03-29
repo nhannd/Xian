@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 #if UNIT_TESTS
 
-namespace ClearCanvas.Dicom.DataStore.Tests
+namespace ClearCanvas.Dicom.Utilities.Tests
 {
 	internal class PathTest : DicomTagPath
 	{
@@ -35,7 +35,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 	}
 
     [TestFixture]
-    public class TypeTests
+    public class DicomTagPathTests
     {
 
         [TestFixtureSetUp]
@@ -49,7 +49,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
         }
 
 		[Test]
-		public void DicomTagPathTests()
+		public void Test()
 		{
 			DicomTagPath path = new PathTest();
 			((PathTest)path).SetPath("(0010,0010)");
