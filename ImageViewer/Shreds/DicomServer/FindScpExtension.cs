@@ -14,11 +14,11 @@ using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using System.Net;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -74,9 +74,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				try
 				{
-					using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+					using (var context = new DataAccessContext())
 					{
-						IEnumerable<DicomAttributeCollection> results = reader.Query(message.DataSet);
+						IEnumerable<DicomAttributeCollection> results = context.GetStudyRootQuery().Query(message.DataSet);
 						foreach (DicomAttributeCollection result in results)
 						{
                             const string utf8 = "ISO_IR 192";

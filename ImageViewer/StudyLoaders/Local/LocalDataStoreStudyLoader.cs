@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {
@@ -48,9 +48,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Local
             var loadedInstances = new AuditedInstances();
             try
             {
-                using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+                using (var context = new DataAccessContext())
                 {
-                    IStudy study = reader.GetStudy(studyLoaderArgs.StudyInstanceUid);
+                    IStudy study = context.GetStudyBroker().GetStudy(studyLoaderArgs.StudyInstanceUid);
                     if (study == null)
                     {
                         result = EventResult.MajorFailure;

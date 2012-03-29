@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Network.Scu;
@@ -24,6 +23,8 @@ using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.Network;
 using System.IO;
+using IStudy = ClearCanvas.ImageViewer.StudyManagement.Storage.IStudy;
+using ISopInstance = ClearCanvas.ImageViewer.StudyManagement.Storage.ISopInstance;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -131,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				foreach (ISopInstance sop in instancesToSend)
 				{
 					AddStudy(sop.GetParentSeries().GetParentStudy());
-					AddStorageInstance(new StorageInstance(sop.GetLocationUri().LocalDiskPath));
+					AddStorageInstance(new StorageInstance(sop.GetLocationUri()));
 				}
 			}
 
