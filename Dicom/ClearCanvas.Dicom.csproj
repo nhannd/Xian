@@ -451,6 +451,7 @@
     <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />
     <Compile Include="Utilities\Command\CommandProcessor.cs" />
     <Compile Include="Utilities\Command\CopyDirectoryCommand.cs" />
+    <Compile Include="Utilities\Command\CopyFileCommand.cs" />
     <Compile Include="Utilities\Command\CreateDirectoryCommand.cs" />
     <Compile Include="Utilities\Command\DeleteDirectoryCommand.cs" />
     <Compile Include="Utilities\Command\DeleteFileCommand.cs" />

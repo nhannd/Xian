@@ -665,6 +665,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Internal error..
+        /// </summary>
+        internal static string InternalError {
+            get {
+                return ResourceManager.GetString("InternalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Local Data Store.
         /// </summary>
         internal static string LocalDataStore {

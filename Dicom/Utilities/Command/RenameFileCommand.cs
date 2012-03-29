@@ -69,7 +69,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
 
             if (File.Exists(_destinationFile))
             {
-                _destBackupFile = FileUtils.Backup(_sourceFile, ProcessorContext.BackupDirectory);
+                _destBackupFile = FileUtils.Backup(_destinationFile, ProcessorContext.BackupDirectory);
             }
         }
 

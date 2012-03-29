@@ -101,6 +101,8 @@
     <Compile Include="WorkItemService\Import\ImportProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
+    <Compile Include="WorkItemService\Reindex\ReindexFactory.cs" />
+    <Compile Include="WorkItemService\Reindex\ReindexItemProcessor.cs" />
     <Compile Include="WorkItemService\StudyProcess\StudyProcessFactory.cs" />
     <Compile Include="WorkItemService\StudyProcess\StudyProcessProcessor.cs" />
     <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />

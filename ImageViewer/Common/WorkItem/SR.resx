@@ -141,6 +141,9 @@
   <data name="DicomSendRequest_ActivityType" xml:space="preserve">
     <value>DICOM Send</value>
   </data>
+  <data name="ImportFilesProgress_Status" xml:space="preserve">
+    <value>{0} of {1} files imported, {2} failed.</value>
+  </data>
   <data name="ImportFilesRequest_ActivityDescription" xml:space="preserve">
     <value>Importing Files</value>
   </data>
@@ -152,5 +155,20 @@
   </data>
   <data name="ImportStudyRequest_ActivityType" xml:space="preserve">
     <value>Import Study</value>
+  </data>
+  <data name="Progress_Pending" xml:space="preserve">
+    <value>Pending.</value>
+  </data>
+  <data name="ReindexProgress_Status" xml:space="preserve">
+    <value>{0} of {1} studies processed, {2} studies deleted, {3}  studies added.</value>
+  </data>
+  <data name="ReindexRequest_ActivityDescription" xml:space="preserve">
+    <value>Reindex of the local data store.</value>
+  </data>
+  <data name="ReindexRequest_ActivityType" xml:space="preserve">
+    <value>Reindex</value>
+  </data>
+  <data name="StudyProcessProgress_Status" xml:space="preserve">
+    <value>{0} of {1} images processed, {2} failed.</value>
   </data>
 </root>

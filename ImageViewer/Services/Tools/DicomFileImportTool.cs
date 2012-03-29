@@ -84,23 +84,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			if (filePaths.Count == 0)
 				return;
-
-            var request = new ImportFilesRequest
-		                      {
-		                          FilePaths = filePaths,
-		                          Recursive = true,
-		                          BadFileBehaviour = BadFileBehaviourEnum.Ignore,
-		                          FileImportBehaviour = FileImportBehaviourEnum.Copy
-		                      };
-
+	
 			try
 			{
-			    //TODO (Marmot): change to use bridge class?
-                Platform.GetService<IWorkItemService>(s => s.Insert(new WorkItemInsertRequest { Request = request }));
-		
-                //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
-				AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
-
+                var importClient = new DicomFileImportClient();
+                importClient.ImportFileList(filePaths, BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Copy);
+       
 				//LocalDataStoreActivityMonitorComponentManager.ShowImportComponent(this.Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)

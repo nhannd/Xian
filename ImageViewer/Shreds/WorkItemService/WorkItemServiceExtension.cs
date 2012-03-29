@@ -26,10 +26,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         private bool _workItemServiceWCFInitialized;
         private bool _workItemActivityMonitorServiceWCFInitialized;
 
+        private readonly WorkItemProcessorExtension _processor;
+
         public WorkItemServiceExtension()
         {
             _workItemServiceWCFInitialized = false;
             _workItemActivityMonitorServiceWCFInitialized = false;
+            _processor = new WorkItemProcessorExtension();
         }
 
         public override void Start()
@@ -75,6 +78,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Platform.Log(LogLevel.Error, e);
                 Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.WorkItemActivityMonitorService));
             }
+
+            _processor.Start();
         }
 
         public override void Stop()
@@ -115,6 +120,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 Platform.Log(LogLevel.Error, e);
             }
+
+            _processor.Stop();
         }
 
         public override string GetDisplayName()
