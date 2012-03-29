@@ -12,6 +12,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -27,19 +28,22 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 		}
 
-		public ILocalDataStoreReindexer Reindexer { get; private set; }
-
+        public ILocalDataStoreReindexer Reindexer { get; private set; }
+        public ReindexClient ReindexerTemp { get; private set; }
 		public override void Start()
 		{
+            ReindexerTemp = new ReindexClient();
+            ReindexerTemp.Reindex();
 			Reindexer = new LocalDataStoreReindexer();
-			Reindexer.Start();
-			base.Start();
+			//Reindexer.Start();
+			//base.Start();
 		}
 
 		public override void Stop()
 		{
-			base.Stop();
-			Reindexer.Dispose();
+            ReindexerTemp.Cancel();
+			//base.Stop();
+			//Reindexer.Dispose();
 		}
 	}
 }

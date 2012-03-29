@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -25,10 +26,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			this.Context.Studies.InsertOnSubmit(study);
 		}
 
-		public Study GetStudy(int oid)
+		public Study GetStudy(long oid)
 		{	
             var list = (from s in this.Context.Studies
-                        where s.Oid == oid                            
+                        where s.Oid == oid
                         select s).ToList();
 
             if (!list.Any()) return null;
@@ -46,5 +47,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
             return list.First();
 		}
+
+        public long GetStudyCount()
+        {
+            var count = (from s in Context.Studies
+                        select s).Count();
+            return count;
+        }
+
+        public List<long> GetStudyOids()
+        {
+            var oids = from s in Context.Studies select s.Oid;
+
+            return GetSingleColumn<Study, long>(null, s => s.Oid);
+        }
+
+        /// <summary>
+        /// Delete Study entity.
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Delete(Study entity)
+        {
+            this.Context.Studies.DeleteOnSubmit(entity);
+        }
 	}
 }

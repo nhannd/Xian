@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core
 {
@@ -22,7 +24,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
         public string FilestoreDirectory { get; private set; }
 
-        public List<string> DirectoryList { get;private set; } 
+        public List<string> DirectoryList { get;private set; }
+
+        public List<long> StudyOidList { get; private set; }
 
         #endregion
 
@@ -38,8 +42,15 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
         #region Public Methods
 
+        /// <summary>
+        /// Initialize the Reindex.  Determine the number of studies in the database and the number of folders on disk to be used
+        /// for progress.
+        /// </summary>
         public void Initialize()
         {
+            // Before scanning the study folders, cleanup any empty directories.
+            CleanupFilestoreDirectory();
+
             try
             {
                 FileProcessor.Process(FilestoreDirectory, "*.*", delegate(string file, out bool cancel)
@@ -51,22 +62,139 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
                                                                      }, false);
             }
-            catch (Exception)
+            catch (Exception x)
             {
-                
+                Platform.Log(LogLevel.Error, x);
+                throw;
             }
 
             StudyFoldersToScan = DirectoryList.Count;
+
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetStudyBroker();
+
+                StudyOidList = broker.GetStudyOids();
+            }
+
+            DatabaseStudiesToScan = StudyOidList.Count;           
         }
 
+        /// <summary>
+        /// Process the Reindex.
+        /// </summary>
         public void Process()
-        {
-            
+        {            
+            ProcessStudiesInDatabase();
+
+            ProcessFilesystem();            
         }
 
         #endregion
 
         #region Private Methods
+
+        private void CleanupFilestoreDirectory()
+        {
+            try
+            {
+                DirectoryUtility.DeleteEmptySubDirectories(FilestoreDirectory, true);
+            }
+            catch (Exception x)
+            {
+                Platform.Log(LogLevel.Warn, x, "Unexpected exception cleaning up empty subdirectories in filestore: {0}",
+                             FilestoreDirectory);
+            }
+        }
+        private void ProcessStudiesInDatabase()
+        {
+            foreach (long oid in StudyOidList)
+            {
+                try
+                {
+                    using (var context = new DataAccessContext())
+                    {
+                        var broker = context.GetStudyBroker();
+                        var study = broker.GetStudy(oid);
+
+                        // TODO (Marmot) structure of how studies are stored is abstracted away in 
+                        // StudyLocation class, should we abstract here, also?
+                        string studyFolder = Path.Combine(FilestoreDirectory, study.StudyInstanceUid);
+                        
+                        if (!Directory.Exists(studyFolder))
+                        {
+                            broker.Delete(study);
+                            context.Commit();
+                        }                        
+                    }
+                }
+                catch (Exception x)
+                {
+                    Platform.Log(LogLevel.Warn, "Unexpected exception attempting to reindex StudyOid: {0}", oid);
+                }
+            }
+        }
+
+        private void ProcessFilesystem()
+        {
+            foreach (string studyFolder in DirectoryList)
+            {
+                ProcessStudy(studyFolder);
+            }
+        }
+
+        private void ProcessStudy(string folder)
+        {
+            try
+            {
+                string studyInstanceUid = Path.GetDirectoryName(folder);
+                StudyLocation location = new StudyLocation(studyInstanceUid);
+
+                var studyXml = location.LoadStudyXml();
+
+                FileProcessor.Process(FilestoreDirectory, "*.dcm", delegate(string file, out bool cancel)
+                                                                       {
+                                                                           try
+                                                                           {
+                                                                               var p = new SopInstanceProcessor(location);
+
+                                                                               var theFile = new DicomFile(file);
+                                                                               theFile.Load(DicomReadOptions.Default |
+                                                                                            DicomReadOptions.StorePixelDataReferences);
+
+                                                                               string sopInstanceUid =
+                                                                                   Path.GetFileNameWithoutExtension(file);
+
+                                                                               if (
+                                                                                   !theFile.MediaStorageSopInstanceUid.
+                                                                                        Equals(sopInstanceUid))
+                                                                               {
+                                                                                   File.Delete(file);
+                                                                               }
+                                                                               else
+                                                                               {
+                                                                                   p.ProcessFile(theFile, studyXml, null);
+                                                                               }
+                                                                           }
+                                                                           catch (Exception x)
+                                                                           {
+                                                                               Platform.Log(LogLevel.Error, x);
+                                                                           }
+
+
+                                                                           cancel = false;
+
+                                                                       }, false);
+
+                location.SaveStudyXml(studyXml);
+
+            }
+            catch (Exception x)
+            {
+                Platform.Log(LogLevel.Error, x);
+                throw;
+            }
+        }
 
         private static string GetFileStoreDirectory()
         {
