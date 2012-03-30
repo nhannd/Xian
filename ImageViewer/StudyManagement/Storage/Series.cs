@@ -15,7 +15,6 @@ using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -75,46 +74,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			get { return GetFirstSopInstanceXml()[DicomTags.SpecificCharacterSet].ToString(); }
 		}
 
-		//[QueryableProperty(DicomTags.StudyInstanceUid, IsHigherLevelUnique = true)]
 		public string StudyInstanceUid
 		{
 			get { return _parentStudy.StudyInstanceUid; }
 		}
 
-		//[QueryableProperty(DicomTags.SeriesInstanceUid, IsUnique = true, PostFilterOnly = true)]
 		public string SeriesInstanceUid
 		{
 			get { return _seriesXml.SeriesInstanceUid; }
 		}
 
-		//[QueryableProperty(DicomTags.Modality, PostFilterOnly = true)]
 		public string Modality
 		{
-			get
-			{
-				return GetFirstSopInstanceXml()[DicomTags.Modality].GetString(0, "");
-			}
+			get { return GetFirstSopInstanceXml()[DicomTags.Modality].GetString(0, ""); }
 		}
 
-		//[QueryableProperty(DicomTags.SeriesDescription, PostFilterOnly = true)]
 		public string SeriesDescription
 		{
-			get
-			{
-				return GetFirstSopInstanceXml()[DicomTags.SeriesDescription].GetString(0, "");
-			}
+			get { return GetFirstSopInstanceXml()[DicomTags.SeriesDescription].GetString(0, ""); }
 		}
 
-		//[QueryableProperty(DicomTags.SeriesNumber, IsRequired = true, PostFilterOnly = true)]
 		public int SeriesNumber
 		{
-			get
-			{
-				return GetFirstSopInstanceXml()[DicomTags.SeriesNumber].GetInt32(0, 0);
-			}
+			get { return GetFirstSopInstanceXml()[DicomTags.SeriesNumber].GetInt32(0, 0); }
 		}
 
-		//[QueryableProperty(DicomTags.NumberOfSeriesRelatedInstances, PostFilterOnly = true)]
 		public int NumberOfSeriesRelatedInstances
 		{
 			get { return SopInstances.Count; }

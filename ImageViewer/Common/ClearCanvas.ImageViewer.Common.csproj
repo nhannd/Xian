@@ -115,7 +115,8 @@
     <Compile Include="LocalDataStore\LocalDataStoreEventBroker.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreReindexer.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceClient.cs" />
-    <Compile Include="LocalDataStore\LocalStudyRootQueryExtensionPoint.cs" />
+    <Compile Include="StudyManagement\LocalStudyRootQuery.cs" />
+    <Compile Include="StudyManagement\LocalStudyRootQueryExtensionPoint.cs" />
     <Compile Include="MemoryCollector.cs" />
     <Compile Include="MemoryManagementSettings.cs" />
     <Compile Include="MemoryManagementSettings.Designer.cs">

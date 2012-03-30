@@ -4,7 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 
-namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
+namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
     internal abstract class UidPropertyFilter<T> : PropertyFilter<T>
     {

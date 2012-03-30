@@ -30,11 +30,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         public virtual bool IsNoOp
         {
-            get { return IsCriterionEmpty || IsUniqueId; }
+            get { return IsCriterionEmpty && !IsRequired; }
         }
 
-        protected internal virtual bool IsUniqueId { get; set; }
-        protected internal virtual bool IsRequired { get; set; }
+        /// <summary>
+        /// The value is required to be returned in the results.
+        /// </summary>
+        protected internal bool IsRequired { get; set; }
 
         protected internal virtual bool IsCriterionEmpty
         {
@@ -43,19 +45,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected internal virtual bool IsCriterionNull
         {
-            get { return !IsCriterionEmpty && Criterion.IsNull; }
+            get { return Criterion != null && Criterion.IsNull; }
         }
 
         protected internal virtual bool ShouldAddToQuery
         {
-            get { return !IsCriterionNull; }
+            get { return !IsCriterionEmpty && !IsCriterionNull; }
         }
 
         protected internal virtual bool ShouldAddToResult
         {
             get
             {
-                if (IsUniqueId)
+                if (IsRequired)
                     return true;
 
                 return !IsCriterionEmpty;

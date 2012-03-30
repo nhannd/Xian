@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 
-namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
+namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
     internal class StringPropertyFilter<T> : PropertyFilter<T>
     {
@@ -51,6 +50,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
             get
             {
+                if (IsCriterionEmpty || IsCriterionNull)
+                    return false;
+
                 if (!IsWildcardCriterionAllowed)
                     return false;
 

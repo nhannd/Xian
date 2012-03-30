@@ -6,73 +6,31 @@ using System.Data.Linq.SqlClient;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
+    internal class StudyInstanceUidFilter : UidPropertyFilter<Study>
+    {
+        public StudyInstanceUidFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.StudyInstanceUid), criteria)
+        {
+            IsRequired = true;
+        }
+
+        protected override IQueryable<Study> AddUidToQuery(IQueryable<Study> query, string uid)
+        {
+            return from study in query where study.StudyInstanceUid == uid select study;
+        }
+
+        protected override IQueryable<Study> AddUidsToQuery(IQueryable<Study> query, string[] uids)
+        {
+            return from study in query where uids.Contains(study.StudyInstanceUid) select study;
+        }
+
+        protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
+        {
+            resultAttribute.SetStringValue(item.StudyInstanceUid);
+        }
+    }
 
     #region Strings
-
-    internal class PatientsNameFilter : StringPropertyFilter<Study>
-    {
-        public PatientsNameFilter(DicomAttributeCollection criteria)
-            : base(DicomTags.PatientsName, criteria)
-        {
-        }
-
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
-        {
-            if (!IsCriterionWildcard)
-                return from study in query where study.PatientsName == CriterionValue select study;
-
-            return from study in query where SqlMethods.Like(study.PatientsName, CriterionValue) select study;
-        }
-
-        protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
-        {
-            resultAttribute.SetStringValue(item.PatientsName);
-        }
-    }
-
-    internal class ReferringPhysiciansNameFilter : StringPropertyFilter<Study>
-    {
-        public ReferringPhysiciansNameFilter(DicomAttributeCollection criteria)
-            : base(DicomTags.ReferringPhysiciansName, criteria)
-        {
-        }
-
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
-        {
-            if (!IsCriterionWildcard)
-                return from study in query where study.ReferringPhysiciansName == CriterionValue select study;
-
-            return from study in query
-                   where SqlMethods.Like(study.ReferringPhysiciansName, CriterionValue)
-                   select study;
-        }
-
-        protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
-        {
-            resultAttribute.SetStringValue(item.ReferringPhysiciansName);
-        }
-    }
-
-    internal class PatientIdFilter : StringPropertyFilter<Study>
-    {
-        public PatientIdFilter(DicomAttributeCollection criteria)
-            : base(new DicomTagPath(DicomTags.PatientId), criteria)
-        {
-        }
-
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
-        {
-            if (!IsCriterionWildcard)
-                return from study in query where study.PatientId == CriterionValue select study;
-
-            return from study in query where SqlMethods.Like(study.PatientId, CriterionValue) select study;
-        }
-
-        protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
-        {
-            resultAttribute.SetStringValue(item.PatientId);
-        }
-    }
 
     internal class StudyIdFilter : StringPropertyFilter<Study>
     {
@@ -137,59 +95,60 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsSexFilter : StringPropertyFilter<Study>
+    //TODO (Marmot): Still need to make this work.
+    internal class ModalitiesInStudyFilter : StringPropertyFilter<Study>
     {
-        public PatientsSexFilter(DicomAttributeCollection criteria)
-            : base(DicomTags.PatientsSex, criteria)
+        public ModalitiesInStudyFilter(DicomAttributeCollection criteria)
+            : base(DicomTags.ModalitiesInStudy, criteria)
+        {
+        }
+
+        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+        {
+            //TODO (Marmot): need to fill this in.
+            return query;
+        }
+
+        protected override System.Collections.Generic.IEnumerable<Study> FilterResults(System.Collections.Generic.IEnumerable<Study> results)
+        {
+            //TODO (Marmot): need to fill this in.
+            return base.FilterResults(results);
+        }
+
+        protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
+        {
+            resultAttribute.SetStringValue(item.ModalitiesInStudy);
+        }
+    }
+
+    internal class ReferringPhysiciansNameFilter : StringPropertyFilter<Study>
+    {
+        public ReferringPhysiciansNameFilter(DicomAttributeCollection criteria)
+            : base(DicomTags.ReferringPhysiciansName, criteria)
         {
         }
 
         protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
         {
             if (!IsCriterionWildcard)
-                return from study in query where study.PatientsSex == CriterionValue select study;
+                return from study in query where study.ReferringPhysiciansName == CriterionValue select study;
 
-            return from study in query where SqlMethods.Like(study.PatientsSex, CriterionValue) select study;
+            return from study in query
+                   where SqlMethods.Like(study.ReferringPhysiciansName, CriterionValue)
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
         {
-            resultAttribute.SetStringValue(item.PatientsSex);
+            resultAttribute.SetStringValue(item.ReferringPhysiciansName);
         }
     }
 
-    #endregion
-
-    #region Uids
-
-    internal class StudyInstanceUidFilter : UidPropertyFilter<Study>
-    {
-        public StudyInstanceUidFilter(DicomAttributeCollection criteria)
-            : base(new DicomTagPath(DicomTags.StudyInstanceUid), criteria)
-        {
-        }
-
-        protected override IQueryable<Study> AddUidToQuery(IQueryable<Study> query, string uid)
-        {
-            return from study in query where study.StudyInstanceUid == uid select study;
-        }
-
-        protected override IQueryable<Study> AddUidsToQuery(IQueryable<Study> query, string[] uids)
-        {
-            return from study in query where uids.Contains(study.StudyInstanceUid) select study;
-        }
-
-        protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
-        {
-            resultAttribute.SetStringValue(item.StudyInstanceUid);
-        }
-    }
-
+    //ProcedureCodeSequenceCodingSchemeDesignator, ProcedureCodeSequenceCodeValue,
     #endregion
 
     #region Dates
 
-    //TODO (Marmot): StudyTime, ModalitiesInStudy
     internal class StudyDateFilter : DatePropertyFilter<Study>
     {
         public StudyDateFilter(DicomAttributeCollection criteria)
@@ -227,38 +186,44 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsBirthDateFilter : DatePropertyFilter<Study>
+    #endregion
+
+    #region Times
+
+    internal class StudyTimeFilter : TimePropertyFilter<Study>
     {
-        public PatientsBirthDateFilter(DicomAttributeCollection criteria)
-            : base(new DicomTagPath(DicomTags.PatientsBirthDate), criteria)
+        public StudyTimeFilter(DicomAttributeCollection criteria)
+            : base(new DicomTagPath(DicomTags.StudyTime), criteria)
         {
         }
 
-        protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, DateTime date)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, long timeTicks)
         {
-            //return from study in query where study.PatientsBirthDate == null || study.PatientsBirthDate >= date);
-            //TODO (Marmot): add column to database.
-            return query;
+            return from study in query where study.StudyTimeTicks == null || study.StudyTimeTicks >= timeTicks select study;
         }
 
-        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, DateTime date)
+        protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, long timeTicks)
         {
-            return query;
+            return from study in query where study.StudyTimeTicks == null || study.StudyTimeTicks >= timeTicks select study;
         }
 
-        protected override IQueryable<Study> AddLessOrEqualToQuery(IQueryable<Study> query, DateTime date)
+        protected override IQueryable<Study> AddLessOrEqualToQuery(IQueryable<Study> query, long timeTicks)
         {
-            return query;
+            return from study in query where study.StudyTimeTicks == null || study.StudyTimeTicks <= timeTicks select study;
         }
 
-        protected override IQueryable<Study> AddBetweenDatesToQuery(IQueryable<Study> query, DateTime startDate, System.DateTime endDate)
+        protected override IQueryable<Study> AddBetweenTimesToQuery(IQueryable<Study> query, long startTimeTicks, long endTimeTicks)
         {
-            return query;
+            return from study in query
+                   where
+                       study.StudyTimeTicks == null
+                       || (study.StudyTimeTicks >= startTimeTicks && study.StudyTimeTicks <= startTimeTicks)
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
         {
-            resultAttribute.SetStringValue(item.PatientsBirthDateRaw);
+            resultAttribute.SetStringValue(item.StudyTimeRaw);
         }
     }
 

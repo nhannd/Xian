@@ -20,6 +20,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using System.Linq;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -182,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		private static bool StudyExistsOnLocal(string studyInstanceUid)
 		{
-			var srq = (IStudyRootQuery) new LocalStudyRootQueryExtensionPoint().CreateExtension();
+		    var srq = new LocalStudyRootQuery();
 			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
 			return result.Count > 0;
 		}
