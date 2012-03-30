@@ -220,6 +220,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		/// <returns>marker text</returns>
 		private static string GetMarkerText(PatientDirection direction)
 		{
+		    // TODO (CR Mar 2012): Add a "short description" to PatientDirection class and return this from there.
+            // Then we're not finding patient direction resources all over the place.
+
 			if (direction == PatientDirection.QuadrupedLeft)
 				return SR.ValueDirectionalMarkersQuadrupedLeft;
 			else if (direction == PatientDirection.QuadrupedRight)

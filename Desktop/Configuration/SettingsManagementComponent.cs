@@ -289,7 +289,7 @@ namespace ClearCanvas.Desktop.Configuration
 
 			_settingsGroupsActionModel = new SimpleActionModel(new ApplicationThemeResourceResolver(this.GetType().Assembly));
 			_importAction = _settingsGroupsActionModel.AddAction("import", SR.LabelImport, "ImportToolSmall.png",
-				"Import settings meta-data from local plugins",
+				SR.TooltipImportSettingsMetaData,
 				Import);
 			_importAction.Visible = _configStore.SupportsImport;
 

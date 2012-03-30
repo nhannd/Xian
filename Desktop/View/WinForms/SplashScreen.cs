@@ -104,6 +104,27 @@ namespace ClearCanvas.Desktop.View.WinForms
 				AddAssemblyIconToImage(pluginAssembly);
 		}
 
+		public static Stream OpenSplashImageResourceStream()
+		{
+			var oemPath = System.IO.Path.Combine(Platform.InstallDirectory, @"oem\splash.png");
+			if (File.Exists(oemPath))
+				return File.OpenRead(oemPath);
+
+			var assemblyName = SplashScreenSettings.Default.BackgroundImageAssemblyName;
+			var resourceName = SplashScreenSettings.Default.BackgroundImageResourceName;
+			if (!string.IsNullOrEmpty(assemblyName) && !string.IsNullOrEmpty(resourceName))
+			{
+				var assembly = Assembly.Load(assemblyName);
+				if (assembly != null)
+				{
+					var streamName = assemblyName + @"." + resourceName;
+					return assembly.GetManifestResourceStream(streamName);
+				}
+			}
+
+			return null;
+		}
+
 		#endregion
 
 		#region Private Methods
@@ -131,16 +152,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				try
 				{
-					Assembly assembly = Assembly.Load(SplashScreenSettings.Default.BackgroundImageAssemblyName);
-					if (assembly != null)
+					var stream = SplashScreen.OpenSplashImageResourceStream();
+					if (stream != null)
 					{
-						string streamName = SplashScreenSettings.Default.BackgroundImageAssemblyName + "." + SplashScreenSettings.Default.BackgroundImageResourceName;
-						Stream stream = assembly.GetManifestResourceStream(streamName);
-						if (stream != null)
-						{
-							this.BackgroundImage = new Bitmap(stream);
-							this.ClientSize = this.BackgroundImage.Size;
-						}
+						// GDI+ resource management quirk: don't dispose the source stream (or create an independent copy of the bitmap)
+						BackgroundImage = new Bitmap(stream);
+						ClientSize = BackgroundImage.Size;
 					}
 				}
 				catch (Exception ex)

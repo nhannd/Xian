@@ -37,7 +37,26 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
 		public DateTableColumn(string columnName, GetColumnValueDelegate<TItem, DateTime?> valueGetter, float widthFactor)
-            : base(columnName, valueGetter, widthFactor)
+            : this(columnName, columnName, valueGetter, widthFactor) {}
+
+        /// <summary>
+        /// Constructs a read-only single-cellrow DateTime table column.
+        /// </summary>
+        /// <param name="columnName">The identifying name of the column.</param>
+        /// <param name="columnDisplayName">The display name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
+        public DateTableColumn(string columnName, string columnDisplayName, GetColumnValueDelegate<TItem, DateTime?> valueGetter)
+            : this(columnName, columnDisplayName, valueGetter, 1.0f) {}
+
+        /// <summary>
+        /// Constructs a read-only single-cellrow DateTime table column with specific width factor.
+        /// </summary>
+        /// <param name="columnName">The identifying name of the column.</param>
+        /// <param name="columnDisplayName">The display name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+        public DateTableColumn(string columnName, string columnDisplayName, GetColumnValueDelegate<TItem, DateTime?> valueGetter, float widthFactor)
+            : base(columnName, columnDisplayName, valueGetter, widthFactor)
         {
 			this.ValueFormatter = delegate(DateTime? value) { return Format.Date(value); };
 		}

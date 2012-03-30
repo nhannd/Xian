@@ -46,6 +46,7 @@ namespace ClearCanvas.Desktop.Tables
 
         private Table<TItem> _table;
         private readonly string _name;
+        private readonly string _displayName;
 		private bool _visible = true;
         private readonly Type _columnType;
         private float _widthFactor;
@@ -78,6 +79,22 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="columnName">The identifying name of the column.</param>
+        /// <param name="columnDisplayName">The display name of the column.</param>
+        /// <param name="columnType">The type of value that the column holds.</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
+        protected TableColumnBase(
+            string columnName,
+            string columnDisplayName,
+            Type columnType,
+            float widthFactor,
+            Comparison<TItem> comparison)
+            : this(columnName, columnDisplayName, columnType, widthFactor, comparison, 0) {}
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="columnName">The name of the column.</param>
         /// <param name="columnType">The type of value that the column holds.</param>
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
@@ -89,8 +106,27 @@ namespace ClearCanvas.Desktop.Tables
             float widthFactor,
             Comparison<TItem> comparison,
             int cellRow)
+            : this(columnName, columnName, columnType, widthFactor, comparison, cellRow) {}
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="columnName">The identifying name of the column.</param>
+        /// <param name="columnDisplayName">The display name of the column.</param>
+        /// <param name="columnType">The type of value that the column holds.</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
+        /// <param name="cellRow">The cell row this column will be displayed in.</param>
+        protected TableColumnBase(
+            string columnName,
+            string columnDisplayName,
+            Type columnType,
+            float widthFactor,
+            Comparison<TItem> comparison,
+            int cellRow)
         {
             _name = columnName;
+            _displayName = columnDisplayName;
             _widthFactor = widthFactor;
             _columnType = columnType;
             _comparison = comparison;
@@ -159,12 +195,20 @@ namespace ClearCanvas.Desktop.Tables
 
         #region ITableColumn members
 
-    	/// <summary>
-    	/// The name or heading of the column.
-    	/// </summary>
-    	public string Name
+        /// <summary>
+        /// The identifying name of the column.
+        /// </summary>
+        public string Name
         {
             get { return _name; }
+        }
+
+        /// <summary>
+        /// The heading text of the column.
+        /// </summary>
+        public string DisplayName
+        {
+            get { return _displayName; }
         }
 
     	/// <summary>
