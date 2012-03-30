@@ -46,6 +46,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public int NumberOfImportFailures { get; set; }
 
+        [DataMember(IsRequired = true)]
+        public int PathsToImport { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int PathsImported { get; set; }
+
+
         public int TotalImportsProcessed
         {
             get { return NumberOfFilesImported + NumberOfImportFailures; }
@@ -69,8 +76,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (TotalFilesToImport > 0)
-                    return (Decimal) TotalImportsProcessed/TotalFilesToImport;
+                if (PathsToImport > 0)
+                    return (Decimal)PathsImported / PathsToImport;
 
                 return new decimal(0.0);
             }
