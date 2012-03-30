@@ -23,6 +23,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             Path = path;
             Criterion = Path.GetAttribute(criteria);
+            IsReturnValueRequired = false;
+            AddToQueryEnabled = true;
+            FilterResultsEnabled = false;
         }
 
         public DicomTagPath Path { get; private set; }
@@ -30,13 +33,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         public virtual bool IsNoOp
         {
-            get { return IsCriterionEmpty && !IsRequired; }
+            get { return IsCriterionEmpty && !IsReturnValueRequired; }
         }
 
         /// <summary>
         /// The value is required to be returned in the results.
         /// </summary>
-        protected internal bool IsRequired { get; set; }
+        protected internal bool IsReturnValueRequired { get; set; }
+        protected internal bool AddToQueryEnabled { get; set; }
+        protected internal bool FilterResultsEnabled { get; set; }
 
         protected internal virtual bool IsCriterionEmpty
         {
@@ -57,7 +62,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             get
             {
-                if (IsRequired)
+                if (IsReturnValueRequired)
                     return true;
 
                 return !IsCriterionEmpty;
@@ -83,7 +88,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         IQueryable<T> IPropertyFilter<T>.AddToQuery(IQueryable<T> query)
         {
-            if (!ShouldAddToQuery)
+            if (!AddToQueryEnabled || !ShouldAddToQuery)
                 return query;
 
             return AddToQuery(query);
@@ -91,7 +96,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         IEnumerable<T> IPropertyFilter<T>.FilterResults(IEnumerable<T> results)
         {
-            if (!ShouldAddToQuery)
+            if (!FilterResultsEnabled || !ShouldAddToQuery)
                 return results;
 
             return FilterResults(results);

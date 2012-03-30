@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         protected abstract IQueryable<T> AddUidToQuery(IQueryable<T> query, string uid);
         protected abstract IQueryable<T> AddUidsToQuery(IQueryable<T> query, string[] uids);
 
-        protected override IQueryable<T> AddToQuery(System.Linq.IQueryable<T> query)
+        protected override IQueryable<T> AddToQuery(IQueryable<T> query)
         {
             if (CriterionValues.Length == 0)
                 return base.AddToQuery(query);

@@ -28,7 +28,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 	/// </remarks>
 	public class DataAccessContext : IDisposable
 	{
-		private const string DefaultDatabaseFileName = "dicom_store.sdf";
+	    private const string DefaultDatabaseFileName = "dicom_store.sdf";
+
+        private readonly string _databaseFilename = DefaultDatabaseFileName;
 
 		private readonly DicomStoreDataContext _context;
 		private readonly IDbConnection _connection;
@@ -44,7 +46,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			_context = new DicomStoreDataContext(_connection);
 		}
 
-		#region Implementation of IDisposable
+		internal DataAccessContext(string databaseFilename)
+		{
+		    _databaseFilename = databaseFilename;
+            _connection = CreateConnection();
+            _transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
+            _context = new DicomStoreDataContext(_connection);
+        }
+
+        internal static string DatabaseDirectory
+        {
+            get { return Platform.ApplicationDataDirectory; }
+        }
+
+        private string DatabaseFilePath
+        {
+            get { return GetDatabaseFilePath(_databaseFilename); }
+        }
+
+	    #region Implementation of IDisposable
 
 		public void Dispose()
 		{
@@ -115,12 +135,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			_transactionCommitted = true;
 		}
 
-		private static IDbConnection CreateConnection()
+        internal static string GetDatabaseFilePath(string fileName)
+        {
+            return Path.Combine(DatabaseDirectory, fileName);
+        }
+
+	    private IDbConnection CreateConnection()
 		{
-			return CreateConnection(Path.Combine(Platform.ApplicationDataDirectory, DefaultDatabaseFileName));
+			return CreateConnection(DatabaseFilePath);
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Creates a connection to the specified database file, creating the database
 		/// if it does not exist.
 		/// </summary>

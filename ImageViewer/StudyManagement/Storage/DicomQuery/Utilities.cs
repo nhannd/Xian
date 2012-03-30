@@ -1,4 +1,5 @@
-﻿using ClearCanvas.Dicom;
+﻿using System.Collections.Generic;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
@@ -12,25 +13,33 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         public static DicomAttribute GetAttribute(this DicomTagPath path, IDicomAttributeProvider attributes, bool create)
         {
-            DicomAttribute attribute = null;
-            var count = path.TagsInPath.Count;
-            for (int i = 0; i < count; i++)
+            DicomAttribute attribute;
+            var tags = new Queue<DicomTag>(path.TagsInPath);
+
+            do
             {
-                attribute = attributes[path.TagsInPath[i]];
-                if (i == count - 1)
+                var tag = tags.Dequeue();
+                attribute = attributes[tag];
+                if (tags.Count == 0)
                     break;
-                
-                if (attribute.IsEmpty && !create)
-                    return null;
 
                 var sequenceItems = attribute.Values as DicomSequenceItem[];
-                if (sequenceItems == null)
-                    return null;
+                if (sequenceItems == null || sequenceItems.Length == 0)
+                {
+                    if (!create)
+                        return null;
+
+                    attribute.AddSequenceItem(new DicomSequenceItem());
+                    sequenceItems = (DicomSequenceItem[]) attribute.Values;
+                }
 
                 attributes = sequenceItems[0];
-            }
+            } while (tags.Count > 0);
 
-            return attribute;
+            if (attribute.IsEmpty && create)
+                attribute.SetNullValue();
+
+            return attribute.IsEmpty ? null : attribute;
         }
     }
 }

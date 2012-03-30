@@ -52,15 +52,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             //TimeParser.Parse(Criterion.GetString(0, ""), out time1, out time2, out _isRange);
         }
 
-        protected abstract IQueryable<T> AddEqualsToQuery(IQueryable<T> query, long timeTicks);
+        protected virtual IQueryable<T> AddEqualsToQuery(IQueryable<T> query, long timeTicks)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+        }
 
-        protected abstract IQueryable<T> AddLessOrEqualToQuery(IQueryable<T> query, long timeTicks);
+        protected virtual IQueryable<T> AddLessOrEqualToQuery(IQueryable<T> query, long timeTicks)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+        }
 
-        protected abstract IQueryable<T> AddGreaterOrEqualToQuery(IQueryable<T> query, long timeTicks);
+        protected virtual IQueryable<T> AddGreaterOrEqualToQuery(IQueryable<T> query, long timeTicks)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+        }
 
-        protected abstract IQueryable<T> AddBetweenTimesToQuery(IQueryable<T> query, long startTimeTicks, long endTimeTicks);
+        protected virtual IQueryable<T> AddBetweenTimesToQuery(IQueryable<T> query, long startTimeTicks, long endTimeTicks)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+        }
 
-        protected override IQueryable<T> AddToQuery(IQueryable<T> query)
+        protected sealed override IQueryable<T> AddToQuery(IQueryable<T> query)
         {
             if (Time1Ticks != null && Time2Ticks != null)
                 return AddBetweenTimesToQuery(query, Time1Ticks.Value, Time2Ticks.Value);
@@ -77,6 +89,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
                 return AddLessOrEqualToQuery(query, Time2Ticks.Value);
 
             return base.AddToQuery(query);
+        }
+
+        protected sealed override System.Collections.Generic.IEnumerable<T> FilterResults(System.Collections.Generic.IEnumerable<T> results)
+        {
+            throw new NotSupportedException("Any time filtering supported is done in the database only.");
         }
     }
 }

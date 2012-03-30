@@ -49,15 +49,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             DateRangeHelper.Parse(Criterion.GetString(0, ""), out _date1, out _date2, out _isRange);
         }
 
-        protected abstract IQueryable<T> AddEqualsToQuery(IQueryable<T> query, DateTime date);
+        protected virtual IQueryable<T> AddEqualsToQuery(IQueryable<T> query, DateTime date)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+        }
 
-        protected abstract IQueryable<T> AddLessOrEqualToQuery(IQueryable<T> query, DateTime date);
+        protected virtual IQueryable<T> AddLessOrEqualToQuery(IQueryable<T> query, DateTime date)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+        }
 
-        protected abstract IQueryable<T> AddGreaterOrEqualToQuery(IQueryable<T> query, DateTime date);
+        protected virtual IQueryable<T> AddGreaterOrEqualToQuery(IQueryable<T> query, DateTime date)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+        }
 
-        protected abstract IQueryable<T> AddBetweenDatesToQuery(IQueryable<T> query, DateTime startDate, DateTime endDate);
+        protected virtual IQueryable<T> AddBetweenDatesToQuery(IQueryable<T> query, DateTime startDate, DateTime endDate)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+        }
 
-        protected override IQueryable<T> AddToQuery(IQueryable<T> query)
+        protected sealed override IQueryable<T> AddToQuery(IQueryable<T> query)
         {
             if (Date1 != null && Date2 != null)
                 return AddBetweenDatesToQuery(query, Date1.Value, Date2.Value);
@@ -74,6 +86,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
                 return AddLessOrEqualToQuery(query, Date2.Value);
 
             return base.AddToQuery(query);
+        }
+
+        protected sealed override System.Collections.Generic.IEnumerable<T> FilterResults(System.Collections.Generic.IEnumerable<T> results)
+        {
+            throw new NotSupportedException("Any date filtering supported is done in the database only.");
         }
     }
 }

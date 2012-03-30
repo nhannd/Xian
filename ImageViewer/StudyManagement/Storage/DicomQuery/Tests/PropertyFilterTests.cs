@@ -13,7 +13,6 @@
 
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
@@ -25,7 +24,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
     internal class TestStringPropertyFilter : StringPropertyFilter<TestObject<string>>
     {
-        public bool CalledAddToQuery;
+        public bool CalledAddEqualsToQuery;
+        public bool CalledAddLikeToQuery;
         public bool CalledFilterResults;
         public bool CalledAddToResults;
 
@@ -45,15 +45,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
         public void Reset()
         {
-            CalledAddToQuery = false;
+            CalledAddEqualsToQuery = false;
+            CalledAddLikeToQuery = false;
             CalledFilterResults = false;
             CalledAddToResults = false;
         }
 
-        protected override System.Linq.IQueryable<TestObject<string>> AddToQuery(System.Linq.IQueryable<TestObject<string>> query)
+        protected override System.Linq.IQueryable<TestObject<string>> AddEqualsToQuery(System.Linq.IQueryable<TestObject<string>> query, string criterion)
         {
-            CalledAddToQuery = true;
-            return base.AddToQuery(query);
+            CalledAddEqualsToQuery = true;
+            return query;
+        }
+
+        protected override System.Linq.IQueryable<TestObject<string>> AddLikeToQuery(System.Linq.IQueryable<TestObject<string>> query, string criterion)
+        {
+            CalledAddLikeToQuery = true;
+            return query;
         }
 
         protected override System.Collections.Generic.IEnumerable<TestObject<string>> FilterResults(System.Collections.Generic.IEnumerable<TestObject<string>> results)
@@ -92,7 +99,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
             Assert.IsFalse(filter.IsCriterionWildcard);
 
-            Assert.IsFalse(filter.CalledAddToQuery);
+            Assert.IsFalse(filter.CalledAddEqualsToQuery);
+            Assert.IsFalse(filter.CalledAddLikeToQuery);
             Assert.IsFalse(filter.CalledFilterResults);
             Assert.IsFalse(filter.CalledAddToResults);
         }
@@ -118,7 +126,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
             Assert.IsFalse(filter.IsCriterionWildcard);
 
-            Assert.IsFalse(filter.CalledAddToQuery);
+            Assert.IsFalse(filter.CalledAddEqualsToQuery);
+            Assert.IsFalse(filter.CalledAddLikeToQuery);
             Assert.IsFalse(filter.CalledFilterResults);
             Assert.IsTrue(filter.CalledAddToResults);
 
@@ -139,7 +148,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.ShouldAddToResult);
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
 
-            Assert.IsFalse(filter.CalledAddToQuery);
+            Assert.IsFalse(filter.CalledAddEqualsToQuery);
+            Assert.IsFalse(filter.CalledAddLikeToQuery);
             Assert.IsFalse(filter.CalledFilterResults);
             Assert.IsTrue(filter.CalledAddToResults);
 
@@ -168,8 +178,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
             Assert.IsFalse(filter.IsCriterionWildcard);
 
-            Assert.IsTrue(filter.CalledAddToQuery);
-            Assert.IsTrue(filter.CalledFilterResults);
+            Assert.IsTrue(filter.CalledAddEqualsToQuery);
+            Assert.IsFalse(filter.CalledAddLikeToQuery);
+            //Only if enabled.
+            Assert.IsFalse(filter.CalledFilterResults);
             Assert.IsTrue(filter.CalledAddToResults);
 
             //Should populate the result because it was in the request.
@@ -179,25 +191,63 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         [Test]
         public void TestWildCardCriteria_WildcardAllowed()
         {
+            var testObjects = new[] { new TestObject<string> { TheProperty = "test" } };
             var criteria = new DicomAttributeCollection();
             criteria[DicomTags.PatientId].SetStringValue("test*");
+            var result = new DicomAttributeCollection();
 
             var filter = new TestStringPropertyFilter(DicomTags.PatientId, criteria);
+            var iFilter = (IPropertyFilter<TestObject<string>>)filter;
+            iFilter.AddToQuery(null);
+            iFilter.FilterResults(testObjects);
+            iFilter.SetAttributeValue(testObjects[0], result);
 
+            Assert.IsFalse(filter.IsCriterionEmpty);
+            Assert.IsFalse(filter.IsCriterionNull);
+            Assert.IsTrue(filter.ShouldAddToQuery);
+            Assert.IsTrue(filter.ShouldAddToResult);
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
             Assert.IsTrue(filter.IsCriterionWildcard);
+
+            Assert.IsFalse(filter.CalledAddEqualsToQuery);
+            Assert.IsTrue(filter.CalledAddLikeToQuery);
+            //Only if enabled.
+            Assert.IsFalse(filter.CalledFilterResults);
+            Assert.IsTrue(filter.CalledAddToResults);
+
+            //Should populate the result because it was in the request.
+            Assert.AreEqual(testObjects[0].TheProperty, result[DicomTags.PatientId].GetString(0, ""));
         }
 
         [Test]
         public void TestWildCardCriteria_WildcardNotAllowed()
         {
-            var criteria = new DicomAttributeCollection {ValidateVrLengths = false, ValidateVrValues = false};
+            var testObjects = new[] { new TestObject<string> { TheProperty = "test" } };
+            var criteria = new DicomAttributeCollection();
             criteria[DicomTags.StudyInstanceUid].SetStringValue("test*");
+            var result = new DicomAttributeCollection();
 
             var filter = new TestStringPropertyFilter(DicomTags.StudyInstanceUid, criteria);
+            var iFilter = (IPropertyFilter<TestObject<string>>)filter;
+            iFilter.AddToQuery(null);
+            iFilter.FilterResults(testObjects);
+            iFilter.SetAttributeValue(testObjects[0], result);
 
+            Assert.IsFalse(filter.IsCriterionEmpty);
+            Assert.IsFalse(filter.IsCriterionNull);
+            Assert.IsTrue(filter.ShouldAddToQuery);
+            Assert.IsTrue(filter.ShouldAddToResult);
             Assert.IsFalse(filter.IsWildcardCriterionAllowed);
             Assert.IsFalse(filter.IsCriterionWildcard);
+
+            Assert.IsTrue(filter.CalledAddEqualsToQuery);
+            Assert.IsFalse(filter.CalledAddLikeToQuery);
+            //Only if enabled.
+            Assert.IsFalse(filter.CalledFilterResults);
+            Assert.IsTrue(filter.CalledAddToResults);
+
+            //Should populate the result because it was in the request.
+            Assert.AreEqual(testObjects[0].TheProperty, result[DicomTags.StudyInstanceUid].GetString(0, ""));
         }
     }
 }

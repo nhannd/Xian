@@ -13,12 +13,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
         }
 
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, string criterion)
         {
-            if (!IsCriterionWildcard)
-                return from study in query where study.PatientId == CriterionValue select study;
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.PatientId == null
+                        || study.PatientId == ""
+                        || study.PatientId == criterion
+                   select study;
+        }
 
-            return from study in query where SqlMethods.Like(study.PatientId, CriterionValue) select study;
+        protected override IQueryable<Study> AddLikeToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.PatientId == null
+                        || study.PatientId == ""
+                       || SqlMethods.Like(study.PatientId, criterion)
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -34,12 +48,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
         }
 
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, string criterion)
         {
-            if (!IsCriterionWildcard)
-                return from study in query where study.PatientsName == CriterionValue select study;
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.PatientsName == null
+                        || study.PatientsName == ""
+                        || study.PatientsName == criterion
+                   select study;
+        }
 
-            return from study in query where SqlMethods.Like(study.PatientsName, CriterionValue) select study;
+        protected override IQueryable<Study> AddLikeToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.PatientsName == null
+                        || study.PatientsName == ""
+                       || SqlMethods.Like(study.PatientsName, criterion)
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -55,12 +83,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
         }
 
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, string criterion)
         {
-            if (!IsCriterionWildcard)
-                return from study in query where study.PatientsSex == CriterionValue select study;
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.PatientsSex == null
+                        || study.PatientsSex == ""
+                        || study.PatientsSex == criterion
+                   select study;
+        }
 
-            return from study in query where SqlMethods.Like(study.PatientsSex, CriterionValue) select study;
+        protected override IQueryable<Study> AddLikeToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.PatientsSex == null
+                        || study.PatientsSex == ""
+                       || SqlMethods.Like(study.PatientsSex, criterion)
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -76,26 +118,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
         }
 
-        protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, DateTime date)
-        {
-            //return from study in query where study.PatientsBirthDate == null || study.PatientsBirthDate >= date);
-            //TODO (Marmot): add column to database.
-            return query;
-        }
-
         protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, DateTime date)
         {
-            return query;
+            //DICOM says this is exact, ignoring studies with no date.
+            return from study in query where study.PatientsBirthDate == date select study;
+        }
+
+        protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, DateTime date)
+        {
+            //DICOM says this excludes studies with no dates.
+            return from study in query where study.PatientsBirthDate != null && study.PatientsBirthDate >= date select study;
         }
 
         protected override IQueryable<Study> AddLessOrEqualToQuery(IQueryable<Study> query, DateTime date)
         {
-            return query;
+            //DICOM says this includes studies with no date.
+            return from study in query where study.PatientsBirthDate == null || study.PatientsBirthDate <= date select study;
         }
 
-        protected override IQueryable<Study> AddBetweenDatesToQuery(IQueryable<Study> query, DateTime startDate, System.DateTime endDate)
+        protected override IQueryable<Study> AddBetweenDatesToQuery(IQueryable<Study> query, DateTime startDate, DateTime endDate)
         {
-            return query;
+            //DICOM says this excludes studies with no dates.
+            return from study in query
+                   where study.PatientsBirthDate >= startDate && study.PatientsBirthDate <= endDate
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -111,31 +157,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
         }
 
+        //NOTE (Marmot): None if this will get called currently because the base class doesn't work.
         protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, long timeTicks)
         {
-            return from study in query
-                   where study.PatientsBirthTimeTicks == null || study.PatientsBirthTimeTicks >= timeTicks
-                   select study;
+            //DICOM says this is exact, ignoring studies with no time.
+            return from study in query where study.PatientsBirthTimeTicks == timeTicks select study;
         }
 
         protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, long timeTicks)
         {
-            return from study in query
-                   where study.PatientsBirthTimeTicks == null || study.PatientsBirthTimeTicks >= timeTicks
-                   select study;
+            //DICOM says this excludes studies with no time.
+            return from study in query where study.PatientsBirthTimeTicks != null && study.PatientsBirthTimeTicks >= timeTicks select study;
+
         }
 
         protected override IQueryable<Study> AddLessOrEqualToQuery(IQueryable<Study> query, long timeTicks)
         {
+            //DICOM says this includes studies with no time.
             return from study in query where study.PatientsBirthTimeTicks == null || study.PatientsBirthTimeTicks <= timeTicks select study;
         }
 
         protected override IQueryable<Study> AddBetweenTimesToQuery(IQueryable<Study> query, long startTimeTicks, long endTimeTicks)
         {
+            //DICOM says this excludes studies with no time.
             return from study in query
-                   where
-                       study.PatientsBirthTimeTicks == null
-                       || (study.PatientsBirthTimeTicks >= startTimeTicks && study.PatientsBirthTimeTicks <= startTimeTicks)
+                   where study.PatientsBirthTimeTicks >= startTimeTicks && study.PatientsBirthTimeTicks <= endTimeTicks
                    select study;
         }
 

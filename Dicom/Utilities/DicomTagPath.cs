@@ -89,7 +89,17 @@ namespace ClearCanvas.Dicom.Utilities
 			get { return _tags[_tags.Count - 1].VR; }	
 		}
 
-		public override bool Equals(object obj)
+        public DicomTagPath UpOne()
+        {
+            if (_tags.Count == 1)
+                throw new InvalidOperationException();
+
+            var lessOne = new DicomTag[_tags.Count - 1];
+            _tags.CopyTo(0, lessOne, 0, _tags.Count - 1);
+            return new DicomTagPath(lessOne);
+        }
+
+	    public override bool Equals(object obj)
 		{
 			if (obj == this)
 				return true;

@@ -1,4 +1,5 @@
-﻿using System.Data.Linq.SqlClient;
+﻿using System;
+using System.Data.Linq.SqlClient;
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
@@ -12,12 +13,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
         }
 
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, string criterion)
         {
-            if (!IsCriterionWildcard)
-                return from study in query where study.ResponsiblePerson == CriterionValue select study;
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.ResponsiblePerson == null
+                        || study.ResponsiblePerson == ""
+                        || study.ResponsiblePerson == criterion
+                   select study;
+        }
 
-            return from study in query where SqlMethods.Like(study.ResponsiblePerson, CriterionValue) select study;
+        protected override IQueryable<Study> AddLikeToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.ResponsiblePerson == null
+                        || study.ResponsiblePerson == ""
+                       || SqlMethods.Like(study.ResponsiblePerson, criterion)
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -33,12 +48,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
         }
 
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, string criterion)
         {
-            if (!IsCriterionWildcard)
-                return from study in query where study.ResponsiblePersonRole == CriterionValue select study;
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.ResponsiblePersonRole == null
+                        || study.ResponsiblePersonRole == ""
+                        || study.ResponsiblePersonRole == criterion
+                   select study;
+        }
 
-            return from study in query where SqlMethods.Like(study.ResponsiblePersonRole, CriterionValue) select study;
+        protected override IQueryable<Study> AddLikeToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.ResponsiblePersonRole == null
+                        || study.ResponsiblePersonRole == ""
+                       || SqlMethods.Like(study.ResponsiblePersonRole, criterion)
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
@@ -54,12 +83,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         {
         }
 
-        protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, string criterion)
         {
-            if (!IsCriterionWildcard)
-                return from study in query where study.ResponsibleOrganization == CriterionValue select study;
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.ResponsibleOrganization == null
+                        || study.ResponsibleOrganization == ""
+                        || study.ResponsibleOrganization == criterion
+                   select study;
+        }
 
-            return from study in query where SqlMethods.Like(study.ResponsibleOrganization, CriterionValue) select study;
+        protected override IQueryable<Study> AddLikeToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.ResponsibleOrganization == null
+                        || study.ResponsibleOrganization == ""
+                       || SqlMethods.Like(study.ResponsibleOrganization, criterion)
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
