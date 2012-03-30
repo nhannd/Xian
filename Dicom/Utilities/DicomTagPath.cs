@@ -37,7 +37,7 @@ namespace ClearCanvas.Dicom.Utilities
 		}
 
 		public DicomTagPath(uint tag)
-			: this(new uint[] { tag })
+			: this(new []{ tag })
 		{
 		}
 
@@ -47,11 +47,21 @@ namespace ClearCanvas.Dicom.Utilities
 		}
 
 		public DicomTagPath(DicomTag tag)
-			: this(new DicomTag[] { tag })
+			: this(new []{ tag })
 		{
 		}
 
-		public DicomTagPath(IEnumerable<DicomTag> tags)
+		public DicomTagPath(params uint[] tags)
+            : this((IEnumerable<uint>)tags)
+		{
+		}
+
+        public DicomTagPath(params DicomTag[] tags)
+            : this((IEnumerable<DicomTag>)tags)
+        {
+        }
+
+	    public DicomTagPath(IEnumerable<DicomTag> tags)
 		{
 			BuildPath(tags);
 		}

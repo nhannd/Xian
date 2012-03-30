@@ -42,7 +42,6 @@
       <Column Name="PatientBreedCodeSequenceCodeValue" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
       <Column Name="PatientBreedCodeSequenceCodeMeaning" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="ResponsiblePerson" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
-      <Column Name="ResponsiblePersonRaw" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Column Name="ResponsiblePersonRole" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
       <Column Name="ResponsibleOrganization" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="StudyXmlUri" Type="System.String" DbType="NVarChar(1024)" CanBeNull="true" />

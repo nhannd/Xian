@@ -6,9 +6,9 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
-    internal class PatientIdFilter : StringPropertyFilter<Study>
+    internal class PatientId : StringPropertyFilter<Study>
     {
-        public PatientIdFilter(DicomAttributeCollection criteria)
+        public PatientId(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientId), criteria)
         {
         }
@@ -27,9 +27,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsNameFilter : StringPropertyFilter<Study>
+    internal class PatientsName : StringPropertyFilter<Study>
     {
-        public PatientsNameFilter(DicomAttributeCollection criteria)
+        public PatientsName(DicomAttributeCollection criteria)
             : base(DicomTags.PatientsName, criteria)
         {
         }
@@ -48,9 +48,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsSexFilter : StringPropertyFilter<Study>
+    internal class PatientsSex : StringPropertyFilter<Study>
     {
-        public PatientsSexFilter(DicomAttributeCollection criteria)
+        public PatientsSex(DicomAttributeCollection criteria)
             : base(DicomTags.PatientsSex, criteria)
         {
         }
@@ -69,9 +69,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsBirthDateFilter : DatePropertyFilter<Study>
+    internal class PatientsBirthDate : DatePropertyFilter<Study>
     {
-        public PatientsBirthDateFilter(DicomAttributeCollection criteria)
+        public PatientsBirthDate(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientsBirthDate), criteria)
         {
         }
@@ -104,9 +104,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsBirthTimeFilter : TimePropertyFilter<Study>
+    internal class PatientsBirthTime : TimePropertyFilter<Study>
     {
-        public PatientsBirthTimeFilter(DicomAttributeCollection criteria)
+        public PatientsBirthTime(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientsBirthTime), criteria)
         {
         }

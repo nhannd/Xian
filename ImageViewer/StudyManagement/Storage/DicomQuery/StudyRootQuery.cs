@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             try
             {
-                var filters = new StudyPropertyFilters(queryCriteria);
+                var filters = new PropertyFilters<Study>(queryCriteria);
                 var results = filters.Query(_context.Studies);
                 return filters.ConvertResults(results);
             }
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
             try
             {
-                var filters = new SeriesPropertyFilters(queryCriteria);
+                var filters = new PropertyFilters<Series>(queryCriteria);
                 var results = filters.FilterResults(study.GetSeries().Cast<Series>());
                 return filters.ConvertResults(results);
             }
@@ -112,8 +112,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
             try
             {
-                var filters = new SeriesPropertyFilters(queryCriteria);
-                var results = filters.FilterResults(study.GetSeries().Cast<Series>());
+                var filters = new PropertyFilters<SopInstance>(queryCriteria);
+                var results = filters.FilterResults(study.GetSopInstances().Cast<SopInstance>());
                 return filters.ConvertResults(results);
             }
             catch (Exception e)

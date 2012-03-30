@@ -236,7 +236,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
             attribute = dataSet[DicomTags.ResponsiblePerson];
             ResponsiblePerson = new PersonName(attribute.ToString());
-            ResponsiblePersonRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(ResponsiblePerson, dataSet.SpecificCharacterSet);
 
             attribute = dataSet[DicomTags.ResponsiblePersonRole];
             ResponsiblePersonRole = attribute.ToString();

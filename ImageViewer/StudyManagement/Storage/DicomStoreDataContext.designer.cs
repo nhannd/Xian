@@ -327,8 +327,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private string _ResponsiblePerson;
 		
-		private string _ResponsiblePersonRaw;
-		
 		private string _ResponsiblePersonRole;
 		
 		private string _ResponsibleOrganization;
@@ -411,8 +409,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnPatientBreedCodeSequenceCodeMeaningChanged();
     partial void OnResponsiblePersonChanging(string value);
     partial void OnResponsiblePersonChanged();
-    partial void OnResponsiblePersonRawChanging(string value);
-    partial void OnResponsiblePersonRawChanged();
     partial void OnResponsiblePersonRoleChanging(string value);
     partial void OnResponsiblePersonRoleChanged();
     partial void OnResponsibleOrganizationChanging(string value);
@@ -1069,26 +1065,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._ResponsiblePerson = value;
 					this.SendPropertyChanged("ResponsiblePerson");
 					this.OnResponsiblePersonChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_ResponsiblePersonRaw", DbType="NVarChar(256)")]
-		public string ResponsiblePersonRaw
-		{
-			get
-			{
-				return this._ResponsiblePersonRaw;
-			}
-			set
-			{
-				if ((this._ResponsiblePersonRaw != value))
-				{
-					this.OnResponsiblePersonRawChanging(value);
-					this.SendPropertyChanging();
-					this._ResponsiblePersonRaw = value;
-					this.SendPropertyChanged("ResponsiblePersonRaw");
-					this.OnResponsiblePersonRawChanged();
 				}
 			}
 		}

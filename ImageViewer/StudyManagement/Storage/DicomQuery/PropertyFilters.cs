@@ -3,19 +3,19 @@ using System.Collections.ObjectModel;
 using System.Data.Linq;
 using System.Linq;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters;
+using System;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class PropertyFilters<T> where T : class
+    internal class PropertyFilters<T> where T : class
     {
         private readonly DicomAttributeCollection _criteria;
         private readonly IList<IPropertyFilter<T>> _filters;
 
-        protected PropertyFilters(DicomAttributeCollection criteria, IEnumerable<IPropertyFilter<T>> filters)
+        public PropertyFilters(DicomAttributeCollection criteria)
         {
             _criteria = criteria;
-            _filters = new ReadOnlyCollection<IPropertyFilter<T>>(filters.ToList());
+            _filters = new ReadOnlyCollection<IPropertyFilter<T>>(CreateFilters(criteria));
         }
 
         public IEnumerable<T> Query(Table<T> table)
@@ -49,70 +49,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             }
             return dicomResults;
         }
-    }
 
-    internal class StudyPropertyFilters : PropertyFilters<Study>
-    {
-        public StudyPropertyFilters(DicomAttributeCollection criteria)
-            : base(criteria, CreateFilters(criteria).Where(f => !f.IsNoOp))
+        public static List<IPropertyFilter<T>> CreateFilters(DicomAttributeCollection criteria)
         {
-        }
+            var filters = new List<IPropertyFilter<T>>();
+            var types = typeof (PropertyFilters<T>).Assembly.GetTypes()
+                            .Where(t => typeof (IPropertyFilter<T>).IsAssignableFrom(t));
 
-        private static IPropertyFilter<Study>[] CreateFilters(DicomAttributeCollection criteria)
-        {
-            return new IPropertyFilter<Study>[]
-                       {
-                           //TODO (Marmot): Fill this in.
-                           new PatientIdFilter(criteria),
-                           new PatientsNameFilter(criteria),
-                           new PatientsBirthDateFilter(criteria),
-                           new PatientsBirthTimeFilter(criteria),
-                           new PatientsSexFilter(criteria),
+            foreach (var type in types)
+            {
+                var constructor = type.GetConstructor(new[] {typeof (DicomAttributeCollection)});
+                if (constructor != null)
+                    filters.Add((IPropertyFilter<T>)Activator.CreateInstance(type, new[]{criteria}));
+            }
 
-                           new StudyInstanceUidFilter(criteria),
-                           new StudyDateFilter(criteria),
-                           new StudyTimeFilter(criteria),
-                           new StudyIdFilter(criteria),
-                           new AccessionNumberFilter(criteria),
-                           new StudyDescriptionFilter(criteria),
-                           new ModalitiesInStudyFilter(criteria),
-                           new ReferringPhysiciansNameFilter(criteria),
-                           
-                           new NumberOfStudyRelatedInstancesFilter(criteria),
-                           new NumberOfStudyRelatedSeriesFilter(criteria)
-                       };
-        }
-    }
-
-    internal class SeriesPropertyFilters : PropertyFilters<Series>
-    {
-        public SeriesPropertyFilters(DicomAttributeCollection criteria)
-            : base(criteria, CreateFilters(criteria).Where(f => !f.IsNoOp))
-        {
-        }
-
-        private static IPropertyFilter<Series>[] CreateFilters(DicomAttributeCollection criteria)
-        {
-            return new IPropertyFilter<Series>[]
-                                          {
-                                              //TODO (Marmot): Fill this in.
-                                          };
-        }
-    }
-
-    internal class SopInstancePropertyFilters : PropertyFilters<SopInstance>
-    {
-        public SopInstancePropertyFilters(DicomAttributeCollection criteria)
-            : base(criteria, CreateFilters(criteria).Where(f => !f.IsNoOp))
-        {
-        }
-
-        private static IPropertyFilter<SopInstance>[] CreateFilters(DicomAttributeCollection criteria)
-        {
-            return new IPropertyFilter<SopInstance>[]
-                                          {
-                                              //TODO (Marmot): Fill this in.
-                                          };
+            return filters;
         }
     }
 }

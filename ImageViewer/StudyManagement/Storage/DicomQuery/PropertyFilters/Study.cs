@@ -6,9 +6,9 @@ using System.Data.Linq.SqlClient;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
-    internal class StudyInstanceUidFilter : UidPropertyFilter<Study>
+    internal class StudyInstanceUid : UidPropertyFilter<Study>
     {
-        public StudyInstanceUidFilter(DicomAttributeCollection criteria)
+        public StudyInstanceUid(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyInstanceUid), criteria)
         {
             IsRequired = true;
@@ -32,9 +32,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region Strings
 
-    internal class StudyIdFilter : StringPropertyFilter<Study>
+    internal class StudyId : StringPropertyFilter<Study>
     {
-        public StudyIdFilter(DicomAttributeCollection criteria)
+        public StudyId(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyId), criteria)
         {
         }
@@ -53,9 +53,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class StudyDescriptionFilter : StringPropertyFilter<Study>
+    internal class StudyDescription : StringPropertyFilter<Study>
     {
-        public StudyDescriptionFilter(DicomAttributeCollection criteria)
+        public StudyDescription(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyDescription), criteria)
         {
         }
@@ -74,9 +74,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class AccessionNumberFilter : StringPropertyFilter<Study>
+    internal class AccessionNumber : StringPropertyFilter<Study>
     {
-        public AccessionNumberFilter(DicomAttributeCollection criteria)
+        public AccessionNumber(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.AccessionNumber), criteria)
         {
         }
@@ -95,10 +95,55 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    //TODO (Marmot): Still need to make this work.
-    internal class ModalitiesInStudyFilter : StringPropertyFilter<Study>
+    internal class ProcedureCodeSequence
     {
-        public ModalitiesInStudyFilter(DicomAttributeCollection criteria)
+        internal class CodeValue : StringPropertyFilter<Study>
+        {
+            public CodeValue(DicomAttributeCollection criteria)
+                : base(new DicomTagPath(DicomTags.ProcedureCodeSequence, DicomTags.CodeValue), criteria)
+            {
+            }
+
+            protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+            {
+                if (!IsCriterionWildcard)
+                    return from study in query where study.ProcedureCodeSequenceCodeValue == CriterionValue select study;
+
+                return from study in query where SqlMethods.Like(study.ProcedureCodeSequenceCodeValue, CriterionValue) select study;
+            }
+
+            protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
+            {
+                resultAttribute.SetStringValue(item.ProcedureCodeSequenceCodeValue);
+            }
+        }
+
+        internal class CodingSchemeDesignator : StringPropertyFilter<Study>
+        {
+            public CodingSchemeDesignator(DicomAttributeCollection criteria)
+                : base(new DicomTagPath(DicomTags.ProcedureCodeSequence, DicomTags.CodingSchemeDesignator), criteria)
+            {
+            }
+
+            protected override IQueryable<Study> AddToQuery(IQueryable<Study> query)
+            {
+                if (!IsCriterionWildcard)
+                    return from study in query where study.ProcedureCodeSequenceCodingSchemeDesignator == CriterionValue select study;
+
+                return from study in query where SqlMethods.Like(study.ProcedureCodeSequenceCodingSchemeDesignator, CriterionValue) select study;
+            }
+
+            protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
+            {
+                resultAttribute.SetStringValue(item.ProcedureCodeSequenceCodingSchemeDesignator);
+            }
+        }
+    }
+
+    //TODO (Marmot): Still need to make this work.
+    internal class ModalitiesInStudy : StringPropertyFilter<Study>
+    {
+        public ModalitiesInStudy(DicomAttributeCollection criteria)
             : base(DicomTags.ModalitiesInStudy, criteria)
         {
         }
@@ -121,9 +166,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class ReferringPhysiciansNameFilter : StringPropertyFilter<Study>
+    internal class ReferringPhysiciansName : StringPropertyFilter<Study>
     {
-        public ReferringPhysiciansNameFilter(DicomAttributeCollection criteria)
+        public ReferringPhysiciansName(DicomAttributeCollection criteria)
             : base(DicomTags.ReferringPhysiciansName, criteria)
         {
         }
@@ -144,29 +189,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    //ProcedureCodeSequenceCodingSchemeDesignator, ProcedureCodeSequenceCodeValue,
     #endregion
 
     #region Dates
 
-    internal class StudyDateFilter : DatePropertyFilter<Study>
+    internal class StudyDate : DatePropertyFilter<Study>
     {
-        public StudyDateFilter(DicomAttributeCollection criteria)
+        public StudyDate(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyDate), criteria)
         {
         }
 
-        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, System.DateTime date)
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, DateTime date)
+        {
+            return from study in query where study.StudyDate == null || study.StudyDate == date select study;
+        }
+
+        protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, DateTime date)
         {
             return from study in query where study.StudyDate == null || study.StudyDate >= date select study;
         }
 
-        protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, System.DateTime date)
-        {
-            return from study in query where study.StudyDate == null || study.StudyDate >= date select study;
-        }
-
-        protected override IQueryable<Study> AddLessOrEqualToQuery(IQueryable<Study> query, System.DateTime date)
+        protected override IQueryable<Study> AddLessOrEqualToQuery(IQueryable<Study> query, DateTime date)
         {
             return from study in query where study.StudyDate == null || study.StudyDate <= date select study;
         }
@@ -190,16 +234,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region Times
 
-    internal class StudyTimeFilter : TimePropertyFilter<Study>
+    internal class StudyTime : TimePropertyFilter<Study>
     {
-        public StudyTimeFilter(DicomAttributeCollection criteria)
+        public StudyTime(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyTime), criteria)
         {
         }
 
+        //NOTE (Marmot): None if this will get called currently because the base class doesn't work.
         protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, long timeTicks)
         {
-            return from study in query where study.StudyTimeTicks == null || study.StudyTimeTicks >= timeTicks select study;
+            return from study in query where study.StudyTimeTicks == null || study.StudyTimeTicks == timeTicks select study;
         }
 
         protected override IQueryable<Study> AddGreaterOrEqualToQuery(IQueryable<Study> query, long timeTicks)
@@ -217,7 +262,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             return from study in query
                    where
                        study.StudyTimeTicks == null
-                       || (study.StudyTimeTicks >= startTimeTicks && study.StudyTimeTicks <= startTimeTicks)
+                       || (study.StudyTimeTicks >= startTimeTicks && study.StudyTimeTicks <= endTimeTicks)
                    select study;
         }
 
@@ -231,9 +276,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region Non-Queryable
 
-    internal class NumberOfStudyRelatedInstancesFilter : PropertyFilter<Study>
+    internal class NumberOfStudyRelatedInstances : PropertyFilter<Study>
     {
-        public NumberOfStudyRelatedInstancesFilter(DicomAttributeCollection criteria)
+        public NumberOfStudyRelatedInstances(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.NumberOfStudyRelatedInstances), criteria)
         {
         }
@@ -247,9 +292,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class NumberOfStudyRelatedSeriesFilter : PropertyFilter<Study>
+    internal class NumberOfStudyRelatedSeries : PropertyFilter<Study>
     {
-        public NumberOfStudyRelatedSeriesFilter(DicomAttributeCollection criteria)
+        public NumberOfStudyRelatedSeries(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.NumberOfStudyRelatedSeries), criteria)
         {
         }
