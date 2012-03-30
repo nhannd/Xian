@@ -35,6 +35,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
         {
             ValidateRequest(Request);
 
+            Progress.NumberOfFilesImported = 0;
+            Progress.NumberOfImportFailures = 0;
+            Progress.PathsImported = 0;
+            Progress.PathsToImport = 0;
+
             Progress.StatusDetails = Request.FilePaths.Count > 1
                                        ? String.Format(SR.FormatMultipleFilesDescription, Request.FilePaths[0])
                                        : Request.FilePaths[0];
