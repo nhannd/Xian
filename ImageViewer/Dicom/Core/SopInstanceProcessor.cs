@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
@@ -12,7 +13,21 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     /// Processor for Sop Instances being inserted into the database.
     /// </summary>
     public class SopInstanceProcessor
-    {        
+    {           
+        #region Subclass
+        public class ProcessorFile
+        {
+            public ProcessorFile(DicomFile file, WorkItemUid uid)
+            {
+                File = file;
+                ItemUid = uid;
+            }
+
+            public DicomFile File { get; set; }
+            public WorkItemUid ItemUid { get; set; }
+        }
+        #endregion
+
         #region Public Properties
         
         public StudyLocation StudyLocation { get; private set; }
@@ -47,57 +62,67 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         public void ProcessFile(DicomFile file, StudyXml stream, WorkItemUid uid)
         {
             Platform.CheckForNullReference(file, "file");
+            var processFile = new ProcessorFile(file, uid);
+            InsertInstance(new List<ProcessorFile> {processFile}, stream);
+        }
 
-            InsertInstance(file, stream, uid);
+        public void ProcessBatch(IList<ProcessorFile> list, StudyXml stream )
+        {
+            Platform.CheckTrue(list.Count > 0,"list");
+            InsertInstance(list, stream);
         }
 
         #endregion
 
         #region Private Methods
 
-        private void InsertInstance(DicomFile file, StudyXml studyXml, WorkItemUid uid)
+        private void InsertInstance(IList<ProcessorFile> list, StudyXml studyXml)
         {
             using (var processor = new ViewerCommandProcessor("Processing WorkItem DICOM file"))
             {
-                String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
-                
                 try
                 {
-                    String seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-                    String sopUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-                    String finalDest = StudyLocation.GetSopInstancePath(seriesUid, sopUid);
-
-                    if (file.Filename != finalDest)
+                    foreach (var file in list)
                     {
-                        // Duplicate handler here
+                        String seriesUid = file.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+                        String sopUid = file.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+                        String finalDest = StudyLocation.GetSopInstancePath(seriesUid, sopUid);
 
-                        // Have to be careful here about failure on exists vs. not failing on exists
-                        // because of the different use cases of the importer.
-                        // save the file in the study folder and remove the source filename
-                        processor.AddCommand(new SaveDicomFileCommand(finalDest, file, false));
+                        if (file.File.Filename != finalDest)
+                        {
+                            // Duplicate handler here
 
-                        processor.AddCommand(new FileDeleteCommand(file.Filename, true));
+                            // Have to be careful here about failure on exists vs. not failing on exists
+                            // because of the different use cases of the importer.
+                            // save the file in the study folder and remove the source filename
+                            processor.AddCommand(new SaveDicomFileCommand(finalDest, file.File, false));
+
+                            processor.AddCommand(new FileDeleteCommand(file.File.Filename, true));
+                        }
+
+                        // Update the StudyStream object
+                        var insertStudyXmlCommand = new InsertStudyXmlCommand(file.File, studyXml, StudyLocation, false);
+                        processor.AddCommand(insertStudyXmlCommand);
+
+                        // Insert into the database, but only if its not a duplicate so the counts don't get off
+                        var insertStudyCommand = new InsertOrUpdateStudyCommand(file.File, studyXml);
+                        processor.AddCommand(insertStudyCommand);
+
+                        if (file.ItemUid != null)
+                            processor.AddCommand(new CompleteWorkItemUidCommand(file.ItemUid));
                     }
-
-                    // Update the StudyStream object
-                    var insertStudyXmlCommand = new InsertStudyXmlCommand(file, studyXml, StudyLocation, true);
-                    processor.AddCommand(insertStudyXmlCommand);
-
-                    // Insert into the database, but only if its not a duplicate so the counts don't get off
-                    var insertStudyCommand = new InsertOrUpdateStudyCommand(file, studyXml);
-                    processor.AddCommand(insertStudyCommand);
-
-                    if (uid != null)
-                        processor.AddCommand(new CompleteWorkItemUidCommand(uid));
 
                     // Do the actual processing
                     if (!processor.Execute())
                     {
-                        Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
-                        Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
-                        throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid, processor.FailureException);
+                        Platform.Log(LogLevel.Error, "Failure processing {0} for Study: {1}",
+                                     processor.Description, StudyLocation.Study.StudyInstanceUid);
+                        throw new ApplicationException(
+                            "Unexpected failure (" + processor.FailureReason + ") executing command for Study: " +
+                            StudyLocation.Study.StudyInstanceUid, processor.FailureException);
                     }
-                    Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
+                    Platform.Log(LogLevel.Info, "Processed {0} SOPs for Study {1}", list.Count,StudyLocation.Study.StudyInstanceUid );
+
                 }
                 catch (Exception e)
                 {

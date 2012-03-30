@@ -17,6 +17,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
@@ -35,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                 {
                     try
                     {
-                        string file = !string.IsNullOrEmpty(sop.File)
+                        string file = string.IsNullOrEmpty(sop.File)
                                           ? Location.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid)
                                           : Path.Combine(Location.StudyFolder, sop.File);
                         FileUtils.Delete(file);
@@ -136,8 +137,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                 LoadUids();
 
                 Progress.TotalFilesToProcess = WorkQueueUidList.Count;
-                Proxy.UpdateProgress();                        
+                Proxy.UpdateProgress();
 
+                const int maxBatch = 10;
+                var fileList = new List<WorkItemUid>(maxBatch);
+                
                 foreach (WorkItemUid sop in WorkQueueUidList)
                 {
                     if (sop.Failed)
@@ -159,19 +163,43 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                         return successfulProcessCount;
                     }
 
-                    if (ProcessWorkQueueUid(sop, studyXml))
+                    if (sop.FailureCount > 0)
                     {
-                        successfulProcessCount++;
+                        // Failed SOPs we process individually
+                        // All others we batch
+                        if (fileList.Count > 0)
+                        {
+                            if (ProcessWorkQueueUids(fileList, studyXml))
+                                successfulProcessCount++;
+                            fileList = new List<WorkItemUid>();
+                        }
 
-                        Progress.NumberOfFilesProcessed++;
-                        Proxy.UpdateProgress();
+                        fileList.Add(sop);
+
+                        if (ProcessWorkQueueUids(fileList, studyXml))
+                            successfulProcessCount++;
+
+                        fileList = new List<WorkItemUid>();
                     }
-                    else if (sop.Failed)
+                    else
                     {
-                        Progress.NumberOfProcessingFailures++;
-                        Proxy.UpdateProgress();                        
+                        fileList.Add(sop);
+
+                        if (fileList.Count >= maxBatch)
+                        {
+                            if (ProcessWorkQueueUids(fileList, studyXml))
+                                successfulProcessCount++;
+
+                            fileList = new List<WorkItemUid>();
+                        }
                     }
-                }                
+                }
+
+                if (fileList.Count > 0)
+                {
+                    if (ProcessWorkQueueUids(fileList, studyXml))
+                        successfulProcessCount++;                 
+                }
             }
 
             return successfulProcessCount;
@@ -180,56 +208,82 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
         /// <summary>
         /// Process a specified <see cref="WorkItemUid"/>
         /// </summary>
-        /// <param name="sop">The <see cref="WorkItemUid"/> being processed</param>
+        /// <param name="sops">The <see cref="WorkItemUid"/> being processed</param>
         /// <param name="studyXml">The <see cref="StudyXml"/> object for the study being processed</param>
         /// <returns>true if the <see cref="WorkItemUid"/> is successfully processed. false otherwise</returns>
-        protected virtual bool ProcessWorkQueueUid(WorkItemUid sop, StudyXml studyXml)
+        protected virtual bool ProcessWorkQueueUids(List<WorkItemUid> sops, StudyXml studyXml)
         {
-            Platform.CheckForNullReference(sop, "sop");
+            Platform.CheckForNullReference(sops, "sops");
             Platform.CheckForNullReference(studyXml, "studyXml");
 
             string path = null;
 
             try
             {
-                DicomFile file;
+                var fileList = new List<SopInstanceProcessor.ProcessorFile>();
 
-                if (!string.IsNullOrEmpty(sop.File))
+                foreach (var uid in sops)
                 {
-                    path = Path.Combine(Location.StudyFolder, sop.File);
-                    file = new DicomFile(path);
+                    DicomFile file;
 
-                    // Load the entire file, since it will be re-written over the top
-                    file.Load();
+                    if (!string.IsNullOrEmpty(uid.File))
+                    {
+                        path = Path.Combine(Location.StudyFolder, uid.File);
+                        file = new DicomFile(path);
+
+                        // Load the entire file, since it will be re-written over the top
+                        file.Load();
+                    }
+                    else
+                    {
+                        path = Location.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
+                        file = new DicomFile(path);
+
+                        // WARNING:  If we ever do anything where we update files and save them,
+                        // we may have to change this.
+                        file.Load(DicomReadOptions.StorePixelDataReferences);
+                    }
+                    fileList.Add(new SopInstanceProcessor.ProcessorFile(file,uid));
                 }
-                else
-                {
-                    path = Location.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
-                    file = new DicomFile(path);
 
-                    // WARNING:  If we ever do anything where we update files and save them,
-                    // we may have to change this.
-                    file.Load(DicomReadOptions.StorePixelDataReferences);
-                }
+                var processor = new SopInstanceProcessor(Location);
 
-				var processor = new ClearCanvas.ImageViewer.Dicom.Core.SopInstanceProcessor(Location);
+                processor.ProcessBatch(fileList, studyXml);
 
-                processor.ProcessFile(file, studyXml, sop);
+                Progress.NumberOfFilesProcessed += fileList.Count;
+                Proxy.UpdateProgress();
 
                 return true;
             }
             catch (Exception e)
-            {
-                var updatedSop = FailWorkItemUid(sop, true);
-                sop.Failed = updatedSop.Failed;
-                sop.FailureCount = updatedSop.FailureCount;
+            {                
+                foreach (var sop in sops)
+                {
+                    try
+                    {
+                        var updatedSop = FailWorkItemUid(sop, true);
+                        sop.Failed = updatedSop.Failed;
+                        sop.FailureCount = updatedSop.FailureCount;
 
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path ?? string.Empty,
-                             sop.SopInstanceUid);
-                Proxy.Item.Progress.StatusDetails = e.InnerException != null
-                                                            ? String.Format("{0}:{1}", e.GetType().Name,
-                                                                            e.InnerException.Message)
-                                                            : String.Format("{0}:{1}", e.GetType().Name, e.Message);
+                        Platform.Log(LogLevel.Error, e,
+                                     "Unexpected exception when processing file: {0} SOP Instance: {1}",
+                                     path ?? string.Empty,
+                                     sop.SopInstanceUid);
+                        Progress.StatusDetails = e.InnerException != null
+                                                                ? String.Format("{0}:{1}", e.GetType().Name,
+                                                                                e.InnerException.Message)
+                                                                : String.Format("{0}:{1}", e.GetType().Name, e.Message);
+                        if (sop.Failed)
+                            Progress.NumberOfProcessingFailures++;
+                    }
+                    catch (Exception)
+                    {
+                        Platform.Log(LogLevel.Error, "Unable to fail WorkItemUid: {0}", sop.Oid);
+                    }
+                }
+                
+                Proxy.UpdateProgress();  
+
                 return false;
             }
         }
