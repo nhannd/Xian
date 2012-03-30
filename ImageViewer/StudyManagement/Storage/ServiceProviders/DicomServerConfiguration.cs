@@ -88,8 +88,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         // TODO (Marmot): How to deal with this? Maybe figure it out from the host name? 
         private const string _defaultServerAE = "AETITLE";
         private const int _defaultPort = 104;
-        
-        private const string _configurationKey = "DicomServer";
+
+        private static readonly string _configurationKey = typeof(DicomServerConfigurationContract).FullName;
 
         private string DefaultAE
         {
@@ -119,14 +119,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             DicomServerConfigurationContract configuration;
             using (var context = new DataAccessContext())
             {
-                configuration = context.GetConfigurationBroker().GetDataContractValue<DicomServerConfigurationContract>(_configurationKey);
-                if (configuration == null)
-                    configuration = new DicomServerConfigurationContract
-                    {
-                        AETitle = DefaultAE,
-                        HostName = DefaultHostname,
-                        Port = DefaultPort
-                    };
+                var broker = context.GetConfigurationBroker();
+                configuration = broker.GetDataContractValue<DicomServerConfigurationContract>(_configurationKey)
+                                ?? new DicomServerConfigurationContract { Port = DefaultPort };
             }
 
             if (String.IsNullOrEmpty(configuration.AETitle))

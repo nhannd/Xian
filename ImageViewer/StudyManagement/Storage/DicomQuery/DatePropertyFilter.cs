@@ -4,7 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 
-namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
+namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
     internal abstract class DatePropertyFilter<T> : PropertyFilter<T>
     {
@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
         private void ParseCriterion()
         {
+            _parsedCriterion = true;
             DateRangeHelper.Parse(Criterion.GetString(0, ""), out _date1, out _date2, out _isRange);
         }
 

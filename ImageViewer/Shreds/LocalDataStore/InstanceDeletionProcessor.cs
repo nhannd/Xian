@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						using (var context = new DataAccessContext())
 						{
 						    var broker = context.GetStudyBroker();
-							IStudy study = broker.GetStudy(instanceUid);
+							Study study = broker.GetStudy(instanceUid);
 							if (study == null)
 							{
 								errorMessage = String.Format(SR.ExceptionCannotDeleteStudyDoesNotExist, instanceUid);
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							{
 								FileRemover remover = new FileRemover(Instance.StorageDirectory);
 								remover.DeleteFilesInStudy(study);
-							    broker.DeleteStudy(study.StudyInstanceUid);
+							    broker.Delete(study);
 								
 								remover.CleanupEmptyDirectories();
 							}

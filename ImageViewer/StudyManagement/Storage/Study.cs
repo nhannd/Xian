@@ -12,9 +12,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
@@ -41,7 +43,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         string IPatientData.PatientsBirthTime
         {
-            get { return ""; }
+            get { return PatientsBirthTimeRaw; }
         }
 
         string IPatientData.ResponsiblePerson
@@ -53,12 +55,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         #region IStudyData Members
 
-        public string StudyTime
-        {
-            //TODO (Marmot): Add to database.
-            get { return ""; }
-        }
-
         string IStudyData.ReferringPhysiciansName
         {
             get { return ReferringPhysiciansName; }
@@ -67,6 +63,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         string IStudyData.StudyDate
         {
             get { return StudyDateRaw; }
+        }
+
+        string IStudyData.StudyTime
+        {
+            get { return StudyTimeRaw; }
         }
 
         string[] IStudyData.ModalitiesInStudy
@@ -89,19 +90,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         public IEnumerable<ISeries> GetSeries()
         {
-            foreach (ISeries series in Series)
-                yield return series;
+            return Series;
         }
 
         public IEnumerable<ISopInstance> GetSopInstances()
         {
-            foreach (ISeries series in Series)
-            {
-                foreach (ISopInstance sopInstance in series.GetSopInstances())
-                {
-                    yield return sopInstance;
-                }
-            }
+            return Series.SelectMany(s => s.GetSopInstances());
         }
 
         public DateTime? GetStoreTime()
@@ -121,14 +115,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         int IStudy.NumberOfStudyRelatedSeries
         {
-            //TODO (Marmot): Fix so it's not nullable in the database.
-            get { return NumberOfStudyRelatedInstances.Value; }
+            get { return NumberOfStudyRelatedSeries.HasValue ? NumberOfStudyRelatedSeries.Value : 0; }
         }
 
         int IStudy.NumberOfStudyRelatedInstances
         {
-            //TODO (Marmot): Fix so it's not nullable in the database.
-            get { return NumberOfStudyRelatedInstances.Value; }
+            get { return NumberOfStudyRelatedInstances.HasValue ? NumberOfStudyRelatedInstances.Value : 0; }
         }
 
         #endregion
@@ -161,17 +153,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
             attribute = dataSet[DicomTags.PatientsName];
             PatientsName = new PersonName(attribute.ToString());
-            PatientsNameRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(PatientsName, dataSet.SpecificCharacterSet);
 
             attribute = dataSet[DicomTags.ReferringPhysiciansName];
             ReferringPhysiciansName = new PersonName(attribute.ToString());
-            ReferringPhysiciansNameRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(ReferringPhysiciansName, dataSet.SpecificCharacterSet);
 
             attribute = dataSet[DicomTags.PatientsSex];
             PatientsSex = attribute.ToString();
 
             attribute = dataSet[DicomTags.PatientsBirthDate];
             PatientsBirthDateRaw = attribute.ToString();
+            PatientsBirthDate = DateParser.Parse(PatientsBirthDateRaw);
+
+            attribute = dataSet[DicomTags.PatientsBirthTime];
+            PatientsBirthTimeRaw = attribute.ToString();
+            var time = TimeParser.Parse(PatientsBirthTimeRaw);
+            if (time.HasValue)
+                PatientsBirthTimeTicks = time.Value.TimeOfDay.Ticks;
+            else
+                PatientsBirthTimeTicks = null;
 
             attribute = dataSet[DicomTags.StudyId];
             StudyId = attribute.ToString();
@@ -188,6 +187,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
             attribute = dataSet[DicomTags.StudyTime];
             StudyTimeRaw = attribute.ToString();
+            time = TimeParser.Parse(StudyTimeRaw);
+            if (time.HasValue)
+                StudyTimeTicks = time.Value.TimeOfDay.Ticks;
+            else
+                StudyTimeTicks = null;
 
             if (dataSet.Contains(DicomTags.ProcedureCodeSequence))
             {
@@ -260,7 +264,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             }
         }
 
-        private List<ISeries> Series
+        private IList<ISeries> Series
         {
             get
             {
@@ -292,85 +296,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
         }
 
-        /*
-        internal void Flush()
-        {
-            var settings = new StudyXmlOutputSettings
-                               {
-                                   IncludePrivateValues = StudyXmlTagInclusion.IgnoreTag,
-                                   IncludeUnknownTags = StudyXmlTagInclusion.IgnoreTag,
-                                   IncludeLargeTags = StudyXmlTagInclusion.IncludeTagExclusion,
-                                   MaxTagLength = 2048,
-                                   IncludeSourceFileName = true
-                               };
-
-            //Ensure the existing stuff is loaded.
-            LoadStudyXml(false);
-
-            XmlDocument doc = _studyXml.GetMemento(settings);
-
-            using (FileStream stream = GetFileStream(FileMode.Create, FileAccess.Write))
-            {
-                StudyXmlIo.Write(doc, stream);
-                stream.Close();
-            }
-        }
-        */
         private void LoadStudyXml(bool throwIfNotExists)
         {
-            if (_studyXml == null)
+            if (_studyXml != null)
+                return;
+
+            if (StudyXmlUri == null)
+                throw new Exception("The study xml location must be set.");
+
+            var doc = new XmlDocument();
+            _studyXml = new StudyXml(StudyInstanceUid);
+
+            if (File.Exists(StudyXmlUri))
             {
-                if (StudyXmlUri == null)
-                    throw new Exception("The study xml location must be set.");
-
-                XmlDocument doc = new XmlDocument();
-                _studyXml = new StudyXml(StudyInstanceUid);
-
-                if (File.Exists(StudyXmlUri))
+                using (FileStream stream = FileStreamOpener.OpenForRead(StudyXmlUri, FileMode.Open, 5000))
                 {
-                    using (FileStream stream = GetFileStream(FileMode.Open, FileAccess.Read))
-                    {
-                        StudyXmlIo.Read(doc, stream);
-                        _studyXml.SetMemento(doc);
-                    }
-                }
-                else if (throwIfNotExists)
-                {
-                    throw new FileNotFoundException("The study xml file could not be found", StudyXmlUri);
+                    StudyXmlIo.Read(doc, stream);
+                    _studyXml.SetMemento(doc);
                 }
             }
-        }
-
-        // This is a bit hacky, but it seems silly to use a named mutex for the rare case when the service
-        // and client processes are both accessing the exact same file at the same time.
-        private FileStream GetFileStream(FileMode fileMode, FileAccess fileAccess)
-        {
-            bool alreadyLogged = false;
-            TimeSpan start = new TimeSpan(DateTime.Now.Ticks);
-
-            while (true)
+            else if (throwIfNotExists)
             {
-                try
-                {
-                    return new FileStream(StudyXmlUri, fileMode, fileAccess, FileShare.Delete);
-                }
-                catch (IOException) //thrown when another process has the file open.
-                {
-                    if (!alreadyLogged)
-                    {
-                        alreadyLogged = true;
-                        Platform.Log(LogLevel.Info, "Failed to open the study xml file because another process currently has it open.  Retry will continue for up to 5 seconds.");
-                    }
-
-                    TimeSpan diff = new TimeSpan(DateTime.Now.Ticks) - start;
-                    if (diff.TotalSeconds >= 5)
-                    {
-                        string message = String.Format("Another process has had the study xml (uid = {0}) file open for more than 5 seconds.  Aborting attempt to open file.", StudyInstanceUid);
-                        throw new TimeoutException(message);
-                    }
-
-                    Thread.Sleep(20);
-                }
+                throw new FileNotFoundException("The study xml file could not be found", StudyXmlUri);
             }
         }
 

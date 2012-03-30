@@ -66,14 +66,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
                            new PatientIdFilter(criteria),
                            new PatientsNameFilter(criteria),
                            new PatientsBirthDateFilter(criteria),
+                           new PatientsBirthTimeFilter(criteria),
                            new PatientsSexFilter(criteria),
 
                            new StudyInstanceUidFilter(criteria),
                            new StudyDateFilter(criteria),
+                           new StudyTimeFilter(criteria),
                            new StudyIdFilter(criteria),
                            new AccessionNumberFilter(criteria),
                            new StudyDescriptionFilter(criteria),
-                           
+                           new ModalitiesInStudyFilter(criteria),
                            new ReferringPhysiciansNameFilter(criteria),
                            
                            new NumberOfStudyRelatedInstancesFilter(criteria),

@@ -17,7 +17,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using System.IO;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Local

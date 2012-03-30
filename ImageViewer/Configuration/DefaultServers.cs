@@ -18,6 +18,7 @@ using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration
@@ -52,16 +53,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
             if (includeLocal)
             {
-                IStudyRootQuery localDataStoreQuery;
-                try
-                {
-                    localDataStoreQuery = (IStudyRootQuery) new LocalStudyRootQueryExtensionPoint().CreateExtension();
-                }
-                catch (NotSupportedException)
-                {
-                    localDataStoreQuery = null;
-                }
-
+                IStudyRootQuery localDataStoreQuery = LocalStudyRootQuery.Create();
                 if (localDataStoreQuery != null)
                     yield return localDataStoreQuery;
             }

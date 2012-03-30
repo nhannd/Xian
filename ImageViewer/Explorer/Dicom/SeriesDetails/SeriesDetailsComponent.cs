@@ -22,6 +22,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tables;
@@ -312,10 +313,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		{
 			_seriesTable.Items.Clear();
 
+		    //TODO (Marmot): Perfect candidate for service node changes.
 			IStudyRootQuery query;
 			if (_server.IsLocalDataStore)
 			{
-				query = (IStudyRootQuery)new LocalStudyRootQueryExtensionPoint().CreateExtension();
+			    query = new LocalStudyRootQuery();
 			}
 			else
 			{

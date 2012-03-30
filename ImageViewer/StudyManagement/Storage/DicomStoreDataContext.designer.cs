@@ -265,7 +265,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private long _Oid;
 		
+		private string _SpecificCharacterSet;
+		
 		private string _StudyId;
+		
+		private System.Nullable<long> _StudyTime;
 		
 		private string _StudyTimeRaw;
 		
@@ -285,21 +289,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private System.Nullable<int> _NumberOfStudyRelatedInstances;
 		
-		private string _SpecificCharacterSet;
-		
 		private string _ProcedureCodeSequenceCodingSchemeDesignator;
 		
 		private string _ProcedureCodeSequenceCodeValue;
 		
-		private System.Nullable<System.DateTime> _StoreTime;
-		
-		private string _StudyXmlUri;
-		
-		private string _PatientsNameRaw;
-		
 		private string _PatientsName;
-		
-		private string _ReferringPhysiciansNameRaw;
 		
 		private string _ReferringPhysiciansName;
 		
@@ -307,7 +301,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private string _PatientsSex;
 		
+		private System.Nullable<System.DateTime> _PatientsBirthDate;
+		
 		private string _PatientsBirthDateRaw;
+		
+		private System.Nullable<long> _PatientsBirthTime;
+		
+		private string _PatientsBirthTimeRaw;
 		
 		private string _PatientSpeciesDescription;
 		
@@ -333,6 +333,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private string _ResponsibleOrganization;
 		
+		private string _StudyXmlUri;
+		
+		private System.Nullable<System.DateTime> _StoreTime;
+		
 		private System.DateTime _DeleteTime;
 		
 		private bool _Deleted;
@@ -345,8 +349,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCreated();
     partial void OnOidChanging(long value);
     partial void OnOidChanged();
+    partial void OnSpecificCharacterSetChanging(string value);
+    partial void OnSpecificCharacterSetChanged();
     partial void OnStudyIdChanging(string value);
     partial void OnStudyIdChanged();
+    partial void OnStudyTimeTicksChanging(System.Nullable<long> value);
+    partial void OnStudyTimeTicksChanged();
     partial void OnStudyTimeRawChanging(string value);
     partial void OnStudyTimeRawChanged();
     partial void OnStudyDateChanging(System.Nullable<System.DateTime> value);
@@ -365,30 +373,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnNumberOfStudyRelatedSeriesChanged();
     partial void OnNumberOfStudyRelatedInstancesChanging(System.Nullable<int> value);
     partial void OnNumberOfStudyRelatedInstancesChanged();
-    partial void OnSpecificCharacterSetChanging(string value);
-    partial void OnSpecificCharacterSetChanged();
     partial void OnProcedureCodeSequenceCodingSchemeDesignatorChanging(string value);
     partial void OnProcedureCodeSequenceCodingSchemeDesignatorChanged();
     partial void OnProcedureCodeSequenceCodeValueChanging(string value);
     partial void OnProcedureCodeSequenceCodeValueChanged();
-    partial void OnStoreTimeChanging(System.Nullable<System.DateTime> value);
-    partial void OnStoreTimeChanged();
-    partial void OnStudyXmlUriChanging(string value);
-    partial void OnStudyXmlUriChanged();
-    partial void OnPatientsNameRawChanging(string value);
-    partial void OnPatientsNameRawChanged();
     partial void OnPatientsNameChanging(string value);
     partial void OnPatientsNameChanged();
-    partial void OnReferringPhysiciansNameRawChanging(string value);
-    partial void OnReferringPhysiciansNameRawChanged();
     partial void OnReferringPhysiciansNameChanging(string value);
     partial void OnReferringPhysiciansNameChanged();
     partial void OnPatientIdChanging(string value);
     partial void OnPatientIdChanged();
     partial void OnPatientsSexChanging(string value);
     partial void OnPatientsSexChanged();
+    partial void OnPatientsBirthDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnPatientsBirthDateChanged();
     partial void OnPatientsBirthDateRawChanging(string value);
     partial void OnPatientsBirthDateRawChanged();
+    partial void OnPatientsBirthTimeTicksChanging(System.Nullable<long> value);
+    partial void OnPatientsBirthTimeTicksChanged();
+    partial void OnPatientsBirthTimeRawChanging(string value);
+    partial void OnPatientsBirthTimeRawChanged();
     partial void OnPatientSpeciesDescriptionChanging(string value);
     partial void OnPatientSpeciesDescriptionChanged();
     partial void OnPatientSpeciesCodeSequenceCodingSchemeDesignatorChanging(string value);
@@ -413,6 +417,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnResponsiblePersonRoleChanged();
     partial void OnResponsibleOrganizationChanging(string value);
     partial void OnResponsibleOrganizationChanged();
+    partial void OnStudyXmlUriChanging(string value);
+    partial void OnStudyXmlUriChanged();
+    partial void OnStoreTimeChanging(System.Nullable<System.DateTime> value);
+    partial void OnStoreTimeChanged();
     partial void OnDeleteTimeChanging(System.DateTime value);
     partial void OnDeleteTimeChanged();
     partial void OnDeletedChanging(bool value);
@@ -445,6 +453,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
+		[Column(Storage="_SpecificCharacterSet", DbType="NVarChar(64)")]
+		public string SpecificCharacterSet
+		{
+			get
+			{
+				return this._SpecificCharacterSet;
+			}
+			set
+			{
+				if ((this._SpecificCharacterSet != value))
+				{
+					this.OnSpecificCharacterSetChanging(value);
+					this.SendPropertyChanging();
+					this._SpecificCharacterSet = value;
+					this.SendPropertyChanged("SpecificCharacterSet");
+					this.OnSpecificCharacterSetChanged();
+				}
+			}
+		}
+		
 		[Column(Storage="_StudyId", DbType="NVarChar(16)")]
 		public string StudyId
 		{
@@ -461,6 +489,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._StudyId = value;
 					this.SendPropertyChanged("StudyId");
 					this.OnStudyIdChanged();
+				}
+			}
+		}
+		
+		[Column(Name="StudyTime", Storage="_StudyTime", DbType="BIGINT")]
+		public System.Nullable<long> StudyTimeTicks
+		{
+			get
+			{
+				return this._StudyTime;
+			}
+			set
+			{
+				if ((this._StudyTime != value))
+				{
+					this.OnStudyTimeTicksChanging(value);
+					this.SendPropertyChanging();
+					this._StudyTime = value;
+					this.SendPropertyChanged("StudyTimeTicks");
+					this.OnStudyTimeTicksChanged();
 				}
 			}
 		}
@@ -645,26 +693,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[Column(Storage="_SpecificCharacterSet", DbType="NVarChar(64)")]
-		public string SpecificCharacterSet
-		{
-			get
-			{
-				return this._SpecificCharacterSet;
-			}
-			set
-			{
-				if ((this._SpecificCharacterSet != value))
-				{
-					this.OnSpecificCharacterSetChanging(value);
-					this.SendPropertyChanging();
-					this._SpecificCharacterSet = value;
-					this.SendPropertyChanged("SpecificCharacterSet");
-					this.OnSpecificCharacterSetChanged();
-				}
-			}
-		}
-		
 		[Column(Storage="_ProcedureCodeSequenceCodingSchemeDesignator", DbType="NVarChar(16)")]
 		public string ProcedureCodeSequenceCodingSchemeDesignator
 		{
@@ -705,66 +733,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[Column(Storage="_StoreTime", DbType="DateTime")]
-		public System.Nullable<System.DateTime> StoreTime
-		{
-			get
-			{
-				return this._StoreTime;
-			}
-			set
-			{
-				if ((this._StoreTime != value))
-				{
-					this.OnStoreTimeChanging(value);
-					this.SendPropertyChanging();
-					this._StoreTime = value;
-					this.SendPropertyChanged("StoreTime");
-					this.OnStoreTimeChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_StudyXmlUri", DbType="NVarChar(1024)")]
-		public string StudyXmlUri
-		{
-			get
-			{
-				return this._StudyXmlUri;
-			}
-			set
-			{
-				if ((this._StudyXmlUri != value))
-				{
-					this.OnStudyXmlUriChanging(value);
-					this.SendPropertyChanging();
-					this._StudyXmlUri = value;
-					this.SendPropertyChanged("StudyXmlUri");
-					this.OnStudyXmlUriChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_PatientsNameRaw", DbType="NVarChar(256)")]
-		public string PatientsNameRaw
-		{
-			get
-			{
-				return this._PatientsNameRaw;
-			}
-			set
-			{
-				if ((this._PatientsNameRaw != value))
-				{
-					this.OnPatientsNameRawChanging(value);
-					this.SendPropertyChanging();
-					this._PatientsNameRaw = value;
-					this.SendPropertyChanged("PatientsNameRaw");
-					this.OnPatientsNameRawChanged();
-				}
-			}
-		}
-		
 		[Column(Storage="_PatientsName", DbType="NVarChar(256)")]
 		public string PatientsName
 		{
@@ -781,26 +749,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._PatientsName = value;
 					this.SendPropertyChanged("PatientsName");
 					this.OnPatientsNameChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_ReferringPhysiciansNameRaw", DbType="NVarChar(256)")]
-		public string ReferringPhysiciansNameRaw
-		{
-			get
-			{
-				return this._ReferringPhysiciansNameRaw;
-			}
-			set
-			{
-				if ((this._ReferringPhysiciansNameRaw != value))
-				{
-					this.OnReferringPhysiciansNameRawChanging(value);
-					this.SendPropertyChanging();
-					this._ReferringPhysiciansNameRaw = value;
-					this.SendPropertyChanged("ReferringPhysiciansNameRaw");
-					this.OnReferringPhysiciansNameRawChanged();
 				}
 			}
 		}
@@ -865,6 +813,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
+		[Column(Storage="_PatientsBirthDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> PatientsBirthDate
+		{
+			get
+			{
+				return this._PatientsBirthDate;
+			}
+			set
+			{
+				if ((this._PatientsBirthDate != value))
+				{
+					this.OnPatientsBirthDateChanging(value);
+					this.SendPropertyChanging();
+					this._PatientsBirthDate = value;
+					this.SendPropertyChanged("PatientsBirthDate");
+					this.OnPatientsBirthDateChanged();
+				}
+			}
+		}
+		
 		[Column(Storage="_PatientsBirthDateRaw", DbType="NVarChar(16)")]
 		public string PatientsBirthDateRaw
 		{
@@ -881,6 +849,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._PatientsBirthDateRaw = value;
 					this.SendPropertyChanged("PatientsBirthDateRaw");
 					this.OnPatientsBirthDateRawChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_PatientsBirthTime", DbType="BIGINT")]
+		public System.Nullable<long> PatientsBirthTimeTicks
+		{
+			get
+			{
+				return this._PatientsBirthTime;
+			}
+			set
+			{
+				if ((this._PatientsBirthTime != value))
+				{
+					this.OnPatientsBirthTimeTicksChanging(value);
+					this.SendPropertyChanging();
+					this._PatientsBirthTime = value;
+					this.SendPropertyChanged("PatientsBirthTimeTicks");
+					this.OnPatientsBirthTimeTicksChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_PatientsBirthTimeRaw", DbType="NVarChar(16)")]
+		public string PatientsBirthTimeRaw
+		{
+			get
+			{
+				return this._PatientsBirthTimeRaw;
+			}
+			set
+			{
+				if ((this._PatientsBirthTimeRaw != value))
+				{
+					this.OnPatientsBirthTimeRawChanging(value);
+					this.SendPropertyChanging();
+					this._PatientsBirthTimeRaw = value;
+					this.SendPropertyChanged("PatientsBirthTimeRaw");
+					this.OnPatientsBirthTimeRawChanged();
 				}
 			}
 		}
@@ -1121,6 +1129,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._ResponsibleOrganization = value;
 					this.SendPropertyChanged("ResponsibleOrganization");
 					this.OnResponsibleOrganizationChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_StudyXmlUri", DbType="NVarChar(1024)")]
+		public string StudyXmlUri
+		{
+			get
+			{
+				return this._StudyXmlUri;
+			}
+			set
+			{
+				if ((this._StudyXmlUri != value))
+				{
+					this.OnStudyXmlUriChanging(value);
+					this.SendPropertyChanging();
+					this._StudyXmlUri = value;
+					this.SendPropertyChanged("StudyXmlUri");
+					this.OnStudyXmlUriChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_StoreTime", DbType="DateTime")]
+		public System.Nullable<System.DateTime> StoreTime
+		{
+			get
+			{
+				return this._StoreTime;
+			}
+			set
+			{
+				if ((this._StoreTime != value))
+				{
+					this.OnStoreTimeChanging(value);
+					this.SendPropertyChanging();
+					this._StoreTime = value;
+					this.SendPropertyChanged("StoreTime");
+					this.OnStoreTimeChanged();
 				}
 			}
 		}
@@ -1909,9 +1957,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private string _Name;
 		
-		private string _AETitle;
+		private string _Description;
 		
 		private string _Location;
+		
+		private string _AETitle;
+		
+		private string _HostName;
 		
 		private int _Port;
 		
@@ -1919,30 +1971,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private System.Nullable<int> _StreamingImagePort;
 		
-		private string _HostName;
-		
-		private string _Description;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnAETitleChanging(string value);
-    partial void OnAETitleChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
     partial void OnLocationChanging(string value);
     partial void OnLocationChanged();
+    partial void OnAETitleChanging(string value);
+    partial void OnAETitleChanged();
+    partial void OnHostNameChanging(string value);
+    partial void OnHostNameChanged();
     partial void OnPortChanging(int value);
     partial void OnPortChanged();
     partial void OnStreamingHeaderPortChanging(System.Nullable<int> value);
     partial void OnStreamingHeaderPortChanged();
     partial void OnStreamingImagePortChanging(System.Nullable<int> value);
     partial void OnStreamingImagePortChanged();
-    partial void OnHostNameChanging(string value);
-    partial void OnHostNameChanged();
-    partial void OnDescriptionChanging(string value);
-    partial void OnDescriptionChanged();
     #endregion
 		
 		public Device()
@@ -1970,22 +2018,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[Column(Storage="_AETitle", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
-		public string AETitle
+		[Column(Storage="_Description", DbType="NVarChar(64) NOT NULL")]
+		public string Description
 		{
 			get
 			{
-				return this._AETitle;
+				return this._Description;
 			}
 			set
 			{
-				if ((this._AETitle != value))
+				if ((this._Description != value))
 				{
-					this.OnAETitleChanging(value);
+					this.OnDescriptionChanging(value);
 					this.SendPropertyChanging();
-					this._AETitle = value;
-					this.SendPropertyChanged("AETitle");
-					this.OnAETitleChanged();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
 				}
 			}
 		}
@@ -2006,6 +2054,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._Location = value;
 					this.SendPropertyChanged("Location");
 					this.OnLocationChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_AETitle", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		public string AETitle
+		{
+			get
+			{
+				return this._AETitle;
+			}
+			set
+			{
+				if ((this._AETitle != value))
+				{
+					this.OnAETitleChanging(value);
+					this.SendPropertyChanging();
+					this._AETitle = value;
+					this.SendPropertyChanged("AETitle");
+					this.OnAETitleChanged();
+				}
+			}
+		}
+		
+		[Column(Storage="_HostName", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		public string HostName
+		{
+			get
+			{
+				return this._HostName;
+			}
+			set
+			{
+				if ((this._HostName != value))
+				{
+					this.OnHostNameChanging(value);
+					this.SendPropertyChanging();
+					this._HostName = value;
+					this.SendPropertyChanged("HostName");
+					this.OnHostNameChanged();
 				}
 			}
 		}
@@ -2066,46 +2154,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._StreamingImagePort = value;
 					this.SendPropertyChanged("StreamingImagePort");
 					this.OnStreamingImagePortChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_HostName", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
-		public string HostName
-		{
-			get
-			{
-				return this._HostName;
-			}
-			set
-			{
-				if ((this._HostName != value))
-				{
-					this.OnHostNameChanging(value);
-					this.SendPropertyChanging();
-					this._HostName = value;
-					this.SendPropertyChanged("HostName");
-					this.OnHostNameChanged();
-				}
-			}
-		}
-		
-		[Column(Storage="_Description", DbType="NVarChar(64) NOT NULL")]
-		public string Description
-		{
-			get
-			{
-				return this._Description;
-			}
-			set
-			{
-				if ((this._Description != value))
-				{
-					this.OnDescriptionChanging(value);
-					this.SendPropertyChanging();
-					this._Description = value;
-					this.SendPropertyChanged("Description");
-					this.OnDescriptionChanged();
 				}
 			}
 		}

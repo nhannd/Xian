@@ -15,10 +15,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
@@ -56,10 +55,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		private void UpdateEnabled()
 		{
+		    //TODO (Marmot): Perfect candidate for service node changes.
 			if (base.Context.SelectedServerGroup == null)
 				base.Enabled = false;
 			else if (base.Context.SelectedServerGroup.IsLocalDatastore)
-				base.Enabled = CanUseLocal() && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
+				base.Enabled = LocalStudyRootQuery.IsSupported && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
 			else
 				base.Enabled = base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1 &&
 					GetServerForStudy(base.Context.SelectedStudy) != null;
@@ -91,26 +91,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 						return false;
 					});
 			}
-		}
-
-		private static bool? _canUseLocal;
-
-		public static bool CanUseLocal()
-		{
-			if (_canUseLocal.HasValue)
-				return _canUseLocal.Value;
-
-			try
-			{
-				IStudyRootQuery query = (IStudyRootQuery)new LocalStudyRootQueryExtensionPoint().CreateExtension();
-				_canUseLocal = true;
-			}
-			catch(NotSupportedException)
-			{
-				_canUseLocal = false;
-			}
-
-			return _canUseLocal.Value;
 		}
 
 		public void Show()
