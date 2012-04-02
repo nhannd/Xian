@@ -30,28 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         [TestFixtureSetUp]
         public void Setup()
         {
-            string filePath = DataAccessContext.GetDatabaseFilePath(_testDatabaseFilename);
-            
-            var resourceResolver = new ResourceResolver(typeof(StudyRootQueryTests).Assembly);
-            using (Stream sourceStream = resourceResolver.OpenResource(Path.GetFileName(filePath)))
-            {
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    var buffer = new byte[1024];
-                    while (true)
-                    {
-                        int read = sourceStream.Read(buffer, 0, buffer.Length);
-                        if (read <= 0)
-                            break;
-
-                        fileStream.Write(buffer, 0, read);
-                        if (read < buffer.Length)
-                            break;
-                    }
-
-                    fileStream.Close();
-                }
-            }
+            DatabaseHelper.CreateDatabase(_testDatabaseFilename, DatabaseHelper.GetDatabaseFilePath(_testDatabaseFilename));
         }
 
         private static DataAccessContext CreateContext()
@@ -85,6 +64,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
                 
                 var results = query.StudyQuery(criteria);
                 Assert.AreEqual(1, results.Count);
+                Assert.AreEqual(criteria.PatientId, results[0].PatientId);
+            }
+        }
+
+        [Test]
+        public void SelectPatientIdEmpty_NoCriteria()
+        {
+            using (var context = CreateContext())
+            {
+                var query = context.GetStudyRootQuery();
+                var criteria = new StudyRootStudyIdentifier
+                {
+                    PatientId = ""
+                };
+
+                var results = query.StudyQuery(criteria);
+                Assert.AreEqual(3, results.Count);
                 Assert.AreEqual(criteria.PatientId, results[0].PatientId);
             }
         }

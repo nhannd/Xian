@@ -12,8 +12,6 @@
 using System;
 using System.Data;
 using System.Data.SqlServerCe;
-using System.IO;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -52,16 +50,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             _connection = CreateConnection();
             _transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
             _context = new DicomStoreDataContext(_connection);
-        }
-
-        internal static string DatabaseDirectory
-        {
-            get { return Platform.ApplicationDataDirectory; }
-        }
-
-        private string DatabaseFilePath
-        {
-            get { return GetDatabaseFilePath(_databaseFilename); }
         }
 
 	    #region Implementation of IDisposable
@@ -135,14 +123,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			_transactionCommitted = true;
 		}
 
-        internal static string GetDatabaseFilePath(string fileName)
-        {
-            return Path.Combine(DatabaseDirectory, fileName);
-        }
-
 	    private IDbConnection CreateConnection()
 		{
-			return CreateConnection(DatabaseFilePath);
+			return CreateConnection(_databaseFilename);
 		}
 
 	    /// <summary>
@@ -151,20 +134,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		/// </summary>
 		/// <param name="databaseFile"></param>
 		/// <returns></returns>
-		private static IDbConnection CreateConnection(string databaseFile)
-		{
-			var connectString = string.Format("Data Source = {0}", databaseFile);
+		private IDbConnection CreateConnection(string databaseFile)
+	    {
+	        string filePath = DatabaseHelper.GetDatabaseFilePath(databaseFile);
+			var connectString = string.Format("Data Source = {0}", filePath);
 
 			// create the database if it does not exist
 			using (var context = new DicomStoreDataContext(connectString))
 			{
 				if (!context.DatabaseExists())
-				{
-					// ensure the parent directory exists before trying to create database
-					Directory.CreateDirectory(Path.GetDirectoryName(databaseFile));
-
-					context.CreateDatabase();
-				}
+                    DatabaseHelper.CreateDatabase(databaseFile, filePath);
 			}
 
 			// now we can create a long-lived connection

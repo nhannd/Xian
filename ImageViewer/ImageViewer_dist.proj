@@ -103,8 +103,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\sqlce*.dll" />
-    <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
+    <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\v4.0\$(PlatformSubFolder)\sqlce*.dll" />
+    <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\v4.0\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
   </ItemGroup>
 
   <ItemGroup>
