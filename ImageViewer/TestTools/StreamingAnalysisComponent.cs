@@ -12,6 +12,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyLoaders.Streaming;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -173,10 +174,10 @@ namespace ClearCanvas.ImageViewer.TestTools
 				{
 					if (study.Server == null)
 						return false;
-					else if (study.Server is ApplicationEntity)
+					else if (study.Server is IApplicationEntity)
 					{
-						ApplicationEntity ae = (ApplicationEntity)study.Server;
-						if (!ae.IsStreaming)
+                        var ae = (IApplicationEntity)study.Server;
+						if (ae.StreamingParameters == null)
 							return false;
 					}
 				}
