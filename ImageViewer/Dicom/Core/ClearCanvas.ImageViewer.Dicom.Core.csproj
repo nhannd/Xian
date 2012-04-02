@@ -74,6 +74,7 @@
     <Compile Include="Command\InsertOrUpdateStudyCommand.cs" />
     <Compile Include="Command\InsertStudyXmlCommand.cs" />
     <Compile Include="Command\InsertWorkItemCommand.cs" />
+    <Compile Include="Command\SaveStudyXmlCommand.cs" />
     <Compile Include="Command\ViewerCommandProcessor.cs" />
     <Compile Include="Command\ViewerCommandProcessorContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,7 +83,6 @@
     <Compile Include="Rules\ViewerRulesEngine.cs" />
     <Compile Include="SopInstanceImporter.cs" />
     <Compile Include="SopInstanceProcessor.cs" />
-    <Compile Include="StudyLocation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

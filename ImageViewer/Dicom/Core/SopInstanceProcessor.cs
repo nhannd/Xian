@@ -63,22 +63,22 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         {
             Platform.CheckForNullReference(file, "file");
             var processFile = new ProcessorFile(file, uid);
-            InsertInstance(new List<ProcessorFile> {processFile}, stream);
+            InsertBatch(new List<ProcessorFile> {processFile}, stream);
         }
 
         public void ProcessBatch(IList<ProcessorFile> list, StudyXml stream )
         {
             Platform.CheckTrue(list.Count > 0,"list");
-            InsertInstance(list, stream);
+            InsertBatch(list, stream);
         }
 
         #endregion
 
         #region Private Methods
 
-        private void InsertInstance(IList<ProcessorFile> list, StudyXml studyXml)
+        private void InsertBatch(IList<ProcessorFile> list, StudyXml studyXml)
         {
-            using (var processor = new ViewerCommandProcessor("Processing WorkItem DICOM file"))
+            using (var processor = new ViewerCommandProcessor("Processing WorkItem DICOM file(s)"))
             {
                 try
                 {
@@ -111,6 +111,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                         if (file.ItemUid != null)
                             processor.AddCommand(new CompleteWorkItemUidCommand(file.ItemUid));
                     }
+
+                    // Now save the batched updates to the StudyXml file.
+                    processor.AddCommand(new SaveStudyXmlCommand(studyXml, StudyLocation));
 
                     // Do the actual processing
                     if (!processor.Execute())

@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             }
 
             Study.Initialize(_messageBase);
-
+            
             Study.NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
             Study.NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
 

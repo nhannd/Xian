@@ -129,6 +129,7 @@
     <Compile Include="ServiceProviders\ServerDirectory.cs" />
     <Compile Include="ServiceProviders\Tests\ServerDirectoryTests.cs" />
     <Compile Include="StudyBroker.cs" />
+    <Compile Include="StudyLocation.cs" />
     <Compile Include="WorkItemBroker.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
     <Compile Include="WorkItem.cs" />

@@ -6,6 +6,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
@@ -38,35 +39,28 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                             };
         }
 
-        private void WriteStudyStream(string streamFile, string gzStreamFile, StudyXml theStream)
+        private void WriteStudyStream(string streamFile, StudyXml theStream)
         {
             var doc = theStream.GetMemento(_settings);
 
             // allocate the random number generator here, in case we need it below
             var rand = new Random();
             string tmpStreamFile = streamFile + "_tmp";
-            string tmpGzStreamFile = gzStreamFile + "_tmp";
             for (int i = 0; ; i++)
                 try
                 {
                     if (File.Exists(tmpStreamFile))
                         FileUtils.Delete(tmpStreamFile);
-                    if (File.Exists(tmpGzStreamFile))
-                        FileUtils.Delete(tmpGzStreamFile);
 
-                    using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew),
-                                      gzipStream = FileStreamOpener.OpenForSoleUpdate(tmpGzStreamFile, FileMode.CreateNew))
+                    using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew))
                     {
-                        StudyXmlIo.WriteXmlAndGzip(doc, xmlStream, gzipStream);
+                        StudyXmlIo.Write(doc, xmlStream);
                         xmlStream.Close();
-                        gzipStream.Close();
                     }
 
                     File.Copy(tmpStreamFile, streamFile, true);
                     FileUtils.Delete(tmpStreamFile);
            
-                    FileUtils.Copy(tmpGzStreamFile, gzStreamFile, true);
-                    FileUtils.Delete(tmpGzStreamFile);
                     return;
                 }
                 catch (IOException)
@@ -103,11 +97,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             {
                 // Write it back out.  We flush it out with every added image so that if a failure happens,
                 // we can recover properly.
-                string streamFile =
-                    Path.Combine(_studyStorageLocation.StudyFolder, _studyStorageLocation.Study.StudyInstanceUid + ".xml");
-                string gzStreamFile = streamFile + ".gz";
 
-                WriteStudyStream(streamFile, gzStreamFile, _studyXml);
+                WriteStudyStream(_studyStorageLocation.GetStudyXmlPath(), _studyXml);
             }
         }
 
@@ -118,11 +109,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             
             if (_writeFile)
             {
-                string streamFile =
-                Path.Combine(_studyStorageLocation.StudyFolder, _studyStorageLocation.Study.StudyInstanceUid + ".xml");
-                string gzStreamFile = streamFile + ".gz";
-
-                WriteStudyStream(streamFile, gzStreamFile, _studyXml);
+                WriteStudyStream(_studyStorageLocation.GetStudyXmlPath(), _studyXml);
             }
         }
     }
