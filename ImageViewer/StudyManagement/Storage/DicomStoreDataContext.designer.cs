@@ -489,7 +489,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="StudyTime", Storage="_StudyTime", DbType="BIGINT")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyTime", DbType="BIGINT")]
 		public System.Nullable<long> StudyTimeTicks
 		{
 			get

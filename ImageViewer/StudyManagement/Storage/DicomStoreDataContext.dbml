@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="dicom_store" EntityNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" ContextNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" Class="DicomStoreDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="dicom_store" EntityNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" ContextNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" Class="DicomStoreDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="Rule" Member="Rules">
     <Type Name="Rule">
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -13,7 +12,7 @@
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="SpecificCharacterSet" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="StudyId" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
-      <Column Name="StudyTime" Member="StudyTimeTicks" Storage="_StudyTime" Type="System.Int64" DbType="BIGINT" CanBeNull="true" />
+      <Column Name="StudyTimeTicks" Storage="_StudyTime" Type="System.Int64" DbType="BIGINT" CanBeNull="true" />
       <Column Name="StudyTimeRaw" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
       <Column Name="StudyDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="StudyDateRaw" Type="System.String" DbType="NVarChar(26)" CanBeNull="true" />

@@ -18,6 +18,8 @@ using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 {
+    //TODO (CR Marmot): case insensitivity.
+
     [TestFixture]
     public class StudyRootQueryTests : ClearCanvas.Dicom.Tests.AbstractTest
     {

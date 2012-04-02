@@ -94,8 +94,13 @@
     <Compile Include="DicomQuery\PropertyFilters\PatientBreed.cs" />
     <Compile Include="DicomQuery\DatePropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Responsibility.cs" />
+    <Compile Include="DicomQuery\PropertyFilters\Series.cs" />
+    <Compile Include="DicomQuery\PropertyFilters\SopInstance.cs" />
     <Compile Include="DicomQuery\StringPropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Study.cs" />
+    <Compile Include="DicomQuery\Tests\InstanceQueryTests.cs" />
+    <Compile Include="DicomQuery\Tests\SeriesQueryTests.cs" />
+    <Compile Include="DicomQuery\Tests\TestBase.cs" />
     <Compile Include="DicomQuery\TimePropertyFilter.cs" />
     <Compile Include="DicomQuery\UidPropertyFilter.cs" />
     <Compile Include="DicomQuery\StudyRootQuery.cs" />
