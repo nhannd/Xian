@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Utilities.Command;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
     public class SaveDicomFileCommand : CommandBase, IAggregateCommand
     {

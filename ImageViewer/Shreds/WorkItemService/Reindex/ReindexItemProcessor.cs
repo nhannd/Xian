@@ -9,13 +9,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 
@@ -23,15 +17,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 {
     public class ReindexItemProcessor : BaseItemProcessor<ReindexRequest, ReindexProgress>
     {
-        public List<string> FilesToImport { get; set; }
-
-
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
             bool initResult = base.Initialize(proxy);
-            
-            FilesToImport = new List<string>();
-            
+                       
             return initResult;
         }
 
@@ -51,25 +40,44 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Progress.IsCancelable = false;
             Proxy.UpdateProgress();
 
-            var processor = new ClearCanvas.ImageViewer.Dicom.Core.ReindexProcessor();
+            var processor = new ReindexProcessor();
 
             processor.Initialize();
 
+            // Reset progress, in case of retry
             Progress.NumberOfStudiesToProcess = processor.DatabaseStudiesToScan + processor.StudyFoldersToScan;
+            Progress.NumberOfStudiesDeleted = 0;
+            Progress.NumberOfStudiesImported = 0;
+            Progress.StudiesProcessed = 0;
+
             Proxy.UpdateProgress();
 
+            processor.StudyAddedEvent += delegate
+                                             {
+                                                 Progress.NumberOfStudiesImported++;
+                                                 Proxy.UpdateProgress();
+                                             };
+
+            processor.StudyDeletedEvent += delegate
+                                               {
+                                                   Progress.NumberOfStudiesDeleted++;
+                                                   Proxy.UpdateProgress();
+                                               };
+
+            processor.StudyProcessedEvent += delegate
+                                                 {
+                                                     Progress.StudiesProcessed++;
+                                                     Proxy.UpdateProgress();
+                                                 };
             processor.Process();
             
             Proxy.Complete();
         }
 
-       
-
         public override bool CanStart(out string reason)
-        {
+        {            
             reason = string.Empty;
-            // TODO: Check for ReIndex pending job?
-            return true;
+            return !InProgressWorkItems();
         }
     }
 }

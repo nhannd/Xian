@@ -163,7 +163,6 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                         var insertStudyXmlCommand = new InsertStudyXmlCommand(file.File, studyXml, StudyLocation, false);
                         processor.AddCommand(insertStudyXmlCommand);
 
-                        // Insert into the database, but only if its not a duplicate so the counts don't get off
                         var insertStudyCommand = new InsertOrUpdateStudyCommand(file.File, studyXml);
                         processor.AddCommand(insertStudyCommand);
 

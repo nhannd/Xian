@@ -323,6 +323,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequestDataContract("875D13F2-621D-4277-8A32-34D9BF5AE40B")]
     public class ReindexRequest : WorkItemRequest
     {
+        public ReindexRequest()
+        {
+            Type = WorkItemTypeEnum.ReIndex;
+            Priority = WorkItemPriorityEnum.Stat;
+        }
+
         public override string ActivityType
         {
             get { return SR.ReindexRequest_ActivityType; }

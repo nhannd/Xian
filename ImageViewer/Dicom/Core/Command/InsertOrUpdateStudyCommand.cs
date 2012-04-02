@@ -26,6 +26,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         private readonly string _studyInstanceUid;
         private readonly StudyXml _studyXml;
 
+        public bool Created { get; private set; }
         public Study Study { get; private set; }        
 
         public InsertOrUpdateStudyCommand(DicomMessageBase message, StudyXml xml) : base("Insert or Update Study Command")
@@ -39,12 +40,12 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         {
             var broker = DataAccessContext.GetStudyBroker();
             Study = broker.GetStudy(_studyInstanceUid);
-            bool created = false;
+            Created = false;
 
             if (Study == null)
             {
                 Study = new Study();
-                created = true;
+                Created = true;
                 Study.DeleteTime = DateTime.Now.AddDays(1);
                 Study.Deleted = false;
             }
@@ -54,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             Study.NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
             Study.NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
 
-            if (created)
+            if (Created)
                 broker.AddStudy(Study);
         }
     }

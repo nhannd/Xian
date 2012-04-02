@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
     /// <summary>
     /// <see cref="Command"/> for saving a <see cref="StudyXml"/> file for a Study.
     /// </summary>
-    public class SaveStudyXmlCommand : CommandBase
+    public class SaveStudyXmlCommand : CommandBase, IDisposable
     {
         #region Private Members
 
@@ -75,5 +75,18 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             else if (File.Exists(_studyStorageLocation.GetStudyXmlPath()) && _fileCreated)
                 File.Delete(_studyStorageLocation.GetStudyXmlPath());
         }
+
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (false == String.IsNullOrEmpty(_backupPath) && File.Exists(_backupPath))
+            {
+                File.Delete(_backupPath);
+            }
+        }
+
+        #endregion
     }
 }

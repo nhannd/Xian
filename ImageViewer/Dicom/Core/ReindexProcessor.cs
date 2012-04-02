@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
@@ -25,6 +24,71 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     /// </summary>
     public class ReindexProcessor
     {
+        #region Private members
+        private event EventHandler _studyDeletedEvent;
+        private event EventHandler _studyAddedEvent;
+        private event EventHandler _studyProcessedEvent;
+        private readonly object _syncLock = new object();
+        #endregion
+
+        #region Public Events
+
+        public event EventHandler StudyDeletedEvent
+        {
+            add
+            {
+                lock (_syncLock)
+                {
+                    _studyDeletedEvent += value;
+                }
+            }
+            remove
+            {
+                lock (_syncLock)
+                {
+                    _studyDeletedEvent -= value;
+                }
+            }
+        }
+
+        public event EventHandler StudyAddedEvent
+        {
+            add
+            {
+                lock (_syncLock)
+                {
+                    _studyAddedEvent += value;
+                }
+            }
+            remove
+            {
+                lock (_syncLock)
+                {
+                    _studyAddedEvent -= value;
+                }
+            }
+        }
+
+        public event EventHandler StudyProcessedEvent
+        {
+            add
+            {
+                lock (_syncLock)
+                {
+                    _studyProcessedEvent += value;
+                }
+            }
+            remove
+            {
+                lock (_syncLock)
+                {
+                    _studyProcessedEvent -= value;
+                }
+            }
+        }
+
+        #endregion
+
         #region Public Properties
 
         public int StudyFoldersToScan { get; private set; }
@@ -62,14 +126,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
             try
             {
-                FileProcessor.Process(FilestoreDirectory, "*.*", delegate(string file, out bool cancel)
-                                                                     {
-                                                                         if (Directory.Exists(file))
-                                                                             DirectoryList.Add(file);
-
-                                                                         cancel = false;
-
-                                                                     }, false);
+                DirectoryList = new List<string>(Directory.GetDirectories(FilestoreDirectory));
             }
             catch (Exception x)
             {
@@ -115,6 +172,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                              FilestoreDirectory);
             }
         }
+
         private void ProcessStudiesInDatabase()
         {
             foreach (long oid in StudyOidList)
@@ -126,18 +184,18 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                         var broker = context.GetStudyBroker();
                         var study = broker.GetStudy(oid);
 
-                        // TODO (Marmot) structure of how studies are stored is abstracted away in 
-                        // StudyLocation class, should we abstract here, also?
-                        string studyFolder = Path.Combine(FilestoreDirectory, study.StudyInstanceUid);
-                        
-                        if (!Directory.Exists(studyFolder))
+                        var location = new StudyLocation(study.StudyInstanceUid);
+                        if (!Directory.Exists(location.StudyFolder))
                         {
                             broker.Delete(study);
                             context.Commit();
-                        }                        
+                            EventsHelper.Fire(_studyDeletedEvent, this, EventArgs.Empty);
+                        }
                     }
+
+                    EventsHelper.Fire(_studyProcessedEvent, this, EventArgs.Empty);
                 }
-                catch (Exception x)
+                catch (Exception)
                 {
                     Platform.Log(LogLevel.Warn, "Unexpected exception attempting to reindex StudyOid: {0}", oid);
                 }
@@ -156,53 +214,63 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         {
             try
             {
-                string studyInstanceUid = Path.GetDirectoryName(folder);
-                StudyLocation location = new StudyLocation(studyInstanceUid);
+                string studyInstanceUid = Path.GetFileName(folder);
+                var location = new StudyLocation(studyInstanceUid);
+                if (!CheckStudyExists(studyInstanceUid))
+                {
+                    EventsHelper.Fire(_studyAddedEvent, this, EventArgs.Empty);
+                }
 
                 var studyXml = location.LoadStudyXml();
+                var fileList = new List<SopInstanceProcessor.ProcessorFile>();
 
-                FileProcessor.Process(FilestoreDirectory, "*.dcm", delegate(string file, out bool cancel)
-                                                                       {
-                                                                           try
-                                                                           {
-                                                                               var p = new SopInstanceProcessor(location);
+                FileProcessor.Process(folder, "*.dcm", delegate(string file)
+                                                           {
+                                                               try
+                                                               {
+                                                                   fileList.Add(
+                                                                       new SopInstanceProcessor.
+                                                                           ProcessorFile(file, null));
 
-                                                                               var theFile = new DicomFile(file);
-                                                                               theFile.Load(DicomReadOptions.Default |
-                                                                                            DicomReadOptions.StorePixelDataReferences);
+                                                                   if (fileList.Count > 19)
+                                                                   {
+                                                                       var p = new SopInstanceProcessor(location);
 
-                                                                               string sopInstanceUid =
-                                                                                   Path.GetFileNameWithoutExtension(file);
+                                                                       p.ProcessBatch(fileList, studyXml);
 
-                                                                               if (
-                                                                                   !theFile.MediaStorageSopInstanceUid.
-                                                                                        Equals(sopInstanceUid))
-                                                                               {
-                                                                                   File.Delete(file);
-                                                                               }
-                                                                               else
-                                                                               {
-                                                                                   p.ProcessFile(theFile, studyXml, null);
-                                                                               }
-                                                                           }
-                                                                           catch (Exception x)
-                                                                           {
-                                                                               Platform.Log(LogLevel.Error, x);
-                                                                           }
+                                                                       fileList.Clear();
+                                                                   }
+                                                               }
+                                                               catch (Exception x)
+                                                               {
+                                                                   Platform.Log(LogLevel.Error, x);
+                                                               }
 
+                                                           }, false);
+                if (fileList.Count > 0)
+                {
+                    var p = new SopInstanceProcessor(location);
 
-                                                                           cancel = false;
+                    p.ProcessBatch(fileList, studyXml);
+                }
 
-                                                                       }, false);
-                bool fileCreated;
-                location.SaveStudyXml(studyXml, out fileCreated);
-
+                EventsHelper.Fire(_studyProcessedEvent, this, EventArgs.Empty);
             }
             catch (Exception x)
             {
-                Platform.Log(LogLevel.Error, x);
-                throw;
+                Platform.Log(LogLevel.Error, x, "Unexpected exception reindexing folder: {0}", folder);
             }
+        }
+
+        private static bool CheckStudyExists(string studyInstanceUid)
+        {
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetStudyBroker();
+                var study = broker.GetStudy(studyInstanceUid);
+                if (study != null) return true;
+            }
+            return false;
         }
 
         private static string GetFileStoreDirectory()

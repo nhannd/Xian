@@ -12,9 +12,8 @@
 using System;
 using System.IO;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.Utilities.Command;
 
-namespace ClearCanvas.ImageServer.Common.Command
+namespace ClearCanvas.Dicom.Utilities.Command
 {
     /// <summary>C:\Projects\Jin\Xian\ImageServer\Common\Command\DeleteFileCommand.cs
     /// Command to delete a file.
