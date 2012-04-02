@@ -106,7 +106,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
         protected override IEnumerable<SopInstance> FilterResults(IEnumerable<SopInstance> results)
         {
-            //TODO (Marmot): Should we be filtering on this?
             var criterion = DicomStringHelper.GetStringArray(Criterion.ToString());
             return results.Where(s => criterion.Contains(s.SopClassUid));
         }

@@ -98,7 +98,7 @@
     <Compile Include="DicomQuery\PropertyFilters\SopInstance.cs" />
     <Compile Include="DicomQuery\StringPropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Study.cs" />
-    <Compile Include="DicomQuery\Tests\InstanceQueryTests.cs" />
+    <Compile Include="DicomQuery\Tests\SopInstanceQueryTests.cs" />
     <Compile Include="DicomQuery\Tests\SeriesQueryTests.cs" />
     <Compile Include="DicomQuery\Tests\TestBase.cs" />
     <Compile Include="DicomQuery\TimePropertyFilter.cs" />
