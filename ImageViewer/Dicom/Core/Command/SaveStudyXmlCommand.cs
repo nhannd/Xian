@@ -1,4 +1,15 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.IO;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Command;
@@ -7,6 +18,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
+    /// <summary>
+    /// <see cref="Command"/> for saving a <see cref="StudyXml"/> file for a Study.
+    /// </summary>
     public class SaveStudyXmlCommand : CommandBase
     {
         #region Private Members
@@ -45,8 +59,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         {
             Backup();
 
-            // TODO (Marmot) - Probably shoudl move the saving back into this class, there's a small chance of issues with the _fileCreated flag not set right when the file is created
-            _studyStorageLocation.SaveStudyXml(_studyXml);
+            _studyStorageLocation.SaveStudyXml(_studyXml, out _fileCreated);
             _fileCreated = true;
         }
 

@@ -1,4 +1,15 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -15,6 +26,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     public class SopInstanceProcessor
     {           
         #region Subclass
+        /// <summary>
+        /// Represents a file to be processed by <see cref="SopInstanceProcessor"/>
+        /// </summary>
         public class ProcessorFile
         {
             public ProcessorFile(DicomFile file, WorkItemUid uid)
@@ -23,19 +37,49 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 ItemUid = uid;
             }
 
+            public ProcessorFile(string path, WorkItemUid uid)
+            {
+                FilePath = path;
+                ItemUid = uid;
+            }
+
+            /// <summary>
+            /// Path to the <see cref="DicomFile"/> to process.  Can be used instead of <see cref="File"/>.
+            /// </summary>
+            public string FilePath { get; set; }
+
+            /// <summary>
+            /// The DICOM File to process.  Can be used instead of <see cref="FilePath"/>.
+            /// </summary>
             public DicomFile File { get; set; }
+
+            /// <summary>
+            /// An optional <see cref="WorkItemUid"/> associated with the file to be processed.  Will be updated appropriately.
+            /// </summary>
             public WorkItemUid ItemUid { get; set; }
         }
         #endregion
 
         #region Public Properties
         
+        /// <summary>
+        /// The <see cref="StudyLocation"/> for the study being processed.
+        /// </summary>
         public StudyLocation StudyLocation { get; private set; }
 
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Note that all SOP Instances processed must be from the same study.
+        /// </para>
+        /// </remarks>
+        /// <param name="location">The StudyLocation for the study being processed</param>
         public SopInstanceProcessor(StudyLocation location)
         {
             Platform.CheckForNullReference(location, "location");
@@ -51,25 +95,33 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// </summary>
         /// <remarks>
         /// <para>
-        /// On success and if <see cref="uid"/> is set, the <see cref="WorkItemUid"/> field is marked as complete.
+        /// On success and if <see cref="uid"/> is set, the <see cref="WorkItemUid"/> field is marked as complete.  If processing fails, 
+        /// the FailureCount field is incremented.
         /// </para>
         /// </remarks>
-        /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
+        /// <param name="studyXml">The <see cref="StudyXml"/> file to update with information from the file.</param>
         /// <param name="file">The file to process.</param>
         /// <param name="uid">An optional WorkQueueUid associated with the entry, that will be deleted upon success or failed on failure.</param>
         /// <exception cref="ApplicationException"/>
         /// <exception cref="DicomDataException"/>
-        public void ProcessFile(DicomFile file, StudyXml stream, WorkItemUid uid)
+        public void ProcessFile(DicomFile file, StudyXml studyXml, WorkItemUid uid)
         {
             Platform.CheckForNullReference(file, "file");
+            Platform.CheckForNullReference(studyXml, "studyXml");
             var processFile = new ProcessorFile(file, uid);
-            InsertBatch(new List<ProcessorFile> {processFile}, stream);
+            InsertBatch(new List<ProcessorFile> {processFile}, studyXml);
         }
 
-        public void ProcessBatch(IList<ProcessorFile> list, StudyXml stream )
+        /// <summary>
+        /// Process a batch of DICOM Files related to a specific Study.  Updates for all the files will be processed together.
+        /// </summary>
+        /// <param name="list">The list of files to batch together.</param>
+        /// <param name="studyXml">The <see cref="StudyXml"/> file to update with information from the file.</param>
+        public void ProcessBatch(IList<ProcessorFile> list, StudyXml studyXml)
         {
             Platform.CheckTrue(list.Count > 0,"list");
-            InsertBatch(list, stream);
+            Platform.CheckForNullReference(studyXml, "studyXml");
+            InsertBatch(list, studyXml);
         }
 
         #endregion
@@ -84,20 +136,27 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 {
                     foreach (var file in list)
                     {
+                        if(!string.IsNullOrEmpty(file.FilePath) && file.File == null)
+                        {
+                            file.File = new DicomFile(file.FilePath);
+
+                            // WARNING:  If we ever do anything where we update files and save them,
+                            // we may have to change this.
+                            file.File.Load(DicomReadOptions.StorePixelDataReferences|DicomReadOptions.Default);
+                        }
+                        else
+                        {
+                            file.FilePath = file.File.Filename;
+                        }
+                        
                         String seriesUid = file.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
                         String sopUid = file.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+
                         String finalDest = StudyLocation.GetSopInstancePath(seriesUid, sopUid);
 
-                        if (file.File.Filename != finalDest)
+                        if (file.FilePath != finalDest)
                         {
-                            // Duplicate handler here
-
-                            // Have to be careful here about failure on exists vs. not failing on exists
-                            // because of the different use cases of the importer.
-                            // save the file in the study folder and remove the source filename
-                            processor.AddCommand(new SaveDicomFileCommand(finalDest, file.File, false));
-
-                            processor.AddCommand(new FileDeleteCommand(file.File.Filename, true));
+                            processor.AddCommand(new RenameFileCommand(file.FilePath, finalDest, false));
                         }
 
                         // Update the StudyStream object

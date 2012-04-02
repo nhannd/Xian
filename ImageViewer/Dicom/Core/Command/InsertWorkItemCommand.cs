@@ -17,6 +17,15 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
+    /// <summary>
+    /// Insert a <see cref="WorkItem"/> and <see cref="WorkItemUid"/> entry for a specific SOP Instance UID.  
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A <see cref="WorkItem"/> is inserted if it doesn't exist already for the Study.  Otherwise, the <see cref="WorkItemUid"/>
+    /// is only inserted.
+    /// </para>
+    /// </remarks>
     public class InsertWorkItemCommand : DataAccessCommand
     {
         private readonly WorkItemRequest _request;

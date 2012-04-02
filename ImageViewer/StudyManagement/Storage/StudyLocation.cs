@@ -29,6 +29,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     {
         #region Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="studyInstanceUid">The Study Instance UID for the study location.</param>
         public StudyLocation(string studyInstanceUid)
         {
             Study = new StudyIdentifier
@@ -39,6 +43,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             StudyFolder = Path.Combine(GetFileStoreDirectory(), studyInstanceUid);
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="message">A message to find the Study location for.</param>
         public StudyLocation(DicomMessageBase message)
         {
             Study = new StudyIdentifier(message.DataSet);
@@ -50,20 +58,36 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         #region Public Properties
 
+        /// <summary>
+        /// The folder where the study is stored.
+        /// </summary>
         public string StudyFolder { get; private set; }
 
+        /// <summary>
+        /// A Study Identifier for the study.  Note that only the <see cref="StudyIdentifier.StudyInstanceUid"/> field is guarenteed to be filled in.
+        /// </summary>
         public StudyIdentifier Study { get; set; }
 
         #endregion
 
         #region Public Methods
 
+        /// <summary>
+        /// Get the path for a specific SOP Instance UID.
+        /// </summary>
+        /// <param name="seriesInstanceUid">The Series Instance UID of the SOP.</param>
+        /// <param name="sopInstanceUid">The SOP Instance UID.</param>
+        /// <returns></returns>
         public string GetSopInstancePath(string seriesInstanceUid, string sopInstanceUid)
         {
             return Path.Combine(StudyFolder,
                 string.Format("{0}.{1}", sopInstanceUid, "dcm"));
         }
 
+        /// <summary>
+        /// Get the path where the <see cref="StudyXml"/> file is saved for the study.
+        /// </summary>
+        /// <returns></returns>
         public string GetStudyXmlPath()
         {
             return Path.Combine(StudyFolder, string.Format("{0}.xml", Study.StudyInstanceUid));
@@ -94,7 +118,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             return theXml;
         }
 
-        public void SaveStudyXml(StudyXml theStream)
+        /// <summary>
+        /// Save the <see cref="StudyXml"/> file for a study.
+        /// </summary>
+        /// <param name="studyXml">The <see cref="StudyXml"/> file to save.</param>
+        /// <param name="fileCreated">flag set to true if the file was created</param>
+        public void SaveStudyXml(StudyXml studyXml, out bool fileCreated)
         {
             var settings = new StudyXmlOutputSettings
             {
@@ -104,7 +133,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 MaxTagLength = 2048,
                 IncludeSourceFileName = true
             };
-            var doc = theStream.GetMemento(settings);
+
+            var doc = studyXml.GetMemento(settings);
             string streamFile = GetStudyXmlPath();
 
             // allocate the random number generator here, in case we need it below
@@ -123,6 +153,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                     }
 
                     File.Copy(tmpStreamFile, streamFile, true);
+                    fileCreated = true;
                     FileUtils.Delete(tmpStreamFile);
                     return;
                 }
@@ -137,7 +168,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                     throw;
                 }
         }
+
         #endregion
+
+        #region Private Methods
 
         private static string GetFileStoreDirectory()
         {
@@ -150,5 +184,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
             return directory;
         }
+
+        #endregion
     }
 }

@@ -17,6 +17,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
+    /// <summary>
+    /// Insert a new <see cref="Study"/> object or update an already existing <see cref="Study"/> object.
+    /// </summary>
     public class InsertOrUpdateStudyCommand : DataAccessCommand
     {
         private readonly DicomMessageBase _messageBase;

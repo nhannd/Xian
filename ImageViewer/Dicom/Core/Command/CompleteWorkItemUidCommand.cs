@@ -14,6 +14,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
+    /// <summary>
+    /// Complete a specific <see cref="WorkItemUid"/> record in the database.
+    /// </summary>
     public class CompleteWorkItemUidCommand : DataAccessCommand
     {
         private WorkItemUid _uid;

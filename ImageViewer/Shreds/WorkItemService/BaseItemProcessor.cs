@@ -326,6 +326,31 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             return list;
         }
 
+        /// <summary>
+        /// Returns a list of related <see cref="StudyManagement.Storage.WorkItem"/> with specified types and status (both are optional).
+        /// and related to the given <see cref="StudyManagement.Storage.WorkItem"/> 
+        /// </summary>
+        /// <returns></returns>
+        protected bool ReindexScheduled()
+        {
+            IList<WorkItem> list;
+
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetWorkItemBroker();
+
+                list = broker.GetWorkItems(WorkItemTypeEnum.ReIndex, null, null);
+            }
+
+            if (list == null || list.Count == 0)
+                return false;
+
+            list = CollectionUtils.Select(list,
+                                          item => item.Status != WorkItemStatusEnum.Complete);
+
+            return list.Count > 0;
+        }
+
         protected static DicomServerConfiguration GetServerConfiguration()
         {
             DicomServerConfiguration configuration = null;

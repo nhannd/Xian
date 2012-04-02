@@ -18,10 +18,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 	{
 		public const int DefaultNormalThreadCount = 4;
 		public const int DefaultStatThreadCount = 4;
-        public const uint DefaultPostponeSeconds = 30;
+        public const uint DefaultPostponeSeconds = 15;
         public const uint DefaultExpireDelaySeconds = 90;
         public const int DefaultRetryCount = 3;
-
+        public const int DefaultStudyProcessBatchSize = 10;
 		private static WorkItemServiceSettings _instance;
 
         private WorkItemServiceSettings()
@@ -93,6 +93,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             set { this["RetryCount"] = value; }
         }
 
+        [ConfigurationProperty("StudyProcessBatchSize", DefaultValue = DefaultStudyProcessBatchSize)]
+        public int StudyProcessBatchSize
+        {
+            get { return (int)this["StudyProcessBatchSize"]; }
+            set { this["StudyProcessBatchSize"] = value; }
+        }
         
 		#endregion
 
@@ -104,6 +110,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                 NormalThreadCount = _instance.NormalThreadCount,
 		                        PostponeSeconds = _instance.PostponeSeconds,
                                 ExpireDelaySeconds = _instance.ExpireDelaySeconds,
+                                StudyProcessBatchSize = _instance.StudyProcessBatchSize,
+                                RetryCount =  _instance.RetryCount
 		                    };
 
 		    return clone;

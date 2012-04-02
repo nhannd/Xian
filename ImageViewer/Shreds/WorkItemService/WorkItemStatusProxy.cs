@@ -37,14 +37,28 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         CompleteDelayDelete
     }
 
+    /// <summary>
+    /// Proxy class for updating the status and progress of a <see cref="WorkItem"/>.
+    /// </summary>
     public class WorkItemStatusProxy
     {
+        #region Public Properties
+
         // Hard-coded log level for proxy
         public LogLevel LogLevel = LogLevel.Info;
 
         public WorkItem Item { get; private set; }
         public WorkItemProgress Progress { get; set; }
         public WorkItemRequest Request { get; set; }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="item">The WorkItem to create a proxy for.</param>
         public WorkItemStatusProxy(WorkItem item)
         {
             Item = item;
@@ -52,12 +66,26 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             Request = item.Request;
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// <summary>
-        /// Simple routine for failing a work queue item.
+        /// Simple routine for failing a <see cref="WorkItem"/> and save a reason.
         /// </summary>
-        /// <param name="failureDescription">The reason for the failure.</param>
+        /// <param name="reason">A non-localized reason for the failure.</param>
+        /// <param name="failureType">The type of failure.</param>
+        public void Fail(string reason, WorkItemFailureType failureType)
+        {
+            Progress.StatusDetails = reason;
+            Fail(failureType);
+        }
+
+        /// <summary>
+        /// Simple routine for failing a <see cref="WorkItem"/>.
+        /// </summary>
         /// <param name="failureType"></param>
-        public void Fail(string failureDescription, WorkItemFailureType failureType)
+        public void Fail(WorkItemFailureType failureType)
         {
             using (var context = new DataAccessContext())
             {
@@ -89,6 +117,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             Platform.Log(LogLevel, "Failing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
+        /// <summary>
+        /// Postpone a <see cref="WorkItem"/>
+        /// </summary>
         public void Postpone()
         {
             DateTime newScheduledTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
@@ -109,6 +140,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
+        /// <summary>
+        /// Complete a <see cref="WorkItem"/>.
+        /// </summary>
         public void Complete()
         {
             using (var context = new DataAccessContext())
@@ -137,6 +171,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             Platform.Log(LogLevel, "Completing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
+        /// <summary>
+        /// Make a <see cref="WorkItem"/> Idle.
+        /// </summary>
         public void Idle()
         {
             using (var context = new DataAccessContext())
@@ -158,6 +195,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             Platform.Log(LogLevel, "Idling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
+        /// <summary>
+        /// Cancel a <see cref="WorkItem"/>
+        /// </summary>
         public void Cancel()
         {
             using (var context = new DataAccessContext())
@@ -180,6 +220,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
+        /// <summary>
+        /// Delete a <see cref="WorkItem"/>.
+        /// </summary>
         public void Delete()
         {
             using (var context = new DataAccessContext())
@@ -196,6 +239,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             Platform.Log(LogLevel, "Deleting {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
+        /// <summary>
+        /// Update the progress for a <see cref="WorkItem"/>.  Progress will be published.
+        /// </summary>
         public void UpdateProgress()
         {
             try
@@ -217,6 +263,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {}
         }
 
+        #endregion
+
+        #region Private Methods
+
         private void Publish()
         {
             try
@@ -226,7 +276,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
-            }            
+            }
         }
+
+        #endregion
     }
 }

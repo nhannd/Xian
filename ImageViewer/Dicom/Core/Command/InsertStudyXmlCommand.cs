@@ -1,8 +1,17 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.IO;
-using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -39,42 +48,6 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                             };
         }
 
-        private void WriteStudyStream(string streamFile, StudyXml theStream)
-        {
-            var doc = theStream.GetMemento(_settings);
-
-            // allocate the random number generator here, in case we need it below
-            var rand = new Random();
-            string tmpStreamFile = streamFile + "_tmp";
-            for (int i = 0; ; i++)
-                try
-                {
-                    if (File.Exists(tmpStreamFile))
-                        FileUtils.Delete(tmpStreamFile);
-
-                    using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew))
-                    {
-                        StudyXmlIo.Write(doc, xmlStream);
-                        xmlStream.Close();
-                    }
-
-                    File.Copy(tmpStreamFile, streamFile, true);
-                    FileUtils.Delete(tmpStreamFile);
-           
-                    return;
-                }
-                catch (IOException)
-                {
-                    if (i < 5)
-                    {
-                        Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
-                        continue;
-                    }
-
-                    throw;
-                }
-        }
-
         protected override void OnExecute(CommandProcessor theProcessor)
         {
             long fileSize = 0;
@@ -97,8 +70,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             {
                 // Write it back out.  We flush it out with every added image so that if a failure happens,
                 // we can recover properly.
-
-                WriteStudyStream(_studyStorageLocation.GetStudyXmlPath(), _studyXml);
+                bool fileCreated;
+                _studyStorageLocation.SaveStudyXml(_studyXml, out fileCreated);
             }
         }
 
@@ -109,7 +82,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             
             if (_writeFile)
             {
-                WriteStudyStream(_studyStorageLocation.GetStudyXmlPath(), _studyXml);
+                bool fileCreated;
+                _studyStorageLocation.SaveStudyXml(_studyXml, out fileCreated);
             }
         }
     }

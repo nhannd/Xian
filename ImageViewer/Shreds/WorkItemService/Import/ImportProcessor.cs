@@ -22,6 +22,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 {
+    /// <summary>
+    /// Processor for <see cref="WorkItemTypeEnum.Import"/> <see cref="WorkItem"/>s.
+    /// </summary>
     public class ImportProcessor : BaseItemProcessor<ImportFilesRequest,ImportFilesProgress>
     {
         public override bool Initialize(WorkItemStatusProxy proxy)
@@ -151,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
             foreach (string path in filePaths)
             {
-                FileProcessor.Process(path, "",
+                FileProcessor.Process(path, string.Empty,
                                       delegate(string file, out bool cancel)
                                       {
                                           cancel = false;
@@ -197,8 +200,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
         public override bool CanStart(out string reason)
         {
             reason = string.Empty;
-            // TODO: Check for ReIndex pending job?
-            return true;
+
+            return !ReindexScheduled();
         }
     }
 }

@@ -22,6 +22,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 {
+    /// <summary>
+    /// Processor for <see cref="WorkItemTypeEnum.StudyProcess"/> entries.
+    /// </summary>
     public class StudyProcessProcessor : BaseItemProcessor<StudyProcessRequest,StudyProcessProgress>
     {
         /// <summary>
@@ -85,12 +88,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                 DateTime now = Platform.Time;
 
                 if (failed)
-                    Proxy.Fail("",WorkItemFailureType.NonFatal);
+                    Proxy.Fail(WorkItemFailureType.NonFatal);
                 else if (!complete)
                     Proxy.Postpone();
                 else if (now > Proxy.Item.ExpirationTime)
                 {
-                    // Need to apply Study Level Rules here!
+                    // TODO (Marmot) Need to apply Study Level Rules here!
 
                     Proxy.Complete();
                 }
@@ -139,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                 Progress.TotalFilesToProcess = WorkQueueUidList.Count;
                 Proxy.UpdateProgress();
 
-                const int maxBatch = 10;
+                int maxBatch = WorkItemServiceSettings.Instance.StudyProcessBatchSize;
                 var fileList = new List<WorkItemUid>(maxBatch);
                 
                 foreach (WorkItemUid sop in WorkQueueUidList)
@@ -224,26 +227,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 
                 foreach (var uid in sops)
                 {
-                    DicomFile file;
+                    path = !string.IsNullOrEmpty(uid.File) 
+                        ? Path.Combine(Location.StudyFolder, uid.File) 
+                        : Location.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
 
-                    if (!string.IsNullOrEmpty(uid.File))
-                    {
-                        path = Path.Combine(Location.StudyFolder, uid.File);
-                        file = new DicomFile(path);
-
-                        // Load the entire file, since it will be re-written over the top
-                        file.Load();
-                    }
-                    else
-                    {
-                        path = Location.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
-                        file = new DicomFile(path);
-
-                        // WARNING:  If we ever do anything where we update files and save them,
-                        // we may have to change this.
-                        file.Load(DicomReadOptions.StorePixelDataReferences);
-                    }
-                    fileList.Add(new SopInstanceProcessor.ProcessorFile(file,uid));
+                    fileList.Add(new SopInstanceProcessor.ProcessorFile(path,uid));
                 }
 
                 var processor = new SopInstanceProcessor(Location);
