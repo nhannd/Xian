@@ -46,6 +46,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			ToolStripBuilder.BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _workItemToolStrip.Items, _component.WorkItemActions.ChildNodes);
 
+			this.DataBindings.Add("IsConnected", _component, "IsConnected");
+
 			_aeTitle.DataBindings.Add("Text", _component, "AeTitle");
 			_hostName.DataBindings.Add("Text", _component, "HostName");
 			_port.DataBindings.Add("Text", _component, "Port");
@@ -54,7 +56,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_failures.DataBindings.Add("Text", _component, "Failures");
 
 			_diskSpace.DataBindings.Add("Text", _component, "DiskspaceUsed");
-			_diskSpaceBar.DataBindings.Add("Value", _component, "DiskspaceUsedPercent");
+			_diskSpaceMeter.DataBindings.Add("Value", _component, "DiskspaceUsedPercent");
 
 			// need to work with these manually, because data-binding doesn't work well with toolstrip comboboxes
 			_activityFilter.Items.AddRange(_component.ActivityTypeFilterChoices.Cast<object>().Select(i => new FilterItem(i, _component.FormatActivityTypeFilter)).ToArray());
@@ -71,6 +73,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_workItemsTableView.Table = _component.WorkItemTable;
 		}
 
+		public bool IsConnected
+		{
+			get { return _statusLight.Status == IndicatorLightStatus.Green; }
+			set
+			{
+				_statusLight.Status = value ? IndicatorLightStatus.Green : IndicatorLightStatus.Red;
+			}
+		}
+
 		private void _activityFilter_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			_component.ActivityTypeFilter = ((FilterItem)_activityFilter.SelectedItem).Item;
@@ -85,5 +96,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			_component.TextFilter = _textFilter.Text;
 		}
+
 	}
 }

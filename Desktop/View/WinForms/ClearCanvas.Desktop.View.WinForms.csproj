@@ -161,6 +161,12 @@
     <Compile Include="DropListPickerField.designer.cs">
       <DependentUpon>DropListPickerField.cs</DependentUpon>
     </Compile>
+    <Compile Include="IndicatorLight.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="IndicatorLight.designer.cs">
+      <DependentUpon>IndicatorLight.cs</DependentUpon>
+    </Compile>
     <Compile Include="KeyModifiersPicker.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -170,12 +176,16 @@
     <Compile Include="LocalePicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Meter.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="TextBoxToolbarItem.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TitleBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="vsstyle.cs" />
     <Compile Include="WinFormsApplicationComponentView.cs" />
     <Compile Include="LocalizableUserControl.cs">
       <SubType>UserControl</SubType>
@@ -599,6 +609,9 @@
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IndicatorLight.resx">
+      <DependentUpon>IndicatorLight.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkspaceDialogBoxForm.resx">
       <DependentUpon>WorkspaceDialogBoxForm.cs</DependentUpon>

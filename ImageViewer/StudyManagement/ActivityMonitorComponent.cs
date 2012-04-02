@@ -275,12 +275,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			this.ActivityMonitor = WorkItemActivityMonitor.Create(true);
 			_connectionState = _connectionState.Update();
 
-			this.ActivityMonitor.IsConnectedChanged += (sender, e) => _connectionState = _connectionState.Update();
+			this.ActivityMonitor.IsConnectedChanged += ActivityMonitorIsConnectedChanged;
 		}
 
 		public override void Stop()
 		{
 			ActivityMonitor.WorkItemChanged -= WorkItemChanged;
+			ActivityMonitor.IsConnectedChanged -= ActivityMonitorIsConnectedChanged;
 			ActivityMonitor.Dispose();
 			ActivityMonitor = null;
 
@@ -293,6 +294,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#region Presentation Model
+
+		public bool IsConnected
+		{
+			get { return _connectionState is ConnectedState; }
+		}
 
 		public string AeTitle
 		{
@@ -317,13 +323,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public int DiskspaceUsedPercent
 		{
 			//todo: put this on a timer
-			get { return (int)QueryDiskspace().UsedSpacePercent; }
+			get { return QueryDiskspace().UsedSpacePercent; }
 		}
 
 		public string DiskspaceUsed
 		{
 			//todo: put this on a timer
-			get { return Diskspace.FormatBytes(QueryDiskspace().UsedSpace); }
+			get
+			{
+				var ds = QueryDiskspace();
+				return string.Format("{0} of {1} ({2}%)",
+					Diskspace.FormatBytes(ds.UsedSpace, false),
+					Diskspace.FormatBytes(ds.TotalSpace, true),
+					ds.UsedSpacePercent);
+			}
 		}
 
 		public int TotalStudies { get; private set; }
@@ -467,6 +480,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			// if FileStore path changed, diskspace may have changed too
 			NotifyPropertyChanged("DiskspaceUsedPercent");
 			NotifyPropertyChanged("DiskspaceUsed");
+		}
+
+		private void ActivityMonitorIsConnectedChanged(object sender, EventArgs e)
+		{
+			_connectionState = _connectionState.Update();
+			NotifyPropertyChanged("IsConnected");
 		}
 
 		private void WorkItemChanged(object sender, WorkItemChangedEventArgs e)

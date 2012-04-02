@@ -8,13 +8,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	class Diskspace
 	{
-		public static string FormatBytes(double bytes)
+		public static string FormatBytes(double bytes, bool includeUnits)
 		{
 			int i;
 			double dblSByte = 0;
 			for (i = 0; (int)(bytes / 1024) > 0; i++, bytes /= 1024)
 				dblSByte = bytes / 1024.0;
-			return String.Format("{0:0.0} {1}", dblSByte, Suffix[i]);
+			return includeUnits ? String.Format("{0:0.0} {1}", dblSByte, Suffix[i])
+				: String.Format("{0:0.0}", dblSByte);
 		}
 
 		private static readonly string[] Suffix = new[] { "B", "KB", "MB", "GB", "TB" };
@@ -36,9 +37,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _driveInfo.TotalSize - _driveInfo.AvailableFreeSpace; }
 		}
 
-		public double UsedSpacePercent
+		public int UsedSpacePercent
 		{
-			get { return this.UsedSpace/this.TotalSpace*100.0; }
+			get { return (int)Math.Round(this.UsedSpace/this.TotalSpace*100.0); }
 		}
 	}
 }
