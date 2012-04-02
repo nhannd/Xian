@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
     [TestFixture]
     public class StudyRootQueryTests : ClearCanvas.Dicom.Tests.AbstractTest
     {
-        private const string _testDatabaseFilename = "test_dicom_store.sdf";
+        private const string _testDatabaseFilename = "test_store.sdf";
         
         private const string _utf8 = "ISO_IR 192";
 

@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             if (String.IsNullOrEmpty(studyUid))
                 throw new ArgumentException("The study uid must be specified for a series level query.");
 
-            IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyUid select s).Single();
+            IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyUid select s).FirstOrDefault();
             if (study == null)
                 throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyUid));
 
