@@ -34,7 +34,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			_seriesXml = seriesXml;
 		}
 
-		#region Private Members
+        internal Study ParentStudy { get { return _parentStudy; } }
+
+	    #region Private Members
 
 		private IList<ISopInstance> SopInstances
 		{

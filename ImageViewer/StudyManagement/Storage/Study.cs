@@ -26,6 +26,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     public partial class Study : IStudy
     {
         private List<ISeries> _series;
+        private StudyLocation _studyLocation;
         private StudyXml _studyXml;
 
         #region IPatientData Members
@@ -125,18 +126,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         #endregion
 
         #region Public Methods
-
-        public void Initialize(StudyXml studyXml)
-        {
-            Platform.CheckForNullReference(studyXml, "studyXml");
-            _studyXml = studyXml;
-
-            Initialize(_studyXml.First().First().Collection);
-            //these have to be here, rather than in Initialize b/c they are 
-            // computed from the series, which are parsed from the xml.
-            NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
-            NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
-        }
 
         public void Initialize(DicomMessageBase message)
         {
@@ -265,13 +254,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         #endregion
         #region Private Properties
 
-        public StudyXml StudyXml
+        internal StudyLocation StudyLocation
         {
             get
             {
-                LoadStudyXml(true);
-                return _studyXml;
+                Platform.CheckMemberIsSet(StudyInstanceUid, "StudyInstanceUid");
+                return _studyLocation ?? (_studyLocation = new StudyLocation(StudyInstanceUid));
             }
+        }
+
+        private StudyXml StudyXml
+        {
+            get { return _studyXml ?? (_studyXml = StudyLocation.LoadStudyXml()); }
         }
 
         private IList<ISeries> Series
@@ -293,29 +287,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         #region Private/Internal Methods
 
-        private void LoadStudyXml(bool throwIfNotExists)
+        internal void Initialize(StudyXml studyXml)
         {
-            if (_studyXml != null)
-                return;
+            Platform.CheckForNullReference(studyXml, "studyXml");
+            _studyXml = studyXml;
 
-            if (StudyXmlUri == null)
-                throw new Exception("The study xml location must be set.");
-
-            var doc = new XmlDocument();
-            _studyXml = new StudyXml(StudyInstanceUid);
-
-            if (File.Exists(StudyXmlUri))
-            {
-                using (FileStream stream = FileStreamOpener.OpenForRead(StudyXmlUri, FileMode.Open, 5000))
-                {
-                    StudyXmlIo.Read(doc, stream);
-                    _studyXml.SetMemento(doc);
-                }
-            }
-            else if (throwIfNotExists)
-            {
-                throw new FileNotFoundException("The study xml file could not be found", StudyXmlUri);
-            }
+            Initialize(_studyXml.First().First().Collection);
+            //these have to be here, rather than in Initialize b/c they are 
+            // computed from the series, which are parsed from the xml.
+            NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
+            NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
         }
 
         private static IEnumerable<string> ComputeModalitiesInStudy(IEnumerable<string> existingModalities, string candidate)

@@ -331,8 +331,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private string _ResponsibleOrganization;
 		
-		private string _StudyXmlUri;
-		
 		private System.Nullable<System.DateTime> _StoreTime;
 		
 		private System.DateTime _DeleteTime;
@@ -413,8 +411,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnResponsiblePersonRoleChanged();
     partial void OnResponsibleOrganizationChanging(string value);
     partial void OnResponsibleOrganizationChanged();
-    partial void OnStudyXmlUriChanging(string value);
-    partial void OnStudyXmlUriChanged();
     partial void OnStoreTimeChanging(System.Nullable<System.DateTime> value);
     partial void OnStoreTimeChanged();
     partial void OnDeleteTimeChanging(System.DateTime value);
@@ -1105,26 +1101,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._ResponsibleOrganization = value;
 					this.SendPropertyChanged("ResponsibleOrganization");
 					this.OnResponsibleOrganizationChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyXmlUri", DbType="NVarChar(1024)")]
-		public string StudyXmlUri
-		{
-			get
-			{
-				return this._StudyXmlUri;
-			}
-			set
-			{
-				if ((this._StudyXmlUri != value))
-				{
-					this.OnStudyXmlUriChanging(value);
-					this.SendPropertyChanging();
-					this._StudyXmlUri = value;
-					this.SendPropertyChanged("StudyXmlUri");
-					this.OnStudyXmlUriChanged();
 				}
 			}
 		}

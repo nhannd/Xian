@@ -12,6 +12,7 @@
 using System;
 using System.Data;
 using System.Data.SqlServerCe;
+using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -139,12 +140,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 	        string filePath = DatabaseHelper.GetDatabaseFilePath(databaseFile);
 			var connectString = string.Format("Data Source = {0}", filePath);
 
-			// create the database if it does not exist
-			using (var context = new DicomStoreDataContext(connectString))
-			{
-				if (!context.DatabaseExists())
-                    DatabaseHelper.CreateDatabase(databaseFile, filePath);
-			}
+            if (!File.Exists(filePath))
+                DatabaseHelper.CreateDatabase(databaseFile, filePath);
 
 			// now we can create a long-lived connection
 			var connection = new SqlCeConnection(connectString);

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 9.875" name="DicomStoreDataContext">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 11.5" name="DicomStoreDataContext">
   <DataContextMoniker Name="/DicomStoreDataContext" />
   <nestedChildShapes>
-    <classShape Id="b8b17ee5-881b-4daf-bbc6-a4c11f2874e3" absoluteBounds="6.375, 0.5, 4, 8.1168440755208326">
+    <classShape Id="b8b17ee5-881b-4daf-bbc6-a4c11f2874e3" absoluteBounds="6.375, 0.5, 4, 7.9245426432291648">
       <DataClassMoniker Name="/DicomStoreDataContext/Study" />
       <nestedChildShapes>
-        <elementListCompartment Id="21a9f01a-06bb-42e0-9b51-9def91dc673a" absoluteBounds="6.39, 0.96, 3.9699999999999998, 7.556844075520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="21a9f01a-06bb-42e0-9b51-9def91dc673a" absoluteBounds="6.39, 0.96, 3.9699999999999998, 7.3645426432291661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="2eb947bf-f453-440e-bd84-c4a2a00ffce7" absoluteBounds="0.75, 1.25, 2, 3.3093082682291666">
@@ -34,10 +34,10 @@
         <classShapeMoniker Id="2eb947bf-f453-440e-bd84-c4a2a00ffce7" />
       </nodes>
     </associationConnector>
-    <classShape Id="ef86e219-c873-4fb9-93a0-ea0294e466fe" absoluteBounds="3.75, 7.25, 3, 2.3478011067708326">
+    <classShape Id="ef86e219-c873-4fb9-93a0-ea0294e466fe" absoluteBounds="3.25, 8.875, 3, 2.3478011067708326">
       <DataClassMoniker Name="/DicomStoreDataContext/Device" />
       <nestedChildShapes>
-        <elementListCompartment Id="4604e8db-b823-4dd3-8318-c0492c3107ac" absoluteBounds="3.765, 7.7100000000000009, 2.9699999999999998, 1.7878011067708333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="4604e8db-b823-4dd3-8318-c0492c3107ac" absoluteBounds="3.265, 9.335, 2.9699999999999998, 1.7878011067708333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="acf03b42-edf7-449e-8f9b-11bcacc909bb" absoluteBounds="1.125, 7.25, 2, 1.1939925130208344">

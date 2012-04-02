@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
 		public string GetLocationUri()
 		{
-			return _xml.SourceFileName;
+		    return _parentSeries.ParentStudy.StudyLocation.GetSopInstancePath(SeriesInstanceUid, SopInstanceUid);
 		}
 
 		public bool IsStoredTag(uint tag)

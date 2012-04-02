@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom", "ClearCanvas.Dicom.csproj", "{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.Samples", "Samples\ClearCanvas.Dicom.Samples.csproj", "{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}"
@@ -20,20 +20,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.DicomDump
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearCanvas.Dicom.Codec.Jpeg", "Codec\Jpeg\Jpeg.vcproj", "{FC264853-24DF-4E17-BC69-871BAF421A6D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearCanvas.Dicom.Codec.Jpeg", "Codec\Jpeg\Jpeg.vcxproj", "{FC264853-24DF-4E17-BC69-871BAF421A6D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libijg8", "Codec\Jpeg\libijg8\libijg8.vcproj", "{A0385D99-56DF-45BB-9DB2-1E170B219F5E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libijg8", "Codec\Jpeg\libijg8\libijg8.vcxproj", "{A0385D99-56DF-45BB-9DB2-1E170B219F5E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libijg12", "Codec\Jpeg\libijg12\libijg12.vcproj", "{9779F796-68BA-4F46-8B6D-BF1F77819C8E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libijg12", "Codec\Jpeg\libijg12\libijg12.vcxproj", "{9779F796-68BA-4F46-8B6D-BF1F77819C8E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libijg16", "Codec\Jpeg\libijg16\libijg16.vcproj", "{8BAE0115-0959-4AF8-82AD-7F599D5850AC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libijg16", "Codec\Jpeg\libijg16\libijg16.vcxproj", "{8BAE0115-0959-4AF8-82AD-7F599D5850AC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearCanvas.Dicom.Codec.Jpeg2000", "Codec\Jpeg2000\Dicom.Jpeg2000.vcproj", "{B389F627-F243-4B7E-8A04-90E1071B2754}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearCanvas.Dicom.Codec.Jpeg2000", "Codec\Jpeg2000\Dicom.Jpeg2000.vcxproj", "{B389F627-F243-4B7E-8A04-90E1071B2754}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenJPEG", "Codec\Jpeg2000\OpenJPEG\OpenJPEG.vcproj", "{497CEAC5-C575-47A7-9230-610D6A3B6A2A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenJPEG", "Codec\Jpeg2000\OpenJPEG\OpenJPEG.vcxproj", "{497CEAC5-C575-47A7-9230-610D6A3B6A2A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.Codec.Rle", "Codec\Rle\ClearCanvas.Dicom.Codec.Rle.csproj", "{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}"
 EndProject
