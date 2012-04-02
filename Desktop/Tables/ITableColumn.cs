@@ -21,9 +21,14 @@ namespace ClearCanvas.Desktop.Tables
     public interface ITableColumn
     {
         /// <summary>
-        /// The name or heading of the column.
+        /// The identifying name of the column.
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// The heading text of the column.
+        /// </summary>
+        string DisplayName { get; }
 
         /// <summary>
         /// The type of data that the column holds.

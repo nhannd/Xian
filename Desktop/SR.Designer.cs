@@ -1113,5 +1113,14 @@ namespace ClearCanvas.Desktop {
                 return ResourceManager.GetString("TooltipFormatActionNotPermitted", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import settings meta-data from local plugins.
+        /// </summary>
+        public static string TooltipImportSettingsMetaData {
+            get {
+                return ResourceManager.GetString("TooltipImportSettingsMetaData", resourceCulture);
+            }
+        }
     }
 }

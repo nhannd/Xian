@@ -30,8 +30,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             }    
         }
 
-        protected abstract IQueryable<T> AddUidToQuery(IQueryable<T> query, string uid);
-        protected abstract IQueryable<T> AddUidsToQuery(IQueryable<T> query, string[] uids);
+        protected virtual IQueryable<T> AddUidToQuery(IQueryable<T> query, string uid)
+        {
+            throw new NotImplementedException("AddUidToQuery must be implemented.");
+        }
+
+        protected virtual IQueryable<T> AddUidsToQuery(IQueryable<T> query, string[] uids)
+        {
+            throw new NotImplementedException("AddUidsToQuery must be implemented.");
+        }
 
         protected override IQueryable<T> AddToQuery(IQueryable<T> query)
         {

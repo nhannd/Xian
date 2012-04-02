@@ -469,4 +469,7 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="LabelNotForHumanDiagnosis" xml:space="preserve">
     <value>Not for Human Diagnosis</value>
   </data>
+  <data name="TooltipImportSettingsMetaData" xml:space="preserve">
+    <value>Import settings meta-data from local plugins</value>
+  </data>
 </root>

@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -126,6 +125,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         #endregion
 
         #region Public Methods
+
+        public void Initialize(StudyXml studyXml)
+        {
+            Platform.CheckForNullReference(studyXml, "studyXml");
+            _studyXml = studyXml;
+
+            Initialize(_studyXml.First().First().Collection);
+            //these have to be here, rather than in Initialize b/c they are 
+            // computed from the series, which are parsed from the xml.
+            NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
+            NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
+        }
 
         public void Initialize(DicomMessageBase message)
         {
@@ -254,7 +265,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         #endregion
         #region Private Properties
 
-        private StudyXml StudyXml
+        public StudyXml StudyXml
         {
             get
             {
@@ -281,19 +292,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         #endregion
 
         #region Private/Internal Methods
-
-        internal void Update(DicomFile file)
-        {
-            Initialize(file);
-
-            LoadStudyXml(false);
-            _studyXml.AddFile(file);
-
-            //these have to be here, rather than in Initialize b/c they are 
-            // computed from the series, which are parsed from the xml.
-            NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
-            NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
-        }
 
         private void LoadStudyXml(bool throwIfNotExists)
         {

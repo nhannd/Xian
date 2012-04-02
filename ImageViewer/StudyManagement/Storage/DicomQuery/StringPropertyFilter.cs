@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ClearCanvas.Dicom;
@@ -27,12 +28,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
         }
 
-        public virtual string PropertyValue
-        {
-            get { throw new NotImplementedException("PropertyValue must be overridden to do post-filtering."); }    
-        }
-
-        public string CriterionValue
+        protected string CriterionValue
         {
             get { return Criterion.GetString(0, null); }
         }
@@ -75,12 +71,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
         }
 
+        protected virtual string GetPropertyValue(T item)
+        {
+            throw new NotImplementedException("GetPropertyValue must be overridden to do post-filtering.");
+        }
+
         protected override System.Collections.Generic.IEnumerable<T> FilterResults(System.Collections.Generic.IEnumerable<T> results)
         {
             if (!IsCriterionWildcard)
             {
                 //Note: single value matching is supposed to be case-sensitive (except for PN) according to Dicom.
-                return results.Where(study => 0 == string.Compare(PropertyValue, CriterionValue, true));
+                return results.Where(result => 0 == string.Compare(GetPropertyValue(result), CriterionValue, StringComparison.InvariantCultureIgnoreCase));
             }
 
             //Wildcard on strings is generic.
@@ -88,7 +89,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             criteriaTest = criteriaTest.Replace("?", "."); //single character
             criteriaTest = String.Format("^{0}", criteriaTest); //match at beginning
 
-            return results.Where(result => Regex.IsMatch(PropertyValue, criteriaTest, RegexOptions.IgnoreCase));
+            return results.Where(result => Regex.IsMatch(GetPropertyValue(result), criteriaTest, RegexOptions.IgnoreCase));
         }
     }
 }

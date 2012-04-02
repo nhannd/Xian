@@ -154,11 +154,17 @@
     background: #ffffff url(../images/Controls/Dialog/DialogBodyBackground.png) repeat-x bottom;
 }
 
-.ReconcileLink
+.StudyStatusLink
 {
     display: inline;
 	color: Blue;
     text-decoration: underline;
+}
+.StudyStatusLink[disabled], .StudyStatusLink[disabled="true"]
+{
+    display: inline;
+    color:Black;
+    text-decoration: none;
 }
 
 /*============================

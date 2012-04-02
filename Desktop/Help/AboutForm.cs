@@ -43,16 +43,12 @@ namespace ClearCanvas.Desktop.Help
 			{
 				try
 				{
-					Assembly assembly = Assembly.Load(AboutSettings.Default.BackgroundImageAssemblyName);
-					if (assembly != null)
+					var stream = OpenResourceStream();
+					if (stream != null)
 					{
-						string streamName = AboutSettings.Default.BackgroundImageAssemblyName + "." + AboutSettings.Default.BackgroundImageResourceName;
-						Stream stream = assembly.GetManifestResourceStream(streamName);
-						if (stream != null)
-						{
-							this.BackgroundImage = new Bitmap(stream);
-							ClientSize = this.BackgroundImage.Size;
-						}
+						// GDI+ resource management quirk: don't dispose the source stream (or create an independent copy of the bitmap)
+						BackgroundImage = new Bitmap(stream);
+						ClientSize = BackgroundImage.Size;
 					}
 				}
 				catch (Exception ex)
@@ -97,6 +93,27 @@ namespace ClearCanvas.Desktop.Help
 			this.ResumeLayout();
 
 			this._closeButton.Click += new EventHandler(OnCloseClicked);
+		}
+
+		private static Stream OpenResourceStream()
+		{
+			var oemPath = System.IO.Path.Combine(Platform.InstallDirectory, @"oem\about.png");
+			if (File.Exists(oemPath))
+				return File.OpenRead(oemPath);
+
+			var assemblyName = AboutSettings.Default.BackgroundImageAssemblyName;
+			var resourceName = AboutSettings.Default.BackgroundImageResourceName;
+			if (!string.IsNullOrEmpty(assemblyName) && !string.IsNullOrEmpty(resourceName))
+			{
+				var assembly = Assembly.Load(assemblyName);
+				if (assembly != null)
+				{
+					var streamName = assemblyName + @"." + resourceName;
+					return assembly.GetManifestResourceStream(streamName);
+				}
+			}
+
+			return null;
 		}
 
 		private void OnCloseClicked(object sender, EventArgs e)

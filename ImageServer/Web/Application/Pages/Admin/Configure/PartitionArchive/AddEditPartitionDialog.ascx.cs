@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             
             PartitionArchive.Enabled = EnabledCheckBox.Checked;
             PartitionArchive.ReadOnly = ReadOnlyCheckBox.Checked;
-            PartitionArchive.ArchiveTypeEnum = ArchiveTypeEnum.HsmArchive;                    
+            PartitionArchive.ArchiveTypeEnum = ArchiveTypeEnum.GetEnum(ArchiveTypeDropDownList.SelectedValue);
         }
 
         #endregion Private Methods

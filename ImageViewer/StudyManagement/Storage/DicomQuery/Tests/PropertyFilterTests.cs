@@ -28,6 +28,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         public bool CalledAddLikeToQuery;
         public bool CalledFilterResults;
         public bool CalledAddToResults;
+        public string EqualsCriterion = "";
+        public string LikeCriterion = "";
 
         public TestStringPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria)
             : base(path, criteria)
@@ -49,17 +51,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             CalledAddLikeToQuery = false;
             CalledFilterResults = false;
             CalledAddToResults = false;
+            EqualsCriterion = LikeCriterion = "";
         }
 
         protected override System.Linq.IQueryable<TestObject<string>> AddEqualsToQuery(System.Linq.IQueryable<TestObject<string>> query, string criterion)
         {
             CalledAddEqualsToQuery = true;
+            EqualsCriterion = criterion;
             return query;
         }
 
         protected override System.Linq.IQueryable<TestObject<string>> AddLikeToQuery(System.Linq.IQueryable<TestObject<string>> query, string criterion)
         {
             CalledAddLikeToQuery = true;
+            LikeCriterion = criterion;
             return query;
         }
 
@@ -209,6 +214,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
             Assert.IsTrue(filter.IsCriterionWildcard);
 
+            Assert.AreEqual(filter.EqualsCriterion ?? "", "");
+            Assert.AreEqual(filter.LikeCriterion, "test%");
+
             Assert.IsFalse(filter.CalledAddEqualsToQuery);
             Assert.IsTrue(filter.CalledAddLikeToQuery);
             //Only if enabled.
@@ -239,6 +247,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.ShouldAddToResult);
             Assert.IsFalse(filter.IsWildcardCriterionAllowed);
             Assert.IsFalse(filter.IsCriterionWildcard);
+
+            Assert.AreEqual(filter.EqualsCriterion, "test*");
+            Assert.AreEqual(filter.LikeCriterion ?? "", "");
 
             Assert.IsTrue(filter.CalledAddEqualsToQuery);
             Assert.IsFalse(filter.CalledAddLikeToQuery);

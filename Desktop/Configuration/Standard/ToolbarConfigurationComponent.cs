@@ -9,8 +9,8 @@
 
 #endregion
 
-using System;
-
+using System.Globalization;
+using System.Threading;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Configuration.Standard
@@ -62,9 +62,18 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 
 		public override void Save()
 		{
-			ToolStripSettings.Default.WrapLongToolstrips = _wrap;
-			ToolStripSettings.Default.IconSize = _iconSize;
-			ToolStripSettings.Default.Save();
+			var previousCulture = Thread.CurrentThread.CurrentUICulture;
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			try
+			{
+				ToolStripSettings.Default.WrapLongToolstrips = _wrap;
+				ToolStripSettings.Default.IconSize = _iconSize;
+				ToolStripSettings.Default.Save();
+			}
+			finally
+			{
+				Thread.CurrentThread.CurrentUICulture = previousCulture;
+			}
 		}
 	}
 }

@@ -182,6 +182,8 @@ namespace ClearCanvas.Dicom.Iod
 			get { return _code; }
 		}
 
+	    // TODO (CR Mar 2012): Add a "short description" which could essentially be used in places where we show/use directional markers?
+
 		/// <summary>
 		/// Gets a textual description of the direction.
 		/// </summary>

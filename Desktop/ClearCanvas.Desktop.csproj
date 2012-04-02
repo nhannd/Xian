@@ -216,6 +216,7 @@
     </Compile>
     <Compile Include="ModifierFlags.cs" />
     <Compile Include="ModifierFlagsConverter.cs" />
+    <Compile Include="OemConfiguration.cs" />
     <Compile Include="PagingActionModel.cs" />
     <Compile Include="PagingController.cs" />
     <Compile Include="PhoneHome.cs" />

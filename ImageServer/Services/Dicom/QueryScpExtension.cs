@@ -519,7 +519,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 dataSet[DicomTags.SpecificCharacterSet].SetStringValue(characterSet);
                 dataSet.SpecificCharacterSet = characterSet;
             }
-            else if (false == sourceDataSet.Contains(DicomTags.SpecificCharacterSet))
+            else if (sourceDataSet.Contains(DicomTags.SpecificCharacterSet))
 			{
 				dataSet[DicomTags.SpecificCharacterSet].SetStringValue(sourceDataSet[DicomTags.SpecificCharacterSet].ToString());
 				dataSet.SpecificCharacterSet = sourceDataSet[DicomTags.SpecificCharacterSet].ToString(); // this will ensure the data is encoded using the specified character set
@@ -1141,6 +1141,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
+                    if (attrib.Tag.TagValue.Equals(DicomTags.SpecificCharacterSet)
+                        || attrib.Tag.TagValue.Equals(DicomTags.QueryRetrieveLevel))
+                        continue;
+
                     tagList.Add(attrib.Tag);
                     if (!attrib.IsNull)
                         matchingTagList.Add(attrib.Tag.TagValue);
