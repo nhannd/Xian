@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
 			try
 			{
-				StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_dicomServerEndpointName, SR.DicomServer);
+				StartNetPipeHost<DicomServerServiceType, IDicomServer>(_dicomServerEndpointName, SR.DicomServer);
 				_dicomServerWcfInitialized = true;
 				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.DicomServer);
 				Platform.Log(LogLevel.Info, message);
@@ -58,9 +58,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             //they're not running yet, anyway.
             try
             {
-                LocalDataStoreEventPublisher.Instance.Start();
-                DicomSendManager.Instance.Start();
-                DicomRetrieveManager.Instance.Start();
                 DicomServerManager.Instance.Start();
 
                 string message = String.Format(SR.FormatServiceStartedSuccessfully, SR.DicomServer);
@@ -73,20 +70,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 Console.WriteLine(String.Format(SR.FormatServiceFailedToStart, SR.DicomServer));
                 return;
             }
-
-			try
-			{
-				StartNetPipeHost<DicomSendServiceType, IDicomSendService>(_dicomSendServiceEndpointName, SR.DicomSendService);
-				_dicomSendServiceWCFInitialized = true;
-				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.DicomSendService);
-				Platform.Log(LogLevel.Info, message);
-				Console.WriteLine(message);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.DicomSendService));
-			}
         }
 
         public override void Stop()
@@ -120,10 +103,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			try
 			{
 				DicomServerManager.Instance.Stop();
-				DicomSendManager.Instance.Stop();
-				DicomRetrieveManager.Instance.Stop();
-				LocalDataStoreEventPublisher.Instance.Stop();
-
 				Platform.Log(LogLevel.Info, String.Format(SR.FormatServiceStoppedSuccessfully, SR.DicomServer));
 			}
 			catch(Exception e)

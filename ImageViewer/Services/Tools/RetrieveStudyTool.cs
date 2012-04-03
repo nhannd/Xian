@@ -20,7 +20,7 @@ using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
@@ -35,15 +35,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
 
     [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Retrieve)]
-	
-	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
+
+	//TODO (Marmot):Restore.
+	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint), Enabled = false)]
 	public class RetrieveStudyTool : StudyBrowserTool
 	{
-		public RetrieveStudyTool()
-		{
-
-		}
-
 		public override void Initialize()
 		{
 			base.Initialize();
@@ -76,9 +72,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				retrieveInformation[applicationEntity].Add(studyInformation);
 			}
 
+            throw new NotImplementedException("Marmot - need to restore this.");
+            
+            /*
 			try
 			{
-			    Platform.GetService(delegate(IDicomServerService service)
+			    Platform.GetService(delegate(IDicomServer service)
 			                            {
 			                                foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
 			                                {
@@ -92,8 +91,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			                                }
 			                            });
 
-			    // TODO (Marmot): What will we show now? Nothing?
-				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
+			    //TODO (Marmot): Restore - just tell the user it's been scheduled.
+                //LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{
@@ -115,6 +114,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.ScpParameters.HostName, requestedInstances, EventSource.CurrentUser, result);
 				}
 			}
+             */
 		}
 
 		private bool GetAtLeastOneServerSupportsLoading()
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			Enabled = (Context.SelectedStudy != null &&
 			                !Context.SelectedServerGroup.IsLocalDatastore &&
-			                LocalDataStoreActivityMonitor.IsConnected);
+			                WorkItemActivityMonitor.IsRunning);
 		}
 	}
 }

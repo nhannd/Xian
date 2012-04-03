@@ -18,7 +18,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
@@ -34,14 +34,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
     [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Send)]
 
-	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
+	//TODO (Marmot):Restore.
+
+	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint), Enabled = false)]
     public class SendStudyTool : StudyBrowserTool
     {
-        public SendStudyTool()
-        {
-
-        }
-
         private void SendStudy()
         {
 			BlockingOperation.Run(SendStudyInternal);
@@ -49,6 +46,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void SendStudyInternal()
 		{
+            throw new NotImplementedException("Marmot - need to restore this.");
+
 			if (!Enabled || this.Context.SelectedStudy == null)
 				return;
 
@@ -92,6 +91,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				sentInstances.AddInstance(item.PatientId, item.PatientsName, item.StudyInstanceUid);
 			}
 
+		    //TODO (Marmot):Restore.
+            /*
 			DicomSendServiceClient client = new DicomSendServiceClient();
 
 			try
@@ -113,7 +114,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 				client.Close();
 
-				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
+			    //TODO (Marmot): Restore - tell the user it's been scheduled.
+                //LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{
@@ -131,6 +133,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
                 foreach (IServerTreeDicomServer destinationAE in serverTreeComponent.SelectedServers.Servers)
 					AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.HostName, sentInstances, EventSource.CurrentUser, result);
 			}
+            */
 		}
 
         protected override void OnSelectedStudyChanged(object sender, EventArgs e)
@@ -147,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			Enabled = (this.Context.SelectedStudy != null &&
 			           this.Context.SelectedServerGroup.IsLocalDatastore &&
-			           LocalDataStoreActivityMonitor.IsConnected);
+			           WorkItemActivityMonitor.IsRunning);
 		}
 	}
 }

@@ -15,6 +15,8 @@ using ClearCanvas.Desktop.Configuration;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
+    //TODO (Marmot):Could all the stuff in this assembly get moved to ImageViewer?
+
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
 	public class ConfigurationPageProvider : IConfigurationPageProvider
 	{
@@ -31,8 +33,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DicomServer))
 				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomConfiguration/ServerConfiguration"));
 
-			if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DiskspaceManager))
-				listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
+		    //TODO (Marmot): Restore, or refactor.
+            //if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DiskspaceManager))
+            //    listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
 
 			return listPages.AsReadOnly();
 		}

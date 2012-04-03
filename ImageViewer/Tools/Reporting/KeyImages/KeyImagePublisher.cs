@@ -17,7 +17,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (_sourceInformation.ClipboardItems.Count == 0)
 				return;
 
-			while (!LocalDataStoreActivityMonitor.IsConnected)
+            while (!WorkItemActivityMonitor.IsRunning)
 			{
 				DialogBoxAction result = Application.ActiveDesktopWindow.ShowMessageBox(
 					SR.MessageCannotPublishKeyImagesServersNotRunning, MessageBoxActions.OkCancel);

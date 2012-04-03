@@ -697,4 +697,13 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="LabelUnitsPixels" xml:space="preserve">
     <value>pixels</value>
   </data>
+  <data name="MenuActivityMonitor" xml:space="preserve">
+    <value>Activity Monitor</value>
+  </data>
+  <data name="TitleActivityMonitor" xml:space="preserve">
+    <value>Activity Monitor</value>
+  </data>
+  <data name="TooltipActivityMonitor" xml:space="preserve">
+    <value>Activity Monitor</value>
+  </data>
 </root>

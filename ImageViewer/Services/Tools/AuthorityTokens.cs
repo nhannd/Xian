@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 						AuthorityTokens.Administration.DicomServer,
 						AuthorityTokens.Administration.DiskspaceManager,
 						AuthorityTokens.Administration.Services,
-						AuthorityTokens.Administration.ReindexLocalDataStore
+						AuthorityTokens.Administration.ReIndex
                     })
             };
 		}
@@ -50,8 +50,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			[AuthorityToken(Description = "Allow configuration of disk space management.")]
 			public const string DiskspaceManager = "Viewer/Administration/Diskspace Manager";
 
-			[AuthorityToken(Description = "Permission to reindex the local data store.")]
-			public const string ReindexLocalDataStore = "Viewer/Administration/Reindex Local Data Store";
+            [AuthorityToken(Description = "Permission to re-index the local store.", Formerly = "Viewer/Administration/Reindex Local Data Store")]
+			public const string ReIndex = "Viewer/Administration/Re-index";
 
 			[AuthorityToken(Description = "Allow administration of the viewer services (e.g. Start/Stop/Restart).")]
 			public const string Services = "Viewer/Administration/Services";

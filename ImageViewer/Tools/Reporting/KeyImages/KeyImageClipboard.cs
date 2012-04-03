@@ -15,7 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Clipboard;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Security.Policy;
 
@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		private static readonly Dictionary<IImageViewer, KeyImageInformation> _keyImageInformation;
 		private static readonly Dictionary<IDesktopWindow, IShelf> _clipboardShelves;
 
-		private static ILocalDataStoreEventBroker _localDataStoreEventBroker;
+		private static IWorkItemActivityMonitor _activityMonitor;
 
 		static KeyImageClipboard()
 		{
@@ -81,12 +81,12 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private static void ManageLocalDataStoreConnection()
 		{
-			if (_keyImageInformation.Count == 0 && _localDataStoreEventBroker != null)
+            if (_keyImageInformation.Count == 0 && _activityMonitor != null)
 			{
 				try
 				{
-					_localDataStoreEventBroker.LostConnection -= DummyEventHandler;
-					_localDataStoreEventBroker.Dispose();
+                    _activityMonitor.IsConnectedChanged -= DummyEventHandler;
+                    _activityMonitor.Dispose();
 				}
 				catch (Exception e)
 				{
@@ -94,20 +94,20 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				}
 				finally
 				{
-					_localDataStoreEventBroker = null;
+                    _activityMonitor = null;
 				}
 			}
-			else if (_keyImageInformation.Count > 0 && _localDataStoreEventBroker == null)
+            else if (_keyImageInformation.Count > 0 && _activityMonitor == null)
 			{
 				try
 				{
-					_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+				    _activityMonitor = WorkItemActivityMonitor.Create();
 					//we subscribe to something to keep the local data store connection open.
-					_localDataStoreEventBroker.LostConnection += DummyEventHandler;
+                    _activityMonitor.IsConnectedChanged += DummyEventHandler;
 				}
 				catch (Exception e)
 				{
-					_localDataStoreEventBroker = null;
+                    _activityMonitor = null;
 					Platform.Log(LogLevel.Warn, e, "Failed to subscribe to local data store events.");
 				}
 			}

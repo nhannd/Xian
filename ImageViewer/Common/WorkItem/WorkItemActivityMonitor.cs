@@ -43,6 +43,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         #endregion
 
+        public static bool IsRunning 
+        {
+            get { using (var monitor = Create()) return monitor.IsConnected; }
+        }
+
         public static IWorkItemActivityMonitor Create()
         {
             return Create(true);

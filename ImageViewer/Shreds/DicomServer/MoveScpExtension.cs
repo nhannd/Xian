@@ -25,6 +25,8 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
+    //TODO (Marmot):Restore/rewrite.
+    /*
 	[ExtensionOf(typeof(DicomScpExtensionPoint<IDicomServerContext>))]
 	public class MoveScpExtension : ScpExtension
 	{
@@ -342,4 +344,5 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#endregion
 	}
+     */
 }

@@ -15,7 +15,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		private bool _showEnabled;
 		private bool _firstKeyImageCreation = true;
 		private event EventHandler _showEnabledChanged;
-		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
+		private IWorkItemActivityMonitor _workItemActivityMonitor;
 
 		#endregion
 
@@ -79,16 +79,14 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 			UpdateEnabled();
 
-			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
-			_localDataStoreEventBroker.Connected += this.OnConnected;
-			_localDataStoreEventBroker.LostConnection += this.OnLostConnection;
+		    _workItemActivityMonitor = WorkItemActivityMonitor.Create();
+            _workItemActivityMonitor.IsConnectedChanged += OnIsConnectedChanged;
 		}
 
-		protected override void Dispose(bool disposing)
+	    protected override void Dispose(bool disposing)
 		{
-			_localDataStoreEventBroker.Connected -= OnConnected;
-			_localDataStoreEventBroker.LostConnection -= OnLostConnection;
-			_localDataStoreEventBroker.Dispose();
+            _workItemActivityMonitor.IsConnectedChanged -= OnIsConnectedChanged;
+			_workItemActivityMonitor.Dispose();
 
 			if (base.Context != null)
 				KeyImageClipboard.OnViewerClosed(base.Context.Viewer);
@@ -99,22 +97,17 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		private void UpdateEnabled()
 		{
 			base.Enabled = KeyImagePublisher.IsSupportedImage(base.SelectedPresentationImage) &&
-			          LocalDataStoreActivityMonitor.IsConnected &&
+			          WorkItemActivityMonitor.IsRunning &&
 					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
 
-			this.ShowEnabled = LocalDataStoreActivityMonitor.IsConnected &&
+            this.ShowEnabled = WorkItemActivityMonitor.IsRunning &&
 					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
 		}
 
-		private void OnConnected(object sender, EventArgs e)
-		{
-			UpdateEnabled();
-		}
-
-		private void OnLostConnection(object sender, EventArgs e)
-		{
-			UpdateEnabled();
-		}
+        private void OnIsConnectedChanged(object sender, EventArgs eventArgs)
+        {
+            UpdateEnabled();
+        }
 
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{

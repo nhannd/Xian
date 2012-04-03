@@ -17,7 +17,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
@@ -31,16 +31,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 
     [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Delete)]
-	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
+	//TODO (Marmot): Restore.
+	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint), Enabled = false)]
 	public class DeleteStudyTool : StudyBrowserTool
 	{
-		public DeleteStudyTool()
-		{
-
-		}
-
 		private void DeleteStudy()
 		{
+            throw new NotImplementedException("Marmot - need to restore this.");
+
 			if (!Enabled || this.Context.SelectedStudy == null)
 				return;
 
@@ -54,8 +52,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
                                                     delegate(StudyItem study)
                                                     	{
                                                     		return study.StudyInstanceUid;
-                                                    	});
+                 
+                                                        });
+		    //TODO (Marmot):Restore.
 
+            /*
 			DeleteInstancesRequest request = new DeleteInstancesRequest();
 			request.DeletePriority = DeletePriority.High;
 			request.InstanceLevel = InstanceLevel.Study;
@@ -70,10 +71,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				ExceptionHandler.Report(e, SR.MessageFailedToDeleteStudy, this.Context.DesktopWindow);
 			}
+             * */
 		}
 
 		private void TaskMethod(IBackgroundTaskContext context)
 		{
+		    //TODO (Marmot): Restore.
+            /*
 			DeleteInstancesRequest request = new DeleteInstancesRequest();
 			request.DeletePriority = DeletePriority.High;
 			request.InstanceLevel = InstanceLevel.Study;
@@ -102,6 +106,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				context.Error(e);
 			}
+             */
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
@@ -118,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			this.Enabled = (this.Context.SelectedStudy != null &&
 			                this.Context.SelectedServerGroup.IsLocalDatastore &&
-			                LocalDataStoreActivityMonitor.IsConnected);
+			                WorkItemActivityMonitor.IsRunning);
 		}
 
 		private bool ConfirmDeletion()

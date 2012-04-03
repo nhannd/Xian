@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             //obvious that this will happen automatically.
             try
             {
-                Platform.GetService<IDicomServerService>(s => s.RestartListener(new RestartListenerRequest()));
+                Platform.GetService<IDicomServer>(s => s.RestartListener(new RestartListenerRequest()));
             }
             catch (EndpointNotFoundException)
             {

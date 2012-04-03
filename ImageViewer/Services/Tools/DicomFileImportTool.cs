@@ -17,7 +17,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Local;
 using System.ServiceModel;
@@ -89,8 +88,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
                 var importClient = new DicomFileImportClient();
                 importClient.ImportFileList(filePaths, BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Copy);
-       
-				//LocalDataStoreActivityMonitorComponentManager.ShowImportComponent(this.Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{

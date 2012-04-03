@@ -20,10 +20,11 @@ using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
+    //TODO (Marmot):Restore?
+    /*
 	#region Retrieve Service Definition
 
 	internal class RetrieveStudiesRequest
@@ -348,4 +349,5 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#endregion
 	}
+     */
 }

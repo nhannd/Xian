@@ -20,7 +20,6 @@ using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.Network;
 using System.IO;
 using IStudy = ClearCanvas.ImageViewer.StudyManagement.Storage.IStudy;
@@ -28,6 +27,9 @@ using ISopInstance = ClearCanvas.ImageViewer.StudyManagement.Storage.ISopInstanc
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
+    //TODO (Marmot):Restore/rewrite.
+
+    /*
 	internal delegate void SendOperationProgressCallback(ISendOperation operation);
 
 	internal interface ISendOperation
@@ -616,4 +618,5 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		#endregion
 
 	}
+     */
 }

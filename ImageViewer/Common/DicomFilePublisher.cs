@@ -16,10 +16,8 @@ using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Common
@@ -139,9 +137,13 @@ namespace ClearCanvas.ImageViewer.Common
 			if (files == null || files.Count == 0)
 				return;
 
+            throw new NotImplementedException("Marmot - need to restore this functionality.");
+            /*
 			// cache files to temporary storage
 			string tempFileDirectory;
 			SaveFiles(files, destinationServer.AETitle, out tempFileDirectory);
+
+            //TODO (Marmot):Restore.
 
 			// setup auditing information
 			var result = EventResult.Success;
@@ -175,6 +177,7 @@ namespace ClearCanvas.ImageViewer.Common
 				// audit attempt to update instances on remote server
 				AuditHelper.LogUpdateInstances(new[] {destinationServer.AETitle}, auditedInstances, EventSource.CurrentUser, result);
 			}
+        */
 		}
 	}
 }

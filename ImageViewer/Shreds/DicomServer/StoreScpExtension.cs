@@ -17,7 +17,6 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
@@ -171,27 +170,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		    server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, result.DicomStatus);
                
 			return true;
-		}
-
-		private static void OnReceiveError(DicomMessage message, string error, string fromAE)
-		{
-		    var info = new ReceiveErrorInformation
-		                   {
-		                       FromAETitle = fromAE,
-		                       ErrorMessage = error,
-		                       StudyInformation =
-		                           new StudyInformation
-		                               {
-		                                   PatientId = message.DataSet[DicomTags.PatientId].GetString(0, ""),
-		                                   PatientsName = message.DataSet[DicomTags.PatientsName].GetString(0, ""),
-		                                   StudyDate = DateParser.Parse(message.DataSet[DicomTags.StudyDate].GetString(0, "")),
-		                                   StudyDescription = message.DataSet[DicomTags.StudyDescription].GetString(0, ""),
-		                                   StudyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "")
-		                               }
-		                   };
-
-
-		    LocalDataStoreEventPublisher.Instance.ReceiveError(info);
 		}
 	}
 }

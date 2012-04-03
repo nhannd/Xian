@@ -15,6 +15,7 @@ using System.Linq;
 using System.Security.Policy;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
@@ -111,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public static DicomExplorerComponent Create()
 		{
 			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
-			serverTreeComponent.ShowLocalDataStoreNode = HasLocalDatastoreSupport();
+			serverTreeComponent.ShowLocalDataStoreNode = LocalStudyRootQuery.IsSupported;
 
 			bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
 			serverTreeComponent.IsReadOnly = !hasEditPermission;
@@ -264,21 +265,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             foreach (IServerTreeDicomServer server in serverTree.FindChildServers())
                 server.IsChecked = false;
         }
-
-		internal static bool HasLocalDatastoreSupport()
-		{
-		    try
-		    {
-		        Platform.GetService<IDicomServerConfiguration>(
-		            s => s.GetConfiguration(new GetDicomServerConfigurationRequest()));
-
-                return true;
-		    }
-		    catch (NotSupportedException)
-		    {
-		        return false;
-		    }
-		}
 
 		private static TComponent CreateComponentFromExtensionPoint<TExtensionPoint, TComponent>()
 			where TExtensionPoint : IExtensionPoint, new()

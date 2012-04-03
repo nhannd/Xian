@@ -69,28 +69,12 @@
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="ConfigurationPageProvider.cs" />
     <Compile Include="DeleteStudyTool.cs" />
-    <Compile Include="DicomFileImportActivityTool.cs" />
-    <Compile Include="DicomFileImportApplicationComponent.cs" />
-    <Compile Include="DicomFileImportTools.cs" />
     <Compile Include="DicomFileImportTool.cs" />
-    <Compile Include="DicomSendReceiveActivityTool.cs" />
     <Compile Include="DicomServerConfigurationComponent.cs" />
     <Compile Include="DiskspaceManagerConfigurationComponent.cs" />
-    <Compile Include="LocalDataStoreActivityMonitorComponentManager.cs" />
-    <Compile Include="LocalDataStoreDeletionHelperExceptionPolicy.cs" />
-    <Compile Include="LocalDataStoreOperationFailureMonitoringTool.cs" />
-    <Compile Include="LocalDataStoreReindexApplicationComponent.cs" />
-    <Compile Include="LocalDataStoreReindexTool.cs" />
-    <Compile Include="ReceiveQueueApplicationComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReceiveQueueTools.cs" />
-    <Compile Include="ReindexLocalDataStoreApplication.cs" />
-    <Compile Include="ReindexLocalDataStoreConsoleApplication.cs" />
-    <Compile Include="ReindexLocalDataStoreDesktopApplication.cs" />
     <Compile Include="RetrieveSeriesTool.cs" />
     <Compile Include="RetrieveStudyTool.cs" />
-    <Compile Include="SendQueueApplicationComponent.cs" />
-    <Compile Include="SendQueueTools.cs" />
     <Compile Include="SendStudyTool.cs" />
     <Compile Include="ServiceControlSettings.cs" />
     <Compile Include="ServiceControlSettings.Designer.cs">
@@ -171,12 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\OpenStudiesToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\ShowBackgroundSendsToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\ShowBackgroundImportsToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

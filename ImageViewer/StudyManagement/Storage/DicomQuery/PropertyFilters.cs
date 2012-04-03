@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Linq;
 using System.Linq;
 using ClearCanvas.Dicom;
@@ -10,30 +9,57 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
     internal class PropertyFilters<T> where T : class
     {
         private readonly DicomAttributeCollection _criteria;
-        private readonly IList<IPropertyFilter<T>> _filters;
+        private IList<IPropertyFilter<T>> _filters;
 
         public PropertyFilters(DicomAttributeCollection criteria)
         {
             _criteria = criteria;
-            _filters = new ReadOnlyCollection<IPropertyFilter<T>>(CreateFilters(criteria));
+        }
+
+        private IEnumerable<IPropertyFilter<T>> Filters
+        {
+            get 
+            {
+                if (_filters == null)
+                    _filters = CreateFilters(_criteria);
+                return _filters;
+            }
+        }
+
+        protected virtual List<IPropertyFilter<T>> CreateFilters(DicomAttributeCollection criteria)
+        {
+            var filters = new List<IPropertyFilter<T>>();
+            var types = typeof(PropertyFilters<T>).Assembly.GetTypes()
+                            .Where(t => typeof(IPropertyFilter<T>).IsAssignableFrom(t));
+
+            foreach (var type in types)
+            {
+                var constructor = type.GetConstructor(new[] { typeof(DicomAttributeCollection) });
+                if (constructor != null)
+                    filters.Add((IPropertyFilter<T>)Activator.CreateInstance(type, new[] { criteria }));
+            }
+
+            return filters;
+        }
+
+        protected virtual IQueryable<T> Query(IQueryable<T> initialQuery)
+        {
+            return Filters.Aggregate(initialQuery, (current, filter) => filter.AddToQuery(current));
         }
 
         public IEnumerable<T> Query(Table<T> table)
         {
-            var query = table.AsQueryable();
-            foreach (var filter in _filters)
-                query = filter.AddToQuery(query);
-
+            var query = Query(table.AsQueryable());
             var results = query.AsEnumerable();
-            return FilterResults(results);
+            return Query(results);
         }
 
-        public IEnumerable<T> FilterResults(IEnumerable<T> results)
+        public IEnumerable<T> Query(IEnumerable<T> items)
         {
-            foreach (var filter in _filters)
-                results = filter.FilterResults(results);
+            foreach (IPropertyFilter<T> filter in Filters)
+                items = filter.FilterResults(items);
 
-            return results;
+            return items;
         }
 
         public List<DicomAttributeCollection> ConvertResults(IEnumerable<T> results)
@@ -42,28 +68,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             foreach (var result in results)
             {
                 var dicomResult = new DicomAttributeCollection();
-                foreach (var filter in _filters)
+                foreach (IPropertyFilter<T> filter in Filters)
                     filter.SetAttributeValue(result, dicomResult);
 
                 dicomResults.Add(dicomResult);
             }
             return dicomResults;
-        }
-
-        public static List<IPropertyFilter<T>> CreateFilters(DicomAttributeCollection criteria)
-        {
-            var filters = new List<IPropertyFilter<T>>();
-            var types = typeof (PropertyFilters<T>).Assembly.GetTypes()
-                            .Where(t => typeof (IPropertyFilter<T>).IsAssignableFrom(t));
-
-            foreach (var type in types)
-            {
-                var constructor = type.GetConstructor(new[] {typeof (DicomAttributeCollection)});
-                if (constructor != null)
-                    filters.Add((IPropertyFilter<T>)Activator.CreateInstance(type, new[]{criteria}));
-            }
-
-            return filters;
         }
     }
 }

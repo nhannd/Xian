@@ -23,9 +23,8 @@ using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -35,15 +34,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Retrieve)]
-	[ExtensionOf(typeof (SeriesDetailsToolExtensionPoint))]
+	//TODO (Marmot):Restore.
+    [ExtensionOf(typeof (SeriesDetailsToolExtensionPoint), Enabled = false)]
 	public class RetrieveSeriesTool : SeriesDetailsTool
 	{
 		public void RetrieveSeries()
 		{
+            throw new NotImplementedException("Marmot - need to restore this.");
+
+            /*
+
 			if (!Enabled || SelectedSeries.Count == 0)
 				return;
 
-			var result = EventResult.Success;
+            var result = EventResult.Success;
 
 			var applicationEntity = Server as IApplicationEntity;
 			if (applicationEntity == null || applicationEntity.ScpParameters == null)
@@ -62,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			try
 			{
-			    Platform.GetService(delegate(IDicomServerService service)
+			    Platform.GetService(delegate(IDicomServer service)
 			            {
 			                var source = new ApplicationEntity
 			                                 {
@@ -73,7 +77,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			                service.RetrieveSeries(source, studyInformation, seriesToRetrieve);
 			            });
 
-				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
+			    //TODO (Marmot): Restore - notify the user it's been scheduled.
+                //LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{
@@ -97,6 +102,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			//that somehow allows a tool to flag that when it is clicked, the component should close.
 			if (result == EventResult.Success)
 				SeriesDetailsComponent.Close();
+            */
 		}
 
 		protected override void OnSelectedSeriesChanged()
@@ -109,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			Enabled = (Context.SelectedSeries != null &&
 			           Context.SelectedSeries.Count > 0 &&
 			           Server != null &&
-			           LocalDataStoreActivityMonitor.IsConnected);
+			           WorkItemActivityMonitor.IsRunning);
 		}
 
 		private static DateTime ParseDicomDate(string dicomDate)

@@ -18,6 +18,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.Automation;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.DesktopServices;
 using System.Threading;
@@ -62,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (request == null)
 				throw new FaultException("The request cannot be null.");
 			
-			if (!DicomExplorerComponent.HasLocalDatastoreSupport())
+			if (!LocalStudyRootQuery.IsSupported)
 				throw new FaultException<NoLocalStoreFault>(new NoLocalStoreFault(), "No local store was found.");
 
 			DicomExplorerComponent explorerComponent = GetDicomExplorer();

@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -23,8 +24,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -157,13 +157,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private ActionModelRoot _toolbarModel;
 		private ActionModelRoot _contextMenuModel;
 
-		private bool _localDataStoreCleared;
-		private readonly Dictionary<string, string> _setStudiesArrived;
-		private readonly Dictionary<string, string> _setStudiesDeleted;
+		private readonly Dictionary<string, string> _setChangedStudies;
 
 		private SearchResultColumnOptionCollection _searchResultColumnOptions;
 
-		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
+		private IWorkItemActivityMonitor _activityMonitor;
 		private DelayedEventPublisher _processStudiesEventPublisher;
 
 		private bool _isEnabled = true;
@@ -177,9 +175,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_searchResults = new Dictionary<string, SearchResult>();
 			_lastQueryParametersList = new List<QueryParameters> { CreateOpenSearchQueryParams() };
 
-			_localDataStoreCleared = false;
-			_setStudiesArrived = new Dictionary<string, string>();
-			_setStudiesDeleted = new Dictionary<string, string>();
+			_setChangedStudies = new Dictionary<string, string>();
 		}
 
 		#region Properties/Events
@@ -199,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 
 				if (_searchResultColumnOptions != null) _searchResultColumnOptions.ApplyColumnSettings(CurrentSearchResult);
-				ProcessReceivedAndRemovedStudies();
+				ProcessChangedStudies();
 				OnSelectedServerChanged();
 			}
 		}
@@ -375,7 +371,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			Async.CancelPending(this);
 
 			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
-				_setStudiesArrived.Clear();
+				_setChangedStudies.Clear();
 
 			var isOpenSearchQuery = CollectionUtils.TrueForAll(queryParametersList,
 				q => CollectionUtils.TrueForAll(q.Values,
@@ -436,18 +432,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolbarModel = ActionModelRoot.CreateModel(GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
 
-			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
-			_localDataStoreEventBroker.SopInstanceImported += OnSopInstanceImported;
-			_localDataStoreEventBroker.InstanceDeleted += OnInstanceDeleted;
-			_localDataStoreEventBroker.LocalDataStoreCleared += OnLocalDataStoreCleared;
+		    _activityMonitor = WorkItemActivityMonitor.Create();
+            _activityMonitor.WorkItemChanged += OnWorkItemChanged;
 
 			_searchResultColumnOptions = SearchResult.ColumnOptions;
 
 			DicomExplorerConfigurationSettings.Default.PropertyChanged += OnConfigurationSettingsChanged;
 		}
 
-
-		public override void Stop()
+	    public override void Stop()
 		{
 			Async.CancelPending(this);
 
@@ -456,10 +449,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolSet.Dispose();
 			_toolSet = null;
 
-			_localDataStoreEventBroker.SopInstanceImported -= OnSopInstanceImported;
-			_localDataStoreEventBroker.InstanceDeleted -= OnInstanceDeleted;
-			_localDataStoreEventBroker.LocalDataStoreCleared -= OnLocalDataStoreCleared;
-			_localDataStoreEventBroker.Dispose();
+            _activityMonitor.WorkItemChanged -= OnWorkItemChanged;
+            _activityMonitor.Dispose();
 
 			DicomExplorerConfigurationSettings.Default.PropertyChanged -= OnConfigurationSettingsChanged;
 
@@ -567,63 +558,60 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				});
 		}
 
-		private void ProcessReceivedAndRemovedStudies()
+		private void ProcessChangedStudies()
 		{
 			if (_selectedServerGroup == null || !_selectedServerGroup.IsLocalDatastore)
 				return;
 
+            if (_setChangedStudies.Count == 0)
+                return;
+
 			Table<StudyItem> studyTable = StudyTable;
 
-			if (_localDataStoreCleared)
-			{
-				_localDataStoreCleared = false;
-				studyTable.Items.Clear();
-			}
+		    var changed = _setChangedStudies.Keys.ToList();
+		    var deleted = new List<string>(changed);
+			
+            string studyUids = DicomStringHelper.GetDicomStringArray(changed);
+			if (String.IsNullOrEmpty(studyUids))
+                return;
 
-			if (_setStudiesArrived.Count > 0)
+			var queryParams = new QueryParameters(this.CreateOpenSearchQueryParams());
+			queryParams["StudyInstanceUid"] = studyUids;
+                    
+			try
 			{
-				List<string> studyUidList = new List<string>();
-				foreach (string studyUid in _setStudiesArrived.Keys)
-					studyUidList.Add(studyUid);
-
-				string studyUids = DicomStringHelper.GetDicomStringArray(studyUidList);
-				if (!String.IsNullOrEmpty(studyUids))
+			    //TODO (Marmot): use service node?
+				StudyItemList list = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
+				foreach (StudyItem item in list)
 				{
-					var queryParams = new QueryParameters(this.CreateOpenSearchQueryParams());
-					queryParams["StudyInstanceUid"] = studyUids;
+					//don't need to check this again, it's just paranoia
+					if (!StudyExists(item.StudyInstanceUid))
+					{
+						studyTable.Items.Add(item);
+					}
+					else
+					{
+						int index = GetStudyIndex(item.StudyInstanceUid);
+						//just update this since the rest won't change.
+						UpdateItem(studyTable.Items[index], item);
+						studyTable.Items.NotifyItemUpdated(index);
 
-					try
-					{
-						StudyItemList list = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
-						foreach (StudyItem item in list)
-						{
-							//don't need to check this again, it's just paranoia
-							if (!StudyExists(item.StudyInstanceUid))
-							{
-								studyTable.Items.Add(item);
-							}
-							else
-							{
-								int index = GetStudyIndex(item.StudyInstanceUid);
-								//just update this since the rest won't change.
-								UpdateItem(studyTable.Items[index], item);
-								studyTable.Items.NotifyItemUpdated(index);
-							}
-						}
-					}
-					catch (StudyFinderNotFoundException e)
-					{
-						//should never get here, really.
-						Platform.Log(LogLevel.Error, e);
-					}
-					catch (Exception e)
-					{
-						Platform.Log(LogLevel.Error, e);
+                        //It wasn't deleted because it was returned in the query.
+					    deleted.Remove(item.StudyInstanceUid);
 					}
 				}
 			}
+			catch (StudyFinderNotFoundException e)
+			{
+				//should never get here, really.
+				Platform.Log(LogLevel.Error, e);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
 
-			foreach (string deleteStudyUid in _setStudiesDeleted.Keys)
+			foreach (string deleteStudyUid in deleted)
 			{
 				int foundIndex = studyTable.Items.FindIndex(
 				delegate(StudyItem test)
@@ -637,13 +625,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			_setStudiesArrived.Clear();
-			_setStudiesDeleted.Clear();
+			_setChangedStudies.Clear();
 		}
 
 		private void DelayProcessReceivedAndRemoved(object sender, EventArgs e)
 		{
-			ProcessReceivedAndRemovedStudies();
+			ProcessChangedStudies();
 			UpdateResultsTitle();
 		}
 
@@ -683,40 +670,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			EventsHelper.Fire(this.SearchEnded, this, EventArgs.Empty);
 		}
 
-		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)
-		{
-			if (_setStudiesArrived.ContainsKey(e.Item.StudyInstanceUid))
-				return;
+        private void OnWorkItemChanged(object sender, WorkItemChangedEventArgs args)
+        {
+            if (args.ItemData == null)
+                return;
 
-			_setStudiesArrived[e.Item.StudyInstanceUid] = e.Item.StudyInstanceUid;
-			_setStudiesDeleted.Remove(e.Item.StudyInstanceUid); //can't be deleted if it's arrived.
+            switch (args.ItemData.Type)
+            {
+                case WorkItemTypeEnum.DicomSend:
+                case WorkItemTypeEnum.ReapplyRules:
+                    return;
+                default:
+                    if (!String.IsNullOrEmpty(args.ItemData.StudyInstanceUid))
+                        _setChangedStudies[args.ItemData.StudyInstanceUid] = args.ItemData.StudyInstanceUid;
+                    break;
+            }
 
-			_processStudiesEventPublisher.Publish(this, EventArgs.Empty);
-		}
-
-		private void OnInstanceDeleted(object sender, ItemEventArgs<DeletedInstanceInformation> e)
-		{
-			if (e.Item.InstanceLevel != InstanceLevel.Study)
-				return;
-
-			if (e.Item.Failed)
-				return;
-
-			_setStudiesDeleted[e.Item.InstanceUid] = e.Item.InstanceUid;
-			_setStudiesArrived.Remove(e.Item.InstanceUid); //can't arrive if it's deleted.
-
-			_processStudiesEventPublisher.Publish(this, EventArgs.Empty);
-		}
-
-		private void OnLocalDataStoreCleared(object sender, EventArgs e)
-		{
-			_setStudiesArrived.Clear();
-			_setStudiesDeleted.Clear();
-			_localDataStoreCleared = true;
-
-			ProcessReceivedAndRemovedStudies();
-			UpdateResultsTitle();
-		}
+            _processStudiesEventPublisher.Publish(this, EventArgs.Empty);
+        }
 
 		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{

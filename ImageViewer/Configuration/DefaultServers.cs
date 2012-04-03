@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;

@@ -10,12 +10,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
@@ -35,65 +32,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 	}
 
     [ServiceBehavior(InstanceContextMode=InstanceContextMode.PerCall)]
-    public class DicomServerServiceType : IDicomServerService
+    public class DicomServerServiceType : IDicomServer
     {
-    	#region IDicomServerService Members
-
-        public void Send(ApplicationEntity destinationAEInformation, IEnumerable<string> studyInstanceUids)
-		{
-			try
-			{
-				SendStudiesRequest request = new SendStudiesRequest();
-				request.DestinationAEInformation = destinationAEInformation;
-				request.StudyInstanceUids = studyInstanceUids;
-				DicomSendManager.Instance.SendStudies(request, null);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				//we throw a serializable, non-FaultException-derived exception so that the 
-				//client channel *does* get closed.
-				string message = SR.ExceptionFailedToInitiateSend;
-				message += "\nDetail: " + e.Message;
-				throw new DicomServerException(message);
-			}
-		}
-
-        public void RetrieveStudies(ApplicationEntity sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
-		{
-			try
-			{
-				RetrieveStudiesRequest request = new RetrieveStudiesRequest(sourceAEInformation, studiesToRetrieve);
-				DicomRetrieveManager.Instance.RetrieveStudies(request);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				//we throw a serializable, non-FaultException-derived exception so that the 
-				//client channel *does* get closed.
-				string message = SR.ExceptionFailedToInitiateRetrieve;
-				message += "\nDetail: " + e.Message;
-				throw new DicomServerException(message);
-			}
-		}
-
-        public void RetrieveSeries(ApplicationEntity sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
-		{
-			try
-			{
-				RetrieveSeriesRequest request = new RetrieveSeriesRequest(sourceAEInformation, studyInformation, seriesInstanceUids);
-				DicomRetrieveManager.Instance.RetrieveSeries(request);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				//we throw a serializable, non-FaultException-derived exception so that the 
-				//client channel *does* get closed.
-				string message = SR.ExceptionFailedToInitiateRetrieve;
-				message += "\nDetail: " + e.Message;
-				throw new DicomServerException(message);
-			}
-		}
+    	#region IDicomServer Members
 
         public RestartListenerResult RestartListener(RestartListenerRequest request)
         {

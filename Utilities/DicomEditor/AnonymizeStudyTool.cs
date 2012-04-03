@@ -19,7 +19,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Common.Auditing;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
@@ -174,7 +173,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 
 			this.Enabled = LocalStudyLoader != null && 
-							LocalDataStoreActivityMonitor.IsConnected && 
+							WorkItemActivityMonitor.IsRunning && 
 							this.Context.SelectedStudies.Count == 1 && 
 							this.Context.SelectedServerGroup.IsLocalDatastore;
 		}
