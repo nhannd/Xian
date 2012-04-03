@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -21,35 +16,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             return Path.Combine(Platform.ApplicationDataDirectory, fileName);
         }
 
-        public static void CreateDatabase(string resourceName, string filePath)
+        public static void CreateDatabase(string resourceName, string databaseFilePath)
         {
             //NOTE: Since we're using CE 4.0, the LINQ CreateDatabase function won't work because it creates a 3.5 database.
 
             // ensure the parent directory exists before trying to create database
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            Directory.CreateDirectory(Path.GetDirectoryName(databaseFilePath));
 
-            var resourceResolver = new ResourceResolver(typeof(StudyRootQueryTests).Assembly);
-            using (Stream sourceStream = resourceResolver.OpenResource(resourceName))
+            var resourceResolver = new ResourceResolver(typeof(DatabaseHelper).Assembly);
+            using (Stream resourceStream = resourceResolver.OpenResource(resourceName))
             {
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var fileStream = new FileStream(databaseFilePath, FileMode.Create))
                 {
                     var buffer = new byte[1024];
-                    while (true)
+                    int bytesRead = resourceStream.Read(buffer, 0, buffer.Length);
+                    // write the required bytes
+                    while (bytesRead > 0)
                     {
-                        int read = sourceStream.Read(buffer, 0, buffer.Length);
-                        if (read <= 0)
-                            break;
-
-                        fileStream.Write(buffer, 0, read);
-                        if (read < buffer.Length)
-                            break;
+                        fileStream.Write(buffer, 0, bytesRead);
+                        bytesRead = resourceStream.Read(buffer, 0, buffer.Length);
                     }
 
                     fileStream.Close();
                 }
+
+                resourceStream.Close();
             }
-
         }
-
     }
 }
