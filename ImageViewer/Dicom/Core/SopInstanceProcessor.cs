@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
@@ -138,11 +139,24 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                     {
                         if(!string.IsNullOrEmpty(file.FilePath) && file.File == null)
                         {
-                            file.File = new DicomFile(file.FilePath);
+                            try
+                            {
+                                file.File = new DicomFile(file.FilePath);
 
-                            // WARNING:  If we ever do anything where we update files and save them,
-                            // we may have to change this.
-                            file.File.Load(DicomReadOptions.StorePixelDataReferences|DicomReadOptions.Default);
+                                // WARNING:  If we ever do anything where we update files and save them,
+                                // we may have to change this.
+                                file.File.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
+                            }
+                            catch (FileNotFoundException)
+                            {
+                                Platform.Log(LogLevel.Warn, "File to be processed is not found, ignoring: {0}",
+                                             file.FilePath);
+
+                                if (file.ItemUid != null)
+                                    processor.AddCommand(new CompleteWorkItemUidCommand(file.ItemUid));
+
+                                continue;
+                            }
                         }
                         else
                         {

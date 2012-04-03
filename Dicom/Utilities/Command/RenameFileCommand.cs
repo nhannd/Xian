@@ -55,10 +55,11 @@ namespace ClearCanvas.Dicom.Utilities.Command
             if (RequiresRollback)
                 Backup();
 
-            if (File.Exists(_destinationFile)) 
-                FileUtils.Delete(_destinationFile);
+		    FileUtils.Copy(_sourceFile, _destinationFile, !_failIfExists);
 
-            File.Move(_sourceFile, _destinationFile);
+            if (File.Exists(_sourceFile))
+                FileUtils.Delete(_sourceFile);
+            
 		    _sourceRenamed = true;
 		}
 

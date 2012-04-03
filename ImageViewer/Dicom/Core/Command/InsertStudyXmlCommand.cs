@@ -27,6 +27,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         private readonly StudyXml _studyXml;
         private readonly StudyLocation _studyStorageLocation;
         private readonly bool _writeFile;
+        private bool _duplicate;
         private readonly StudyXmlOutputSettings _settings;
         #endregion
 
@@ -57,6 +58,14 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 fileSize = finfo.Length;
             }
 
+            String seriesInstanceUid = _file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+            String sopInstanceUid = _file.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
+
+            if (_studyXml.Contains(seriesInstanceUid,sopInstanceUid))
+            {
+                _duplicate = true;                
+            }
+
             // Setup the insert parameters
             if (false == _studyXml.AddFile(_file, fileSize, _settings))
             {
@@ -77,13 +86,15 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         protected override void OnUndo()
         {
-            Platform.Log(LogLevel.Info, "Undoing InsertStudyXmlCommand");
-            _studyXml.RemoveFile(_file);
-            
-            if (_writeFile)
+            if (!_duplicate)
             {
-                bool fileCreated;
-                _studyStorageLocation.SaveStudyXml(_studyXml, out fileCreated);
+                _studyXml.RemoveFile(_file);
+
+                if (_writeFile)
+                {
+                    bool fileCreated;
+                    _studyStorageLocation.SaveStudyXml(_studyXml, out fileCreated);
+                }
             }
         }
     }

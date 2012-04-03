@@ -216,43 +216,14 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             {
                 string studyInstanceUid = Path.GetFileName(folder);
                 var location = new StudyLocation(studyInstanceUid);
-                if (!CheckStudyExists(studyInstanceUid))
+
+                var reprocessor = new ReprocessStudy(location);
+                if (!reprocessor.StudyStoredInDatabase)
                 {
                     EventsHelper.Fire(_studyAddedEvent, this, EventArgs.Empty);
                 }
 
-                var studyXml = location.LoadStudyXml();
-                var fileList = new List<SopInstanceProcessor.ProcessorFile>();
-
-                FileProcessor.Process(folder, "*.dcm", delegate(string file)
-                                                           {
-                                                               try
-                                                               {
-                                                                   fileList.Add(
-                                                                       new SopInstanceProcessor.
-                                                                           ProcessorFile(file, null));
-
-                                                                   if (fileList.Count > 19)
-                                                                   {
-                                                                       var p = new SopInstanceProcessor(location);
-
-                                                                       p.ProcessBatch(fileList, studyXml);
-
-                                                                       fileList.Clear();
-                                                                   }
-                                                               }
-                                                               catch (Exception x)
-                                                               {
-                                                                   Platform.Log(LogLevel.Error, x);
-                                                               }
-
-                                                           }, false);
-                if (fileList.Count > 0)
-                {
-                    var p = new SopInstanceProcessor(location);
-
-                    p.ProcessBatch(fileList, studyXml);
-                }
+                reprocessor.Process();
 
                 EventsHelper.Fire(_studyProcessedEvent, this, EventArgs.Empty);
             }
@@ -260,17 +231,6 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             {
                 Platform.Log(LogLevel.Error, x, "Unexpected exception reindexing folder: {0}", folder);
             }
-        }
-
-        private static bool CheckStudyExists(string studyInstanceUid)
-        {
-            using (var context = new DataAccessContext())
-            {
-                var broker = context.GetStudyBroker();
-                var study = broker.GetStudy(studyInstanceUid);
-                if (study != null) return true;
-            }
-            return false;
         }
 
         private static string GetFileStoreDirectory()
