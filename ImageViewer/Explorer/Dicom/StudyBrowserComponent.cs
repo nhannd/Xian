@@ -162,12 +162,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private SearchResultColumnOptionCollection _searchResultColumnOptions;
 
 		private IWorkItemActivityMonitor _activityMonitor;
-		private DelayedEventPublisher _processStudiesEventPublisher;
+        private DelayedEventPublisher _processStudiesEventPublisher;
+
+        private bool _notificationTextVisible;
+        private string _notificationText;
+        private DelayedEventPublisher _notificationEventPublisher;
 
 		private bool _isEnabled = true;
 		private bool _searchInProgress;
 
-		#endregion
+	    #endregion
 
 		public StudyBrowserComponent()
 		{
@@ -278,6 +282,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return CurrentSearchResult.ResultsTitle;
 			}
 		}
+
+        public string NotificationText
+        {
+            get { return _notificationTextVisible ? _notificationText : String.Empty; }
+            private set
+            {
+                if (Equals(_notificationText, value))
+                    return;
+
+                _notificationText = value;
+                NotifyPropertyChanged("NotificationText");
+            }
+        }
 
 		public event EventHandler StudyTableChanged
 		{
@@ -424,7 +441,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			base.Start();
 
 			_processStudiesEventPublisher = new DelayedEventPublisher(DelayProcessReceivedAndRemoved);
-
+		    const int tenSeconds = 10000;
+            _notificationEventPublisher = new DelayedEventPublisher(DelayedClearNotificationText, tenSeconds);
 			ArrayList tools = new ArrayList(new StudyBrowserToolExtensionPoint().CreateExtensions());
 			tools.Add(new FilterDuplicateStudiesTool(this));
 			_toolSet = new ToolSet(tools, new StudyBrowserToolContext(this));
@@ -445,6 +463,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			Async.CancelPending(this);
 
 			_processStudiesEventPublisher.Dispose();
+            _notificationEventPublisher.Dispose();
 
 			_toolSet.Dispose();
 			_toolSet = null;
@@ -473,6 +492,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			EventsHelper.Fire(_selectedServerChangedEvent, this, EventArgs.Empty);
 			EventsHelper.Fire(_studyTableChanged, this, EventArgs.Empty);
 			UpdateResultsTitle();
+
+            if (SelectedServerGroup.IsLocalDatastore)
+            {
+                _notificationTextVisible = true;
+                NotifyPropertyChanged("NotificationText");
+            }
+            else
+            {
+                _notificationTextVisible = false;
+                NotifyPropertyChanged("NotificationText");
+            }
 		}
 
 		private void UpdateResultsTitle()
@@ -687,6 +717,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             switch (args.ItemData.Type)
             {
+                case WorkItemTypeEnum.ReIndex:
+                    UpdateNotificationText(args.ItemData);
+                    break;
                 case WorkItemTypeEnum.DicomSend:
                 case WorkItemTypeEnum.ReapplyRules:
                     return;
@@ -699,7 +732,45 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _processStudiesEventPublisher.Publish(this, EventArgs.Empty);
         }
 
-		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
+        private void UpdateNotificationText(WorkItemData workItemData)
+        {
+            switch (workItemData.Status)
+            {
+                case WorkItemStatusEnum.Pending:
+                    _notificationEventPublisher.Cancel();
+                    NotificationText = SR.NotificationReindexScheduled;
+                    break;
+                case WorkItemStatusEnum.InProgress:
+                    NotificationText = SR.NotificationReindexRunning;
+                    break;
+                case WorkItemStatusEnum.Failed:
+                    NotificationText = SR.NotificationReindexFailed;
+                    _notificationEventPublisher.Publish(this, EventArgs.Empty);
+                    break;
+                case WorkItemStatusEnum.Idle:
+                    NotificationText = SR.NotificationReindexComplete;
+                    _notificationEventPublisher.Publish(this, EventArgs.Empty);
+                    break;
+                case WorkItemStatusEnum.Complete:
+                    NotificationText = SR.NotificationReindexComplete;
+                    _notificationEventPublisher.Publish(this, EventArgs.Empty);
+                    break;
+                case WorkItemStatusEnum.Canceled:
+                    NotificationText = SR.NotificationReindexCancelled;
+                    _notificationEventPublisher.Publish(this, EventArgs.Empty);
+                    break;
+                default:
+                    NotificationText = String.Empty;
+                    break;
+            }
+        }
+
+        private void DelayedClearNotificationText(object sender, EventArgs e)
+        {
+            NotificationText = String.Empty;
+        }
+        
+        private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
 			_searchResultColumnOptions = SearchResult.ColumnOptions;
 			_searchResultColumnOptions.ApplyColumnSettings(CurrentSearchResult);

@@ -40,7 +40,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_bindingSource = new BindingSource();
 			_bindingSource.DataSource = _studyBrowserComponent;
 
-			_resultsTitleBar.DataBindings.Add("Text", _studyBrowserComponent, "ResultsTitle", true, DataSourceUpdateMode.OnPropertyChanged);
+            _banner.DataBindings.Add("Text", _studyBrowserComponent, "ResultsTitle", true, DataSourceUpdateMode.OnPropertyChanged);
+            _banner.DataBindings.Add("NotificationText", _studyBrowserComponent, "NotificationText", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			this.DataBindings.Add("Enabled", _studyBrowserComponent, "IsEnabled");
 		}

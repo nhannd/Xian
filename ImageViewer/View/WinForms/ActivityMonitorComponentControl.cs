@@ -97,5 +97,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_component.TextFilter = _textFilter.Text;
 		}
 
+        private void Reindex_Click(object sender, EventArgs e)
+        {
+            _component.StartReindex();
+        }
 	}
 }

@@ -300,6 +300,51 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Re-index cancelled.
+        /// </summary>
+        internal static string NotificationReindexCancelled {
+            get {
+                return ResourceManager.GetString("NotificationReindexCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-index complete.
+        /// </summary>
+        internal static string NotificationReindexComplete {
+            get {
+                return ResourceManager.GetString("NotificationReindexComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-index failed.
+        /// </summary>
+        internal static string NotificationReindexFailed {
+            get {
+                return ResourceManager.GetString("NotificationReindexFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-index running.
+        /// </summary>
+        internal static string NotificationReindexRunning {
+            get {
+                return ResourceManager.GetString("NotificationReindexRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-index scheduled.
+        /// </summary>
+        internal static string NotificationReindexScheduled {
+            get {
+                return ResourceManager.GetString("NotificationReindexScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM.
         /// </summary>
         internal static string PathDicom {

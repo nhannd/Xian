@@ -706,4 +706,7 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="TooltipActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>
+  <data name="MessageFailedToStartReindex" xml:space="preserve">
+    <value>Failed to start re-index.</value>
+  </data>
 </root>
