@@ -437,8 +437,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			RefreshInternal();
 		}
 
+        public void StartReindex()
+        {
+            try
+            {
+                new ReindexClient().Reindex();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, SR.MessageFailedToStartReindex, Host.DesktopWindow);
+            }
+        }
 
-		#endregion
+	    #endregion
 
 		private IWorkItemActivityMonitor ActivityMonitor { get; set; }
 

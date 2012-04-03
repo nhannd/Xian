@@ -59,43 +59,50 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StudyBrowserControl));
-			this._resultsTitleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
-			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this.SuspendLayout();
-			// 
-			// _resultsTitleBar
-			// 
-			resources.ApplyResources(this._resultsTitleBar, "_resultsTitleBar");
-			this._resultsTitleBar.Name = "_resultsTitleBar";
-			// 
-			// _studyTableView
-			// 
-			this._studyTableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
-			this._studyTableView.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._studyTableView, "_studyTableView");
-			this._studyTableView.Name = "_studyTableView";
-			this._studyTableView.ReadOnly = false;
-			this._studyTableView.SmartColumnSizing = true;
-			this._studyTableView.SortButtonTooltip = null;
-			// 
-			// StudyBrowserControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Controls.Add(this._studyTableView);
-			this.Controls.Add(this._resultsTitleBar);
-			this.Name = "StudyBrowserControl";
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StudyBrowserControl));
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._banner = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.StudyBrowserBannerControl();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this._studyTableView, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this._banner, 0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // _studyTableView
+            // 
+            this._studyTableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
+            resources.ApplyResources(this._studyTableView, "_studyTableView");
+            this._studyTableView.Name = "_studyTableView";
+            this._studyTableView.ReadOnly = false;
+            this._studyTableView.SmartColumnSizing = true;
+            // 
+            // _banner
+            // 
+            resources.ApplyResources(this._banner, "_banner");
+            this._banner.Name = "_banner";
+            this._banner.NotificationText = "Re-index not running";
+            // 
+            // StudyBrowserControl
+            // 
+            resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.tableLayoutPanel1);
+            this.Name = "StudyBrowserControl";
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private ClearCanvas.Desktop.View.WinForms.TableView _studyTableView;
-		private ClearCanvas.Desktop.View.WinForms.TitleBar _resultsTitleBar;
-
-
-	}
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private Desktop.View.WinForms.TableView _studyTableView;
+        private StudyBrowserBannerControl _banner;
+    }
 }

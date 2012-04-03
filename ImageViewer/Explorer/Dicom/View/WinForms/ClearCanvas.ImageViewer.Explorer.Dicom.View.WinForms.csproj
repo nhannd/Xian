@@ -98,6 +98,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="StudyBrowserBannerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StudyBrowserBannerControl.Designer.cs">
+      <DependentUpon>StudyBrowserBannerControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="StudyBrowserComponentView.cs" />
     <Compile Include="StudyBrowserControl.cs">
       <SubType>UserControl</SubType>
@@ -137,6 +143,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="StudyBrowserBannerControl.resx">
+      <DependentUpon>StudyBrowserBannerControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StudyBrowserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudyBrowserControl.cs</DependentUpon>

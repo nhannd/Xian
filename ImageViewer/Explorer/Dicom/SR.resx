@@ -200,6 +200,21 @@ Are you sure you want to continue?</value>
   <data name="MessageSearchStudyPermissionDenied" xml:space="preserve">
     <value>Permission to search studies is denied.</value>
   </data>
+  <data name="NotificationReindexCancelled" xml:space="preserve">
+    <value>Re-index cancelled</value>
+  </data>
+  <data name="NotificationReindexComplete" xml:space="preserve">
+    <value>Re-index complete</value>
+  </data>
+  <data name="NotificationReindexFailed" xml:space="preserve">
+    <value>Re-index failed</value>
+  </data>
+  <data name="NotificationReindexRunning" xml:space="preserve">
+    <value>Re-index running</value>
+  </data>
+  <data name="NotificationReindexScheduled" xml:space="preserve">
+    <value>Re-index scheduled</value>
+  </data>
   <data name="PathDicom" xml:space="preserve">
     <value>DICOM</value>
   </data>

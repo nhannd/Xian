@@ -1323,6 +1323,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to start re-index..
+        /// </summary>
+        public static string MessageFailedToStartReindex {
+            get {
+                return ResourceManager.GetString("MessageFailedToStartReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ClearCanvas was only able to load {0} of the {1} images you requested..
         /// </summary>
         public static string MessageFormatLoadStudyIncomplete {
