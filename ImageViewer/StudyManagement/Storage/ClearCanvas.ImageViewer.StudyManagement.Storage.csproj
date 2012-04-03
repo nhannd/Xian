@@ -210,9 +210,11 @@
     <EmbeddedResource Include="DicomQuery\Tests\test_store.sdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="dicom_store.sdf">
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dicom_store.sdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

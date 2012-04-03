@@ -560,31 +560,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void ProcessChangedStudies()
 		{
-			if (_selectedServerGroup == null || !_selectedServerGroup.IsLocalDatastore)
-				return;
-
-            if (_setChangedStudies.Count == 0)
+			if (_selectedServerGroup == null || !_selectedServerGroup.IsLocalDatastore || _setChangedStudies.Count == 0)
                 return;
 
 			Table<StudyItem> studyTable = StudyTable;
 
 		    var changed = _setChangedStudies.Keys.ToList();
-		    var deleted = new List<string>(changed);
-			
+		    var confirmedDeleted = new List<string>();
+
             string studyUids = DicomStringHelper.GetDicomStringArray(changed);
 			if (String.IsNullOrEmpty(studyUids))
                 return;
 
 			var queryParams = new QueryParameters(this.CreateOpenSearchQueryParams());
 			queryParams["StudyInstanceUid"] = studyUids;
-                    
+
 			try
 			{
 			    //TODO (Marmot): use service node?
-				StudyItemList list = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
-				foreach (StudyItem item in list)
+				StudyItemList matchingStudies = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
+				foreach (StudyItem item in matchingStudies)
 				{
-					//don't need to check this again, it's just paranoia
+                    //What's left over in this list may have been deleted.
+                    changed.Remove(item.StudyInstanceUid);
+                    
+                    //don't need to check this again, it's just paranoia
 					if (!StudyExists(item.StudyInstanceUid))
 					{
 						studyTable.Items.Add(item);
@@ -595,11 +595,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						//just update this since the rest won't change.
 						UpdateItem(studyTable.Items[index], item);
 						studyTable.Items.NotifyItemUpdated(index);
-
-                        //It wasn't deleted because it was returned in the query.
-					    deleted.Remove(item.StudyInstanceUid);
 					}
 				}
+
+                string possiblyDeletedUids = DicomStringHelper.GetDicomStringArray(changed);
+                if (String.IsNullOrEmpty(possiblyDeletedUids))
+                    return;
+
+                queryParams = new QueryParameters();
+                queryParams["StudyInstanceUid"] = possiblyDeletedUids;
+			    StudyItemList notDeletedStudies = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
+                if (notDeletedStudies != null && notDeletedStudies.Count > 0)
+                {
+                    var notDeletedUids = notDeletedStudies.Select(s => s.StudyInstanceUid);
+                    confirmedDeleted = changed.Where(uid => !notDeletedUids.Contains(uid)).ToList();
+                }
+                else
+                {
+                    //They've all been deleted.
+                    confirmedDeleted = changed;
+                }
+
 			}
 			catch (StudyFinderNotFoundException e)
 			{
@@ -611,18 +627,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				Platform.Log(LogLevel.Error, e);
 			}
 
-			foreach (string deleteStudyUid in deleted)
+			foreach (string deletedUid in confirmedDeleted)
 			{
-				int foundIndex = studyTable.Items.FindIndex(
-				delegate(StudyItem test)
-				{
-					return test.StudyInstanceUid == deleteStudyUid;
-				});
-
+                var uid = deletedUid;
+				int foundIndex = studyTable.Items.FindIndex(test => test.StudyInstanceUid == uid);
 				if (foundIndex >= 0)
-				{
 					studyTable.Items.RemoveAt(foundIndex);
-				}
 			}
 
 			_setChangedStudies.Clear();
