@@ -35,10 +35,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         /// <param name="studyInstanceUid">The Study Instance UID for the study location.</param>
         public StudyLocation(string studyInstanceUid)
         {
-            Study = new StudyIdentifier
-            {
-                StudyInstanceUid = studyInstanceUid
-            };
+            Study = new Study
+                        {
+                            StudyInstanceUid = studyInstanceUid
+                        };
 
             StudyFolder = Path.Combine(GetFileStoreDirectory(), studyInstanceUid);
         }
@@ -49,7 +49,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         /// <param name="message">A message to find the Study location for.</param>
         public StudyLocation(DicomMessageBase message)
         {
-            Study = new StudyIdentifier(message.DataSet);
+            Study = new Study();
+            Study.Initialize(message);
 
             StudyFolder = Path.Combine(GetFileStoreDirectory(), Study.StudyInstanceUid);
         }
@@ -64,9 +65,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         public string StudyFolder { get; private set; }
 
         /// <summary>
-        /// A Study Identifier for the study.  Note that only the <see cref="StudyIdentifier.StudyInstanceUid"/> field is guarenteed to be filled in.
+        /// A Study object.  Note that only the <see cref="StudyIdentifier.StudyInstanceUid"/> field is guarenteed to be filled in.
         /// </summary>
-        public StudyIdentifier Study { get; set; }
+        public Study Study { get; set; }
 
         #endregion
 

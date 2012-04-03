@@ -25,15 +25,17 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         private readonly DicomMessageBase _messageBase;
         private readonly string _studyInstanceUid;
         private readonly StudyXml _studyXml;
+        private readonly StudyLocation _location;
 
         public bool Created { get; private set; }
         public Study Study { get; private set; }        
 
-        public InsertOrUpdateStudyCommand(DicomMessageBase message, StudyXml xml) : base("Insert or Update Study Command")
+        public InsertOrUpdateStudyCommand(StudyLocation location, DicomMessageBase message, StudyXml xml) : base("Insert or Update Study Command")
         {
             _messageBase = message;
             _studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
             _studyXml = xml;
+            _location = location;
         }
 
         protected override void OnExecute(CommandProcessor theProcessor)
@@ -44,7 +46,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
             if (Study == null)
             {
-                Study = new Study();
+                // This is a bit of a hack to handle batch processing of studies
+                Study = _location.Study;
                 Created = true;
                 Study.DeleteTime = DateTime.Now.AddDays(1);
                 Study.Deleted = false;

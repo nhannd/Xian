@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                         var insertStudyXmlCommand = new InsertStudyXmlCommand(file.File, studyXml, StudyLocation, false);
                         processor.AddCommand(insertStudyXmlCommand);
 
-                        var insertStudyCommand = new InsertOrUpdateStudyCommand(file.File, studyXml);
+                        var insertStudyCommand = new InsertOrUpdateStudyCommand(StudyLocation, file.File, studyXml);
                         processor.AddCommand(insertStudyCommand);
 
                         if (file.ItemUid != null)
