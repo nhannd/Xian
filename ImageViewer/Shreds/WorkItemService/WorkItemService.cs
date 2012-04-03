@@ -81,6 +81,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             using (var context = new DataAccessContext())
             {
                 DateTime now = Platform.Time;
+                var broker = context.GetWorkItemBroker();
+
+                if (request.Request.Type == WorkItemTypeEnum.ReIndex)
+                {
+                    var list = broker.GetWorkItems(request.Request.Type, null, null);
+                    foreach (var workItem in list)
+                    {
+                        if (workItem.Status == WorkItemStatusEnum.Pending
+                            || workItem.Status == WorkItemStatusEnum.InProgress)
+                        {
+                            response.Item = WorkItemHelper.FromWorkItem(workItem);
+                            return response;
+                        }
+                    }
+                }
 
                 var item = new WorkItem
                                {
@@ -88,13 +103,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                    Type = request.Request.Type,
                                    Priority = request.Request.Priority,
                                    InsertTime = now,
-                                   ScheduledTime = now.AddSeconds(2), // TODO (Marmot) - Draw delay from a config option
-                                   DeleteTime = now.AddHours(3),
-                                   ExpirationTime = now.AddMinutes(2),
+                                   ScheduledTime = now.AddSeconds(5),
+                                   DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes),
+                                   ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds),
                                    Status = WorkItemStatusEnum.Pending
                                };
 
-                var broker = context.GetWorkItemBroker();
                 broker.AddWorkItem(item);
                 
                 context.Commit();

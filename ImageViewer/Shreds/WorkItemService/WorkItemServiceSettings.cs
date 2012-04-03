@@ -20,6 +20,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		public const int DefaultStatThreadCount = 4;
         public const uint DefaultPostponeSeconds = 15;
         public const uint DefaultExpireDelaySeconds = 90;
+        public const uint DefaultDeleteDelayMinutes = 120;
         public const int DefaultRetryCount = 3;
         public const int DefaultStudyProcessBatchSize = 10;
 		private static WorkItemServiceSettings _instance;
@@ -84,6 +85,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             get { return (uint)this["ExpireDelaySeconds"]; }
             set { this["ExpireDelaySeconds"] = value; }
+        }
+
+        [ConfigurationProperty("DeleteDelayMinutes", DefaultValue = DefaultDeleteDelayMinutes)]
+        public uint DeleteDelayMinutes
+        {
+            get { return (uint)this["DeleteDelayMinutes"]; }
+            set { this["DeleteDelayMinutes"] = value; }
         }
 
         [ConfigurationProperty("RetryCount", DefaultValue = DefaultRetryCount)]

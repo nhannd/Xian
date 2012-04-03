@@ -96,17 +96,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 Item.Progress = Progress;
                 Item.FailureCount = Item.FailureCount + 1;
-                Item.ScheduledTime = now;
-                Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
                 if (Item.FailureCount >= WorkItemServiceSettings.Instance.RetryCount
                     || failureType == WorkItemFailureType.Fatal )
                 {
                     Item.Status = WorkItemStatusEnum.Failed;
                     Item.ExpirationTime = now;
+                    Item.ScheduledTime = now;
                 }
                 else
                 {
-                    Item.ExpirationTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                    if (Item.ExpirationTime < now)
+                        Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                    Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
                     Item.Status = WorkItemStatusEnum.Pending;
                 }
 
@@ -123,7 +125,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         public void Postpone()
         {
             DateTime newScheduledTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-            DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds));
             using (var context = new DataAccessContext())
             {
                 var workItemBroker = context.GetWorkItemBroker();
@@ -131,7 +132,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item = workItemBroker.GetWorkItem(Item.Oid);
                 Item.Progress = Progress;
                 Item.ScheduledTime = newScheduledTime;
-                Item.ExpirationTime = expireTime;
+                if (Item.ExpirationTime > Item.ScheduledTime)
+                    Item.ExpirationTime = Item.ScheduledTime;
                 Item.Status = WorkItemStatusEnum.Pending;
                 context.Commit();
             }
@@ -156,6 +158,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item.Progress = Progress;
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
                 Item.Status = WorkItemStatusEnum.Complete;
 
                 var uidBroker = context.GetWorkItemUidBroker();
@@ -186,6 +189,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 Item.Progress = Progress;
                 Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                if (Item.ExpirationTime > Item.ScheduledTime)
+                    Item.ExpirationTime = Item.ScheduledTime;
                 Item.Status = WorkItemStatusEnum.Idle;
 
                 context.Commit();
@@ -210,6 +215,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
                 Item.Status = WorkItemStatusEnum.Canceled;
                 Item.Progress = Progress;
                 

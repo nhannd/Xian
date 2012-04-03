@@ -119,6 +119,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             {
                 // Already have a committed WorkItem, just set the Oid
                 WorkItemUid.WorkItemOid = WorkItem.Oid;
+                //WorkItem.ExpirationTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.)
                 var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
                 workItemUidBroker.AddWorkItemUid(WorkItemUid);
             }
