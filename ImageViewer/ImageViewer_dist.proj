@@ -112,11 +112,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Iesi.Collections.dll" />
-    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Nhibernate.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
     <DicomToolkitFiles Include="$(TrunkDirectory)\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
   </ItemGroup>
 
@@ -136,10 +131,6 @@
 
   <ItemGroup Condition="$(ShredHostBuild)">
     <CriticalConfigFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_Shreds_critical.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ImageViewerServicesFiles Include="$(TrunkDirectory)\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -311,9 +302,6 @@
 
     <!-- Manifest -->
     <PluginFiles Include="$(TrunkDirectory)\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
-
-    <!-- DICOM Services -->
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Dicom\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.Dicom.Core.dll" />
 
   </ItemGroup>
 
@@ -503,8 +491,6 @@
 
     <!-- Copy plugins -->
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy SourceFiles="@(ImageViewerServicesFiles)" DestinationFolder="$(PluginsDirectory)" />
-
     <Copy SourceFiles="@(CodecFiles)" DestinationFolder="$(PluginsDirectory)" />
 
   </Target>

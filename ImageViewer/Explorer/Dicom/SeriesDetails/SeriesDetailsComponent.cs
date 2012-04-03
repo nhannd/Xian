@@ -316,13 +316,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			IStudyRootQuery query;
 			if (_server.IsLocalDataStore)
 			{
-			    query = new LocalStudyRootQuery();
+			    query = new StudyStoreBridge();
 			}
 			else
 			{
                 var server = (IServerTreeDicomServer)_server;
-				query = new DicomStudyRootQuery(
-                    DicomServerConfigurationHelper.AETitle, server.AETitle, server.HostName, server.Port);
+				query = new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle, server.AETitle, server.HostName, server.Port);
 			}
 
 			try

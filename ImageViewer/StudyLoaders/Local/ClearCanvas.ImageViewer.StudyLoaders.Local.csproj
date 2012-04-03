@@ -63,8 +63,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LocalDataStoreSopDataSource.cs" />
-    <Compile Include="LocalDataStoreStudyLoader.cs" />
+    <Compile Include="LocalStoreSopDataSource.cs" />
+    <Compile Include="LocalStoreStudyLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PreLoadingSettings.cs" />
     <Compile Include="PreLoadingSettings.Designer.cs">

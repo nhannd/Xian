@@ -12,6 +12,7 @@
 using System;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using System.Diagnostics;
 
@@ -19,21 +20,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	internal class DicomServerManager
 	{
-		private enum ServerState
-		{
-			Stopped = 0,
-			Starting,
-			Started,
-			Stopping
-		}
-
 		public static readonly DicomServerManager Instance = new DicomServerManager();
 
 		#region Private Fields
 
 		private readonly object _syncLock = new object();
 		private DicomServer _server;
-		private ServerState _serverState;
+		private ServiceState _serviceState;
 
 		private bool _active;
 		private bool _restart;
@@ -88,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
 					//the server may be null here, we are just reflecting the state based on the method calls.
 					_server = server;
-					_serverState = ServerState.Started;
+					_serviceState = ServiceState.Started;
 					OnServerStarted();
 				}
 			}
@@ -107,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					server.Stop();
 				}
 
-				_serverState = ServerState.Stopped;
+				_serviceState = ServiceState.Stopped;
 				OnServerStopped();
 			}
 		}
@@ -146,15 +139,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			lock (_syncLock)
 			{
-				if (_serverState == ServerState.Stopped)
+				if (_serviceState == ServiceState.Stopped)
 				{
-					_serverState = ServerState.Starting;
+					_serviceState = ServiceState.Starting;
 					ThreadPool.QueueUserWorkItem(StartServerAsync);
 				}
 
 				if (wait)
 				{
-					while (_serverState != ServerState.Started)
+					while (_serviceState != ServiceState.Started)
 						Monitor.Wait(_syncLock, 50);
 				}
 			}
@@ -164,15 +157,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			lock (_syncLock)
 			{
-				if (_serverState == ServerState.Started)
+				if (_serviceState == ServiceState.Started)
 				{
-					_serverState = ServerState.Stopping;
+					_serviceState = ServiceState.Stopping;
 					ThreadPool.QueueUserWorkItem(StopServerAsync);
 				}
 
 				if (wait)
 				{
-					while (_serverState != ServerState.Stopped)
+					while (_serviceState != ServiceState.Stopped)
 						Monitor.Wait(_syncLock, 50);
 				}
 			}
@@ -182,7 +175,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Public Methods
 
-		public void Start()
+	    public ServiceState State
+	    {
+            get
+            {
+                lock (_syncLock)
+                {
+                    return _serviceState;
+                }
+            }
+	    }
+
+	    public void Start()
 		{
 			lock (_syncLock)
 			{

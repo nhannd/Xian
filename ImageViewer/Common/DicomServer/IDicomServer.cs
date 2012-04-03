@@ -9,8 +9,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
@@ -21,7 +19,14 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 	[ServiceContract(ConfigurationName = "IDicomServer")]
 	public interface IDicomServer
 	{
-        //TODO (Marmot): Add GetListenerState, Start/Stop?
+        //TODO (Marmot): Add Start/Stop?
+        /// <summary>
+        /// Gets the current state of the local DICOM listener.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetListenerStateResult GetListenerState(GetListenerStateRequest request);
 
         /// <summary>
         /// Requests that the DICOM listener be restarted. Would normally be called

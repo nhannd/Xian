@@ -104,9 +104,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			return new RuleBroker(_context);
 		}
 
-        public StudyRootQuery GetStudyRootQuery()
+        public StudyStoreQuery GetStudyStoreQuery()
         {
-            return new StudyRootQuery(_context);
+            return new StudyStoreQuery(_context);
         }
 
 	    /// <summary>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
@@ -31,19 +30,19 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         public List<IDicomServiceNode> GetServers()
         {
             var servers = _serverDirectory.GetServers(new GetServersRequest()).Servers;
-            return servers.Select(s => s.ToServiceNode()).OfType<IDicomServiceNode>().ToList();
+            return servers.Select(s => s.ToServiceNode()).ToList();
         }
 
         public List<IDicomServiceNode> GetServersByAETitle(string aeTitle)
         {
             var servers = _serverDirectory.GetServers(new GetServersRequest{AETitle = aeTitle}).Servers;
-            return servers.Select(s => s.ToServiceNode()).OfType<IDicomServiceNode>().ToList();
+            return servers.Select(s => s.ToServiceNode()).ToList();
         }
 
-        public List<IDicomServiceNode> GetServerByName(string name)
+        public IDicomServiceNode GetServerByName(string name)
         {
             var servers = _serverDirectory.GetServers(new GetServersRequest { Name = name}).Servers;
-            return servers.Select(s => s.ToServiceNode()).OfType<IDicomServiceNode>().ToList();
+            return servers.Select(s => s.ToServiceNode()).FirstOrDefault();
         }
 
         protected virtual void Dispose(bool disposing)

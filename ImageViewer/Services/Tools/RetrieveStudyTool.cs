@@ -49,71 +49,71 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void RetrieveStudy()
 		{
-			if (!Enabled || Context.SelectedServerGroup.IsLocalDatastore || Context.SelectedStudy == null)
+            throw new NotImplementedException("Marmot - need to restore this.");
+            /*
+
+            if (!Enabled || Context.SelectedServerGroup.IsLocalDatastore || Context.SelectedStudy == null)
                 return;
 
-			EventResult result = EventResult.Success;
+            EventResult result = EventResult.Success;
 
             var retrieveInformation = new Dictionary<IApplicationEntity, List<StudyInformation>>();
-			foreach (StudyItem item in Context.SelectedStudies)
-			{
+            foreach (StudyItem item in Context.SelectedStudies)
+            {
                 var applicationEntity = item.Server as IApplicationEntity;
                 if (applicationEntity != null && applicationEntity.ScpParameters != null && !retrieveInformation.ContainsKey(applicationEntity))
-					retrieveInformation[applicationEntity] = new List<StudyInformation>();
+                    retrieveInformation[applicationEntity] = new List<StudyInformation>();
                 else continue;
 
-				var studyInformation = new StudyInformation {PatientId = item.PatientId, PatientsName = item.PatientsName};
-			    DateTime studyDate;
-				DateParser.Parse(item.StudyDate, out studyDate);
-				studyInformation.StudyDate = studyDate;
-				studyInformation.StudyDescription = item.StudyDescription;
-				studyInformation.StudyInstanceUid = item.StudyInstanceUid;
+                var studyInformation = new StudyInformation {PatientId = item.PatientId, PatientsName = item.PatientsName};
+                DateTime studyDate;
+                DateParser.Parse(item.StudyDate, out studyDate);
+                studyInformation.StudyDate = studyDate;
+                studyInformation.StudyDescription = item.StudyDescription;
+                studyInformation.StudyInstanceUid = item.StudyInstanceUid;
 
-				retrieveInformation[applicationEntity].Add(studyInformation);
-			}
+                retrieveInformation[applicationEntity].Add(studyInformation);
+            }
 
-            throw new NotImplementedException("Marmot - need to restore this.");
-            
-            /*
-			try
-			{
-			    Platform.GetService(delegate(IDicomServer service)
-			                            {
-			                                foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
-			                                {
-			                                    var aeInformation = new ApplicationEntity
-			                                                            {
-			                                                                AETitle = kvp.Key.AETitle,
-			                                                                ScpParameters = new ScpParameters(kvp.Key.ScpParameters)
-			                                                            };
+            try
+            {
+                Platform.GetService(delegate(IDicomServer service)
+                                        {
+                                            foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
+                                            {
+                                                var aeInformation = new ApplicationEntity
+                                                                        {
+                                                                            AETitle = kvp.Key.AETitle,
+                                                                            ScpParameters = new ScpParameters(kvp.Key.ScpParameters)
+                                                                        };
 
-			                                    service.RetrieveStudies(aeInformation, kvp.Value);
-			                                }
-			                            });
+                                                service.RetrieveStudies(aeInformation, kvp.Value);
+                                            }
+                                        });
 
-			    //TODO (Marmot): Restore - just tell the user it's been scheduled.
+                //TODO (Marmot): Restore - just tell the user it's been scheduled.
                 //LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
-			}
-			catch (EndpointNotFoundException)
-			{
-				result = EventResult.MajorFailure;
-				Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
-			}
-			catch (Exception e)
-			{
-				result = EventResult.MajorFailure;
-				ExceptionHandler.Report(e, SR.MessageFailedToRetrieveStudy, Context.DesktopWindow);
-			}
-			finally
-			{
+            }
+            catch (EndpointNotFoundException)
+            {
+                result = EventResult.MajorFailure;
+                Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
+            }
+            catch (Exception e)
+            {
+                result = EventResult.MajorFailure;
+                ExceptionHandler.Report(e, SR.MessageFailedToRetrieveStudy, Context.DesktopWindow);
+            }
+            finally
+            {
                 foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
-				{
-					var requestedInstances = new AuditedInstances();
-					foreach (StudyInformation study in kvp.Value)
-						requestedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
-					AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.ScpParameters.HostName, requestedInstances, EventSource.CurrentUser, result);
-				}
-			}
+                {
+                    var requestedInstances = new AuditedInstances();
+                    foreach (StudyInformation study in kvp.Value)
+                        requestedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+                    AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.ScpParameters.HostName, requestedInstances, EventSource.CurrentUser, result);
+                }
+            }
              */
 		}
 

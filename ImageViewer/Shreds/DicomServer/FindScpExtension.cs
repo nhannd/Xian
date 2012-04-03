@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
 					using (var context = new DataAccessContext())
 					{
-						IEnumerable<DicomAttributeCollection> results = context.GetStudyRootQuery().Query(message.DataSet);
+						IEnumerable<DicomAttributeCollection> results = context.GetStudyStoreQuery().Query(message.DataSet);
 						foreach (DicomAttributeCollection result in results)
 						{
                             const string utf8 = "ISO_IR 192";

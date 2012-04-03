@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			if (defaultServerPaths == null)
                 return new List<IDicomServiceNode>();
 
-            var matches = candidates.OfType<IServerTreeDicomServer>().Where(s => defaultServerPaths.Contains(s.Path)).Cast<IServerTreeDicomServer>();
+            var matches = candidates.Where(s => defaultServerPaths.Contains(s.Path));
             var results = matches.Select(m => m.ToDataContract().ToServiceNode());
             return results.ToList();
 		}
@@ -50,11 +50,11 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public static IEnumerable<IStudyRootQuery> GetQueryInterfaces(bool includeLocal)
 		{
+            //TODO (Marmot): Use service nodes.
             if (includeLocal)
             {
-                IStudyRootQuery localDataStoreQuery = LocalStudyRootQuery.Create();
-                if (localDataStoreQuery != null)
-                    yield return localDataStoreQuery;
+                if (StudyStore.IsSupported)
+                    yield return new StudyStoreBridge();
             }
 
             string localAE = DicomServerConfigurationHelper.AETitle;

@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier();
 
                 var results = query.StudyQuery(criteria);
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                                    {
                                        PatientId = "12345678"
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     PatientId = ""
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                                    {
                                        PatientId = "123?56?8"
@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                                    {
                                        PatientId = "123*"
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     PatientId = "*5*",
@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     PatientId = "123a56b8",
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     PatientId = "*EXAMPLE",
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyDescription = ""
@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyDescription = "pelvis"
@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyDate = "20111223"
@@ -239,7 +239,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyDate = "-20111223"
@@ -265,7 +265,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyDate = "20050915-"
@@ -291,7 +291,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyDate = "20050915-20111223"
@@ -326,7 +326,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyTime = "083501"
@@ -346,7 +346,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyTime = "-083501"
@@ -366,7 +366,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyTime = "083501-"
@@ -386,7 +386,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyTime = "083501-100821"
@@ -406,7 +406,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyInstanceUid = "1.3.51.0.7.633918642.633920010109.6339100821"
@@ -425,7 +425,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new StudyRootStudyIdentifier
                 {
                     StudyInstanceUid = @"1.3.51.0.7.633918642.633920010109.6339100821\1.3.46.670589.6.1.0.98511171.2001010909203006\1.2.840.113619.2.67.2158294438.15745010109084247.20000"
@@ -444,7 +444,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new DicomAttributeCollection();
                 criteria[DicomTags.QueryRetrieveLevel].SetString(0, "STUDY");
                 //criteria[DicomTags.StudyInstanceUid].SetString(0, "1.3.51.0.7.633918642.633920010109.6339100821");
@@ -466,7 +466,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var query = context.GetStudyRootQuery();
+                var query = context.GetStudyStoreQuery();
                 var criteria = new DicomAttributeCollection();
                 criteria[DicomTags.QueryRetrieveLevel].SetString(0, "STUDY");
                 criteria[DicomTags.PatientId].SetNullValue();

@@ -17,18 +17,20 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {
+    //TODO (Marmot):Move once IStudyLoader is moved to Common?
+
     [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
-    public class LocalDataStoreStudyLoader : StudyLoader
+    public class LocalStoreStudyLoader : StudyLoader
     {
         private IEnumerator<ISopInstance> _sops;
 
-        public LocalDataStoreStudyLoader() : base("DICOM_LOCAL")
+        public LocalStoreStudyLoader() : base("DICOM_LOCAL")
         {
             int? frameLookAhead = PreLoadingSettings.Default.FrameLookAheadCount;
             if (PreLoadingSettings.Default.LoadAllFrames)
                 frameLookAhead = null;
 
-            var coreStrategy = new SimpleCorePrefetchingStrategy(frame => frame.ParentImageSop.DataSource is LocalDataStoreSopDataSource);
+            var coreStrategy = new SimpleCorePrefetchingStrategy(frame => frame.ParentImageSop.DataSource is LocalStoreSopDataSource);
             PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(coreStrategy, "DICOM_LOCAL", "Simple prefetcing strategy for local data store images.")
                                       {
                                           Enabled = PreLoadingSettings.Default.Enabled,
@@ -80,7 +82,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Local
                 return null;
             }
 
-            return new LocalDataStoreSopDataSource(_sops.Current);
+            return new LocalStoreSopDataSource(_sops.Current);
         }
     }
 }

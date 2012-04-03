@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			if (base.Context.SelectedServerGroup == null)
 				base.Enabled = false;
 			else if (base.Context.SelectedServerGroup.IsLocalDatastore)
-				base.Enabled = LocalStudyRootQuery.IsSupported && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
+				base.Enabled = StudyStore.IsSupported && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
 			else
 				base.Enabled = base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1 &&
 					GetServerForStudy(base.Context.SelectedStudy) != null;

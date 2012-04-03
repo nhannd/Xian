@@ -15,11 +15,11 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {
-    internal class LocalDataStoreSopDataSource : LocalSopDataSource
+    internal class LocalStoreSopDataSource : LocalSopDataSource
     {
         private readonly ISopInstance _sop;
 
-        public LocalDataStoreSopDataSource(ISopInstance sop)
+        public LocalStoreSopDataSource(ISopInstance sop)
             : base(sop.GetLocationUri())
         {
             _sop = sop;

@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public static DicomExplorerComponent Create()
 		{
 			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
-			serverTreeComponent.ShowLocalDataStoreNode = LocalStudyRootQuery.IsSupported;
+			serverTreeComponent.ShowLocalDataStoreNode = StudyStore.IsSupported;
 
 			bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
 			serverTreeComponent.IsReadOnly = !hasEditPermission;

@@ -748,8 +748,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     _notificationEventPublisher.Publish(this, EventArgs.Empty);
                     break;
                 case WorkItemStatusEnum.Idle:
-                    NotificationText = SR.NotificationReindexComplete;
-                    _notificationEventPublisher.Publish(this, EventArgs.Empty);
+                    //NotificationText = SR.NotificationReindexComplete;
+                    //_notificationEventPublisher.Publish(this, EventArgs.Empty);
                     break;
                 case WorkItemStatusEnum.Complete:
                     NotificationText = SR.NotificationReindexComplete;

@@ -13,6 +13,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
+    //TODO (Marmot): Add callback contract?
     [ServiceContract(SessionMode = SessionMode.Allowed,
         ConfigurationName = "IDicomServerConfiguration",
         Namespace = DicomServerNamespace.Value)]

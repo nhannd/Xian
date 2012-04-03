@@ -4,6 +4,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
@@ -15,6 +16,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
                        {
                            ScpParameters = new ScpParameters(localConfiguration.HostName, localConfiguration.Port)
                        };
+
             IsLocal = true;
         }
 
@@ -69,8 +71,11 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public override bool IsSupported<T>()
         {
-            if (typeof(T).Equals(typeof(IStudyRootQuery)))
-                return ScpParameters != null;
+            if (typeof(T) == typeof(IStudyStore))
+                return IsLocal && StudyStore.IsSupported;
+
+            if (typeof(T) == typeof(IStudyRootQuery))
+                return IsLocal || ScpParameters != null;
 
             //if (typeof(T).Equals(typeof(IHeaderStreamingService)))
             //    return StreamingParameters != null;
@@ -83,10 +88,18 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             if (!IsSupported<T>())
                 throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
 
+            if (typeof(T) == typeof(IStudyStore) && IsLocal)
+                return Platform.GetService<IStudyStore>() as T;
+
             //TODO (Marmot): Add an extension mechanism.
-            if (typeof(T).Equals(typeof(IStudyRootQuery)))
+            if (typeof(T) == typeof(IStudyRootQuery))
+            {
+                if (IsLocal)
+                    return Platform.GetService<IStudyStore>() as T;
+
                 return new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle,
                                     AETitle, ScpParameters.HostName, ScpParameters.Port) as T;
+            }
 
             throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
             //if (typeof(T).Equals(typeof(IHeaderStreamingService)))

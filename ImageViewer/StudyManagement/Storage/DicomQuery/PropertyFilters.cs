@@ -73,6 +73,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
                 dicomResults.Add(dicomResult);
             }
+
             return dicomResults;
         }
     }

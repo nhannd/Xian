@@ -4,14 +4,17 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    public class StudyRootQuery : IStudyRootQuery
+    //TODO (Marmot): Proxy and throw faults.
+
+    public class StudyStoreQuery : IStudyStore
     {
         private readonly DicomStoreDataContext _context;
 
-        internal StudyRootQuery(DicomStoreDataContext context)
+        internal StudyStoreQuery(DicomStoreDataContext context)
         {
             _context = context;
         }
@@ -32,6 +35,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
                 default:
                     throw new ArgumentException(String.Format("Invalid query level: {0}", level));
             }
+        }
+
+        public GetStudyCountResult GetStudyCount(GetStudyCountRequest request)
+        {
+            int count = request.QueryIdentifier == null ? _context.Studies.Count() : StudyQuery(request.QueryIdentifier).Count;
+            return new GetStudyCountResult{StudyCount = count};
         }
 
         public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)

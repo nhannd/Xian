@@ -182,9 +182,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		private static bool StudyExistsOnLocal(string studyInstanceUid)
 		{
-		    var srq = new LocalStudyRootQuery();
-			var result = srq.StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid});
-			return result.Count > 0;
+		    //TODO (Marmot):
+		    using (var bridge = new StudyStoreBridge())
+		        return bridge.QueryByStudyInstanceUid(studyInstanceUid).Count > 0;
 		}
 
         private static bool StudyExistsOnRemote(IServiceNode server, string studyInstanceUid)

@@ -63,8 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LocalDataStoreQueryClient.cs" />
-    <Compile Include="LocalDataStoreStudyFinder.cs" />
+    <Compile Include="LocalStoreStudyFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -32,7 +32,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 
 	internal class DicomServerClient : ClientBase<IDicomServer>, IDicomServer
 	{
-        public RestartListenerResult RestartListener(RestartListenerRequest request)
+	    public GetListenerStateResult GetListenerState(GetListenerStateRequest request)
+	    {
+            return base.Channel.GetListenerState(request);
+	    }
+
+	    public RestartListenerResult RestartListener(RestartListenerRequest request)
         {
             return base.Channel.RestartListener(request);
         }

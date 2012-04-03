@@ -36,6 +36,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     {
     	#region IDicomServer Members
 
+        public GetListenerStateResult GetListenerState(GetListenerStateRequest request)
+        {
+            return new GetListenerStateResult {State = DicomServerManager.Instance.State};
+        }
+
         public RestartListenerResult RestartListener(RestartListenerRequest request)
         {
             try

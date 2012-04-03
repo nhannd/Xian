@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (request == null)
 				throw new FaultException("The request cannot be null.");
 			
-			if (!LocalStudyRootQuery.IsSupported)
+			if (!StudyStore.IsSupported)
 				throw new FaultException<NoLocalStoreFault>(new NoLocalStoreFault(), "No local store was found.");
 
 			DicomExplorerComponent explorerComponent = GetDicomExplorer();

@@ -84,7 +84,6 @@
     <Compile Include="DicomServer\VerifyScpExtension.cs" />
     <Compile Include="PublishManager.cs" />
     <Compile Include="SubscriptionManager.cs" />
-    <Compile Include="StudyInformationFieldExchanger.cs" />
     <Compile Include="ServiceClientImpersonationContext.cs" />
     <Compile Include="UserIdentityContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

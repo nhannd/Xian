@@ -6,6 +6,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using System.Collections;
 using ClearCanvas.Common.Utilities;
@@ -244,8 +245,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private WorkItemTypeEnum? _activityFilter;
 		private string _textFilter;
 		private readonly Timer _textFilterTimer;
+	    private int _totalStudies;
 
-		public ActivityMonitorComponent()
+	    public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
@@ -255,6 +257,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			base.Start();
 
+		    UpdateStudyCount();
 			_workItemActionModel.Refresh.SetClickHandler(Refresh);
 
 
@@ -339,7 +342,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public int TotalStudies { get; private set; }
+	    public int TotalStudies
+	    {
+            get { return _totalStudies; }
+            private set
+            {
+                if (value == _totalStudies)
+                    return;
+
+                _totalStudies = value;
+                NotifyPropertyChanged("TotalStudies");
+            }
+	    }
 
 		public int Failures { get; private set; }
 
@@ -501,6 +515,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void WorkItemChanged(object sender, WorkItemChangedEventArgs e)
 		{
+		    UpdateStudyCount(e.ItemData);
+
 			var newItem = new WorkItem(e.ItemData);
 			var index = _workItems.Items.FindIndex(w => w.Id == newItem.Id);
 			if (index > -1)
@@ -524,7 +540,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		private void RefreshInternal()
+        private void UpdateStudyCount(WorkItemData workItem)
+        {
+            if (workItem.Type == WorkItemTypeEnum.ReapplyRules || workItem.Type == WorkItemTypeEnum.DicomSend)
+                return;
+
+            UpdateStudyCount();
+        }
+
+        private void UpdateStudyCount()
+        {
+            try
+            {
+                Platform.GetService<IStudyStore>(s => TotalStudies = s.GetStudyCount(new GetStudyCountRequest()).StudyCount);
+            }
+            catch (Exception e)
+            {
+                //TODO (Marmot): Show something to the user?
+                Platform.Log(LogLevel.Error, e, "Error getting the count of studies in the local store.");
+            }
+        }
+
+	    private void RefreshInternal()
 		{
 			this.ActivityMonitor.WorkItemChanged -= WorkItemChanged;
 			_workItems.Items.Clear();

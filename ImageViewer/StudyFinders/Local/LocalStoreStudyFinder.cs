@@ -21,10 +21,12 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Local
 {
+    //TODO (Marmot):Move once IStudyFinder gets moved to Common.
+
     [ExtensionOf(typeof(StudyFinderExtensionPoint))]
-    public class LocalDataStoreStudyFinder : StudyFinder
+    public class LocalStoreStudyFinder : StudyFinder
     {
-        public LocalDataStoreStudyFinder()
+        public LocalStoreStudyFinder()
 			: base("DICOM_LOCAL")
         {
         }
@@ -87,7 +89,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Local
             StudyItemList studyItemList = new StudyItemList();
 			using (var context = new DataAccessContext())
 			{
-				foreach (DicomAttributeCollection result in context.GetStudyRootQuery().Query(collection))
+				foreach (DicomAttributeCollection result in context.GetStudyStoreQuery().Query(collection))
 				{
 					StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].ToString(), null, Name);
 					item.SpecificCharacterSet = result.SpecificCharacterSet;
