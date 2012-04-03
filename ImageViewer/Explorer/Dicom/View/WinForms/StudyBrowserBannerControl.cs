@@ -10,6 +10,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         {
             InitializeComponent();
             _notificationText.Visible = !string.IsNullOrEmpty(NotificationText);
+            _notificationDetailsTooltip.SetToolTip(_notificationText, string.Empty);
         }
 
         public string Text
@@ -30,6 +31,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _notificationText.Text = value;
                 EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("NotificationText"));
                 _notificationText.Visible = !string.IsNullOrEmpty(NotificationText);
+            }
+        }
+
+        public string NotificationDetails
+        {
+            get { return _notificationDetailsTooltip.GetToolTip(_notificationText); }
+            set
+            {
+                _notificationDetailsTooltip.SetToolTip(_notificationText, value);
+                EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs("NotificationDetails"));
             }
         }
 

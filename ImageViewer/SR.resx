@@ -213,9 +213,6 @@
   <data name="ExceptionInvalidStride" xml:space="preserve">
     <value>Stride improperly calculated (correct stride = {0}, calculated stride = {1}).</value>
   </data>
-  <data name="ExceptionInvalidTransferSyntaxUID" xml:space="preserve">
-    <value>Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1, 1.2.840.10008.1.2.2 or 1.2.840.10008.1.2.5</value>
-  </data>
   <data name="ExceptionLayoutIsNotRectangular" xml:space="preserve">
     <value>The layout of the physical workspace is either non-rectangular or has not been set.</value>
   </data>
@@ -667,11 +664,17 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="LabelUnitsMlml" xml:space="preserve">
     <value>ml/ml</value>
   </data>
+  <data name="LabelUnitsMm2" xml:space="preserve">
+    <value>mm²</value>
+  </data>
   <data name="LabelUnitsOD" xml:space="preserve">
     <value>1/1000 OD</value>
   </data>
   <data name="LabelUnitsPcnt" xml:space="preserve">
     <value>%</value>
+  </data>
+  <data name="LabelUnitsPixels" xml:space="preserve">
+    <value>pixels</value>
   </data>
   <data name="LabelUnitsPropcnts" xml:space="preserve">
     <value>prop. to counts</value>
@@ -691,22 +694,22 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="LabelUnitsUnspecified" xml:space="preserve">
     <value />
   </data>
-  <data name="LabelUnitsMm2" xml:space="preserve">
-    <value>mm²</value>
-  </data>
-  <data name="LabelUnitsPixels" xml:space="preserve">
-    <value>pixels</value>
-  </data>
   <data name="MenuActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
+  </data>
+  <data name="MessageFailedToStartReindex" xml:space="preserve">
+    <value>Failed to start re-index.</value>
+  </data>
+  <data name="MessageReindexInProgress" xml:space="preserve">
+    <value>A re-index operation is already in progress.</value>
+  </data>
+  <data name="MessageReindexScheduled" xml:space="preserve">
+    <value>The re-index has been scheduled.</value>
   </data>
   <data name="TitleActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>
   <data name="TooltipActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
-  </data>
-  <data name="MessageFailedToStartReindex" xml:space="preserve">
-    <value>Failed to start re-index.</value>
   </data>
 </root>

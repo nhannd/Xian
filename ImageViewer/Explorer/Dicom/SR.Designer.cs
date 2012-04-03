@@ -300,6 +300,51 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The re-index operation has been canceled. You should run another re-index as soon as possible, as studies may be in an unstable state..
+        /// </summary>
+        internal static string NotificationDetailsReindexCancelled {
+            get {
+                return ResourceManager.GetString("NotificationDetailsReindexCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The re-index has completed. It is safe to begin working with studies again..
+        /// </summary>
+        internal static string NotificationDetailsReindexCompleted {
+            get {
+                return ResourceManager.GetString("NotificationDetailsReindexCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The re-index has failed. Check the Activity Monitor for more details..
+        /// </summary>
+        internal static string NotificationDetailsReindexFailed {
+            get {
+                return ResourceManager.GetString("NotificationDetailsReindexFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The re-index is currently running. You should avoid working with studies until it completes..
+        /// </summary>
+        internal static string NotificationDetailsReindexRunning {
+            get {
+                return ResourceManager.GetString("NotificationDetailsReindexRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The re-index has been scheduled and will begin shortly..
+        /// </summary>
+        internal static string NotificationDetailsReindexScheduled {
+            get {
+                return ResourceManager.GetString("NotificationDetailsReindexScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Re-index cancelled.
         /// </summary>
         internal static string NotificationReindexCancelled {

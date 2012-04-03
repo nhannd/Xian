@@ -538,15 +538,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1, 1.2.840.10008.1.2.2 or 1.2.840.10008.1.2.5.
-        /// </summary>
-        public static string ExceptionInvalidTransferSyntaxUID {
-            get {
-                return ResourceManager.GetString("ExceptionInvalidTransferSyntaxUID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The layout of the physical workspace is either non-rectangular or has not been set..
         /// </summary>
         public static string ExceptionLayoutIsNotRectangular {
@@ -1636,6 +1627,24 @@ namespace ClearCanvas.ImageViewer {
         public static string MessageReferencedKeyImageFromOtherStudy {
             get {
                 return ResourceManager.GetString("MessageReferencedKeyImageFromOtherStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A re-index operation is already in progress..
+        /// </summary>
+        public static string MessageReindexInProgress {
+            get {
+                return ResourceManager.GetString("MessageReindexInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The re-index has been scheduled..
+        /// </summary>
+        public static string MessageReindexScheduled {
+            get {
+                return ResourceManager.GetString("MessageReindexScheduled", resourceCulture);
             }
         }
         

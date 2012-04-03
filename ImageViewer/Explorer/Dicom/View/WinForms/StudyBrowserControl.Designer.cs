@@ -85,6 +85,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             // 
             resources.ApplyResources(this._banner, "_banner");
             this._banner.Name = "_banner";
+            this._banner.NotificationDetails = "";
             this._banner.NotificationText = "Re-index not running";
             // 
             // StudyBrowserControl

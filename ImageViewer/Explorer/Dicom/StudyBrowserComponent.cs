@@ -166,6 +166,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private bool _notificationTextVisible;
         private string _notificationText;
+        private string _notificationDetails;
         private DelayedEventPublisher _notificationEventPublisher;
 
 		private bool _isEnabled = true;
@@ -293,6 +294,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
                 _notificationText = value;
                 NotifyPropertyChanged("NotificationText");
+            }
+        }
+
+        public string NotificationDetails
+        {
+            get { return _notificationTextVisible ? _notificationDetails : String.Empty; }
+            private set
+            {
+                if (Equals(_notificationDetails, value))
+                    return;
+
+                _notificationDetails = value;
+                NotifyPropertyChanged("NotificationDetails");
             }
         }
 
@@ -739,12 +753,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 case WorkItemStatusEnum.Pending:
                     _notificationEventPublisher.Cancel();
                     NotificationText = SR.NotificationReindexScheduled;
+                    NotificationDetails = SR.NotificationDetailsReindexScheduled;
                     break;
                 case WorkItemStatusEnum.InProgress:
                     NotificationText = SR.NotificationReindexRunning;
+                    NotificationDetails = SR.NotificationDetailsReindexRunning;
                     break;
                 case WorkItemStatusEnum.Failed:
                     NotificationText = SR.NotificationReindexFailed;
+                    NotificationDetails = SR.NotificationDetailsReindexFailed;
                     _notificationEventPublisher.Publish(this, EventArgs.Empty);
                     break;
                 case WorkItemStatusEnum.Idle:
@@ -753,10 +770,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     break;
                 case WorkItemStatusEnum.Complete:
                     NotificationText = SR.NotificationReindexComplete;
+                    NotificationDetails = SR.NotificationDetailsReindexCompleted;
                     _notificationEventPublisher.Publish(this, EventArgs.Empty);
                     break;
                 case WorkItemStatusEnum.Canceled:
                     NotificationText = SR.NotificationReindexCancelled;
+                    NotificationDetails = SR.NotificationDetailsReindexCancelled;
                     _notificationEventPublisher.Publish(this, EventArgs.Empty);
                     break;
                 default:
@@ -768,6 +787,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private void DelayedClearNotificationText(object sender, EventArgs e)
         {
             NotificationText = String.Empty;
+            NotificationDetails = String.Empty;
         }
         
         private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)

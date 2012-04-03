@@ -399,12 +399,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             // 
             // _reindexButton
             // 
-            this._reindexButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this._reindexButton.Location = new System.Drawing.Point(304, 124);
+            this._reindexButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._reindexButton.Location = new System.Drawing.Point(304, 128);
             this._reindexButton.Margin = new System.Windows.Forms.Padding(0);
             this._reindexButton.Name = "_reindexButton";
-            this._reindexButton.Size = new System.Drawing.Size(75, 24);
+            this._reindexButton.Size = new System.Drawing.Size(59, 20);
             this._reindexButton.TabIndex = 32;
             this._reindexButton.Text = "Re-index";
             this._reindexButton.UseVisualStyleBackColor = true;

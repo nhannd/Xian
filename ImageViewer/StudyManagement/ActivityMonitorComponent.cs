@@ -455,7 +455,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         {
             try
             {
-                new ReindexClient().Reindex();
+                var requestTime = Platform.Time;
+                var client = new ReindexClient();
+                client.Reindex();
+                if (client.Request.Status == WorkItemStatusEnum.InProgress)
+                    Host.DesktopWindow.ShowMessageBox(SR.MessageReindexInProgress, MessageBoxActions.Ok);
+                else if (client.Request.Status == WorkItemStatusEnum.Idle)
+                    Host.DesktopWindow.ShowMessageBox(SR.MessageReindexInProgress, MessageBoxActions.Ok);
+                else if (client.Request.Status == WorkItemStatusEnum.Pending)
+                    Host.DesktopWindow.ShowMessageBox(SR.MessageReindexScheduled, MessageBoxActions.Ok);
+                else
+                    Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToStartReindex, MessageBoxActions.Ok);
             }
             catch (Exception e)
             {

@@ -200,6 +200,21 @@ Are you sure you want to continue?</value>
   <data name="MessageSearchStudyPermissionDenied" xml:space="preserve">
     <value>Permission to search studies is denied.</value>
   </data>
+  <data name="NotificationDetailsReindexCancelled" xml:space="preserve">
+    <value>The re-index operation has been canceled. You should run another re-index as soon as possible, as studies may be in an unstable state.</value>
+  </data>
+  <data name="NotificationDetailsReindexCompleted" xml:space="preserve">
+    <value>The re-index has completed. It is safe to begin working with studies again.</value>
+  </data>
+  <data name="NotificationDetailsReindexFailed" xml:space="preserve">
+    <value>The re-index has failed. Check the Activity Monitor for more details.</value>
+  </data>
+  <data name="NotificationDetailsReindexRunning" xml:space="preserve">
+    <value>The re-index is currently running. You should avoid working with studies until it completes.</value>
+  </data>
+  <data name="NotificationDetailsReindexScheduled" xml:space="preserve">
+    <value>The re-index has been scheduled and will begin shortly.</value>
+  </data>
   <data name="NotificationReindexCancelled" xml:space="preserve">
     <value>Re-index cancelled</value>
   </data>

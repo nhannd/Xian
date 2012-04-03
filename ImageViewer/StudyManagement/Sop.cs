@@ -1280,7 +1280,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					return;
 			}
 
-			throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUid));
+            throw new SopValidationException(String.Format("Unsupported transfer syntax: {0}", TransferSyntaxUid));
 		}
 
 		protected virtual IEnumerable<TransferSyntax> GetAllowableTransferSyntaxes()
