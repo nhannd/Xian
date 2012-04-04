@@ -1,4 +1,4 @@
-﻿namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+﻿namespace ClearCanvas.ImageViewer.View.WinForms
 {
     partial class TimedDialogForm
     {

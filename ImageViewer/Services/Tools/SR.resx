@@ -294,10 +294,4 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="DicomConfiguration" xml:space="preserve">
     <value>DICOM</value>
   </data>
-  <data name="LinkOpenActivityMonitor" xml:space="preserve">
-    <value>Open Activity Monitor</value>
-  </data>
-  <data name="MenuReindex" xml:space="preserve">
-    <value>Re-index File Store</value>
-  </data>
 </root>

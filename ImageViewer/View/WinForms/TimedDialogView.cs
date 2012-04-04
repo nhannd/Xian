@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.View.WinForms
 {
     [ExtensionOf(typeof(TimeDialogViewExtensionPoint))]
     public class TimedDialogView : WinFormsView, ITimeDialogView
@@ -27,12 +27,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
             _dialog = dialog;
         }
 
-        public void Open(TimeSpan lingerTime)
+        public void Open()
         {
             if (_closed)
                 throw new InvalidOperationException("This timed dialog view has been used.");
 
-            _form = new TimedDialogForm(new TimedDialogControl(_dialog), _dialog.Title, lingerTime);
+            _form = new TimedDialogForm(new TimedDialogControl(_dialog), _dialog.Title, _dialog.LingerTime);
             _form.CloseRequested += FormOnCloseRequested;
             _form.StartPosition = FormStartPosition.CenterParent;
 

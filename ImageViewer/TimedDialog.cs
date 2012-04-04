@@ -4,7 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer
 {
     [ExtensionPoint]
     public class TimeDialogViewExtensionPoint : ExtensionPoint<ITimeDialogView>
@@ -14,11 +14,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
     public interface ITimeDialogView : IView
     {
         void SetDialog(TimedDialog dialog);
-        void Open(TimeSpan lingerTime);
+        void Open();
         void Close();
     }
 
-    //TODO (Marmot): Make an app component.
+    //TODO (Marmot): Make a desktop object that hosts a component, if it proves useful.
     public class TimedDialog : INotifyPropertyChanged
     {
         private string _title;
@@ -28,12 +28,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
         private ITimeDialogView _view;
 
-        public TimedDialog(Action followLink)
+        internal TimedDialog(Action followLink)
+            : this(TimeSpan.FromSeconds(3), followLink)
+        {
+        }
+
+        internal TimedDialog(TimeSpan lingerTime, Action followLink)
         {
             Platform.CheckForNullReference(followLink, "followLink");
             _followLink = followLink;
+            LingerTime = lingerTime;
             _view = (ITimeDialogView) new TimeDialogViewExtensionPoint().CreateExtension();
         }
+
+        #region Presentation Model
 
         public string Title
         {
@@ -74,6 +82,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
             }
         }
 
+        public TimeSpan LingerTime { get; private set; }
+
         public void FollowLink()
         {
             _followLink();
@@ -82,20 +92,44 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs(propertyName));
-        }
+        #endregion
 
         public void Show()
         {
             _view.SetDialog(this);
-            _view.Open(TimeSpan.FromSeconds(3));
+            _view.Open();
         }
 
         public void Close()
         {
             _view.Close();
+        }
+
+        public static void Show(string title, string message, string linkText, Action followLink)
+        {
+            var dialog = new TimedDialog(followLink) {Title = title, Message = message, LinkText = linkText};
+            dialog.Show();
+        }
+
+        public static void Show(string title, string message, string linkText, Action followLink, TimeSpan lingerTime)
+        {
+            var dialog = new TimedDialog(lingerTime, followLink) { Title = title, Message = message, LinkText = linkText };
+            dialog.Show();
+        }
+
+        public static void Show(string message, string linkText, Action followLink)
+        {
+            Show(null, message, linkText, followLink);
+        }
+
+        public static void Show(string message, string linkText, Action followLink, TimeSpan lingerTime)
+        {
+            Show(null, message, linkText, followLink, lingerTime);
+        }
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            EventsHelper.Fire(PropertyChanged, this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -143,15 +143,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open Activity Monitor.
-        /// </summary>
-        internal static string LinkOpenActivityMonitor {
-            get {
-                return ResourceManager.GetString("LinkOpenActivityMonitor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string MenuDeleteStudy {
@@ -166,15 +157,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MenuOpenStudies {
             get {
                 return ResourceManager.GetString("MenuOpenStudies", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Re-index File Store.
-        /// </summary>
-        internal static string MenuReindex {
-            get {
-                return ResourceManager.GetString("MenuReindex", resourceCulture);
             }
         }
         

@@ -36,7 +36,7 @@
             // 
             // _resultsTitleBar
             // 
-            this._resultsTitleBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._resultsTitleBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this._resultsTitleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
             this._resultsTitleBar.Location = new System.Drawing.Point(0, 0);
             this._resultsTitleBar.Margin = new System.Windows.Forms.Padding(0);
@@ -55,7 +55,7 @@
             this._notificationText.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this._notificationText.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._notificationText.ForeColor = System.Drawing.Color.White;
-            this._notificationText.Location = new System.Drawing.Point(414, 3);
+            this._notificationText.Location = new System.Drawing.Point(413, 3);
             this._notificationText.Name = "_notificationText";
             this._notificationText.Size = new System.Drawing.Size(165, 24);
             this._notificationText.TabIndex = 6;

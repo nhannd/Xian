@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.View.WinForms
 {
     public partial class TimedDialogControl : UserControl, INotifyPropertyChanged
     {

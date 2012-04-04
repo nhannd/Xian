@@ -209,6 +209,19 @@
       <DependentUpon>TileControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TileView.cs" />
+    <Compile Include="TimedDialogControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TimedDialogControl.Designer.cs">
+      <DependentUpon>TimedDialogControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TimedDialogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TimedDialogForm.Designer.cs">
+      <DependentUpon>TimedDialogForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TimedDialogView.cs" />
     <Compile Include="TrackSlider.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -234,6 +247,12 @@
     <EmbeddedResource Include="ImageBoxControl.resx">
       <DependentUpon>ImageBoxControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TimedDialogControl.resx">
+      <DependentUpon>TimedDialogControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TimedDialogForm.resx">
+      <DependentUpon>TimedDialogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TrackSliderResources\ThumbHorizontal.png" />
     <EmbeddedResource Include="TrackSliderResources\ThumbVertical.png" />

@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Crownwood.DotNetMagic.Forms;
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.View.WinForms
 {
     public partial class TimedDialogForm : DotNetMagicForm
     {
