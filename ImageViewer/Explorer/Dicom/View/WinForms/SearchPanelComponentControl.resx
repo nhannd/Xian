@@ -436,7 +436,7 @@
     <value>0, 0</value>
   </data>
   <data name="_titleBar.Size" type="System.Drawing.Size, System.Drawing">
-    <value>911, 30</value>
+    <value>909, 30</value>
   </data>
   <data name="_titleBar.TabIndex" type="System.Int32, mscorlib">
     <value>20</value>
@@ -583,7 +583,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>911, 137</value>
+    <value>909, 135</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SearchPanelComponentControl</value>

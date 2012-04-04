@@ -19,12 +19,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
             DataBindings.Add("LinkText", dialog, "LinkText", true,
                                          DataSourceUpdateMode.OnPropertyChanged);
-
-            _link.MouseEnter += ChildMouseEnter;
-            _message.MouseEnter += ChildMouseEnter;
-
-            _link.MouseLeave += ChildMouseLeave;
-            _message.MouseLeave += ChildMouseLeave;
         }
 
         public string Message
@@ -57,19 +51,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
-
-        private void ChildMouseEnter(object sender, EventArgs eventArgs)
-        {
-            base.OnMouseEnter(eventArgs);
-        }
-
-        private void ChildMouseLeave(object sender, EventArgs eventArgs)
-        {
-            var cursorPosition = Cursor.Position;
-            var bounds = RectangleToScreen(ClientRectangle);
-            if (!bounds.Contains(cursorPosition))
-                base.OnMouseLeave(eventArgs);
-        }
 
         private void OnLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
