@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ReIndex.
+        ///   Looks up a localized string similar to Re-index.
         /// </summary>
         internal static string ActivityTypeEnumReIndex {
             get {

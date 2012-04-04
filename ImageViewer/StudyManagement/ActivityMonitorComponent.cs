@@ -367,7 +367,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public IList StatusFilterChoices
 		{
-			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(WorkItemStatusEnum)).Cast<object>()).ToList(); }
+			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(WorkItemStatusEnum)).Cast<object>().OrderBy(FormatStatusFilter)).ToList(); }
 		}
 
 		public string FormatStatusFilter(object value)
@@ -395,7 +395,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public IList ActivityTypeFilterChoices
 		{
-			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(ActivityTypeEnum)).Cast<object>()).ToList(); }
+			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(ActivityTypeEnum)).Cast<object>().OrderBy(FormatActivityTypeFilter)).ToList(); }
 		}
 
 		public string FormatActivityTypeFilter(object value)
