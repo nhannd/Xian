@@ -52,6 +52,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             if (directoryServerCount == 0)
             {
                 AddExamples();
+                //TODO (Marmot): Move the add examples code out.
+                Save();
             }
             else
             {
@@ -95,6 +97,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             ((ServerTreeGroup)RootServerGroup).ChangeParentPath(_rootPath);
         }
 
+        //TODO (Marmot): Factor this out to ServerTreeComponent, since saving is done outside everywhere else.
         private void AddExamples()
         {
             RootServerGroup.ChildGroups.Add(new ServerTreeGroup(SR.ExampleGroup));
