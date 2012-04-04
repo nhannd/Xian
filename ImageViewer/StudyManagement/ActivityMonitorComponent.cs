@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -114,8 +117,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					var p = _data.Patient;
 					if (p == null)
 						return null;
-
-					return string.Format("{0} {1} {2} {3}", p.PatientId, p.PatientsName, p.PatientsBirthDate, p.PatientsSex);
+                    return string.Format("{0} \u00B7 {1}", new PersonName(p.PatientsName).FormattedName, p.PatientId);
 				}
 			}
 
@@ -123,6 +125,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				get { return _data.Study != null ? _data.Study.StudyDate : null; }
 			}
+
+            public string StudyTime
+            {
+                get { return _data.Study != null ? _data.Study.StudyTime : null; }
+            }
 
 			public string AccessionNumber
 			{
@@ -138,12 +145,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				get
 				{
-					// todo: format this like elsewhere in the viewer
-					var s = _data.Study;
-					if (s == null)
-						return null;
+                    if (_data.Study == null) return string.Empty;
 
-					return string.Format("{0} {1} {2}", s.AccessionNumber, s.StudyDescription, s.StudyDate);
+                    // TODO (Marmot) Code taken from DicomImageSetDescriptor.GetName()  Should be consolidated?  TBD
+                    DateTime studyDate;
+                    DateParser.Parse(StudyDate, out studyDate);
+                    DateTime studyTime;
+                    TimeParser.Parse(StudyTime, out studyTime);
+
+                    string modalitiesInStudy = null;
+                    if (_data.Study != null && _data.Study.ModalitiesInStudy != null)
+                        modalitiesInStudy = StringUtilities.Combine(_data.Study.ModalitiesInStudy, ", ");
+
+                    var nameBuilder = new StringBuilder();
+                    nameBuilder.AppendFormat("{0} {1}", studyDate.ToString(Format.DateFormat),
+                                                        studyTime.ToString(Format.TimeFormat));
+
+                    if (!String.IsNullOrEmpty(AccessionNumber))
+                        nameBuilder.AppendFormat(", A#: {0}", AccessionNumber);
+
+                    nameBuilder.AppendFormat(", [{0}] {1}", modalitiesInStudy ?? string.Empty, StudyDescription);
+
+                    return nameBuilder.ToString();
 				}
 			}
 
@@ -222,13 +245,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		class WorkItemActionModel : SimpleActionModel
 		{
-			internal ClickAction Refresh { get; private set; }
-
 			public WorkItemActionModel()
 				: base(new ApplicationThemeResourceResolver(typeof(ActivityMonitorComponent).Assembly, new ApplicationThemeResourceResolver(typeof(CrudActionModel).Assembly)))
 			{
-				//todo loc
-				Refresh = AddAction("refresh", "Refresh", "RefreshSmall.png");
 			}
 		}
 
@@ -256,22 +275,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			base.Start();
 
-		    UpdateStudyCount();
-			_workItemActionModel.Refresh.SetClickHandler(Refresh);
-
+		    UpdateStudyCount();		
 
 			_dicomConfigProvider = DicomServerConfigurationHelper.GetConfigurationProvider();
 			_dicomConfigProvider.Changed += DicomServerConfigurationChanged;
 
 			// todo loc
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Patient", w => w.PatientsName));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Study", w => w.StudyDescription));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Activity Desc.", w => w.ActivityDescription));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Status", w => w.Status.GetDescription()));
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>("Patient", w => w.PatientInfo));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Study", w => w.StudyInfo));
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>("Activity Desc.", w => w.ActivityDescription) { WidthFactor = .8f });
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>("Status", w => w.Status.GetDescription()) { WidthFactor = .4f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Status Desc.", w => w.ProgressStatus));
-			_workItems.Columns.Add(new TableColumn<WorkItem, DateTime>("Sched. Time", w => w.ScheduledTime));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Priority", w => w.Priority.GetDescription()));
-			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>("Progress", w => w.ProgressIcon));
+            _workItems.Columns.Add(new TableColumn<WorkItem, DateTime>("Scheduled Time", w => w.ScheduledTime) { WidthFactor = .6f });
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>("Priority", w => w.Priority.GetDescription()) { WidthFactor = .3f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>("Progress", w => w.ProgressIcon) { WidthFactor = .5f});
 
 			this.ActivityMonitor = WorkItemActivityMonitor.Create(true);
 			_connectionState = _connectionState.Update();
@@ -439,16 +456,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public void Refresh()
-		{
-			if (_connectionState is DisconnectedState)
-			{
-				this.Host.ShowMessageBox("not connected", MessageBoxActions.Ok); // todo loc
-				return;
-			}
-			RefreshInternal();
-		}
-
         public void StartReindex()
         {
             ReindexTool.StartReindex(Host.DesktopWindow);
@@ -473,14 +480,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			switch (status)
 			{
 				case WorkItemStatusEnum.Pending:
-				case WorkItemStatusEnum.InProgress:
+                    return ProgressBarState.Paused;
+                case WorkItemStatusEnum.InProgress:
 				case WorkItemStatusEnum.Complete:
 				case WorkItemStatusEnum.Deleted:
 				case WorkItemStatusEnum.Canceled:
 					return ProgressBarState.Active;
 				case WorkItemStatusEnum.Idle:
-					return ProgressBarState.Paused;
-				case WorkItemStatusEnum.Failed:
+                    return ProgressBarState.Paused;
+                case WorkItemStatusEnum.Failed:
 					return ProgressBarState.Error;
 			}
 			throw new NotImplementedException();
