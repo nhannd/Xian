@@ -233,10 +233,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			private bool ContainsText(string text, params Func<WorkItem, string>[] fields)
 			{
+			    text = text.ToLower();
 				return fields.Any(f =>
 									{
 										var value = f(this);
-										return value != null && value.Contains(text);
+										return !String.IsNullOrEmpty(value) && value.ToLower().Contains(text);
 									});
 			}
 		}
