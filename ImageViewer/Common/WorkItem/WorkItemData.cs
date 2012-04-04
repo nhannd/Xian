@@ -44,7 +44,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         Failed
     }
 
-    // REmove?  Not sure due to wanting to Query by type or subscribe by type
     [DataContract(Name = "WorkItemType", Namespace = ImageViewerNamespace.Value)]
     public enum WorkItemTypeEnum
     {

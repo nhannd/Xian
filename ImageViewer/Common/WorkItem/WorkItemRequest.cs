@@ -20,6 +20,28 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
+
+    [DataContract(Name = "ActivityType", Namespace = ImageViewerNamespace.Value)]
+    public enum ActivityTypeEnum
+    {
+        [EnumMember]
+        DicomReceive = 1,
+        [EnumMember]
+        ImportStudy = 2,
+        [EnumMember]
+        DicomSend = 3,
+        [EnumMember]
+        AutoRoute = 4,
+        [EnumMember]
+        ImportFiles = 5,
+        [EnumMember]
+        DicomRetrieve = 6,
+        [EnumMember]
+        ReIndex = 7,
+        [EnumMember]
+        ReapplyRules = 8,
+    }
+
     public static class WorkItemRequestTypeProvider
     {
         private static readonly List<Type> List = new List<Type>
@@ -75,7 +97,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember]
         public WorkItemTypeEnum Type { get; set; }
 
-        public abstract string ActivityType { get; }
+        [DataMember]
+        public ActivityTypeEnum ActivityType { get; set; }
 
         public abstract string ActivityDescription { get; }
 
@@ -127,6 +150,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             Type = WorkItemTypeEnum.DicomSend;
             Priority = WorkItemPriorityEnum.Normal;
+            ActivityType = ActivityTypeEnum.DicomSend;
         }
 
         [DataMember]
@@ -144,14 +168,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember]
         public string TransferSyntaxUid { get; set; }
 
-        public override string ActivityType
-        {
-            get { return SR.DicomSendRequest_ActivityType; }
-        }
-
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendRequest_ActivityDescription, AeTitle, Patient.PatientsName); }
+            get { return string.Format(SR.DicomSendRequest_ActivityDescription, AeTitle); }
         }
     }
 
@@ -162,9 +181,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequestDataContract("1c63c863-aa4e-4672-bee5-8aa3db16edd5")]
     public class DicomAutoRouteRequest : DicomSendRequest
     {
-        public override string ActivityType
+        public DicomAutoRouteRequest()
         {
-            get { return SR.DicomAutoRouteRequest_ActivityType; }
+            Type = WorkItemTypeEnum.DicomSend;
+            Priority = WorkItemPriorityEnum.Normal;
+            ActivityType = ActivityTypeEnum.AutoRoute;
         }
 
         public override string ActivityDescription
@@ -206,6 +227,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             Type = WorkItemTypeEnum.Import;
             Priority = WorkItemPriorityEnum.Stat;
+            ActivityType = ActivityTypeEnum.ImportFiles;
         }
 
         [DataMember(IsRequired = true)]
@@ -223,14 +245,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public FileImportBehaviourEnum FileImportBehaviour { get; set; }
 
-        public override string ActivityType
-        {
-            get { return SR.ImportFilesRequest_ActivityType; }
-        }
-
         public override string ActivityDescription
         {
-            get { return SR.ImportFilesRequest_ActivityDescription; }
+            get { return string.Format(SR.ImportFilesRequest_ActivityDescription, FilePaths.Count); }
         }
     }
 
@@ -246,19 +263,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             Type = WorkItemTypeEnum.DicomRetrieve;
             Priority = WorkItemPriorityEnum.Normal;
+            ActivityType = ActivityTypeEnum.DicomRetrieve;
         }
 
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
 
-        public override string ActivityType
-        {
-            get { return SR.DicomRetreiveRequest_ActivityType; }
-        }
-
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, FromAETitle, Patient.PatientsName); }
+            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, FromAETitle); }
         }
     }
 
@@ -285,19 +298,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class DicomReceiveRequest : StudyProcessRequest
     {
         public DicomReceiveRequest()
-        {}
+        {
+            ActivityType = ActivityTypeEnum.DicomReceive;
+        }
 
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
 
-        public override string ActivityType
-        {
-            get { return SR.DicomReceiveRequest_ActivityType; }
-        }
-
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomReceiveRequest_ActivityDescription, FromAETitle, Patient.PatientsName); }
+            get { return string.Format(SR.DicomReceiveRequest_ActivityDescription, FromAETitle); }
         }
     }
 
@@ -308,14 +318,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequestDataContract("2def790a-8039-4fc5-85d6-f4d3be3f2d8e")]
     public class ImportStudyRequest : StudyProcessRequest
     {
-        public override string ActivityType
+        public ImportStudyRequest()
         {
-            get { return SR.ImportStudyRequest_ActivityType; }
+            ActivityType = ActivityTypeEnum.ImportStudy;
         }
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.ImportStudyRequest_AcitivityDescription, Patient.PatientsName); }
+            get { return string.Format(SR.ImportStudyRequest_AcitivityDescription); }
         }
     }
 
@@ -330,11 +340,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             Type = WorkItemTypeEnum.ReIndex;
             Priority = WorkItemPriorityEnum.Stat;
-        }
-
-        public override string ActivityType
-        {
-            get { return SR.ReindexRequest_ActivityType; }
+            ActivityType = ActivityTypeEnum.ReIndex;
         }
 
         public override string ActivityDescription

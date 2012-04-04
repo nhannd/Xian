@@ -73,5 +73,29 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 			}
 			throw new NotImplementedException();
 		}
+
+        public static string GetDescription(this ActivityTypeEnum value)
+        {
+            switch (value)
+            {
+                case ActivityTypeEnum.AutoRoute:
+                    return SR.ActivityTypeEnumAutoRoute;
+                case ActivityTypeEnum.DicomReceive:
+                    return SR.ActivityTypeEnumDicomReceive;
+                case ActivityTypeEnum.DicomRetrieve:
+                    return SR.ActivityTypeEnumDicomRetrieve;
+                case ActivityTypeEnum.DicomSend:
+                    return SR.ActivityTypeEnumDicomSend;
+                case ActivityTypeEnum.ImportFiles:
+                    return SR.ActivityTypeEnumImportFiles;
+                case ActivityTypeEnum.ImportStudy:
+                    return SR.ActivityTypeEnumImportStudy;
+                case ActivityTypeEnum.ReIndex:
+                    return SR.ActivityTypeEnumReIndex;
+                case ActivityTypeEnum.ReapplyRules:
+                    return SR.ActivityTypeEnumReapplyRules;
+            }
+            throw new NotImplementedException();
+        }
 	}
 }

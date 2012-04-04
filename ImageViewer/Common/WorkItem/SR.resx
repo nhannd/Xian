@@ -118,40 +118,40 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DicomAutoRouteRequest_ActivityDescription" xml:space="preserve">
-    <value>Auto Route to {0} for Patient {1}</value>
+    <value>Auto Route to {0}</value>
   </data>
   <data name="DicomAutoRouteRequest_ActivityType" xml:space="preserve">
     <value>Auto Route</value>
   </data>
   <data name="DicomReceiveRequest_ActivityDescription" xml:space="preserve">
-    <value>DICOM Receive from {0} for Patient {1}</value>
+    <value>DICOM Receive from {0}</value>
   </data>
   <data name="DicomReceiveRequest_ActivityType" xml:space="preserve">
     <value>DICOM Receive</value>
   </data>
   <data name="DicomRetreiveRequest_ActivityDescription" xml:space="preserve">
-    <value>Retrieve of Study from {0} for Patient {1}</value>
+    <value>Retrieve of Study from {0}</value>
   </data>
   <data name="DicomRetreiveRequest_ActivityType" xml:space="preserve">
     <value>DICOM Retrieve</value>
   </data>
   <data name="DicomSendRequest_ActivityDescription" xml:space="preserve">
-    <value>DICOM Send to {0} for Patient {1}</value>
+    <value>DICOM Send to {0}</value>
   </data>
   <data name="DicomSendRequest_ActivityType" xml:space="preserve">
     <value>DICOM Send</value>
   </data>
   <data name="ImportFilesProgress_Status" xml:space="preserve">
-    <value>{0} of {1} files imported, {2} failed.</value>
+    <value>{0} of {1} files imported, {2} failed</value>
   </data>
   <data name="ImportFilesRequest_ActivityDescription" xml:space="preserve">
-    <value>Importing Files</value>
+    <value>Importing Files from {0} locations</value>
   </data>
   <data name="ImportFilesRequest_ActivityType" xml:space="preserve">
     <value>Importing Files</value>
   </data>
   <data name="ImportStudyRequest_AcitivityDescription" xml:space="preserve">
-    <value>Import Study for Patient {0}</value>
+    <value>Import Study</value>
   </data>
   <data name="ImportStudyRequest_ActivityType" xml:space="preserve">
     <value>Import Study</value>
@@ -160,16 +160,16 @@
     <value>Pending.</value>
   </data>
   <data name="ReindexProgress_Status" xml:space="preserve">
-    <value>{0} of {1} studies processed, {2} studies deleted, {3}  studies added.</value>
+    <value>{0} of {1} studies processed, {2} studies deleted, {3}  studies added</value>
   </data>
   <data name="ReindexRequest_ActivityDescription" xml:space="preserve">
-    <value>Reindex of the local data store.</value>
+    <value>Reindex of the local file store</value>
   </data>
   <data name="ReindexRequest_ActivityType" xml:space="preserve">
     <value>Reindex</value>
   </data>
   <data name="StudyProcessProgress_Status" xml:space="preserve">
-    <value>{0} of {1} images processed, {2} failed.</value>
+    <value>{0} of {1} images processed, {2} failed</value>
   </data>
   <data name="WorkItemPriorityEnumNormal" xml:space="preserve">
     <value>Normal</value>
@@ -221,5 +221,29 @@
   </data>
   <data name="WorkItemTypeEnumStudyProcess" xml:space="preserve">
     <value>Process Study</value>
+  </data>
+  <data name="ActivityTypeEnumAutoRoute" xml:space="preserve">
+    <value>Auto Route</value>
+  </data>
+  <data name="ActivityTypeEnumDicomReceive" xml:space="preserve">
+    <value>DICOM Receive</value>
+  </data>
+  <data name="ActivityTypeEnumDicomRetrieve" xml:space="preserve">
+    <value>DICOM Retrieve</value>
+  </data>
+  <data name="ActivityTypeEnumDicomSend" xml:space="preserve">
+    <value>DICOM Send</value>
+  </data>
+  <data name="ActivityTypeEnumImportFiles" xml:space="preserve">
+    <value>Import Files</value>
+  </data>
+  <data name="ActivityTypeEnumImportStudy" xml:space="preserve">
+    <value>Import Study</value>
+  </data>
+  <data name="ActivityTypeEnumReapplyRules" xml:space="preserve">
+    <value>Reapply Rules</value>
+  </data>
+  <data name="ActivityTypeEnumReIndex" xml:space="preserve">
+    <value>ReIndex</value>
   </data>
 </root>

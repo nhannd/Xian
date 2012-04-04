@@ -163,9 +163,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Status; }
 			}
 
-			public string ActivityType
+			public ActivityTypeEnum ActivityType
 			{
-				get { return _data.Request != null ? _data.Request.ActivityType : null; }
+				get { return _data.Progress != null ? _data.Request.ActivityType : ActivityTypeEnum.ReIndex; }
 			}
 
 			public string ActivityDescription
@@ -200,7 +200,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return ContainsText(text,
 									w => w.PatientInfo,
 									w => w.StudyInfo,
-									w => w.ActivityType,
 									w => w.ActivityDescription,
 									w => w.ProgressStatus,
 									w => w.ProgressStatusDescription,
@@ -242,7 +241,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private IDicomServerConfigurationProvider _dicomConfigProvider;
 		private ConnectionState _connectionState;
 		private WorkItemStatusEnum? _statusFilter;
-		private WorkItemTypeEnum? _activityFilter;
+        private ActivityTypeEnum? _activityFilter;
 		private string _textFilter;
 		private readonly Timer _textFilterTimer;
 	    private int _totalStudies;
@@ -265,9 +264,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_dicomConfigProvider.Changed += DicomServerConfigurationChanged;
 
 			// todo loc
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Patient", w => w.PatientInfo));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Study", w => w.StudyInfo));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Activity", w => w.ActivityType));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Patient", w => w.PatientsName));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Study", w => w.StudyDescription));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Activity Desc.", w => w.ActivityDescription));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Status", w => w.Status.GetDescription()));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Status Desc.", w => w.ProgressStatus));
@@ -397,7 +395,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public IList ActivityTypeFilterChoices
 		{
-			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(WorkItemTypeEnum)).Cast<object>()).ToList(); }
+			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(ActivityTypeEnum)).Cast<object>()).ToList(); }
 		}
 
 		public string FormatActivityTypeFilter(object value)
@@ -405,7 +403,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			// todo loc
 			if (value == NoFilter)
 				return "(all)";
-			return ((WorkItemTypeEnum)value).GetDescription();
+			return ((ActivityTypeEnum)value).GetDescription();
 		}
 
 		public object ActivityTypeFilter
@@ -413,7 +411,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _activityFilter.HasValue ? _activityFilter.Value : NoFilter; }
 			set
 			{
-				var v = (value == NoFilter) ? (WorkItemTypeEnum?)null : (WorkItemTypeEnum)value;
+                var v = (value == NoFilter) ? (ActivityTypeEnum?)null : (ActivityTypeEnum)value;
 				if (_activityFilter != v)
 				{
 					_activityFilter = v;
@@ -610,7 +608,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private bool Include(WorkItem item)
 		{
-			if (_activityFilter.HasValue && item.Type != _activityFilter.Value)
+            if (_activityFilter.HasValue && item.ActivityType != _activityFilter.Value)
 				return false;
 
 			if (_statusFilter.HasValue && item.Status != _statusFilter.Value)
@@ -632,7 +630,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return new Diskspace(this.FileStore.Substring(0, 1));
 		}
-
-
 	}
 }
