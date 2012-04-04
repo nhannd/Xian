@@ -244,6 +244,6 @@
     <value>Reapply Rules</value>
   </data>
   <data name="ActivityTypeEnumReIndex" xml:space="preserve">
-    <value>ReIndex</value>
+    <value>Re-index</value>
   </data>
 </root>
