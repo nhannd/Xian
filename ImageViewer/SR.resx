@@ -706,6 +706,9 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="MessageReindexScheduled" xml:space="preserve">
     <value>The re-index has been scheduled.</value>
   </data>
+  <data name="MessageReindexServiceNotRunning" xml:space="preserve">
+    <value>The service must be running to start a re-index.</value>
+  </data>
   <data name="TitleActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>

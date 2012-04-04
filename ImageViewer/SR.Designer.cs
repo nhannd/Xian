@@ -1649,6 +1649,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The service must be running to start a re-index..
+        /// </summary>
+        public static string MessageReindexServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageReindexServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error has occurred in the rendering pipeline..
         /// </summary>
         public static string MessageRenderingPipelineFailure {

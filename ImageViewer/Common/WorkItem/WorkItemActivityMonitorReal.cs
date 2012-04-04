@@ -161,11 +161,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     //Check disposed before and after the wait because it could have changed.
                     if (_disposed) break;
 
-                    var hasListeners = _workItemChanged != null;
-                    bool needsSubscriptionChange = _subscribedToService != hasListeners;
-
-                    if (!needsSubscriptionChange)
-                        Monitor.Wait(_syncLock, ConnectionRetryInterval);
+                    Monitor.Wait(_syncLock, ConnectionRetryInterval);
                     if (_disposed) break;
                 }
 
