@@ -284,6 +284,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequestDataContract("146cc54f-7b98-468b-948a-415eeffd3d7f")]
     public class DicomReceiveRequest : StudyProcessRequest
     {
+        public DicomReceiveRequest()
+        {}
+
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
 

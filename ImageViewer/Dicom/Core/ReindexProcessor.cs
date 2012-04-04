@@ -190,6 +190,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                             broker.Delete(study);
                             context.Commit();
                             EventsHelper.Fire(_studyDeletedEvent, this, EventArgs.Empty);
+                            Platform.Log(LogLevel.Info, "Deleted Study that wasn't on disk, but in the database: {0}",
+                                         study.StudyInstanceUid);
                         }
                     }
 

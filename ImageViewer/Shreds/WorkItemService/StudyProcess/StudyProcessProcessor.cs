@@ -53,8 +53,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
             }
 
             Proxy.Delete();
+
         }
 
+        /// <summary>
+        /// Main Processing routine.
+        /// </summary>
         public override void Process()
         {
             int count = ProcessUidList();
@@ -108,6 +112,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
             }
         }
 
+        /// <summary>
+        /// Can the <see cref="WorkItem"/> start processing?
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns></returns>
         public override bool CanStart(out string reason)
         {
             var relatedList = FindRelatedWorkItems(null, new List<WorkItemStatusEnum> {WorkItemStatusEnum.InProgress});
@@ -115,8 +124,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
             reason = string.Empty;
 
             if (relatedList.Count > 0)
+            {
+                reason = "There are related WorkItems for the study being processed.";
                 return false;
-
+            }
             return true;
         }
 
