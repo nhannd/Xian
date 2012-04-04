@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -28,22 +29,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
         }
 
-        protected string CriterionValue
+        protected string[] CriterionValues
         {
-            get { return Criterion.GetString(0, null); }
+            get { return DicomStringHelper.GetStringArray(CriterionValue); }    
         }
 
-        protected internal bool IsCriterionWildcard
+        protected internal string CriterionValue
         {
             get
             {
-                if (IsCriterionEmpty || IsCriterionNull)
-                    return false;
+                if (Criterion == null)
+                    return String.Empty;
 
-                if (!IsWildcardCriterionAllowed)
-                    return false;
-
-                return CriterionValue.Contains("*") || CriterionValue.Contains("?");
+                return Criterion.ToString();
             }
         }
 
@@ -52,13 +50,50 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             get { return !WildcardExcludedVRs.Any(excludedVr => excludedVr == Path.ValueRepresentation.Name); }    
         }
 
+        internal bool IsWildcardCriterion(string criterion)
+        {
+            if (!IsWildcardCriterionAllowed)
+                return false;
+
+            if (String.IsNullOrEmpty(criterion))
+                return false;
+
+            return criterion.Contains("*") || criterion.Contains("?");
+        }
+
+        internal bool IsMultiValued(string value)
+        {
+            return !String.IsNullOrEmpty(value) && value.Contains(@"\");
+        }
+
         protected sealed override IQueryable<T> AddToQuery(IQueryable<T> query)
         {
-            if (!IsCriterionWildcard)
+            if (CriterionValues.Length > 1)
+                return AddToQuery(query, CriterionValues);
+
+            return AddToQuery(query, CriterionValue);
+        }
+
+        protected IQueryable<T> AddToQuery(IQueryable<T> query, string criterionValue)
+        {
+            if (!IsWildcardCriterion(CriterionValue))
                 return AddEqualsToQuery(query, CriterionValue);
 
             var sqlCriterion = CriterionValue.Replace("*", "%").Replace("?", "_");
-            return AddLikeToQuery(query, sqlCriterion);
+            var returnQuery = AddLikeToQuery(query, sqlCriterion);
+            return returnQuery;
+        }
+
+        protected IQueryable<T> AddToQuery(IQueryable<T> query, string[] criterionValues)
+        {
+            IQueryable<T> unionedQuery = null;
+            foreach (var criterionValue in criterionValues.Where(v => !String.IsNullOrEmpty(v)))
+            {
+                var criterionQuery = AddToQuery(query, criterionValue);
+                unionedQuery = unionedQuery == null ? criterionQuery : unionedQuery.Union(criterionQuery);
+            }
+
+            return unionedQuery ?? query;
         }
 
         protected virtual IQueryable<T> AddEqualsToQuery(IQueryable<T> query, string criterion)
@@ -76,20 +111,77 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             throw new NotImplementedException("GetPropertyValue must be overridden to do post-filtering.");
         }
 
-        protected override System.Collections.Generic.IEnumerable<T> FilterResults(System.Collections.Generic.IEnumerable<T> results)
+        protected bool AreEqual(string value, string criterion)
         {
-            if (!IsCriterionWildcard)
+            //DICOM says if we manage an object having no value, it's considered a match.
+            return String.IsNullOrEmpty(value)
+            //DICOM says matching is case sensitive, but that's just silly.
+            || 0 == string.Compare(value, criterion, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        protected bool IsLike(string value, string criterion)
+        {
+            string test = criterion.Replace("*", ".*"); //zero or more characters
+            test = test.Replace("?", "."); //single character
+            test = String.Format("^{0}", test); //match at beginning
+
+            //DICOM says if we manage an object having no value, it's considered a match.
+            return String.IsNullOrEmpty(value)
+                   //DICOM says matching is case sensitive, but that's just silly.
+                   || Regex.IsMatch(value, test, RegexOptions.IgnoreCase);
+        }
+
+        protected bool IsMatch(T result, string criterion)
+        {
+            var propertyValue = GetPropertyValue(result);
+            if (String.IsNullOrEmpty(propertyValue))
+                return true;
+
+            var propertyValues = DicomStringHelper.GetStringArray(propertyValue);
+
+            if (!IsWildcardCriterion(criterion))
+                return propertyValues.Any(value => AreEqual(value, criterion));
+
+            return propertyValues.Any(value => IsLike(value, criterion));
+        }
+
+        protected IEnumerable<T> FilterResults(IEnumerable<T> results, string[] criterionValues)
+        {
+            var resultsList = new List<T>(results);
+            IEnumerable<T> unionedResults = null;
+            foreach (var criterionValue in criterionValues)
             {
-                //Note: single value matching is supposed to be case-sensitive (except for PN) according to Dicom.
-                return results.Where(result => 0 == string.Compare(GetPropertyValue(result), CriterionValue, StringComparison.InvariantCultureIgnoreCase));
+                var c = criterionValue;
+                var criterionResults = resultsList.Where(result => IsMatch(result, c));
+                unionedResults = unionedResults == null ? criterionResults : unionedResults.Union(criterionResults);
             }
 
-            //Wildcard on strings is generic.
-            string criteriaTest = CriterionValue.Replace("*", ".*"); //zero or more characters
-            criteriaTest = criteriaTest.Replace("?", "."); //single character
-            criteriaTest = String.Format("^{0}", criteriaTest); //match at beginning
+            return unionedResults ?? results;
+        }
 
-            return results.Where(result => Regex.IsMatch(GetPropertyValue(result), criteriaTest, RegexOptions.IgnoreCase));
+        protected IEnumerable<T> FilterResults(IEnumerable<T> results, string criterionValue)
+        {
+            if (string.IsNullOrEmpty(criterionValue))
+                return results;
+
+            if (CriterionValues.Length > 1)
+                return FilterResults(results, CriterionValues);
+
+            return results.Where(result => IsMatch(result, criterionValue));
+        }
+
+        protected override IEnumerable<T> FilterResults(IEnumerable<T> results)
+        {
+            if (CriterionValues.Length > 1)
+            {
+                var filtered = FilterResults(results, CriterionValues);
+                return filtered;
+            }
+            else
+            {
+                var filtered = FilterResults(results, CriterionValue);
+                return filtered;
+            }
         }
     }
 }

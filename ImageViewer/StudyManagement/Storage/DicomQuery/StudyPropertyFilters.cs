@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
@@ -7,6 +8,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
     {
         public StudyPropertyFilters(DicomAttributeCollection criteria) : base(criteria)
         {
+        }
+
+        protected override System.Collections.Generic.List<IPropertyFilter<Study>> CreateFilters(DicomAttributeCollection criteria)
+        {
+            var filters = base.CreateFilters(criteria);
+            var modalitiesInStudyPath = new DicomTagPath(DicomTags.ModalitiesInStudy);
+            var modalitiesInStudyIndex = filters.FindIndex(f => f.Path.Equals(modalitiesInStudyPath));
+            var modalitiesInStudyFilter = filters[modalitiesInStudyIndex];
+            
+            //Because of the potentially complex joins of the same initial query over and over, move this one to the front.
+            filters.RemoveAt(modalitiesInStudyIndex);
+            filters.Insert(0, modalitiesInStudyFilter);
+            return filters;
         }
 
         protected override IQueryable<Study> Query(IQueryable<Study> initialQuery)
