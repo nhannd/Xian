@@ -91,7 +91,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			catch (EndpointNotFoundException)
 			{
-				Context.DesktopWindow.ShowMessageBox(SR.MessageImportLocalDataStoreServiceNotRunning, MessageBoxActions.Ok);
+			    var message = String.Format(SR.FormatMessageImportWorkItemServiceNotRunning,
+			                                   ServiceControlSettings.Default.ServiceName);
+
+                Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
 			}
 			catch (Exception e)
 			{

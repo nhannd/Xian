@@ -67,10 +67,5 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 				e.Value = value;
 			}
 		}
-		
-		private void _refreshButton_Click(object sender, EventArgs e)
-        {
-            _component.Refresh();
-        }
     }
 }

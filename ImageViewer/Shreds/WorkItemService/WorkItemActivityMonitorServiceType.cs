@@ -23,7 +23,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                //TODO (Marmot): Need to update so we can limit by WorkItemType?
                 SubscriptionManager<IWorkItemActivityCallback>.Subscribe(_callback, "WorkItemChanged");
                 return new WorkItemSubscribeResponse();
             }

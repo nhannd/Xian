@@ -117,15 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ClearAll" xml:space="preserve">
-    <value>Clear All</value>
-  </data>
-  <data name="ClearInactive" xml:space="preserve">
-    <value>Clear Inactive</value>
-  </data>
-  <data name="ClearSelected" xml:space="preserve">
-    <value>Clear Selected</value>
-  </data>
   <data name="ServerConfiguration" xml:space="preserve">
     <value>Local Server</value>
   </data>
@@ -134,18 +125,6 @@
   </data>
   <data name="MessageFailedToRetrieveDicomServerConfiguration" xml:space="preserve">
     <value>Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
-  </data>
-  <data name="ExceptionIdentifiersMustMatch" xml:space="preserve">
-    <value>The identifiers must match.</value>
-  </data>
-  <data name="FormatXDaysAgo" xml:space="preserve">
-    <value>{0} days ago</value>
-  </data>
-  <data name="FormatXHoursAgo" xml:space="preserve">
-    <value>{0} hours, </value>
-  </data>
-  <data name="FormatXMinutesAgo" xml:space="preserve">
-    <value>{0} minutes ago</value>
   </data>
   <data name="ImportDicomFiles" xml:space="preserve">
     <value>Import</value>
@@ -165,35 +144,14 @@
   <data name="LabelTerabytes" xml:space="preserve">
     <value>TB</value>
   </data>
-  <data name="MenuCancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="MenuClear" xml:space="preserve">
-    <value>Clear</value>
-  </data>
   <data name="MenuDeleteStudy" xml:space="preserve">
     <value>Delete</value>
-  </data>
-  <data name="MenuDicomFileImportActivity" xml:space="preserve">
-    <value>Import Activity Monitor</value>
-  </data>
-  <data name="MenuDicomSendReceiveActivity" xml:space="preserve">
-    <value>Send/Receive Activity Monitor</value>
-  </data>
-  <data name="MenuLocalDataStoreReindex" xml:space="preserve">
-    <value>Reindex Local Data Store</value>
   </data>
   <data name="MenuOpenStudies" xml:space="preserve">
     <value>Open</value>
   </data>
   <data name="MenuRestart" xml:space="preserve">
     <value>Restart</value>
-  </data>
-  <data name="MenuRetrieveStudy" xml:space="preserve">
-    <value>Retrieve</value>
-  </data>
-  <data name="MenuSendStudy" xml:space="preserve">
-    <value>Send</value>
   </data>
   <data name="MenuServices" xml:space="preserve">
     <value>Services</value>
@@ -204,22 +162,6 @@
   <data name="MenuStop" xml:space="preserve">
     <value>Stop</value>
   </data>
-  <data name="MessageActivityMonitorServiceUnavailable" xml:space="preserve">
-    <value>The Activity Monitor service is currently unavailable</value>
-  </data>
-  <data name="MessageCancelFailed" xml:space="preserve">
-    <value>Failed to cancel the selected items.</value>
-  </data>
-  <data name="MessageClearFailed" xml:space="preserve">
-    <value>Failed to clear the selected items.</value>
-  </data>
-  <data name="MessageClearInactiveFailed" xml:space="preserve">
-    <value>Failed to clear the selected items.</value>
-  </data>
-  <data name="MessageConfirmCancelReindex" xml:space="preserve">
-    <value>Cancelling a reindex operation will cause your data store to be out of sync with the files stored on your local machine.
-Do you want to cancel the reindex operation anyway?</value>
-  </data>
   <data name="MessageConfirmDeleteStudies" xml:space="preserve">
     <value>Are you sure you want to delete the {0} selected studies?</value>
   </data>
@@ -229,27 +171,8 @@ Do you want to cancel the reindex operation anyway?</value>
   <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
     <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
   </data>
-  <data name="MessageDeletingStudies" xml:space="preserve">
-    <value>Deleting studies ...</value>
-  </data>
-  <data name="MessageDeletionHelperConnectionLost" xml:space="preserve">
-    <value>Deletion progress can no longer be obtained; the connection to the required service has been lost.</value>
-  </data>
-  <data name="MessageDeletionHelperUnableToConnect" xml:space="preserve">
-    <value>Failed to process delete request because the Local Data Store service is not running.
-Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
-  </data>
   <data name="MessageFailedToImportSelection" xml:space="preserve">
     <value>Failed to initiate an import of the selected items.</value>
-  </data>
-  <data name="MessageFailedToLaunchImportActivityComponent" xml:space="preserve">
-    <value>Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator.</value>
-  </data>
-  <data name="MessageFailedToLaunchReindexComponent" xml:space="preserve">
-    <value>Failed to launch the Reindex Activity manager, likely due to a communication error with the Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator.</value>
-  </data>
-  <data name="MessageFailedToLaunchSendReceiveActivityComponent" xml:space="preserve">
-    <value>Failed to launch the Send/Receive Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator.</value>
   </data>
   <data name="MessageFailedToRestartService" xml:space="preserve">
     <value>Failed to restart service. Please check the logs for more details.</value>
@@ -264,9 +187,6 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="MessageFailedToSendStudy" xml:space="preserve">
     <value>Failed to initiate sending of the selected items.</value>
   </data>
-  <data name="MessageFailedToStartDelete" xml:space="preserve">
-    <value>Failed to start delete operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
-  </data>
   <data name="MessageFailedToStartService" xml:space="preserve">
     <value>Failed to start service. Please check the logs for more details.</value>
   </data>
@@ -277,15 +197,9 @@ Please ensure the ClearCanvas Service is running or contact your system administ
     <value>Failed to update Diskspace Management settings.
 Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
-  <data name="MessageImportLocalDataStoreServiceNotRunning" xml:space="preserve">
-    <value>Failed to import the selected items because the Local Data Store service is not running.
-Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
-  </data>
-  <data name="MessageNothingSelected" xml:space="preserve">
-    <value>Nothing has been selected.</value>
-  </data>
-  <data name="MessageNoWaitSpecified" xml:space="preserve">
-    <value>'No wait' specified - quitting.</value>
+  <data name="FormatMessageImportWorkItemServiceNotRunning" xml:space="preserve">
+    <value>Failed to import the selected items because the local services are not running.
+Please ensure the '{0}' is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageOneDayAgo" xml:space="preserve">
     <value>1 day ago</value>
@@ -299,28 +213,9 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="MessageOneOfSelectedStudiesInUse" xml:space="preserve">
     <value>One of the selected studies is in use.  Please close all relevant workspaces before deleting.</value>
   </data>
-  <data name="MessageReindexCancelled" xml:space="preserve">
-    <value>Reindex was cancelled.</value>
-  </data>
-  <data name="MessageReindexFailure" xml:space="preserve">
-    <value>An error has occurred while reindexing.  You will have to correct the problem and reindex manually.  Please check the logs for more details.</value>
-  </data>
-  <data name="MessageReindexFailures" xml:space="preserve">
-    <value>One or more failures have occurred while reindexing.  You will have to correct the problem and reindex manually.  Please check the logs for more details.</value>
-  </data>
-  <data name="MessageReindexLocalDataStoreServiceNotRunning" xml:space="preserve">
-    <value>Failed to reindex the Local Data Store because the Local Data Store service is not running.
-Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
-  </data>
-  <data name="MessageReindexNotStarted" xml:space="preserve">
+  <data name="MessageFormatReindexNotStarted" xml:space="preserve">
     <value>The reindex operation couldn't start.
-Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
-  </data>
-  <data name="MessageReindexRunning" xml:space="preserve">
-    <value>Reindex already running ...</value>
-  </data>
-  <data name="MessageReindexWillContinue" xml:space="preserve">
-    <value>The reindex operation will continue to run in the background, however you will NOT be informed of any errors that may have occurred.</value>
+Please ensure the '{0}' is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
     <value>Failed to retrieve the selected studies because the DICOM Server service is not running.
@@ -339,71 +234,14 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
     <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
   </data>
-  <data name="MessageStartingReindex" xml:space="preserve">
-    <value>Starting reindex ...</value>
-  </data>
   <data name="MessageStudyCountUnavailable" xml:space="preserve">
     <value>Unavailable</value>
-  </data>
-  <data name="TitleAvailable" xml:space="preserve">
-    <value>Available</value>
-  </data>
-  <data name="TitleDescription" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="TitleFailed" xml:space="preserve">
-    <value>Failed</value>
-  </data>
-  <data name="TitleFrom" xml:space="preserve">
-    <value>From</value>
-  </data>
-  <data name="TitleImportActivity" xml:space="preserve">
-    <value>Import Activity</value>
-  </data>
-  <data name="TitleLastActive" xml:space="preserve">
-    <value>Last Active</value>
-  </data>
-  <data name="TitleMessage" xml:space="preserve">
-    <value>Message</value>
-  </data>
-  <data name="TitlePatientId" xml:space="preserve">
-    <value>Patient Id</value>
-  </data>
-  <data name="TitlePatientsName" xml:space="preserve">
-    <value>Patient's Name</value>
-  </data>
-  <data name="TitleReceive" xml:space="preserve">
-    <value>Receive</value>
-  </data>
-  <data name="TitleReceived" xml:space="preserve">
-    <value>Received</value>
-  </data>
-  <data name="TitleReindexLocalDataStore" xml:space="preserve">
-    <value>Reindex Local Data Store</value>
   </data>
   <data name="TitleSend" xml:space="preserve">
     <value>Send</value>
   </data>
   <data name="TitleSendStudy" xml:space="preserve">
     <value>Send Study</value>
-  </data>
-  <data name="TitleSent" xml:space="preserve">
-    <value>Sent</value>
-  </data>
-  <data name="TitleStartTime" xml:space="preserve">
-    <value>Started</value>
-  </data>
-  <data name="TitleStatus" xml:space="preserve">
-    <value>Status</value>
-  </data>
-  <data name="TitleStudyDate" xml:space="preserve">
-    <value>Study Date</value>
-  </data>
-  <data name="TitleStudyDescription" xml:space="preserve">
-    <value>Study Description</value>
-  </data>
-  <data name="TitleTo" xml:space="preserve">
-    <value>To</value>
   </data>
   <data name="ToolbarDeleteStudy" xml:space="preserve">
     <value>Delete</value>
@@ -416,21 +254,6 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   </data>
   <data name="ToolbarSendStudy" xml:space="preserve">
     <value>Send</value>
-  </data>
-  <data name="TooltipCancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="TooltipClear" xml:space="preserve">
-    <value>Clear</value>
-  </data>
-  <data name="TooltipClearAll" xml:space="preserve">
-    <value>Clear All Items</value>
-  </data>
-  <data name="TooltipClearInactive" xml:space="preserve">
-    <value>Clear Inactive</value>
-  </data>
-  <data name="TooltipClearSelected" xml:space="preserve">
-    <value>Clear Selected Item(s)</value>
   </data>
   <data name="TooltipDeleteStudy" xml:space="preserve">
     <value>Delete study</value>
@@ -447,12 +270,6 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="TooltipSendStudy" xml:space="preserve">
     <value>Send Study</value>
   </data>
-  <data name="TooltipShowBackgroundImports" xml:space="preserve">
-    <value>Show Background Imports</value>
-  </data>
-  <data name="TooltipShowBackgroundSends" xml:space="preserve">
-    <value>Show Background Sends</value>
-  </data>
   <data name="ValidationAETitleInvalidCharacters" xml:space="preserve">
     <value>The AE Title contains invalid characters.</value>
   </data>
@@ -462,26 +279,11 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="ValidationPortOutOfRange" xml:space="preserve">
     <value>The Port must be between 1 and 65535.</value>
   </data>
-  <data name="MessageFailedToDeleteOneOrMoreStudies" xml:space="preserve">
-    <value>Failed to delete one or more studies. Please see the service log for more details. You may need to reindex the local data store after manually removing the affected studies.</value>
-  </data>
-  <data name="MessageDeterminingReindexState" xml:space="preserve">
-    <value>Determining reindex state ...</value>
-  </data>
-  <data name="ReindexApplicationName" xml:space="preserve">
-    <value>Reindex</value>
-  </data>
-  <data name="MessageReindexCompleted" xml:space="preserve">
-    <value>The reindex has completed successfully.</value>
-  </data>
   <data name="MessageControlServiceAccessDenied" xml:space="preserve">
     <value>You don't have the appropriate permissions to start/stop the service.</value>
   </data>
   <data name="MessageControlServiceTimeout" xml:space="preserve">
     <value>A timeout has occurred while attempting to control the service.</value>
-  </data>
-  <data name="MessageFailedToDeleteStudy" xml:space="preserve">
-    <value>Failed to delete the selected items.</value>
   </data>
   <data name="MessageFailedToOpenStudy" xml:space="preserve">
     <value>Failed to open the selected study.</value>
@@ -489,10 +291,13 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="MessageFailedToUpdateDicomServerConfiguration" xml:space="preserve">
     <value>Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
   </data>
-  <data name="FormatProgressUpdate" xml:space="preserve">
-    <value>... {0:F1}%</value>
-  </data>
   <data name="DicomConfiguration" xml:space="preserve">
     <value>DICOM</value>
+  </data>
+  <data name="LinkOpenActivityMonitor" xml:space="preserve">
+    <value>Open Activity Monitor</value>
+  </data>
+  <data name="MenuReindex" xml:space="preserve">
+    <value>Re-index File Store</value>
   </data>
 </root>

@@ -61,33 +61,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear All.
-        /// </summary>
-        internal static string ClearAll {
-            get {
-                return ResourceManager.GetString("ClearAll", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear Inactive.
-        /// </summary>
-        internal static string ClearInactive {
-            get {
-                return ResourceManager.GetString("ClearInactive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear Selected.
-        /// </summary>
-        internal static string ClearSelected {
-            get {
-                return ResourceManager.GetString("ClearSelected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to DICOM.
         /// </summary>
         internal static string DicomConfiguration {
@@ -106,47 +79,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The identifiers must match..
+        ///   Looks up a localized string similar to Failed to import the selected items because the local services are not running.
+        ///Please ensure the &apos;{0}&apos; is running or contact your system administrator for assistance..
         /// </summary>
-        internal static string ExceptionIdentifiersMustMatch {
+        internal static string FormatMessageImportWorkItemServiceNotRunning {
             get {
-                return ResourceManager.GetString("ExceptionIdentifiersMustMatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ... {0:F1}%.
-        /// </summary>
-        internal static string FormatProgressUpdate {
-            get {
-                return ResourceManager.GetString("FormatProgressUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} days ago.
-        /// </summary>
-        internal static string FormatXDaysAgo {
-            get {
-                return ResourceManager.GetString("FormatXDaysAgo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} hours, .
-        /// </summary>
-        internal static string FormatXHoursAgo {
-            get {
-                return ResourceManager.GetString("FormatXHoursAgo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} minutes ago.
-        /// </summary>
-        internal static string FormatXMinutesAgo {
-            get {
-                return ResourceManager.GetString("FormatXMinutesAgo", resourceCulture);
+                return ResourceManager.GetString("FormatMessageImportWorkItemServiceNotRunning", resourceCulture);
             }
         }
         
@@ -205,20 +143,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel.
+        ///   Looks up a localized string similar to Open Activity Monitor.
         /// </summary>
-        internal static string MenuCancel {
+        internal static string LinkOpenActivityMonitor {
             get {
-                return ResourceManager.GetString("MenuCancel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear.
-        /// </summary>
-        internal static string MenuClear {
-            get {
-                return ResourceManager.GetString("MenuClear", resourceCulture);
+                return ResourceManager.GetString("LinkOpenActivityMonitor", resourceCulture);
             }
         }
         
@@ -232,33 +161,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import Activity Monitor.
-        /// </summary>
-        internal static string MenuDicomFileImportActivity {
-            get {
-                return ResourceManager.GetString("MenuDicomFileImportActivity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Send/Receive Activity Monitor.
-        /// </summary>
-        internal static string MenuDicomSendReceiveActivity {
-            get {
-                return ResourceManager.GetString("MenuDicomSendReceiveActivity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reindex Local Data Store.
-        /// </summary>
-        internal static string MenuLocalDataStoreReindex {
-            get {
-                return ResourceManager.GetString("MenuLocalDataStoreReindex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         internal static string MenuOpenStudies {
@@ -268,29 +170,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Re-index File Store.
+        /// </summary>
+        internal static string MenuReindex {
+            get {
+                return ResourceManager.GetString("MenuReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Restart.
         /// </summary>
         internal static string MenuRestart {
             get {
                 return ResourceManager.GetString("MenuRestart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrieve.
-        /// </summary>
-        internal static string MenuRetrieveStudy {
-            get {
-                return ResourceManager.GetString("MenuRetrieveStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Send.
-        /// </summary>
-        internal static string MenuSendStudy {
-            get {
-                return ResourceManager.GetString("MenuSendStudy", resourceCulture);
             }
         }
         
@@ -318,52 +211,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MenuStop {
             get {
                 return ResourceManager.GetString("MenuStop", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Activity Monitor service is currently unavailable.
-        /// </summary>
-        internal static string MessageActivityMonitorServiceUnavailable {
-            get {
-                return ResourceManager.GetString("MessageActivityMonitorServiceUnavailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to cancel the selected items..
-        /// </summary>
-        internal static string MessageCancelFailed {
-            get {
-                return ResourceManager.GetString("MessageCancelFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to clear the selected items..
-        /// </summary>
-        internal static string MessageClearFailed {
-            get {
-                return ResourceManager.GetString("MessageClearFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to clear the selected items..
-        /// </summary>
-        internal static string MessageClearInactiveFailed {
-            get {
-                return ResourceManager.GetString("MessageClearInactiveFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cancelling a reindex operation will cause your data store to be out of sync with the files stored on your local machine.
-        ///Do you want to cancel the reindex operation anyway?.
-        /// </summary>
-        internal static string MessageConfirmCancelReindex {
-            get {
-                return ResourceManager.GetString("MessageConfirmCancelReindex", resourceCulture);
             }
         }
         
@@ -413,93 +260,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleting studies ....
-        /// </summary>
-        internal static string MessageDeletingStudies {
-            get {
-                return ResourceManager.GetString("MessageDeletingStudies", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Deletion progress can no longer be obtained; the connection to the required service has been lost..
-        /// </summary>
-        internal static string MessageDeletionHelperConnectionLost {
-            get {
-                return ResourceManager.GetString("MessageDeletionHelperConnectionLost", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to process delete request because the Local Data Store service is not running.
-        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
-        /// </summary>
-        internal static string MessageDeletionHelperUnableToConnect {
-            get {
-                return ResourceManager.GetString("MessageDeletionHelperUnableToConnect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Determining reindex state ....
-        /// </summary>
-        internal static string MessageDeterminingReindexState {
-            get {
-                return ResourceManager.GetString("MessageDeterminingReindexState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to delete one or more studies. Please see the service log for more details. You may need to reindex the local data store after manually removing the affected studies..
-        /// </summary>
-        internal static string MessageFailedToDeleteOneOrMoreStudies {
-            get {
-                return ResourceManager.GetString("MessageFailedToDeleteOneOrMoreStudies", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to delete the selected items..
-        /// </summary>
-        internal static string MessageFailedToDeleteStudy {
-            get {
-                return ResourceManager.GetString("MessageFailedToDeleteStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to initiate an import of the selected items..
         /// </summary>
         internal static string MessageFailedToImportSelection {
             get {
                 return ResourceManager.GetString("MessageFailedToImportSelection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator..
-        /// </summary>
-        internal static string MessageFailedToLaunchImportActivityComponent {
-            get {
-                return ResourceManager.GetString("MessageFailedToLaunchImportActivityComponent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to launch the Reindex Activity manager, likely due to a communication error with the Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator..
-        /// </summary>
-        internal static string MessageFailedToLaunchReindexComponent {
-            get {
-                return ResourceManager.GetString("MessageFailedToLaunchReindexComponent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to launch the Send/Receive Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator..
-        /// </summary>
-        internal static string MessageFailedToLaunchSendReceiveActivityComponent {
-            get {
-                return ResourceManager.GetString("MessageFailedToLaunchSendReceiveActivityComponent", resourceCulture);
             }
         }
         
@@ -559,15 +324,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to start delete operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator..
-        /// </summary>
-        internal static string MessageFailedToStartDelete {
-            get {
-                return ResourceManager.GetString("MessageFailedToStartDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to start service. Please check the logs for more details..
         /// </summary>
         internal static string MessageFailedToStartService {
@@ -605,30 +361,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to import the selected items because the Local Data Store service is not running.
-        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
+        ///   Looks up a localized string similar to The reindex operation couldn&apos;t start.
+        ///Please ensure the &apos;{0}&apos; is running or contact your system administrator for assistance..
         /// </summary>
-        internal static string MessageImportLocalDataStoreServiceNotRunning {
+        internal static string MessageFormatReindexNotStarted {
             get {
-                return ResourceManager.GetString("MessageImportLocalDataStoreServiceNotRunning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Nothing has been selected..
-        /// </summary>
-        internal static string MessageNothingSelected {
-            get {
-                return ResourceManager.GetString("MessageNothingSelected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;No wait&apos; specified - quitting..
-        /// </summary>
-        internal static string MessageNoWaitSpecified {
-            get {
-                return ResourceManager.GetString("MessageNoWaitSpecified", resourceCulture);
+                return ResourceManager.GetString("MessageFormatReindexNotStarted", resourceCulture);
             }
         }
         
@@ -665,80 +403,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageOneOfSelectedStudiesInUse {
             get {
                 return ResourceManager.GetString("MessageOneOfSelectedStudiesInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reindex was cancelled..
-        /// </summary>
-        internal static string MessageReindexCancelled {
-            get {
-                return ResourceManager.GetString("MessageReindexCancelled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The reindex has completed successfully..
-        /// </summary>
-        internal static string MessageReindexCompleted {
-            get {
-                return ResourceManager.GetString("MessageReindexCompleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An error has occurred while reindexing.  You will have to correct the problem and reindex manually.  Please check the logs for more details..
-        /// </summary>
-        internal static string MessageReindexFailure {
-            get {
-                return ResourceManager.GetString("MessageReindexFailure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to One or more failures have occurred while reindexing.  You will have to correct the problem and reindex manually.  Please check the logs for more details..
-        /// </summary>
-        internal static string MessageReindexFailures {
-            get {
-                return ResourceManager.GetString("MessageReindexFailures", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to reindex the Local Data Store because the Local Data Store service is not running.
-        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
-        /// </summary>
-        internal static string MessageReindexLocalDataStoreServiceNotRunning {
-            get {
-                return ResourceManager.GetString("MessageReindexLocalDataStoreServiceNotRunning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The reindex operation couldn&apos;t start.
-        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
-        /// </summary>
-        internal static string MessageReindexNotStarted {
-            get {
-                return ResourceManager.GetString("MessageReindexNotStarted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reindex already running ....
-        /// </summary>
-        internal static string MessageReindexRunning {
-            get {
-                return ResourceManager.GetString("MessageReindexRunning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The reindex operation will continue to run in the background, however you will NOT be informed of any errors that may have occurred..
-        /// </summary>
-        internal static string MessageReindexWillContinue {
-            get {
-                return ResourceManager.GetString("MessageReindexWillContinue", resourceCulture);
             }
         }
         
@@ -790,15 +454,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Starting reindex ....
-        /// </summary>
-        internal static string MessageStartingReindex {
-            get {
-                return ResourceManager.GetString("MessageStartingReindex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unavailable.
         /// </summary>
         internal static string MessageStudyCountUnavailable {
@@ -808,128 +463,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reindex.
-        /// </summary>
-        internal static string ReindexApplicationName {
-            get {
-                return ResourceManager.GetString("ReindexApplicationName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Local Server.
         /// </summary>
         internal static string ServerConfiguration {
             get {
                 return ResourceManager.GetString("ServerConfiguration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Available.
-        /// </summary>
-        internal static string TitleAvailable {
-            get {
-                return ResourceManager.GetString("TitleAvailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Description.
-        /// </summary>
-        internal static string TitleDescription {
-            get {
-                return ResourceManager.GetString("TitleDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed.
-        /// </summary>
-        internal static string TitleFailed {
-            get {
-                return ResourceManager.GetString("TitleFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to From.
-        /// </summary>
-        internal static string TitleFrom {
-            get {
-                return ResourceManager.GetString("TitleFrom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Import Activity.
-        /// </summary>
-        internal static string TitleImportActivity {
-            get {
-                return ResourceManager.GetString("TitleImportActivity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Last Active.
-        /// </summary>
-        internal static string TitleLastActive {
-            get {
-                return ResourceManager.GetString("TitleLastActive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Message.
-        /// </summary>
-        internal static string TitleMessage {
-            get {
-                return ResourceManager.GetString("TitleMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Patient Id.
-        /// </summary>
-        internal static string TitlePatientId {
-            get {
-                return ResourceManager.GetString("TitlePatientId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Patient&apos;s Name.
-        /// </summary>
-        internal static string TitlePatientsName {
-            get {
-                return ResourceManager.GetString("TitlePatientsName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Receive.
-        /// </summary>
-        internal static string TitleReceive {
-            get {
-                return ResourceManager.GetString("TitleReceive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Received.
-        /// </summary>
-        internal static string TitleReceived {
-            get {
-                return ResourceManager.GetString("TitleReceived", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reindex Local Data Store.
-        /// </summary>
-        internal static string TitleReindexLocalDataStore {
-            get {
-                return ResourceManager.GetString("TitleReindexLocalDataStore", resourceCulture);
             }
         }
         
@@ -948,60 +486,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string TitleSendStudy {
             get {
                 return ResourceManager.GetString("TitleSendStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sent.
-        /// </summary>
-        internal static string TitleSent {
-            get {
-                return ResourceManager.GetString("TitleSent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Started.
-        /// </summary>
-        internal static string TitleStartTime {
-            get {
-                return ResourceManager.GetString("TitleStartTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Status.
-        /// </summary>
-        internal static string TitleStatus {
-            get {
-                return ResourceManager.GetString("TitleStatus", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Study Date.
-        /// </summary>
-        internal static string TitleStudyDate {
-            get {
-                return ResourceManager.GetString("TitleStudyDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Study Description.
-        /// </summary>
-        internal static string TitleStudyDescription {
-            get {
-                return ResourceManager.GetString("TitleStudyDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to To.
-        /// </summary>
-        internal static string TitleTo {
-            get {
-                return ResourceManager.GetString("TitleTo", resourceCulture);
             }
         }
         
@@ -1038,51 +522,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string ToolbarSendStudy {
             get {
                 return ResourceManager.GetString("ToolbarSendStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cancel.
-        /// </summary>
-        internal static string TooltipCancel {
-            get {
-                return ResourceManager.GetString("TooltipCancel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear.
-        /// </summary>
-        internal static string TooltipClear {
-            get {
-                return ResourceManager.GetString("TooltipClear", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear All Items.
-        /// </summary>
-        internal static string TooltipClearAll {
-            get {
-                return ResourceManager.GetString("TooltipClearAll", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear Inactive.
-        /// </summary>
-        internal static string TooltipClearInactive {
-            get {
-                return ResourceManager.GetString("TooltipClearInactive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear Selected Item(s).
-        /// </summary>
-        internal static string TooltipClearSelected {
-            get {
-                return ResourceManager.GetString("TooltipClearSelected", resourceCulture);
             }
         }
         
@@ -1128,24 +567,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string TooltipSendStudy {
             get {
                 return ResourceManager.GetString("TooltipSendStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Background Imports.
-        /// </summary>
-        internal static string TooltipShowBackgroundImports {
-            get {
-                return ResourceManager.GetString("TooltipShowBackgroundImports", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Background Sends.
-        /// </summary>
-        internal static string TooltipShowBackgroundSends {
-            get {
-                return ResourceManager.GetString("TooltipShowBackgroundSends", resourceCulture);
             }
         }
         

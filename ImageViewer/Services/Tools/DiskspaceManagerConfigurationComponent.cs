@@ -162,11 +162,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			base.Start();
 		}
 
-		public override void Stop()
-		{
-			base.Stop();
-		}
-
 		public void Refresh()
 		{
 			BlockingOperation.Run(this.ConnectToClientInternal);

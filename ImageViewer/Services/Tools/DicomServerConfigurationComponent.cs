@@ -80,14 +80,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
         private string _storageDirectory;
 		private bool _enabled;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public DicomServerConfigurationComponent()
-        {
-		}
-
-    	private void ConnectToClientInternal()
+    	private void Refresh()
     	{
     		try
     		{
@@ -204,11 +197,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				NotifyPropertyChanged("Enabled");
 			}
         }
-
-		public void Refresh()
-		{
-			BlockingOperation.Run(this.ConnectToClientInternal);
-		}
 
 		#endregion
     }

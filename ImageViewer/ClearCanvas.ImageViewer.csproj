@@ -213,6 +213,7 @@
     <Compile Include="Rendering\RenderingException.cs" />
     <Compile Include="StudyManagement\ActivityMonitorComponent.cs" />
     <Compile Include="StudyManagement\ActivityMonitorTool.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorWorkspace.cs" />
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\Diskspace.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />

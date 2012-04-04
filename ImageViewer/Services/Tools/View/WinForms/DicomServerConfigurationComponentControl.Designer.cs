@@ -59,49 +59,37 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomServerConfigurationComponentControl));
-			this._aeTitle = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._port = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._refreshButton = new System.Windows.Forms.Button();
-			this.SuspendLayout();
-			// 
-			// _aeTitle
-			// 
-			resources.ApplyResources(this._aeTitle, "_aeTitle");
-			this._aeTitle.Name = "_aeTitle";
-			this._aeTitle.ToolTip = null;
-			this._aeTitle.Value = null;
-			// 
-			// _port
-			// 
-			resources.ApplyResources(this._port, "_port");
-			this._port.Name = "_port";
-			this._port.ToolTip = null;
-			this._port.Value = null;
-			// 
-			// _refreshButton
-			// 
-			resources.ApplyResources(this._refreshButton, "_refreshButton");
-			this._refreshButton.Name = "_refreshButton";
-			this._refreshButton.UseVisualStyleBackColor = true;
-			this._refreshButton.Click += new System.EventHandler(this._refreshButton_Click);
-			// 
-			// DicomServerConfigurationComponentControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._refreshButton);
-			this.Controls.Add(this._port);
-			this.Controls.Add(this._aeTitle);
-			this.Name = "DicomServerConfigurationComponentControl";
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomServerConfigurationComponentControl));
+            this._aeTitle = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._port = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this.SuspendLayout();
+            // 
+            // _aeTitle
+            // 
+            resources.ApplyResources(this._aeTitle, "_aeTitle");
+            this._aeTitle.Name = "_aeTitle";
+            this._aeTitle.Value = null;
+            // 
+            // _port
+            // 
+            resources.ApplyResources(this._port, "_port");
+            this._port.Name = "_port";
+            this._port.Value = null;
+            // 
+            // DicomServerConfigurationComponentControl
+            // 
+            resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._port);
+            this.Controls.Add(this._aeTitle);
+            this.Name = "DicomServerConfigurationComponentControl";
+            this.ResumeLayout(false);
 
         }
 
         #endregion
 
 		private ClearCanvas.Desktop.View.WinForms.TextField _aeTitle;
-		private ClearCanvas.Desktop.View.WinForms.TextField _port;
-        private System.Windows.Forms.Button _refreshButton;
+        private ClearCanvas.Desktop.View.WinForms.TextField _port;
     }
 }

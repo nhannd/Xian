@@ -112,5 +112,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            return Path.ToString();
+        }
     }
 }

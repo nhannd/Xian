@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		private static bool StudyExistsOnLocal(string studyInstanceUid)
 		{
-		    //TODO (Marmot):
+		    //TODO (Marmot): service nodes.
 		    using (var bridge = new StudyStoreBridge())
 		        return bridge.QueryByStudyInstanceUid(studyInstanceUid).Count > 0;
 		}
