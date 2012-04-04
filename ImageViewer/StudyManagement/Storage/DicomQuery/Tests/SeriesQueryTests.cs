@@ -122,7 +122,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             var converted = filters.ConvertResults(results);
             foreach (var result in converted)
             {
-                Assert.AreEqual(2, result.Count);
+                //It's 5 because of InstanceAvailability, RetrieveAE, SpecificCharacterSet.
+                Assert.AreEqual(5, result.Count);
                 Assert.IsNotEmpty(result[DicomTags.StudyInstanceUid]);
                 Assert.IsNotEmpty(result[DicomTags.SeriesInstanceUid]);
             }

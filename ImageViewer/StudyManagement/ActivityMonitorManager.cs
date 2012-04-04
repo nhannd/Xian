@@ -2,7 +2,7 @@
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-    public class ActivityMonitorWorkspace
+    public class ActivityMonitorManager
     {
         private static Workspace _workspace;
 

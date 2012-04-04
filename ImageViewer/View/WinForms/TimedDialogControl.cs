@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.View.WinForms
 {
     public partial class TimedDialogControl : UserControl, INotifyPropertyChanged
     {
@@ -20,7 +20,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
             DataBindings.Add("LinkText", dialog, "LinkText", true,
                                          DataSourceUpdateMode.OnPropertyChanged);
 
-            Click += OnClickControlBody;
+            _link.MouseEnter += ChildMouseEnter;
+            _message.MouseEnter += ChildMouseEnter;
+
+            _link.MouseLeave += ChildMouseLeave;
+            _message.MouseLeave += ChildMouseLeave;
         }
 
         public string Message
@@ -54,15 +58,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
         #endregion
 
-        private void OnClickControlBody(object sender, EventArgs eventArgs)
+        private void ChildMouseEnter(object sender, EventArgs eventArgs)
         {
-            _dialog.Close();
+            base.OnMouseEnter(eventArgs);
         }
 
-
-        private void OnMessageClick(object sender, EventArgs e)
+        private void ChildMouseLeave(object sender, EventArgs eventArgs)
         {
-            _dialog.Close();
+            var cursorPosition = Cursor.Position;
+            var bounds = RectangleToScreen(ClientRectangle);
+            if (!bounds.Contains(cursorPosition))
+                base.OnMouseLeave(eventArgs);
         }
 
         private void OnLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

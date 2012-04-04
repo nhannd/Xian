@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsFalse(filter.ShouldAddToQuery);
             Assert.IsFalse(filter.ShouldAddToResult);
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
-            Assert.IsFalse(filter.IsCriterionWildcard);
+            Assert.IsFalse(filter.IsWildcardCriterion(filter.CriterionValue));
 
             Assert.IsFalse(filter.CalledAddEqualsToQuery);
             Assert.IsFalse(filter.CalledAddLikeToQuery);
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsFalse(filter.ShouldAddToQuery);
             Assert.IsTrue(filter.ShouldAddToResult);
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
-            Assert.IsFalse(filter.IsCriterionWildcard);
+            Assert.IsFalse(filter.IsWildcardCriterion(filter.CriterionValue));
 
             Assert.IsFalse(filter.CalledAddEqualsToQuery);
             Assert.IsFalse(filter.CalledAddLikeToQuery);
@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.ShouldAddToQuery);
             Assert.IsTrue(filter.ShouldAddToResult);
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
-            Assert.IsFalse(filter.IsCriterionWildcard);
+            Assert.IsFalse(filter.IsWildcardCriterion(filter.CriterionValue));
 
             Assert.IsTrue(filter.CalledAddEqualsToQuery);
             Assert.IsFalse(filter.CalledAddLikeToQuery);
@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.ShouldAddToQuery);
             Assert.IsTrue(filter.ShouldAddToResult);
             Assert.IsTrue(filter.IsWildcardCriterionAllowed);
-            Assert.IsTrue(filter.IsCriterionWildcard);
+            Assert.IsTrue(filter.IsWildcardCriterion(filter.CriterionValue));
 
             Assert.AreEqual(filter.EqualsCriterion ?? "", "");
             Assert.AreEqual(filter.LikeCriterion, "test%");
@@ -246,7 +246,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             Assert.IsTrue(filter.ShouldAddToQuery);
             Assert.IsTrue(filter.ShouldAddToResult);
             Assert.IsFalse(filter.IsWildcardCriterionAllowed);
-            Assert.IsFalse(filter.IsCriterionWildcard);
+            Assert.IsFalse(filter.IsWildcardCriterion(filter.CriterionValue));
 
             Assert.AreEqual(filter.EqualsCriterion, "test*");
             Assert.AreEqual(filter.LikeCriterion ?? "", "");

@@ -715,4 +715,13 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="TooltipActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>
+  <data name="LinkOpenActivityMonitor" xml:space="preserve">
+    <value>Open Activity Monitor</value>
+  </data>
+  <data name="MenuLocalServer" xml:space="preserve">
+    <value>Local Server</value>
+  </data>
+  <data name="MenuReindex" xml:space="preserve">
+    <value>Re-index File Store</value>
+  </data>
 </root>

@@ -210,10 +210,11 @@
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
+    <Compile Include="StudyManagement\ReindexTool.cs" />
     <Compile Include="Rendering\RenderingException.cs" />
     <Compile Include="StudyManagement\ActivityMonitorComponent.cs" />
     <Compile Include="StudyManagement\ActivityMonitorTool.cs" />
-    <Compile Include="StudyManagement\ActivityMonitorWorkspace.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorManager.cs" />
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\Diskspace.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Tests\MockScreenInfoProvider.cs" />
     <Compile Include="StudyManagement\Tests\StudyBuilder.cs" />
     <Compile Include="StudyManagement\Tests\StudyBuilderFactory.cs" />
+    <Compile Include="TimedDialog.cs" />
     <Compile Include="ViewerActionFilter.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />

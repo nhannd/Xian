@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         private string DefaultHostname
         {
-            get { return Dns.GetHostName(); }
+            get { return "localhost"; }
         }
 
         private string DefaultFileStoreLocation

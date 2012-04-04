@@ -11,12 +11,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	[MenuAction("show", "global-menus/MenuTools/MenuActivityMonitor", "Show")]
 	[Tooltip("show", "TooltipActivityMonitor")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	[Obfuscation(Exclude = true, Feature = "renaming", ApplyToMembers = false)]
 	public class ActivityMonitorTool : Tool<IDesktopToolContext>
 	{
 		public void Show()
 		{
-            ActivityMonitorWorkspace.Show(Context.DesktopWindow);
+            ActivityMonitorManager.Show(Context.DesktopWindow);
 		}
 	}
 }

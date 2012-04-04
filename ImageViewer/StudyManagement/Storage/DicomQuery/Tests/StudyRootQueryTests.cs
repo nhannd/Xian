@@ -457,7 +457,113 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
                 Assert.AreEqual(realCount, results.Count());
 
                 foreach (var result in results)
-                    Assert.AreEqual(1, result.Count);
+                {
+                    Assert.IsFalse(result[DicomTags.StudyInstanceUid].IsEmpty);
+
+                    //It's 4 because of InstanceAvailability, RetrieveAE, SpecificCharacterSet.
+                    Assert.AreEqual(4, result.Count);
+                }
+            }
+        }
+        [Test]
+        public void SelectModalitiesInStudy_NoCriteria()
+        {
+            using (var context = CreateContext())
+            {
+                var query = context.GetStudyStoreQuery();
+                var criteria = new DicomAttributeCollection();
+                criteria[DicomTags.QueryRetrieveLevel].SetString(0, "STUDY");
+                criteria[DicomTags.ModalitiesInStudy].SetNullValue();
+
+                var results = query.Query(criteria);
+                var realCount = context.GetStudyBroker().GetStudyCount();
+                Assert.AreEqual(realCount, results.Count());
+
+                foreach (var result in results)
+                {
+                    Assert.IsFalse(result[DicomTags.ModalitiesInStudy].IsEmpty);
+                    //The 1 requested attribute + Study UID, InstanceAvailability, RetrieveAE, SpecificCharacterSet.
+                    Assert.AreEqual(5, result.Count);
+                }
+            }
+        }
+
+        [Test]
+        public void SelectModalitiesInStudy_SingleValue()
+        {
+            using (var context = CreateContext())
+            {
+                var query = context.GetStudyStoreQuery();
+                var criteria = new DicomAttributeCollection();
+                criteria[DicomTags.QueryRetrieveLevel].SetString(0, "STUDY");
+                criteria[DicomTags.ModalitiesInStudy].SetStringValue("OT");
+
+                var results = query.Query(criteria);
+                Assert.AreEqual(7, results.Count());
+            }
+        }
+
+        [Test]
+        public void SelectModalitiesInStudy_SingleValueWildcard()
+        {
+            using (var context = CreateContext())
+            {
+                var query = context.GetStudyStoreQuery();
+                var criteria = new DicomAttributeCollection();
+                criteria[DicomTags.QueryRetrieveLevel].SetString(0, "STUDY");
+                criteria[DicomTags.ModalitiesInStudy].SetStringValue("C*");
+
+                var results = query.Query(criteria);
+                //CR and CT
+                Assert.AreEqual(2, results.Count());
+
+                criteria[DicomTags.ModalitiesInStudy].SetStringValue("C?");
+                results = query.Query(criteria);
+                Assert.AreEqual(2, results.Count());
+            }
+        }
+
+        [Test]
+        public void SelectModalitiesInStudy_MultipleValues()
+        {
+            using (var context = CreateContext())
+            {
+                //Technically, DICOM doesn't allow multiple values for the criteria, but we allow
+                //the one special case of ModalitiesInStudy, and treat it as an *any*, rather than *all*.
+                var query = context.GetStudyStoreQuery();
+                var criteria = new DicomAttributeCollection();
+                criteria[DicomTags.QueryRetrieveLevel].SetString(0, "STUDY");
+                criteria[DicomTags.ModalitiesInStudy].SetStringValue(@"CT\OT");
+
+                var results = query.Query(criteria);
+                //7 OT, 1CT
+                Assert.AreEqual(8, results.Count());
+
+                criteria[DicomTags.ModalitiesInStudy].SetStringValue(@"CT\OT\KO");
+                results = query.Query(criteria);
+                Assert.AreEqual(8, results.Count());
+
+                criteria[DicomTags.ModalitiesInStudy].SetStringValue(@"CT\KO");
+                results = query.Query(criteria);
+                Assert.AreEqual(3, results.Count());
+            }
+        }
+
+        [Test]
+        public void SelectModalitiesInStudy_MultipleValue_WithWildcard()
+        {
+            using (var context = CreateContext())
+            {
+                //Technically, DICOM doesn't allow multiple values for the criteria, but we allow
+                //the one special case of ModalitiesInStudy, and treat it as an *any*, rather than *all*.
+                var query = context.GetStudyStoreQuery();
+                var criteria = new DicomAttributeCollection();
+                criteria[DicomTags.QueryRetrieveLevel].SetString(0, "STUDY");
+                criteria[DicomTags.ModalitiesInStudy].SetStringValue(@"C*\OT");
+
+                var results = query.Query(criteria);
+                //7 OT, 1CT, 1CR
+                Assert.AreEqual(9, results.Count());
             }
         }
 
@@ -481,8 +587,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
                 foreach (var result in results)
                 {
-                    //The 2 requested attributes + Study UID.
-                    Assert.AreEqual(3, result.Count);
+                    Assert.IsFalse(result[DicomTags.PatientId].IsEmpty);
+                    Assert.IsFalse(result[DicomTags.PatientId].IsEmpty);
+
+                    //The 2 requested attributes + Study UID, InstanceAvailability, RetrieveAE, SpecificCharacterSet.
+                    Assert.AreEqual(6, result.Count);
                 }
             }
         }

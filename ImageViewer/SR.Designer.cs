@@ -1177,6 +1177,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Activity Monitor.
+        /// </summary>
+        public static string LinkOpenActivityMonitor {
+            get {
+                return ResourceManager.GetString("LinkOpenActivityMonitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Activity Monitor.
         /// </summary>
         public static string MenuActivityMonitor {
@@ -1209,6 +1218,24 @@ namespace ClearCanvas.ImageViewer {
         public static string MenuInsertVertex {
             get {
                 return ResourceManager.GetString("MenuInsertVertex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local Server.
+        /// </summary>
+        public static string MenuLocalServer {
+            get {
+                return ResourceManager.GetString("MenuLocalServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-index File Store.
+        /// </summary>
+        public static string MenuReindex {
+            get {
+                return ResourceManager.GetString("MenuReindex", resourceCulture);
             }
         }
         

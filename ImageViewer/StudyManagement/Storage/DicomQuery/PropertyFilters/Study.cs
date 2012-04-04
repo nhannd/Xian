@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
@@ -216,8 +217,41 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         public ModalitiesInStudy(DicomAttributeCollection criteria)
             : base(DicomTags.ModalitiesInStudy, criteria)
         {
-            AddToQueryEnabled = false;
+            AddToQueryEnabled = true;
             FilterResultsEnabled = true;
+        }
+
+        protected override string GetPropertyValue(Study item)
+        {
+            return item.ModalitiesInStudy;
+        }
+
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.ModalitiesInStudy == null
+                        || study.ModalitiesInStudy == ""
+                        || study.ModalitiesInStudy == criterion
+                        || SqlMethods.Like(study.ModalitiesInStudy, String.Format(@"{0}\%", criterion))
+                        || SqlMethods.Like(study.ModalitiesInStudy, String.Format(@"%\{0}", criterion))
+                        || SqlMethods.Like(study.ModalitiesInStudy, String.Format(@"%\{0}\%", criterion))
+                   select study;
+        }
+
+        protected override IQueryable<Study> AddLikeToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.ModalitiesInStudy == null
+                        || study.ModalitiesInStudy == ""
+                        || SqlMethods.Like(study.ModalitiesInStudy, criterion)
+                        || SqlMethods.Like(study.ModalitiesInStudy, String.Format(@"{0}\%", criterion))
+                        || SqlMethods.Like(study.ModalitiesInStudy, String.Format(@"%\{0}", criterion))
+                        || SqlMethods.Like(study.ModalitiesInStudy, String.Format(@"%{0}\%", criterion))
+                   select study;
         }
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)

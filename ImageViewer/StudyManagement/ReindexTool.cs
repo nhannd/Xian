@@ -1,0 +1,57 @@
+using System;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Common.WorkItem;
+
+namespace ClearCanvas.ImageViewer.StudyManagement
+{
+    [MenuAction("reindex", "global-menus/MenuTools/MenuLocalServer/MenuReindex", "Reindex")]
+    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+    public class ReindexTool : Tool<IDesktopToolContext>
+    {
+        public void Reindex()
+        {
+            StartReindex(this.Context.DesktopWindow);
+        }
+
+        internal static void StartReindex(IDesktopWindow desktopWindow)
+        {
+            if (!WorkItemActivityMonitor.IsRunning)
+            {
+                desktopWindow.ShowMessageBox(SR.MessageReindexServiceNotRunning, MessageBoxActions.Ok);
+                return;
+            }
+
+            string linkText = SR.LinkOpenActivityMonitor;
+
+            try
+            {
+                string message;
+                var client = new ReindexClient();
+                if (client.Reindex())
+                {
+                    if (client.Request.Status == WorkItemStatusEnum.InProgress)
+                        message = SR.MessageReindexInProgress;
+                    else if (client.Request.Status == WorkItemStatusEnum.Idle)
+                        message = SR.MessageReindexInProgress;
+                    else if (client.Request.Status == WorkItemStatusEnum.Pending)
+                        message = SR.MessageReindexScheduled;
+                    else
+                        message = SR.MessageFailedToStartReindex;
+                }
+                else
+                {
+                    message = SR.MessageFailedToStartReindex;
+                }
+
+                TimedDialog.Show(message, linkText, () => ActivityMonitorManager.Show(desktopWindow));
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, SR.MessageFailedToStartReindex, desktopWindow);
+            }
+        }
+    }
+}
