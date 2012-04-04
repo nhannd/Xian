@@ -664,19 +664,46 @@ namespace ClearCanvas.Common.Serialization
 
 				if (dataType.GetInterface("IList") == typeof(IList))
 				{
-					var dataObject = Activator.CreateInstance(dataType);
-					var genericTypes = dataType.GetGenericArguments();
+                    if (dataType.BaseType == typeof(Array) && dataType.HasElementType)
+                    {
+                        var elementType = dataType.GetElementType();
+                        var nodeList = xmlElement.SelectNodes("item");
+                        if (nodeList != null)
+                        {
+                            var dataObject = Array.CreateInstance(elementType, nodeList.Count);
 
-					var nodeList = xmlElement.SelectNodes("item");
-					if(nodeList != null)
-					{
-						foreach (XmlNode node in nodeList)
-						{
-							var item = Do(genericTypes[0], (XmlElement)node);
-							((IList)dataObject).Add(item);
-						}
-					}
-					return dataObject;
+                            int index = 0;
+                            foreach (XmlNode node in nodeList)
+                            {
+                                var item = Do(elementType, (XmlElement)node);
+                                dataObject.SetValue(item, index);
+                                index++;
+                            }
+
+                            return dataObject;
+                        }
+                        else
+                        {
+                            var dataObject = Array.CreateInstance(elementType, 0);
+                            return dataObject;
+                        }                        
+                    }
+                    else
+                    {
+                        var dataObject = Activator.CreateInstance(dataType);
+                        var genericTypes = dataType.GetGenericArguments();
+
+                        var nodeList = xmlElement.SelectNodes("item");
+                        if (nodeList != null)
+                        {
+                            foreach (XmlNode node in nodeList)
+                            {
+                                var item = Do(genericTypes[0], (XmlElement) node);
+                                ((IList) dataObject).Add(item);
+                            }
+                        }
+                        return dataObject;
+                    }
 				}
 
 				if (dataType == typeof(XmlDocument))
