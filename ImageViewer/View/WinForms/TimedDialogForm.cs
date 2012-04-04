@@ -9,9 +9,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     {
         private readonly TimeSpan _lingerTimer;
         private Timer _timer;
-        private int _startTicks;
-        private double _minOpacity;
-        private double _maxOpacity;
+        private readonly int _startTicks;
+        private readonly double _minOpacity;
+        private readonly double _maxOpacity;
+        private bool _stay;
 
         public TimedDialogForm(Control control, string title, TimeSpan lingerTimer)
         {
@@ -21,6 +22,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             InitializeComponent();
             _hostPanel.Controls.Add(control);
 
+            /// TODO (CR Apr 2012): This exists in the core framework dialog, too, and possibly elsewhere as well.
             Text = string.IsNullOrEmpty(title) 
                             ? Desktop.Application.Name 
                             : string.Format("{0} - {1}", Desktop.Application.Name, title);
@@ -28,6 +30,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             _minOpacity = 0.3;
             Opacity = _maxOpacity = 1.0;
 
+            control.MouseEnter += OnControlMouseEnter;
+            control.MouseLeave += OnControlMouseLeave;
             ResumeLayout();
 
             _startTicks = Environment.TickCount;
@@ -37,6 +41,19 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         }
 
         public event EventHandler CloseRequested;
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+            Stay();
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            if (_stay)
+                Close();
+        }
 
         private void OnTimerTick(object sender, EventArgs e)
         {
@@ -74,6 +91,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         protected override void OnDeactivate(EventArgs e)
         {
+            if (_stay)
+                return;
+
             base.OnDeactivate(e);
             DisposeTimer();
             Close();
@@ -126,6 +146,24 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
                 Location = location;
             }
+        }
+
+        private void OnControlMouseEnter(object sender, EventArgs e)
+        {
+            Stay();
+        }
+
+        private void OnControlMouseLeave(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void Stay()
+        {
+            _stay = true;
+            Opacity = 1.0;
+            Invalidate();
+            DisposeTimer();
         }
     }
 }

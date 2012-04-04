@@ -44,7 +44,6 @@
             this._message.TabIndex = 4;
             this._message.Text = "The re-index has been scheduled.";
             this._message.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this._message.Click += new System.EventHandler(this.OnMessageClick);
             // 
             // _link
             // 
