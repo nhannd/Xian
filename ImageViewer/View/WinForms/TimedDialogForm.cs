@@ -7,12 +7,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 {
     public partial class TimedDialogForm : DotNetMagicForm
     {
-        private readonly TimeSpan _lingerTimer;
-        private Timer _timer;
-        private readonly int _startTicks;
         private readonly double _minOpacity;
         private readonly double _maxOpacity;
+
+        private TimeSpan _lingerTimer;
+        private Timer _timer;
+        private int _startTicks;
+
         private bool _stay;
+        private bool _closePending;
 
         public TimedDialogForm(Control control, string title, TimeSpan lingerTimer)
         {
@@ -27,17 +30,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                             ? Desktop.Application.Name 
                             : string.Format("{0} - {1}", Desktop.Application.Name, title);
 
+            _maxOpacity = 1.0;
             _minOpacity = 0.3;
-            Opacity = _maxOpacity = 1.0;
-
             control.MouseEnter += OnControlMouseEnter;
             control.MouseLeave += OnControlMouseLeave;
             ResumeLayout();
 
-            _startTicks = Environment.TickCount;
-            _timer = new Timer { Interval = 100 };
-            _timer.Tick += OnTimerTick;
-            _timer.Start();
+            FadeAndClose();
         }
 
         public event EventHandler CloseRequested;
@@ -51,47 +50,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
-            if (_stay)
-                Close();
-        }
-
-        private void OnTimerTick(object sender, EventArgs e)
-        {
-            var elapsed = Environment.TickCount - _startTicks;
-            var remaining = _lingerTimer.TotalMilliseconds - elapsed;
-            if (remaining <= 0)
-            {
-                DisposeTimer();
-                Close();
-                return;
-            }
-
-            var ratio = remaining / _lingerTimer.TotalMilliseconds;
-            var addOpacity = (_maxOpacity - _minOpacity) * ratio;
-            Opacity = _minOpacity + addOpacity;
-
-            if (Opacity <= _minOpacity)
-            {
-                DisposeTimer();
-                Close();
-            }
-            else
-            {
-                Invalidate();
-            }
-        }
-
-        private void DisposeTimer()
-        {
-            if (_timer == null) return;
-            
-            _timer.Dispose();
-            _timer = null;
+            _lingerTimer = TimeSpan.FromSeconds(1);
+            FadeAndClose();
         }
 
         protected override void OnDeactivate(EventArgs e)
         {
-            if (_stay)
+            if (_stay || _closePending)
                 return;
 
             base.OnDeactivate(e);
@@ -155,15 +120,70 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         private void OnControlMouseLeave(object sender, EventArgs e)
         {
-            Close();
+            _lingerTimer = TimeSpan.FromSeconds(1);
+            FadeAndClose();
         }
 
         private void Stay()
         {
             _stay = true;
+            _closePending = false;
+            DisposeTimer();
+
             Opacity = 1.0;
             Invalidate();
-            DisposeTimer();
+        }
+
+        private void FadeAndClose()
+        {
+            if (_closePending)
+                return;
+
+            _closePending = true;
+            _stay = false;
+            StartFadeTimer();
+        }
+
+        private void StartFadeTimer()
+        {
+            _startTicks = Environment.TickCount;
+            _timer = new Timer { Interval = 100 };
+            _timer.Tick += OnTimerTick;
+            _timer.Start();
+        }
+
+        private void OnTimerTick(object sender, EventArgs e)
+        {
+            var elapsed = Environment.TickCount - _startTicks;
+            var remaining = _lingerTimer.TotalMilliseconds - elapsed;
+            if (remaining <= 0)
+            {
+                DisposeTimer();
+                Close();
+                return;
+            }
+
+            var ratio = remaining / _lingerTimer.TotalMilliseconds;
+            var addOpacity = (_maxOpacity - _minOpacity) * ratio;
+            Opacity = _minOpacity + addOpacity;
+
+            if (Opacity <= _minOpacity)
+            {
+                DisposeTimer();
+                Close();
+            }
+            else
+            {
+                Invalidate();
+            }
+        }
+
+        private void DisposeTimer()
+        {
+            if (_timer == null) return;
+
+            _timer.Dispose();
+            _timer = null;
         }
     }
 }
