@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
             if (_closed)
                 throw new InvalidOperationException("This timed dialog view has been used.");
 
-            _form = new TimedDialogForm(new TimedDialogControl(_dialog), lingerTime);
+            _form = new TimedDialogForm(new TimedDialogControl(_dialog), _dialog.Title, lingerTime);
             _form.CloseRequested += FormOnCloseRequested;
             _form.StartPosition = FormStartPosition.CenterParent;
 

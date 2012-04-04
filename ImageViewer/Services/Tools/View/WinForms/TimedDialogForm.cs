@@ -12,13 +12,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         private double _minOpacity;
         private double _maxOpacity;
 
-        public TimedDialogForm(Control control, TimeSpan lingerTimer)
+        public TimedDialogForm(Control control, string title, TimeSpan lingerTimer)
         {
             _lingerTimer = lingerTimer;
             SuspendLayout();
             
             InitializeComponent();
             _hostPanel.Controls.Add(control);
+
+            Text = string.IsNullOrEmpty(title) 
+                            ? Desktop.Application.Name 
+                            : string.Format("{0} - {1}", Desktop.Application.Name, title);
 
             _minOpacity = 0.3;
             Opacity = _maxOpacity = 1.0;

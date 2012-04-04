@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
     //TODO (Marmot): Make an app component.
     public class TimedDialog : INotifyPropertyChanged
     {
+        private string _title;
         private string _message;
         private string _linkText;
         private readonly Action _followLink;
@@ -32,6 +33,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
             Platform.CheckForNullReference(followLink, "followLink");
             _followLink = followLink;
             _view = (ITimeDialogView) new TimeDialogViewExtensionPoint().CreateExtension();
+        }
+
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                if (Equals(value, _title))
+                    return;
+
+                _title = value;
+                NotifyPropertyChanged("Title");
+            }
         }
 
         public string Message
