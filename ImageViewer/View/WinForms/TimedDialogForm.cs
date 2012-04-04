@@ -10,16 +10,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         private readonly double _minOpacity;
         private readonly double _maxOpacity;
 
-        private TimeSpan _lingerTimer;
+        private TimeSpan _lingerTime;
         private Timer _timer;
         private int _startTicks;
 
         private bool _stay;
-        private bool _closePending;
 
-        public TimedDialogForm(Control control, string title, TimeSpan lingerTimer)
+        public TimedDialogForm(Control control, string title, TimeSpan lingerTime)
         {
-            _lingerTimer = lingerTimer;
+            _lingerTime = lingerTime;
             SuspendLayout();
             
             InitializeComponent();
@@ -32,31 +31,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
             _maxOpacity = 1.0;
             _minOpacity = 0.3;
-            control.MouseEnter += OnControlMouseEnter;
-            control.MouseLeave += OnControlMouseLeave;
             ResumeLayout();
 
-            FadeAndClose();
+            StartFadeTimer();
         }
 
         public event EventHandler CloseRequested;
 
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            base.OnMouseEnter(e);
-            Stay();
-        }
-
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            base.OnMouseLeave(e);
-            _lingerTimer = TimeSpan.FromSeconds(1);
-            FadeAndClose();
-        }
-
         protected override void OnDeactivate(EventArgs e)
         {
-            if (_stay || _closePending)
+            if (_stay)
                 return;
 
             base.OnDeactivate(e);
@@ -113,35 +97,23 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             }
         }
 
-        private void OnControlMouseEnter(object sender, EventArgs e)
+        private bool IsMouseOver()
         {
-            Stay();
-        }
-
-        private void OnControlMouseLeave(object sender, EventArgs e)
-        {
-            _lingerTimer = TimeSpan.FromSeconds(1);
-            FadeAndClose();
+            var cursorPosition = Cursor.Position;
+            var bounds = new Rectangle(Location, Size);
+            return bounds.Contains(cursorPosition);
         }
 
         private void Stay()
         {
-            _stay = true;
-            _closePending = false;
-            DisposeTimer();
-
-            Opacity = 1.0;
-            Invalidate();
-        }
-
-        private void FadeAndClose()
-        {
-            if (_closePending)
+            if (_stay)
                 return;
 
-            _closePending = true;
-            _stay = false;
-            StartFadeTimer();
+            _stay = true;
+            Opacity = 1.0;
+            //Once the user puts their mouse over, after that we always fade out in one second if the mouse is outside.
+            _lingerTime = TimeSpan.FromSeconds(1);
+            Invalidate();
         }
 
         private void StartFadeTimer()
@@ -154,8 +126,19 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         private void OnTimerTick(object sender, EventArgs e)
         {
+            if (IsMouseOver())
+            {
+                Stay();
+                return;
+            }
+            else if (_stay)
+            {
+                _stay = false;
+                _startTicks = Environment.TickCount;
+            }
+
             var elapsed = Environment.TickCount - _startTicks;
-            var remaining = _lingerTimer.TotalMilliseconds - elapsed;
+            var remaining = _lingerTime.TotalMilliseconds - elapsed;
             if (remaining <= 0)
             {
                 DisposeTimer();
@@ -163,7 +146,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 return;
             }
 
-            var ratio = remaining / _lingerTimer.TotalMilliseconds;
+            var ratio = remaining / _lingerTime.TotalMilliseconds;
             var addOpacity = (_maxOpacity - _minOpacity) * ratio;
             Opacity = _minOpacity + addOpacity;
 
