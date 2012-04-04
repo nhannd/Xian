@@ -20,8 +20,12 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         private string _path;
         private string _parentPath;
 
-        private static readonly IDicomServerConfigurationProvider _dicomServerConfigurationProvider =
-            DicomServerConfigurationHelper.GetConfigurationProvider();
+        private static readonly IDicomServerConfigurationProvider _dicomServerConfigurationProvider;
+
+        static ServerTreeLocalServer()
+        {
+            _dicomServerConfigurationProvider = DicomServerConfigurationHelper.GetConfigurationProvider();
+        }
 
         internal IDicomServerConfigurationProvider DicomServerConfigurationProvider
         {
@@ -111,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
         public string DisplayName
         {
-            get { return SR.MyDataStoreTitle; }
+            get { return SR.MyStudiesTitle; }
         }
 
         #endregion
@@ -124,21 +128,25 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
                     _dicomServerConfigurationProvider.RefreshAsync();
 
                 if (_dicomServerConfigurationProvider.ConfigurationExists)
-                    return String.Format(SR.FormatLocalDataStoreDetails, 
-                        DisplayName, 
-                        _dicomServerConfigurationProvider.AETitle, 
-                        _dicomServerConfigurationProvider.HostName, 
-                        _dicomServerConfigurationProvider.Port, 
-                        _dicomServerConfigurationProvider.FileStoreDirectory);
+                {
+                    var formatString = DicomServer.IsRunning
+                                           ? SR.FormatLocalServerDetails
+                                           : SR.FormatLocalServerOfflineDetails;
+
+                    return String.Format(formatString,
+                                         DisplayName,
+                                         _dicomServerConfigurationProvider.AETitle,
+                                         _dicomServerConfigurationProvider.HostName,
+                                         _dicomServerConfigurationProvider.Port,
+                                         _dicomServerConfigurationProvider.FileStoreDirectory);
+                }
             }
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e);
             }
 
-            string ae = AETitle ?? "<AE Title unavailable>";
-            //TODO (Marmot): This no longer means the services are offline. Need to update this.
-            return String.Format(SR.FormatLocalDataStoreConfigurationUnavailable, ae);
+            return String.Format(SR.FormatLocalServerConfigurationUnavailable, DisplayName);
         }
         
         private static void RefreshConfiguration()
