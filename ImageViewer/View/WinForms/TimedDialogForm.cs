@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Crownwood.DotNetMagic.Forms;
 
@@ -80,11 +81,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
         protected override void OnLoad(EventArgs e)
         {
-            if (Parent != null && StartPosition == FormStartPosition.CenterParent)
-                CenterToParent();
-            else
-                CenterToScreen();
-
+            SetLocation();
             base.OnLoad(e);
         }
 
@@ -97,6 +94,38 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             }
 
             base.OnFormClosing(e);
+        }
+
+        private void SetLocation()
+        {
+            var owner = Owner;
+            if (owner == null)
+            {
+                CenterToScreen();
+            }
+            else
+            {
+                var ownerLocation = owner.Location;
+                var ownerWidth = owner.Bounds.Width;
+                var ownerHeight = owner.Bounds.Height;
+
+                const int bufferX = 20;
+                const int bufferY = 20;
+
+                var ownerRight = ownerLocation.X + ownerWidth;
+                var ownerBottom = ownerLocation.Y + ownerHeight;
+
+                var width = Bounds.Width + bufferX;
+                var height = Bounds.Height + bufferY;
+
+                var location = new Point(ownerRight - width, ownerBottom - height);
+                if (location.X < ownerLocation.X)
+                    location.X = ownerLocation.X;
+                if (location.Y < ownerLocation.Y)
+                    location.Y = ownerLocation.Y;
+
+                Location = location;
+            }
         }
     }
 }

@@ -39,12 +39,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             var owner = Form.ActiveForm;
             if (owner != null)
             {
-                _form.StartPosition = FormStartPosition.CenterParent;
                 _form.Show(owner);
             }
             else
             {
-                _form.StartPosition = FormStartPosition.CenterScreen;
                 _form.Show();
             }
 
