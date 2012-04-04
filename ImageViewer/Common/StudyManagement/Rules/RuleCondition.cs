@@ -9,8 +9,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 	public class RuleCondition
 	{
 		public static readonly DicomTag[] TagChoices = {
-			DicomTagDictionary.GetDicomTag("PatientId"),
 			DicomTagDictionary.GetDicomTag("Modality"),
+			DicomTagDictionary.GetDicomTag("PatientId"),
 			DicomTagDictionary.GetDicomTag("StudyDescription"),
 			DicomTagDictionary.GetDicomTag("SourceApplicationEntityTitle"),
 			DicomTagDictionary.GetDicomTag("StationName"),
