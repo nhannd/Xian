@@ -264,9 +264,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                         if (sop.Failed)
                             Progress.NumberOfProcessingFailures++;
                     }
-                    catch (Exception)
+                    catch (Exception x)
                     {
-                        Platform.Log(LogLevel.Error, "Unable to fail WorkItemUid: {0}", sop.Oid);
+                        Platform.Log(LogLevel.Error, "Unable to fail WorkItemUid {0}: {1}", sop.Oid, x.Message);
                     }
                 }
                 

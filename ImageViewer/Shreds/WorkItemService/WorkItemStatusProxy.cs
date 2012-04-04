@@ -250,23 +250,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         public void UpdateProgress()
         {
-            try
-            {
-                using (var context = new DataAccessContext())
-                {
-                    var broker = context.GetWorkItemBroker();
-
-                    Item = broker.GetWorkItem(Item.Oid);
-
-                    Item.Progress = Progress;
-
-                    context.Commit();
-                }
-
-                Publish();
-            }
-            catch (Exception)
-            {}
+            // We were originally committing to the database here, but decided to only commit when done processing the WorkItem.
+             Publish();
         }
 
         #endregion
@@ -277,6 +262,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
+                Item.Progress = Progress;
                 PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", WorkItemHelper.FromWorkItem(Item));
             }
             catch (Exception e)

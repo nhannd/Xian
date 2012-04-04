@@ -115,6 +115,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         internal XmlElement GetMemento(XmlDocument theDocument, StudyXmlOutputSettings settings)
         {
+            _dirty = false;
             // Calc the base attributes
             CalculateBaseCollectionForSeries();
 
