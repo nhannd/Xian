@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public int StudiesProcessed { get; set; }
 
         [DataMember(IsRequired = true)]
-        public int NumberOfStudiesImported { get; set; }
+        public int StudyFoldersProcessed { get; set; }
 
         [DataMember(IsRequired = true)]
         public int NumberOfStudiesDeleted { get; set; }
@@ -147,11 +147,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (NumberOfStudiesDeleted == 0 && NumberOfStudiesToProcess == 0 && NumberOfStudiesImported == 0 && StudiesProcessed == 0)
+                if (NumberOfStudiesDeleted == 0 && NumberOfStudiesToProcess == 0 && StudyFoldersProcessed == 0 && StudiesProcessed == 0)
                     return SR.Progress_Pending;
 
                 return string.Format(SR.ReindexProgress_Status, StudiesProcessed, NumberOfStudiesToProcess,
-                    NumberOfStudiesDeleted, NumberOfStudiesImported);
+                    NumberOfStudiesDeleted, StudyFoldersProcessed);
             }
         }
 

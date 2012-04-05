@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     {
         #region Private members
         private event EventHandler _studyDeletedEvent;
-        private event EventHandler _studyAddedEvent;
+        private event EventHandler _studyFolderProcessedEvent;
         private event EventHandler _studyProcessedEvent;
         private readonly object _syncLock = new object();
         #endregion
@@ -51,20 +51,20 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             }
         }
 
-        public event EventHandler StudyAddedEvent
+        public event EventHandler StudyFolderProcessedEvent
         {
             add
             {
                 lock (_syncLock)
                 {
-                    _studyAddedEvent += value;
+                    _studyFolderProcessedEvent += value;
                 }
             }
             remove
             {
                 lock (_syncLock)
                 {
-                    _studyAddedEvent -= value;
+                    _studyFolderProcessedEvent -= value;
                 }
             }
         }
@@ -153,7 +153,10 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         {            
             ProcessStudiesInDatabase();
 
-            ProcessFilesystem();            
+            ProcessFilesystem();
+
+            // Before scanning the study folders, cleanup any empty directories.
+            CleanupFilestoreDirectory();
         }
 
         #endregion
@@ -182,12 +185,29 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                     using (var context = new DataAccessContext())
                     {
                         var broker = context.GetStudyBroker();
+                        var workItemBroker = context.GetWorkItemBroker();
+                        var workItemUidBroker = context.GetWorkItemUidBroker();
+
                         var study = broker.GetStudy(oid);
 
                         var location = new StudyLocation(study.StudyInstanceUid);
                         if (!Directory.Exists(location.StudyFolder))
                         {
                             broker.Delete(study);
+                            var workItemList = workItemBroker.GetWorkItems(null, null, study.StudyInstanceUid);
+                            foreach (var item in workItemList)
+                            {
+                                Platform.Log(LogLevel.Info, "Deleting WorkItem for Study {0}, OID: {1}",
+                                             study.StudyInstanceUid, item.Oid);
+
+                                foreach (var uid in item.WorkItemUids)
+                                {
+                                    workItemUidBroker.Delete(uid);
+                                }
+
+                                workItemBroker.Delete(item);
+                            }
+
                             context.Commit();
                             EventsHelper.Fire(_studyDeletedEvent, this, EventArgs.Empty);
                             Platform.Log(LogLevel.Info, "Deleted Study that wasn't on disk, but in the database: {0}",
@@ -197,9 +217,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
                     EventsHelper.Fire(_studyProcessedEvent, this, EventArgs.Empty);
                 }
-                catch (Exception)
+                catch (Exception x)
                 {
-                    Platform.Log(LogLevel.Warn, "Unexpected exception attempting to reindex StudyOid: {0}", oid);
+                    Platform.Log(LogLevel.Warn, "Unexpected exception attempting to reindex StudyOid {0}: {1}", oid, x.Message);
                 }
             }
         }
@@ -208,21 +228,21 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         {
             foreach (string studyFolder in DirectoryList)
             {
-                ProcessStudy(studyFolder);
+                ProcessStudyFolder(studyFolder);
             }
         }
 
-        private void ProcessStudy(string folder)
+        private void ProcessStudyFolder(string folder)
         {
             try
             {
                 string studyInstanceUid = Path.GetFileName(folder);
                 var location = new StudyLocation(studyInstanceUid);
 
-                var reprocessor = new ReprocessStudy(location);
+                var reprocessor = new ReprocessStudyFolder(location);
                 if (!reprocessor.StudyStoredInDatabase)
                 {
-                    EventsHelper.Fire(_studyAddedEvent, this, EventArgs.Empty);
+                    EventsHelper.Fire(_studyFolderProcessedEvent, this, EventArgs.Empty);
                 }
 
                 reprocessor.Process();
