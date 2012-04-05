@@ -16,8 +16,12 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 {
+    /// <summary>
+    /// Context object used by the <see cref="ViewerCommandProcessor"/>.
+    /// </summary>
     public class ViewerCommandProcessorContext : ICommandProcessorContext
     {
+        private bool _disposed;
 
         public DataAccessContext DataAccessContext { get; private set; }
         public ViewerCommandProcessorContext()
@@ -28,8 +32,16 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         public void Dispose()
         {
-            DataAccessContext.Dispose();
-            DataAccessContext = null;
+            if (_disposed)
+                throw new InvalidOperationException("Already disposed.");
+            
+            _disposed = true;
+            
+            if (DataAccessContext != null)
+            {
+                DataAccessContext.Dispose();
+                DataAccessContext = null;
+            }
         }
 
         public void PreExecute(ICommand command)

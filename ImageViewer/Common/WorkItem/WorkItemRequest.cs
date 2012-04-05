@@ -125,7 +125,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public WorkItemStudy(DicomAttributeCollection c)
             : base(c)
-        { }
+        {            
+            string modality = c[DicomTags.Modality].ToString();
+            ModalitiesInStudy = new[] { modality };
+        }
     }
 
     [DataContract(Namespace = ImageViewerNamespace.Value)]

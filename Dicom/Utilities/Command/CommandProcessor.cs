@@ -56,7 +56,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         private readonly Stack<ICommand> _stack = new Stack<ICommand>();
         private readonly Queue<ICommand> _queue = new Queue<ICommand>();
         private readonly List<ICommand> _list = new List<ICommand>();
-       
+        private bool _disposed;
         #endregion
 
         #region Constructors
@@ -151,7 +151,21 @@ namespace ClearCanvas.Dicom.Utilities.Command
                 }
             }
 
-            ProcessorContext.Commit();
+            try
+            {
+                ProcessorContext.Commit();  
+            }
+            catch (Exception e)
+            {
+                ProcessorContext.Rollback();
+
+                FailureReason = String.Format("{0}: {1}", e.GetType().Name, e.Message);
+                Platform.Log(LogLevel.Error, e, "Unexpected error when committing updates to context.  Rolling back.");
+                Rollback();
+                FailureException = e;
+                return false;               
+            }
+            
             return true;
         }
 
@@ -224,7 +238,17 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// </summary>
         public virtual void Dispose()
         {
+            if (_disposed)
+                throw new InvalidOperationException("Already disposed.");
+
+            _disposed = true;
+
             DisposeCommandList(_list);
+            if (ProcessorContext != null)
+            {
+                ProcessorContext.Dispose();
+                ProcessorContext = null;
+            }
         }
 
         #endregion
