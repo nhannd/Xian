@@ -709,12 +709,6 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="MessageReindexServiceNotRunning" xml:space="preserve">
     <value>The service must be running to start a re-index.</value>
   </data>
-  <data name="TitleActivityMonitor" xml:space="preserve">
-    <value>Activity Monitor</value>
-  </data>
-  <data name="TooltipActivityMonitor" xml:space="preserve">
-    <value>Activity Monitor</value>
-  </data>
   <data name="LinkOpenActivityMonitor" xml:space="preserve">
     <value>Open Activity Monitor</value>
   </data>
@@ -723,5 +717,41 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   </data>
   <data name="MenuReindex" xml:space="preserve">
     <value>Re-index File Store</value>
+  </data>
+  <data name="ColumnActivityDescription" xml:space="preserve">
+    <value>Activity</value>
+  </data>
+  <data name="ColumnPatient" xml:space="preserve">
+    <value>Patient</value>
+  </data>
+  <data name="ColumnPriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="ColumnProgress" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="ColumnScheduledTime" xml:space="preserve">
+    <value>Scheduled Time</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColumnStatusDescription" xml:space="preserve">
+    <value>Status Details</value>
+  </data>
+  <data name="ColumnStudy" xml:space="preserve">
+    <value>Study</value>
+  </data>
+  <data name="DiskspaceTemplate" xml:space="preserve">
+    <value>{0} of {1} ({2}%)</value>
+  </data>
+  <data name="NoFilterItem" xml:space="preserve">
+    <value>(all)</value>
+  </data>
+  <data name="TitleActivityMonitor" xml:space="preserve">
+    <value>Activity Monitor</value>
+  </data>
+  <data name="TooltipActivityMonitor" xml:space="preserve">
+    <value>Activity Monitor</value>
   </data>
 </root>

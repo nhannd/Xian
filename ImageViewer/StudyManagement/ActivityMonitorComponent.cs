@@ -1,8 +1,21 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
+using System.Collections;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
@@ -11,8 +24,6 @@ using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using System.Collections;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -113,7 +124,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				get
 				{
-					// todo: format this like elsewhere in the viewer
 					var p = _data.Patient;
 					if (p == null)
 						return null;
@@ -218,8 +228,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public bool ContainsText(string text)
 			{
-				// todo: not sure if we need to include all of these fields or not
-				// would it be better to be a little more selective?
 				return ContainsText(text,
 									w => w.PatientInfo,
 									w => w.StudyInfo,
@@ -262,14 +270,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private ConnectionState _connectionState;
 		private WorkItemStatusEnum? _statusFilter;
         private ActivityTypeEnum? _activityFilter;
+
 		private string _textFilter;
 		private readonly Timer _textFilterTimer;
-	    private int _totalStudies;
+
+		private Diskspace _diskspace;
+		private readonly Timer _diskspaceTimer;
+
+		private int _totalStudies;
 
 	    public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
+			_diskspaceTimer = new Timer(OnDiskspaceTimerElapsed, null, TimeSpan.FromSeconds(60));
 		}
 
 		public override void Start()
@@ -281,20 +295,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_dicomConfigProvider = DicomServerConfigurationHelper.GetConfigurationProvider();
 			_dicomConfigProvider.Changed += DicomServerConfigurationChanged;
 
-			// todo loc
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>("Patient", w => w.PatientInfo));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Study", w => w.StudyInfo));
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>("Activity Desc.", w => w.ActivityDescription) { WidthFactor = .8f });
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>("Status", w => w.Status.GetDescription()) { WidthFactor = .4f });
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>("Status Desc.", w => w.ProgressStatus));
-            _workItems.Columns.Add(new TableColumn<WorkItem, DateTime>("Scheduled Time", w => w.ScheduledTime) { WidthFactor = .6f });
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>("Priority", w => w.Priority.GetDescription()) { WidthFactor = .3f });
-			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>("Progress", w => w.ProgressIcon) { WidthFactor = .5f});
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStudy, w => w.StudyInfo));
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .8f });
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatus, w => w.Status.GetDescription()) { WidthFactor = .4f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus));
+            _workItems.Columns.Add(new TableColumn<WorkItem, DateTime>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .6f });
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .3f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon) { WidthFactor = .5f});
 
 			this.ActivityMonitor = WorkItemActivityMonitor.Create(true);
 			_connectionState = _connectionState.Update();
 
 			this.ActivityMonitor.IsConnectedChanged += ActivityMonitorIsConnectedChanged;
+
+			_diskspaceTimer.Start();
 		}
 
 		public override void Stop()
@@ -308,6 +323,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_dicomConfigProvider = null;
 
 			_textFilterTimer.Dispose();
+			_diskspaceTimer.Dispose();
 
 			base.Stop();
 		}
@@ -341,19 +357,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public int DiskspaceUsedPercent
 		{
-			//todo: put this on a timer
-			get { return QueryDiskspace().UsedSpacePercent; }
+			get { return this.Diskspace.UsedSpacePercent; }
 		}
 
 		public string DiskspaceUsed
 		{
-			//todo: put this on a timer
 			get
 			{
-				var ds = QueryDiskspace();
-				return string.Format("{0} of {1} ({2}%)",
-					Diskspace.FormatBytes(ds.UsedSpace, false),
-					Diskspace.FormatBytes(ds.TotalSpace, true),
+				var ds = this.Diskspace;
+				return string.Format(SR.DiskspaceTemplate,
+					Diskspace.FormatBytes(ds.UsedSpace),
+					Diskspace.FormatBytes(ds.TotalSpace),
 					ds.UsedSpacePercent);
 			}
 		}
@@ -390,10 +404,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public string FormatStatusFilter(object value)
 		{
-			// todo loc
-			if (value == NoFilter)
-				return "(all)";
-			return ((WorkItemStatusEnum)value).GetDescription();
+			return value == NoFilter ? SR.NoFilterItem : ((WorkItemStatusEnum)value).GetDescription();
 		}
 
 		public object StatusFilter
@@ -418,10 +429,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public string FormatActivityTypeFilter(object value)
 		{
-			// todo loc
-			if (value == NoFilter)
-				return "(all)";
-			return ((ActivityTypeEnum)value).GetDescription();
+			return value == NoFilter ? SR.NoFilterItem : ((ActivityTypeEnum)value).GetDescription();
 		}
 
 		public object ActivityTypeFilter
@@ -476,19 +484,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private static ProgressBarState GetProgressState(WorkItemStatusEnum status)
 		{
-			// TODO: not sure exactly how these should map to colors,
-			// but I think keeping the progress bar limited to 3 colors (red, yellow, green) is a good idea
+			// determine progress state based on workItem status
 			switch (status)
 			{
-				case WorkItemStatusEnum.Pending:
-                    return ProgressBarState.Paused;
-                case WorkItemStatusEnum.InProgress:
+				case WorkItemStatusEnum.InProgress:
 				case WorkItemStatusEnum.Complete:
 				case WorkItemStatusEnum.Deleted:
 				case WorkItemStatusEnum.Canceled:
 					return ProgressBarState.Active;
+
+				case WorkItemStatusEnum.Pending:
 				case WorkItemStatusEnum.Idle:
                     return ProgressBarState.Paused;
+
                 case WorkItemStatusEnum.Failed:
 					return ProgressBarState.Error;
 			}
@@ -609,9 +617,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			RefreshInternal();
 		}
 
-		private Diskspace QueryDiskspace()
+		private void OnDiskspaceTimerElapsed(object state)
 		{
-			return new Diskspace(this.FileStore.Substring(0, 1));
+			_diskspace = null;	// invalidate
+
+			NotifyPropertyChanged("DiskspaceUsed");
+			NotifyPropertyChanged("DiskspaceUsedPercent");
+		}
+
+		private Diskspace Diskspace
+		{
+			get
+			{
+				if (_diskspace == null)
+				{
+					_diskspace = new Diskspace(this.FileStore.Substring(0, 1));
+				}
+				return _diskspace;
+			}
 		}
 	}
 }

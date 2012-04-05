@@ -79,6 +79,78 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Activity.
+        /// </summary>
+        public static string ColumnActivityDescription {
+            get {
+                return ResourceManager.GetString("ColumnActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient.
+        /// </summary>
+        public static string ColumnPatient {
+            get {
+                return ResourceManager.GetString("ColumnPatient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Priority.
+        /// </summary>
+        public static string ColumnPriority {
+            get {
+                return ResourceManager.GetString("ColumnPriority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Progress.
+        /// </summary>
+        public static string ColumnProgress {
+            get {
+                return ResourceManager.GetString("ColumnProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scheduled Time.
+        /// </summary>
+        public static string ColumnScheduledTime {
+            get {
+                return ResourceManager.GetString("ColumnScheduledTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status.
+        /// </summary>
+        public static string ColumnStatus {
+            get {
+                return ResourceManager.GetString("ColumnStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status Details.
+        /// </summary>
+        public static string ColumnStatusDescription {
+            get {
+                return ResourceManager.GetString("ColumnStatusDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study.
+        /// </summary>
+        public static string ColumnStudy {
+            get {
+                return ResourceManager.GetString("ColumnStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change.
         /// </summary>
         public static string CommandChange {
@@ -417,6 +489,15 @@ namespace ClearCanvas.ImageViewer {
         public static string DescriptionUnitsUnspecified {
             get {
                 return ResourceManager.GetString("DescriptionUnitsUnspecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} of {1} ({2}%).
+        /// </summary>
+        public static string DiskspaceTemplate {
+            get {
+                return ResourceManager.GetString("DiskspaceTemplate", resourceCulture);
             }
         }
         
@@ -1718,6 +1799,15 @@ namespace ClearCanvas.ImageViewer {
         public static string NamePrefetchingStrategyVisibleDisplaySet {
             get {
                 return ResourceManager.GetString("NamePrefetchingStrategyVisibleDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (all).
+        /// </summary>
+        public static string NoFilterItem {
+            get {
+                return ResourceManager.GetString("NoFilterItem", resourceCulture);
             }
         }
         
