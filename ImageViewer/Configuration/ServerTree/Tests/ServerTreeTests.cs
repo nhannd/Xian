@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#if UNIT_TESTS
+
+using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Dicom.ServiceModel;
 using NUnit.Framework;
@@ -172,3 +174,5 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         }
     }
 }
+
+#endif
