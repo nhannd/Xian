@@ -212,6 +212,14 @@ namespace ClearCanvas.Common.Serialization.Tests
 			}
 		}
 
+		[DataContract]
+		class TestContract6
+		{
+			public List<string> Values { get; set; }
+
+			public string[] Names { get; set; }
+		}
+
 
 		public JsmlSerializerTests()
 		{
@@ -481,12 +489,12 @@ namespace ClearCanvas.Common.Serialization.Tests
 			DeserializeHelper(emptyList, "<Tag array=\"true\" />");
 			DeserializeHelper(emptyList, "<Tag array=\"true\"></Tag>");
 
-			var stringList = new List<string> {"1"};
-			SerializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
-			DeserializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
-			DeserializeHelper(stringList, "<Tag type=\"array\"><item>1</item></Tag>");
-			DeserializeHelper(stringList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
-			DeserializeHelper(stringList, "<Tag array=\"true\"><item>1</item></Tag>");
+			var stringList = new List<string> {"1", "2"};
+			SerializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n  <item>2</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n  <item>2</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag type=\"array\"><item>1</item><item>2</item></Tag>");
+			DeserializeHelper(stringList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n  <item>2</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag array=\"true\"><item>1</item><item>2</item></Tag>");
 
 			var intList = new List<int> {1};
 			SerializeHelper(intList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
@@ -509,6 +517,61 @@ namespace ClearCanvas.Common.Serialization.Tests
 			DeserializeHelper(boolList, "<Tag array=\"true\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
 			DeserializeHelper(boolList, "<Tag array=\"true\"><item>true</item><item>false</item></Tag>");
 		}
+
+		[Test]
+		public void Test_Array()
+		{
+			var emptyList = new object[0];
+			SerializeHelper(emptyList, "<Tag type=\"array\" />");
+			DeserializeHelper(emptyList, "<Tag type=\"array\" />");
+			DeserializeHelper(emptyList, "<Tag type=\"array\"></Tag>");
+			DeserializeHelper(emptyList, "<Tag array=\"true\" />");
+			DeserializeHelper(emptyList, "<Tag array=\"true\"></Tag>");
+
+			var stringList = new string[] { "1", "2" };
+			SerializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n  <item>2</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n  <item>2</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag type=\"array\"><item>1</item><item>2</item></Tag>");
+			DeserializeHelper(stringList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n  <item>2</item>\r\n</Tag>");
+			DeserializeHelper(stringList, "<Tag array=\"true\"><item>1</item><item>2</item></Tag>");
+
+			var intList = new int[] { 1 };
+			SerializeHelper(intList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(intList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(intList, "<Tag type=\"array\"><item>1</item></Tag>");
+			DeserializeHelper(intList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(intList, "<Tag array=\"true\"><item>1</item></Tag>");
+
+			var doubleList = new double[] { 1.0 };
+			SerializeHelper(doubleList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(doubleList, "<Tag type=\"array\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(doubleList, "<Tag type=\"array\"><item>1</item></Tag>");
+			DeserializeHelper(doubleList, "<Tag array=\"true\">\r\n  <item>1</item>\r\n</Tag>");
+			DeserializeHelper(doubleList, "<Tag array=\"true\"><item>1</item></Tag>");
+
+			var boolList = new bool[] { true, false };
+			SerializeHelper(boolList, "<Tag type=\"array\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
+			DeserializeHelper(boolList, "<Tag type=\"array\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
+			DeserializeHelper(boolList, "<Tag type=\"array\"><item>true</item><item>false</item></Tag>");
+			DeserializeHelper(boolList, "<Tag array=\"true\">\r\n  <item>true</item>\r\n  <item>false</item>\r\n</Tag>");
+			DeserializeHelper(boolList, "<Tag array=\"true\"><item>true</item><item>false</item></Tag>");
+		}
+
+		[Test]
+		public void Test_UntypedList_serialize()
+		{
+			var list = new ArrayList() { "1", "2" };
+			SerializeHelper(list, "<Tag type=\"array\">\r\n  <item>1</item>\r\n  <item>2</item>\r\n</Tag>");
+		}
+
+		[Test]
+		[ExpectedException(typeof(NotSupportedException))]
+		public void Test_UntypedList_deserialize()
+		{
+			var list = new ArrayList() { "1", "2" };
+			DeserializeHelper(list, "<Tag type=\"array\">\r\n  <item>1</item>\r\n  <item>2</item>\r\n</Tag>");
+		}
+
 
 		[Test]
 		public void Test_Dictionary()

@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Xml;
@@ -538,7 +539,7 @@ namespace ClearCanvas.Common.Serialization
 						xmlDoc.DocumentElement.WriteTo(_writer);
 					}
 				}
-				else if(obj is Guid)
+				else if (obj is Guid)
 				{
 					_writer.WriteValue(((Guid)obj).ToString("N"));
 				}
@@ -656,7 +657,7 @@ namespace ClearCanvas.Common.Serialization
 					return xmlElement.InnerText.Equals("true") ? true : false;
 				}
 
-				if(dataType.IsGenericType && dataType.GetGenericTypeDefinition() == typeof(Nullable<>))
+				if (dataType.IsGenericType && dataType.GetGenericTypeDefinition() == typeof(Nullable<>))
 				{
 					// recur using the generic argument type in place of the nullable wrapper type
 					return Do(dataType.GetGenericArguments()[0], xmlElement);
@@ -664,46 +665,35 @@ namespace ClearCanvas.Common.Serialization
 
 				if (dataType.GetInterface("IList") == typeof(IList))
 				{
-                    if (dataType.BaseType == typeof(Array) && dataType.HasElementType)
-                    {
-                        var elementType = dataType.GetElementType();
-                        var nodeList = xmlElement.SelectNodes("item");
-                        if (nodeList != null)
-                        {
-                            var dataObject = Array.CreateInstance(elementType, nodeList.Count);
+					var nodeList = xmlElement.SelectNodes("item");
+					var count = nodeList == null ? 0 : nodeList.Count;
+					if (dataType.BaseType == typeof(Array))
+					{
+						var elementType = dataType.GetElementType();
+						var dataObject = Array.CreateInstance(elementType, count);
 
-                            int index = 0;
-                            foreach (XmlNode node in nodeList)
-                            {
-                                var item = Do(elementType, (XmlElement)node);
-                                dataObject.SetValue(item, index);
-                                index++;
-                            }
+						for (var i = 0; i < count; i++)
+						{
+							var item = Do(elementType, (XmlElement)nodeList[i]);
+							dataObject.SetValue(item, i);
+						}
 
-                            return dataObject;
-                        }
-                        else
-                        {
-                            var dataObject = Array.CreateInstance(elementType, 0);
-                            return dataObject;
-                        }                        
-                    }
-                    else
-                    {
-                        var dataObject = Activator.CreateInstance(dataType);
-                        var genericTypes = dataType.GetGenericArguments();
+						return dataObject;
+					}
+					else
+					{
+						if (!dataType.IsGenericType)
+							throw new NotSupportedException("Only typed lists (IList<T>) are supported, and T must be a JSML-serializable type.");
 
-                        var nodeList = xmlElement.SelectNodes("item");
-                        if (nodeList != null)
-                        {
-                            foreach (XmlNode node in nodeList)
-                            {
-                                var item = Do(genericTypes[0], (XmlElement) node);
-                                ((IList) dataObject).Add(item);
-                            }
-                        }
-                        return dataObject;
-                    }
+						var elementType = dataType.GetGenericArguments()[0];
+						var dataObject = Activator.CreateInstance(dataType);
+						for (var i = 0; i < count; i++)
+						{
+							var item = Do(elementType, (XmlElement)nodeList[i]);
+							((IList)dataObject).Add(item);
+						}
+						return dataObject;
+					}
 				}
 
 				if (dataType == typeof(XmlDocument))
@@ -719,7 +709,7 @@ namespace ClearCanvas.Common.Serialization
 					return null;
 				}
 
-				if(dataType == typeof(Guid))
+				if (dataType == typeof(Guid))
 				{
 					// parse guid
 					return new Guid(xmlElement.InnerText);
