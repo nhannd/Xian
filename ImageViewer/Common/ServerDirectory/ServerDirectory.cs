@@ -10,6 +10,8 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         public abstract DeleteServerResult DeleteServer(DeleteServerRequest request);
         public abstract DeleteAllServersResult DeleteAllServers(DeleteAllServersRequest request);
 
+        //TODO (Marmot): IsSupported
+
         public static IDicomServiceNode GetLocalServer()
         {
             using (var bridge = new ServerDirectoryBridge())
