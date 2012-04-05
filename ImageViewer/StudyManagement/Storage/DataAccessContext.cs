@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		private IDbConnection CreateConnection(string databaseFile)
 	    {
 	        string filePath = DatabaseHelper.GetDatabaseFilePath(databaseFile);
-			var connectString = string.Format("Data Source = {0}", filePath);
+            var connectString = string.Format("Data Source = {0}; Default Lock Timeout = 10000", filePath);
 
             if (!File.Exists(filePath))
                 DatabaseHelper.CreateDatabase(databaseFile, filePath);

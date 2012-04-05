@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         public const uint DefaultExpireDelaySeconds = 90;
         public const uint DefaultDeleteDelayMinutes = 120;
         public const int DefaultRetryCount = 3;
-        public const int DefaultStudyProcessBatchSize = 50;
+        public const int DefaultStudyProcessBatchSize = 25;
 		private static WorkItemServiceSettings _instance;
 
         private WorkItemServiceSettings()

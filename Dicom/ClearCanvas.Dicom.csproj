@@ -124,6 +124,7 @@
     <Compile Include="DicomAttributeSingleValueText.cs" />
     <Compile Include="DicomAttributeSQ.cs" />
     <Compile Include="Iod\ComponentGroup.cs" />
+    <Compile Include="Utilities\Command\AggregateCommand.cs" />
     <Compile Include="Utilities\DateParser.cs" />
     <Compile Include="Utilities\DateRangeHelper.cs" />
     <Compile Include="Utilities\DateTimeParser.cs" />

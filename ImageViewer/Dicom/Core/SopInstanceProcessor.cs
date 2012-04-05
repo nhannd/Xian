@@ -135,6 +135,10 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             {
                 try
                 {
+                    // Create an AggregrateCommand where we batch together all the database updates
+                    // and execute them together as the last command.
+                    var batchDatabaseCommand = new AggregateCommand();
+
                     foreach (var file in list)
                     {
                         if(!string.IsNullOrEmpty(file.FilePath) && file.File == null)
@@ -153,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                              file.FilePath);
 
                                 if (file.ItemUid != null)
-                                    processor.AddCommand(new CompleteWorkItemUidCommand(file.ItemUid));
+                                    batchDatabaseCommand.AddSubCommand(new CompleteWorkItemUidCommand(file.ItemUid));
 
                                 continue;
                             }
@@ -177,15 +181,17 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                         var insertStudyXmlCommand = new InsertStudyXmlCommand(file.File, studyXml, StudyLocation, false);
                         processor.AddCommand(insertStudyXmlCommand);
 
-                        var insertStudyCommand = new InsertOrUpdateStudyCommand(StudyLocation, file.File, studyXml);
-                        processor.AddCommand(insertStudyCommand);
+                        batchDatabaseCommand.AddSubCommand( new InsertOrUpdateStudyCommand(StudyLocation, file.File, studyXml));
 
                         if (file.ItemUid != null)
-                            processor.AddCommand(new CompleteWorkItemUidCommand(file.ItemUid));
+                            batchDatabaseCommand.AddSubCommand(new CompleteWorkItemUidCommand(file.ItemUid));
                     }
 
                     // Now save the batched updates to the StudyXml file.
                     processor.AddCommand(new SaveStudyXmlCommand(studyXml, StudyLocation));
+
+                    // Now, add all the batched database updates
+                    processor.AddCommand(batchDatabaseCommand);
 
                     // Do the actual processing
                     if (!processor.Execute())

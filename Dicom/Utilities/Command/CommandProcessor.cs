@@ -57,6 +57,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         private readonly Queue<ICommand> _queue = new Queue<ICommand>();
         private readonly List<ICommand> _list = new List<ICommand>();
         private bool _disposed;
+        private bool _contextRolledback;
         #endregion
 
         #region Constructors
@@ -136,7 +137,11 @@ namespace ClearCanvas.Dicom.Utilities.Command
                 {
                     if (command.RequiresRollback)
                     {
-                        ProcessorContext.Rollback();
+                        if (!_contextRolledback)
+                        {
+                            ProcessorContext.Rollback();
+                            _contextRolledback = true;
+                        }
 
                         FailureReason = String.Format("{0}: {1}", e.GetType().Name, e.Message);
                         Platform.Log(LogLevel.Error, e, "Unexpected error when executing command: {0}", command.Description);
@@ -157,7 +162,11 @@ namespace ClearCanvas.Dicom.Utilities.Command
             }
             catch (Exception e)
             {
-                ProcessorContext.Rollback();
+                if (!_contextRolledback)
+                {
+                    ProcessorContext.Rollback();
+                    _contextRolledback = true;
+                }
 
                 FailureReason = String.Format("{0}: {1}", e.GetType().Name, e.Message);
                 Platform.Log(LogLevel.Error, e, "Unexpected error when committing updates to context.  Rolling back.");
@@ -190,8 +199,13 @@ namespace ClearCanvas.Dicom.Utilities.Command
             {
                 if (subCommand.RequiresRollback)
                 {
-                    ProcessorContext.Rollback();
+                    if (!_contextRolledback)
+                    {
+                        ProcessorContext.Rollback();
+                        _contextRolledback = true;
+                    }
 
+                    // Real rollback happens when the Execute fails
                     FailureReason = String.Format("{0}: {1}", e.GetType().Name, e.Message);
                     Platform.Log(LogLevel.Error, e, "Unexpected error when executing command: {0}", subCommand.Description);
                     FailureException = e;
@@ -210,7 +224,11 @@ namespace ClearCanvas.Dicom.Utilities.Command
         /// </summary>
         public void Rollback()
         {
-            ProcessorContext.Rollback();
+            if (!_contextRolledback)
+            {
+                ProcessorContext.Rollback();
+                _contextRolledback = true;
+            }
 
             while (_stack.Count > 0)
             {
@@ -271,7 +289,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", subCommand.Description);
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back sub command {0}", subCommand.Description);
                 }
 
                 var aggregateCommand = subCommand as IAggregateCommand;
