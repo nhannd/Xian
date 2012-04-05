@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Services.Tools {
+namespace ClearCanvas.ImageViewer.Services {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -24,29 +24,25 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        /// Maximum time to wait for the workstation service process to start or stop.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Maximum time to wait for the workstation service process to start or stop.")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public int TimeoutSeconds {
-            get {
-                return ((int)(this["TimeoutSeconds"]));
-            }
-        }
-        
-        /// <summary>
         /// The name of the workstation service, as it would appear in the Service Control Manager.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("The name of the workstation service, as it would appear in the Service Control Ma" +
             "nager.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas Workstation Shred Host Service")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas Workstation ShredHost Service")]
         public string ServiceName {
             get {
                 return ((string)(this["ServiceName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Enabled {
+            get {
+                return ((bool)(this["Enabled"]));
             }
         }
     }

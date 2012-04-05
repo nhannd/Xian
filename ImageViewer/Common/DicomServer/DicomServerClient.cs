@@ -23,7 +23,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         public object GetService(Type serviceType)
         {
             if (serviceType == typeof(IDicomServer))
-                return new DicomServerClient();
+            {
+                var client = new DicomServerClient();
+                if (client.State != CommunicationState.Opened)
+                    client.Open();
+                return client;
+            }
             return null;
         }
 

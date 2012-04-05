@@ -66,6 +66,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
     {
     }
 
+    //TODO (Marmot):Move.
+
 	//NOTE: this may not be the best place for this, but it doesn't make sense to have any of these tools without
 	// the configuration components (or vice versa) anyway.
 

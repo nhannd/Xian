@@ -49,9 +49,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.DataBindings.Add("IsConnected", _component, "IsConnected");
 
 			_aeTitle.DataBindings.Add("Text", _component, "AeTitle");
-			_hostName.DataBindings.Add("Text", _component, "HostName");
-			_port.DataBindings.Add("Text", _component, "Port");
-			_fileStore.DataBindings.Add("Text", _component, "FileStore");
+			this.DataBindings.Add("HostName", _component, "HostName");
+			
 			_totalStudies.DataBindings.Add("Text", _component, "TotalStudies");
 			_failures.DataBindings.Add("Text", _component, "Failures");
 
@@ -82,6 +81,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
+		public string HostName
+		{
+			get { return ""; }
+			set
+			{
+				_hostName.Text = string.Format("{0}:{1}", _component.HostName, _component.Port);
+			}
+		}
+
 		private void _activityFilter_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			_component.ActivityTypeFilter = ((FilterItem)_activityFilter.SelectedItem).Item;
@@ -97,9 +105,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_component.TextFilter = _textFilter.Text;
 		}
 
-        private void Reindex_Click(object sender, EventArgs e)
-        {
-            _component.StartReindex();
-        }
+		private void _reindexLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		{
+			_component.StartReindex();
+		}
 	}
 }

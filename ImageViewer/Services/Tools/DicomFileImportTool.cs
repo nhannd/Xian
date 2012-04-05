@@ -23,6 +23,8 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
+    //TODO (Marmot): Move to viewer.
+
 	[MenuAction("Import", "explorerlocal-contextmenu/ImportDicomFiles", "Import")]
 	[Tooltip("Import", "TooltipImportDicomFiles")]
 	[IconSet("Import", "Icons.DicomFileImportToolSmall.png", "Icons.DicomFileImportToolMedium.png", "Icons.DicomFileImportToolLarge.png")]
@@ -91,9 +93,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			catch (EndpointNotFoundException)
 			{
-			    var message = String.Format(SR.FormatMessageImportWorkItemServiceNotRunning,
-			                                   ServiceControlSettings.Default.ServiceName);
-
+			    var message = String.Format(SR.FormatMessageImportWorkItemServiceNotRunning, LocalServiceProcess.Name);
                 Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
 			}
 			catch (Exception e)

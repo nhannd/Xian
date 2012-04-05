@@ -66,7 +66,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="ConfigurationPageProvider.cs" />
     <Compile Include="DeleteStudyTool.cs" />
     <Compile Include="DicomFileImportTool.cs" />
@@ -76,13 +75,6 @@
     <Compile Include="RetrieveSeriesTool.cs" />
     <Compile Include="RetrieveStudyTool.cs" />
     <Compile Include="SendStudyTool.cs" />
-    <Compile Include="ServiceControlSettings.cs" />
-    <Compile Include="ServiceControlSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ServiceControlSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="ServiceControlTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -157,21 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ServiceControlSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ServiceControlSettings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\RestartServiceToolLarge.png" />
-    <EmbeddedResource Include="Icons\RestartServiceToolMedium.png" />
-    <EmbeddedResource Include="Icons\RestartServiceToolSmall.png" />
-    <EmbeddedResource Include="Icons\StartServiceToolLarge.png" />
-    <EmbeddedResource Include="Icons\StartServiceToolMedium.png" />
-    <EmbeddedResource Include="Icons\StartServiceToolSmall.png" />
-    <EmbeddedResource Include="Icons\StopServiceToolLarge.png" />
-    <EmbeddedResource Include="Icons\StopServiceToolMedium.png" />
-    <EmbeddedResource Include="Icons\StopServiceToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DicomFileImportToolLarge.png" />

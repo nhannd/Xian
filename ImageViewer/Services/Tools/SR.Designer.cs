@@ -161,42 +161,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restart.
-        /// </summary>
-        internal static string MenuRestart {
-            get {
-                return ResourceManager.GetString("MenuRestart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Services.
-        /// </summary>
-        internal static string MenuServices {
-            get {
-                return ResourceManager.GetString("MenuServices", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Start.
-        /// </summary>
-        internal static string MenuStart {
-            get {
-                return ResourceManager.GetString("MenuStart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Stop.
-        /// </summary>
-        internal static string MenuStop {
-            get {
-                return ResourceManager.GetString("MenuStop", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the {0} selected studies?.
         /// </summary>
         internal static string MessageConfirmDeleteStudies {
@@ -224,24 +188,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You don&apos;t have the appropriate permissions to start/stop the service..
-        /// </summary>
-        internal static string MessageControlServiceAccessDenied {
-            get {
-                return ResourceManager.GetString("MessageControlServiceAccessDenied", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A timeout has occurred while attempting to control the service..
-        /// </summary>
-        internal static string MessageControlServiceTimeout {
-            get {
-                return ResourceManager.GetString("MessageControlServiceTimeout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to initiate an import of the selected items..
         /// </summary>
         internal static string MessageFailedToImportSelection {
@@ -256,15 +202,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageFailedToOpenStudy {
             get {
                 return ResourceManager.GetString("MessageFailedToOpenStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to restart service. Please check the logs for more details..
-        /// </summary>
-        internal static string MessageFailedToRestartService {
-            get {
-                return ResourceManager.GetString("MessageFailedToRestartService", resourceCulture);
             }
         }
         
@@ -302,24 +239,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageFailedToSendStudy {
             get {
                 return ResourceManager.GetString("MessageFailedToSendStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to start service. Please check the logs for more details..
-        /// </summary>
-        internal static string MessageFailedToStartService {
-            get {
-                return ResourceManager.GetString("MessageFailedToStartService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to stop service. Please check the logs for more details..
-        /// </summary>
-        internal static string MessageFailedToStopService {
-            get {
-                return ResourceManager.GetString("MessageFailedToStopService", resourceCulture);
             }
         }
         

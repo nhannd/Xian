@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ServerConfiguration" xml:space="preserve">
-    <value>Local Server</value>
-  </data>
   <data name="DiskspaceManagerConfiguration" xml:space="preserve">
     <value>Diskspace Manager</value>
   </data>
@@ -150,18 +147,6 @@
   <data name="MenuOpenStudies" xml:space="preserve">
     <value>Open</value>
   </data>
-  <data name="MenuRestart" xml:space="preserve">
-    <value>Restart</value>
-  </data>
-  <data name="MenuServices" xml:space="preserve">
-    <value>Services</value>
-  </data>
-  <data name="MenuStart" xml:space="preserve">
-    <value>Start</value>
-  </data>
-  <data name="MenuStop" xml:space="preserve">
-    <value>Stop</value>
-  </data>
   <data name="MessageConfirmDeleteStudies" xml:space="preserve">
     <value>Are you sure you want to delete the {0} selected studies?</value>
   </data>
@@ -174,9 +159,6 @@
   <data name="MessageFailedToImportSelection" xml:space="preserve">
     <value>Failed to initiate an import of the selected items.</value>
   </data>
-  <data name="MessageFailedToRestartService" xml:space="preserve">
-    <value>Failed to restart service. Please check the logs for more details.</value>
-  </data>
   <data name="MessageFailedToRetrieveDiskspaceManagementSettings" xml:space="preserve">
     <value>Failed to retrieve Diskspace Management settings.
 Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
@@ -186,12 +168,6 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   </data>
   <data name="MessageFailedToSendStudy" xml:space="preserve">
     <value>Failed to initiate sending of the selected items.</value>
-  </data>
-  <data name="MessageFailedToStartService" xml:space="preserve">
-    <value>Failed to start service. Please check the logs for more details.</value>
-  </data>
-  <data name="MessageFailedToStopService" xml:space="preserve">
-    <value>Failed to stop service. Please check the logs for more details.</value>
   </data>
   <data name="MessageFailedToUpdateDiskspaceManagementSettings" xml:space="preserve">
     <value>Failed to update Diskspace Management settings.
@@ -279,12 +255,6 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="ValidationPortOutOfRange" xml:space="preserve">
     <value>The Port must be between 1 and 65535.</value>
   </data>
-  <data name="MessageControlServiceAccessDenied" xml:space="preserve">
-    <value>You don't have the appropriate permissions to start/stop the service.</value>
-  </data>
-  <data name="MessageControlServiceTimeout" xml:space="preserve">
-    <value>A timeout has occurred while attempting to control the service.</value>
-  </data>
   <data name="MessageFailedToOpenStudy" xml:space="preserve">
     <value>Failed to open the selected study.</value>
   </data>
@@ -293,5 +263,8 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   </data>
   <data name="DicomConfiguration" xml:space="preserve">
     <value>DICOM</value>
+  </data>
+  <data name="ServerConfiguration" xml:space="preserve">
+    <value>Local Server</value>
   </data>
 </root>

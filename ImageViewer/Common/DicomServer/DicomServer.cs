@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ServiceModel;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
@@ -16,15 +17,20 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
                 if (disposable != null)
                     disposable.Dispose();
             }
+            catch(EndpointNotFoundException)
+            {
+                //This doesn't mean it's not supported, it means it's not running.
+                IsSupported = true;
+            }
             catch (NotSupportedException)
             {
                 IsSupported = false;
-                Platform.Log(LogLevel.Debug, "Study Store is not supported.");
+                Platform.Log(LogLevel.Debug, "Local DICOM Server is not supported.");
             }
             catch (Exception e)
             {
                 IsSupported = false;
-                Platform.Log(LogLevel.Debug, e, "Study Store is not supported.");
+                Platform.Log(LogLevel.Debug, "Local DICOM Server is not supported.");
             }
         }
 

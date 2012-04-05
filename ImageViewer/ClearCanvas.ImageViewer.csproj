@@ -114,6 +114,7 @@
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -210,6 +211,20 @@
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
+    <Compile Include="Services\AuthorityTokens.cs" />
+    <Compile Include="Services\LocalServiceProcess.cs" />
+    <Compile Include="Services\ServiceControlSettings.cs" />
+    <Compile Include="Services\ServiceControlSettings.Designer.cs">
+      <DependentUpon>ServiceControlSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Services\ServiceControlTool.cs" />
+    <Compile Include="Services\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\ReindexTool.cs" />
     <Compile Include="Rendering\RenderingException.cs" />
     <Compile Include="StudyManagement\ActivityMonitorComponent.cs" />
@@ -816,6 +831,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RoiSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Services\ServiceControlSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ServiceControlSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="StandardModalitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>StandardModalitySettings.Designer.cs</LastGenOutput>
@@ -828,6 +847,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Services\SR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -840,8 +863,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Annotations\AnnotationLayoutStoreDefaults.xml" />
     <EmbeddedResource Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreDefaults.xml" />
-  </ItemGroup>
-  <ItemGroup>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -900,6 +921,33 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\RefreshSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StartServiceToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StartServiceToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StartServiceToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StopServiceToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StopServiceToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StopServiceToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\RestartServiceToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\RestartServiceToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\RestartServiceToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

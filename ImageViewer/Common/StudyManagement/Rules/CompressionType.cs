@@ -2,6 +2,7 @@
 {
 	public enum CompressionType
 	{
+		None,
 		Rle,
 		JpegLossless,
 		J2KLossless,

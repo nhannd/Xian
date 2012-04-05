@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
     public class GetListenerStateResult
     {
         [DataMember(IsRequired = true)]
-        public ServiceState State { get; set; }
+        public ServiceStateEnum State { get; set; }
     }
 
     [DataContract(Namespace = DicomServerNamespace.Value)]
