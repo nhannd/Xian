@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private readonly object _syncLock = new object();
 		private DicomServer _server;
-		private ServiceState _serviceState;
+		private ServiceStateEnum _serviceState;
 
 		private bool _active;
 		private bool _restart;
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
 					//the server may be null here, we are just reflecting the state based on the method calls.
 					_server = server;
-					_serviceState = ServiceState.Started;
+					_serviceState = ServiceStateEnum.Started;
 					OnServerStarted();
 				}
 			}
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					server.Stop();
 				}
 
-				_serviceState = ServiceState.Stopped;
+				_serviceState = ServiceStateEnum.Stopped;
 				OnServerStopped();
 			}
 		}
@@ -139,15 +139,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			lock (_syncLock)
 			{
-				if (_serviceState == ServiceState.Stopped)
+				if (_serviceState == ServiceStateEnum.Stopped)
 				{
-					_serviceState = ServiceState.Starting;
+					_serviceState = ServiceStateEnum.Starting;
 					ThreadPool.QueueUserWorkItem(StartServerAsync);
 				}
 
 				if (wait)
 				{
-					while (_serviceState != ServiceState.Started)
+					while (_serviceState != ServiceStateEnum.Started)
 						Monitor.Wait(_syncLock, 50);
 				}
 			}
@@ -157,15 +157,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			lock (_syncLock)
 			{
-				if (_serviceState == ServiceState.Started)
+				if (_serviceState == ServiceStateEnum.Started)
 				{
-					_serviceState = ServiceState.Stopping;
+					_serviceState = ServiceStateEnum.Stopping;
 					ThreadPool.QueueUserWorkItem(StopServerAsync);
 				}
 
 				if (wait)
 				{
-					while (_serviceState != ServiceState.Stopped)
+					while (_serviceState != ServiceStateEnum.Stopped)
 						Monitor.Wait(_syncLock, 50);
 				}
 			}
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Public Methods
 
-	    public ServiceState State
+	    public ServiceStateEnum State
 	    {
             get
             {

@@ -12,7 +12,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer.Services
 {
     [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
 	internal class DefineAuthorityGroups : IDefineAuthorityGroups
@@ -47,6 +47,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			[AuthorityToken(Description = "Allow administration/configuration of the local DICOM Server (e.g. set AE Title, Port).")]
 			public const string DicomServer = "Viewer/Administration/DICOM Server";
 
+		    //TODO (Marmot): get rid of this?
 			[AuthorityToken(Description = "Allow configuration of disk space management.")]
 			public const string DiskspaceManager = "Viewer/Administration/Diskspace Manager";
 

@@ -20,11 +20,15 @@ namespace ClearCanvas.ImageViewer.Common
     }
 
     [DataContract(Namespace = ImageViewerNamespace.Value)]
-    public enum ServiceState
+    public enum ServiceStateEnum
     {
-        Stopped = 0,
+        [EnumMember]
+        Stopped,
+        [EnumMember]
         Starting,
+        [EnumMember]
         Started,
+        [EnumMember]
         Stopping
     }
 }

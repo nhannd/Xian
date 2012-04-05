@@ -15,12 +15,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
                 try
                 {
                     bool state = false;
-                    Platform.GetService<IDicomServer>(s => state = s.GetListenerState(new GetListenerStateRequest()).State == ServiceState.Started);
+                    Platform.GetService<IDicomServer>(s => state = s.GetListenerState(new GetListenerStateRequest()).State == ServiceStateEnum.Started);
                     return state;
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Debug, e, "The local dicom server could not be contacted.");
+                    Platform.Log(LogLevel.Debug, e, "The local DICOM Server could not be contacted.");
                     return false;
                 }
             }

@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml;
