@@ -144,8 +144,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             lock (_syncLock)
             {
-                //TODO (Marmot): Implement some kind of startup connection timeout, or maybe just pulse right away?
-
                 //Try to connect first.
                 Connect();
                 ManageSubscription();

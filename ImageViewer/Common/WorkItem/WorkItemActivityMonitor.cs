@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
 
@@ -16,7 +17,44 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
     }
 
-    public abstract class WorkItemActivityMonitor : IWorkItemActivityMonitor
+    public abstract partial class WorkItemActivityMonitor
+    {
+        static WorkItemActivityMonitor()
+        {
+            try
+            {
+                var service = Platform.GetService<IWorkItemActivityMonitorService>();
+                IsSupported = service != null;
+                var disposable = service as IDisposable;
+                if (disposable != null)
+                    disposable.Dispose();
+            }
+            catch (EndpointNotFoundException)
+            {
+                //This doesn't mean it's not supported, it means it's not running.
+                IsSupported = true;
+            }
+            catch (NotSupportedException)
+            {
+                IsSupported = false;
+                Platform.Log(LogLevel.Debug, "Work Item Activity Monitor is not supported.");
+            }
+            catch (UnknownServiceException)
+            {
+                IsSupported = false;
+                Platform.Log(LogLevel.Debug, "Work Item Activity Monitor is not supported.");
+            }
+            catch (Exception e)
+            {
+                IsSupported = false;
+                Platform.Log(LogLevel.Debug, e, "Work Item Activity Monitor is not supported.");
+            }
+        }
+
+        public static bool IsSupported { get; private set; }
+    }
+
+    public abstract partial class WorkItemActivityMonitor : IWorkItemActivityMonitor
     {
         private static readonly object _instanceLock = new object();
         private static RealWorkItemActivityMonitor _instance;

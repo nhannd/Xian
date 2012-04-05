@@ -581,7 +581,6 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 			{
                 try
                 {
-                    // TODO (Marmot): this ok?
                     return DicomServerConfigurationHelper.AETitle;
                 }
                 catch(Exception e)
