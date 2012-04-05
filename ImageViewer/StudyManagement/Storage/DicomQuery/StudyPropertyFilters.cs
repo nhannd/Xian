@@ -30,8 +30,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             //We don't want to return anything that is about to be deleted.
             query = query.Where(s => !s.Deleted);
             
-            //TODO (Marmot): Modalities in study.
-
             return query;
         }
     }

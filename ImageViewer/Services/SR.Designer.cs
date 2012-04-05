@@ -61,15 +61,6 @@ namespace ClearCanvas.ImageViewer.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Local Server.
-        /// </summary>
-        public static string MenuLocalServer {
-            get {
-                return ResourceManager.GetString("MenuLocalServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Restart.
         /// </summary>
         public static string MenuRestart {

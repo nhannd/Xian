@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
-    // TODO (Marmot): Try to remove.
+    // TODO (Marmot): Try to remove, or at least convert to use service nodes.
     public class AEServerGroup
     {
         private List<IServerTreeNode> _servers;

@@ -10,7 +10,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         {
             try
             {
-
                 var service = Platform.GetService<IDicomServer>();
                 IsSupported = service != null;
                 var disposable = service as IDisposable;
@@ -27,10 +26,15 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
                 IsSupported = false;
                 Platform.Log(LogLevel.Debug, "Local DICOM Server is not supported.");
             }
-            catch (Exception e)
+            catch (UnknownServiceException)
             {
                 IsSupported = false;
                 Platform.Log(LogLevel.Debug, "Local DICOM Server is not supported.");
+            }
+            catch (Exception e)
+            {
+                IsSupported = false;
+                Platform.Log(LogLevel.Debug, e, "Local DICOM Server is not supported.");
             }
         }
 

@@ -5,7 +5,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
-    //TODO (Marmot): Change to use service nodes so we don't need to use the term "local".
     public abstract class StudyStore : IStudyStore
     {
         static StudyStore()

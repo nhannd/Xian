@@ -7,10 +7,22 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+    //TODO (Marmot): Move to "Services"?
     [MenuAction("reindex", "global-menus/MenuTools/MenuLocalServer/MenuReindex", "Reindex")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ReindexTool : Tool<IDesktopToolContext>
     {
+        public override IActionSet Actions
+        {
+            get
+            {
+                if (!WorkItemActivityMonitor.IsSupported)
+                    return new ActionSet();
+
+                return base.Actions;
+            }
+        }
+
         public void Reindex()
         {
             StartReindex(this.Context.DesktopWindow);
