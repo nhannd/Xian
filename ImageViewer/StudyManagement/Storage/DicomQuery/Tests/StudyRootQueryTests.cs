@@ -541,11 +541,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
                 criteria[DicomTags.ModalitiesInStudy].SetStringValue(@"CT\OT\KO");
                 results = query.Query(criteria);
+                //7 OT (1 w/KO), 1CT
                 Assert.AreEqual(8, results.Count());
 
                 criteria[DicomTags.ModalitiesInStudy].SetStringValue(@"CT\KO");
                 results = query.Query(criteria);
-                Assert.AreEqual(3, results.Count());
+                //1 CT, 1 OT w/KO
+                Assert.AreEqual(2, results.Count());
             }
         }
 

@@ -14,6 +14,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         //therefore any wildcard characters present in the criteria are literal.
         private static readonly string[] WildcardExcludedVRs = { "DA", "TM", "DT", "SL", "SS", "US", "UL", "FL", "FD", "OB", "OW", "UN", "AT", "DS", "IS", "AS", "UI" };
 
+        private string[] _criterionValues;
+
         protected StringPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria) 
             : base(path, criteria)
         {
@@ -31,7 +33,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected string[] CriterionValues
         {
-            get { return DicomStringHelper.GetStringArray(CriterionValue); }    
+            get 
+            {
+                return _criterionValues ??
+                    (_criterionValues = DicomStringHelper.GetStringArray(CriterionValue) ?? new string[0]);
+            }
         }
 
         protected internal string CriterionValue
@@ -76,10 +82,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected IQueryable<T> AddToQuery(IQueryable<T> query, string criterionValue)
         {
-            if (!IsWildcardCriterion(CriterionValue))
-                return AddEqualsToQuery(query, CriterionValue);
+            if (!IsWildcardCriterion(criterionValue))
+                return AddEqualsToQuery(query, criterionValue);
 
-            var sqlCriterion = CriterionValue.Replace("*", "%").Replace("?", "_");
+            var sqlCriterion = criterionValue.Replace("*", "%").Replace("?", "_");
             var returnQuery = AddLikeToQuery(query, sqlCriterion);
             return returnQuery;
         }
@@ -116,7 +122,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             //DICOM says if we manage an object having no value, it's considered a match.
             return String.IsNullOrEmpty(value)
             //DICOM says matching is case sensitive, but that's just silly.
-            || 0 == string.Compare(value, criterion, StringComparison.InvariantCultureIgnoreCase);
+                || 0 == string.Compare(value, criterion, StringComparison.InvariantCultureIgnoreCase);
         }
 
         protected bool IsLike(string value, string criterion)
@@ -135,7 +141,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             var propertyValue = GetPropertyValue(result);
             if (String.IsNullOrEmpty(propertyValue))
+            {
+                //DICOM says if we maintain an object with an empty value, it's a match for any criteria.
                 return true;
+            }
 
             var propertyValues = DicomStringHelper.GetStringArray(propertyValue);
 
@@ -163,9 +172,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             if (string.IsNullOrEmpty(criterionValue))
                 return results;
-
-            if (CriterionValues.Length > 1)
-                return FilterResults(results, CriterionValues);
 
             return results.Where(result => IsMatch(result, criterionValue));
         }
