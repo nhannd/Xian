@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             try
             {
-                var service = Platform.GetService<IWorkItemActivityMonitor>();
+                var service = Platform.GetService<IWorkItemActivityMonitorService>();
                 IsSupported = service != null;
                 var disposable = service as IDisposable;
                 if (disposable != null)
