@@ -160,7 +160,7 @@
     <value>Pending.</value>
   </data>
   <data name="ReindexProgress_Status" xml:space="preserve">
-    <value>{0} of {1} studies processed, {2} studies deleted, {3}  studies added</value>
+    <value>{0} of {1} studies processed, {2} studies deleted, {3}  study folders processed</value>
   </data>
   <data name="ReindexRequest_ActivityDescription" xml:space="preserve">
     <value>Reindex of the local file store</value>

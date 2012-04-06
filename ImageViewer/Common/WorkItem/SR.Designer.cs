@@ -259,7 +259,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} of {1} studies processed, {2} studies deleted, {3}  studies added.
+        ///   Looks up a localized string similar to {0} of {1} studies processed, {2} studies deleted, {3}  study folders processed.
         /// </summary>
         internal static string ReindexProgress_Status {
             get {

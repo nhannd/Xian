@@ -9,7 +9,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 
@@ -47,14 +46,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             // Reset progress, in case of retry
             Progress.NumberOfStudiesToProcess = processor.DatabaseStudiesToScan + processor.StudyFoldersToScan;
             Progress.NumberOfStudiesDeleted = 0;
-            Progress.NumberOfStudiesImported = 0;
+            Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
 
             Proxy.UpdateProgress();
 
-            processor.StudyAddedEvent += delegate
+            processor.StudyFolderProcessedEvent += delegate
                                              {
-                                                 Progress.NumberOfStudiesImported++;
+                                                 Progress.StudyFoldersProcessed++;
                                                  Proxy.UpdateProgress();
                                              };
 
