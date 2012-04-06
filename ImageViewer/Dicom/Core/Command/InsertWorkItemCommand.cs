@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                                        ScheduledTime = now.AddSeconds(5),
                                        Priority = _request.Priority,
                                        Type = _request.Type,
-                                       DeleteTime = now.AddHours(3),
+                                       DeleteTime = now.AddHours(2),
                                        ExpirationTime = now.AddMinutes(2),
                                        StudyInstanceUid = _studyInstanceUid,
                                    };

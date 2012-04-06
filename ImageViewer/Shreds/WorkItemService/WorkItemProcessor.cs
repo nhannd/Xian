@@ -95,13 +95,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         #region Public Methods
         /// <summary>
+        /// Stop the WorkQueue processor
+        /// </summary>
+        public void SignalThread()
+        {
+            _threadStop.Set();
+        }
+
+        /// <summary>
 		/// Stop the WorkQueue processor
 		/// </summary>
 		public override void RequestStop()
 		{
             base.RequestStop();
 
-            // Set both events, just in case.
 			_threadStop.Set();
 
 			if (_threadPool.Active)
@@ -149,13 +156,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 if ( list == null)
                 {
                     /* No threads available, wait for one to complete. */
-                    _threadStop.WaitOne(3000, false);
+                    _threadStop.WaitOne(5000, false);
                     continue;
                 }
                 if  (list.Count == 0)
                 {
                     // No result found 
-                    _threadStop.WaitOne(2000, false);
+                    _threadStop.WaitOne(5000, false);
                     continue;
                 }
 
@@ -291,25 +298,24 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-
-            using (var context = new DataAccessContext())
-            {
-                var workItemBroker = context.GetWorkItemBroker();
-
-                List<WorkItem> workItems;
-                if (stat)
-                    workItems = workItemBroker.GetStatPendingWorkItems(count);
-                else                
-                    workItems = workItemBroker.GetPendingWorkItems(count);
-
-                foreach (var item in workItems)
+                using (var context = new DataAccessContext())
                 {
-                    item.Status = WorkItemStatusEnum.InProgress;
-                }
+                    var workItemBroker = context.GetWorkItemBroker();
 
-                context.Commit();
-                return workItems;
-            }
+                    List<WorkItem> workItems;
+                    if (stat)
+                        workItems = workItemBroker.GetStatPendingWorkItems(count);
+                    else
+                        workItems = workItemBroker.GetPendingWorkItems(count);
+
+                    foreach (var item in workItems)
+                    {
+                        item.Status = WorkItemStatusEnum.InProgress;
+                    }
+
+                    context.Commit();
+                    return workItems;
+                }
             }
             catch (Exception x)
             {
@@ -324,7 +330,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// Method for getting next <see cref="StudyManagement.Storage.WorkItem"/> entry.
         /// </summary>
         /// <param name="count">The count.</param>
-        /// <param name="stat">Search for stat items.</param>
         /// <remarks>
         /// </remarks>
         /// <returns>
@@ -336,8 +341,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
-                List<WorkItem> workItems;
-                workItems = workItemBroker.GetWorkItemsToDelete(count);
+                var workItems = workItemBroker.GetWorkItemsToDelete(count);
 
                 foreach (var item in workItems)
                 {
@@ -349,6 +353,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
+        /// <summary>
+        /// Called on startup to reset InProgress WorkItems back to Pending.
+        /// </summary>
         private void ResetInProgressWorkItems()
         {
             using (var context = new DataAccessContext())

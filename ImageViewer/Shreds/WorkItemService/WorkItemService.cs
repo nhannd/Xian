@@ -119,6 +119,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             try
             {
                 PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", response.Item);
+                WorkItemProcessor.Instance.SignalThread();
             }
             catch (Exception e)
             {
