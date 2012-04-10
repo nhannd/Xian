@@ -238,6 +238,7 @@
     <Compile Include="StudyManagement\RescaleUnits.cs" />
     <Compile Include="StudyManagement\SopInstanceFactory.cs" />
     <Compile Include="StudyManagement\StudyExtensions.cs" />
+    <Compile Include="StudyManagement\Tests\ActivityMonitorComponentTests.cs" />
     <Compile Include="StudyManagement\Tests\NormalizedPixelSpacingTests.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />

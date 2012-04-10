@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			switch (_state)
 			{
 				case ProgressBarState.Active:
-					return Brushes.GreenYellow;
+					return Brushes.LimeGreen;
 				case ProgressBarState.Paused:
 					return Brushes.Yellow;
 				case ProgressBarState.Error:

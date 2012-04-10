@@ -67,9 +67,27 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_statusFilter.SelectedIndex = 0;
 			_statusFilter.SelectedIndexChanged += _statusFilter_SelectedIndexChanged;
 
+			// need to work with these manually, because data-binding doesn't work well with toolstrip comboboxes
 			_textFilter.TextChanged += _textFilter_TextChanged;
 
+			_component.PropertyChanged += _component_PropertyChanged;
+
 			_workItemsTableView.Table = _component.WorkItemTable;
+
+			UpdateTooltips();
+		}
+
+		private void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case "AeTitle":
+				case "HostName":
+				case "Port":
+				case "FileStore":
+					UpdateTooltips();
+					break;
+			}
 		}
 
 		public bool IsConnected
@@ -86,7 +104,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			get { return ""; }
 			set
 			{
-				_hostName.Text = string.Format("{0}:{1}", _component.HostName, _component.Port);
+				_hostName.Text = FormatHostAndPort();
 			}
 		}
 
@@ -109,5 +127,23 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			_component.StartReindex();
 		}
+
+		private void _openFileStoreLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		{
+			_component.OpenFileStore();
+		}
+
+		private void UpdateTooltips()
+		{
+			_toolTip.SetToolTip(_aeTitle, string.Format(SR.ActivityMonitorAeTitleToolTip, _component.AeTitle));
+			_toolTip.SetToolTip(_hostName, string.Format(SR.ActivityMonitorHostPortToolTip, FormatHostAndPort()));
+			_toolTip.SetToolTip(_openFileStoreLink, string.Format(SR.ActivityMonitorFileStoreToolTip, _component.FileStore));
+		}
+
+		private string FormatHostAndPort()
+		{
+			return string.Format("{0}:{1}", _component.HostName, _component.Port);
+		}
+
 	}
 }

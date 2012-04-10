@@ -29,12 +29,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this._workItemsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._overviewPanel = new System.Windows.Forms.Panel();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			this._reindexLink = new System.Windows.Forms.LinkLabel();
 			this.label2 = new System.Windows.Forms.Label();
-			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.linkLabel2 = new System.Windows.Forms.LinkLabel();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this._aeTitle = new System.Windows.Forms.Label();
@@ -48,6 +47,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._diskSpacePanel = new System.Windows.Forms.Panel();
 			this._diskSpaceMeter = new ClearCanvas.Desktop.View.WinForms.Meter();
 			this._diskSpace = new System.Windows.Forms.Label();
+			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+			this._reindexLink = new System.Windows.Forms.LinkLabel();
+			this._openFileStoreLink = new System.Windows.Forms.LinkLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this._workItemToolStrip = new System.Windows.Forms.ToolStrip();
@@ -58,6 +60,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
 			this._textFilter = new System.Windows.Forms.ToolStripTextBox();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this._overviewPanel.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.panel2.SuspendLayout();
@@ -107,61 +110,40 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 106F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 49F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 515F));
-			this.tableLayoutPanel2.Controls.Add(this._reindexLink, 7, 3);
 			this.tableLayoutPanel2.Controls.Add(this.label2, 7, 0);
-			this.tableLayoutPanel2.Controls.Add(this.linkLabel1, 7, 2);
-			this.tableLayoutPanel2.Controls.Add(this.linkLabel2, 7, 1);
+			this.tableLayoutPanel2.Controls.Add(this.linkLabel2, 7, 2);
 			this.tableLayoutPanel2.Controls.Add(this.panel2, 1, 0);
-			this.tableLayoutPanel2.Controls.Add(this.label10, 1, 1);
+			this.tableLayoutPanel2.Controls.Add(this.label10, 1, 2);
 			this.tableLayoutPanel2.Controls.Add(this._statusLight, 0, 0);
-			this.tableLayoutPanel2.Controls.Add(this.label11, 1, 2);
-			this.tableLayoutPanel2.Controls.Add(this._totalStudies, 2, 1);
-			this.tableLayoutPanel2.Controls.Add(this._failures, 2, 2);
-			this.tableLayoutPanel2.Controls.Add(this.label1, 4, 1);
-			this.tableLayoutPanel2.Controls.Add(this._diskSpacePanel, 4, 2);
+			this.tableLayoutPanel2.Controls.Add(this.label11, 1, 3);
+			this.tableLayoutPanel2.Controls.Add(this._totalStudies, 2, 2);
+			this.tableLayoutPanel2.Controls.Add(this._failures, 2, 3);
+			this.tableLayoutPanel2.Controls.Add(this.label1, 4, 2);
+			this.tableLayoutPanel2.Controls.Add(this._diskSpacePanel, 4, 3);
+			this.tableLayoutPanel2.Controls.Add(this.linkLabel1, 7, 1);
+			this.tableLayoutPanel2.Controls.Add(this._reindexLink, 7, 3);
+			this.tableLayoutPanel2.Controls.Add(this._openFileStoreLink, 7, 4);
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 14);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-			this.tableLayoutPanel2.RowCount = 4;
+			this.tableLayoutPanel2.RowCount = 5;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(1004, 126);
 			this.tableLayoutPanel2.TabIndex = 22;
-			// 
-			// _reindexLink
-			// 
-			this._reindexLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._reindexLink.AutoSize = true;
-			this._reindexLink.Location = new System.Drawing.Point(492, 113);
-			this._reindexLink.Name = "_reindexLink";
-			this._reindexLink.Size = new System.Drawing.Size(91, 13);
-			this._reindexLink.TabIndex = 25;
-			this._reindexLink.TabStop = true;
-			this._reindexLink.Text = "Re-index file store";
-			this._reindexLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._reindexLink_LinkClicked);
 			// 
 			// label2
 			// 
 			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.label2.AutoSize = true;
 			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point(492, 40);
+			this.label2.Location = new System.Drawing.Point(492, 16);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(49, 13);
 			this.label2.TabIndex = 33;
 			this.label2.Text = "Actions";
-			// 
-			// linkLabel1
-			// 
-			this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.linkLabel1.AutoSize = true;
-			this.linkLabel1.Location = new System.Drawing.Point(492, 88);
-			this.linkLabel1.Name = "linkLabel1";
-			this.linkLabel1.Size = new System.Drawing.Size(132, 13);
-			this.linkLabel1.TabIndex = 23;
-			this.linkLabel1.TabStop = true;
-			this.linkLabel1.Text = "Local Server Configuration";
 			// 
 			// linkLabel2
 			// 
@@ -182,6 +164,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.panel2.Location = new System.Drawing.Point(30, 0);
 			this.panel2.Margin = new System.Windows.Forms.Padding(0);
 			this.panel2.Name = "panel2";
+			this.tableLayoutPanel2.SetRowSpan(this.panel2, 2);
 			this.panel2.Size = new System.Drawing.Size(410, 53);
 			this.panel2.TabIndex = 34;
 			// 
@@ -305,6 +288,41 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._diskSpace.TabIndex = 28;
 			this._diskSpace.Text = "diskspace";
 			this._diskSpace.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// linkLabel1
+			// 
+			this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.linkLabel1.AutoSize = true;
+			this.linkLabel1.Location = new System.Drawing.Point(492, 40);
+			this.linkLabel1.Name = "linkLabel1";
+			this.linkLabel1.Size = new System.Drawing.Size(132, 13);
+			this.linkLabel1.TabIndex = 23;
+			this.linkLabel1.TabStop = true;
+			this.linkLabel1.Text = "Local Server Configuration";
+			// 
+			// _reindexLink
+			// 
+			this._reindexLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._reindexLink.AutoSize = true;
+			this._reindexLink.Location = new System.Drawing.Point(492, 88);
+			this._reindexLink.Name = "_reindexLink";
+			this._reindexLink.Size = new System.Drawing.Size(91, 13);
+			this._reindexLink.TabIndex = 25;
+			this._reindexLink.TabStop = true;
+			this._reindexLink.Text = "Re-index file store";
+			this._reindexLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._reindexLink_LinkClicked);
+			// 
+			// _openFileStoreLink
+			// 
+			this._openFileStoreLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._openFileStoreLink.AutoSize = true;
+			this._openFileStoreLink.Location = new System.Drawing.Point(492, 113);
+			this._openFileStoreLink.Name = "_openFileStoreLink";
+			this._openFileStoreLink.Size = new System.Drawing.Size(75, 13);
+			this._openFileStoreLink.TabIndex = 35;
+			this._openFileStoreLink.TabStop = true;
+			this._openFileStoreLink.Text = "Open file store";
+			this._openFileStoreLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openFileStoreLink_LinkClicked);
 			// 
 			// splitContainer1
 			// 
@@ -448,6 +466,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private System.Windows.Forms.LinkLabel _reindexLink;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.ToolTip _toolTip;
+		private System.Windows.Forms.LinkLabel _openFileStoreLink;
 
 	}
 }

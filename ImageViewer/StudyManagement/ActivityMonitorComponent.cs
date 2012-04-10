@@ -11,7 +11,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
@@ -77,6 +80,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					return this;
 
 				// whatever is on the screen is out-of-date and should be refreshed
+				this.Component.ActivityMonitor.WorkItemChanged += this.Component.WorkItemChanged;
 				this.Component.RefreshInternal();
 				return new ConnectedState(this.Component);
 			}
@@ -86,7 +90,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region WorkItem class
 
-		class WorkItem
+		internal class WorkItem
 		{
 			private readonly WorkItemData _data;
 
@@ -252,6 +256,52 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region WorkItemUpdateManager class
+
+		internal class WorkItemUpdateManager
+		{
+			private readonly ItemCollection<WorkItem> _items;
+			private readonly Predicate<WorkItem> _filter;
+
+			public WorkItemUpdateManager(ItemCollection<WorkItem> itemCollection, Predicate<WorkItem> filter)
+			{
+				_items = itemCollection;
+				_filter = filter;
+			}
+
+			public void Update(WorkItem newItem)
+			{
+				var index = _items.FindIndex(w => w.Id == newItem.Id);
+				if (index > -1)
+				{
+					// the item is currently in the list
+					// if the item is marked deleted, or if it no longer meets the filter criteria, remove it
+					// otherwise update it
+					if (newItem.Status == WorkItemStatusEnum.Deleted || !Include(newItem))
+						_items.RemoveAt(index);
+					else
+						_items[index] = newItem;
+				}
+				else
+				{
+					// the item is not currently in the list
+					// if not deleted and it meets the filter criteria, add it
+					if (newItem.Status != WorkItemStatusEnum.Deleted && Include(newItem))
+					{
+						_items.Add(newItem);
+					}
+				}
+
+			}
+
+			private bool Include(WorkItem item)
+			{
+				return _filter(item);
+			}
+		}
+
+		#endregion
+
 		class WorkItemActionModel : SimpleActionModel
 		{
 			public WorkItemActionModel()
@@ -265,6 +315,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private readonly WorkItemActionModel _workItemActionModel = new WorkItemActionModel();
 		private readonly Table<WorkItem> _workItems = new Table<WorkItem>();
+		private readonly WorkItemUpdateManager _workItemManager;
 
 		private IDicomServerConfigurationProvider _dicomConfigProvider;
 		private ConnectionState _connectionState;
@@ -284,6 +335,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_connectionState = new DisconnectedState(this);
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
 			_diskspaceTimer = new Timer(OnDiskspaceTimerElapsed, null, TimeSpan.FromSeconds(60));
+
+	    	_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
 		}
 
 		public override void Start()
@@ -470,6 +523,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             ReindexTool.StartReindex(Host.DesktopWindow);
         }
 
+		public void OpenFileStore()
+		{
+			var path = this.FileStore;
+			if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+				Process.Start(path);
+		}
+
 	    #endregion
 
 		private IWorkItemActivityMonitor ActivityMonitor { get; set; }
@@ -507,7 +567,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			NotifyPropertyChanged("AeTitle");
 			NotifyPropertyChanged("HostName");
-			NotifyPropertyChanged("IpAddress");
+			NotifyPropertyChanged("Port");
 			NotifyPropertyChanged("FileStore");
 
 			// if FileStore path changed, diskspace may have changed too
@@ -525,27 +585,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 		    UpdateStudyCount(e.ItemData);
 
-			var newItem = new WorkItem(e.ItemData);
-			var index = _workItems.Items.FindIndex(w => w.Id == newItem.Id);
-			if (index > -1)
-			{
-				// the item is currently in the list
-				// if the item is marked deleted, or if it no longer meets the filter criteria, remove it
-				// otherwise update it
-				if (newItem.Status == WorkItemStatusEnum.Deleted || !Include(newItem))
-					_workItems.Items.RemoveAt(index);
-				else
-					_workItems.Items[index] = newItem;
-			}
-			else
-			{
-				// the item is not currently in the list
-				// if it meets the filter criteria, add it
-				if (Include(newItem))
-				{
-					_workItems.Items.Add(newItem);
-				}
-			}
+			_workItemManager.Update(new WorkItem(e.ItemData));
 		}
 
         private void UpdateStudyCount(WorkItemData workItem)
@@ -571,30 +611,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 	    private void RefreshInternal()
 		{
-			this.ActivityMonitor.WorkItemChanged -= WorkItemChanged;
 			_workItems.Items.Clear();
 
 			try
 			{
-				Platform.GetService<IWorkItemService>(
-					service =>
-					{
-						var response = service.Query(new WorkItemQueryRequest());
-						var items = from wd in response.Items
-									let w = new WorkItem(wd)
-									where Include(w)
-									select w;
-
-						_workItems.Items.AddRange(items);
-					});
+				this.ActivityMonitor.Refresh();
 			}
 			catch (Exception e)
 			{
 				// don't show a message box here, since the user may not even be looking at this workspace
 				Platform.Log(LogLevel.Error, e);
 			}
-
-			this.ActivityMonitor.WorkItemChanged += WorkItemChanged;
 		}
 
 		private bool Include(WorkItem item)
@@ -636,5 +663,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return _diskspace;
 			}
 		}
+
 	}
 }
