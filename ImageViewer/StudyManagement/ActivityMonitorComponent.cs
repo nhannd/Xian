@@ -11,7 +11,9 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
@@ -470,6 +472,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             ReindexTool.StartReindex(Host.DesktopWindow);
         }
 
+		public void OpenFileStore()
+		{
+			var path = this.FileStore;
+			if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+				Process.Start(path);
+		}
+
 	    #endregion
 
 		private IWorkItemActivityMonitor ActivityMonitor { get; set; }
@@ -507,7 +516,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			NotifyPropertyChanged("AeTitle");
 			NotifyPropertyChanged("HostName");
-			NotifyPropertyChanged("IpAddress");
+			NotifyPropertyChanged("Port");
 			NotifyPropertyChanged("FileStore");
 
 			// if FileStore path changed, diskspace may have changed too
@@ -636,5 +645,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return _diskspace;
 			}
 		}
+
 	}
 }
