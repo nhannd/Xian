@@ -143,15 +143,13 @@ The configuration is currently unavailable.</value>
     <value>{0}
 AE Title: {1}
 Host: {2}
-Listening Port: {3}
-File Store: {4}</value>
+Listening Port: {3}</value>
   </data>
   <data name="FormatLocalServerOfflineDetails" xml:space="preserve">
     <value>{0} (Offline)
 AE Title: {1}
 Host: {2}
-Listening Port: {3}
-File Store: {4}</value>
+Listening Port: {3}</value>
   </data>
   <data name="FormatServerConflict" xml:space="preserve">
     <value>The server properties conflict with an existing entry ({0}).

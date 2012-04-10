@@ -128,8 +128,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         ///   Looks up a localized string similar to {0}
         ///AE Title: {1}
         ///Host: {2}
-        ///Listening Port: {3}
-        ///File Store: {4}.
+        ///Listening Port: {3}.
         /// </summary>
         internal static string FormatLocalServerDetails {
             get {
@@ -141,8 +140,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         ///   Looks up a localized string similar to {0} (Offline)
         ///AE Title: {1}
         ///Host: {2}
-        ///Listening Port: {3}
-        ///File Store: {4}.
+        ///Listening Port: {3}.
         /// </summary>
         internal static string FormatLocalServerOfflineDetails {
             get {

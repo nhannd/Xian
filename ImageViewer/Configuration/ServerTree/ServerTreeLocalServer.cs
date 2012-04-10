@@ -137,8 +137,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
                                          DisplayName,
                                          _dicomServerConfigurationProvider.AETitle,
                                          _dicomServerConfigurationProvider.HostName,
-                                         _dicomServerConfigurationProvider.Port,
-                                         _dicomServerConfigurationProvider.FileStoreDirectory);
+                                         _dicomServerConfigurationProvider.Port);
                 }
             }
             catch (Exception e)
