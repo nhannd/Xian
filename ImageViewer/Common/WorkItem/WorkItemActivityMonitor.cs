@@ -15,6 +15,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         long[] WorkItemIdFilters { get; set; }
 
         event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
+    	void Refresh();
+
     }
 
     public abstract partial class WorkItemActivityMonitor

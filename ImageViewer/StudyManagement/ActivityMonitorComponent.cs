@@ -80,6 +80,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					return this;
 
 				// whatever is on the screen is out-of-date and should be refreshed
+				this.Component.ActivityMonitor.WorkItemChanged += this.Component.WorkItemChanged;
 				this.Component.RefreshInternal();
 				return new ConnectedState(this.Component);
 			}
@@ -255,6 +256,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region WorkItemUpdateManager class
+
 		internal class WorkItemUpdateManager
 		{
 			private readonly ItemCollection<WorkItem> _items;
@@ -265,13 +268,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_items = itemCollection;
 				_filter = filter;
 			}
-
-			public void SetItems(IEnumerable<WorkItem> items)
-			{
-				_items.Clear();
-				_items.AddRange(items.Where(Include));
-			}
-
 
 			public void Update(WorkItem newItem)
 			{
@@ -303,6 +299,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return _filter(item);
 			}
 		}
+
+		#endregion
 
 		class WorkItemActionModel : SimpleActionModel
 		{
@@ -613,24 +611,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 	    private void RefreshInternal()
 		{
-			this.ActivityMonitor.WorkItemChanged -= WorkItemChanged;
+			_workItems.Items.Clear();
 
 			try
 			{
-				Platform.GetService<IWorkItemService>(
-					service =>
-					{
-						var response = service.Query(new WorkItemQueryRequest());
-						_workItemManager.SetItems(response.Items.Select(wd => new WorkItem(wd)));
-					});
+				this.ActivityMonitor.Refresh();
 			}
 			catch (Exception e)
 			{
 				// don't show a message box here, since the user may not even be looking at this workspace
 				Platform.Log(LogLevel.Error, e);
 			}
-
-			this.ActivityMonitor.WorkItemChanged += WorkItemChanged;
 		}
 
 		private bool Include(WorkItem item)
