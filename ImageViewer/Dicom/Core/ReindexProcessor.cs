@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             {
                 try
                 {
-                    using (var context = new DataAccessContext())
+                    using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
                     {
                         var broker = context.GetStudyBroker();
                         var workItemBroker = context.GetWorkItemBroker();

@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// <param name="retry">A boolean value indicating whether a retry will be attempted later.</param>
         protected WorkItemUid FailWorkItemUid(WorkItemUid uid, bool retry)
         {
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var broker = context.GetWorkItemUidBroker();
                 var sop = broker.GetWorkItemUid(uid.Oid);
@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 try
                 {
-                    using (var context = new DataAccessContext())
+                    using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
                     {
                         var broker = context.GetWorkItemUidBroker();
                         var sop = broker.GetWorkItemUid(uid.Oid);

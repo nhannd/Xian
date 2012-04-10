@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// <param name="failureType"></param>
         public void Fail(WorkItemFailureType failureType)
         {
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         public void Postpone()
         {
             DateTime newScheduledTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         public void Complete()
         {
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var broker = context.GetWorkItemBroker();
            
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         public void Idle()
         {
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var broker = context.GetWorkItemBroker();
               
@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         public void Cancel()
         {
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var broker = context.GetWorkItemBroker();
                 
@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         public void Delete()
         {
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var broker = context.GetWorkItemBroker();
 

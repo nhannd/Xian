@@ -13,6 +13,7 @@ using System;
 using System.Data;
 using System.Data.SqlServerCe;
 using System.IO;
+using System.Threading;
 using ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -27,6 +28,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 	/// </remarks>
 	public class DataAccessContext : IDisposable
 	{
+	    public static string WorkItemMutex = "WorkItem";
+
+	    private Mutex _mutex;
 	    private const string DefaultDatabaseFileName = "dicom_store.sdf";
 
         private readonly string _databaseFilename = DefaultDatabaseFileName;
@@ -37,16 +41,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		private bool _transactionCommitted;
 		private bool _disposed;
 
-		public DataAccessContext()
-		{
-			// initialize a connection and transaction
-			_connection = CreateConnection();
-			_transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
-			_context = new DicomStoreDataContext(_connection);
-		}
+		public DataAccessContext() :this(null)
+		{ }
 
-		internal DataAccessContext(string databaseFilename)
+        public DataAccessContext(string mutexName)
+        {
+            if (!string.IsNullOrEmpty(mutexName))
+            {
+                _mutex = new Mutex(false, typeof(DataAccessContext).ToString());
+                _mutex.WaitOne();
+            }
+
+            // initialize a connection and transaction
+            _connection = CreateConnection();
+            _transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
+            _context = new DicomStoreDataContext(_connection);
+        }
+
+		internal DataAccessContext(string mutexName, string databaseFilename)
 		{
+            if (!string.IsNullOrEmpty(mutexName))
+            {
+                _mutex = new Mutex(false, typeof (DataAccessContext).ToString());
+                _mutex.WaitOne();
+            }
+
 		    _databaseFilename = databaseFilename;
             _connection = CreateConnection();
             _transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
@@ -62,7 +81,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
 			_disposed = true;
 
-			if(!_transactionCommitted)
+			if(!_transactionCommitted && _transaction != null)
 			{
 				_transaction.Rollback();
 			}
@@ -70,6 +89,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			_context.Dispose();
 			_connection.Close();
 			_connection.Dispose();
+
+            if (_mutex != null)
+            {
+                _mutex.ReleaseMutex();
+                _mutex = null;
+            }
 		}
 
 		#endregion
@@ -120,8 +145,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			if(_transactionCommitted)
 				throw new InvalidOperationException("Transaction already committed.");
 			_context.SubmitChanges();
-			_transaction.Commit();
+            if (_transaction != null)
+			    _transaction.Commit();
 			_transactionCommitted = true;
+
+            if (_mutex != null)
+            {
+                _mutex.ReleaseMutex();
+                _mutex = null;
+            }
 		}
 
 	    private IDbConnection CreateConnection()
