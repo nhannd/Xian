@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             var response = new WorkItemInsertResponse();
 
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 DateTime now = Platform.Time;
                 var broker = context.GetWorkItemBroker();
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         public WorkItemUpdateResponse Update(WorkItemUpdateRequest request)
         {
             var response = new WorkItemUpdateResponse();
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var broker = context.GetWorkItemBroker();
                 var workItem = broker.GetWorkItem(request.Identifier);

@@ -156,13 +156,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 if ( list == null)
                 {
                     /* No threads available, wait for one to complete. */
-                    _threadStop.WaitOne(5000, false);
+                    if (_threadStop.WaitOne(5000, false))
+                        _threadStop.Reset();
                     continue;
                 }
                 if  (list.Count == 0)
                 {
                     // No result found 
-                    _threadStop.WaitOne(5000, false);
+                    if (_threadStop.WaitOne(5000, false))
+                        _threadStop.Reset(); 
                     continue;
                 }
 
@@ -298,7 +300,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                using (var context = new DataAccessContext())
+                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
                 {
                     var workItemBroker = context.GetWorkItemBroker();
 
@@ -337,7 +339,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </returns>
         private List<WorkItem> GetWorkItemsToDelete(int count)
         {
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
@@ -358,7 +360,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         private void ResetInProgressWorkItems()
         {
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
                 var list = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.InProgress, null);
