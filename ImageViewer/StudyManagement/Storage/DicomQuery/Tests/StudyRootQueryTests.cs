@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
         private static DataAccessContext CreateContext()
         {
-            return new DataAccessContext(_testDatabaseFilename);
+            return new DataAccessContext(null, _testDatabaseFilename);
         }
 
         [Test]
