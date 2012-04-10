@@ -79,11 +79,20 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public abstract event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
 
+        public void Refresh()
+        {
+            Platform.GetService<IWorkItemActivityMonitorService>(s => s.Refresh(new WorkItemRefreshRequest()));
+        }
+
         #endregion
 
         public static bool IsRunning 
         {
-            get { using (var monitor = Create()) return monitor.IsConnected; }
+            get
+            {
+                using (var monitor = Create())
+                    return monitor.IsConnected;
+            }
         }
 
         public static IWorkItemActivityMonitor Create()
@@ -173,5 +182,4 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             return matchesIdFilters;
         }
     }
-
 }
