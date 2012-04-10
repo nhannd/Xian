@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -721,12 +720,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_textFilterTimer.Stop();
 			RefreshInternal();
 		}
-
-		private void OnDiskspaceTimerElapsed(object state)
-		{
-		}
-
-
-
 	}
 }
