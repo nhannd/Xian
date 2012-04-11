@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Services
 	[ViewerActionPermission("restart", AuthorityTokens.Administration.Services)]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class ServiceControlTool : Tool<IDesktopToolContext>
+	internal class ServiceControlTool : Tool<IDesktopToolContext>
 	{
         private enum ServiceControlOperation
         {

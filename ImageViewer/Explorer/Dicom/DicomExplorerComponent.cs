@@ -72,7 +72,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				try
 				{
-					var queryParamList = new List<QueryParameters> {_studyBrowserComponent.CreateOpenSearchQueryParams()};
+                    var queryParams = new QueryParameters();
+					var queryParamList = new List<QueryParameters> {queryParams};
 					_studyBrowserComponent.Search(queryParamList);
 				}
 				catch (PolicyException)

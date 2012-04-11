@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			SynchronizationContext.Current.Post(
 				delegate
 				{
-					var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
+					var queryParams = new QueryParameters();
 					PrepareQueryParameters(request.SearchCriteria, queryParams);
 					explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
 				}, null); 
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			SynchronizationContext.Current.Post(
 				delegate
 					{
-						var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
+                        var queryParams = new QueryParameters();
 						PrepareQueryParameters(request.SearchCriteria, queryParams);
 						explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
 					}, null); 

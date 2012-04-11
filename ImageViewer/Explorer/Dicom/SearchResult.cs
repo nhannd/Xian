@@ -11,18 +11,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	public class SearchResult
+	public partial class SearchResult
 	{
 		protected const string ColumnPatientId = @"Patient ID";
 		protected const string ColumnLastName = @"Last Name";
@@ -61,6 +59,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_hiddenItems = new List<StudyItem>();
 			_studyTable = new Table<StudyItem>();
+
+            StartMonitoringStudies();
 		}
 
 		#region Properties
@@ -148,6 +148,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_everSearched = true;
 			_filterDuplicates = filterDuplicates;
 
+            _setChangedStudies.Clear();
+
 			_hiddenItems.Clear();
 			IList<StudyItem> filteredStudies = new List<StudyItem>(studies);
 			RemoveDuplicates(filteredStudies, _hiddenItems);
@@ -204,6 +206,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			foreach (StudyItem study in removed)
 				allStudies.Remove(study);
 		}
+
 
 		protected virtual void InitializeTable()
 		{
