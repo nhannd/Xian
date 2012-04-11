@@ -331,7 +331,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public StudyCountWatcher(System.Action onChanged)
 			{
-				_throttleTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(2));
+				_throttleTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(5));
 				_onChanged = onChanged;
 			}
 
@@ -387,7 +387,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public DiskspaceWatcher(Func<string> fileStorePathProvider, System.Action onChanged)
 			{
 				_fileStorePathProvider = fileStorePathProvider;
-				_refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(60));
+				_refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
 				_onChanged = onChanged;
 			}
 
@@ -453,12 +453,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			_connectionState = new DisconnectedState(this);
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
-			_diskspaceWatcher = new DiskspaceWatcher(() => this.FileStore, () =>
-			                                                               	{
-																				NotifyPropertyChanged("DiskspaceUsed");
-																				NotifyPropertyChanged("DiskspaceUsedPercent");
-			                                                               	});
-			_studyCountWatcher = new StudyCountWatcher(() => NotifyPropertyChanged("TotalStudies"));
+			_diskspaceWatcher = new DiskspaceWatcher(() => this.FileStore, OnDiskspaceChanged);
+			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
 			_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
 		}
 
@@ -746,5 +742,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_textFilterTimer.Stop();
 			RefreshInternal();
 		}
+
+		private void OnStudyCountChanged()
+		{
+			NotifyPropertyChanged("TotalStudies");
+		}
+
+		private void OnDiskspaceChanged()
+		{
+			NotifyPropertyChanged("DiskspaceUsed");
+			NotifyPropertyChanged("DiskspaceUsedPercent");
+		}
+
 	}
 }
