@@ -25,6 +25,8 @@ namespace ClearCanvas.Dicom.Utilities.Command
 
 		private readonly StudyXml _stream;
 		private readonly string _path;
+	    private string _seriesInstanceUid;
+	    private string _sopInstanceUid;
 		#endregion
 
 
@@ -59,6 +61,9 @@ namespace ClearCanvas.Dicom.Utilities.Command
 			var dicomFile = new DicomFile(_path);
 			dicomFile.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
 
+		    _sopInstanceUid = dicomFile.DataSet[DicomTags.SopInstanceUid];
+		    _seriesInstanceUid = dicomFile.DataSet[DicomTags.SeriesInstanceUid];
+
 			// Setup the insert parameters
 			if (false == _stream.AddFile(dicomFile, fileSize))
 			{
@@ -71,7 +76,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
 
 		protected override void OnUndo()
 		{
-
+		    _stream.RemoveInstance(_seriesInstanceUid, _sopInstanceUid);
 		}
 
 		#endregion

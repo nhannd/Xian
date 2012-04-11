@@ -12,6 +12,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.Utilities.Command
 {
@@ -24,13 +25,13 @@ namespace ClearCanvas.Dicom.Utilities.Command
 	{
         private string _backupFile;
         private bool _backedUp;
-        private readonly string _path;
+        private readonly string _originalFile;
 
 		public FileDeleteCommand(string path, bool requiresRollback) 
             : base(String.Format("Delete {0}", path), requiresRollback)
 		{
             Platform.CheckForNullReference(path, "path");
-			_path = path;
+			_originalFile = path;
 		}
 
 		protected override void OnExecute(CommandProcessor theProcessor)
@@ -40,40 +41,38 @@ namespace ClearCanvas.Dicom.Utilities.Command
                 Backup();
             }
 
-
-			if (File.Exists(_path))
+			if (File.Exists(_originalFile))
 			{
-			    File.Delete(_path);
+			    File.Delete(_originalFile);
 			}
             else
 			{
-			    Platform.Log(LogLevel.Warn, "Attempted to delete file which doesn't exist: {0}", _path);
+			    Platform.Log(LogLevel.Warn, "Attempted to delete file which doesn't exist: {0}", _originalFile);
 			}
 		}
 
 	    private void Backup()
 	    {
-            if (File.Exists(_path))
-            {
-                _backupFile = _path + ".bak";
-                File.Copy(_path, _backupFile);
+            if (File.Exists(_originalFile))
+            {                
+                _backupFile = _originalFile + ".bak";
+                File.Copy(_originalFile, _backupFile, true);
                 _backedUp = true;
-            }
-            
+            }            
 	    }
 
 	    protected override void OnUndo()
 		{
 			if (_backedUp)
 			{
-			    Platform.Log(LogLevel.Info, "Restoring {0} ...", _path);
-                File.Copy(_backupFile, _path, true);
+			    Platform.Log(LogLevel.Info, "Restoring {0} ...", _originalFile);
+                File.Copy(_backupFile, _originalFile, true);
 			}
 		}
 
         public override string ToString()
         {
-            return String.Format("Delete file {0}", _path);
+            return String.Format("Delete file {0}", _originalFile);
         }
 
         #region IDisposable Members
@@ -82,7 +81,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         {
             if (File.Exists(_backupFile))
             {
-                File.Delete(_backupFile);
+                FileUtils.Delete(_backupFile);
             }
         }
 
