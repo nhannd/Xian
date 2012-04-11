@@ -59,8 +59,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_hiddenItems = new List<StudyItem>();
 			_studyTable = new Table<StudyItem>();
-
-            StartMonitoringStudies();
+            _setChangedStudies = new Dictionary<string, string>();
 		}
 
 		#region Properties
@@ -76,8 +75,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _isLocalServer; }
 			set
 			{
+                if (Equals(_isLocalServer, value))
+                    return;
+
 				_isLocalServer = value;
 				UpdateServerColumnsVisibility();
+                if (_isLocalServer)
+                    StartMonitoringStudies();
+                else
+                    StopMonitoringStudies();
 			}
 		}
 

@@ -18,17 +18,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void StartMonitoringStudies()
         {
-            if (!IsLocalServer)
-                return;
-
-            _setChangedStudies = new Dictionary<string, string>();
             _activityMonitor = WorkItemActivityMonitor.Create();
-
             _activityMonitor.WorkItemChanged += ActivityMonitorOnWorkItemChanged;
+
             _processStudiesEventPublisher = new DelayedEventPublisher((s,e) => ProcessChangedStudies());
         }
 
-        public void Dispose()
+        private void StopMonitoringStudies()
         {
             if (_processStudiesEventPublisher != null)
             {
@@ -42,6 +38,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _activityMonitor.Dispose();
                 _activityMonitor = null;
             }
+        }
+
+        public void Dispose()
+        {
+            StopMonitoringStudies();
         }
 
         private void ActivityMonitorOnWorkItemChanged(object sender, WorkItemChangedEventArgs args)

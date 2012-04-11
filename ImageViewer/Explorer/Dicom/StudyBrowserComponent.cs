@@ -448,9 +448,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			CurrentSearchResult.ServerGroupName = _selectedServerGroup.Name;
 			CurrentSearchResult.IsLocalServer = _selectedServerGroup.IsLocalServer;
 			CurrentSearchResult.NumberOfChildServers = _selectedServerGroup.Servers.Count;
+            CurrentSearchResult.FilterDuplicates = _filterDuplicateStudies;
 
 			CurrentSearchResult.UpdateColumnVisibility();
-			CurrentSearchResult.FilterDuplicates = _filterDuplicateStudies;
 
 			EventsHelper.Fire(_selectedServerChangedEvent, this, EventArgs.Empty);
 			EventsHelper.Fire(_studyTableChanged, this, EventArgs.Empty);
