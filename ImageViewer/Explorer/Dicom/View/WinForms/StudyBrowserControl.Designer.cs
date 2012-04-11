@@ -60,18 +60,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private void InitializeComponent()
 		{
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StudyBrowserControl));
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._resultsTitleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
             this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._banner = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.StudyBrowserBannerControl();
-            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tableLayoutPanel1
+            // _resultsTitleBar
             // 
-            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this._studyTableView, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this._banner, 0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            resources.ApplyResources(this._resultsTitleBar, "_resultsTitleBar");
+            this._resultsTitleBar.Name = "_resultsTitleBar";
+            this._resultsTitleBar.TextAlignment = System.Drawing.StringAlignment.Near;
             // 
             // _studyTableView
             // 
@@ -81,29 +78,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._studyTableView.ReadOnly = false;
             this._studyTableView.SmartColumnSizing = true;
             // 
-            // _banner
-            // 
-            resources.ApplyResources(this._banner, "_banner");
-            this._banner.Name = "_banner";
-            this._banner.NotificationDetails = "";
-            this._banner.NotificationText = "Re-index not running";
-            // 
             // StudyBrowserControl
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this._studyTableView);
+            this.Controls.Add(this._resultsTitleBar);
             this.Name = "StudyBrowserControl";
-            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private Desktop.View.WinForms.TableView _studyTableView;
-        private StudyBrowserBannerControl _banner;
-    }
+		private ClearCanvas.Desktop.View.WinForms.TableView _studyTableView;
+		private ClearCanvas.Desktop.View.WinForms.TitleBar _resultsTitleBar;
+
+
+	}
 }
