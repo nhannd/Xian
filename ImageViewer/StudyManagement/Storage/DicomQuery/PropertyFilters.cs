@@ -50,7 +50,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         public IEnumerable<T> Query(Table<T> table)
         {
             var query = Query(table.AsQueryable());
-            var results = query.AsEnumerable();
+			// TODO (CR): this call to AsEnumerable() is confusing - consider instead renaming the protected overload to BuildQuery or something like that -JR
+			var results = query.AsEnumerable();	
             return Query(results);
         }
 

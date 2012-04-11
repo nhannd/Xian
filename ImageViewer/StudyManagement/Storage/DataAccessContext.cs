@@ -28,49 +28,45 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 	/// </remarks>
 	public class DataAccessContext : IDisposable
 	{
-	    public static string WorkItemMutex = "WorkItem";
+		public const string WorkItemMutex = "WorkItem";
 
-	    private Mutex _mutex;
-	    private const string DefaultDatabaseFileName = "dicom_store.sdf";
 
-        private readonly string _databaseFilename = DefaultDatabaseFileName;
+		private const string DefaultDatabaseFileName = "dicom_store.sdf";
 
+        private readonly string _databaseFilename;
 		private readonly DicomStoreDataContext _context;
 		private readonly IDbConnection _connection;
 		private readonly IDbTransaction _transaction;
 		private bool _transactionCommitted;
 		private bool _disposed;
+		private Mutex _mutex;
 
-		public DataAccessContext() :this(null)
-		{ }
+		public DataAccessContext()
+			:this(null)
+		{
+			
+		}
 
         public DataAccessContext(string mutexName)
+			:this(mutexName, DefaultDatabaseFileName)
         {
-            if (!string.IsNullOrEmpty(mutexName))
-            {
-                _mutex = new Mutex(false, typeof(DataAccessContext).ToString());
-                _mutex.WaitOne();
-            }
-
-            // initialize a connection and transaction
-            _connection = CreateConnection();
-            _transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
-            _context = new DicomStoreDataContext(_connection);
         }
 
 		internal DataAccessContext(string mutexName, string databaseFilename)
 		{
             if (!string.IsNullOrEmpty(mutexName))
             {
-                _mutex = new Mutex(false, typeof (DataAccessContext).ToString());
+                _mutex = new Mutex(false, string.Format("{0}:{1}", typeof (DataAccessContext).FullName, mutexName));
                 _mutex.WaitOne();
             }
 
-		    _databaseFilename = databaseFilename;
+			// initialize a connection and transaction
+			_databaseFilename = databaseFilename;
             _connection = CreateConnection();
             _transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
             _context = new DicomStoreDataContext(_connection);
-        }
+			//_context.Log = Console.Out;
+		}
 
 	    #region Implementation of IDisposable
 
