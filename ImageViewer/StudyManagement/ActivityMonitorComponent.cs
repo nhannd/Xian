@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -260,12 +261,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		internal class WorkItemUpdateManager
 		{
 			private readonly ItemCollection<WorkItem> _items;
+			private readonly Dictionary<long, WorkItem> _failures;
 			private readonly Predicate<WorkItem> _filter;
 
 			public WorkItemUpdateManager(ItemCollection<WorkItem> itemCollection, Predicate<WorkItem> filter)
 			{
 				_items = itemCollection;
 				_filter = filter;
+				_failures = new Dictionary<long, WorkItem>();
+			}
+
+			public int FailedItemCount
+			{
+				get { return _failures.Values.Count(item => item.Status == WorkItemStatusEnum.Failed); }
+			}
+
+			public void Clear()
+			{
+				_items.Clear();
+				_failures.Clear();
 			}
 
 			public void Update(WorkItem newItem)
@@ -289,6 +303,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					{
 						_items.Add(newItem);
 					}
+				}
+
+				// track failures
+				if(newItem.Status == WorkItemStatusEnum.Failed || _failures.ContainsKey(newItem.Id))
+				{
+					_failures[newItem.Id] = newItem;
 				}
 
 			}
@@ -532,7 +552,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             get { return _studyCountWatcher.StudyCount; }
 	    }
 
-		public int Failures { get; private set; }
+		public int Failures
+		{
+			get { return _workItemManager.FailedItemCount; }
+		}
 
 		public ActionModelNode WorkItemActions
 		{
@@ -684,11 +707,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 
 			_workItemManager.Update(new WorkItem(e.ItemData));
+
+			// tell view to update this value
+			NotifyPropertyChanged("Failures");
 		}
 
 	    private void RefreshInternal()
-		{
-			_workItems.Items.Clear();
+	    {
+	    	_workItemManager.Clear();
 
 			try
 			{
