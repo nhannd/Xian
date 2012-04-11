@@ -119,7 +119,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 if (result.DicomStatus == DicomStatuses.Success)
                 {
                     Progress.NumberOfFilesImported++;
-                }           
+                }
+                else
+                {
+                    Progress.NumberOfImportFailures++;
+                }
             }
             catch (Exception e)
             {
