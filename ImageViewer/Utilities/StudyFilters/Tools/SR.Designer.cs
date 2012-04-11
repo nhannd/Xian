@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Import to Local Data Store.
+        ///   Looks up a localized string similar to &amp;Import to Local File Store.
         /// </summary>
         internal static string MenuImportToLocalDataStore {
             get {
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import to Local Data Store.
+        ///   Looks up a localized string similar to Import to Local File Store.
         /// </summary>
         internal static string ToolbarImportToLocalDataStore {
             get {
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Imports the selected instances to the Local Data Store.
+        ///   Looks up a localized string similar to Imports the selected instances to the Local File Store.
         /// </summary>
         internal static string TooltipImportToLocalDataStore {
             get {

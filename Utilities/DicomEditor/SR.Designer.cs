@@ -297,7 +297,7 @@ namespace ClearCanvas.Utilities.DicomEditor {
         /// <summary>
         ///   Looks up a localized string similar to The changes will be saved to *all* loaded files and the original files will be overwritten.  Are you sure you want to continue?
         ///
-        ///NOTE: if any of the edited files are from the local data store, it should be reindexed, otherwise the edited values may appear unchanged..
+        ///NOTE: if any of the edited files are from the local store, it should be reindexed, otherwise the edited values may appear unchanged..
         /// </summary>
         internal static string MessageConfirmSaveAllFiles {
             get {
@@ -308,7 +308,7 @@ namespace ClearCanvas.Utilities.DicomEditor {
         /// <summary>
         ///   Looks up a localized string similar to The changes will be saved to the loaded file and the original file will be overwritten. Are you sure you want to continue?
         ///
-        ///NOTE: the edited file is from the local data store so it should be reindexed, otherwise the edited values may appear unchanged..
+        ///NOTE: the edited file is from the local store so it should be reindexed, otherwise the edited values may appear unchanged..
         /// </summary>
         internal static string MessageConfirmSaveSingleLocalFile {
             get {

@@ -163,10 +163,10 @@
     <value>{0} of {1} studies processed, {2} studies deleted, {3}  study folders processed</value>
   </data>
   <data name="ReindexRequest_ActivityDescription" xml:space="preserve">
-    <value>Reindex of the local file store</value>
+    <value>Re-index of the local file store</value>
   </data>
   <data name="ReindexRequest_ActivityType" xml:space="preserve">
-    <value>Reindex</value>
+    <value>Re-index</value>
   </data>
   <data name="StudyProcessProgress_Status" xml:space="preserve">
     <value>{0} of {1} images processed, {2} failed</value>

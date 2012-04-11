@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		/// <summary>
 		/// Gets a value indicating whether or not the SOP instance is 'stored',
-		/// for example in the local data store or a remote PACS server.
+		/// for example in the local store or a remote PACS server.
 		/// </summary>
 		public bool IsStored
 		{

@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			{
 				components.Dispose();
 
-				if (_component.ShowLocalDataStoreNode)
+				if (_component.ShowLocalServerNode)
 				{
 					_aeTreeView.MouseEnter -= new EventHandler(OnLocalServerConfigurationChanged);
 					_component.ServerTree.LocalServer.ConfigurationChanged -= OnLocalServerConfigurationChanged;

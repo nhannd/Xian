@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		protected const string ColumnAvailability = @"Availability";
 
 		private string _serverGroupName;
-		private bool _isLocalDataStore;
+		private bool _isLocalServer;
 		private int _numberOfChildServers;
 
 		private readonly Table<StudyItem> _studyTable;
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			HasDuplicates = false;
 
 			_serverGroupName = "";
-			_isLocalDataStore = false;
+			_isLocalServer = false;
 			_numberOfChildServers = 1;
 
 			_hiddenItems = new List<StudyItem>();
@@ -71,12 +71,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set { _serverGroupName = value; }
 		}
 
-		public bool IsLocalDataStore
+		public bool IsLocalServer
 		{
-			get { return _isLocalDataStore; }
+			get { return _isLocalServer; }
 			set
 			{
-				_isLocalDataStore = value;
+				_isLocalServer = value;
 				UpdateServerColumnsVisibility();
 			}
 		}
@@ -428,7 +428,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			TableColumnBase<StudyItem> column = FindColumn(ColumnServer);
 			if (column != null)
 			{
-				if (_isLocalDataStore || _numberOfChildServers == 1)
+				if (_isLocalServer || _numberOfChildServers == 1)
 					column.Visible = false;
 				else
 					column.Visible = true;
@@ -437,7 +437,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = FindColumn(ColumnAvailability);
 			if (column != null)
 			{
-				if (_isLocalDataStore)
+				if (_isLocalServer)
 					column.Visible = false;
 				else
 					column.Visible = true;

@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 result = EventResult.MajorFailure;
 
-                var message = string.Format("Failed to connect to the local data store service to import files.  The files must be imported manually (location: {0})", importFolder);
+                var message = string.Format("Failed to connect to the work item service to import files.  The files must be imported manually (location: {0})", importFolder);
                 throw new DicomFilePublishingException(message, ex);
             }
             finally
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 result = EventResult.MajorFailure;
 
-                var message = string.Format("Failed to connect to the local data store service to import files.  The files must be imported manually (location: {0})", importFolder);
+                var message = string.Format("Failed to connect to the work item service to import files.  The files must be imported manually (location: {0})", importFolder);
                 throw new DicomFilePublishingException(message, ex);
             }
             finally

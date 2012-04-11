@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		private ClickHandlerDelegate _defaultActionHandler;
 		private bool _showTools = true;
 		private bool _showTitlebar = true;
-		private bool _showLocalDataStoreNode = true;
+		private bool _showLocalServerNode = true;
 		private bool _isReadOnly = false;
 		private bool _showCheckBoxes = false;
 		private bool _isEnabled = true;
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			_selectedServers = new AEServerGroup();
 			_serverTree = new ServerTree();
 
-			if (_serverTree.CurrentNode != null && (_serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore))
+			if (_serverTree.CurrentNode != null && (_serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalServer))
 			{
 				_selectedServers.Servers.Add(_serverTree.CurrentNode);
 				_selectedServers.Name = _serverTree.CurrentNode.DisplayName;
@@ -190,10 +190,10 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			set { _showCheckBoxes = value; }
 		}
 
-		public bool ShowLocalDataStoreNode
+		public bool ShowLocalServerNode
 		{
-			get { return _showLocalDataStoreNode; }
-			set { _showLocalDataStoreNode = value; }
+			get { return _showLocalServerNode; }
+			set { _showLocalServerNode = value; }
 		}
 
 		public bool IsReadOnly
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		public void SetSelection(IServerTreeNode dataNode)
 		{
-			if (dataNode.IsServer || dataNode.IsLocalDataStore)
+			if (dataNode.IsServer || dataNode.IsLocalServer)
 			{
 				_selectedServers = new AEServerGroup();
 				_selectedServers.Servers.Add(dataNode);
@@ -303,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			// and we want to retain the behaviour of expanding the tree node when
 			// a ServerGroup is d-clicked, we only want the edit tool invoked if
 			// the node is a Server
-			if (!_serverTree.CurrentNode.IsLocalDataStore && 
+			if (!_serverTree.CurrentNode.IsLocalServer && 
 			    !_serverTree.CurrentNode.IsServerGroup && 
 			    null != _defaultActionHandler &&
 			    _showTools)

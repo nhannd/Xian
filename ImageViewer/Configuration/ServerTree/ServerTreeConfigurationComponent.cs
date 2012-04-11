@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 			_serverTreeComponent.IsReadOnly = true;
 			_serverTreeComponent.ShowCheckBoxes = true;
-			_serverTreeComponent.ShowLocalDataStoreNode = false;
+			_serverTreeComponent.ShowLocalServerNode = false;
 			_serverTreeComponent.ShowTitlebar = false;
 			_serverTreeComponent.ShowTools = false;
 

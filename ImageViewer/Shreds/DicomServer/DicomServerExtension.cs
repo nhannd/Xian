@@ -21,15 +21,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     public class DicomServerExtension : WcfShred
     {
 		private readonly string _dicomServerEndpointName = "DicomServer";
-		private readonly string _dicomSendServiceEndpointName = "DicomSend";
 
 		private bool _dicomServerWcfInitialized;
-		private bool _dicomSendServiceWCFInitialized;
 
         public DicomServerExtension()
         {
 			_dicomServerWcfInitialized = false;
-        	_dicomSendServiceWCFInitialized = false;
 		}
 
         public override void Start()
@@ -74,19 +71,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public override void Stop()
         {
-			if (_dicomSendServiceWCFInitialized)
-			{
-				try
-				{
-					StopHost(_dicomSendServiceEndpointName);
-					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.DicomSendService));
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-				}
-			}
-
 			if (_dicomServerWcfInitialized)
         	{
         		try

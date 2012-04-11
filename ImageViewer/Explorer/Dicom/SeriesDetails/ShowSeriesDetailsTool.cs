@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		    //TODO (Marmot): Perfect candidate for service node changes.
 			if (base.Context.SelectedServerGroup == null)
 				base.Enabled = false;
-			else if (base.Context.SelectedServerGroup.IsLocalDatastore)
+			else if (base.Context.SelectedServerGroup.IsLocalServer)
 				base.Enabled = StudyStore.IsSupported && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
 			else
 				base.Enabled = base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1 &&

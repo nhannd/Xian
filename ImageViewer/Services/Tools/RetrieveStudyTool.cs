@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private bool GetAtLeastOneServerSupportsLoading()
 		{
-			if (Context.SelectedServerGroup.IsLocalDatastore && base.IsLocalStudyLoaderSupported)
+			if (Context.SelectedServerGroup.IsLocalServer && base.IsLocalStudyLoaderSupported)
 				return true;
 
 			foreach (IServerTreeDicomServer server in base.Context.SelectedServerGroup.Servers)
@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private void UpdateEnabled()
 		{
 			Enabled = (Context.SelectedStudy != null &&
-			                !Context.SelectedServerGroup.IsLocalDatastore &&
+			                !Context.SelectedServerGroup.IsLocalServer &&
 			                WorkItemActivityMonitor.IsRunning);
 		}
 	}

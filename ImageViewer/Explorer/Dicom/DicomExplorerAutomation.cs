@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (request.SearchCriteria == null)
 				request.SearchCriteria = new DicomExplorerSearchCriteria();
 
-			//Select the local data store node.
+			//Select the local server node.
 			explorerComponent.ServerTreeComponent.SetSelection(explorerComponent.ServerTreeComponent.ServerTree.LocalServer);
 
 			SynchronizationContext.Current.Post(

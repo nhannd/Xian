@@ -186,7 +186,7 @@
   <data name="MessageConfirmSaveAllFiles" xml:space="preserve">
     <value>The changes will be saved to *all* loaded files and the original files will be overwritten.  Are you sure you want to continue?
 
-NOTE: if any of the edited files are from the local data store, it should be reindexed, otherwise the edited values may appear unchanged.</value>
+NOTE: if any of the edited files are from the local store, it should be reindexed, otherwise the edited values may appear unchanged.</value>
   </data>
   <data name="MessageDumpProgressBar" xml:space="preserve">
     <value>Processing Files...</value>
@@ -293,7 +293,7 @@ NOTE: if any of the edited files are from the local data store, it should be rei
   <data name="MessageConfirmSaveSingleLocalFile" xml:space="preserve">
     <value>The changes will be saved to the loaded file and the original file will be overwritten. Are you sure you want to continue?
 
-NOTE: the edited file is from the local data store so it should be reindexed, otherwise the edited values may appear unchanged.</value>
+NOTE: the edited file is from the local store so it should be reindexed, otherwise the edited values may appear unchanged.</value>
   </data>
   <data name="MessageConfirmSaveSingleRemoteFile" xml:space="preserve">
     <value>The changes will be saved to the loaded file and the original file will be overwritten. Are you sure you want to continue?</value>

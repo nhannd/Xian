@@ -55,7 +55,10 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         //TODO: move IsChecked to the server tree level.
         bool IsChecked { get; set; }
 
+        [Obsolete("Use IsLocalServer instead.")]
         bool IsLocalDataStore { get; }
+
+        bool IsLocalServer { get; }
         bool IsServer { get; }
         bool IsServerGroup { get; }
         

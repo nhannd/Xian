@@ -401,14 +401,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			// cancel any pending searches
 			Async.CancelPending(this);
 
-			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
+			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalServer)
 				_setChangedStudies.Clear();
 
 			var isOpenSearchQuery = CollectionUtils.TrueForAll(queryParametersList,
 				q => CollectionUtils.TrueForAll(q.Values,
 					v => string.IsNullOrEmpty(v)));
 
-			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
+			if (!_selectedServerGroup.IsLocalServer && isOpenSearchQuery)
 			{
 				if (Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
@@ -497,7 +497,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void OnSelectedServerChanged()
 		{
 			CurrentSearchResult.ServerGroupName = _selectedServerGroup.Name;
-			CurrentSearchResult.IsLocalDataStore = _selectedServerGroup.IsLocalDatastore;
+			CurrentSearchResult.IsLocalServer = _selectedServerGroup.IsLocalServer;
 			CurrentSearchResult.NumberOfChildServers = _selectedServerGroup.Servers.Count;
 
 			CurrentSearchResult.UpdateColumnVisibility();
@@ -507,7 +507,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			EventsHelper.Fire(_studyTableChanged, this, EventArgs.Empty);
 			UpdateResultsTitle();
 
-            if (SelectedServerGroup.IsLocalDatastore)
+            if (SelectedServerGroup.IsLocalServer)
             {
                 _notificationTextVisible = true;
                 NotifyPropertyChanged("NotificationText");
@@ -541,7 +541,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						// OpenSearchQueryParams but not in user specified parameters.
 						var queryParams = MergeQueryParams(q, this.CreateOpenSearchQueryParams());
 
-						if (serverNode.IsLocalDataStore)
+						if (serverNode.IsLocalServer)
 						{
 							var studyItemList = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
 							serverStudyItemList.AddRange(studyItemList);
@@ -604,7 +604,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void ProcessChangedStudies()
 		{
-			if (_selectedServerGroup == null || !_selectedServerGroup.IsLocalDatastore || _setChangedStudies.Count == 0)
+			if (_selectedServerGroup == null || !_selectedServerGroup.IsLocalServer || _setChangedStudies.Count == 0)
                 return;
 
 			Table<StudyItem> studyTable = StudyTable;

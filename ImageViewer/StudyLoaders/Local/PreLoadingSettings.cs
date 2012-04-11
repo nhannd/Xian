@@ -33,7 +33,7 @@ using System.Configuration;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {
-    [SettingsGroupDescription("Settings for pre-loading local data store images.")]
+    [SettingsGroupDescription("Settings for pre-loading local images.")]
     [SettingsProvider(typeof(LocalFileSettingsProvider))]
     internal sealed partial class PreLoadingSettings
     {

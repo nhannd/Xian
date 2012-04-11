@@ -124,7 +124,7 @@
     <value>&amp;Filter Study</value>
   </data>
   <data name="MenuImportToLocalDataStore" xml:space="preserve">
-    <value>&amp;Import to Local Data Store</value>
+    <value>&amp;Import to Local File Store</value>
   </data>
   <data name="MenuOpenInStudyFilters" xml:space="preserve">
     <value>Open in Study &amp;Filters...</value>
@@ -142,7 +142,7 @@
     <value>Filter Study</value>
   </data>
   <data name="ToolbarImportToLocalDataStore" xml:space="preserve">
-    <value>Import to Local Data Store</value>
+    <value>Import to Local File Store</value>
   </data>
   <data name="ToolbarOpenInStudyFilters" xml:space="preserve">
     <value>Open in Study Filters</value>
@@ -154,7 +154,7 @@
     <value>Filter Study</value>
   </data>
   <data name="TooltipImportToLocalDataStore" xml:space="preserve">
-    <value>Imports the selected instances to the Local Data Store</value>
+    <value>Imports the selected instances to the Local File Store</value>
   </data>
   <data name="TooltipOpenInStudyFilters" xml:space="preserve">
     <value>Opens the selected DICOM files in a table for filtering purposes</value>

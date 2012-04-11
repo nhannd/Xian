@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		/// <summary>
 		/// Gets a value indicating whether or not the SOP instance is 'stored',
-		/// for example in the local data store or on a remote PACS server.
+		/// for example in the local store or on a remote PACS server.
 		/// </summary>
 		/// <remarks>
 		/// This would normally be used to determine whether an <see cref="ISopDataSource">data source</see>
