@@ -18,12 +18,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         private IEnumerable<IPropertyFilter<T>> Filters
         {
-            get 
-            {
-                if (_filters == null)
-                    _filters = CreateFilters(_criteria);
-                return _filters;
-            }
+            get { return _filters ?? (_filters = CreateFilters(_criteria)); }
         }
 
         protected virtual List<IPropertyFilter<T>> CreateFilters(DicomAttributeCollection criteria)
@@ -36,7 +31,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             {
                 var constructor = type.GetConstructor(new[] { typeof(DicomAttributeCollection) });
                 if (constructor != null)
-                    filters.Add((IPropertyFilter<T>)Activator.CreateInstance(type, new[] { criteria }));
+                    filters.Add((IPropertyFilter<T>)Activator.CreateInstance(type, new object[] { criteria }));
             }
 
             return filters;
@@ -51,15 +46,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             var query = Query(table.AsQueryable());
             var results = query.AsEnumerable();
-            return Query(results);
+            return FilterResults(results);
         }
 
-        public IEnumerable<T> Query(IEnumerable<T> items)
+        public IEnumerable<T> FilterResults(IEnumerable<T> items)
         {
-            foreach (IPropertyFilter<T> filter in Filters)
-                items = filter.FilterResults(items);
-
-            return items;
+            return Filters.Aggregate(items, (current, filter) => filter.FilterResults(current));
         }
 
         public List<DicomAttributeCollection> ConvertResults(IEnumerable<T> results)
@@ -68,7 +60,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             foreach (var result in results)
             {
                 var dicomResult = new DicomAttributeCollection();
-                foreach (IPropertyFilter<T> filter in Filters)
+                foreach (var filter in Filters)
                     filter.SetAttributeValue(result, dicomResult);
 
                 dicomResults.Add(dicomResult);

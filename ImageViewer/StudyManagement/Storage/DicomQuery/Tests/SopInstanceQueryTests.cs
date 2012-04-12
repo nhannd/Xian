@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
             var criteria = new DicomAttributeCollection();
             var filters = new PropertyFilters<SopInstance>(criteria);
-            var results = filters.Query(sops);
+            var results = filters.FilterResults(sops);
             Assert.AreEqual(5, results.Count());
         }
 
@@ -42,13 +42,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             criteria[DicomTags.InstanceNumber].SetInt32(0, 102);
 
             var filters = new PropertyFilters<SopInstance>(criteria);
-            var results = filters.Query(sops);
+            var results = filters.FilterResults(sops);
             Assert.AreEqual(1, results.Count());
 
             criteria[DicomTags.InstanceNumber].SetInt32(0, 106);
             filters = new PropertyFilters<SopInstance>(criteria);
 
-            results = filters.Query(sops);
+            results = filters.FilterResults(sops);
             Assert.AreEqual(0, results.Count());
         }
 
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
             var criteria = new DicomAttributeCollection();
             var filters = new PropertyFilters<SopInstance>(criteria);
-            var results = filters.Query(sops);
+            var results = filters.FilterResults(sops);
             var converted = filters.ConvertResults(results);
             foreach (var result in converted)
             {

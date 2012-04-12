@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             var query = base.Query(initialQuery);
             
-            //We don't want to return anything that is about to be deleted.
+            //We don't want to return anything that is scheduled to be deleted.
             query = query.Where(s => !s.Deleted);
             
             return query;

@@ -78,8 +78,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 var ownerWidth = owner.Bounds.Width;
                 var ownerHeight = owner.Bounds.Height;
 
-                const int bufferX = 20;
-                const int bufferY = 20;
+                const int bufferX = 2;
+                const int bufferY = 2;
 
                 var ownerRight = ownerLocation.X + ownerWidth;
                 var ownerBottom = ownerLocation.Y + ownerHeight;

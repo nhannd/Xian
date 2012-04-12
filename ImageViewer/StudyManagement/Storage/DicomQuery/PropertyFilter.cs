@@ -9,7 +9,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
     {
         DicomTagPath Path { get; }
         DicomAttribute Criterion { get; }
-        bool IsNoOp { get; }
 
         IQueryable<T> AddToQuery(IQueryable<T> query);
         IEnumerable<T> FilterResults(IEnumerable<T> results);
@@ -30,11 +29,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         public DicomTagPath Path { get; private set; }
         public DicomAttribute Criterion { get; private set; }
-
-        public virtual bool IsNoOp
-        {
-            get { return IsCriterionEmpty && !IsReturnValueRequired; }
-        }
 
         /// <summary>
         /// The value is required to be returned in the results.
@@ -60,13 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected internal virtual bool ShouldAddToResult
         {
-            get
-            {
-                if (IsReturnValueRequired)
-                    return true;
-
-                return !IsCriterionEmpty;
-            }
+            get { return IsReturnValueRequired || !IsCriterionEmpty; }
         }
 
         protected virtual IQueryable<T> AddToQuery(IQueryable<T> query)

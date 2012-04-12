@@ -21,6 +21,8 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		[DicomField(DicomTags.RetrieveAeTitle)]
 		string RetrieveAeTitle { get; }
 
+	    //TODO (Marmot): RetrieveApplicationEntity
+
 		[DicomField(DicomTags.InstanceAvailability)]
 		string InstanceAvailability { get; }
 	}
