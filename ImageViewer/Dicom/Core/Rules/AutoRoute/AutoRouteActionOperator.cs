@@ -29,6 +29,10 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Rules.AutoRoute
 
             string device = xmlNode.Attributes["device"].Value;
 
+            string transferSyntaxUid = null;
+            if (xmlNode.Attributes["transferSyntaxUid"] != null)
+                transferSyntaxUid = xmlNode.Attributes["transferSyntaxUid"].Value;
+
             if ((xmlNode.Attributes["startTime"] != null)
                 && (xmlNode.Attributes["endTime"] != null))
             {
@@ -48,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Rules.AutoRoute
                     throw new XmlActionCompilerException("Incorrect format of endTime: " + xmlNode.Attributes["endTime"].Value);
                 }
 
-                return new AutoRouteActionItem(device, startTime, endTime);
+                return new AutoRouteActionItem(device, startTime, endTime, transferSyntaxUid);
             }
             if ((xmlNode.Attributes["startTime"] == null)
                 && (xmlNode.Attributes["endTime"] != null))
@@ -57,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Rules.AutoRoute
                 && (xmlNode.Attributes["endTime"] == null))
                 throw new XmlActionCompilerException("Unexpected missing endTime attribute for auto-route action");
 
-            return new AutoRouteActionItem(device);
+            return new AutoRouteActionItem(device, transferSyntaxUid);
         }
 
         public XmlSchemaElement GetSchema(RuleActionType ruleType)
@@ -65,29 +69,43 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Rules.AutoRoute
             if (!ruleType.Equals(RuleActionType.AutoRoute))
                 return null;
 
-            XmlSchemaComplexType type = new XmlSchemaComplexType();
+            var type = new XmlSchemaComplexType();
 
-            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
-            attrib.Name = "device";
-            attrib.Use = XmlSchemaUse.Required;
-            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
+            type.Attributes.Add(new XmlSchemaAttribute
+                                            {
+                                                Name = "device",
+                                                Use = XmlSchemaUse.Required,
+                                                SchemaTypeName =
+                                                    new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema")
+                                            });
 
-            attrib = new XmlSchemaAttribute();
-            attrib.Name = "startTime";
-            attrib.Use = XmlSchemaUse.Optional;
-            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
+            type.Attributes.Add(new XmlSchemaAttribute
+                         {
+                             Name = "startTime",
+                             Use = XmlSchemaUse.Optional,
+                             SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema")
+                         });
 
-            attrib = new XmlSchemaAttribute();
-            attrib.Name = "endTime";
-            attrib.Use = XmlSchemaUse.Optional;
-            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
+            type.Attributes.Add(new XmlSchemaAttribute
+                         {
+                             Name = "endTime",
+                             Use = XmlSchemaUse.Optional,
+                             SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema")
+                         });
 
-            XmlSchemaElement element = new XmlSchemaElement();
-            element.Name = "auto-route";
-            element.SchemaType = type;
+            type.Attributes.Add(new XmlSchemaAttribute
+            {
+                Name = "transferSyntaxUid",
+                Use = XmlSchemaUse.Optional,
+                SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema")
+            });
+
+
+            var element = new XmlSchemaElement
+                              {
+                                  Name = "auto-route", 
+                                  SchemaType = type
+                              };
 
             return element;
         }
