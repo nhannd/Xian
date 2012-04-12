@@ -21,6 +21,7 @@ using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using SaveDicomFileCommand = ClearCanvas.ImageServer.Core.Command.SaveDicomFileCommand;
 
 namespace ClearCanvas.ImageServer.Core.Process
 {

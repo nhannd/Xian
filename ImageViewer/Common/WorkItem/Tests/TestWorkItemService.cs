@@ -45,6 +45,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
                 Callback.WorkItemChanged(workItemData);
         }
 
+        void IWorkItemActivityCallback.StudiesCleared()
+        {
+            if (_isSubscribed)
+                Callback.StudiesCleared();
+        }
+
         #region ICommunicationObject Members
 
         public void Abort()

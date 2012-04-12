@@ -18,6 +18,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -397,7 +398,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Delete Received Duplicate"))
             {
                 FileInfo duplicateFile = GetDuplicateSopFile(uid);
-                processor.AddCommand(new DeleteFileCommand(duplicateFile.FullName));
+                processor.AddCommand(new FileDeleteCommand(duplicateFile.FullName,true));
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
                 if (!processor.Execute())
                 {
@@ -490,7 +491,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Delete Existing Image"))
             {
-                processor.AddCommand(new DeleteFileCommand(path));
+                processor.AddCommand(new FileDeleteCommand(path,true));
                 processor.AddCommand(new RemoveInstanceFromStudyXmlCommand(StorageLocation, studyXml, file));
                 processor.AddCommand(new UpdateInstanceCountCommand(StorageLocation, file));
 

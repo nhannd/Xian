@@ -14,10 +14,8 @@ using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
-using ClearCanvas.Dicom.Utilities;
-using CommonSR=ClearCanvas.Common.SR;
 
-namespace ClearCanvas.ImageServer.Rules.Specifications
+namespace ClearCanvas.Dicom.Utilities.Rules.Specifications
 {
     [ExtensionOf(typeof (XmlSpecificationCompilerOperatorExtensionPoint))]
     public class DicomAgeGreaterThanSpecificationOperator : IXmlSpecificationCompilerOperator
@@ -50,56 +48,57 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
         public XmlSchemaElement GetSchema()
         {
-            XmlSchemaComplexType type = new XmlSchemaComplexType();
+            var type = new XmlSchemaComplexType();
 
-            XmlSchemaAttribute attrib = new XmlSchemaAttribute();
-            attrib.Name = "refValue";
-            attrib.Use = XmlSchemaUse.Required;
-            attrib.SchemaTypeName = new XmlQualifiedName("positiveInteger", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
+            type.Attributes.Add(new XmlSchemaAttribute
+                                    {
+                                        Name = "refValue",
+                                        Use = XmlSchemaUse.Required,
+                                        SchemaTypeName = new XmlQualifiedName("positiveInteger", "http://www.w3.org/2001/XMLSchema")
+                                    });
 
-            attrib = new XmlSchemaAttribute();
-            attrib.Name = "test";
-            attrib.Use = XmlSchemaUse.Optional;
-            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
+            type.Attributes.Add(new XmlSchemaAttribute
+                                    {
+                                        Name = "test",
+                                        Use = XmlSchemaUse.Optional,
+                                        SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema")
+                                    });
 
-            XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType();
+            var restriction = new XmlSchemaSimpleTypeRestriction
+                                  {
+                                      BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema")
+                                  };
 
-            XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
-            restriction.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+            restriction.Facets.Add(new XmlSchemaEnumerationFacet {Value = "years"});
+            restriction.Facets.Add(new XmlSchemaEnumerationFacet {Value = "weeks"});
+            restriction.Facets.Add(new XmlSchemaEnumerationFacet {Value = "days"});
 
-            XmlSchemaEnumerationFacet enumeration = new XmlSchemaEnumerationFacet();
-            enumeration.Value = "years";
-            restriction.Facets.Add(enumeration);
+            var simpleType = new XmlSchemaSimpleType
+                                 {
+                                     Content = restriction
+                                 };
 
-            enumeration = new XmlSchemaEnumerationFacet();
-            enumeration.Value = "weeks";
-            restriction.Facets.Add(enumeration);
 
-            enumeration = new XmlSchemaEnumerationFacet();
-            enumeration.Value = "days";
-            restriction.Facets.Add(enumeration);
+            type.Attributes.Add(new XmlSchemaAttribute
+                                    {
+                                        Name = "units", 
+                                        Use = XmlSchemaUse.Required, 
+                                        SchemaType = simpleType
+                                    });
 
-            simpleType.Content = restriction;
 
-            attrib = new XmlSchemaAttribute();
-            attrib.Name = "units";
-            attrib.Use = XmlSchemaUse.Required;
-            attrib.SchemaType = simpleType;
-            type.Attributes.Add(attrib);
+            type.Attributes.Add(new XmlSchemaAttribute
+                         {
+                             Name = "expressionLanguage",
+                             Use = XmlSchemaUse.Optional,
+                             SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema")
+                         });
 
-            attrib = new XmlSchemaAttribute();
-            attrib.Name = "expressionLanguage";
-            attrib.Use = XmlSchemaUse.Optional;
-            attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
-            type.Attributes.Add(attrib);
-
-            XmlSchemaElement element = new XmlSchemaElement();
-            element.Name = "dicom-age-greater-than";
-            element.SchemaType = type;
-
-            return element;
+            return new XmlSchemaElement
+                       {
+                           Name = "dicom-age-greater-than", 
+                           SchemaType = type
+                       };
         }
 
         #endregion
@@ -133,7 +132,7 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
                 DateTime comparisonTime = Platform.Time;
                 double time;
                 if (false == double.TryParse(_refValue, out time))
-                    throw new SpecificationException(CommonSR.ExceptionCastExpressionString);
+                    throw new SpecificationException(Common.SR.ExceptionCastExpressionString);
 
                 time = time*-1;
 
@@ -148,10 +147,7 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
                 return DefaultTestResult(comparisonTime > testTime);
             }
-            else
-            {
-                throw new SpecificationException(CommonSR.ExceptionCastExpressionString);
-            }
+            throw new SpecificationException(Common.SR.ExceptionCastExpressionString);
         }
     }
 }

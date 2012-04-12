@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common.Specifications;
 
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Dicom.Utilities.Rules
 {
     /// <summary>
     /// Base class for server rule action operator compiler.

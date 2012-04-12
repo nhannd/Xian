@@ -73,11 +73,6 @@
     <Compile Include="SampleRuleExtensionPoint.cs" />
     <Compile Include="ServerActionContext.cs" />
     <Compile Include="ServerRulesEngine.cs" />
-    <Compile Include="Specifications\DicomAgeGreaterThanSpecification.cs" />
-    <Compile Include="Specifications\DicomAgeLessThanSpecification.cs" />
-    <Compile Include="Specifications\DicomExpression.cs" />
-    <Compile Include="ActionOperatorCompilerBase.cs" />
-    <Compile Include="ServerActionItemBase.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

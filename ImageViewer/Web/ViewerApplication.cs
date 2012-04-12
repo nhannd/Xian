@@ -17,6 +17,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Web.Common.Messages;
@@ -410,10 +411,10 @@ namespace ClearCanvas.ImageViewer.Web
 	            int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
 
 	            var serverAe =
-	                new ClearCanvas.Dicom.ServiceModel.StreamingServerApplicationEntity(identifier.RetrieveAeTitle, host,
-	                                                                                    port,
-	                                                                                    headerPort, wadoPort);
-
+	                new ClearCanvas.Dicom.ServiceModel.ApplicationEntity(identifier.RetrieveAeTitle);
+	            serverAe.ScpParameters = new ScpParameters(host, port);
+	            serverAe.StreamingParameters = new StreamingParameters(headerPort, wadoPort);
+                // TODO (Marmot) - Need to figure out how this works with the changes for Marmot
 	            return new LoadStudyArgs(identifier.StudyInstanceUid, serverAe, WebViewerServices.Default.StudyLoaderName);
 	        }
 	        else

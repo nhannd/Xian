@@ -10,12 +10,12 @@
 #endregion
 
 using System;
+using System.Globalization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Scripting;
 using ClearCanvas.Common.Specifications;
-using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageServer.Rules.Specifications
+namespace ClearCanvas.Dicom.Utilities.Rules.Specifications
 {
     public class NoSuchDicomTagException : Exception
     {
@@ -84,8 +84,8 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
             if (Text.StartsWith("$"))
             {
-                DicomMessageBase msg = arg as DicomMessageBase;
-                DicomAttributeCollection collection = arg as DicomAttributeCollection;
+                var msg = arg as DicomMessageBase;
+                var collection = arg as DicomAttributeCollection;
                 if (collection == null && msg == null)
                     return null;
 
@@ -114,26 +114,25 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
 					if (attrib.Tag.VR.Equals(DicomVr.SLvr))
 						return attrib.GetInt32(0, 0);
-					else if (attrib.Tag.VR.Equals(DicomVr.SSvr))
-						return attrib.GetInt16(0, 0);
-					else if (attrib.Tag.VR.Equals(DicomVr.ATvr) || attrib.Tag.VR.Equals(DicomVr.ULvr))
-						return attrib.GetUInt32(0, 0);
-					else if (attrib.Tag.VR.Equals(DicomVr.DSvr) || attrib.Tag.VR.Equals(DicomVr.FDvr))
-						return attrib.GetFloat64(0, 0f);
-					else if (attrib.Tag.VR.Equals(DicomVr.FLvr))
-						return attrib.GetFloat32(0, 0f);
-					else if (attrib.Tag.VR.Equals(DicomVr.ISvr))
-						return attrib.GetInt64(0, 0);
-					else if (attrib.Tag.VR.Equals(DicomVr.USvr))
-						return attrib.GetUInt16(0, 0);
-					else if (attrib.Tag.VR.Equals(DicomVr.SLvr))
-						return attrib.GetInt32(0, 0);
-					else if (attrib.Tag.VR.Equals(DicomVr.OBvr)
-						|| attrib.Tag.VR.Equals(DicomVr.OWvr)
-						|| attrib.Tag.VR.Equals(DicomVr.OFvr))
-						return attrib.StreamLength.ToString();
-					else
-						return attrib.ToString().Trim();
+				    if (attrib.Tag.VR.Equals(DicomVr.SSvr))
+				        return attrib.GetInt16(0, 0);
+				    if (attrib.Tag.VR.Equals(DicomVr.ATvr) || attrib.Tag.VR.Equals(DicomVr.ULvr))
+				        return attrib.GetUInt32(0, 0);
+				    if (attrib.Tag.VR.Equals(DicomVr.DSvr) || attrib.Tag.VR.Equals(DicomVr.FDvr))
+				        return attrib.GetFloat64(0, 0f);
+				    if (attrib.Tag.VR.Equals(DicomVr.FLvr))
+				        return attrib.GetFloat32(0, 0f);
+				    if (attrib.Tag.VR.Equals(DicomVr.ISvr))
+				        return attrib.GetInt64(0, 0);
+				    if (attrib.Tag.VR.Equals(DicomVr.USvr))
+				        return attrib.GetUInt16(0, 0);
+				    if (attrib.Tag.VR.Equals(DicomVr.SLvr))
+				        return attrib.GetInt32(0, 0);
+				    if (attrib.Tag.VR.Equals(DicomVr.OBvr)
+				        || attrib.Tag.VR.Equals(DicomVr.OWvr)
+				        || attrib.Tag.VR.Equals(DicomVr.OFvr))
+				        return attrib.StreamLength.ToString(CultureInfo.InvariantCulture);
+				    return attrib.ToString().Trim();
 				}
 
             	return null;
