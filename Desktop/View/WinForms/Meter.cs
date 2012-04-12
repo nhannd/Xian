@@ -66,7 +66,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			var clientRect = this.ClientRectangle;
 			var fillRect = clientRect;
 			fillRect.Width = (int)(_value / 100.0 * clientRect.Width);
-			if (VisualStyleRenderer.IsSupported)
+			try
 			{
 				// draw background
 				var renderer = new VisualStyleRenderer(VisualStyleElement.ProgressBar.Bar.Normal);
@@ -81,13 +81,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 				   VsStyles.ProgressBar.FillStates.PBFS_PARTIAL);
 				renderer.DrawBackground(e.Graphics, fillRect);
 			}
-			else
+			catch(Exception)
 			{
+				// the VisualStyles stuff can fail when the OS is < Win7, in which case
 				// draw a very basic progress bar manually
 				e.Graphics.DrawRectangle(Pens.DarkGray, 0, 0, clientRect.Width - 1, clientRect.Height - 1);
 				e.Graphics.FillRectangle(Brushes.DodgerBlue, 1, 1,
 					Math.Min(fillRect.Width, clientRect.Width - 2), clientRect.Height - 2);
-				
 			}
 
 			base.OnPaint(e);
