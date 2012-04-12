@@ -129,8 +129,10 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
                     try
                     {
-                        StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
-                        identifier.PatientId = patientId;
+                        var identifier = new StudyRootStudyIdentifier
+                                             {
+                                                 PatientId = patientId
+                                             };
 
                         IList<StudyRootStudyIdentifier> list = query.StudyQuery(identifier);
                         foreach (StudyRootStudyIdentifier i in list)
@@ -167,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 		private StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
 		{
 			string studyLoaderName;
-		    IDicomServerApplicationEntity applicationEntity;
+		    ApplicationEntity applicationEntity;
 
 		    ServerPartition partiton = ServerPartitionMonitor.Instance.GetPartition(study.RetrieveAeTitle);
 			if (partiton != null)
@@ -177,7 +179,12 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 int port = WebViewerServices.Default.ArchiveServerPort;
                 int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
                 int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
-                applicationEntity = new StreamingServerApplicationEntity(study.RetrieveAeTitle,host, port, headerPort, wadoPort);
+
+			    applicationEntity = new ApplicationEntity(study.RetrieveAeTitle)
+			                            {
+			                                ScpParameters = new ScpParameters(host, port),
+			                                StreamingParameters = new StreamingParameters(headerPort, wadoPort)
+			                            };
 
 			}
             else
@@ -187,8 +194,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 if (theDevice != null)
 			    {
 		            studyLoaderName = "DICOM_REMOTE";
-
-			        applicationEntity = new DicomServerApplicationEntity(theDevice.AeTitle, theDevice.IpAddress, theDevice.Port);
+                    // TODO (Marmot) - Need to get this to work with changes in marmot
+			        applicationEntity = new ApplicationEntity(theDevice.AeTitle)
+			                                {ScpParameters = new ScpParameters(theDevice.IpAddress, theDevice.Port)};
 			    }
 			    else // (node == null)
 			    {
@@ -200,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 			    }
 			}
 
-		    StudyItem item = new StudyItem(study, applicationEntity, studyLoaderName);
+		    var item = new StudyItem(study, applicationEntity, studyLoaderName);
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 
@@ -211,8 +219,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 		{
             using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                IDeviceEntityBroker broker = ctx.GetBroker<IDeviceEntityBroker>();
-                DeviceSelectCriteria criteria = new DeviceSelectCriteria();
+                var broker = ctx.GetBroker<IDeviceEntityBroker>();
+                var criteria = new DeviceSelectCriteria();
                 criteria.AeTitle.EqualTo(retrieveAeTitle);
                 IList<Device> list = broker.Find(criteria);
                 foreach (Device theDevice in list)

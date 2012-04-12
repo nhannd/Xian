@@ -1,23 +1,10 @@
-#region License
-
-// Copyright (c) 2011, ClearCanvas Inc.
-// All rights reserved.
-// http://www.clearcanvas.ca
-//
-// This software is licensed under the Open Software License v3.0.
-// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
-
-#endregion
-
-using System;
+﻿using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
-using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Rules.Specifications;
+using ClearCanvas.Dicom.Utilities.Rules.Specifications;
 
-namespace ClearCanvas.ImageServer.Rules
+namespace ClearCanvas.Dicom.Utilities.Rules
 {
     /// <summary>
     /// Defines time unitS used in server rule actions
@@ -45,16 +32,16 @@ namespace ClearCanvas.ImageServer.Rules
     }
 
     /// <summary>
-    /// Base class for all server rule actions implementing <see cref="IActionItem{ServerActionContext}"/> 
+    /// Base class for all server rule actions implementing <see cref="IActionItem{T}"/> 
     /// </summary>
-    public abstract class ServerActionItemBase : IActionItem<ServerActionContext>
+    public abstract class ActionItemBase<TActionContext> : IActionItem<TActionContext>
+        where TActionContext : ActionContext
     {
         private string _failureReason = "Success";
-        private string _name;
 
         #region Constructors
 
-        public ServerActionItemBase(string name)
+        protected ActionItemBase(string name)
         {
             Name = name;
         }
@@ -66,11 +53,7 @@ namespace ClearCanvas.ImageServer.Rules
         /// <summary>
         /// Gets or sets the name of the action
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the description of the failure when the action execution fails.
@@ -85,7 +68,7 @@ namespace ClearCanvas.ImageServer.Rules
 
         #region IActionItem<ServerActionContext> Members
 
-        public bool Execute(ServerActionContext context)
+        public bool Execute(TActionContext context)
         {
             try
             {
@@ -126,7 +109,7 @@ namespace ClearCanvas.ImageServer.Rules
                     break;
 
                 case TimeUnit.Weeks:
-                    time = time.AddDays(offset*7);
+                    time = time.AddDays(offset * 7);
                     break;
 
                 case TimeUnit.Months:
@@ -136,22 +119,19 @@ namespace ClearCanvas.ImageServer.Rules
                 case TimeUnit.Years:
                     time = time.AddYears(offset);
                     break;
-
-                default:
-                    break;
             }
 
             return time;
         }
 
 
-    	/// <summary>
+        /// <summary>
         /// Evaluates an expression in the specified context.
         /// </summary>
         /// <param name="expression">The expression to be evaluated</param>
         /// <param name="context">The context to evaluate the expression</param>
         /// <returns></returns>
-        protected static object Evaluate(Expression expression, ServerActionContext context)
+        protected static object Evaluate(Expression expression, TActionContext context)
         {
             Platform.CheckForNullReference(expression, "expression");
             Platform.CheckForNullReference(context, "context");
@@ -167,81 +147,70 @@ namespace ClearCanvas.ImageServer.Rules
         /// <param name="expression">The expression to be evaluated</param>
         /// <param name="context">The context to evaluate the expression</param>
         /// <returns></returns>
-        /// <exception cref="TypeConversionException"/> thrown if the value of the expression cannot be converted into specified type</exception>
-        protected static T Evaluate<T>(Expression expression, ServerActionContext context)
+        /// <exception cref="TypeConversionException"> thrown if the value of the expression cannot be converted into specified type</exception>
+        protected static T Evaluate<T>(Expression expression, TActionContext context)
         {
             object value = Evaluate(expression, context);
 
             if (value is T)
             {
                 // if the expression was evaluated to the same type then just return it
-                return (T) value;
+                return (T)value;
             }
 
 
-            if (typeof (T) == typeof (string))
+            if (typeof(T) == typeof(string))
             {
-                return (T) (object) value.ToString();
+                return (T)(object)value.ToString();
             }
-            else if (typeof (T) == typeof (int))
+            if (typeof(T) == typeof(int))
             {
                 int result = int.Parse(value.ToString());
-                return (T) (object) result;
+                return (T)(object)result;
             }
-            else if (typeof (T) == typeof (uint))
+            if (typeof(T) == typeof(uint))
             {
                 uint result = uint.Parse(value.ToString());
-                return (T) (object) result;
+                return (T)(object)result;
             }
-            else if (typeof (T) == typeof (long))
+            if (typeof(T) == typeof(long))
             {
                 long result = long.Parse(value.ToString());
-                return (T) (object) result;
+                return (T)(object)result;
             }
-            else if (typeof (T) == typeof (ulong))
+            if (typeof(T) == typeof(ulong))
             {
                 ulong result = ulong.Parse(value.ToString());
-                return (T) (object) result;
+                return (T)(object)result;
             }
-            else if (typeof (T) == typeof (float))
+            if (typeof(T) == typeof(float))
             {
                 float result = float.Parse(value.ToString());
-                return (T) (object) result;
+                return (T)(object)result;
             }
-            else if (typeof (T) == typeof (double))
+            if (typeof(T) == typeof(double))
             {
                 double result = double.Parse(value.ToString());
-                return (T) (object) result;
+                return (T)(object)result;
             }
-            else if (typeof (T) == typeof (DateTime))
+            if (typeof(T) == typeof(DateTime))
             {
                 if (value == null || String.IsNullOrEmpty(value.ToString()))
                 {
-                    string error =
-                        String.Format("Unable to convert value for expression {0} (value={1}) to {2}", expression.Text,
-                                      value, typeof (T));
-                    throw new TypeConversionException(error);
+                    throw new TypeConversionException(String.Format("Unable to convert value for expression {0} (value={1}) to {2}", expression.Text,
+                                      value, typeof(T)));
                 }
 
                 DateTime? result = DateTimeParser.Parse(value.ToString());
                 if (result == null)
-                {
-                    string error =
-                        String.Format("Unable to convert value for expression {0} (value={1}) to {2}", expression.Text,
-                                      value, typeof (T));
-                    throw new TypeConversionException(error);
-                    ;
+                {                  
+                    throw new TypeConversionException(String.Format("Unable to convert value for expression {0} (value={1}) to {2}", expression.Text,
+                                      value, typeof(T)));                    
                 }
-                else
-                    return (T) (object) result.Value;
-            }
-            else
-            {
-                string error =
-                    String.Format("Unable to retrieve value for expression {0} as {1}: Unsupported conversion.",
-                                  expression.Text, typeof (T));
-                throw new TypeConversionException(error);
-            }
+                return (T)(object)result.Value;
+            }  
+            throw new TypeConversionException(String.Format("Unable to retrieve value for expression {0} as {1}: Unsupported conversion.",
+                              expression.Text, typeof(T)));
         }
 
         /// <summary>
@@ -252,17 +221,15 @@ namespace ClearCanvas.ImageServer.Rules
         /// <param name="context">The context to evaluate the expression</param>
         /// <param name="defaultValue">Returned value if the expression cannot be evaluated</param>
         /// <returns></returns>
-        protected static T Evaluate<T>(Expression expression, ServerActionContext context, T defaultValue)
+        protected static T Evaluate<T>(Expression expression, TActionContext context, T defaultValue)
         {
             try
             {
                 return Evaluate<T>(expression, context);
             }
-            catch(NoSuchDicomTagException)
+            catch (NoSuchDicomTagException)
             {
-                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, SR.AlertComponentRules, AlertTypeCodes.InvalidConfiguration, null, TimeSpan.Zero,
-                               SR.AlertRuleInvalid, expression.Text
-                    );
+                // Alert?
 
                 return defaultValue;
             }
@@ -282,7 +249,7 @@ namespace ClearCanvas.ImageServer.Rules
         /// </summary>
         /// <param name="context"></param>
         /// <returns>true if the action execution succeeds. false otherwise.</returns>
-        protected abstract bool OnExecute(ServerActionContext context);
+        protected abstract bool OnExecute(TActionContext context);
 
         #endregion
 

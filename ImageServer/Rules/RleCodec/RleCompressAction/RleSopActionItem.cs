@@ -12,13 +12,14 @@
 using System.Xml;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.Dicom.Utilities.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 {
 	/// <summary>
 	/// RLE SOP compression action item for <see cref="ServerRulesEngine"/>
 	/// </summary>
-	public class RleSopActionItem : ServerActionItemBase
+	public class RleSopActionItem : ActionItemBase<ServerActionContext>
 	{
 		private readonly bool _convertFromPalette;
 
