@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         public IEnumerable<T> Query(Table<T> table)
         {
             var query = Query(table.AsQueryable());
-            var results = query.AsEnumerable();
+            var results = query.AsEnumerable(); //TODO (CR) - what is the reason for this line?
             return FilterResults(results);
         }
 
