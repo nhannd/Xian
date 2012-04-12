@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Oid
 		{
 			get
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RuleId", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RuleId", DbType="NVarChar(100) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string RuleId
 		{
 			get
@@ -337,8 +337,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private bool _Deleted;
 		
-		private EntitySet<WorkItem> _WorkItems;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -421,7 +419,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		public Study()
 		{
-			this._WorkItems = new EntitySet<WorkItem>(new Action<WorkItem>(this.attach_WorkItems), new Action<WorkItem>(this.detach_WorkItems));
 			OnCreated();
 		}
 		
@@ -585,7 +582,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyInstanceUid", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyInstanceUid", DbType="NVarChar(64) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string StudyInstanceUid
 		{
 			get
@@ -1165,19 +1162,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Study_WorkItem", Storage="_WorkItems", ThisKey="Oid", OtherKey="StudyOid")]
-		public EntitySet<WorkItem> WorkItems
-		{
-			get
-			{
-				return this._WorkItems;
-			}
-			set
-			{
-				this._WorkItems.Assign(value);
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1196,18 +1180,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_WorkItems(WorkItem entity)
-		{
-			this.SendPropertyChanging();
-			entity.Study = this;
-		}
-		
-		private void detach_WorkItems(WorkItem entity)
-		{
-			this.SendPropertyChanging();
-			entity.Study = null;
 		}
 	}
 	
@@ -1235,8 +1207,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private string _StudyInstanceUid;
 		
-		private System.Nullable<long> _StudyOid;
-		
 		private string _SerializedPatient;
 		
 		private string _SerializedRequest;
@@ -1244,8 +1214,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		private int _FailureCount;
 		
 		private EntitySet<WorkItemUid> _WorkItemUids;
-		
-		private EntityRef<Study> _Study;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1269,8 +1237,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnPriorityChanged();
     partial void OnStudyInstanceUidChanging(string value);
     partial void OnStudyInstanceUidChanged();
-    partial void OnStudyOidChanging(System.Nullable<long> value);
-    partial void OnStudyOidChanged();
     partial void OnSerializedProgressChanging(string value);
     partial void OnSerializedProgressChanged();
     partial void OnSerializedRequestChanging(string value);
@@ -1282,7 +1248,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		public WorkItem()
 		{
 			this._WorkItemUids = new EntitySet<WorkItemUid>(new Action<WorkItemUid>(this.attach_WorkItemUids), new Action<WorkItemUid>(this.detach_WorkItemUids));
-			this._Study = default(EntityRef<Study>);
 			OnCreated();
 		}
 		
@@ -1306,7 +1271,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InsertTime", DbType="DateTime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InsertTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime InsertTime
 		{
 			get
@@ -1406,7 +1371,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Type", DbType="SmallInt NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Type", DbType="SmallInt NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemTypeEnum Type
 		{
 			get
@@ -1462,30 +1427,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._StudyInstanceUid = value;
 					this.SendPropertyChanged("StudyInstanceUid");
 					this.OnStudyInstanceUidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyOid", DbType="BigInt")]
-		public System.Nullable<long> StudyOid
-		{
-			get
-			{
-				return this._StudyOid;
-			}
-			set
-			{
-				if ((this._StudyOid != value))
-				{
-					if (this._Study.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnStudyOidChanging(value);
-					this.SendPropertyChanging();
-					this._StudyOid = value;
-					this.SendPropertyChanged("StudyOid");
-					this.OnStudyOidChanged();
 				}
 			}
 		}
@@ -1560,40 +1501,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			set
 			{
 				this._WorkItemUids.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Study_WorkItem", Storage="_Study", ThisKey="StudyOid", OtherKey="Oid", IsForeignKey=true)]
-		public Study Study
-		{
-			get
-			{
-				return this._Study.Entity;
-			}
-			set
-			{
-				Study previousValue = this._Study.Entity;
-				if (((previousValue != value) 
-							|| (this._Study.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Study.Entity = null;
-						previousValue.WorkItems.Remove(this);
-					}
-					this._Study.Entity = value;
-					if ((value != null))
-					{
-						value.WorkItems.Add(this);
-						this._StudyOid = value.Oid;
-					}
-					else
-					{
-						this._StudyOid = default(Nullable<long>);
-					}
-					this.SendPropertyChanged("Study");
-				}
 			}
 		}
 		
@@ -1702,7 +1609,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WorkItemOid", DbType="BigInt")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WorkItemOid", DbType="BigInt", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<long> WorkItemOid
 		{
 			get
@@ -1726,7 +1633,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SeriesInstanceUid", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SeriesInstanceUid", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string SeriesInstanceUid
 		{
 			get
@@ -1746,7 +1653,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SopInstanceUid", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SopInstanceUid", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string SopInstanceUid
 		{
 			get
@@ -1907,6 +1814,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
+		private long _Oid;
+		
 		private string _Name;
 		
 		private string _Description;
@@ -1927,6 +1836,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
+    partial void OnOidChanging(long value);
+    partial void OnOidChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
     partial void OnDescriptionChanging(string value);
@@ -1950,7 +1861,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(64) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
+		public long Oid
+		{
+			get
+			{
+				return this._Oid;
+			}
+			set
+			{
+				if ((this._Oid != value))
+				{
+					this.OnOidChanging(value);
+					this.SendPropertyChanging();
+					this._Oid = value;
+					this.SendPropertyChanged("Oid");
+					this.OnOidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(64) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Name
 		{
 			get
@@ -2137,6 +2068,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
+		private long _Oid;
+		
 		private string _Name;
 		
 		private string _Value;
@@ -2145,6 +2078,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
+    partial void OnOidChanging(long value);
+    partial void OnOidChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
     partial void OnValueChanging(string value);
@@ -2156,7 +2091,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", AutoSync=AutoSync.OnInsert, DbType="NVarChar(100) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Oid", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
+		public long Oid
+		{
+			get
+			{
+				return this._Oid;
+			}
+			set
+			{
+				if ((this._Oid != value))
+				{
+					this.OnOidChanging(value);
+					this.SendPropertyChanging();
+					this._Oid = value;
+					this.SendPropertyChanged("Oid");
+					this.OnOidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", AutoSync=AutoSync.OnInsert, DbType="NVarChar(100) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Name
 		{
 			get

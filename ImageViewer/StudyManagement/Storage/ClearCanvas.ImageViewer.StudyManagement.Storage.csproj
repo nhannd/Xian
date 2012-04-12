@@ -217,6 +217,8 @@
     <EmbeddedResource Include="dicom_store.sdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Content Include="dicom_store_empty.sdf" />
+    <Content Include="dicom_store_empty35.sdf" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,13 +2,17 @@
 <Database Name="dicom_store" EntityNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" ContextNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" Class="DicomStoreDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="Configuration" Member="Configurations">
     <Type Name="Configuration">
-      <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Value" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Value" Type="System.String" DbType="NText" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="Device" Member="Devices">
     <Type Name="Device">
-      <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="Description" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="Location" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="AETitle" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
@@ -21,17 +25,19 @@
   <Table Name="Rule" Member="Rules">
     <Type Name="Rule">
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
       <Column Name="RuleId" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="SerializedRule" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="SerializedRule" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="Study" Member="Studies">
     <Type Name="Study">
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
       <Column Name="SpecificCharacterSet" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="StudyId" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
-      <Column Name="StudyTime" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="StudyTimeTicks" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
       <Column Name="StudyTimeRaw" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
       <Column Name="StudyDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="StudyDateRaw" Type="System.String" DbType="NVarChar(26)" CanBeNull="true" />
@@ -62,16 +68,15 @@
       <Column Name="ResponsiblePerson" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Column Name="ResponsiblePersonRole" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
       <Column Name="ResponsibleOrganization" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
-      <Column Name="StudyXmlUri" Type="System.String" DbType="NVarChar(1024)" CanBeNull="true" />
       <Column Name="StoreTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="DeleteTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Deleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Association Name="Study_WorkItem" Member="WorkItems" ThisKey="Oid" OtherKey="StudyOid" Type="WorkItem" DeleteRule="NO ACTION" />
     </Type>
   </Table>
   <Table Name="WorkItem" Member="WorkItems">
     <Type Name="WorkItem">
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
       <Column Name="InsertTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="ScheduledTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="ExpirationTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
@@ -79,25 +84,25 @@
       <Column Name="Status" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="Type" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="Priority" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="FailureCount" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="StudyInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="StudyOid" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
-      <Column Name="SerializedProgress" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
-      <Column Name="SerializedRequest" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
-      <Column Name="FailureCount" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
-      <Association Name="Study_WorkItem" Member="Study" ThisKey="StudyOid" OtherKey="Oid" Type="Study" IsForeignKey="true" />
+      <Column Name="SerializedRequest" Type="System.String" DbType="NText" CanBeNull="true" />
+      <Column Name="SerializedProgress" Type="System.String" DbType="NText" CanBeNull="true" />
       <Association Name="WorkItem_WorkItemUid" Member="WorkItemUids" ThisKey="Oid" OtherKey="WorkItemOid" Type="WorkItemUid" DeleteRule="NO ACTION" />
     </Type>
   </Table>
   <Table Name="WorkItemUid" Member="WorkItemUids">
     <Type Name="WorkItemUid">
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
       <Column Name="WorkItemOid" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
       <Column Name="SeriesInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="SopInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="Complete" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="FailureCount" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
-      <Column Name="File" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
       <Column Name="Failed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="File" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
       <Association Name="WorkItem_WorkItemUid" Member="WorkItem" ThisKey="WorkItemOid" OtherKey="Oid" Type="WorkItem" IsForeignKey="true" />
     </Type>
   </Table>
