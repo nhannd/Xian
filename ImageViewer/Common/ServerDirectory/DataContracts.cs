@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel;

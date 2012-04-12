@@ -11,18 +11,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	public class SearchResult
+	public partial class SearchResult
 	{
 		protected const string ColumnPatientId = @"Patient ID";
 		protected const string ColumnLastName = @"Last Name";
@@ -41,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		protected const string ColumnAvailability = @"Availability";
 
 		private string _serverGroupName;
-		private bool _isLocalDataStore;
+		private bool _isLocalServer;
 		private int _numberOfChildServers;
 
 		private readonly Table<StudyItem> _studyTable;
@@ -56,11 +54,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			HasDuplicates = false;
 
 			_serverGroupName = "";
-			_isLocalDataStore = false;
+			_isLocalServer = false;
 			_numberOfChildServers = 1;
 
 			_hiddenItems = new List<StudyItem>();
 			_studyTable = new Table<StudyItem>();
+            _setChangedStudies = new Dictionary<string, string>();
 		}
 
 		#region Properties
@@ -71,13 +70,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set { _serverGroupName = value; }
 		}
 
-		public bool IsLocalDataStore
+		public bool IsLocalServer
 		{
-			get { return _isLocalDataStore; }
+			get { return _isLocalServer; }
 			set
 			{
-				_isLocalDataStore = value;
+                if (Equals(_isLocalServer, value))
+                    return;
+
+				_isLocalServer = value;
 				UpdateServerColumnsVisibility();
+                if (_isLocalServer)
+                    StartMonitoringStudies();
+                else
+                    StopMonitoringStudies();
 			}
 		}
 
@@ -148,6 +154,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_everSearched = true;
 			_filterDuplicates = filterDuplicates;
 
+            _setChangedStudies.Clear();
+
 			_hiddenItems.Clear();
 			IList<StudyItem> filteredStudies = new List<StudyItem>(studies);
 			RemoveDuplicates(filteredStudies, _hiddenItems);
@@ -204,6 +212,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			foreach (StudyItem study in removed)
 				allStudies.Remove(study);
 		}
+
 
 		protected virtual void InitializeTable()
 		{
@@ -428,7 +437,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			TableColumnBase<StudyItem> column = FindColumn(ColumnServer);
 			if (column != null)
 			{
-				if (_isLocalDataStore || _numberOfChildServers == 1)
+				if (_isLocalServer || _numberOfChildServers == 1)
 					column.Visible = false;
 				else
 					column.Visible = true;
@@ -437,7 +446,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = FindColumn(ColumnAvailability);
 			if (column != null)
 			{
-				if (_isLocalDataStore)
+				if (_isLocalServer)
 					column.Visible = false;
 				else
 					column.Visible = true;

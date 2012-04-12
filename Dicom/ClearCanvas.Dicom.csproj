@@ -125,6 +125,7 @@
     <Compile Include="DicomAttributeSQ.cs" />
     <Compile Include="Iod\ComponentGroup.cs" />
     <Compile Include="Utilities\Command\AggregateCommand.cs" />
+    <Compile Include="Utilities\Command\Tests\CommandTests.cs" />
     <Compile Include="Utilities\DateParser.cs" />
     <Compile Include="Utilities\DateRangeHelper.cs" />
     <Compile Include="Utilities\DateTimeParser.cs" />
@@ -455,7 +456,6 @@
     <Compile Include="Utilities\Command\CopyFileCommand.cs" />
     <Compile Include="Utilities\Command\CreateDirectoryCommand.cs" />
     <Compile Include="Utilities\Command\DeleteDirectoryCommand.cs" />
-    <Compile Include="Utilities\Command\DeleteFileCommand.cs" />
     <Compile Include="Utilities\Command\DicomCompressCommand.cs" />
     <Compile Include="Utilities\Command\FileDeleteCommand.cs" />
     <Compile Include="Utilities\Command\IAggregateCommand.cs" />

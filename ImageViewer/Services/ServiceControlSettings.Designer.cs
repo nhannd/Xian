@@ -23,6 +23,15 @@ namespace ClearCanvas.ImageViewer.Services {
             }
         }
         
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Enabled {
+            get {
+                return ((bool)(this["Enabled"]));
+            }
+        }
+        
         /// <summary>
         /// The name of the workstation service, as it would appear in the Service Control Manager.
         /// </summary>
@@ -30,19 +39,10 @@ namespace ClearCanvas.ImageViewer.Services {
         [global::System.Configuration.SettingsDescriptionAttribute("The name of the workstation service, as it would appear in the Service Control Ma" +
             "nager.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas Workstation ShredHost Service")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas Workstation Shred Host Service")]
         public string ServiceName {
             get {
                 return ((string)(this["ServiceName"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool Enabled {
-            get {
-                return ((bool)(this["Enabled"]));
             }
         }
     }

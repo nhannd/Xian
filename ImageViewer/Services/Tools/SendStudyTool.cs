@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
 			serverTreeComponent.IsReadOnly = true;
 			serverTreeComponent.ShowCheckBoxes = false;
-			serverTreeComponent.ShowLocalDataStoreNode = false;
+			serverTreeComponent.ShowLocalServerNode = false;
 			serverTreeComponent.ShowTitlebar = false;
 			serverTreeComponent.ShowTools = false;
 
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private void UpdateEnabled()
 		{
 			Enabled = (this.Context.SelectedStudy != null &&
-			           this.Context.SelectedServerGroup.IsLocalDatastore &&
+			           this.Context.SelectedServerGroup.IsLocalServer &&
 			           WorkItemActivityMonitor.IsRunning);
 		}
 	}

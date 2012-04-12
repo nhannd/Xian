@@ -1,4 +1,5 @@
-﻿using ClearCanvas.Dicom;
+﻿using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
@@ -61,7 +62,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
         protected override void AddValueToResult(T item, DicomAttribute resultAttribute)
         {
-            resultAttribute.SetString(0, DicomServerConfigurationHelper.AETitle);
+            var aeTitle = string.Empty;
+            var request = new GetDicomServerConfigurationRequest();
+            Platform.GetService<IDicomServerConfiguration>(s => aeTitle = s.GetConfiguration(request).Configuration.AETitle);
+            resultAttribute.SetString(0,aeTitle);
         }
     }
 

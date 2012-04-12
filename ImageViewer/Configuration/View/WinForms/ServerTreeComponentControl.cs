@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 				MenuModel = _component.ContextMenuModel;
 			}
 
-			if (_component.ShowLocalDataStoreNode)
+			if (_component.ShowLocalServerNode)
 			{
 				// A bit cheap, but by doing this we can force a refresh of the tooltip text if the Dicom
 				// Server WCF service hadn't quite started yet when this component was first created.
@@ -214,8 +214,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 			if (this._aeTreeView.SelectedNode == null)
 			{
-				if (_component.ShowLocalDataStoreNode)
-					SelectLocalDataStoreNode();
+				if (_component.ShowLocalServerNode)
+					SelectLocalServerNode();
 				else
 					SelectRootServerGroupNode();
 			}
@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			SelectCurrentServerTreeNode();
 		}
 
-		private void SelectLocalDataStoreNode()
+		private void SelectLocalServerNode()
 		{
 			SelectServerTreeNode(_component.ServerTree.LocalServer);
 		}
@@ -385,14 +385,13 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             treeView.Nodes.Clear();
             treeView.ShowNodeToolTips = true;
 
-			if (_component.ShowLocalDataStoreNode)
+			if (_component.ShowLocalServerNode)
 			{
-				// build the localdatastorenode
-				TreeNode localDataStoreTreeNode = new TreeNode(dicomServerTree.LocalServer.DisplayName);
-				localDataStoreTreeNode.Tag = dicomServerTree.LocalServer;
-				localDataStoreTreeNode.ToolTipText = dicomServerTree.LocalServer.ToString();
-				SetIcon(dicomServerTree.LocalServer, localDataStoreTreeNode);
-				treeView.Nodes.Add(localDataStoreTreeNode);
+				TreeNode localServerNode = new TreeNode(dicomServerTree.LocalServer.DisplayName);
+				localServerNode.Tag = dicomServerTree.LocalServer;
+				localServerNode.ToolTipText = dicomServerTree.LocalServer.ToString();
+				SetIcon(dicomServerTree.LocalServer, localServerNode);
+				treeView.Nodes.Add(localServerNode);
 			}
 
             // build the default server group
@@ -445,7 +444,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             if (browserNode == null)
 				return;
 
-            if (browserNode.IsLocalDataStore)
+            if (browserNode.IsLocalServer)
 			{
 				treeNode.ImageIndex = 0;
 				treeNode.SelectedImageIndex = 0;

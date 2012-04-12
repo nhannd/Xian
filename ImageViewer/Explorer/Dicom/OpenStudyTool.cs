@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				                     AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer
 				                 };
 
-			    if (Context.SelectedServerGroup.IsLocalDatastore)
+			    if (Context.SelectedServerGroup.IsLocalServer)
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
 						helper.AddStudy(study.StudyInstanceUid, study.Server, LocalStudyLoaderName);
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-			if (Context.SelectedServerGroup.IsLocalDatastore)
+			if (Context.SelectedServerGroup.IsLocalServer)
 			{
 				Enabled = Context.SelectedStudy != null;
 			}
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private bool GetAtLeastOneServerSupportsLoading()
 		{
-			if (Context.SelectedServerGroup.IsLocalDatastore && base.IsLocalStudyLoaderSupported)
+			if (Context.SelectedServerGroup.IsLocalServer && base.IsLocalStudyLoaderSupported)
 				return true;
 
 			foreach (IServerTreeDicomServer server in base.Context.SelectedServerGroup.Servers)
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			if (Context.SelectedStudy != null)
 			{
-				if (Context.SelectedServerGroup.IsLocalDatastore && IsLocalStudyLoaderSupported)
+				if (Context.SelectedServerGroup.IsLocalServer && IsLocalStudyLoaderSupported)
 					return Context.SelectedStudies.Count;
 
 				foreach (StudyItem study in Context.SelectedStudies)

@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Common
 			: base(message, innerException) {}
 	}
 
-	//TODO: Instead of static helper, could be part of 2 separate bridges (IDicomSendBridge and ILocalDataStorebridge).
+    //TODO (Marmot): change to use the work queue.
 	public static class DicomFilePublisher
 	{
 		private static void DeleteEmptyFolders(string directory)

@@ -71,13 +71,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (request.SearchCriteria == null)
 				request.SearchCriteria = new DicomExplorerSearchCriteria();
 
-			//Select the local data store node.
+			//Select the local server node.
 			explorerComponent.ServerTreeComponent.SetSelection(explorerComponent.ServerTreeComponent.ServerTree.LocalServer);
 
 			SynchronizationContext.Current.Post(
 				delegate
 				{
-					var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
+					var queryParams = new QueryParameters();
 					PrepareQueryParameters(request.SearchCriteria, queryParams);
 					explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
 				}, null); 
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			SynchronizationContext.Current.Post(
 				delegate
 					{
-						var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
+                        var queryParams = new QueryParameters();
 						PrepareQueryParameters(request.SearchCriteria, queryParams);
 						explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
 					}, null); 

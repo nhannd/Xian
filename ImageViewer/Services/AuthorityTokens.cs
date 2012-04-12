@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Services
 			public const string DiskspaceManager = "Viewer/Administration/Diskspace Manager";
 
 		    //TODO (Marmot): move?
-            [AuthorityToken(Description = "Permission to re-index the local store.", Formerly = "Viewer/Administration/Reindex Local Data Store")]
+            [AuthorityToken(Description = "Permission to re-index the local file store.", Formerly = "Viewer/Administration/Reindex Local Data Store")]
 			public const string ReIndex = "Viewer/Administration/Re-index";
 
 			[AuthorityToken(Description = "Allow administration of the viewer services (e.g. Start/Stop/Restart).")]

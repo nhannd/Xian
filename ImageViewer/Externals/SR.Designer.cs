@@ -102,8 +102,8 @@ namespace ClearCanvas.ImageViewer.Externals {
         ///The sequence %% may be used where a literal % character is required.
         ///
         ///The following argument fields may be used when the external is with images on a file system:
-        ///* $FILENAME$ (e.g. c:\datastore\image.dcm)
-        ///* $DIRECTORY$ (e.g. c:\datastore)
+        ///* $FILENAME$ (e.g. c:\filestore\image.dcm)
+        ///* $DIRECTORY$ (e.g. c:\filestore)
         ///* $FILENAMEONLY$ (e.g. image.dcm)
         ///* $EXTENSIONONLY$ (e.g. dcm)
         ///

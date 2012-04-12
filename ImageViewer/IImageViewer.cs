@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer
 		/// and <see cref="ImageSop"/> objects.
 		/// 
 		/// By default, the Framework provides an implementation of 
-		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader"</b> which loads
+		/// <see cref="IStudyLoader"/> called <b>LocalStoreStudyLoader"</b> which loads
 		/// studies from the local database.  If you have implemented your own 
 		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageViewer
 		/// and <see cref="Sop"/> objects.
 		/// 
 		/// By default, the Framework provides an implementation of 
-		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader</b> which loads
+		/// <see cref="IStudyLoader"/> called <b>LocalStoreStudyLoader</b> which loads
 		/// studies from the local database.  If you have implemented your own 
 		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.

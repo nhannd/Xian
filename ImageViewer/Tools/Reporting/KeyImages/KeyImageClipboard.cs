@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				return null;
 		}
 
-		private static void ManageLocalDataStoreConnection()
+		private static void ManageActivityMonitorConnection()
 		{
             if (_keyImageInformation.Count == 0 && _activityMonitor != null)
 			{
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Warn, e, "Failed to unsubscribe to local data store events.");
+					Platform.Log(LogLevel.Warn, e, "Failed to unsubscribe from activity monitor events.");
 				}
 				finally
 				{
@@ -102,13 +102,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				try
 				{
 				    _activityMonitor = WorkItemActivityMonitor.Create();
-					//we subscribe to something to keep the local data store connection open.
+					//we subscribe to something to keep the connection open.
                     _activityMonitor.IsConnectedChanged += DummyEventHandler;
 				}
 				catch (Exception e)
 				{
                     _activityMonitor = null;
-					Platform.Log(LogLevel.Warn, e, "Failed to subscribe to local data store events.");
+					Platform.Log(LogLevel.Warn, e, "Failed to subscribe to activity monitor events.");
 				}
 			}
 		}
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (!_keyImageInformation.ContainsKey(viewer))
 				_keyImageInformation[viewer] = new KeyImageInformation();
 
-			ManageLocalDataStoreConnection();
+			ManageActivityMonitorConnection();
 		}
 
 		internal static void OnViewerClosed(IImageViewer viewer)
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				}
 			}
 
-			ManageLocalDataStoreConnection();
+			ManageActivityMonitorConnection();
 		}
 
 		#endregion

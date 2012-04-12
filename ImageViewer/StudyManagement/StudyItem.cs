@@ -527,22 +527,144 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A map of query parameters.
 	/// </summary>
-	public class QueryParameters : Dictionary<string,string>
+	public class QueryParameters : IDictionary<string, string>
 	{
+	    private readonly Dictionary<string, string> _parameters;
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="QueryParameters"/>.
 		/// </summary>
 		public QueryParameters()
 		{
-		}
+		    _parameters = new Dictionary<string, string>();
+            this["PatientsName"] = String.Empty;
+            this["ReferringPhysiciansName"] = String.Empty;
+            this["PatientId"] = String.Empty;
+            this["AccessionNumber"] = String.Empty;
+            this["StudyDescription"] = String.Empty;
+            this["ModalitiesInStudy"] = String.Empty;
+            this["StudyDate"] = String.Empty;
+            this["StudyInstanceUid"] = String.Empty;
+        }
 
-		/// <summary>
-		/// Make a copy of an existing instance of <see cref="QueryParameters"/>.
-		/// </summary>
-		/// <param name="parameters"></param>
-		public QueryParameters(QueryParameters parameters)
-			: base(parameters)
-		{
-		}
-	}
+        /// <summary>
+        /// Creates a copy of <paramref name="other"/>.
+        /// </summary>
+        public QueryParameters(QueryParameters other)
+        {
+            _parameters = new Dictionary<string, string>();
+            foreach (var queryParameter in other)
+                _parameters.Add(queryParameter.Key, queryParameter.Value);
+        }
+
+        #region IDictionary<string,string> Members
+
+        public string this[string key]
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(key))
+                    return null;
+
+                string value;
+                return !_parameters.TryGetValue(key, out value) ? null : value;
+            }
+            set
+            {
+                if (!_parameters.ContainsKey(key))
+                    _parameters.Add(key, value);
+                else
+                    _parameters[key] = value;
+            }
+        }
+        
+        public void Add(string key, string value)
+        {
+            _parameters.Add(key, value);
+        }
+
+        public bool ContainsKey(string key)
+        {
+            return _parameters.ContainsKey(key);
+        }
+
+        public ICollection<string> Keys
+        {
+            get { return _parameters.Keys; }
+        }
+
+        public bool Remove(string key)
+        {
+            return _parameters.Remove(key);
+        }
+
+        public bool TryGetValue(string key, out string value)
+        {
+            return _parameters.TryGetValue(key, out value);
+        }
+
+        public ICollection<string> Values
+        {
+            get { return _parameters.Values; }
+        }
+
+        #endregion
+
+        #region ICollection<KeyValuePair<string,string>> Members
+
+        public void Clear()
+        {
+            _parameters.Clear();
+        }
+
+        public void Add(KeyValuePair<string, string> item)
+        {
+            ((ICollection<KeyValuePair<string, string>>)_parameters).Add(item);
+        }
+
+        public bool Contains(KeyValuePair<string, string> item)
+        {
+            return ((ICollection<KeyValuePair<string,string>>)_parameters).Contains(item);
+        }
+
+        public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
+        {
+            ((ICollection<KeyValuePair<string, string>>)_parameters).CopyTo(array, arrayIndex);
+        }
+
+        public int Count
+        {
+            get { return _parameters.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public bool Remove(KeyValuePair<string, string> item)
+        {
+            return ((ICollection<KeyValuePair<string, string>>) _parameters).Remove(item);
+        }
+
+        #endregion
+
+        #region IEnumerable<KeyValuePair<string,string>> Members
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            return _parameters.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return _parameters.GetEnumerator();
+        }
+
+        #endregion
+    }
 }

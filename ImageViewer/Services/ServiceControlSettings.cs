@@ -15,7 +15,8 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Services
 {
-	[SettingsGroupDescription("Provides settings for control of services.")]
+    //TODO (Marmot): should this be a shared setting in the local database?
+    [SettingsGroupDescription("Provides settings for control of services.")]
 	[SettingsProvider(typeof(ApplicationCriticalSettingsProvider))]
 	internal sealed partial class ServiceControlSettings
 	{

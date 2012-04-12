@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Local
                 frameLookAhead = null;
 
             var coreStrategy = new SimpleCorePrefetchingStrategy(frame => frame.ParentImageSop.DataSource is LocalStoreSopDataSource);
-            PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(coreStrategy, "DICOM_LOCAL", "Simple prefetcing strategy for local data store images.")
+            PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(coreStrategy, "DICOM_LOCAL", "Simple prefetcing strategy for local images.")
                                       {
                                           Enabled = PreLoadingSettings.Default.Enabled,
                                           RetrievalThreadConcurrency = PreLoadingSettings.Default.Concurrency,

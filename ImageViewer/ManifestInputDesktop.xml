@@ -9,7 +9,6 @@
     <File name="uninstall.log" ignore="true" />
     <File name="ClearCanvas.Desktop.Executable.exe" checksum="true" />
     <File name="ClearCanvas.Desktop.Executable.exe.config" config="true" />
-    <File name="ClearCanvas.Dicom.DataStore.cfg.xml" />
     <File name="ClearCanvas.Server.ShredHostService.exe" checksum="true" />
     <File name="ClearCanvas.Server.ShredHostService.exe.config" config="false" />
     <File name="ClearCanvas.Executable.exe" checksum="true" />
@@ -20,7 +19,7 @@
     <File name="Logging.config" />
     <File name="common\ClearCanvas.Common.dll" checksum="true" />
     <File name="common\ClearCanvas.ImageViewer.Common.dll" checksum="true" />
-    <File name="common\ClearCanvas.Dicom.DataStore.dll" checksum="true" />
+    <File name="common\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" checksum="true" />
     <File name="common\ClearCanvas.Dicom.dll" checksum="true" />
     <File name="common\ClearCanvas.Server.ShredHost.dll" checksum="true" />
     <File name="common\DotNetMagic2005.DLL" />
@@ -70,7 +69,5 @@
     <File name="plugins\ClearCanvas.ImageViewer.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Jscript.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Utilities.Manifest.dll" checksum="true" />
-    <File name="dicom_datastore\empty_viewer.sdf" />
-    <File name="dicom_datastore\viewer.sdf" />
   </Files>
 </ManifestInput>

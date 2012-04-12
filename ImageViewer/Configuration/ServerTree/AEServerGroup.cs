@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
@@ -33,14 +34,20 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
         public string GroupID { get; set; }
 
+        [Obsolete("Use IsLocalServer instead.")]
         public bool IsLocalDatastore
+        {
+            get { return IsLocalServer; }
+        }
+
+        public bool IsLocalServer
         {
             get
             {
                 if (_servers.Count != 1)
                     return false;
 
-                if (_servers[0].IsLocalDataStore)
+                if (_servers[0].IsLocalServer)
                     return true;
                 else
                     return false;

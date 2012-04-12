@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ClearCanvas.Dicom;
@@ -44,10 +43,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             get
             {
-                if (Criterion == null)
-                    return String.Empty;
-
-                return Criterion.ToString();
+                return Criterion == null ? String.Empty : Criterion.ToString();
             }
         }
 
@@ -90,16 +86,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return returnQuery;
         }
 
-        protected IQueryable<T> AddToQuery(IQueryable<T> query, string[] criterionValues)
+        protected IQueryable<T> AddToQuery(IQueryable<T> inputQuery, string[] criterionValues)
         {
             IQueryable<T> unionedQuery = null;
-            foreach (var criterionValue in criterionValues.Where(v => !String.IsNullOrEmpty(v)))
+            foreach (var criterionValue in criterionValues.Where(value => !String.IsNullOrEmpty(value)))
             {
-                var criterionQuery = AddToQuery(query, criterionValue);
+                var criterionQuery = AddToQuery(inputQuery, criterionValue);
                 unionedQuery = unionedQuery == null ? criterionQuery : unionedQuery.Union(criterionQuery);
             }
 
-            return unionedQuery ?? query;
+            return unionedQuery ?? inputQuery;
         }
 
         protected virtual IQueryable<T> AddEqualsToQuery(IQueryable<T> query, string criterion)
@@ -160,8 +156,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             IEnumerable<T> unionedResults = null;
             foreach (var criterionValue in criterionValues)
             {
-                var c = criterionValue;
-                var criterionResults = resultsList.Where(result => IsMatch(result, c));
+                var criterion = criterionValue;
+                var criterionResults = resultsList.Where(result => IsMatch(result, criterion));
                 unionedResults = unionedResults == null ? criterionResults : unionedResults.Union(criterionResults);
             }
 
@@ -170,6 +166,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected IEnumerable<T> FilterResults(IEnumerable<T> results, string criterionValue)
         {
+            //DICOM says if we maintain an object with an empty value, it's a match for any criteria.
             if (string.IsNullOrEmpty(criterionValue))
                 return results;
 

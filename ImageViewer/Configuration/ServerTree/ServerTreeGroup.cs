@@ -38,6 +38,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
         public bool IsLocalDataStore
         {
+            get { return IsLocalServer; }
+        }
+
+        public bool IsLocalServer
+        {
             get { return false; }
         }
 

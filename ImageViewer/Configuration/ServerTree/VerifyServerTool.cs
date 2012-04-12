@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			this.Enabled = !this.Context.SelectedServers.IsLocalDatastore && !this.NoServersSelected();                 
+			this.Enabled = !this.Context.SelectedServers.IsLocalServer && !this.NoServersSelected();                 
 		}
 	}
 }

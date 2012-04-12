@@ -80,6 +80,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
         public bool IsLocalDataStore
         {
+            get { return IsLocalServer; }
+        }
+
+        public bool IsLocalServer
+        {
             get { return true; }
         }
 
@@ -137,8 +142,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
                                          DisplayName,
                                          _dicomServerConfigurationProvider.AETitle,
                                          _dicomServerConfigurationProvider.HostName,
-                                         _dicomServerConfigurationProvider.Port,
-                                         _dicomServerConfigurationProvider.FileStoreDirectory);
+                                         _dicomServerConfigurationProvider.Port);
                 }
             }
             catch (Exception e)

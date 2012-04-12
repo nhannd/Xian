@@ -68,11 +68,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_studyBrowserComponent.SearchEnded += OnStudyBrowserComponentSearchCompleted;
 
 			// if initially selected server is local, begin an initial dicom query
-			if (_serverTreeComponent.ShowLocalDataStoreNode && _serverTreeComponent.SelectedServers.IsLocalDatastore)
+			if (_serverTreeComponent.ShowLocalServerNode && _serverTreeComponent.SelectedServers.IsLocalServer)
 			{
 				try
 				{
-					var queryParamList = new List<QueryParameters> {_studyBrowserComponent.CreateOpenSearchQueryParams()};
+                    var queryParams = new QueryParameters();
+					var queryParamList = new List<QueryParameters> {queryParams};
 					_studyBrowserComponent.Search(queryParamList);
 				}
 				catch (PolicyException)
@@ -112,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public static DicomExplorerComponent Create()
 		{
 			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
-			serverTreeComponent.ShowLocalDataStoreNode = StudyStore.IsSupported;
+			serverTreeComponent.ShowLocalServerNode = StudyStore.IsSupported;
 
 			bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
 			serverTreeComponent.IsReadOnly = !hasEditPermission;
@@ -189,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private static void SelectDefaultServerNode(ServerTreeComponent serverTreeComponent)
 		{
-			if (serverTreeComponent.ShowLocalDataStoreNode &&
+			if (serverTreeComponent.ShowLocalServerNode &&
 				!DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup)
 			{
 				serverTreeComponent.SetSelection(serverTreeComponent.ServerTree.LocalServer);
@@ -212,7 +213,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             if (initialSelection == null)
             {
-                if (serverTreeComponent.ShowLocalDataStoreNode)
+                if (serverTreeComponent.ShowLocalServerNode)
                     initialSelection = serverTreeComponent.ServerTree.LocalServer;
                 else
                     initialSelection = serverTreeComponent.ServerTree.RootServerGroup;

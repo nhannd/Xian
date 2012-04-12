@@ -95,6 +95,7 @@
     <Compile Include="OpenStudyTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StudyBrowserComponent.cs" />
+    <Compile Include="SearchResult2.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

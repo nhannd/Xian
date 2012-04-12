@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
@@ -211,7 +210,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    //TODO (Marmot): Still need to make this work.
     internal class ModalitiesInStudy : StringPropertyFilter<Study>
     {
         public ModalitiesInStudy(DicomAttributeCollection criteria)

@@ -314,7 +314,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		    //TODO (Marmot): Perfect candidate for service node changes.
 			IStudyRootQuery query;
-			if (_server.IsLocalDataStore)
+			if (_server.IsLocalServer)
 			{
 			    query = new StudyStoreBridge();
 			}

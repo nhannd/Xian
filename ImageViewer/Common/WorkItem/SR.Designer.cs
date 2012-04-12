@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reindex of the local file store.
+        ///   Looks up a localized string similar to Re-index of the local file store.
         /// </summary>
         internal static string ReindexRequest_ActivityDescription {
             get {
@@ -277,7 +277,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reindex.
+        ///   Looks up a localized string similar to Re-index.
         /// </summary>
         internal static string ReindexRequest_ActivityType {
             get {
