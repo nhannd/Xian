@@ -388,7 +388,10 @@
       <DependentUpon>ExtensionSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="FatalExceptionHandler.cs" />
+    <Compile Include="ILicenseProvider.cs" />
+    <Compile Include="ILicenseDetailsProvider.cs" />
     <Compile Include="IUserCredentialsProvider.cs" />
+    <Compile Include="LicenseInformation.cs" />
     <Compile Include="LicenseSettings.cs" />
     <Compile Include="ProductSettings.cs" />
     <Compile Include="ProductSettings.Designer.cs">
