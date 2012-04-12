@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using ClearCanvas.Dicom;
 
@@ -24,11 +23,15 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 			node.SetAttributeValue(XName.Get("expressionLanguage"), "dicom");
 			if (conditions.Count > 0)
 			{
-				return Junction(junction == JunctionType.MatchAllConditions ? "and" : "or", conditions.Select(Condition));
+				node.Add(
+					Junction(junction == JunctionType.MatchAllConditions ? "and" : "or", conditions.Select(Condition)));
+			}
+			else
+			{
+				// TODO: this is a dummy expr which should return true for all studies - is there a better way to do this??
+				node.Add(Element("not-null", DicomTagDictionary.GetDicomTag("StudyInstanceUid"), new Dictionary<string, string>()));
 			}
 
-			// TODO: this is a dummy expr which should return true for all studies - is there a better way to do this??
-			node.Add(Element("not-null", DicomTagDictionary.GetDicomTag("StudyInstanceUid"), new Dictionary<string, string>()));
 			return node;
 		}
 
@@ -37,9 +40,9 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 			switch(input.Operator)
 			{
 				case ComparisonOperator.EqualTo:
-					return Equality("equal", input.Tag, input.Value);
+					return Regex(input.Tag, string.Format("^{0}$", input.Value));
 				case ComparisonOperator.NotEqualTo:
-					return Equality("not-equal", input.Tag, input.Value);
+					return Not(Regex(input.Tag, string.Format("^{0}$", input.Value)));
 				case ComparisonOperator.Contains:
 					return Regex(input.Tag, string.Format("{0}", input.Value));
 				case ComparisonOperator.DoesNotContain:
@@ -57,11 +60,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 			var node = new XElement(XName.Get(op));
 			node.Add(childNodes);
 			return node;
-		}
-
-		private static XElement Equality(string op, DicomTag tag, string value)
-		{
-			return Element(op, tag, new Dictionary<string, string> {{"refValue", value}});
 		}
 
 		private static XElement Regex(DicomTag tag, string pattern)

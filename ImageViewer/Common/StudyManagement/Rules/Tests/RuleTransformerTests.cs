@@ -6,13 +6,25 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities.Rules.Specifications;
 using NUnit.Framework;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 {
 	[TestFixture]
 	class RuleTransformerTests
 	{
+		public RuleTransformerTests()
+		{
+			Platform.SetExtensionFactory(new UnitTestExtensionFactory(
+				new Dictionary<Type, Type>()
+					{
+						{typeof(ExpressionFactoryExtensionPoint), typeof(DicomExpressionFactory)}
+					}));
+		}
+
 		[Test]
 		public void Test_no_conditions()
 		{
@@ -20,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Conditions(rule.Conditions, rule.Junction);
 
-			var spec = Compile(xml);
+			var spec = Compile(xml, false);
 			Assert.IsInstanceOfType(typeof(NotNullSpecification), spec);
 
 			var notNull = (NotNullSpecification)spec;
@@ -36,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Conditions(rule.Conditions, rule.Junction);
 
-			var spec = Compile(xml);
+			var spec = Compile(xml, false);
 			Assert.IsInstanceOfType(typeof(AndSpecification), spec);
 
 			var junction = (AndSpecification)spec;
@@ -52,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Conditions(rule.Conditions, rule.Junction);
 
-			var spec = Compile(xml);
+			var spec = Compile(xml, false);
 			Assert.IsInstanceOfType(typeof(OrSpecification), spec);
 
 			var junction = (OrSpecification)spec;
@@ -69,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Conditions(rule.Conditions, rule.Junction);
 
-			var spec = Compile(xml);
+			var spec = Compile(xml, false);
 			Assert.IsInstanceOfType(typeof(AndSpecification), spec);
 
 			var junction = (CompositeSpecification)spec;
@@ -79,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			rule.Junction = JunctionType.MatchAnyCondition;
 			xml = transformer.Conditions(rule.Conditions, rule.Junction);
 
-			spec = Compile(xml);
+			spec = Compile(xml, false);
 			Assert.IsInstanceOfType(typeof(OrSpecification), spec);
 
 			junction = (CompositeSpecification)spec;
@@ -93,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Condition(condition);
 
-			var spec = Compile(new XElement(XName.Get("condition"), xml));
+			var spec = Compile(xml, true);
 			Assert.IsInstanceOfType(typeof(RegexSpecification), spec);
 
 			var typedSpec = (RegexSpecification)spec;
@@ -110,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Condition(condition);
 
-			var spec = Compile(new XElement(XName.Get("condition"), xml));
+			var spec = Compile(xml, true);
 
 			Assert.IsInstanceOfType(typeof(NotSpecification), spec);
 			var notSpec = (NotSpecification) spec;
@@ -131,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Condition(condition);
 
-			var spec = Compile(new XElement(XName.Get("condition"), xml));
+			var spec = Compile(xml, true);
 			Assert.IsInstanceOfType(typeof(RegexSpecification), spec);
 
 			var typedSpec = (RegexSpecification)spec;
@@ -148,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Condition(condition);
 
-			var spec = Compile(new XElement(XName.Get("condition"), xml));
+			var spec = Compile(xml, true);
 
 			Assert.IsInstanceOfType(typeof(NotSpecification), spec);
 			var notSpec = (NotSpecification)spec;
@@ -169,7 +181,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Condition(condition);
 
-			var spec = Compile(new XElement(XName.Get("condition"), xml));
+			var spec = Compile(xml, true);
 			Assert.IsInstanceOfType(typeof(RegexSpecification), spec);
 
 			var typedSpec = (RegexSpecification)spec;
@@ -186,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			var transformer = new RuleTransformer();
 			var xml = transformer.Condition(condition);
 
-			var spec = Compile(new XElement(XName.Get("condition"), xml));
+			var spec = Compile(xml, true);
 			Assert.IsInstanceOfType(typeof(RegexSpecification), spec);
 
 			var typedSpec = (RegexSpecification)spec;
@@ -196,8 +208,9 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules.Tests
 			Assert.IsFalse(typedSpec.NullMatches);
 		}
 
-		private static ISpecification Compile(XElement xml)
+		private static ISpecification Compile(XElement xml, bool wrap)
 		{
+			xml = wrap ? new XElement(XName.Get("condition"), xml) : xml;
 			var compiler = new XmlSpecificationCompiler("dicom");
 			return compiler.Compile(GetXmlElement(xml));
 		}
