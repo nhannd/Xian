@@ -12,11 +12,12 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
-    public class StudyDeleteActionItem : ServerActionItemBase
+    public class StudyDeleteActionItem : ActionItemBase<ServerActionContext>
     {
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.DeleteStudy;
         private readonly Expression _exprScheduledTime;

@@ -15,6 +15,7 @@ using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction

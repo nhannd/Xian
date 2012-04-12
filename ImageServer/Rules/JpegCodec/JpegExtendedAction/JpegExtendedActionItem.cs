@@ -14,6 +14,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
@@ -21,7 +22,7 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 	/// <summary>
 	/// JPEG Extended 2/4 action for <see cref="ServerRulesEngine"/>.
 	/// </summary>
-	public class JpegExtendedActionItem : ServerActionItemBase
+	public class JpegExtendedActionItem : ActionItemBase<ServerActionContext>
 	{
 		private static readonly FilesystemQueueTypeEnum QueueType = FilesystemQueueTypeEnum.LossyCompress;
 		private readonly Expression _exprScheduledTime;

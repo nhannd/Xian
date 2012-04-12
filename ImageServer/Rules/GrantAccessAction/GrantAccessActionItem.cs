@@ -12,13 +12,14 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Dicom.Utilities.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
 {
     /// <summary>
     /// Class for implementing auto-route action as specified by <see cref="IActionItem{T}"/>
     /// </summary>
-    public class GrantAccessActionItem : ServerActionItemBase
+    public class GrantAccessActionItem : ActionItemBase<ServerActionContext>
     {
         readonly private string _oid;
         #region Constructors

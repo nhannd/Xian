@@ -12,13 +12,14 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Dicom.Utilities.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
     /// <summary>
     /// Class for implementing auto-route action as specified by <see cref="IActionItem{T}"/>
     /// </summary>
-    public class AutoRouteActionItem : ServerActionItemBase
+    public class AutoRouteActionItem : ActionItemBase<ServerActionContext>
     {
         readonly private string _device;
     	private readonly DateTime? _startTime;

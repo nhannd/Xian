@@ -17,6 +17,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -27,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
     public class ImageServerStudyLoader : StudyLoader
     {
         private IEnumerator<InstanceXml> _instances;
-        private IStreamingServerApplicationEntity _ae;
+        private IDicomServiceNode _ae;
         private StudyStorageLocation _location;
         public ImageServerStudyLoader()
             : base("CC_ImageServer")
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
         {
-            var ae = studyLoaderArgs.Server as IStreamingServerApplicationEntity;
+            var ae = studyLoaderArgs.Server as IDicomServiceNode;
             _ae = ae;
 
             EventResult result = EventResult.Success;

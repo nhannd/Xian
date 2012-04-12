@@ -12,13 +12,14 @@
 using System.Xml;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.Dicom.Utilities.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 {
 	/// <summary>
 	/// JPEG Extended 2/4 SOP Compression ActionItem for <see cref="ServerRulesEngine"/>.
 	/// </summary>
-	public class JpegExtendedSopActionItem : ServerActionItemBase
+    public class JpegExtendedSopActionItem : ActionItemBase<ServerActionContext>
 	{
 		private readonly int _quality;
 		private readonly bool _convertFromPalette;

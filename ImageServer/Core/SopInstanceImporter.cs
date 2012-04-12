@@ -26,6 +26,7 @@ using ClearCanvas.ImageServer.Core.Diagnostics;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using SaveDicomFileCommand = ClearCanvas.ImageServer.Core.Command.SaveDicomFileCommand;
 
 namespace ClearCanvas.ImageServer.Core
 {
