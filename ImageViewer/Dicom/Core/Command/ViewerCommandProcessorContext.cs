@@ -22,11 +22,15 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
     public class ViewerCommandProcessorContext : ICommandProcessorContext
     {
         private bool _disposed;
+        private DataAccessContext _context;
 
-        public DataAccessContext DataAccessContext { get; private set; }
+        public DataAccessContext DataAccessContext
+        {
+            get { return _context ?? (_context = new DataAccessContext(DataAccessContext.WorkItemMutex)); }
+        }
+
         public ViewerCommandProcessorContext()
         {
-            DataAccessContext = new DataAccessContext();
             BackupDirectory = Path.GetTempPath();
         }
 
@@ -37,10 +41,10 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             
             _disposed = true;
             
-            if (DataAccessContext != null)
+            if (_context != null)
             {
-                DataAccessContext.Dispose();
-                DataAccessContext = null;
+                _context.Dispose();
+                _context = null;
             }
         }
 
@@ -61,10 +65,10 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         public void Rollback()
         {
-            if (DataAccessContext != null)
+            if (_context != null)
             {
-                DataAccessContext.Dispose();
-                DataAccessContext = null;
+                _context.Dispose();
+                _context = null;
             }
         }
 

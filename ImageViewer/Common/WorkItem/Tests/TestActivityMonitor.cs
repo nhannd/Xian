@@ -30,8 +30,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         public long[] WorkItemIdFilters { get; set; }
 
         public event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
+    	public void Refresh()
+    	{
+    		throw new NotImplementedException();
+    	}
 
-        #endregion
+    	#endregion
 
         void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
         {

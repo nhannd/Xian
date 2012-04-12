@@ -80,6 +80,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					return this;
 
 				// whatever is on the screen is out-of-date and should be refreshed
+				this.Component.ActivityMonitor.WorkItemChanged += this.Component.WorkItemChanged;
 				this.Component.RefreshInternal();
 				return new ConnectedState(this.Component);
 			}
@@ -255,23 +256,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region WorkItemUpdateManager class
+
 		internal class WorkItemUpdateManager
 		{
 			private readonly ItemCollection<WorkItem> _items;
+			private readonly Dictionary<long, WorkItem> _failures;
 			private readonly Predicate<WorkItem> _filter;
 
 			public WorkItemUpdateManager(ItemCollection<WorkItem> itemCollection, Predicate<WorkItem> filter)
 			{
 				_items = itemCollection;
 				_filter = filter;
+				_failures = new Dictionary<long, WorkItem>();
 			}
 
-			public void SetItems(IEnumerable<WorkItem> items)
+			public int FailedItemCount
+			{
+				get { return _failures.Values.Count(item => item.Status == WorkItemStatusEnum.Failed); }
+			}
+
+			public void Clear()
 			{
 				_items.Clear();
-				_items.AddRange(items.Where(Include));
+				_failures.Clear();
 			}
-
 
 			public void Update(WorkItem newItem)
 			{
@@ -296,6 +305,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					}
 				}
 
+				// track failures
+				if(newItem.Status == WorkItemStatusEnum.Failed || _failures.ContainsKey(newItem.Id))
+				{
+					_failures[newItem.Id] = newItem;
+				}
+
 			}
 
 			private bool Include(WorkItem item)
@@ -303,6 +318,109 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return _filter(item);
 			}
 		}
+
+		#endregion
+
+		#region StudyCountWatcher class
+
+		class StudyCountWatcher : IDisposable
+		{
+			private int _studyCount;
+			private readonly Timer _throttleTimer;
+			private readonly System.Action _onChanged;
+
+			public StudyCountWatcher(System.Action onChanged)
+			{
+				_throttleTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(5));
+				_onChanged = onChanged;
+			}
+
+			public void Invalidate()
+			{
+				_throttleTimer.Start();
+			}
+
+			public void Dispose()
+			{
+				_throttleTimer.Dispose();
+			}
+
+			public int StudyCount
+			{
+				get
+				{
+					if (_studyCount == -1)
+					{
+						try
+						{
+							Platform.GetService<IStudyStore>(s => _studyCount = s.GetStudyCount(new GetStudyCountRequest()).StudyCount);
+						}
+						catch (Exception e)
+						{
+							//TODO (Marmot): Show something to the user?
+							Platform.Log(LogLevel.Error, e, "Error getting the count of studies in the local store.");
+						}
+					}
+					return _studyCount;
+				}
+			}
+
+			private void OnTimerElapsed(object state)
+			{
+				_throttleTimer.Stop();
+				_studyCount = -1;	// invalidate
+				_onChanged();
+			}
+		}
+
+		#endregion
+
+		#region DiskspaceWatcher class
+
+		class DiskspaceWatcher : IDisposable
+		{
+			private Diskspace _diskspace;
+			private readonly Timer _refreshTimer;
+			private readonly System.Action _onChanged;
+			private readonly Func<string> _fileStorePathProvider;
+
+			public DiskspaceWatcher(Func<string> fileStorePathProvider, System.Action onChanged)
+			{
+				_fileStorePathProvider = fileStorePathProvider;
+				_refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
+				_onChanged = onChanged;
+			}
+
+			public void Start()
+			{
+				_refreshTimer.Start();
+			}
+
+			public void Dispose()
+			{
+				_refreshTimer.Dispose();
+			}
+
+			public Diskspace Diskspace
+			{
+				get
+				{
+					if (_diskspace == null)
+					{
+						_diskspace = new Diskspace(_fileStorePathProvider().Substring(0, 1));
+					}
+					return _diskspace;
+				}
+			}
+
+			private void OnTimerElapsed(object state)
+			{
+				_diskspace = null;	// invalidate
+				_onChanged();
+			}
+		}
+
+		#endregion
 
 		class WorkItemActionModel : SimpleActionModel
 		{
@@ -327,25 +445,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private string _textFilter;
 		private readonly Timer _textFilterTimer;
 
-		private Diskspace _diskspace;
-		private readonly Timer _diskspaceTimer;
+		private readonly DiskspaceWatcher _diskspaceWatcher;
+		private readonly StudyCountWatcher _studyCountWatcher;
 
-		private int _totalStudies;
 
 	    public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
-			_diskspaceTimer = new Timer(OnDiskspaceTimerElapsed, null, TimeSpan.FromSeconds(60));
-
-	    	_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
+			_diskspaceWatcher = new DiskspaceWatcher(() => this.FileStore, OnDiskspaceChanged);
+			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
+			_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
 		}
 
 		public override void Start()
 		{
 			base.Start();
-
-		    UpdateStudyCount();		
 
 			_dicomConfigProvider = DicomServerConfigurationHelper.GetConfigurationProvider();
 			_dicomConfigProvider.Changed += DicomServerConfigurationChanged;
@@ -364,7 +479,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			this.ActivityMonitor.IsConnectedChanged += ActivityMonitorIsConnectedChanged;
 
-			_diskspaceTimer.Start();
+			_diskspaceWatcher.Start();
 		}
 
 		public override void Stop()
@@ -378,7 +493,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_dicomConfigProvider = null;
 
 			_textFilterTimer.Dispose();
-			_diskspaceTimer.Dispose();
+			_diskspaceWatcher.Dispose();
+			_studyCountWatcher.Dispose();
 
 			base.Stop();
 		}
@@ -412,14 +528,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public int DiskspaceUsedPercent
 		{
-			get { return this.Diskspace.UsedSpacePercent; }
+			get { return _diskspaceWatcher.Diskspace.UsedSpacePercent; }
 		}
 
 		public string DiskspaceUsed
 		{
 			get
 			{
-				var ds = this.Diskspace;
+				var ds = _diskspaceWatcher.Diskspace;
 				return string.Format(SR.DiskspaceTemplate,
 					Diskspace.FormatBytes(ds.UsedSpace),
 					Diskspace.FormatBytes(ds.TotalSpace),
@@ -429,18 +545,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 	    public int TotalStudies
 	    {
-            get { return _totalStudies; }
-            private set
-            {
-                if (value == _totalStudies)
-                    return;
-
-                _totalStudies = value;
-                NotifyPropertyChanged("TotalStudies");
-            }
+            get { return _studyCountWatcher.StudyCount; }
 	    }
 
-		public int Failures { get; private set; }
+		public int Failures
+		{
+			get { return _workItemManager.FailedItemCount; }
+		}
 
 		public ActionModelNode WorkItemActions
 		{
@@ -585,52 +696,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void WorkItemChanged(object sender, WorkItemChangedEventArgs e)
 		{
-		    UpdateStudyCount(e.ItemData);
+			var workItem = e.ItemData;
+			if (workItem.Type != WorkItemTypeEnum.ReapplyRules && workItem.Type != WorkItemTypeEnum.DicomSend)
+			{
+				_studyCountWatcher.Invalidate();
+			}
 
 			_workItemManager.Update(new WorkItem(e.ItemData));
+
+			// tell view to update this value
+			NotifyPropertyChanged("Failures");
 		}
 
-        private void UpdateStudyCount(WorkItemData workItem)
-        {
-            if (workItem.Type == WorkItemTypeEnum.ReapplyRules || workItem.Type == WorkItemTypeEnum.DicomSend)
-                return;
-
-            UpdateStudyCount();
-        }
-
-        private void UpdateStudyCount()
-        {
-            try
-            {
-                Platform.GetService<IStudyStore>(s => TotalStudies = s.GetStudyCount(new GetStudyCountRequest()).StudyCount);
-            }
-            catch (Exception e)
-            {
-                //TODO (Marmot): Show something to the user?
-                Platform.Log(LogLevel.Error, e, "Error getting the count of studies in the local store.");
-            }
-        }
-
 	    private void RefreshInternal()
-		{
-			this.ActivityMonitor.WorkItemChanged -= WorkItemChanged;
+	    {
+	    	_workItemManager.Clear();
 
 			try
 			{
-				Platform.GetService<IWorkItemService>(
-					service =>
-					{
-						var response = service.Query(new WorkItemQueryRequest());
-						_workItemManager.SetItems(response.Items.Select(wd => new WorkItem(wd)));
-					});
+				this.ActivityMonitor.Refresh();
 			}
 			catch (Exception e)
 			{
 				// don't show a message box here, since the user may not even be looking at this workspace
 				Platform.Log(LogLevel.Error, e);
 			}
-
-			this.ActivityMonitor.WorkItemChanged += WorkItemChanged;
 		}
 
 		private bool Include(WorkItem item)
@@ -653,24 +743,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			RefreshInternal();
 		}
 
-		private void OnDiskspaceTimerElapsed(object state)
+		private void OnStudyCountChanged()
 		{
-			_diskspace = null;	// invalidate
-
-			NotifyPropertyChanged("DiskspaceUsed");
-			NotifyPropertyChanged("DiskspaceUsedPercent");
+			NotifyPropertyChanged("TotalStudies");
 		}
 
-		private Diskspace Diskspace
+		private void OnDiskspaceChanged()
 		{
-			get
-			{
-				if (_diskspace == null)
-				{
-					_diskspace = new Diskspace(this.FileStore.Substring(0, 1));
-				}
-				return _diskspace;
-			}
+			NotifyPropertyChanged("DiskspaceUsed");
+			NotifyPropertyChanged("DiskspaceUsedPercent");
 		}
 
 	}
