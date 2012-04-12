@@ -41,10 +41,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
         public bool CanMove(IServerTreeNode destinationNode, IServerTreeNode addMoveNode)
         {
-            if (destinationNode.IsServer)
-                return false;
-
-            if (destinationNode == addMoveNode)
+            if (destinationNode == addMoveNode || !destinationNode.IsServerGroup)
                 return false;
 
             if (addMoveNode == RootServerGroup || addMoveNode == LocalServer)
