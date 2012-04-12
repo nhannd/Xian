@@ -20,6 +20,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         private int _workItemChanged2Count;
         private int _workItemChanged3Count;
         private int _workItemChangedCallbackCount;
+        //TODO (Marmot):Need to actually do something to test this.
+        private int _studiesClearedCallbackCount;
 
         private int _expectedAsyncEventCount;
         private volatile bool _expectingAsyncEvents;
@@ -307,6 +309,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             lock (_syncLock)
             {
                 ++_workItemChangedCallbackCount;
+                --_expectedAsyncEventCount;
+                Monitor.Pulse(_syncLock);
+            }
+        }
+
+        void IWorkItemActivityCallback.StudiesCleared()
+        {
+            lock (_syncLock)
+            {
+                ++_studiesClearedCallbackCount;
                 --_expectedAsyncEventCount;
                 Monitor.Pulse(_syncLock);
             }

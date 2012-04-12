@@ -23,6 +23,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 _realActivityMonitor.OnWorkItemChanged(workItemData);
             }
+
+            public override void StudiesCleared()
+            {
+                _realActivityMonitor.OnStudiesCleared();
+            }
         }
 
         internal static TimeSpan ConnectionRetryInterval = TimeSpan.FromSeconds(5);
@@ -39,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         private IList<WorkItemTypeEnum> _workItemTypeFilters;
         private IList<long> _workItemIdFilters;
         private event EventHandler<WorkItemChangedEventArgs> _workItemChanged;
+        private event EventHandler _studiesCleared;
 
         private volatile IWorkItemActivityMonitorService _client;
 
@@ -119,6 +125,27 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
+        public override event EventHandler StudiesCleared
+        {
+            add
+            {
+                lock (_syncLock)
+                {
+                    _studiesCleared += value;
+                    Monitor.Pulse(_syncLock);
+                }
+            }
+            remove
+            {
+                lock (_syncLock)
+                {
+                    _studiesCleared -= value;
+                    Monitor.Pulse(_syncLock);
+                }
+            }
+        }
+
+
         public override event EventHandler<WorkItemChangedEventArgs> WorkItemChanged
         {
             add
@@ -138,7 +165,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 }
             }
         }
-
 
         private void MonitorConnection(object ignore)
         {
@@ -316,6 +342,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             var args = new WorkItemChangedEventArgs(workItemData);
             //ThreadPool.QueueUserWorkItem(ignore => CallDelegates(delegates, args));
             CallDelegates(delegates, args);
+        }
+
+        private void OnStudiesCleared()
+        {
+            IList<Delegate> delegates;
+            lock (_syncLock)
+            {
+                delegates = _studiesCleared != null ? _studiesCleared.GetInvocationList() : new Delegate[0];
+            }
+
+            if (delegates.Count > 0)
+                CallDelegates(delegates, EventArgs.Empty);
         }
 
         private void CallDelegates(IEnumerable<Delegate> delegates, EventArgs e)

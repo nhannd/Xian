@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         private IList<WorkItemTypeEnum> _workItemTypeFilters;
         private IList<long> _workItemIdFilters;
         private event EventHandler<WorkItemChangedEventArgs> _workItemChanged;
+        private event EventHandler _studiesCleared;
 
         private volatile bool _disposed;
 
@@ -114,6 +115,30 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
+        public override event EventHandler StudiesCleared
+        {
+            add
+            {
+                CheckDisposed();
+
+                bool subscribeToReal = _studiesCleared == null;
+                if (subscribeToReal)
+                    _real.StudiesCleared += OnStudiesCleared;
+
+                _studiesCleared += value;
+            }
+            remove
+            {
+                CheckDisposed();
+
+                _studiesCleared -= value;
+
+                bool unsubscribeFromReal = _studiesCleared == null;
+                if (unsubscribeFromReal)
+                    _real.StudiesCleared -= OnStudiesCleared;
+            }
+        }
+
         private void OnIsConnectedChanged(object sender, EventArgs e)
         {
             if (_synchronizationContext != null)
@@ -130,6 +155,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 FireWorkItemChanged(e);
         }
 
+        private void OnStudiesCleared(object sender, EventArgs e)
+        {
+            if (_synchronizationContext != null)
+                _synchronizationContext.Post(ignore => FireStudiesCleared(e), null);
+            else
+                FireStudiesCleared(e);
+        }
+
         private void FireIsConnectedChanged()
         {
             if (!_disposed)
@@ -142,6 +175,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 EventsHelper.Fire(_workItemChanged, this, e);
         }
 
+        private void FireStudiesCleared(EventArgs e)
+        {
+            if (!_disposed)
+                EventsHelper.Fire(_studiesCleared, this, e);
+        }
 
         private void CheckDisposed()
         {

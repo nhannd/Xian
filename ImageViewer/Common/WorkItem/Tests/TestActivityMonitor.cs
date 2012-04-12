@@ -30,7 +30,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         public long[] WorkItemIdFilters { get; set; }
 
         public event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
-    	public void Refresh()
+        public event EventHandler StudiesCleared;
+        
+        public void Refresh()
     	{
     		throw new NotImplementedException();
     	}
@@ -41,6 +43,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         {
             if (this.WorkItemMatchesFilters(workItemData))
                 EventsHelper.Fire(WorkItemChanged, this, new WorkItemChangedEventArgs(workItemData));
+        }
+
+        void IWorkItemActivityCallback.StudiesCleared()
+        {
+            EventsHelper.Fire(StudiesCleared, this, EventArgs.Empty);
         }
 
         #region IDisposable Members

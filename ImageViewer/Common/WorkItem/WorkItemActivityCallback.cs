@@ -17,6 +17,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public interface IWorkItemActivityCallback
     {
         [OperationContract(IsOneWay = true)]
+        void StudiesCleared();
+
+        [OperationContract(IsOneWay = true)]
         void WorkItemChanged(WorkItemData workItemData);
     }
 
@@ -27,6 +30,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             public override void WorkItemChanged(WorkItemData workItemData)
             {
             }
+
+            public override void StudiesCleared()
+            {
+            }
         }
 
         public static readonly IWorkItemActivityCallback Nil = new NilCallback();
@@ -34,6 +41,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         #region IWorkItemActivityCallback Members
 
         public abstract void WorkItemChanged(WorkItemData workItemData);
+
+        public abstract void StudiesCleared();
 
         #endregion
     }

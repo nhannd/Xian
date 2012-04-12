@@ -15,7 +15,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         long[] WorkItemIdFilters { get; set; }
 
         event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
-    	void Refresh();
+        event EventHandler StudiesCleared;
+        void Refresh();
 
     }
 
@@ -80,6 +81,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public abstract long[] WorkItemIdFilters { get; set; }
 
         public abstract event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
+        public abstract event EventHandler StudiesCleared;
 
         public void Refresh()
         {
