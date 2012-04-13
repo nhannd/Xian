@@ -57,9 +57,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         public List<long> GetStudyOids()
         {
-            var oids = from s in Context.Studies select s.Oid;
-
             return GetSingleColumn<Study, long>(null, s => s.Oid);
+        }
+
+        public List<Study> GetStudies()
+        {
+            return (from s in Context.Studies                    
+                    select s).ToList();
         }
 
         /// <summary>
