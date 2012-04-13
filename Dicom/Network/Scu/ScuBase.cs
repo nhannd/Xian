@@ -219,7 +219,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// </summary>
 		public void Cancel()
 		{
-			if (LogInformation) Platform.Log(LogLevel.Info, "Canceling...");
+			if (LogInformation) Platform.Log(LogLevel.Info, "Canceling Scu...");
 			Status = ScuOperationStatus.Canceled;
 			ProgressEvent.Set();
 		}

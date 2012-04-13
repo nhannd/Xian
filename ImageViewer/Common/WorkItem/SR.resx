@@ -120,26 +120,14 @@
   <data name="DicomAutoRouteRequest_ActivityDescription" xml:space="preserve">
     <value>Auto Route to {0}</value>
   </data>
-  <data name="DicomAutoRouteRequest_ActivityType" xml:space="preserve">
-    <value>Auto Route</value>
-  </data>
   <data name="DicomReceiveRequest_ActivityDescription" xml:space="preserve">
     <value>DICOM Receive from {0}</value>
-  </data>
-  <data name="DicomReceiveRequest_ActivityType" xml:space="preserve">
-    <value>DICOM Receive</value>
   </data>
   <data name="DicomRetreiveRequest_ActivityDescription" xml:space="preserve">
     <value>Retrieve of Study from {0}</value>
   </data>
-  <data name="DicomRetreiveRequest_ActivityType" xml:space="preserve">
-    <value>DICOM Retrieve</value>
-  </data>
   <data name="DicomSendRequest_ActivityDescription" xml:space="preserve">
     <value>DICOM Send to {0}</value>
-  </data>
-  <data name="DicomSendRequest_ActivityType" xml:space="preserve">
-    <value>DICOM Send</value>
   </data>
   <data name="ImportFilesProgress_Status" xml:space="preserve">
     <value>{0} of {1} files imported, {2} failed</value>
@@ -147,13 +135,7 @@
   <data name="ImportFilesRequest_ActivityDescription" xml:space="preserve">
     <value>Importing Files from {0} locations</value>
   </data>
-  <data name="ImportFilesRequest_ActivityType" xml:space="preserve">
-    <value>Importing Files</value>
-  </data>
   <data name="ImportStudyRequest_AcitivityDescription" xml:space="preserve">
-    <value>Import Study</value>
-  </data>
-  <data name="ImportStudyRequest_ActivityType" xml:space="preserve">
     <value>Import Study</value>
   </data>
   <data name="Progress_Pending" xml:space="preserve">
@@ -231,8 +213,8 @@
   <data name="ActivityTypeEnumDicomRetrieve" xml:space="preserve">
     <value>DICOM Retrieve</value>
   </data>
-  <data name="ActivityTypeEnumDicomSend" xml:space="preserve">
-    <value>DICOM Send</value>
+  <data name="ActivityTypeEnumDicomSendStudy" xml:space="preserve">
+    <value>DICOM Send Study</value>
   </data>
   <data name="ActivityTypeEnumImportFiles" xml:space="preserve">
     <value>Import Files</value>
@@ -245,5 +227,20 @@
   </data>
   <data name="ActivityTypeEnumReIndex" xml:space="preserve">
     <value>Re-index</value>
+  </data>
+  <data name="ActivityTypeEnumDicomSendSeries" xml:space="preserve">
+    <value>DICOM Send Series</value>
+  </data>
+  <data name="ActivityTypeEnumPublishFiles" xml:space="preserve">
+    <value>Publish Files</value>
+  </data>
+  <data name="DicomSendSeriesRequest_ActivityDescription" xml:space="preserve">
+    <value>DICOM Send Series to {0}</value>
+  </data>
+  <data name="DicomSendStudyRequest_ActivityDescription" xml:space="preserve">
+    <value>DICOM Send Study to {0}</value>
+  </data>
+  <data name="PublishFilesRequest_ActivityDescription" xml:space="preserve">
+    <value>Publish Files to {0}</value>
   </data>
 </root>

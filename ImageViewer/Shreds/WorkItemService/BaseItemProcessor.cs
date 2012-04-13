@@ -121,13 +121,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             return true;
         }
 
-        public void Cancel()
+        public virtual void Cancel()
         {
             lock (_syncRoot)
                 _cancelPending = true;
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
             lock (_syncRoot)
                 _stopPending = true;

@@ -88,11 +88,20 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DICOM Send.
+        ///   Looks up a localized string similar to DICOM Send Series.
         /// </summary>
-        internal static string ActivityTypeEnumDicomSend {
+        internal static string ActivityTypeEnumDicomSendSeries {
             get {
-                return ResourceManager.GetString("ActivityTypeEnumDicomSend", resourceCulture);
+                return ResourceManager.GetString("ActivityTypeEnumDicomSendSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DICOM Send Study.
+        /// </summary>
+        internal static string ActivityTypeEnumDicomSendStudy {
+            get {
+                return ResourceManager.GetString("ActivityTypeEnumDicomSendStudy", resourceCulture);
             }
         }
         
@@ -111,6 +120,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string ActivityTypeEnumImportStudy {
             get {
                 return ResourceManager.GetString("ActivityTypeEnumImportStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publish Files.
+        /// </summary>
+        internal static string ActivityTypeEnumPublishFiles {
+            get {
+                return ResourceManager.GetString("ActivityTypeEnumPublishFiles", resourceCulture);
             }
         }
         
@@ -142,29 +160,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto Route.
-        /// </summary>
-        internal static string DicomAutoRouteRequest_ActivityType {
-            get {
-                return ResourceManager.GetString("DicomAutoRouteRequest_ActivityType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to DICOM Receive from {0}.
         /// </summary>
         internal static string DicomReceiveRequest_ActivityDescription {
             get {
                 return ResourceManager.GetString("DicomReceiveRequest_ActivityDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to DICOM Receive.
-        /// </summary>
-        internal static string DicomReceiveRequest_ActivityType {
-            get {
-                return ResourceManager.GetString("DicomReceiveRequest_ActivityType", resourceCulture);
             }
         }
         
@@ -178,15 +178,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DICOM Retrieve.
-        /// </summary>
-        internal static string DicomRetreiveRequest_ActivityType {
-            get {
-                return ResourceManager.GetString("DicomRetreiveRequest_ActivityType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to DICOM Send to {0}.
         /// </summary>
         internal static string DicomSendRequest_ActivityDescription {
@@ -196,11 +187,20 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DICOM Send.
+        ///   Looks up a localized string similar to DICOM Send Series to {0}.
         /// </summary>
-        internal static string DicomSendRequest_ActivityType {
+        internal static string DicomSendSeriesRequest_ActivityDescription {
             get {
-                return ResourceManager.GetString("DicomSendRequest_ActivityType", resourceCulture);
+                return ResourceManager.GetString("DicomSendSeriesRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DICOM Send Study to {0}.
+        /// </summary>
+        internal static string DicomSendStudyRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("DicomSendStudyRequest_ActivityDescription", resourceCulture);
             }
         }
         
@@ -223,15 +223,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing Files.
-        /// </summary>
-        internal static string ImportFilesRequest_ActivityType {
-            get {
-                return ResourceManager.GetString("ImportFilesRequest_ActivityType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Import Study.
         /// </summary>
         internal static string ImportStudyRequest_AcitivityDescription {
@@ -241,20 +232,20 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import Study.
-        /// </summary>
-        internal static string ImportStudyRequest_ActivityType {
-            get {
-                return ResourceManager.GetString("ImportStudyRequest_ActivityType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Pending..
         /// </summary>
         internal static string Progress_Pending {
             get {
                 return ResourceManager.GetString("Progress_Pending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publish Files to {0}.
+        /// </summary>
+        internal static string PublishFilesRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("PublishFilesRequest_ActivityDescription", resourceCulture);
             }
         }
         

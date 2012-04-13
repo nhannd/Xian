@@ -92,6 +92,9 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="WorkItemService\BaseItemProcessor.cs" />
+    <Compile Include="WorkItemService\DicomSend\DicomSendFactory.cs" />
+    <Compile Include="WorkItemService\DicomSend\DicomSendItemProcessor.cs" />
+    <Compile Include="WorkItemService\DicomSend\ImageViewerStorageScu.cs" />
     <Compile Include="WorkItemService\Import\ImportFactory.cs" />
     <Compile Include="WorkItemService\Import\ImportProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
@@ -153,7 +156,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="WorkItemService\DicomSend\" />
     <Folder Include="WorkItemService\StudyDelete\" />
   </ItemGroup>
   <ItemGroup>

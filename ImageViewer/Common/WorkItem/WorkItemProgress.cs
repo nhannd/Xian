@@ -166,4 +166,41 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
     }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemProgressDataContract("68BCA074-F1F1-4870-8ABD-281B31E10B6A")]
+    public class DicomSendProgress : WorkItemProgress
+    {
+        [DataMember(IsRequired = true)]
+        public int ImagesToSend { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int ImagesWarning { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int ImagesError { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int ImagesSuccess { get; set; }
+
+        public override string Status
+        {
+            get
+            {
+                
+                return string.Format("");
+            }
+        }
+
+        public override Decimal PercentComplete
+        {
+            get
+            {
+                if (ImagesToSend > 0)
+                    return (Decimal)(ImagesWarning+ImagesError+ImagesSuccess) / ImagesToSend;
+
+                return new decimal(0.0);
+            }
+        }
+    }
 }

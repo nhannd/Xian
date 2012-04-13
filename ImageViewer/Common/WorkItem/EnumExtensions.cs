@@ -84,8 +84,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     return SR.ActivityTypeEnumDicomReceive;
                 case ActivityTypeEnum.DicomRetrieve:
                     return SR.ActivityTypeEnumDicomRetrieve;
-                case ActivityTypeEnum.DicomSend:
-                    return SR.ActivityTypeEnumDicomSend;
+                case ActivityTypeEnum.DicomSendSeries:
+                    return SR.ActivityTypeEnumDicomSendSeries;
+                case ActivityTypeEnum.DicomSendStudy:
+                    return SR.ActivityTypeEnumDicomSendStudy;
+                case ActivityTypeEnum.PublishFiles:
+                    return SR.ActivityTypeEnumPublishFiles;
                 case ActivityTypeEnum.ImportFiles:
                     return SR.ActivityTypeEnumImportFiles;
                 case ActivityTypeEnum.ImportStudy:

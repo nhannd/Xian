@@ -29,17 +29,21 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         ImportStudy = 2,
         [EnumMember]
-        DicomSend = 3,
+        ImportFiles = 3,
         [EnumMember]
-        AutoRoute = 4,
+        DicomRetrieve = 4,
         [EnumMember]
-        ImportFiles = 5,
+        ReIndex = 5,
         [EnumMember]
-        DicomRetrieve = 6,
+        ReapplyRules = 6,
         [EnumMember]
-        ReIndex = 7,
+        DicomSendStudy = 7,
         [EnumMember]
-        ReapplyRules = 8,
+        DicomSendSeries = 8,
+        [EnumMember]
+        AutoRoute = 9,
+        [EnumMember]
+        PublishFiles = 10,
     }
 
     public static class WorkItemRequestTypeProvider
@@ -55,6 +59,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           //Study related requests
                                                           typeof (WorkItemStudyRequest),
                                                           typeof (DicomSendRequest),
+                                                          typeof (DicomSendSeriesRequest),
+                                                          typeof (DicomSendStudyRequest),
+                                                          typeof (PublishFilesRequest),
                                                           typeof (DicomAutoRouteRequest),
                                                           typeof (DicomRetrieveRequest),
                                                           typeof (StudyProcessRequest),
@@ -66,6 +73,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (StudyProcessProgress),
                                                           typeof (ImportFilesProgress),
                                                           typeof (ReindexProgress),
+                                                          typeof (DicomSendProgress),
                                                       };
 
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider ignored)
@@ -82,6 +90,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [XmlInclude(typeof(ImportFilesRequest))]
     [XmlInclude(typeof(ReindexRequest))]
     [XmlInclude(typeof(DicomSendRequest))]
+    [XmlInclude(typeof(DicomSendStudyRequest))]
+    [XmlInclude(typeof(DicomSendSeriesRequest))]
+    [XmlInclude(typeof(PublishFilesRequest))]
     [XmlInclude(typeof(DicomAutoRouteRequest))]
     [XmlInclude(typeof(DicomRetrieveRequest))]
     [XmlInclude(typeof(StudyProcessRequest))]
@@ -147,15 +158,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
 	[WorkItemRequestDataContract("c6a4a14e-e877-45a3-871d-bb06054dd837")]
-    public class DicomSendRequest : WorkItemStudyRequest
+    public abstract class DicomSendRequest : WorkItemStudyRequest
     {
-        public DicomSendRequest()
-        {
-            Type = WorkItemTypeEnum.DicomSend;
-            Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.DicomSend;
-        }
-
         [DataMember]
         public string AeTitle { get; set; }
 
@@ -166,14 +170,79 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public int Port { get; set; }
 
         [DataMember]
-        public string StudyInstanceUid { get; set; }
-
-        [DataMember]
         public string TransferSyntaxUid { get; set; }
+    }
+
+    /// <summary>
+    /// <see cref="WorkItemRequest"/> for sending a study to a DICOM AE.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("F0C1BA64-06BD-4E97-BE55-183915656811")]
+    public class DicomSendStudyRequest : DicomSendRequest
+    {
+        public DicomSendStudyRequest()
+        {
+            Type = WorkItemTypeEnum.DicomSend;
+            Priority = WorkItemPriorityEnum.Normal;
+            ActivityType = ActivityTypeEnum.DicomSendStudy;
+        }
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendRequest_ActivityDescription, AeTitle); }
+            get { return string.Format(SR.DicomSendStudyRequest_ActivityDescription, AeTitle); }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="WorkItemRequest"/> for sending series to a DICOM AE.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("EF7A33C7-6B8A-470D-98F4-796780D8E50E")]
+    public class DicomSendSeriesRequest : DicomSendRequest
+    {        
+        public DicomSendSeriesRequest()
+        {
+            Type = WorkItemTypeEnum.DicomSend;
+            Priority = WorkItemPriorityEnum.Normal;
+            ActivityType = ActivityTypeEnum.DicomSendSeries;
+        }
+
+        [DataMember(IsRequired = false)]
+        public List<string> SeriesInstanceUids { get; set; }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, AeTitle); }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="WorkItemRequest"/> for publishing files to a DICOM AE.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("46DCBBF6-A8B3-4F5E-8611-5712A2BBBEFC")]
+    public class PublishFilesRequest : DicomSendRequest
+    {
+        public PublishFilesRequest()
+        {
+            Type = WorkItemTypeEnum.DicomSend;
+            Priority = WorkItemPriorityEnum.Normal;
+            ActivityType = ActivityTypeEnum.PublishFiles;
+            DeletionBehaviour = DeletionBehaviour.None;
+        }
+
+        [DataMember(IsRequired = false)]
+        public List<string> SeriesInstanceUids { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public List<string> FilePaths { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public DeletionBehaviour DeletionBehaviour { get; set; }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, AeTitle); }
         }
     }
 
@@ -196,6 +265,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, AeTitle, Patient.PatientsName); }
         }
     }
+
+    [DataContract(Name = "DeletionBehaviour", Namespace = ImageViewerNamespace.Value)]
+    public enum DeletionBehaviour
+    {
+        [EnumMember]
+        DeleteOnSuccess = 0,
+        [EnumMember]
+        DeleteAlways,
+        [EnumMember]
+        None
+    }
+
 
     [DataContract(Name = "BadFileBehaviour", Namespace = ImageViewerNamespace.Value)]
     public enum BadFileBehaviourEnum
