@@ -47,8 +47,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private bool _filterDuplicates;
 		private bool _everSearched;
+	    private string _resultsTitle;
 
-		public SearchResult()
+	    public SearchResult()
 		{
 			_everSearched = false;
 			HasDuplicates = false;
@@ -104,14 +105,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public string ResultsTitle
 		{
-			get
-			{
-				if (!_everSearched)
-					return _serverGroupName;
-				else
-					return String.Format(SR.FormatStudiesFound, _studyTable.Items.Count, _serverGroupName);
-			}
+            get { return _resultsTitle; }
+            private set
+            {
+                if (Equals(_resultsTitle, value))
+                    return;
+
+                _resultsTitle = value;
+                EventsHelper.Fire(ResultsTitleChanged, this, EventArgs.Empty);
+            }
 		}
+
+	    public event EventHandler ResultsTitleChanged;
 
 		public bool HasDuplicates { get; private set; }
 
@@ -125,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					if (_hiddenItems.Count == 0)
 					{
-						RemoveDuplicates(_studyTable.Items, _hiddenItems);
+					    RemoveDuplicates(_studyTable.Items, _hiddenItems);
 					}
 				}
 				else
@@ -138,6 +143,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 
 				StudyTable.Sort();
+                SetResultsTitle();
 			}
 		}
 		#endregion
@@ -147,6 +153,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public void Initialize()
 		{
 			InitializeTable();
+		    SetResultsTitle();
 		}
 
 		public void Refresh(StudyItemList studies, bool filterDuplicates)
@@ -174,9 +181,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			StudyTable.Sort();
-		}
+            SetResultsTitle();
+        }
 
-		private static void RemoveDuplicates(IList<StudyItem> allStudies, List<StudyItem> removed)
+        private void SetResultsTitle()
+        {
+            if (!_everSearched)
+            {
+                ResultsTitle = Reindexing
+                                   ? String.Format(SR.FormatNeverSearchedReindexing, _serverGroupName)
+                                   : _serverGroupName;
+            }
+            else
+            {
+                ResultsTitle = Reindexing
+                                   ? String.Format(SR.FormatStudiesFoundReindexing, _studyTable.Items.Count, _serverGroupName)
+                                   : String.Format(SR.FormatStudiesFound, _studyTable.Items.Count, _serverGroupName);
+            }
+        }
+
+	    private static void RemoveDuplicates(IList<StudyItem> allStudies, List<StudyItem> removed)
 		{
 			removed.Clear();
 
@@ -213,8 +237,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				allStudies.Remove(study);
 		}
 
-
-		protected virtual void InitializeTable()
+	    protected virtual void InitializeTable()
 		{
 			_studyTable.Columns.AddRange(CreateExtensionColumns());
 			_studyTable.Columns.AddRange(CreateDefaultColumns());

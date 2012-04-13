@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -13,14 +12,59 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     public partial class SearchResult : IDisposable
     {
         private IWorkItemActivityMonitor _activityMonitor;
-		private Dictionary<string, string> _setChangedStudies;
+		private readonly Dictionary<string, string> _setChangedStudies;
         private DelayedEventPublisher _processStudiesEventPublisher;
+        private bool _reindexing;
+
+        public void Dispose()
+        {
+            StopMonitoringStudies();
+        }
+
+        private bool Reindexing
+        {
+            get { return _reindexing; }
+            set
+            {
+                if (Equals(value, _reindexing))
+                    return;
+
+                _reindexing = value;
+                SetResultsTitle();
+            }
+        }
+
+        private void UpdateReindexing()
+        {
+            if (_activityMonitor == null || !_activityMonitor.IsConnected)
+            {
+                Reindexing = false;
+                return;
+            }
+            
+            var request = new WorkItemQueryRequest { Type = WorkItemTypeEnum.ReIndex };
+            IEnumerable<WorkItemData> reindexItems = null;
+            
+            try
+            {
+                Platform.GetService<IWorkItemService>(s => reindexItems = s.Query(request).Items);
+                Reindexing = reindexItems != null && reindexItems.Any(item => item.Status == WorkItemStatusEnum.InProgress);
+            }
+            catch (Exception e)
+            {
+                Reindexing = false;
+                Platform.Log(LogLevel.Debug, e);
+            }
+        }
 
         private void StartMonitoringStudies()
         {
             _activityMonitor = WorkItemActivityMonitor.Create();
-            _activityMonitor.WorkItemChanged += ActivityMonitorOnWorkItemChanged;
+            _activityMonitor.IsConnectedChanged += OnIsConnectedChanged;
+            _activityMonitor.WorkItemChanged += OnWorkItemChanged;
+            _activityMonitor.StudiesCleared += OnStudiesCleared;
 
+            UpdateReindexing();
             _processStudiesEventPublisher = new DelayedEventPublisher((s,e) => ProcessChangedStudies());
         }
 
@@ -34,24 +78,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             if (_activityMonitor != null)
             {
-                _activityMonitor.WorkItemChanged -= ActivityMonitorOnWorkItemChanged;
+                _activityMonitor.IsConnectedChanged -= OnIsConnectedChanged;
+                _activityMonitor.WorkItemChanged -= OnWorkItemChanged;
+                _activityMonitor.StudiesCleared -= OnStudiesCleared;
                 _activityMonitor.Dispose();
                 _activityMonitor = null;
             }
+
+            UpdateReindexing();
         }
 
-        public void Dispose()
+        private void OnIsConnectedChanged(object sender, EventArgs e)
         {
-            StopMonitoringStudies();
+            UpdateReindexing();
         }
 
-        private void ActivityMonitorOnWorkItemChanged(object sender, WorkItemChangedEventArgs args)
+        private void OnWorkItemChanged(object sender, WorkItemChangedEventArgs args)
         {
             if (args.ItemData == null)
                 return;
 
             switch (args.ItemData.Type)
             {
+                case WorkItemTypeEnum.ReIndex:
+                    Reindexing = args.ItemData.Status == WorkItemStatusEnum.InProgress;
+                    return;
                 case WorkItemTypeEnum.DicomSend:
                 case WorkItemTypeEnum.ReapplyRules:
                     return;
@@ -64,12 +115,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _processStudiesEventPublisher.Publish(this, EventArgs.Empty);
         }
 
+        private void OnStudiesCleared(object sender, EventArgs e)
+        {
+            _setChangedStudies.Clear();
+            _hiddenItems.Clear();
+            StudyTable.Items.Clear();
+        }
+
         private void ProcessChangedStudies()
         {
             if (_setChangedStudies.Count == 0)
                 return;
-
-            Table<StudyItem> studyTable = StudyTable;
 
             var changed = _setChangedStudies.Keys.ToList();
             _setChangedStudies.Clear();
@@ -107,7 +163,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 DeleteStudy(deletedUid);
         }
 
-        internal void UpdateStudy(StudyItem study)
+        private void UpdateStudy(StudyItem study)
         {
             //don't need to check this again, it's just paranoia
             if (!StudyExists(study.StudyInstanceUid))
@@ -123,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
-        internal void DeleteStudy(string studyInstanceUid)
+        private void DeleteStudy(string studyInstanceUid)
         {
             int foundIndex = StudyTable.Items.FindIndex(test => test.StudyInstanceUid == studyInstanceUid);
             if (foundIndex >= 0)
@@ -141,11 +197,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private int GetStudyIndex(string studyInstanceUid)
         {
-            return StudyTable.Items.FindIndex(
-                delegate(StudyItem test)
-                {
-                    return test.StudyInstanceUid == studyInstanceUid;
-                });
+            return StudyTable.Items.FindIndex(test => test.StudyInstanceUid == studyInstanceUid);
         }
         
         private static void UpdateItem(StudyItem existingItem, StudyItem sourceItem)
@@ -174,6 +226,5 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             existingItem.ResponsiblePersonRole = sourceItem.ResponsiblePersonRole;
             existingItem.ResponsiblePerson = sourceItem.ResponsiblePerson;
         }
-
     }
 }

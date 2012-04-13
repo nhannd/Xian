@@ -162,8 +162,14 @@
   <data name="ColumnHeadingStudyDescription" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="FormatNeverSearchedReindexing" xml:space="preserve">
+    <value>(Re-indexing) {0}</value>
+  </data>
   <data name="FormatStudiesFound" xml:space="preserve">
     <value>{0} studies found on {1}</value>
+  </data>
+  <data name="FormatStudiesFoundReindexing" xml:space="preserve">
+    <value>(Re-indexing) {0} studies found on {1}</value>
   </data>
   <data name="FormatUnableToQueryServer" xml:space="preserve">
     <value>Unable to Query server {0}:  {1}</value>
