@@ -100,17 +100,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             switch (args.ItemData.Type)
             {
-                case WorkItemTypeEnum.ReIndex:
-                    Reindexing = args.ItemData.Status == WorkItemStatusEnum.InProgress;
-                    return;
                 case WorkItemTypeEnum.DicomSend:
                 case WorkItemTypeEnum.ReapplyRules:
                     return;
-                default:
-                    if (!String.IsNullOrEmpty(args.ItemData.StudyInstanceUid))
-                        _setChangedStudies[args.ItemData.StudyInstanceUid] = args.ItemData.StudyInstanceUid;
+                case WorkItemTypeEnum.ReIndex:
+                    Reindexing = args.ItemData.Status == WorkItemStatusEnum.InProgress;
                     break;
             }
+
+            if (!String.IsNullOrEmpty(args.ItemData.StudyInstanceUid))
+                _setChangedStudies[args.ItemData.StudyInstanceUid] = args.ItemData.StudyInstanceUid;
 
             _processStudiesEventPublisher.Publish(this, EventArgs.Empty);
         }
@@ -161,6 +160,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             //Anything left over in changed no longer exists.
             foreach (string deletedUid in changed)
                 DeleteStudy(deletedUid);
+
+            SetResultsTitle();
         }
 
         private void UpdateStudy(StudyItem study)
