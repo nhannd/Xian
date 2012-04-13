@@ -136,9 +136,9 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Gets a value indicating the licensed diagnostic uses of the product.
+		/// Gets a value indicating the licensed diagnostic use of the product.
 		/// </summary>
-		public static LicensedDiagnosticUses DiagnosticUses
+		public static LicenseDiagnosticUse DiagnosticUse
 		{
 			get
 			{
@@ -146,7 +146,7 @@ namespace ClearCanvas.Common
 
 				lock (_syncRoot)
 				{
-					return _licenseDetailsProvider.DiagnosticUses;
+					return _licenseDetailsProvider.DiagnosticUse;
 				}
 			}
 		}

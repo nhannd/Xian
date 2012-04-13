@@ -27,36 +27,42 @@ namespace ClearCanvas.Common
 		string LicenseType { get; }
 
 		/// <summary>
-		/// Gets the licensed diagnostic uses.
+		/// Gets the licensed diagnostic use.
 		/// </summary>
-		LicensedDiagnosticUses DiagnosticUses { get; }
+		LicenseDiagnosticUse DiagnosticUse { get; }
 
 		/// <summary>
 		/// Gets the first run date.
 		/// </summary>
 		DateTime? FirstRun { get; }
+
+		/// <summary>
+		/// Gets the status if the license is for a limited-use trial.
+		/// </summary>
+		/// <param name="timeRemaining">Time remaining in trial period.</param>
+		/// <returns>True if license is for a limited-use trial; False otherwise.</returns>
+		bool GetTrialStatus(out TimeSpan? timeRemaining);
 	}
 
 	/// <summary>
-	/// Flags indicating allowed diagnostic uses of the product license.
+	/// Specifies the allowed diagnostic use of the product license.
 	/// </summary>
-	[Flags]
-	public enum LicensedDiagnosticUses
+	public enum LicenseDiagnosticUse
 	{
 		/// <summary>
-		/// Indicates product no licensed diagnostic uses.
+		/// Indicates product is not licensed for diagnostic use.
 		/// </summary>
-		None = 0,
+		None,
 
 		/// <summary>
-		/// Indicates product is licensed for human diagnosis.
+		/// Indicates product is licensed for general diagnostic use, including humans.
 		/// </summary>
-		Human = 0x1,
+		Allowed,
 
 		/// <summary>
-		/// Indicates product is licensed for veterinary diagnosis.
+		/// Indicates product is licensed only for veterinary diagnosis.
 		/// </summary>
-		Veterinary = 0x2,
+		VeterinaryOnly
 	}
 
 	/// <summary>
@@ -90,14 +96,20 @@ namespace ClearCanvas.Common
 				get { return null; }
 			}
 
-			public LicensedDiagnosticUses DiagnosticUses
+			public LicenseDiagnosticUse DiagnosticUse
 			{
-				get { return LicensedDiagnosticUses.None; }
+				get { return LicenseDiagnosticUse.None; }
 			}
 
 			public DateTime? FirstRun
 			{
 				get { return null; }
+			}
+
+			public bool GetTrialStatus(out TimeSpan? timeRemaining)
+			{
+				timeRemaining = null;
+				return false;
 			}
 		}
 	}
