@@ -196,11 +196,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (Re-indexing) {0}.
+        /// </summary>
+        internal static string FormatNeverSearchedReindexing {
+            get {
+                return ResourceManager.GetString("FormatNeverSearchedReindexing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} studies found on {1}.
         /// </summary>
         internal static string FormatStudiesFound {
             get {
                 return ResourceManager.GetString("FormatStudiesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Re-indexing) {0} studies found on {1}.
+        /// </summary>
+        internal static string FormatStudiesFoundReindexing {
+            get {
+                return ResourceManager.GetString("FormatStudiesFoundReindexing", resourceCulture);
             }
         }
         

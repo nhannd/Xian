@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -214,10 +215,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					_filterDuplicateStudies = value;
 					if (CurrentSearchResult != null)
-					{
 						CurrentSearchResult.FilterDuplicates = _filterDuplicateStudies;
-						UpdateResultsTitle();
-					}
 				}
 			}
 		}
@@ -231,10 +229,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     return;
 
                 if (_currentSearchResult != null)
-                    _currentSearchResult.StudyTable.Items.ItemsChanged -= OnSearchResultItemsChanged;
+                    _currentSearchResult.ResultsTitleChanged -= OnResultsTitleChanged;
 
                 _currentSearchResult = value;
-                _currentSearchResult.StudyTable.Items.ItemsChanged += OnSearchResultItemsChanged;
+                _currentSearchResult.ResultsTitleChanged += OnResultsTitleChanged;
             }
 		}
 
@@ -282,10 +280,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get
 			{
-				if (CurrentSearchResult == null)
-					return "";
-				else
-					return CurrentSearchResult.ResultsTitle;
+			    return CurrentSearchResult == null ? "" : CurrentSearchResult.ResultsTitle;
 			}
 		}
 
@@ -297,26 +292,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public StudyItem SelectedStudy
 		{
-			get
-			{
-				if (_currentSelection == null)
-					return null;
-				else
-					return _currentSelection.Item as StudyItem;
-			}
+			get { return _currentSelection == null ? null : _currentSelection.Item as StudyItem; }
 		}
 
 		public ReadOnlyCollection<StudyItem> SelectedStudies
 		{
 			get
 			{
-				List<StudyItem> selectedStudies = new List<StudyItem>();
-
+				var selectedStudies = new List<StudyItem>();
 				if (_currentSelection != null)
-				{
-					foreach (StudyItem item in _currentSelection.Items)
-						selectedStudies.Add(item);
-				}
+				    selectedStudies.AddRange(_currentSelection.Items.Cast<StudyItem>());
 
 				return selectedStudies.AsReadOnly();
 			}
@@ -334,11 +319,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void SetSelection(ISelection selection)
 		{
-			if (_currentSelection != selection)
-			{
-				_currentSelection = selection;
-				EventsHelper.Fire(_selectedStudyChangedEvent, this, EventArgs.Empty);
-			}
+		    if (_currentSelection == selection)
+                return;
+		    
+            _currentSelection = selection;
+		    EventsHelper.Fire(_selectedStudyChangedEvent, this, EventArgs.Empty);
 		}
 
 		public void ItemDoubleClick()
@@ -438,12 +423,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#region Private Helpers
 
-        private void OnSearchResultItemsChanged(object sender, ItemChangedEventArgs itemChangedEventArgs)
+        private void OnResultsTitleChanged(object sender, EventArgs e)
         {
             UpdateResultsTitle();
         }
 
-		private void OnSelectedServerChanged()
+	    private void OnSelectedServerChanged()
 		{
 			CurrentSearchResult.ServerGroupName = _selectedServerGroup.Name;
 			CurrentSearchResult.IsLocalServer = _selectedServerGroup.IsLocalServer;
@@ -535,7 +520,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
 
-			// Re-throw the last exception with a list of failed server name, if any
 			if (failedServerInfo.Count > 0)
 			{
 				var aggregateExceptionMessage = new StringBuilder();
@@ -556,8 +540,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				//method is called on startup before the component is started.
 				Application.ActiveDesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
 			}
-
-			UpdateResultsTitle();
 
 			_searchInProgress = false;
 
