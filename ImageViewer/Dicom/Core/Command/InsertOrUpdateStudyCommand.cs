@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -50,8 +51,10 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 Study = _location.Study;
                 Created = true;
                 Study.DeleteTime = DateTime.Now.AddDays(1);
-                Study.Deleted = false;
+                Study.StoreTime = Platform.Time;                
             }
+
+            Study.Deleted = false;
 
             Study.Initialize(_messageBase);
             

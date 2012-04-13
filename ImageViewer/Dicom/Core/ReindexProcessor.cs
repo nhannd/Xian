@@ -25,15 +25,23 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     public class ReindexProcessor
     {
         #region Private members
-        private event EventHandler _studyDeletedEvent;
-        private event EventHandler _studyFolderProcessedEvent;
-        private event EventHandler _studyProcessedEvent;
+
+        private event EventHandler<StudyEventArgs> _studyDeletedEvent;
+        private event EventHandler<StudyEventArgs> _studyFolderProcessedEvent;
+        private event EventHandler<StudyEventArgs> _studyProcessedEvent;
         private readonly object _syncLock = new object();
+
         #endregion
 
         #region Public Events
 
-        public event EventHandler StudyDeletedEvent
+        public class StudyEventArgs : EventArgs
+        {
+            public string StudyInstanceUid;
+        }    
+    
+
+        public event EventHandler<StudyEventArgs> StudyDeletedEvent
         {
             add
             {
@@ -51,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             }
         }
 
-        public event EventHandler StudyFolderProcessedEvent
+        public event EventHandler<StudyEventArgs> StudyFolderProcessedEvent
         {
             add
             {
@@ -69,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             }
         }
 
-        public event EventHandler StudyProcessedEvent
+        public event EventHandler<StudyEventArgs> StudyProcessedEvent
         {
             add
             {
@@ -136,11 +144,19 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
             StudyFoldersToScan = DirectoryList.Count;
 
-            using (var context = new DataAccessContext())
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var broker = context.GetStudyBroker();
 
-                StudyOidList = broker.GetStudyOids();
+                StudyOidList = new List<long>(); 
+                
+                var studyList = broker.GetStudies();
+                foreach (var study in studyList)
+                {
+                    study.Deleted = true;
+                    StudyOidList.Add(study.Oid);
+                }
+                context.Commit();
             }
 
             DatabaseStudiesToScan = StudyOidList.Count;           
@@ -209,13 +225,13 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                             }
 
                             context.Commit();
-                            EventsHelper.Fire(_studyDeletedEvent, this, EventArgs.Empty);
+                            EventsHelper.Fire(_studyDeletedEvent, this, new StudyEventArgs { StudyInstanceUid = study.StudyInstanceUid });
                             Platform.Log(LogLevel.Info, "Deleted Study that wasn't on disk, but in the database: {0}",
                                          study.StudyInstanceUid);
                         }
-                    }
-
-                    EventsHelper.Fire(_studyProcessedEvent, this, EventArgs.Empty);
+                        else
+                            EventsHelper.Fire(_studyProcessedEvent, this, new StudyEventArgs { StudyInstanceUid = study.StudyInstanceUid });
+                    }                    
                 }
                 catch (Exception x)
                 {
@@ -240,14 +256,13 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 var location = new StudyLocation(studyInstanceUid);
 
                 var reprocessor = new ReprocessStudyFolder(location);
-                if (!reprocessor.StudyStoredInDatabase)
-                {
-                    EventsHelper.Fire(_studyFolderProcessedEvent, this, EventArgs.Empty);
-                }
-
+       
                 reprocessor.Process();
-
-                EventsHelper.Fire(_studyProcessedEvent, this, EventArgs.Empty);
+                
+                if (!reprocessor.StudyStoredInDatabase)                
+                    EventsHelper.Fire(_studyFolderProcessedEvent, this, new StudyEventArgs { StudyInstanceUid = studyInstanceUid });                
+                else
+                    EventsHelper.Fire(_studyProcessedEvent, this, new StudyEventArgs {StudyInstanceUid = studyInstanceUid});
             }
             catch (Exception x)
             {
