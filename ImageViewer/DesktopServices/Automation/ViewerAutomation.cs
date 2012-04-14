@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
                 if (!request.ReportFaultToUser.HasValue || request.ReportFaultToUser.Value)
                 {
                     SynchronizationContext.Current.Post(
-                        ignore => ExceptionHandler.Report(e, ImageViewer.SR.MessageFailedToOpenImages, Application.ActiveDesktopWindow), null);
+                        ignore => ExceptionHandler.Report(e, ImageViewer.StudyManagement.SR.MessageFailedToOpenImages, Application.ActiveDesktopWindow), null);
                 }
 
                 const string message = "There was a problem opening the files/directories specified in the viewer.";

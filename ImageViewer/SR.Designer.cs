@@ -79,78 +79,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Activity.
-        /// </summary>
-        public static string ColumnActivityDescription {
-            get {
-                return ResourceManager.GetString("ColumnActivityDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Patient.
-        /// </summary>
-        public static string ColumnPatient {
-            get {
-                return ResourceManager.GetString("ColumnPatient", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Priority.
-        /// </summary>
-        public static string ColumnPriority {
-            get {
-                return ResourceManager.GetString("ColumnPriority", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Progress.
-        /// </summary>
-        public static string ColumnProgress {
-            get {
-                return ResourceManager.GetString("ColumnProgress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Scheduled Time.
-        /// </summary>
-        public static string ColumnScheduledTime {
-            get {
-                return ResourceManager.GetString("ColumnScheduledTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Status.
-        /// </summary>
-        public static string ColumnStatus {
-            get {
-                return ResourceManager.GetString("ColumnStatus", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Status Details.
-        /// </summary>
-        public static string ColumnStatusDescription {
-            get {
-                return ResourceManager.GetString("ColumnStatusDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Study.
-        /// </summary>
-        public static string ColumnStudy {
-            get {
-                return ResourceManager.GetString("ColumnStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Change.
         /// </summary>
         public static string CommandChange {
@@ -489,15 +417,6 @@ namespace ClearCanvas.ImageViewer {
         public static string DescriptionUnitsUnspecified {
             get {
                 return ResourceManager.GetString("DescriptionUnitsUnspecified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} of {1} ({2}%).
-        /// </summary>
-        public static string DiskspaceTemplate {
-            get {
-                return ResourceManager.GetString("DiskspaceTemplate", resourceCulture);
             }
         }
         
@@ -1258,24 +1177,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open Activity Monitor.
-        /// </summary>
-        public static string LinkOpenActivityMonitor {
-            get {
-                return ResourceManager.GetString("LinkOpenActivityMonitor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Activity Monitor.
-        /// </summary>
-        public static string MenuActivityMonitor {
-            get {
-                return ResourceManager.GetString("MenuActivityMonitor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete Vertex.
         /// </summary>
         public static string MenuDeleteVertex {
@@ -1299,24 +1200,6 @@ namespace ClearCanvas.ImageViewer {
         public static string MenuInsertVertex {
             get {
                 return ResourceManager.GetString("MenuInsertVertex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Local Server.
-        /// </summary>
-        public static string MenuLocalServer {
-            get {
-                return ResourceManager.GetString("MenuLocalServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Re-index File Store.
-        /// </summary>
-        public static string MenuReindex {
-            get {
-                return ResourceManager.GetString("MenuReindex", resourceCulture);
             }
         }
         
@@ -1391,42 +1274,6 @@ namespace ClearCanvas.ImageViewer {
         public static string MessageFailedToApplyDicomHeaderGraphics {
             get {
                 return ResourceManager.GetString("MessageFailedToApplyDicomHeaderGraphics", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Creation of VOI Data LUTs failed..
-        /// </summary>
-        public static string MessageFailedToGetVOIDataLUTs {
-            get {
-                return ResourceManager.GetString("MessageFailedToGetVOIDataLUTs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to open the selected images..
-        /// </summary>
-        public static string MessageFailedToOpenImages {
-            get {
-                return ResourceManager.GetString("MessageFailedToOpenImages", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to open the selected studies..
-        /// </summary>
-        public static string MessageFailedToOpenStudy {
-            get {
-                return ResourceManager.GetString("MessageFailedToOpenStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to start re-index..
-        /// </summary>
-        public static string MessageFailedToStartReindex {
-            get {
-                return ResourceManager.GetString("MessageFailedToStartReindex", resourceCulture);
             }
         }
         
@@ -1739,33 +1586,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A re-index operation is already in progress..
-        /// </summary>
-        public static string MessageReindexInProgress {
-            get {
-                return ResourceManager.GetString("MessageReindexInProgress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The re-index has been scheduled..
-        /// </summary>
-        public static string MessageReindexScheduled {
-            get {
-                return ResourceManager.GetString("MessageReindexScheduled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The service must be running to start a re-index..
-        /// </summary>
-        public static string MessageReindexServiceNotRunning {
-            get {
-                return ResourceManager.GetString("MessageReindexServiceNotRunning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error has occurred in the rendering pipeline..
         /// </summary>
         public static string MessageRenderingPipelineFailure {
@@ -1799,15 +1619,6 @@ namespace ClearCanvas.ImageViewer {
         public static string NamePrefetchingStrategyVisibleDisplaySet {
             get {
                 return ResourceManager.GetString("NamePrefetchingStrategyVisibleDisplaySet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (all).
-        /// </summary>
-        public static string NoFilterItem {
-            get {
-                return ResourceManager.GetString("NoFilterItem", resourceCulture);
             }
         }
         
@@ -1925,24 +1736,6 @@ namespace ClearCanvas.ImageViewer {
         public static string SuffixSingleImagesDisplaySet {
             get {
                 return ResourceManager.GetString("SuffixSingleImagesDisplaySet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Activity Monitor.
-        /// </summary>
-        public static string TitleActivityMonitor {
-            get {
-                return ResourceManager.GetString("TitleActivityMonitor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Activity Monitor.
-        /// </summary>
-        public static string TooltipActivityMonitor {
-            get {
-                return ResourceManager.GetString("TooltipActivityMonitor", resourceCulture);
             }
         }
         

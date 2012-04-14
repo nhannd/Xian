@@ -240,6 +240,11 @@
     <Compile Include="StudyManagement\ProgressBarIconSet.cs" />
     <Compile Include="StudyManagement\RescaleUnits.cs" />
     <Compile Include="StudyManagement\SopInstanceFactory.cs" />
+    <Compile Include="StudyManagement\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\StudyExtensions.cs" />
     <Compile Include="StudyManagement\Tests\ActivityMonitorComponentTests.cs" />
     <Compile Include="StudyManagement\Tests\NormalizedPixelSpacingTests.cs" />
@@ -860,6 +865,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="StudyManagement\SR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -952,6 +961,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Services\Icons\RestartServiceToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="StudyManagement\Icons\RestartToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="StudyManagement\Icons\CancelToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />
