@@ -13,7 +13,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms view onto <see cref="DicomServerConfigurationComponent"/>

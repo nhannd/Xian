@@ -27,6 +27,7 @@ using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using Action = ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -424,16 +425,83 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		class WorkItemActionModel : SimpleActionModel
 		{
-			public WorkItemActionModel()
+		    private const string _deleteKey = "delete";
+            private const string _cancelKey = "cancel";
+            private const string _restartKey = "restart";
+
+		    private readonly IItemCollection<WorkItem> _workItems;
+            private IList<long> _selectedWorkItemIDs;
+
+            public WorkItemActionModel(IItemCollection<WorkItem> workItems)
 				: base(new ApplicationThemeResourceResolver(typeof(ActivityMonitorComponent).Assembly, new ApplicationThemeResourceResolver(typeof(CrudActionModel).Assembly)))
 			{
-			}
-		}
+                AddAction(_cancelKey, SR.NameCancelWorkItem, "CancelToolSmall.png", SR.TooltipCancelWorkItem, CancelSelectedWorkItems);
+                AddAction(_restartKey, SR.NameRestartWorkItem, "RestartToolSmall.png", SR.TooltipRestartWorkItem, RestartSelectedWorkItems);
+                AddAction(_deleteKey, SR.NameDeleteWorkItem, "DeleteToolSmall.png", SR.TooltipDeleteWorkItem, DeleteSelectedWorkItems);
 
+                _workItems = workItems;
+            }
+
+            public IList<long> SelectedWorkItemIDs
+            {
+                get { return _selectedWorkItemIDs ?? (_selectedWorkItemIDs = new List<long>()); }
+                set
+                {
+                    _selectedWorkItemIDs = value;
+                    UpdateActionEnablement();
+                }
+            }
+
+		    private IEnumerable<WorkItem> SelectedWorkItems
+		    {
+                get { return _workItems.Where(w => SelectedWorkItemIDs.Contains(w.Id)); }
+		    }
+
+		    private Action DeleteAction { get { return this[_deleteKey]; } }
+            private Action CancelAction { get { return this[_cancelKey]; } }
+            private Action RestartAction { get { return this[_restartKey]; } }
+
+            public void OnWorkItemChanged(WorkItem item)
+            {
+                if (SelectedWorkItemIDs.Contains(item.Id))
+                    UpdateActionEnablement();
+            }
+
+            private void UpdateActionEnablement()
+            {
+		        DeleteAction.Enabled = SelectedWorkItems.All(
+                    w => w.Status == WorkItemStatusEnum.Complete
+                         || w.Status == WorkItemStatusEnum.Failed
+                         || w.Status == WorkItemStatusEnum.Pending);
+
+                CancelAction.Enabled = SelectedWorkItems.All(
+                    w => w.Status == WorkItemStatusEnum.InProgress
+                         || w.Status == WorkItemStatusEnum.Idle);
+
+                RestartAction.Enabled = SelectedWorkItems.All(
+                    w => w.Status == WorkItemStatusEnum.Canceled
+                         || w.Status == WorkItemStatusEnum.Failed);
+            }
+
+		    private void RestartSelectedWorkItems()
+		    {
+                //Platform.GetService<IWorkItemService>(s => s.Update(...))
+		    }
+
+		    private void CancelSelectedWorkItems()
+		    {
+                //Platform.GetService<IWorkItemService>(s => s.Update(...))
+		    }
+
+		    private void DeleteSelectedWorkItems()
+		    {
+                //Platform.GetService<IWorkItemService>(s => s.Update(...))
+            }
+        }
 
 		private static readonly object NoFilter = new object();
 
-		private readonly WorkItemActionModel _workItemActionModel = new WorkItemActionModel();
+		private readonly WorkItemActionModel _workItemActionModel;
 		private readonly Table<WorkItem> _workItems = new Table<WorkItem>();
 		private readonly WorkItemUpdateManager _workItemManager;
 
@@ -448,7 +516,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly DiskspaceWatcher _diskspaceWatcher;
 		private readonly StudyCountWatcher _studyCountWatcher;
 
-
 	    public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
@@ -456,6 +523,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_diskspaceWatcher = new DiskspaceWatcher(() => this.FileStore, OnDiskspaceChanged);
 			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
 			_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
+            _workItemActionModel = new WorkItemActionModel(_workItems.Items);
 		}
 
 		public override void Start()
@@ -482,7 +550,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_diskspaceWatcher.Start();
 		}
 
-		public override void Stop()
+	    public override void Stop()
 		{
 			ActivityMonitor.WorkItemChanged -= WorkItemChanged;
 			ActivityMonitor.IsConnectedChanged -= ActivityMonitorIsConnectedChanged;
@@ -631,6 +699,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+        public void SetSelection(ISelection selection)
+        {
+            SelectedWorkItemIDs = _workItemActionModel.SelectedWorkItemIDs = selection.Items.Cast<WorkItem>().Select(w => w.Id).ToList();
+        }
+
         public void StartReindex()
         {
             ReindexTool.StartReindex(Host.DesktopWindow);
@@ -645,9 +718,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 	    #endregion
 
-		private IWorkItemActivityMonitor ActivityMonitor { get; set; }
+        private IList<long> SelectedWorkItemIDs { get; set; }
+        
+        private IWorkItemActivityMonitor ActivityMonitor { get; set; }
 
-		private static IconSet GetProgressIcon(WorkItemProgress progress, WorkItemStatusEnum status)
+	    private static IconSet GetProgressIcon(WorkItemProgress progress, WorkItemStatusEnum status)
 		{
 			if (progress == null)
 				return null;
@@ -702,7 +777,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_studyCountWatcher.Invalidate();
 			}
 
-			_workItemManager.Update(new WorkItem(e.ItemData));
+		    var item = new WorkItem(e.ItemData);
+			_workItemManager.Update(item);
+            _workItemActionModel.OnWorkItemChanged(item);
 
 			// tell view to update this value
 			NotifyPropertyChanged("Failures");
@@ -753,6 +830,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			NotifyPropertyChanged("DiskspaceUsed");
 			NotifyPropertyChanged("DiskspaceUsedPercent");
 		}
-
-	}
+    }
 }

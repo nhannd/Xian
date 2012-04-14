@@ -13,29 +13,19 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer.Configuration
 {
-    //TODO (Marmot):Could all the stuff in this assembly get moved to ImageViewer?
-
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
 	public class ConfigurationPageProvider : IConfigurationPageProvider
 	{
-		public ConfigurationPageProvider()
-		{
-		}
-
 		#region IConfigurationPageProvider Members
 
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
+			var listPages = new List<IConfigurationPage>();
 
-			if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DicomServer))
+			if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
 				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomConfiguration/ServerConfiguration"));
-
-		    //TODO (Marmot): Restore, or refactor.
-            //if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DiskspaceManager))
-            //    listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
 
 			return listPages.AsReadOnly();
 		}

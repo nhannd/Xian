@@ -10,32 +10,20 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.Auditing;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
 	[ButtonAction("activate", ToolbarActionSite + "/ToolbarRetrieveSeries", "RetrieveSeries")]
 	[MenuAction("activate", ContextMenuActionSite + "/MenuRetrieveSeries", "RetrieveSeries")]
 	[Tooltip("activate", "TooltipRetrieveSeries")]
-	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
+    [IconSet("activate", "Icons.RetrieveSeriesToolSmall.png", "Icons.RetrieveSeriesToolSmall.png", "Icons.RetrieveSeriesToolSmall.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Retrieve)]
-	//TODO (Marmot):Restore.
-    [ExtensionOf(typeof (SeriesDetailsToolExtensionPoint), Enabled = false)]
+    [ExtensionOf(typeof (SeriesDetailsToolExtensionPoint))]
 	public class RetrieveSeriesTool : SeriesDetailsTool
 	{
 		public void RetrieveSeries()

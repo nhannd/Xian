@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
@@ -294,10 +295,15 @@ namespace ClearCanvas.Desktop.Actions
 		/// <returns>a map of action IDs to actions</returns>
 		private static IDictionary<string, IAction> BuildActionMap(IActionSet actions)
 		{
-			Dictionary<string, IAction> actionMap = new Dictionary<string, IAction>();
+			var actionMap = new Dictionary<string, IAction>();
 
 			foreach (IAction action in actions)
-				actionMap[action.ActionID] = action;
+			{
+			    actionMap[action.ActionID] = action;
+
+			    foreach (var formerActionId in action.FormerActionIDs)
+                    actionMap[formerActionId] = action;
+			}
 
 			return actionMap;
 		}
@@ -325,25 +331,31 @@ namespace ClearCanvas.Desktop.Actions
 		private static XmlElement CreateXmlAction(XmlDocument document, IAction action)
 		{
 			XmlElement xmlAction = document.CreateElement("action");
-
-			xmlAction.SetAttribute("id", action.ActionID);
-			xmlAction.SetAttribute("path", action.Path.ToString());
-			xmlAction.SetAttribute("group-hint", action.GroupHint.Hint);
-
-			if (!action.Available)
-				xmlAction.SetAttribute("available", action.Available.ToString());
-
-			if (action is IClickAction)
-			{
-				IClickAction clickAction = (IClickAction) action;
-				if (clickAction.KeyStroke != XKeys.None)
-					xmlAction.SetAttribute("keystroke", XKeysConverter.FormatInvariant(clickAction.KeyStroke));
-			}
-			
+			SynchronizeAction(xmlAction, action);
 			return xmlAction;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Sets all the relevant attributes on the <paramref name="xmlAction"/> from the <paramref name="action"/>.
+        /// </summary>
+        private static void SynchronizeAction(XmlElement xmlAction, IAction action)
+        {
+            xmlAction.SetAttribute("id", action.ActionID);
+            xmlAction.SetAttribute("path", action.Path.ToString());
+            xmlAction.SetAttribute("group-hint", action.GroupHint.Hint);
+
+            if (!action.Available)
+                xmlAction.SetAttribute("available", action.Available.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+            var clickAction = action as IClickAction;
+            if (clickAction == null)
+                return;
+            
+            if (clickAction.KeyStroke != XKeys.None)
+                xmlAction.SetAttribute("keystroke", XKeysConverter.FormatInvariant(clickAction.KeyStroke));
+        }
+
+	    /// <summary>
 		/// Finds a stored model in the XML doc with the specified model ID.
 		/// </summary>
 		/// <param name="id">The model ID</param>
@@ -356,12 +368,28 @@ namespace ClearCanvas.Desktop.Actions
 		/// <summary>
 		/// Finds an action with the specified id in the specified "action-model" node.
 		/// </summary>
-		/// <param name="id">the id of the action to find</param>
+		/// <param name="action">the <see cref="IAction"/> whose "action" node should be found</param>
 		/// <param name="xmlActionModel">the "action-model" node to search in</param>
+        /// <param name="includeFormerIds">Specifies whether any "former" IDs the action has had should be included in the search.</param>
 		/// <returns>the XmlElement of the action if found, otherwise null</returns>
-		private static XmlElement FindXmlAction(string id, XmlElement xmlActionModel)
+		private static XmlElement FindXmlAction(XmlElement xmlActionModel, IAction action)
 		{
-			return (XmlElement)xmlActionModel.SelectSingleNode(String.Format("action[@id='{0}']", id));
+            var primary = (XmlElement)xmlActionModel.SelectSingleNode(String.Format("action[@id='{0}']", action.ActionID));
+            if (primary != null)
+                return primary;
+
+		    foreach (var formerActionId in action.FormerActionIDs)
+		    {
+		        var former = (XmlElement) xmlActionModel.SelectSingleNode(String.Format("action[@id='{0}']", formerActionId));
+		        if (former == null)
+                    continue;
+
+                //The action was formerly known as "formerActionId" (not "Prince" :), so fix the ID of the xml action.
+		        former.SetAttribute("id", action.ActionID);
+		        return former;
+		    }
+
+		    return null;
 		}
 
 		/// <summary>
@@ -403,9 +431,9 @@ namespace ClearCanvas.Desktop.Actions
 				if (!modelExists)
 					this.GetActionModelsNode().AppendChild(xmlActionModel);
 			}
-			
+
+		    //Append "non-persistent" actions to the model, but in a way that will not affect the one that is saved.
 			XmlElement xmlActionModelClone = (XmlElement)xmlActionModel.CloneNode(true);
-	
 			foreach (IAction action in actionMap.Values)
 			{
 				if (!action.Persistent)
@@ -429,6 +457,8 @@ namespace ClearCanvas.Desktop.Actions
 			foreach (XmlElement xmlAction in xmlActionModel.GetElementsByTagName("action"))
 			{
 				string id = xmlAction.GetAttribute("id");
+
+                //This accounts for "former action IDs" because the same action will be in the map for each ID (current and former).
                 if (!actionMap.ContainsKey(id))
                     continue;
 
@@ -484,7 +514,9 @@ namespace ClearCanvas.Desktop.Actions
 				if (xmlAction.Name == "action")
 				{
 					string actionID = xmlAction.GetAttribute("id");
-					if (actions.ContainsKey(actionID))
+
+                    //This accounts for "former action IDs" because the same action will be in the map for each ID (current and former).
+                    if (actions.ContainsKey(actionID))
 					{
 						IAction action = actions[actionID];
 
@@ -662,7 +694,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <returns>a boolean indicating whether anything was added/removed/modified</returns>
         private static bool AppendActionToXmlModel(XmlDocument document, XmlElement xmlActionModel, IAction action)
         {
-			if (null != FindXmlAction(action.ActionID, xmlActionModel))
+            if (null != FindXmlAction(xmlActionModel, action))
 				return false;
 			
 			XmlNode insertionPoint = null;

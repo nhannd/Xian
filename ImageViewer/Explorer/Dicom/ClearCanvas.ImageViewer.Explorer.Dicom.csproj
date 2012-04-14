@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeleteStudyTool.cs" />
     <Compile Include="DicomExplorerComponent.cs" />
     <Compile Include="DicomExplorerConfigurationComponent.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.cs" />
@@ -79,11 +80,13 @@
     <Compile Include="IStudyBrowserComponent.cs" />
     <Compile Include="IStudyColumn.cs" />
     <Compile Include="QueryStringHelper.cs" />
+    <Compile Include="RetrieveStudyTool.cs" />
     <Compile Include="SearchPanelComponent.cs" />
     <Compile Include="SearchResult.cs" />
     <Compile Include="FilterDuplicateStudiesTool.cs" />
     <Compile Include="SearchResultColumnOption.cs" />
     <Compile Include="SearchResultColumnOptionCollection.cs" />
+    <Compile Include="SendStudyTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -180,6 +183,27 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RetrieveStudyToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RetrieveStudyToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RetrieveStudyToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SendStudyToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SendStudyToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SendStudyToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
