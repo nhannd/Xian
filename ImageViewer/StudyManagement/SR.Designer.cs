@@ -286,7 +286,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel selected work item(s).
+        ///   Looks up a localized string similar to Cancel selected work item.
         /// </summary>
         public static string TooltipCancelWorkItem {
             get {
@@ -295,7 +295,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete selected work item(s).
+        ///   Looks up a localized string similar to Delete selected work item.
         /// </summary>
         public static string TooltipDeleteWorkItem {
             get {
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restart selected work item(s).
+        ///   Looks up a localized string similar to Restart selected work item.
         /// </summary>
         public static string TooltipRestartWorkItem {
             get {
