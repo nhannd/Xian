@@ -117,8 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="FormatMessageImportWorkItemServiceNotRunning" xml:space="preserve">
+    <value>Failed to import the selected items because the local services are not running.
+Please ensure the '{0}' is running or contact your system administrator for assistance.</value>
+  </data>
+  <data name="ImportDicomFiles" xml:space="preserve">
+    <value>Import</value>
+  </data>
   <data name="MenuOpenFiles" xml:space="preserve">
     <value>Open</value>
+  </data>
+  <data name="MessageFailedToImportSelection" xml:space="preserve">
+    <value>Failed to initiate an import of the selected items.</value>
   </data>
   <data name="MessageFileNotFound" xml:space="preserve">
     <value>The specified file could not be found.</value>
@@ -138,10 +148,7 @@
   <data name="OpenDicomFilesVerbose" xml:space="preserve">
     <value>Open Dicom Files</value>
   </data>
-  <data name="OpenMprFilesVerbose" xml:space="preserve">
-    <value>Open MPR</value>
-  </data>
-  <data name="TitleImageViewer" xml:space="preserve">
-    <value>Image</value>
+  <data name="TooltipImportDicomFiles" xml:space="preserve">
+    <value>Import DICOM files from the local file system</value>
   </data>
 </root>

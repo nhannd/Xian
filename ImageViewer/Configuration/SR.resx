@@ -217,6 +217,12 @@ Streaming Image Port: {1}</value>
   <data name="MessageConfirmDeleteServerGroup" xml:space="preserve">
     <value>Are you sure you want to delete the selected server group?</value>
   </data>
+  <data name="MessageFailedToRetrieveDicomServerConfiguration" xml:space="preserve">
+    <value>Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
+  </data>
+  <data name="MessageFailedToUpdateDicomServerConfiguration" xml:space="preserve">
+    <value>Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
+  </data>
   <data name="MessageHostNameCannotBeEmpty" xml:space="preserve">
     <value>The Host Name cannot be empty.</value>
   </data>
@@ -270,6 +276,9 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="PublishingConfiguration" xml:space="preserve">
     <value>Publishing</value>
+  </data>
+  <data name="ServerConfiguration" xml:space="preserve">
+    <value>Local Server</value>
   </data>
   <data name="TitleAddNewServer" xml:space="preserve">
     <value>Add New Server</value>

@@ -114,12 +114,15 @@
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="StudyManagement\Icons\DeleteToolSmall.png" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionPlaceholder.cs" />
     <Compile Include="Annotations\AnnotationBoxList.cs" />

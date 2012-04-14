@@ -120,12 +120,6 @@
   <data name="DiskspaceManagerConfiguration" xml:space="preserve">
     <value>Diskspace Manager</value>
   </data>
-  <data name="MessageFailedToRetrieveDicomServerConfiguration" xml:space="preserve">
-    <value>Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
-  </data>
-  <data name="ImportDicomFiles" xml:space="preserve">
-    <value>Import</value>
-  </data>
   <data name="LabelBytes" xml:space="preserve">
     <value>bytes</value>
   </data>
@@ -141,130 +135,15 @@
   <data name="LabelTerabytes" xml:space="preserve">
     <value>TB</value>
   </data>
-  <data name="MenuDeleteStudy" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="MenuOpenStudies" xml:space="preserve">
-    <value>Open</value>
-  </data>
-  <data name="MessageConfirmDeleteStudies" xml:space="preserve">
-    <value>Are you sure you want to delete the {0} selected studies?</value>
-  </data>
-  <data name="MessageConfirmDeleteStudy" xml:space="preserve">
-    <value>Are you sure you want to delete the selected study?</value>
-  </data>
-  <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
-    <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
-  </data>
-  <data name="MessageFailedToImportSelection" xml:space="preserve">
-    <value>Failed to initiate an import of the selected items.</value>
-  </data>
   <data name="MessageFailedToRetrieveDiskspaceManagementSettings" xml:space="preserve">
     <value>Failed to retrieve Diskspace Management settings.
 Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
-  </data>
-  <data name="MessageFailedToRetrieveStudy" xml:space="preserve">
-    <value>Failed to initiate a retrieval of the selected items.</value>
-  </data>
-  <data name="MessageFailedToSendStudy" xml:space="preserve">
-    <value>Failed to initiate sending of the selected items.</value>
   </data>
   <data name="MessageFailedToUpdateDiskspaceManagementSettings" xml:space="preserve">
     <value>Failed to update Diskspace Management settings.
 Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
-  <data name="FormatMessageImportWorkItemServiceNotRunning" xml:space="preserve">
-    <value>Failed to import the selected items because the local services are not running.
-Please ensure the '{0}' is running or contact your system administrator for assistance.</value>
-  </data>
-  <data name="MessageOneDayAgo" xml:space="preserve">
-    <value>1 day ago</value>
-  </data>
-  <data name="MessageOneHourAgo" xml:space="preserve">
-    <value>1 hour, </value>
-  </data>
-  <data name="MessageOneMinuteAgo" xml:space="preserve">
-    <value>1 minute ago</value>
-  </data>
-  <data name="MessageOneOfSelectedStudiesInUse" xml:space="preserve">
-    <value>One of the selected studies is in use.  Please close all relevant workspaces before deleting.</value>
-  </data>
-  <data name="MessageFormatReindexNotStarted" xml:space="preserve">
-    <value>The reindex operation couldn't start.
-Please ensure the '{0}' is running or contact your system administrator for assistance.</value>
-  </data>
-  <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
-    <value>Failed to retrieve the selected studies because the DICOM Server service is not running.
-Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
-  </data>
-  <data name="MessageSelectDestination" xml:space="preserve">
-    <value>Please select a destination.</value>
-  </data>
-  <data name="MessageSelectedStudyInUse" xml:space="preserve">
-    <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
-  </data>
-  <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
-    <value>Failed to send the selected studies because the DICOM Server service is not running.
-Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
-  </data>
-  <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
-    <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
-  </data>
   <data name="MessageStudyCountUnavailable" xml:space="preserve">
     <value>Unavailable</value>
-  </data>
-  <data name="TitleSend" xml:space="preserve">
-    <value>Send</value>
-  </data>
-  <data name="TitleSendStudy" xml:space="preserve">
-    <value>Send Study</value>
-  </data>
-  <data name="ToolbarDeleteStudy" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="ToolbarOpenStudies" xml:space="preserve">
-    <value>Open</value>
-  </data>
-  <data name="ToolbarRetrieveStudy" xml:space="preserve">
-    <value>Retrieve</value>
-  </data>
-  <data name="ToolbarSendStudy" xml:space="preserve">
-    <value>Send</value>
-  </data>
-  <data name="TooltipDeleteStudy" xml:space="preserve">
-    <value>Delete study</value>
-  </data>
-  <data name="TooltipImportDicomFiles" xml:space="preserve">
-    <value>Import DICOM files from the local file system</value>
-  </data>
-  <data name="TooltipOpenStudies" xml:space="preserve">
-    <value>Open</value>
-  </data>
-  <data name="TooltipRetrieveStudy" xml:space="preserve">
-    <value>Retrieve Study</value>
-  </data>
-  <data name="TooltipSendStudy" xml:space="preserve">
-    <value>Send Study</value>
-  </data>
-  <data name="ValidationAETitleInvalidCharacters" xml:space="preserve">
-    <value>The AE Title contains invalid characters.</value>
-  </data>
-  <data name="ValidationAETitleLengthIncorrect" xml:space="preserve">
-    <value>The AE Title must be between 1 and 16 characters.</value>
-  </data>
-  <data name="ValidationPortOutOfRange" xml:space="preserve">
-    <value>The Port must be between 1 and 65535.</value>
-  </data>
-  <data name="MessageFailedToOpenStudy" xml:space="preserve">
-    <value>Failed to open the selected study.</value>
-  </data>
-  <data name="MessageFailedToUpdateDicomServerConfiguration" xml:space="preserve">
-    <value>Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
-  </data>
-  <data name="DicomConfiguration" xml:space="preserve">
-    <value>DICOM</value>
-  </data>
-  <data name="ServerConfiguration" xml:space="preserve">
-    <value>Local Server</value>
   </data>
 </root>

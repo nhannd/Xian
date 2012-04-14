@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -50,7 +51,8 @@ namespace ClearCanvas.Desktop.Actions
 		private readonly IResourceResolver _resourceResolver;
 		private readonly IconSet _iconSet;
 		private readonly string _actionId;
-		private readonly string _label;
+        private readonly IList<string> _formerActionIds;
+        private readonly string _label;
 		private readonly string _tooltip;
 		private readonly bool _permissible;
 
@@ -65,6 +67,7 @@ namespace ClearCanvas.Desktop.Actions
 
 			_resourceResolver = _globalResourceResolver;
 			_actionId = id;
+            _formerActionIds = new List<string>();
 			_path = new ActionPath(path, _globalResourceResolver);
 			_groupHint = new GroupHint(string.Empty);
 			_label = string.Empty;
@@ -81,6 +84,7 @@ namespace ClearCanvas.Desktop.Actions
 
 			_resourceResolver = concreteAction.ResourceResolver;
 			_actionId = concreteAction.ActionID;
+		    _formerActionIds = new List<string>(concreteAction.FormerActionIDs);
 			_path = new ActionPath(concreteAction.Path.ToString(), concreteAction.ResourceResolver);
 			_groupHint = new GroupHint(concreteAction.GroupHint.Hint);
 			_label = concreteAction.Label;
@@ -99,6 +103,11 @@ namespace ClearCanvas.Desktop.Actions
 		{
 			get { return this.ActionId; }
 		}
+
+        IList<string> IAction.FormerActionIDs
+        {
+            get { return _formerActionIds; }
+        }
 
 		public ActionPath Path
 		{

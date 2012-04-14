@@ -232,11 +232,47 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string MenuDeleteStudy {
+            get {
+                return ResourceManager.GetString("MenuDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string MenuOpenStudies {
+            get {
+                return ResourceManager.GetString("MenuOpenStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         internal static string MenuOpenStudy {
             get {
                 return ResourceManager.GetString("MenuOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve Study.
+        /// </summary>
+        internal static string MenuRetrieveStudy {
+            get {
+                return ResourceManager.GetString("MenuRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Study.
+        /// </summary>
+        internal static string MenuSendStudy {
+            get {
+                return ResourceManager.GetString("MenuSendStudy", resourceCulture);
             }
         }
         
@@ -256,6 +292,60 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string MessageConfirmContinueOpenSearch {
             get {
                 return ResourceManager.GetString("MessageConfirmContinueOpenSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the {0} selected studies?.
+        /// </summary>
+        internal static string MessageConfirmDeleteStudies {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected study?.
+        /// </summary>
+        internal static string MessageConfirmDeleteStudy {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have selected multiple servers to send to.  Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmSendToMultipleServers {
+            get {
+                return ResourceManager.GetString("MessageConfirmSendToMultipleServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to open the selected study..
+        /// </summary>
+        internal static string MessageFailedToOpenStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate a retrieval of the selected items..
+        /// </summary>
+        internal static string MessageFailedToRetrieveStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate sending of the selected items..
+        /// </summary>
+        internal static string MessageFailedToSendStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToSendStudy", resourceCulture);
             }
         }
         
@@ -300,6 +390,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One of the selected studies is in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageOneOfSelectedStudiesInUse {
+            get {
+                return ResourceManager.GetString("MessageOneOfSelectedStudiesInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Permission to view a study is denied..
         /// </summary>
         internal static string MessageOpenStudyPermissionDenied {
@@ -309,11 +408,58 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the selected studies because the DICOM Server service is not running.
+        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageRetrieveDicomServerServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageRetrieveDicomServerServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Permission to search studies is denied..
         /// </summary>
         internal static string MessageSearchStudyPermissionDenied {
             get {
                 return ResourceManager.GetString("MessageSearchStudyPermissionDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select a destination..
+        /// </summary>
+        internal static string MessageSelectDestination {
+            get {
+                return ResourceManager.GetString("MessageSelectDestination", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected study is currently in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageSelectedStudyInUse {
+            get {
+                return ResourceManager.GetString("MessageSelectedStudyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to send the selected studies because the DICOM Server service is not running.
+        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageSendDicomServerServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageSendDicomServerServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} of the selected studies are in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageSomeOfSelectedStudiesInUse {
+            get {
+                return ResourceManager.GetString("MessageSomeOfSelectedStudiesInUse", resourceCulture);
             }
         }
         
@@ -453,6 +599,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        internal static string TitleSend {
+            get {
+                return ResourceManager.GetString("TitleSend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Study.
+        /// </summary>
+        internal static string TitleSendStudy {
+            get {
+                return ResourceManager.GetString("TitleSendStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Servers.
         /// </summary>
         internal static string TitleServerTreePane {
@@ -480,11 +644,47 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string ToolbarDeleteStudy {
+            get {
+                return ResourceManager.GetString("ToolbarDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         internal static string ToolbarOpenStudy {
             get {
                 return ResourceManager.GetString("ToolbarOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve.
+        /// </summary>
+        internal static string ToolbarRetrieveStudy {
+            get {
+                return ResourceManager.GetString("ToolbarRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        internal static string ToolbarSendStudy {
+            get {
+                return ResourceManager.GetString("ToolbarSendStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete study.
+        /// </summary>
+        internal static string TooltipDeleteStudy {
+            get {
+                return ResourceManager.GetString("TooltipDeleteStudy", resourceCulture);
             }
         }
         
@@ -498,11 +698,38 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string TooltipOpenStudies {
+            get {
+                return ResourceManager.GetString("TooltipOpenStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open study.
         /// </summary>
         internal static string TooltipOpenStudy {
             get {
                 return ResourceManager.GetString("TooltipOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve Study.
+        /// </summary>
+        internal static string TooltipRetrieveStudy {
+            get {
+                return ResourceManager.GetString("TooltipRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Study.
+        /// </summary>
+        internal static string TooltipSendStudy {
+            get {
+                return ResourceManager.GetString("TooltipSendStudy", resourceCulture);
             }
         }
         

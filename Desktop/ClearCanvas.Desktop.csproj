@@ -79,6 +79,7 @@
     <Compile Include="Actions\ActionBuildingContext.cs" />
     <Compile Include="Actions\ActionBuilderException.cs" />
     <Compile Include="Actions\ActionDecoratorAttribute.cs" />
+    <Compile Include="Actions\ActionFormerlyAttribute.cs" />
     <Compile Include="Actions\ActionInitiatorAttribute.cs" />
     <Compile Include="Actions\ActionModelNode.cs" />
     <Compile Include="Actions\ActionModelNodeList.cs" />

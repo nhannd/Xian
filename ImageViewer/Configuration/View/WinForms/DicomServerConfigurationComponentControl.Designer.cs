@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
     partial class DicomServerConfigurationComponentControl
     {

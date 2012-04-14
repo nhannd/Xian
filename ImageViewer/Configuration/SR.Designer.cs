@@ -335,6 +335,24 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again..
+        /// </summary>
+        internal static string MessageFailedToRetrieveDicomServerConfiguration {
+            get {
+                return ResourceManager.GetString("MessageFailedToRetrieveDicomServerConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again..
+        /// </summary>
+        internal static string MessageFailedToUpdateDicomServerConfiguration {
+            get {
+                return ResourceManager.GetString("MessageFailedToUpdateDicomServerConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Host Name cannot be empty..
         /// </summary>
         internal static string MessageHostNameCannotBeEmpty {
@@ -493,6 +511,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string PublishingConfiguration {
             get {
                 return ResourceManager.GetString("PublishingConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local Server.
+        /// </summary>
+        internal static string ServerConfiguration {
+            get {
+                return ResourceManager.GetString("ServerConfiguration", resourceCulture);
             }
         }
         

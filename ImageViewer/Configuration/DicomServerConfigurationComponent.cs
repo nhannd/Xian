@@ -17,7 +17,7 @@ using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer.Configuration
 {
 	/// <summary>
 	/// Exception handling policy for <see cref="DicomServerConfigurationHelper.UpdateException"/>s and <see cref="DicomServerConfigurationHelper.RefreshException"/>s.
@@ -28,13 +28,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
 	public sealed class DicomServerConfigurationHelperExceptionPolicy : IExceptionPolicy
 	{
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public DicomServerConfigurationHelperExceptionPolicy()
-		{
-		}
-
 		#region IExceptionPolicy Members
 
 		///<summary>
@@ -90,7 +83,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
     			_aeTitle = DicomServerConfigurationHelper.AETitle;
     			_port = DicomServerConfigurationHelper.Port;
-				_storageDirectory = DicomServerConfigurationHelper.FileStoreDirectory;
 
     			Enabled = true;
     		}
@@ -156,8 +148,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
             }
         }
 
-		[ValidateGreaterThanAttribute(0, Inclusive = false, Message = "ValidationPortOutOfRange")]
-		[ValidateLessThanAttribute(65536, Inclusive = false, Message = "ValidationPortOutOfRange")]
+		[ValidateGreaterThan(0, Inclusive = false, Message = "ValidationPortOutOfRange")]
+		[ValidateLessThan(65536, Inclusive = false, Message = "ValidationPortOutOfRange")]
 		public int Port
         {
             get { return _port; }
@@ -171,21 +163,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				NotifyPropertyChanged("Port");
 			}
         }
-
-		//private for now.
-		private string StorageDirectory
-		{
-			get { return _storageDirectory; }
-			set
-			{
-				if (_storageDirectory == value)
-					return;
-
-				_storageDirectory = value;
-				base.Modified = true;
-				NotifyPropertyChanged("StorageDirectory");
-			}
-		}
 		
 		public bool Enabled
         {

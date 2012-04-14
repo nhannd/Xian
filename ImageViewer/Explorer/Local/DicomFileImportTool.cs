@@ -11,35 +11,31 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Explorer.Local;
-using System.ServiceModel;
+using ClearCanvas.ImageViewer.Services;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer.Explorer.Local
 {
     //TODO (Marmot): Move to viewer.
 
 	[MenuAction("Import", "explorerlocal-contextmenu/ImportDicomFiles", "Import")]
-	[Tooltip("Import", "TooltipImportDicomFiles")]
+    [ActionFormerly("Import", "ClearCanvas.ImageViewer.Services.Tools.DicomFileImportTool:Import")]
+    [Tooltip("Import", "TooltipImportDicomFiles")]
 	[IconSet("Import", "Icons.DicomFileImportToolSmall.png", "Icons.DicomFileImportToolMedium.png", "Icons.DicomFileImportToolLarge.png")]
 	[EnabledStateObserver("Import", "Enabled", "EnabledChanged")]
-	[ViewerActionPermission("Import", ImageViewer.Common.AuthorityTokens.Study.Import)]
+	[ViewerActionPermission("Import", Common.AuthorityTokens.Study.Import)]
 
 	[ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
 	public class DicomFileImportTool : Tool<ILocalImageExplorerToolContext>
 	{
 		public event EventHandler EnabledChanged;
 		private bool _enabled = true;
-
-		public DicomFileImportTool()
-		{
-		}
 
 		public bool Enabled
 		{

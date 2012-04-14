@@ -174,8 +174,20 @@
   <data name="FormatUnableToQueryServer" xml:space="preserve">
     <value>Unable to Query server {0}:  {1}</value>
   </data>
+  <data name="MenuDeleteStudy" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="MenuOpenStudies" xml:space="preserve">
+    <value>Open</value>
+  </data>
   <data name="MenuOpenStudy" xml:space="preserve">
     <value>Open</value>
+  </data>
+  <data name="MenuRetrieveStudy" xml:space="preserve">
+    <value>Retrieve Study</value>
+  </data>
+  <data name="MenuSendStudy" xml:space="preserve">
+    <value>Send Study</value>
   </data>
   <data name="MessageCannotOpenNonStreamingStudy" xml:space="preserve">
     <value>The selected study is on a non-streaming server and cannot be opened.</value>
@@ -183,6 +195,24 @@
   <data name="MessageConfirmContinueOpenSearch" xml:space="preserve">
     <value>This query could take a long time to complete because you have not specified any filters.
 Are you sure you want to continue?</value>
+  </data>
+  <data name="MessageConfirmDeleteStudies" xml:space="preserve">
+    <value>Are you sure you want to delete the {0} selected studies?</value>
+  </data>
+  <data name="MessageConfirmDeleteStudy" xml:space="preserve">
+    <value>Are you sure you want to delete the selected study?</value>
+  </data>
+  <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
+    <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
+  </data>
+  <data name="MessageFailedToOpenStudy" xml:space="preserve">
+    <value>Failed to open the selected study.</value>
+  </data>
+  <data name="MessageFailedToRetrieveStudy" xml:space="preserve">
+    <value>Failed to initiate a retrieval of the selected items.</value>
+  </data>
+  <data name="MessageFailedToSendStudy" xml:space="preserve">
+    <value>Failed to initiate sending of the selected items.</value>
   </data>
   <data name="MessageFormatXNonStreamingStudiesCannotBeOpened" xml:space="preserve">
     <value>{0} of the selected studies are on a non-streaming server and cannot be opened.</value>
@@ -200,11 +230,31 @@ Are you sure you want to continue?</value>
   <data name="MessageOneNonStreamingStudyCannotBeOpened" xml:space="preserve">
     <value>One of the selected studies is on a non-streaming server and cannot be opened.</value>
   </data>
+  <data name="MessageOneOfSelectedStudiesInUse" xml:space="preserve">
+    <value>One of the selected studies is in use.  Please close all relevant workspaces before deleting.</value>
+  </data>
   <data name="MessageOpenStudyPermissionDenied" xml:space="preserve">
     <value>Permission to view a study is denied.</value>
   </data>
+  <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
+    <value>Failed to retrieve the selected studies because the DICOM Server service is not running.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
+  </data>
   <data name="MessageSearchStudyPermissionDenied" xml:space="preserve">
     <value>Permission to search studies is denied.</value>
+  </data>
+  <data name="MessageSelectDestination" xml:space="preserve">
+    <value>Please select a destination.</value>
+  </data>
+  <data name="MessageSelectedStudyInUse" xml:space="preserve">
+    <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
+  </data>
+  <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
+    <value>Failed to send the selected studies because the DICOM Server service is not running.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
+  </data>
+  <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
+    <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
   </data>
   <data name="NotificationDetailsReindexCancelled" xml:space="preserve">
     <value>The re-index operation has been canceled. You should run another re-index as soon as possible, as studies may be in an unstable state.</value>
@@ -251,6 +301,12 @@ Are you sure you want to continue?</value>
   <data name="TitleSearchPanelPane" xml:space="preserve">
     <value>Search Panel</value>
   </data>
+  <data name="TitleSend" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="TitleSendStudy" xml:space="preserve">
+    <value>Send Study</value>
+  </data>
   <data name="TitleServerTreePane" xml:space="preserve">
     <value>Servers</value>
   </data>
@@ -260,14 +316,35 @@ Are you sure you want to continue?</value>
   <data name="TitleStudyNavigatorPane" xml:space="preserve">
     <value>Study Navigator</value>
   </data>
+  <data name="ToolbarDeleteStudy" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="ToolbarOpenStudy" xml:space="preserve">
     <value>Open</value>
+  </data>
+  <data name="ToolbarRetrieveStudy" xml:space="preserve">
+    <value>Retrieve</value>
+  </data>
+  <data name="ToolbarSendStudy" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="TooltipDeleteStudy" xml:space="preserve">
+    <value>Delete study</value>
   </data>
   <data name="TooltipHideDuplicateStudies" xml:space="preserve">
     <value>Hide duplicate studies</value>
   </data>
+  <data name="TooltipOpenStudies" xml:space="preserve">
+    <value>Open</value>
+  </data>
   <data name="TooltipOpenStudy" xml:space="preserve">
     <value>Open study</value>
+  </data>
+  <data name="TooltipRetrieveStudy" xml:space="preserve">
+    <value>Retrieve Study</value>
+  </data>
+  <data name="TooltipSendStudy" xml:space="preserve">
+    <value>Send Study</value>
   </data>
   <data name="TooltipShowAllStudies" xml:space="preserve">
     <value>Show all studies</value>

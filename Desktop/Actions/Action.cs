@@ -10,9 +10,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -71,6 +73,8 @@ namespace ClearCanvas.Desktop.Actions
 			_available = true;
 
 			_persistent = false;
+
+            FormerActionIDs = new List<string>();
         }
 
         /// <summary>
@@ -122,6 +126,17 @@ namespace ClearCanvas.Desktop.Actions
         {
             get { return _actionID; }
         }
+
+        /// <summary>
+        /// Gets any former <see cref="IAction.ActionID"/>s, in case an <see cref="IAction"/>
+        /// or <see cref="Tool{TContextInterface}"/> has moved.
+        /// </summary>
+        /// <remarks>Use the <see cref="ActionFormerlyAttribute"/> in action declarations to indicate to the framework
+        /// that an action used to have a different <see cref="IAction.ActionID"/>. This way, the action will not lose it's place
+        /// in the action model just because the code moved. Obviously, only do this if, indeed, you want the action
+        /// to maintain it's same place in the action model.
+        /// </remarks>
+        public IList<string> FormerActionIDs { get; private set; }
 
         /// <summary>
         /// Gets the resource resolver associated with this action, that will be used to resolve

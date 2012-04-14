@@ -12,6 +12,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Explorer.Local;
 using ClearCanvas.ImageViewer.Services.Tools;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools

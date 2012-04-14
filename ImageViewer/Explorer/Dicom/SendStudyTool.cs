@@ -11,23 +11,19 @@
 
 using System;
 using System.Collections.Generic;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.Auditing;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Explorer.Dicom;
-using System.ServiceModel;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarSendStudy", "SendStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuSendStudy", "SendStudy")]
+    [ActionFormerly("activate", "ClearCanvas.ImageViewer.Services.Tools.SendStudyTool:activate")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipSendStudy")]
 	[IconSet("activate", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
@@ -36,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 	//TODO (Marmot):Restore.
 
-	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint), Enabled = false)]
+	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
     public class SendStudyTool : StudyBrowserTool
     {
         private void SendStudy()

@@ -11,28 +11,25 @@
 
 using System;
 using System.Collections.Generic;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Explorer.Dicom;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarDeleteStudy", "DeleteStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuDeleteStudy", "DeleteStudy")]
-	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+    [ActionFormerly("activate", "ClearCanvas.ImageViewer.Services.Tools.DeleteStudyTool:activate")]
+    [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDeleteStudy")]
 	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 
-    [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Delete)]
+    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Delete)]
 	//TODO (Marmot): Restore.
-	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint), Enabled = false)]
+	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class DeleteStudyTool : StudyBrowserTool
 	{
 		private void DeleteStudy()
