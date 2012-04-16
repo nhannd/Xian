@@ -409,9 +409,6 @@ namespace ClearCanvas.Desktop
     				// should be hardcoded because manifest verification is all that prevents localizing this tag away
     				tags.Add(LabelModifiedInstallation);
 
-
-
-
     			var name = ProductInformation.GetName(false, true);
     			var oemConfig = OemConfiguration.Load();
 				if (!string.IsNullOrEmpty(oemConfig.ProductName))
