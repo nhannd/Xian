@@ -62,23 +62,22 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="read">A read context to read from the database.</param>
         public void LoadPreferredSyntaxes(IPersistenceContext read)
         {
-            IDevicePreferredTransferSyntaxEntityBroker select =
-                read.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
+            var select = read.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
 
             // Setup the select parameters.
-            DevicePreferredTransferSyntaxSelectCriteria criteria = new DevicePreferredTransferSyntaxSelectCriteria();
+            var criteria = new DevicePreferredTransferSyntaxSelectCriteria();
             criteria.DeviceKey.EqualTo(_remoteDevice.GetKey());
 
             IList<DevicePreferredTransferSyntax> list = select.Find(criteria);
 
             // Translate the list returned into the database into a list that is supported by the Storage SCU Component
-            List<SupportedSop> sopList = new List<SupportedSop>();
+            var sopList = new List<SupportedSop>();
             foreach (DevicePreferredTransferSyntax preferred in list)
             {
-                SupportedSop sop = new SupportedSop
-                                   	{
-                                   		SopClass = SopClass.GetSopClass(preferred.GetServerSopClass().SopClassUid)
-                                   	};
+                var sop = new SupportedSop
+                              {
+                                  SopClass = SopClass.GetSopClass(preferred.GetServerSopClass().SopClassUid)
+                              };
             	sop.AddSyntax(TransferSyntax.GetTransferSyntax(preferred.GetServerTransferSyntax().Uid));
 
                 sopList.Add(sop);
@@ -111,7 +110,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             foreach (InstanceXml instanceXml in seriesXml)
             {
                 string instancePath = Path.Combine(seriesPath, instanceXml.SopInstanceUid + ServerPlatform.DicomFileExtension);
-                StorageInstance instance = new StorageInstance(instancePath);
+                var instance = new StorageInstance(instancePath);
                 
                 AddStorageInstance(instance);
                 instance.SopClass = instanceXml.SopClass;

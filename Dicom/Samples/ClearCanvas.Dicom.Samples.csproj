@@ -116,20 +116,29 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="StudyRootStudy.xml" />
+    <EmbeddedResource Include="SampleXml\StudyRootStudy.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PatientRootPatient.xml" />
+    <EmbeddedResource Include="SampleXml\PatientRootPatient.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DicomdirDisplay.resx">
       <DependentUpon>DicomdirDisplay.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PatientRootImage.xml" />
-    <EmbeddedResource Include="PatientRootSeries.xml" />
-    <EmbeddedResource Include="PatientRootStudy.xml" />
-    <EmbeddedResource Include="StudyRootImage.xml" />
-    <EmbeddedResource Include="StudyRootSeries.xml" />
+    <EmbeddedResource Include="SampleXml\PatientRootImage.xml" />
+    <EmbeddedResource Include="SampleXml\PatientRootSeries.xml" />
+    <EmbeddedResource Include="SampleXml\PatientRootStudy.xml" />
+    <EmbeddedResource Include="SampleXml\StudyRootImage.xml" />
+    <EmbeddedResource Include="SampleXml\StudyRootSeries.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SampleXml\PatientRootMoveImage.xml" />
+    <EmbeddedResource Include="SampleXml\PatientRootMovePatient.xml" />
+    <EmbeddedResource Include="SampleXml\PatientRootMoveSeries.xml" />
+    <EmbeddedResource Include="SampleXml\PatientRootMoveStudy.xml" />
+    <EmbeddedResource Include="SampleXml\StudyRootMoveImage.xml" />
+    <EmbeddedResource Include="SampleXml\StudyRootMoveSeries.xml" />
+    <EmbeddedResource Include="SampleXml\StudyRootMoveStudy.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

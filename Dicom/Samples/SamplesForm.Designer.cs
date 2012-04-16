@@ -76,6 +76,7 @@ namespace ClearCanvas.Dicom.Samples
             this._textBoxStorageScuRemoteAe = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.StorageScpTab = new System.Windows.Forms.TabPage();
+            this._checkBoxStorageScpBitbucket = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this._textBoxStorageScpAeTitle = new System.Windows.Forms.TextBox();
             this._buttonStorageScuSelectStorageLocation = new System.Windows.Forms.Button();
@@ -124,13 +125,29 @@ namespace ClearCanvas.Dicom.Samples
             this._buttonOpenDicomdir = new System.Windows.Forms.Button();
             this.label19 = new System.Windows.Forms.Label();
             this._textBoxDicomdir = new System.Windows.Forms.TextBox();
+            this.moveScuTab = new System.Windows.Forms.TabPage();
+            this.label23 = new System.Windows.Forms.Label();
+            this.comboBoxMoveScuQueryLevel = new System.Windows.Forms.ComboBox();
+            this.textBoxMoveScuMoveDestination = new System.Windows.Forms.TextBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.comboBoxMoveScuQueryType = new System.Windows.Forms.ComboBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.textBoxMoveScuLocalAe = new System.Windows.Forms.TextBox();
+            this.textBoxMoveScuRemotePort = new System.Windows.Forms.TextBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.textBoxMoveScuRemoteHost = new System.Windows.Forms.TextBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.textBoxMoveScuRemoteAe = new System.Windows.Forms.TextBox();
+            this.label29 = new System.Windows.Forms.Label();
+            this.textBoxMoveMessage = new System.Windows.Forms.TextBox();
+            this.buttonMoveScuMove = new System.Windows.Forms.Button();
             this._buttonOutputClearLog = new System.Windows.Forms.Button();
             this.OutputTextBox = new System.Windows.Forms.TextBox();
             this.openFileDialogStorageScu = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialogStorageScp = new System.Windows.Forms.FolderBrowserDialog();
             this.folderBrowserDialogStorageScu = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this._checkBoxStorageScpBitbucket = new System.Windows.Forms.CheckBox();
             this.SamplesSplitContainer.Panel1.SuspendLayout();
             this.SamplesSplitContainer.Panel2.SuspendLayout();
             this.SamplesSplitContainer.SuspendLayout();
@@ -140,6 +157,7 @@ namespace ClearCanvas.Dicom.Samples
             this.CompressionTab.SuspendLayout();
             this.queryScuTab.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.moveScuTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // SamplesSplitContainer
@@ -165,14 +183,15 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // SamplesTabs
             // 
-            this.SamplesTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.SamplesTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.SamplesTabs.Controls.Add(this.StorageScuTab);
             this.SamplesTabs.Controls.Add(this.StorageScpTab);
             this.SamplesTabs.Controls.Add(this.CompressionTab);
             this.SamplesTabs.Controls.Add(this.queryScuTab);
             this.SamplesTabs.Controls.Add(this.tabPage1);
+            this.SamplesTabs.Controls.Add(this.moveScuTab);
             this.SamplesTabs.Location = new System.Drawing.Point(3, 0);
             this.SamplesTabs.Name = "SamplesTabs";
             this.SamplesTabs.SelectedIndex = 0;
@@ -342,6 +361,16 @@ namespace ClearCanvas.Dicom.Samples
             this.StorageScpTab.TabIndex = 1;
             this.StorageScpTab.Text = "StorageSCP";
             this.StorageScpTab.UseVisualStyleBackColor = true;
+            // 
+            // _checkBoxStorageScpBitbucket
+            // 
+            this._checkBoxStorageScpBitbucket.AutoSize = true;
+            this._checkBoxStorageScpBitbucket.Location = new System.Drawing.Point(181, 74);
+            this._checkBoxStorageScpBitbucket.Name = "_checkBoxStorageScpBitbucket";
+            this._checkBoxStorageScpBitbucket.Size = new System.Drawing.Size(71, 17);
+            this._checkBoxStorageScpBitbucket.TabIndex = 8;
+            this._checkBoxStorageScpBitbucket.Text = "Bitbucket";
+            this._checkBoxStorageScpBitbucket.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -826,6 +855,185 @@ namespace ClearCanvas.Dicom.Samples
             this._textBoxDicomdir.Size = new System.Drawing.Size(509, 20);
             this._textBoxDicomdir.TabIndex = 0;
             // 
+            // moveScuTab
+            // 
+            this.moveScuTab.Controls.Add(this.label23);
+            this.moveScuTab.Controls.Add(this.comboBoxMoveScuQueryLevel);
+            this.moveScuTab.Controls.Add(this.textBoxMoveScuMoveDestination);
+            this.moveScuTab.Controls.Add(this.label24);
+            this.moveScuTab.Controls.Add(this.label25);
+            this.moveScuTab.Controls.Add(this.comboBoxMoveScuQueryType);
+            this.moveScuTab.Controls.Add(this.label26);
+            this.moveScuTab.Controls.Add(this.textBoxMoveScuLocalAe);
+            this.moveScuTab.Controls.Add(this.textBoxMoveScuRemotePort);
+            this.moveScuTab.Controls.Add(this.label27);
+            this.moveScuTab.Controls.Add(this.textBoxMoveScuRemoteHost);
+            this.moveScuTab.Controls.Add(this.label28);
+            this.moveScuTab.Controls.Add(this.textBoxMoveScuRemoteAe);
+            this.moveScuTab.Controls.Add(this.label29);
+            this.moveScuTab.Controls.Add(this.textBoxMoveMessage);
+            this.moveScuTab.Controls.Add(this.buttonMoveScuMove);
+            this.moveScuTab.Location = new System.Drawing.Point(4, 22);
+            this.moveScuTab.Name = "moveScuTab";
+            this.moveScuTab.Padding = new System.Windows.Forms.Padding(3);
+            this.moveScuTab.Size = new System.Drawing.Size(910, 126);
+            this.moveScuTab.TabIndex = 5;
+            this.moveScuTab.Text = "MoveSCU";
+            this.moveScuTab.UseVisualStyleBackColor = true;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(148, 70);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(33, 13);
+            this.label23.TabIndex = 41;
+            this.label23.Text = "Level";
+            // 
+            // comboBoxMoveScuQueryLevel
+            // 
+            this.comboBoxMoveScuQueryLevel.FormattingEnabled = true;
+            this.comboBoxMoveScuQueryLevel.Items.AddRange(new object[] {
+            "PATIENT",
+            "STUDY",
+            "SERIES",
+            "IMAGE"});
+            this.comboBoxMoveScuQueryLevel.Location = new System.Drawing.Point(148, 87);
+            this.comboBoxMoveScuQueryLevel.Name = "comboBoxMoveScuQueryLevel";
+            this.comboBoxMoveScuQueryLevel.Size = new System.Drawing.Size(100, 21);
+            this.comboBoxMoveScuQueryLevel.TabIndex = 40;
+            this.comboBoxMoveScuQueryLevel.Text = "STUDY";
+            this.comboBoxMoveScuQueryLevel.SelectedIndexChanged += new System.EventHandler(this.ComboBoxMoveScuQueryLevelSelectedIndexChanged);
+            // 
+            // textBoxMoveScuMoveDestination
+            // 
+            this.textBoxMoveScuMoveDestination.Location = new System.Drawing.Point(282, 87);
+            this.textBoxMoveScuMoveDestination.Name = "textBoxMoveScuMoveDestination";
+            this.textBoxMoveScuMoveDestination.Size = new System.Drawing.Size(100, 20);
+            this.textBoxMoveScuMoveDestination.TabIndex = 39;
+            this.textBoxMoveScuMoveDestination.Text = "StorageSCP";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(279, 71);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(90, 13);
+            this.label24.TabIndex = 38;
+            this.label24.Text = "Move Destination";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(17, 71);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(62, 13);
+            this.label25.TabIndex = 37;
+            this.label25.Text = "Query Type";
+            // 
+            // comboBoxMoveScuQueryType
+            // 
+            this.comboBoxMoveScuQueryType.FormattingEnabled = true;
+            this.comboBoxMoveScuQueryType.Items.AddRange(new object[] {
+            "Study Root",
+            "Patient Root"});
+            this.comboBoxMoveScuQueryType.Location = new System.Drawing.Point(17, 87);
+            this.comboBoxMoveScuQueryType.Name = "comboBoxMoveScuQueryType";
+            this.comboBoxMoveScuQueryType.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxMoveScuQueryType.TabIndex = 36;
+            this.comboBoxMoveScuQueryType.Text = "Study Root";
+            this.comboBoxMoveScuQueryType.SelectedIndexChanged += new System.EventHandler(this.ComboBoxMoveScuQueryTypeSelectedIndexChanged);
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(17, 14);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(50, 13);
+            this.label26.TabIndex = 35;
+            this.label26.Text = "Local AE";
+            // 
+            // textBoxMoveScuLocalAe
+            // 
+            this.textBoxMoveScuLocalAe.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuLocalAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBoxMoveScuLocalAe.Location = new System.Drawing.Point(17, 31);
+            this.textBoxMoveScuLocalAe.Name = "textBoxMoveScuLocalAe";
+            this.textBoxMoveScuLocalAe.Size = new System.Drawing.Size(100, 20);
+            this.textBoxMoveScuLocalAe.TabIndex = 34;
+            this.textBoxMoveScuLocalAe.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuLocalAETitle;
+            // 
+            // textBoxMoveScuRemotePort
+            // 
+            this.textBoxMoveScuRemotePort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemotePort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBoxMoveScuRemotePort.Location = new System.Drawing.Point(421, 32);
+            this.textBoxMoveScuRemotePort.Name = "textBoxMoveScuRemotePort";
+            this.textBoxMoveScuRemotePort.Size = new System.Drawing.Size(100, 20);
+            this.textBoxMoveScuRemotePort.TabIndex = 33;
+            this.textBoxMoveScuRemotePort.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemotePort;
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(418, 15);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(66, 13);
+            this.label27.TabIndex = 32;
+            this.label27.Text = "Remote Port";
+            // 
+            // textBoxMoveScuRemoteHost
+            // 
+            this.textBoxMoveScuRemoteHost.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemoteHost", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBoxMoveScuRemoteHost.Location = new System.Drawing.Point(282, 32);
+            this.textBoxMoveScuRemoteHost.Name = "textBoxMoveScuRemoteHost";
+            this.textBoxMoveScuRemoteHost.Size = new System.Drawing.Size(100, 20);
+            this.textBoxMoveScuRemoteHost.TabIndex = 31;
+            this.textBoxMoveScuRemoteHost.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemoteHost;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(279, 15);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(69, 13);
+            this.label28.TabIndex = 30;
+            this.label28.Text = "Remote Host";
+            // 
+            // textBoxMoveScuRemoteAe
+            // 
+            this.textBoxMoveScuRemoteAe.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemoteAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBoxMoveScuRemoteAe.Location = new System.Drawing.Point(148, 32);
+            this.textBoxMoveScuRemoteAe.Name = "textBoxMoveScuRemoteAe";
+            this.textBoxMoveScuRemoteAe.Size = new System.Drawing.Size(100, 20);
+            this.textBoxMoveScuRemoteAe.TabIndex = 29;
+            this.textBoxMoveScuRemoteAe.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemoteAETitle;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(145, 15);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(61, 13);
+            this.label29.TabIndex = 28;
+            this.label29.Text = "Remote AE";
+            // 
+            // textBoxMoveMessage
+            // 
+            this.textBoxMoveMessage.Location = new System.Drawing.Point(550, 6);
+            this.textBoxMoveMessage.Multiline = true;
+            this.textBoxMoveMessage.Name = "textBoxMoveMessage";
+            this.textBoxMoveMessage.Size = new System.Drawing.Size(348, 114);
+            this.textBoxMoveMessage.TabIndex = 27;
+            // 
+            // buttonMoveScuMove
+            // 
+            this.buttonMoveScuMove.Location = new System.Drawing.Point(446, 87);
+            this.buttonMoveScuMove.Name = "buttonMoveScuMove";
+            this.buttonMoveScuMove.Size = new System.Drawing.Size(75, 23);
+            this.buttonMoveScuMove.TabIndex = 26;
+            this.buttonMoveScuMove.Text = "Move";
+            this.buttonMoveScuMove.UseVisualStyleBackColor = true;
+            this.buttonMoveScuMove.Click += new System.EventHandler(this.buttonMoveScuMove_Click);
+            // 
             // _buttonOutputClearLog
             // 
             this._buttonOutputClearLog.Location = new System.Drawing.Point(16, 3);
@@ -838,9 +1046,9 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // OutputTextBox
             // 
-            this.OutputTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.OutputTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OutputTextBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OutputTextBox.Location = new System.Drawing.Point(3, 30);
             this.OutputTextBox.MaxLength = 65536;
@@ -861,16 +1069,6 @@ namespace ClearCanvas.Dicom.Samples
             // 
             this.saveFileDialog.DefaultExt = "dcm";
             this.saveFileDialog.Title = "Save DICOM File";
-            // 
-            // _checkBoxStorageScpBitbucket
-            // 
-            this._checkBoxStorageScpBitbucket.AutoSize = true;
-            this._checkBoxStorageScpBitbucket.Location = new System.Drawing.Point(181, 74);
-            this._checkBoxStorageScpBitbucket.Name = "_checkBoxStorageScpBitbucket";
-            this._checkBoxStorageScpBitbucket.Size = new System.Drawing.Size(71, 17);
-            this._checkBoxStorageScpBitbucket.TabIndex = 8;
-            this._checkBoxStorageScpBitbucket.Text = "Bitbucket";
-            this._checkBoxStorageScpBitbucket.UseVisualStyleBackColor = true;
             // 
             // SamplesForm
             // 
@@ -895,6 +1093,8 @@ namespace ClearCanvas.Dicom.Samples
             this.queryScuTab.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.moveScuTab.ResumeLayout(false);
+            this.moveScuTab.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -973,6 +1173,23 @@ namespace ClearCanvas.Dicom.Samples
 		private System.Windows.Forms.TextBox _textBoxDicomdirRemoteAe;
 		private System.Windows.Forms.Label label22;
         private System.Windows.Forms.CheckBox _checkBoxStorageScpBitbucket;
+        private System.Windows.Forms.TabPage moveScuTab;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.ComboBox comboBoxMoveScuQueryLevel;
+        private System.Windows.Forms.TextBox textBoxMoveScuMoveDestination;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.ComboBox comboBoxMoveScuQueryType;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.TextBox textBoxMoveScuLocalAe;
+        private System.Windows.Forms.TextBox textBoxMoveScuRemotePort;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.TextBox textBoxMoveScuRemoteHost;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.TextBox textBoxMoveScuRemoteAe;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.TextBox textBoxMoveMessage;
+        private System.Windows.Forms.Button buttonMoveScuMove;
     }
 }
 
