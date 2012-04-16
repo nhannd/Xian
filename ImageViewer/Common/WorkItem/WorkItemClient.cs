@@ -136,6 +136,22 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
+    internal class ReindexApplication : IApplicationRoot
+    {
+        #region IApplicationRoot Members
+
+        public void RunApplication(string[] args)
+        {
+            if (new ReindexClient().Reindex())
+                return;
+
+            Console.WriteLine("Failed to start Re-index.");
+            Environment.ExitCode = 1;
+        }
+
+        #endregion
+    }
+
     public class ReindexClient : WorkItemClient
     {
         public bool Reindex()

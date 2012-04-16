@@ -94,6 +94,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             Platform.CheckForEmptyString(request.Configuration.AETitle, "AETitle");
             Platform.CheckArgumentRange(request.Configuration.Port, 1, 65535, "Port");
 
+            //Trim the strings before saving.
+            request.Configuration.AETitle = request.Configuration.AETitle.Trim();
+            request.Configuration.FileStoreDirectory = request.Configuration.FileStoreDirectory.Trim();
+            request.Configuration.HostName = request.Configuration.HostName.Trim();
+
             using (var context = new DataAccessContext())
             {
                 context.GetConfigurationBroker().SetDataContractValue(_configurationKey, request.Configuration);
