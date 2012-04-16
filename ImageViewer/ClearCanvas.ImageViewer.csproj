@@ -255,7 +255,6 @@
     <Compile Include="Tests\MockScreenInfoProvider.cs" />
     <Compile Include="StudyManagement\Tests\StudyBuilder.cs" />
     <Compile Include="StudyManagement\Tests\StudyBuilderFactory.cs" />
-    <Compile Include="TimedDialog.cs" />
     <Compile Include="ViewerActionFilter.cs" />
     <Compile Include="ImageBoxDrawingEventArgs.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />

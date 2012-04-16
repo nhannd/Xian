@@ -50,6 +50,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         private DesktopForm _form;
         private OrderedSet<WorkspaceView> _workspaceActivationOrder;
 
+    	private TimedDialogForm _errorNotificationDialog;
+		private TimedDialogForm _infoNotificationDialog;
+
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -584,6 +588,19 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
     	/// <summary>
+    	/// Shows an alert notification in front of this window.
+    	/// </summary>
+    	public void ShowAlert(AlertNotificationArgs args)
+    	{
+    		var dialog = GetAlertDialog(args.Level);
+    		dialog.Message = args.Message;
+    		dialog.LinkText = args.LinkText;
+    		dialog.LinkHandler = SafeLinkHandler(args.LinkAction);
+			dialog.Popup(dialog == _infoNotificationDialog && _errorNotificationDialog.Visible ? 1 : 0);
+			dialog.Activate();
+		}
+
+    	/// <summary>
     	/// Shows a 'Save file' dialog in front of this window.
     	/// </summary>
     	/// <param name="args"></param>
@@ -717,6 +734,18 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (disposing && _form != null)
             {
+				if(_infoNotificationDialog != null)
+				{
+					_infoNotificationDialog.Dispose();
+					_infoNotificationDialog = null;
+				}
+				if (_errorNotificationDialog != null)
+				{
+					_errorNotificationDialog.Dispose();
+					_errorNotificationDialog = null;
+				}
+
+
 				_form.VisibleChanged -= new EventHandler(FormVisibleChangedEventHandler);
 				_form.Activated -= new EventHandler(FormActivatedEventHandler);
 				_form.Deactivate -= new EventHandler(FormDeactivateEventHandler);
@@ -853,6 +882,38 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 			return true;
 		}
+
+		private System.Action SafeLinkHandler(Action<DesktopWindow> linkAction)
+		{
+			return delegate
+			{
+				try
+				{
+					if (linkAction != null)
+					{
+						linkAction(_desktopWindow);
+					}
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			};
+		}
+
+		private TimedDialogForm GetAlertDialog(AlertLevel level)
+		{
+			if(level == AlertLevel.Info)
+			{
+				if (_infoNotificationDialog == null)
+					_infoNotificationDialog = new TimedDialogForm(_form, Application.Name) {AutoDismiss = true};
+				return _infoNotificationDialog;
+			}
+			if (_errorNotificationDialog == null)
+				_errorNotificationDialog = new TimedDialogForm(_form, Application.Name);
+			return _errorNotificationDialog;
+		}
+
 
 	}
 }

@@ -54,6 +54,11 @@ namespace ClearCanvas.Desktop
 		DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons);
 
 		/// <summary>
+		/// Shows an alert notification in front of this window.
+		/// </summary>
+		void ShowAlert(AlertNotificationArgs args);
+
+		/// <summary>
 		/// Shows a 'Save file' dialog in front of this window.
 		/// </summary>
 		/// <param name="args"></param>
@@ -73,5 +78,5 @@ namespace ClearCanvas.Desktop
 		/// <param name="args"></param>
 		/// <returns></returns>
     	FileDialogResult ShowSelectFolderDialogBox(SelectFolderDialogCreationArgs args);
-	}
+    }
 }

@@ -166,6 +166,15 @@ namespace ClearCanvas.Desktop
             return this.DesktopWindowView.ShowMessageBox(message, title, buttons);
         }
 
+		public void ShowAlert(AlertNotificationArgs args)
+		{
+			AssertState(new[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+
+			AlertLog.Instance.Log(args);
+
+			this.DesktopWindowView.ShowAlert(args);
+		}
+
         /// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>

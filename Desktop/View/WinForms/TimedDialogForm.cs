@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Crownwood.DotNetMagic.Forms;
 
-namespace ClearCanvas.ImageViewer.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class TimedDialogForm : DotNetMagicForm
     {
@@ -11,61 +11,87 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         private readonly double _maxOpacity;
 
         private TimeSpan _lingerTime;
-        private Timer _timer;
         private int _startTicks;
 
         private bool _stay;
+    	private int _slot;
+		private Action _linkHandler;
+    	private bool _autoDismiss;
 
-        public TimedDialogForm(Control control, string title, TimeSpan lingerTime)
+        public TimedDialogForm(DesktopForm owner, string title)
         {
-            _lingerTime = lingerTime;
-            SuspendLayout();
+             SuspendLayout();
             
             InitializeComponent();
-            _hostPanel.Controls.Add(control);
 
-            /// TODO (CR Apr 2012): This exists in the core framework dialog, too, and possibly elsewhere as well.
-            Text = string.IsNullOrEmpty(title) 
-                            ? Desktop.Application.Name 
-                            : string.Format("{0} - {1}", Desktop.Application.Name, title);
+        	this.Text = title;
+        	this.Owner = owner;
 
             _maxOpacity = 1.0;
             _minOpacity = 0.3;
             ResumeLayout();
 
-            StartFadeTimer();
         }
 
-        public event EventHandler CloseRequested;
+    	public bool AutoDismiss
+    	{
+			get { return _autoDismiss; }
+			set { _autoDismiss = value; }
+    	}
 
-        protected override void OnDeactivate(EventArgs e)
-        {
-            if (_stay)
-                return;
+    	public string Message
+    	{
+			get { return _message.Text; }
+			set { _message.Text = value; }
+    	}
 
-            base.OnDeactivate(e);
-            DisposeTimer();
-            Close();
-        }
+		public string LinkText
+		{
+			get { return _contextualLink.Text; }
+			set { _contextualLink.Text = value; }
+		}
+
+		public Action LinkHandler
+		{
+			get { return _linkHandler; }
+			set { _linkHandler = value; }
+		}
+
+		public void Popup(int slot)
+		{
+			// reset all the parameters
+			_slot = slot;
+			this.Opacity = 1.0;
+			_lingerTime = TimeSpan.FromSeconds(3);
+			_startTicks = Environment.TickCount;
+
+			SetLocation();
+
+			if (!this.Visible)
+				Show();
+
+			_timer.Start();
+		}
+
+		public void Show(DesktopForm owner, int slot)
+		{
+			Show(owner);
+		}
 
         protected override void OnLoad(EventArgs e)
         {
-            SetLocation();
-            base.OnLoad(e);
+			base.OnLoad(e);
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            if (CloseRequested != null)
-            {
-                e.Cancel = true;
-                CloseRequested(this, EventArgs.Empty);
-            }
+		private void _contextualLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			if (_linkHandler != null)
+			{
+				_linkHandler();
+			}
+		}
 
-            base.OnFormClosing(e);
-        }
-
-        private void SetLocation()
+		private void SetLocation()
         {
             var owner = Owner;
             if (owner == null)
@@ -87,7 +113,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                 var width = Bounds.Width + bufferX;
                 var height = Bounds.Height + bufferY;
 
-                var location = new Point(ownerRight - width, ownerBottom - height);
+				var location = new Point(ownerRight - width, ownerBottom - height * (_slot + 1));
                 if (location.X < ownerLocation.X)
                     location.X = ownerLocation.X;
                 if (location.Y < ownerLocation.Y)
@@ -116,16 +142,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             Invalidate();
         }
 
-        private void StartFadeTimer()
-        {
-            _startTicks = Environment.TickCount;
-            _timer = new Timer { Interval = 100 };
-            _timer.Tick += OnTimerTick;
-            _timer.Start();
-        }
-
         private void OnTimerTick(object sender, EventArgs e)
         {
+			if (!_autoDismiss)
+				return;
+
             if (IsMouseOver())
             {
                 Stay();
@@ -141,32 +162,38 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             var remaining = _lingerTime.TotalMilliseconds - elapsed;
             if (remaining <= 0)
             {
-                DisposeTimer();
-                Close();
-                return;
+            	Dismiss();
+            	return;
             }
 
-            var ratio = remaining / _lingerTime.TotalMilliseconds;
+        	var ratio = remaining / _lingerTime.TotalMilliseconds;
             var addOpacity = (_maxOpacity - _minOpacity) * ratio;
             Opacity = _minOpacity + addOpacity;
 
             if (Opacity <= _minOpacity)
             {
-                DisposeTimer();
-                Close();
-            }
+				Dismiss();
+			}
             else
             {
                 Invalidate();
             }
         }
 
-        private void DisposeTimer()
-        {
-            if (_timer == null) return;
+    	private void Dismiss()
+    	{
+			_timer.Stop();
+			Hide();
+    	}
 
-            _timer.Dispose();
-            _timer = null;
-        }
+		private void TimedDialogForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if(e.CloseReason == System.Windows.Forms.CloseReason.UserClosing)
+			{
+				e.Cancel = true;
+				Hide();
+			}
+		}
+
     }
 }
