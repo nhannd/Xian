@@ -376,6 +376,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Evaluated For {0} Days.
+        /// </summary>
+        public static string FormatTotalDaysUsed {
+            get {
+                return ResourceManager.GetString("FormatTotalDaysUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The custom date format must be from the available list..
         /// </summary>
         public static string InvalidCustomDateFormat {
@@ -439,11 +448,11 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Evaluation (expired).
+        ///   Looks up a localized string similar to Evaluation ({0} days).
         /// </summary>
-        public static string LabelEvaluationExpired {
+        public static string LabelEvaluationWithDays {
             get {
-                return ResourceManager.GetString("LabelEvaluationExpired", resourceCulture);
+                return ResourceManager.GetString("LabelEvaluationWithDays", resourceCulture);
             }
         }
         

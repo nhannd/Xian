@@ -380,7 +380,24 @@ namespace ClearCanvas.Desktop
     			
                 if (LicenseInformation.IsEvaluation)
                 {
-                    tags.Add(LicenseInformation.Expired ? SR.LabelEvaluationExpired : SR.LabelEvaluation);
+                    var firstRun = LicenseInformation.FirstRun;
+                    if (firstRun==null)
+                    {
+                        tags.Add(SR.LabelEvaluation);
+                    }
+                    else
+                    {
+                        var days = (Platform.Time - firstRun.Value).Days;
+                        if (days>0)
+                        {
+                            var message = string.Format(SR.LabelEvaluationWithDays, days);
+                            tags.Add(message);
+                        }
+                        else
+                        {
+                            tags.Add(SR.LabelEvaluation);
+                        }
+                    }
                 }
 
                 //TODO (CR February 2011) - High: We should have left this as a property on ProductInformation rather than checking for empty string.

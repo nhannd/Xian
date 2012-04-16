@@ -475,7 +475,10 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="LabelEvaluation" xml:space="preserve">
     <value>Evaluation</value>
   </data>
-  <data name="LabelEvaluationExpired" xml:space="preserve">
-    <value>Evaluation (expired)</value>
+  <data name="FormatTotalDaysUsed" xml:space="preserve">
+    <value>Evaluated For {0} Days</value>
+  </data>
+  <data name="LabelEvaluationWithDays" xml:space="preserve">
+    <value>Evaluation ({0} days)</value>
   </data>
 </root>
