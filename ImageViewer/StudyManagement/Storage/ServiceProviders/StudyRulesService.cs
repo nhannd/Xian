@@ -3,12 +3,10 @@ using System.Linq;
 using Castle.Core.Interceptor;
 using Castle.DynamicProxy;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 {
-	// TODO (Marmot): This seems like the best place for this, since it has to be available (in process) whenever the database is present.
 	[ExtensionOf(typeof(ServiceProviderExtensionPoint))]
 	internal class StudyRulesServiceProvider : IServiceProvider
 	{

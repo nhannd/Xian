@@ -40,16 +40,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
     internal class DicomServerConfiguration : IDicomServerConfiguration
     {
-        // TODO (Marmot): How to deal with this? Maybe figure it out from the host name? 
-        private const string _defaultServerAE = "AETITLE";
-        private const int _defaultPort = 104;
-
         private static readonly string _configurationKey = typeof(DicomServerConfigurationContract).FullName;
+
+        //Note: the installer is supposed to set these defaults. These are the bottom of the barrel, last-ditch defaults.
+        #region Defaults
 
         private string DefaultAE
         {
-            //TODO (Marmot): Do something smarter, like determine it from the host name?
-            get { return _defaultServerAE; }
+            get { return "AETITLE"; }
         }
 
         private string DefaultHostname
@@ -64,8 +62,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         private int DefaultPort
         {
-            get { return _defaultPort; }
+            get { return 104; }
         }
+
+        #endregion
 
         #region Implementation of IDicomServerConfiguration
 
@@ -92,6 +92,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         public UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request)
         {
             Platform.CheckForEmptyString(request.Configuration.AETitle, "AETitle");
+            Platform.CheckArgumentRange(request.Configuration.Port, 1, 65535, "Port");
 
             using (var context = new DataAccessContext())
             {
@@ -99,11 +100,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                 context.Commit();
             }
 
-            //TODO (Marmot): This really the right place to do this? Guess it does no harm, but perhaps not
-            //obvious that this will happen automatically.
+            //TODO (Marmot): While it doesn't do any harm to do this here, the listener should also poll periodically for configuration changes, just in case.
             try
             {
-                Platform.GetService<IDicomServer>(s => s.RestartListener(new RestartListenerRequest()));
+                DicomServer.RestartListener();
             }
             catch (EndpointNotFoundException)
             {

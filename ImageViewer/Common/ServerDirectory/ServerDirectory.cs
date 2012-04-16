@@ -1,16 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ServiceModel;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
     public abstract class ServerDirectory : IServerDirectory
     {
-        public abstract GetServersResult GetServers(GetServersRequest request);
-        public abstract AddServerResult AddServer(AddServerRequest request);
-        public abstract UpdateServerResult UpdateServer(UpdateServerRequest request);
-        public abstract DeleteServerResult DeleteServer(DeleteServerRequest request);
-        public abstract DeleteAllServersResult DeleteAllServers(DeleteAllServersRequest request);
+        static ServerDirectory()
+        {
+            try
+            {
+                //TODO (Marmot): This really the best way to do this?
+                var service = Platform.GetService<IServerDirectory>();
+                IsSupported = service != null;
+                var disposable = service as IDisposable;
+                if (disposable != null)
+                    disposable.Dispose();
+            }
+            catch(EndpointNotFoundException)
+            {
+                //This doesn't mean it's not supported, it means it's not running.
+                IsSupported = true;
+            }
+            catch (NotSupportedException)
+            {
+                IsSupported = false;
+                Platform.Log(LogLevel.Debug, "Server Directory is not supported.");
+            }
+            catch (UnknownServiceException)
+            {
+                IsSupported = false;
+                Platform.Log(LogLevel.Debug, "Server Directory is not supported.");
+            }
+            catch (Exception e)
+            {
+                IsSupported = false;
+                Platform.Log(LogLevel.Debug, e, "Server Directory is not supported.");
+            }
+        }
 
-        //TODO (Marmot): IsSupported
+        public static bool IsSupported { get; private set; }
 
         public static IDicomServiceNode GetLocalServer()
         {
@@ -43,5 +73,11 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
                 return bridge.GetServers();
             }
         }
+
+        public abstract GetServersResult GetServers(GetServersRequest request);
+        public abstract AddServerResult AddServer(AddServerRequest request);
+        public abstract UpdateServerResult UpdateServer(UpdateServerRequest request);
+        public abstract DeleteServerResult DeleteServer(DeleteServerRequest request);
+        public abstract DeleteAllServersResult DeleteAllServers(DeleteAllServersRequest request);
     }
 }

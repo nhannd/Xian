@@ -21,7 +21,6 @@ using Castle.DynamicProxy;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 {
-    // TODO (Marmot): This seems like the best place for this, since it has to be available (in process) whenever the database is present.
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
     internal class ServerDirectoryServiceProvider : IServiceProvider
     {

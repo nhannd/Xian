@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Local
         private readonly ISopInstance _sop;
 
         public LocalStoreSopDataSource(ISopInstance sop)
-            : base(sop.GetLocationUri())
+            : base(sop.FilePath)
         {
             _sop = sop;
         }

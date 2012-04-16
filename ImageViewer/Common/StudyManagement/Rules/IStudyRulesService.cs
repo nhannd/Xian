@@ -101,7 +101,5 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 		GetRuleResponse GetRule(GetRuleRequest request);
 		PutRuleResponse PutRule(PutRuleRequest request);
 		DeleteRuleResponse DeleteRule(DeleteRuleRequest request);
-
-	    //TODO (Marmot): TestRule?
 	}
 }

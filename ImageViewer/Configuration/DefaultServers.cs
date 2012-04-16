@@ -50,7 +50,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public static IEnumerable<IStudyRootQuery> GetQueryInterfaces(bool includeLocal)
 		{
-            //TODO (Marmot): Use service nodes.
             if (includeLocal)
             {
                 if (StudyStore.IsSupported)

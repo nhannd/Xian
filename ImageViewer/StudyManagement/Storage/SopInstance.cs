@@ -50,6 +50,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			return _parentSeries;
 		}
 
+        public string FilePath
+        {
+            get { return _parentSeries.ParentStudy.StudyLocation.GetSopInstancePath(SeriesInstanceUid, SopInstanceUid); }
+        }
+
 		public string SpecificCharacterSet
 		{
 			get { return _xml[DicomTags.SpecificCharacterSet].ToString(); }
@@ -89,11 +94,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		public string TransferSyntaxUid
 		{
 			get { return _xml.TransferSyntax.UidString; }
-		}
-
-		public string GetLocationUri()
-		{
-		    return _parentSeries.ParentStudy.StudyLocation.GetSopInstancePath(SeriesInstanceUid, SopInstanceUid);
 		}
 
 		public bool IsStoredTag(uint tag)
