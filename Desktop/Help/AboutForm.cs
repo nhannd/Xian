@@ -85,6 +85,8 @@ namespace ClearCanvas.Desktop.Help
 				this._manifest.Font = AboutSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._manifest.Font;
                 this._manifest.TextAlign = AboutSettings.Default.ManifestTextAlign;
 
+			    AddLicenseLabels();
+
 				this._closeButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
 				this._closeButton.Location = AboutSettings.Default.CloseButtonLocation;
 				this._closeButton.LinkColor = AboutSettings.Default.CloseButtonLinkColor;
@@ -94,6 +96,55 @@ namespace ClearCanvas.Desktop.Help
 
 			this._closeButton.Click += new EventHandler(OnCloseClicked);
 		}
+
+        private void AddLicenseLabels()
+        {
+            // Add some labels that are controlled by license
+            if (LicenseInformation.IsEvaluation)
+            {
+                var expired = LicenseInformation.Expired;
+                var evaluationLabel = new Label()
+                {
+                    Text = !expired ? SR.LabelEvaluation : SR.LabelEvaluationExpired,
+                    Visible = AboutSettings.Default.EvaluationVisible,
+                    BackColor = System.Drawing.Color.Transparent,
+                    Location = AboutSettings.Default.EvaluationLocation,
+                    Size = AboutSettings.Default.EvaluationSize,
+                    AutoSize = AboutSettings.Default.EvaluationAutoSize,
+                    ForeColor = AboutSettings.Default.EvaluationForeColor,
+                    TextAlign = AboutSettings.Default.EvaluationTextAlign
+                };
+                if (AboutSettings.Default.EvaluationFontBold)
+                    evaluationLabel.Font = new Font(evaluationLabel.Font, FontStyle.Bold);
+
+                this.Controls.Add(evaluationLabel);
+
+            }
+
+            if (LicenseInformation.DiagnosticUse != LicenseDiagnosticUse.Allowed)
+            {
+                var text = LicenseInformation.DiagnosticUse == LicenseDiagnosticUse.None
+                               ? SR.LabelNotForClinicalUse
+                               : SR.LabelNotForHumanDiagnosticUse;
+
+                var notForDiagnosticUseLabel = new Label()
+                {
+                    Text = text,
+                    Visible = AboutSettings.Default.NotForDiagnosticUseVisible,
+                    BackColor = System.Drawing.Color.Transparent,
+                    Location = AboutSettings.Default.NotForDiagnosticUseLocation,
+                    Size = AboutSettings.Default.NotForDiagnosticUseSize,
+                    AutoSize = AboutSettings.Default.NotForDiagnosticUseAutoSize,
+                    ForeColor = AboutSettings.Default.NotForDiagnosticUseForeColor,
+                    TextAlign = AboutSettings.Default.NotForDiagnosticUseTextAlign
+                };
+                if (AboutSettings.Default.NotForDiagnosticUseFontBold)
+                    notForDiagnosticUseLabel.Font = new Font(notForDiagnosticUseLabel.Font, FontStyle.Bold);
+
+                this.Controls.Add(notForDiagnosticUseLabel);
+
+            }
+        }
 
 		private static Stream OpenResourceStream()
 		{
