@@ -395,6 +395,15 @@ namespace ClearCanvas.Common
 
 			return Concatenate(versionString.ToString(), includeVersionSuffix ? VersionSuffix : string.Empty, includeRelease ? Release : string.Empty);
 		}
+        
+	    public static bool IsEvaluation
+	    {
+            get
+            {
+                TimeSpan? ignore;
+                return LicenseInformation.GetTrialStatus(out ignore);
+            }
+	    }
 
 		/// <summary>
 		/// Concatenates a number of strings with spaces, skipping empty strings.

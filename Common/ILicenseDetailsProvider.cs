@@ -42,6 +42,15 @@ namespace ClearCanvas.Common
 		/// <param name="timeRemaining">Time remaining in trial period.</param>
 		/// <returns>True if license is for a limited-use trial; False otherwise.</returns>
 		bool GetTrialStatus(out TimeSpan? timeRemaining);
+
+
+        /// <summary>
+        /// Gets the license expiry (local) time 
+        /// </summary>
+        /// <returns>
+        /// License expiry time or NULL if the license will not expire
+        /// </returns>
+        DateTime? GetExpiryTime();
 	}
 
 	/// <summary>
@@ -111,6 +120,11 @@ namespace ClearCanvas.Common
 				timeRemaining = null;
 				return false;
 			}
+
+		    public DateTime? GetExpiryTime()
+		    {
+                return null;
+		    }
 		}
 	}
 }

@@ -26,6 +26,7 @@ namespace ClearCanvas.Common
 		private static string _licenseKey;
 		private static string _machineIdentifier;
 		private static int _sessionCount;
+	    private static bool _expired;
 
 		private static void CheckLicenseProvider()
 		{
@@ -166,6 +167,47 @@ namespace ClearCanvas.Common
 				}
 			}
 		}
+
+        /// <summary>
+        /// Gets the status if the license is for a limited-use trial.
+        /// </summary>
+        /// <param name="timeRemaining">Time remaining in trial period.</param>
+        /// <returns>True if license is for a limited-use trial; False otherwise.</returns>
+        public static bool GetTrialStatus(out TimeSpan? timeRemaining)
+        {
+            CheckLicenseDetailsProvider();
+
+            lock (_syncRoot)
+            {
+                return _licenseDetailsProvider.GetTrialStatus(out timeRemaining);
+            }
+        }
+
+        
+        public static bool IsEvaluation
+        {
+            get
+            {
+                TimeSpan? ignore;
+                return GetTrialStatus(out ignore);
+            }
+        }
+
+	    public static bool Expired
+	    {
+            get
+            {
+                CheckLicenseDetailsProvider();
+
+                lock (_syncRoot)
+                {
+                    var expiry = _licenseDetailsProvider.GetExpiryTime();
+                    _expired = expiry.HasValue && expiry.Value < Platform.Time;
+
+                    return _expired;
+                }
+            }
+	    }
 
 		/// <summary>
 		/// Forces license information to be reloaded when it is requested next time
