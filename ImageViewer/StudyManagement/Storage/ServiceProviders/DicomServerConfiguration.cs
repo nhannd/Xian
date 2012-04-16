@@ -11,8 +11,9 @@
 
 using System;
 using System.IO;
-using System.Net;
 using System.ServiceModel;
+using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using DicomServerConfigurationContract = ClearCanvas.ImageViewer.Common.DicomServer.DicomServerConfiguration;
@@ -26,57 +27,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         public object GetService(Type serviceType)
         {
-            if (serviceType == typeof(IDicomServerConfiguration))
-                return new DicomServerConfigurationProxy(new DicomServerConfiguration());
+            if (serviceType != typeof (IDicomServerConfiguration))
+                return null;
 
-            return null;
-        }
-
-        #endregion
-    }
-
-    // TODO (Marmot): Later, maybe implement something a little more robust that can convert an exception
-    // to the correct Fault contract object for "in process" services.
-    internal class DicomServerConfigurationProxy : IDicomServerConfiguration
-    {
-        private DicomServerConfiguration _real;
-
-        public DicomServerConfigurationProxy(DicomServerConfiguration real)
-        {
-            _real = real;
-        }
-
-        #region Implementation of IDicomServerConfiguration
-
-        public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
-        {
-            Platform.CheckForNullReference(request, "request");
-
-            try
-            {
-                return _real.GetConfiguration(request);
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-                throw new FaultException();
-            }
-        }
-
-        public UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request)
-        {
-            Platform.CheckForNullReference(request, "request");
-            Platform.CheckForNullReference(request.Configuration, "request.Configuration");
-
-            try
-            {
-                return _real.UpdateConfiguration(request);
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-                throw new FaultException();
-            }
+            return new ProxyGenerator().CreateInterfaceProxyWithTargetInterface(
+                typeof (IDicomServerConfiguration), new DicomServerConfiguration()
+                , new IInterceptor[] {new BasicFaultInterceptor()});
         }
 
         #endregion

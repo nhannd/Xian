@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
@@ -13,10 +16,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
 		public object GetService(Type serviceType)
 		{
-			if (serviceType == typeof(IStudyRulesService))
-				return new StudyRulesService();
+            if (serviceType != typeof(IStudyRulesService))
+                return null;
 
-			return null;
+            return new ProxyGenerator().CreateInterfaceProxyWithTargetInterface(
+                typeof(IStudyRulesService), new StudyRulesService()
+                , new IInterceptor[] { new BasicFaultInterceptor() });
 		}
 
 		#endregion
