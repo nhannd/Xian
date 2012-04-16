@@ -136,6 +136,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
+    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     internal class ReindexApplication : IApplicationRoot
     {
         #region IApplicationRoot Members
@@ -143,9 +144,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public void RunApplication(string[] args)
         {
             if (new ReindexClient().Reindex())
+            {
+                Console.WriteLine("The re-index has been scheduled.");
                 return;
+            }
 
-            Console.WriteLine("Failed to start Re-index.");
+            Console.WriteLine("Failed to start re-index.");
             Environment.ExitCode = 1;
         }
 
