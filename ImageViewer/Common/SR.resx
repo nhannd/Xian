@@ -120,6 +120,15 @@
   <data name="MessageActivityMonitorServiceUnavailable" xml:space="preserve">
     <value>The Activity Monitor service is currently unavailable</value>
   </data>
+  <data name="MessageFailedToSendSeries" xml:space="preserve">
+    <value>Failed to send series. If this problem persists, please contact your system administrator.</value>
+  </data>
+  <data name="MessageFailedToSendSops" xml:space="preserve">
+    <value>Failed to send images. If this problem persists, please contact your system administrator.</value>
+  </data>
+  <data name="MessageFailedToSendStudy" xml:space="preserve">
+    <value>Failed to send study. If this problem persists, please contact your system administrator.</value>
+  </data>
   <data name="MessageFailedToStartReindex" xml:space="preserve">
     <value>Failed to start reindex operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
   </data>

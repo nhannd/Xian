@@ -116,6 +116,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                                                                                                {
                                                                                                    ImagesToSend = sendOperation.SubOperations
                                                                                                };
+                if (progress.ImagesToSend == 0)
+                    progress.ImagesToSend = sendOperation.SubOperations;
+
                 return progress;
             }
             var aggregateProgress = new DicomSendProgress();
@@ -177,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 {
                     sendOperationInfo.Complete = true;
                 }
-                else if (progress.RemainingSubOperations == 0)
+                else if (progress.RemainingSubOperations == 0 && workItemChangedEventArgs.ItemData.Status != WorkItemStatusEnum.Pending)
                 {
                     sendOperationInfo.Complete = true;
                 }
@@ -238,13 +241,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             foreach (string studyUid in studyUids)
             {
-                var request = new DicomSendStudyRequest
-                                  {
-                                      AeTitle = remoteAEInfo.AETitle,
-                                      Host = remoteAEInfo.ScpParameters.HostName,
-                                      Port = remoteAEInfo.ScpParameters.Port,
-                                      Priority = WorkItemPriorityEnum.Stat
-                                  };
+                
 
                 var instances = new AuditedInstances();
                 EventResult result = EventResult.Success;
@@ -256,22 +253,30 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                         int subOperations = 0;
                         using (var context = new DataAccessContext())
                         {
-                            var s = context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier {StudyInstanceUid = studyUid});
+                            var s =
+                                context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
+                                                                            {StudyInstanceUid = studyUid});
                             var identifier = CollectionUtils.FirstElement(s);
-                            request.Study = new WorkItemStudy(identifier);
-                            request.Patient = new WorkItemPatient(identifier);
                             if (identifier.NumberOfStudyRelatedInstances.HasValue)
                                 subOperations = identifier.NumberOfStudyRelatedInstances.Value;
-                            instances.AddInstance(identifier.PatientId, identifier.PatientsName, identifier.StudyInstanceUid);
-                        }
-                     
-                        var response = WorkItemService.WorkItemService.Instance.Insert(new WorkItemInsertRequest {Request = request});
-                        _sendOperations.Add(new SendOperationInfo(response.Item, message.MessageId, presentationID,
-                                                                  server)
-                                                {
-                                                    SubOperations = subOperations
-                                                });
+                            instances.AddInstance(identifier.PatientId, identifier.PatientsName,
+                                                  identifier.StudyInstanceUid);
 
+                            var client = new DicomSendClient();
+                            if (client.MoveStudy(remoteAEInfo, identifier))
+                            {
+                                _sendOperations.Add(new SendOperationInfo(client.Request, message.MessageId,
+                                                                          presentationID,
+                                                                          server)
+                                                        {
+                                                            SubOperations = subOperations
+                                                        });
+                            }
+                            else
+                            {
+                                throw new ApplicationException();
+                            }
+                        }
                     }
                     catch
                     {
@@ -291,16 +296,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			var seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
-            var request = new DicomSendSeriesRequest
-                              {
-                                  AeTitle = remoteAEInfo.AETitle,
-                                  Host = remoteAEInfo.ScpParameters.HostName,
-                                  Port = remoteAEInfo.ScpParameters.Port,
-                                  SeriesInstanceUids = new List<string>(),
-                                  Priority = WorkItemPriorityEnum.Stat
-                              };
-
-            request.SeriesInstanceUids.AddRange( seriesUids);
 
 			var instances = new AuditedInstances();
 			EventResult result = EventResult.Success;
@@ -329,16 +324,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
                         var s = context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier { StudyInstanceUid = studyInstanceUid });
                         var identifier = CollectionUtils.FirstElement(s);
-                        request.Study = new WorkItemStudy(identifier);
-                        request.Patient = new WorkItemPatient(identifier);
-                        instances.AddInstance(identifier.PatientId, identifier.PatientsName, identifier.StudyInstanceUid);            
+                        instances.AddInstance(identifier.PatientId, identifier.PatientsName, identifier.StudyInstanceUid);
+                        var client = new DicomSendClient();
+                        if (client.MoveSeries(remoteAEInfo, identifier, seriesUids))
+                        {
+                            _sendOperations.Add(new SendOperationInfo(client.Request, message.MessageId, presentationID,
+                                                                      server)
+                                                    {
+                                                        SubOperations = subOperations
+                                                    });
+                        }
+                        else
+                        {
+                            result = EventResult.MajorFailure;
+                            throw new ApplicationException("");
+                        }
                     }
-
-                    var response = WorkItemService.WorkItemService.Instance.Insert(new WorkItemInsertRequest { Request = request });
-				    _sendOperations.Add(new SendOperationInfo(response.Item, message.MessageId, presentationID, server)
-				                            {
-				                                SubOperations = subOperations
-				                            });
 				}
 				catch
 				{
@@ -354,20 +355,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         private void OnReceiveMoveImageRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
 		{
-			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
 			var sopInstanceUids = (string[])message.DataSet[DicomTags.SopInstanceUid].Values;
-            var request = new DicomSendSopRequest
-                              {
-                                  AeTitle = remoteAEInfo.AETitle,
-                                  Host = remoteAEInfo.ScpParameters.HostName,
-                                  Port = remoteAEInfo.ScpParameters.Port,
-                                  SeriesInstanceUid = seriesInstanceUid,
-                                  SopInstanceUids = new List<string>(),
-                                  Priority = WorkItemPriorityEnum.Stat
-                              };
-
-            request.SopInstanceUids.AddRange(sopInstanceUids);
 
 			EventResult result = EventResult.Success;
 			var instances = new AuditedInstances();
@@ -378,17 +368,24 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
                     using (var context = new DataAccessContext())
                     {
-                        var s = context.GetStudyBroker().GetStudy(studyInstanceUid);
-                        request.Study = new WorkItemStudy(s);
-                        request.Patient = new WorkItemPatient(s);
-                        instances.AddInstance(s.PatientId, s.PatientsName, s.StudyInstanceUid);
-                    }
-           
-                    var response = WorkItemService.WorkItemService.Instance.Insert(new WorkItemInsertRequest { Request = request });
-                    _sendOperations.Add(new SendOperationInfo(response.Item, message.MessageId, presentationID, server)
-                    {
-                        SubOperations = sopInstanceUids.Length
-                    });				
+                        var s = context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier { StudyInstanceUid = studyInstanceUid });
+                        var identifier = CollectionUtils.FirstElement(s);
+                        instances.AddInstance(identifier.PatientId, identifier.PatientsName, identifier.StudyInstanceUid);
+
+                        var client = new DicomSendClient();
+                        if (client.MoveSops(remoteAEInfo, identifier, seriesInstanceUid, sopInstanceUids))
+                        {
+                            _sendOperations.Add(new SendOperationInfo(client.Request, message.MessageId, presentationID,
+                                                                      server)
+                                                    {
+                                                        SubOperations = sopInstanceUids.Length
+                                                    });
+                        }
+                        else
+                        {
+                            throw new ApplicationException();
+                        }
+                    }         			
 				}
 				catch
 				{
@@ -442,7 +439,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return true;
 			}
 
-			String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, "");
+			String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, string.Empty);
 
 			try
 			{
@@ -488,5 +485,4 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#endregion
 	}
-     
 }

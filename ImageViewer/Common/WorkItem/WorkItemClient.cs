@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
@@ -131,7 +133,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
                 AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, result);
-
             }
         }
     }
@@ -170,6 +171,87 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             catch (Exception ex)
             {
                 Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToStartReindex);
+                return false;
+            }
+        }
+    }
+
+    public class DicomSendClient : WorkItemClient
+    {
+        public bool MoveStudy(ApplicationEntity remoteAEInfo, StudyRootStudyIdentifier study)
+        {
+            try
+            {
+                var request = new DicomSendStudyRequest
+                {
+                    AeTitle = remoteAEInfo.AETitle,
+                    Host = remoteAEInfo.ScpParameters.HostName,
+                    Port = remoteAEInfo.ScpParameters.Port,
+                    Priority = WorkItemPriorityEnum.Stat,
+                    Study = new WorkItemStudy(study),
+                    Patient = new WorkItemPatient(study)
+
+                };
+
+                
+                InsertRequest(request);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendStudy);
+                return false;
+            }
+        }
+
+        public bool MoveSeries(ApplicationEntity remoteAEInfo, StudyRootStudyIdentifier study, string[] seriesInstanceUids)
+        {
+            try
+            {
+                var request = new DicomSendSeriesRequest
+                                  {
+                                      AeTitle = remoteAEInfo.AETitle,
+                                      Host = remoteAEInfo.ScpParameters.HostName,
+                                      Port = remoteAEInfo.ScpParameters.Port,
+                                      SeriesInstanceUids = new List<string>(),
+                                      Priority = WorkItemPriorityEnum.Stat,
+                                      Study = new WorkItemStudy(study),
+                                      Patient = new WorkItemPatient(study)
+                                  };
+
+                request.SeriesInstanceUids.AddRange(seriesInstanceUids);
+                InsertRequest(request);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendSeries);
+                return false;
+            }
+        }
+
+        public bool MoveSops(ApplicationEntity remoteAEInfo, StudyRootStudyIdentifier study, string seriesInstanceUid, string[] sopInstanceUids)
+        {
+            try
+            {
+                var request = new DicomSendSopRequest
+                                  {
+                                      AeTitle = remoteAEInfo.AETitle,
+                                      Host = remoteAEInfo.ScpParameters.HostName,
+                                      Port = remoteAEInfo.ScpParameters.Port,
+                                      SeriesInstanceUid = seriesInstanceUid,
+                                      SopInstanceUids = new List<string>(),
+                                      Priority = WorkItemPriorityEnum.Stat,
+                                      Study = new WorkItemStudy(study),
+                                      Patient = new WorkItemPatient(study)
+                                  };
+                request.SopInstanceUids.AddRange(sopInstanceUids);
+                InsertRequest(request);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendSops);
                 return false;
             }
         }
