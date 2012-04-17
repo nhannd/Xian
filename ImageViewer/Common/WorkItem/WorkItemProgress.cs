@@ -37,6 +37,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemProgressDataContract("d3b84be6-edc7-40e1-911f-f6ec30c2a128")]
     public class ImportFilesProgress : WorkItemProgress
     {
+        public ImportFilesProgress()
+        {
+            IsCancelable = true;
+        }
+
         [DataMember(IsRequired = true)]
         public int TotalFilesToImport { get; set; }
 
@@ -88,6 +93,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemProgressDataContract("8C994CAB-630E-4a92-AA5B-7BF5D6095D6D")]
     public class StudyProcessProgress : WorkItemProgress
     {
+        public StudyProcessProgress()
+        {
+            IsCancelable = true;
+        }
+
         [DataMember(IsRequired = true)]
         public int TotalFilesToProcess { get; set; }
 
@@ -131,6 +141,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemProgressDataContract("A1F64C74-FAE9-4a4c-A120-E82EE45EA21B")]
     public class ReindexProgress : WorkItemProgress
     {
+        public ReindexProgress()
+        {
+            IsCancelable = false;
+        }
+
         [DataMember(IsRequired = true)]
         public int NumberOfStudiesToProcess { get; set; }
 
@@ -171,6 +186,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemProgressDataContract("68BCA074-F1F1-4870-8ABD-281B31E10B6A")]
     public class DicomSendProgress : WorkItemProgress
     {
+        public DicomSendProgress()
+        {
+            IsCancelable = true;
+        }
+
         [DataMember(IsRequired = true)]
         public int ImagesToSend { get; set; }
 

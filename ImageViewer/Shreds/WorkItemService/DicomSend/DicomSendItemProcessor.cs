@@ -97,6 +97,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             Progress.FailureSubOperations = 0;
             Progress.WarningSubOperations = 0;
             Progress.SuccessSubOperations = 0;
+            Progress.IsCancelable = true;
             Proxy.UpdateProgress();
 
             _scu.ImageStoreCompleted += OnImageSent;

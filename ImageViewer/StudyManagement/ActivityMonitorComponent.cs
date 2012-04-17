@@ -100,6 +100,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_data = data;
 			}
 
+		    public WorkItemData Data
+		    {
+                get { return _data; }
+		    }
+
 			public long Id
 			{
 				get { return _data.Identifier; }
@@ -472,11 +477,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		        DeleteAction.Enabled = SelectedWorkItems.All(
                     w => w.Status == WorkItemStatusEnum.Complete
                          || w.Status == WorkItemStatusEnum.Failed
-                         || w.Status == WorkItemStatusEnum.Pending);
+                         || w.Status == WorkItemStatusEnum.Canceled);
 
                 CancelAction.Enabled = SelectedWorkItems.All(
                     w => w.Status == WorkItemStatusEnum.InProgress
-                         || w.Status == WorkItemStatusEnum.Idle);
+                         || w.Status == WorkItemStatusEnum.Idle
+                         || w.Status == WorkItemStatusEnum.Pending);
 
                 RestartAction.Enabled = SelectedWorkItems.All(
                     w => w.Status == WorkItemStatusEnum.Canceled
@@ -485,19 +491,55 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		    private void RestartSelectedWorkItems()
 		    {
-                //Platform.GetService<IWorkItemService>(s => s.Update(...))
+                try
+                {
+                    var client = new WorkItemClient();
+                    foreach (var workItem in SelectedWorkItems)
+                    {
+                        client.WorkItem = workItem.Data;
+                        client.Reset();
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
+                }
 		    }
 
-		    private void CancelSelectedWorkItems()
-		    {
-                //Platform.GetService<IWorkItemService>(s => s.Update(...))
-		    }
+            private void CancelSelectedWorkItems()
+            {
+                try
+                {
+                    var client = new WorkItemClient();
+                    foreach (var workItem in SelectedWorkItems)
+                    {
+                        client.WorkItem = workItem.Data;
+                        client.Cancel();
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
+                }
+            }
 
 		    private void DeleteSelectedWorkItems()
-		    {
-                //Platform.GetService<IWorkItemService>(s => s.Update(...))
+            {
+                try
+                {
+                    var client = new WorkItemClient();
+                    foreach (var workItem in SelectedWorkItems)
+                    {
+                        client.WorkItem = workItem.Data;
+                        client.Delete();
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
+                }
             }
-        }
+		}
 
 		private static readonly object NoFilter = new object();
 

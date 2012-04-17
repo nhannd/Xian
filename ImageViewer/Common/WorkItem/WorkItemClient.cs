@@ -20,17 +20,47 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (WorkItem == null)
                 return;
 
-            if (WorkItem.Status == WorkItemStatusEnum.Canceled) 
-                return;
-
             if (WorkItem.Progress == null || !WorkItem.Progress.IsCancelable) 
                 return;
 
             WorkItemUpdateResponse response = null;
 
-            Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest {Cancel = true, Identifier = WorkItem.Identifier}));
+            Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest
+                                                                               {
+                                                                                   Cancel = true, 
+                                                                                   Identifier = WorkItem.Identifier
+                                                                               }));
+            WorkItem = response.Item;
+        }
 
-            // Cancel the request
+        public void Reset()
+        {
+            if (WorkItem == null)
+                return;
+
+            WorkItemUpdateResponse response = null;
+
+            Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest
+                                                                               {                                                                                   
+                                                                                   Status = WorkItemStatusEnum.Pending, 
+                                                                                   ScheduledTime = Platform.Time, 
+                                                                                   Identifier = WorkItem.Identifier
+                                                                               }));
+            WorkItem = response.Item;
+        }
+
+        public void Delete()
+        {
+            if (WorkItem == null)
+                return;
+
+            WorkItemUpdateResponse response = null;
+
+            Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest
+                                                                               {
+                                                                                   Delete = true, 
+                                                                                   Identifier = WorkItem.Identifier
+                                                                               }));        
             WorkItem = response.Item;
         }
 
