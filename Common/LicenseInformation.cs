@@ -193,7 +193,7 @@ namespace ClearCanvas.Common
             }
         }
 
-	    public static bool Expired
+	    public static DateTime? ExpiryTime
 	    {
             get
             {
@@ -201,11 +201,19 @@ namespace ClearCanvas.Common
 
                 lock (_syncRoot)
                 {
-                    var expiry = _licenseDetailsProvider.GetExpiryTime();
-                    _expired = expiry.HasValue && expiry.Value < Platform.Time;
-
-                    return _expired;
+                    return _licenseDetailsProvider.GetExpiryTime();
                 }
+            }
+	    }
+
+	    public static bool Expired
+	    {
+            get
+            {
+                var expiryTime = ExpiryTime;
+                _expired = expiryTime.HasValue && expiryTime.Value < Platform.Time;
+
+                return _expired;
             }
 	    }
 

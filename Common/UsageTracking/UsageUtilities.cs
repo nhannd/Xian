@@ -190,10 +190,14 @@ namespace ClearCanvas.Common.UsageTracking
             UsageMessage msg;
 
             // if license key cannot be retrieved, send an empty string to maintain the existing data on the server
-            string licenseString = string.Empty; 
+            string licenseString = string.Empty;
+            string licenseType = string.Empty; 
+            DateTime? licenseExpiryTime = null;
             try
             {
                 licenseString = LicenseInformation.LicenseKey;
+                licenseExpiryTime = LicenseInformation.ExpiryTime;
+                licenseType = LicenseInformation.LicenseType;
             }
             catch(Exception ex)
             {
@@ -216,7 +220,11 @@ namespace ClearCanvas.Common.UsageTracking
                     MachineIdentifier = EnvironmentUtilities.MachineIdentifier,
                     MessageType = UsageType.Other,
                     LicenseString = licenseString,
+                    LicenseType = licenseType
                 };
+
+                if (licenseExpiryTime.HasValue)
+                    msg.LicenseExpiryTimeUTC = licenseExpiryTime.Value.ToUniversalTime();
 
             }
 
