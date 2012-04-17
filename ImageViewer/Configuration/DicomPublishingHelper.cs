@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
-				DicomFilePublisher.PublishLocal(files, true);
+				DicomFilePublisher.PublishLocal(files);
 				return true;
 			}
 			catch (DicomFilePublishingException ex)
@@ -213,7 +213,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
-			    DicomFilePublisher.PublishRemote(files, destination, true);
+			    DicomFilePublisher.PublishRemote(files, destination);
 				return true;
 			}
 			catch (DicomFilePublishingException ex)

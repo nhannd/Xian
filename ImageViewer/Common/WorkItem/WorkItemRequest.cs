@@ -113,6 +113,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public WorkItemTypeEnum Type { get; set; }
 
         [DataMember]
+        public string UserName { get; set; }
+
+        [DataMember]
         public ActivityTypeEnum ActivityType { get; set; }
 
         public abstract string ActivityDescription { get; }

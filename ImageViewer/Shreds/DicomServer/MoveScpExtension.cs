@@ -241,47 +241,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             foreach (string studyUid in studyUids)
             {
-                
-
-                var instances = new AuditedInstances();
-                EventResult result = EventResult.Success;
-
                 lock (_syncLock)
                 {
-                    try
+                    int subOperations = 0;
+                    using (var context = new DataAccessContext())
                     {
-                        int subOperations = 0;
-                        using (var context = new DataAccessContext())
-                        {
-                            var s =
-                                context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
-                                                                            {StudyInstanceUid = studyUid});
-                            var identifier = CollectionUtils.FirstElement(s);
-                            if (identifier.NumberOfStudyRelatedInstances.HasValue)
-                                subOperations = identifier.NumberOfStudyRelatedInstances.Value;
-                            instances.AddInstance(identifier.PatientId, identifier.PatientsName,
-                                                  identifier.StudyInstanceUid);
+                        var s =
+                            context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
+                                                                        {StudyInstanceUid = studyUid});
+                        var identifier = CollectionUtils.FirstElement(s);
+                        if (identifier.NumberOfStudyRelatedInstances.HasValue)
+                            subOperations = identifier.NumberOfStudyRelatedInstances.Value;
 
-                            var client = new DicomSendClient();
-                            client.MoveStudy(remoteAEInfo, identifier, WorkItemPriorityEnum.Stat);
-                            _sendOperations.Add(new SendOperationInfo(client.Request, message.MessageId,
-                                                                      presentationID,
-                                                                      server)
-                                                    {
-                                                        SubOperations = subOperations
-                                                    });
-                        }
-
-                    }
-                    catch
-                    {
-                        result = EventResult.MajorFailure;
-                        throw;
-                    }
-                    finally
-                    {
-                        AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName,
-                                                          instances, EventSource.CurrentProcess, result);
+                        var client = new DicomSendClient();
+                        client.MoveStudy(remoteAEInfo, identifier, WorkItemPriorityEnum.Stat);
+                        _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId,
+                                                                  presentationID,
+                                                                  server)
+                                                {
+                                                    SubOperations = subOperations
+                                                });
                     }
                 }
             }
@@ -292,58 +271,42 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			var seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
 
-			var instances = new AuditedInstances();
-			EventResult result = EventResult.Success;
+            lock (_syncLock)
+            {
 
-			lock (_syncLock)
-			{
-				try
-				{
-				    int subOperations = 0;
-                    using (var context = new DataAccessContext())
+                int subOperations = 0;
+                using (var context = new DataAccessContext())
+                {
+                    var results = context.GetStudyStoreQuery().SeriesQuery(new SeriesIdentifier
+                                                                               {
+                                                                                   StudyInstanceUid =
+                                                                                       studyInstanceUid,
+                                                                               });
+                    foreach (SeriesIdentifier series in results)
                     {
-                        var results = context.GetStudyStoreQuery().SeriesQuery(new SeriesIdentifier
-                                                                                   {
-                                                                                       StudyInstanceUid =
-                                                                                           studyInstanceUid,
-                                                                                   });
-                        foreach (SeriesIdentifier series in results)
-                        {
-                            foreach (string seriesUid in seriesUids)
-                                if (series.SeriesInstanceUid.Equals(seriesUid) &&
-                                    series.NumberOfSeriesRelatedInstances.HasValue)
-                                {
-                                    subOperations += series.NumberOfSeriesRelatedInstances.Value;
-                                    break;
-                                }
-
-                        }
-
-                        var s =
-                            context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
-                                                                        {StudyInstanceUid = studyInstanceUid});
-                        var identifier = CollectionUtils.FirstElement(s);
-                        instances.AddInstance(identifier.PatientId, identifier.PatientsName, identifier.StudyInstanceUid);
-                        var client = new DicomSendClient();
-
-                        client.MoveSeries(remoteAEInfo, identifier, seriesUids, WorkItemPriorityEnum.Stat);
-                        _sendOperations.Add(new SendOperationInfo(client.Request, message.MessageId, presentationID,
-                                                                  server)
-                                                {
-                                                    SubOperations = subOperations
-                                                });
+                        foreach (string seriesUid in seriesUids)
+                            if (series.SeriesInstanceUid.Equals(seriesUid) &&
+                                series.NumberOfSeriesRelatedInstances.HasValue)
+                            {
+                                subOperations += series.NumberOfSeriesRelatedInstances.Value;
+                                break;
+                            }
                     }
-				}
-				catch
-				{
-					result = EventResult.MajorFailure;
-					throw;
-				}
-				finally
-				{
-					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName, instances, EventSource.CurrentProcess, result);
-				}
-			}
+
+                    var s =
+                        context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
+                                                                    {StudyInstanceUid = studyInstanceUid});
+                    var identifier = CollectionUtils.FirstElement(s);
+                    var client = new DicomSendClient();
+
+                    client.MoveSeries(remoteAEInfo, identifier, seriesUids, WorkItemPriorityEnum.Stat);
+                    _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId, presentationID,
+                                                              server)
+                                            {
+                                                SubOperations = subOperations
+                                            });
+                }
+            }
 		}
 
         private void OnReceiveMoveImageRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
@@ -352,40 +315,23 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
 			var sopInstanceUids = (string[])message.DataSet[DicomTags.SopInstanceUid].Values;
 
-			EventResult result = EventResult.Success;
-			var instances = new AuditedInstances();
+            lock (_syncLock)
+            {
 
-			lock (_syncLock)
-			{
-				try
-				{
-                    using (var context = new DataAccessContext())
-                    {
-                        var s = context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
-                                                                        {StudyInstanceUid = studyInstanceUid});
-                        var identifier = CollectionUtils.FirstElement(s);
-                        instances.AddInstance(identifier.PatientId, identifier.PatientsName, identifier.StudyInstanceUid);
+                using (var context = new DataAccessContext())
+                {
+                    var s = context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
+                                                                    {StudyInstanceUid = studyInstanceUid});
+                    var identifier = CollectionUtils.FirstElement(s);
 
-                        var client = new DicomSendClient();
-                        client.MoveSops(remoteAEInfo, identifier, seriesInstanceUid, sopInstanceUids,
-                                        WorkItemPriorityEnum.Stat);
-                        _sendOperations.Add(new SendOperationInfo(client.Request, message.MessageId, presentationID,
-                                                                  server)
-                                                {
-                                                    SubOperations = sopInstanceUids.Length
-                                                });
-                    }
-				}
-				catch
-				{
-					result = EventResult.MajorFailure;
-					throw;
-				}
-				finally
-				{
-					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName, instances, EventSource.CurrentProcess, result);
-				}
-			}
+                    var client = new DicomSendClient();
+                    client.MoveSops(remoteAEInfo, identifier, seriesInstanceUid, sopInstanceUids, WorkItemPriorityEnum.Stat);
+                    _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId, presentationID, server)
+                                            {
+                                                SubOperations = sopInstanceUids.Length
+                                            });
+                }
+            }
 		}
 
 		private void OnReceiveCancelRequest(DicomMessage message)

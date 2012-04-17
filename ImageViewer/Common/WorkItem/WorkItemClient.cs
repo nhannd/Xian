@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Principal;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -9,37 +11,51 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
     public class WorkItemClient
     {
-        public WorkItemData Request { get; set; }
+        public WorkItemData WorkItem { get; set; }
+        public WorkItemRequest Request { get; set; }
         public Exception Exception { get; set; }
 
         public void Cancel()
         {
-            if (Request == null)
+            if (WorkItem == null)
                 return;
 
-            if (Request.Status == WorkItemStatusEnum.Canceled) 
+            if (WorkItem.Status == WorkItemStatusEnum.Canceled) 
                 return;
 
-            if (Request.Progress == null || !Request.Progress.IsCancelable) 
+            if (WorkItem.Progress == null || !WorkItem.Progress.IsCancelable) 
                 return;
 
             WorkItemUpdateResponse response = null;
 
-            Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest {Cancel = true, Identifier = Request.Identifier}));
+            Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest {Cancel = true, Identifier = WorkItem.Identifier}));
 
             // Cancel the request
-            Request = response.Item;
+            WorkItem = response.Item;
         }
 
         protected void InsertRequest(WorkItemRequest request)
         {
             WorkItemInsertResponse response = null;
+            
+            if(string.IsNullOrEmpty(request.UserName))
+                request.UserName = GetUserName();
+            
+            Request = request;
 
             Platform.GetService<IWorkItemService>(s => response = s.Insert(new WorkItemInsertRequest { Request = request }));
 
             if (response == null) return;
 
-            Request = response.Item;
+            WorkItem = response.Item;
+        }
+
+        private static string GetUserName()
+        {
+            IPrincipal p = Thread.CurrentPrincipal;
+            if (p == null || p.Identity == null || string.IsNullOrEmpty(p.Identity.Name))
+                return string.Format("{0}@{1}", Environment.UserName, Environment.UserDomainName);
+            return p.Identity.Name;
         }
     }
 
@@ -50,6 +66,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             // setup auditing information
             var result = EventResult.Success;
      
+            // TODO (Marmot) - The uses of this are mostly for importing a single known study, we might want to change the request to include study information.
             var request = new ImportFilesRequest
             {
                 FilePaths = new List<string> { importFolder },
@@ -188,6 +205,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public void MoveStudy(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, WorkItemPriorityEnum priority)
         {
+            EventResult result = EventResult.Success;
             try
             {
                 var request = new DicomSendStudyRequest
@@ -200,19 +218,32 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     Patient = new WorkItemPatient(study)
 
                 };
-                
+
                 InsertRequest(request);
             }
             catch (Exception ex)
             {
+                result = EventResult.MajorFailure;
                 Exception = ex;
                 Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendStudy);
                 throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName,
+                                                  instances,
+                                                  string.IsNullOrEmpty(Request.UserName)
+                                                      ? EventSource.CurrentProcess
+                                                      : EventSource.CurrentUser, result);
             }
         }
 
         public void MoveSeries(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
         {
+            EventResult result = EventResult.Success;
             try
             {
                 var request = new DicomSendSeriesRequest
@@ -231,13 +262,26 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             catch (Exception ex)
             {
+                result = EventResult.MajorFailure;
                 Exception = ex;
                 throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName,
+                                                  instances,
+                                                  string.IsNullOrEmpty(Request.UserName)
+                                                      ? EventSource.CurrentProcess
+                                                      : EventSource.CurrentUser, result);
             }
         }
 
         public void MoveSops(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
         {
+            EventResult result = EventResult.Success;
             try
             {
                 var request = new DicomSendSopRequest
@@ -256,14 +300,27 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             catch (Exception ex)
             {
+                result = EventResult.MajorFailure;
                 Exception = ex;
                 Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendSops);
                 throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName,
+                                                  instances,
+                                                  string.IsNullOrEmpty(Request.UserName)
+                                                      ? EventSource.CurrentProcess
+                                                      : EventSource.CurrentUser, result);
             }
         }
 
         public void PublishFiles(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, DeletionBehaviour behaviour, List<string> files  )
         {
+            EventResult result = EventResult.Success;
             try
             {
                 var request = new PublishFilesRequest
@@ -281,9 +338,21 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             catch (Exception ex)
             {
+                result = EventResult.MajorFailure;
                 Exception = ex;
                 Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendSops);
                 throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName,
+                                                  instances,
+                                                  string.IsNullOrEmpty(Request.UserName)
+                                                      ? EventSource.CurrentProcess
+                                                      : EventSource.CurrentUser, result);
             }
         }
     }

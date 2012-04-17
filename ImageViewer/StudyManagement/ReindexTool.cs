@@ -43,11 +43,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
                 var client = new ReindexClient();
                 client.Reindex();
 
-                if (client.Request.Status == WorkItemStatusEnum.InProgress)
+                if (client.WorkItem.Status == WorkItemStatusEnum.InProgress)
                     message = SR.MessageReindexInProgress;
-                else if (client.Request.Status == WorkItemStatusEnum.Idle)
+                else if (client.WorkItem.Status == WorkItemStatusEnum.Idle)
                     message = SR.MessageReindexInProgress;
-                else if (client.Request.Status == WorkItemStatusEnum.Pending)
+                else if (client.WorkItem.Status == WorkItemStatusEnum.Pending)
                     message = SR.MessageReindexScheduled;
                 else
                     message = SR.MessageFailedToStartReindex;

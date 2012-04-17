@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Common
 			return instances;
 		}
 
-		public static void PublishLocal(ICollection<DicomFile> files, bool isBackground)
+		public static void PublishLocal(ICollection<DicomFile> files)
 		{
 			if (files == null || files.Count == 0)
 				return;
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Common
             importClient.PublishLocal(tempFileDirectory,auditedInstances,BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
 		}
 
-		public static void PublishRemote(ICollection<DicomFile> files, ApplicationEntity destinationServer, bool isBackground)
+		public static void PublishRemote(ICollection<DicomFile> files, ApplicationEntity destinationServer)
 		{
 			if (files == null || files.Count == 0)
 				return;
@@ -145,12 +145,6 @@ namespace ClearCanvas.ImageViewer.Common
 		    List<string> savedFiles;
             SaveFiles(files, destinationServer.AETitle, out tempFileDirectory, out savedFiles);
 
-            //TODO (Marmot):Restore.
-
-			// setup auditing information
-			var result = EventResult.Success;
-			var auditedInstances = GetAuditedInstances(files, false);
-
 			try
 			{
                 var client = new DicomSendClient();
@@ -159,16 +153,9 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 			catch (Exception ex)
 			{
-				result = EventResult.MajorFailure;
-
 				var message = string.Format("Failed to connect to the dicom send service to send files.  The files must be published manually (location: {0})", tempFileDirectory);
 				throw new DicomFilePublishingException(message, ex);
-			}
-			finally
-			{
-				// audit attempt to update instances on remote server
-				AuditHelper.LogUpdateInstances(new[] {destinationServer.AETitle}, auditedInstances, EventSource.CurrentUser, result);
-			}        
+			}      
 		}
 	}
 }

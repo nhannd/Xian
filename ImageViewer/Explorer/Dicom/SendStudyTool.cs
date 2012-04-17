@@ -16,7 +16,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -47,18 +46,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (!Enabled || this.Context.SelectedStudy == null)
 				return;
 
-			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
-			serverTreeComponent.IsReadOnly = true;
-			serverTreeComponent.ShowCheckBoxes = false;
-			serverTreeComponent.ShowLocalServerNode = false;
-			serverTreeComponent.ShowTitlebar = false;
-			serverTreeComponent.ShowTools = false;
+		    var serverTreeComponent = new ServerTreeComponent
+		                                  {
+		                                      IsReadOnly = true,
+		                                      ShowCheckBoxes = false,
+		                                      ShowLocalServerNode = false,
+		                                      ShowTitlebar = false,
+		                                      ShowTools = false
+		                                  };
 
-			SimpleComponentContainer dialogContainer = new SimpleComponentContainer(serverTreeComponent);
+		    var dialogContainer = new SimpleComponentContainer(serverTreeComponent);
 
 			ApplicationComponentExitCode code =
 				ApplicationComponent.LaunchAsDialog(
-					this.Context.DesktopWindow,
+					Context.DesktopWindow,
 					dialogContainer,
 					SR.TitleSendStudy);
 
@@ -67,27 +68,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Servers == null || serverTreeComponent.SelectedServers.Servers.Count == 0)
 			{
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
+				Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
 				return;
 			}
 
 			if (serverTreeComponent.SelectedServers.Servers.Count > 1)
 			{
-				if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
+				if (Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
 			}
 
-			EventResult result = EventResult.Success;
-			AuditedInstances sentInstances = new AuditedInstances();
-
-			List<string> studyUids = new List<string>();
+			var studyUids = new List<string>();
 	
-		    //TODO (Marmot):Restore.
             var client = new DicomSendClient();
-            foreach (StudyItem item in this.Context.SelectedStudies)
+            foreach (StudyItem item in Context.SelectedStudies)
             {
                 studyUids.Add(item.StudyInstanceUid);
-                sentInstances.AddInstance(item.PatientId, item.PatientsName, item.StudyInstanceUid);
                 foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
                 {
                     var aeInformation = new ApplicationEntity
@@ -102,16 +98,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     }
                     catch (EndpointNotFoundException)
                     {
-                        result = EventResult.SeriousFailure;
-                        this.Context.DesktopWindow.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning, MessageBoxActions.Ok);
+                        Context.DesktopWindow.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning, MessageBoxActions.Ok);
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, this.Context.DesktopWindow);
+                        ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, Context.DesktopWindow);
                     }
-
-                    foreach (IServerTreeDicomServer destinationAE in serverTreeComponent.SelectedServers.Servers)
-                        AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.HostName, sentInstances, EventSource.CurrentUser, result);
                 }
             }
 		}
