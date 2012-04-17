@@ -92,7 +92,6 @@
     <Compile Include="DicomServer\ConfigureDicomServerApplication.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
-    <Compile Include="DicomServer\DicomServerBridge.cs" />
     <Compile Include="DicomServer\DicomServerConfigurationHelper.cs" />
     <Compile Include="DicomServer\DicomServerClient.cs" />
     <Compile Include="DicomServer\IDicomServerConfiguration.cs" />

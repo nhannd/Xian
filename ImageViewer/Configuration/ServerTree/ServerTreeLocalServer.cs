@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
                 if (_dicomServerConfigurationProvider.ConfigurationExists)
                 {
-                    var formatString = DicomServer.IsRunning
+                    var formatString = DicomServer.IsListening
                                            ? SR.FormatLocalServerDetails
                                            : SR.FormatLocalServerOfflineDetails;
 

@@ -8,8 +8,6 @@ using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    //TODO (Marmot): Proxy and throw faults.
-
     public class StudyStoreQuery : IStudyStore
     {
         private readonly DicomStoreDataContext _context;

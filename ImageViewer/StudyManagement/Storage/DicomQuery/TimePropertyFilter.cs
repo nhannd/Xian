@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         private void ParseCriterion()
         {
-            //TODO (Marmot): We've never supported time queries before.
+            //Note (Marmot): We've never supported time queries before; not in the requirements for Marmot.
             _parsedCriterion = true;
 
             //DateTime? time1, time2;

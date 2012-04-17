@@ -11,7 +11,11 @@
 
 #if UNIT_TESTS
 
+using System;
+using System.Collections.Generic;
 using System.ServiceModel;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using NUnit.Framework;
@@ -21,9 +25,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
     [TestFixture]
     public class ServerDirectoryTests
     {
+        [TestFixtureSetUp]
+        public void Initialize()
+        {
+            var extensionFactory = new UnitTestExtensionFactory(new Dictionary<Type, Type>
+                                                                    {
+                                                                        { typeof(ServiceProviderExtensionPoint), typeof(ServerDirectoryServiceProvider) }  
+                                                                    });
+            Platform.SetExtensionFactory(extensionFactory);
+        }
+
         public void DeleteAllServers()
         {
-            var directory = new ServerDirectory();
+            var directory = Platform.GetService<IServerDirectory>();
             directory.DeleteAllServers(new DeleteAllServersRequest());
         }
 
@@ -32,7 +46,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
         {
             DeleteAllServers();
 
-            var directory = new ServerDirectory();
+            var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("streaming", true);
             directory.AddServer(new AddServerRequest { Server = server });
@@ -56,7 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
         {
             DeleteAllServers();
 
-            var directory = new ServerDirectory();
+            var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
             directory.AddServer(new AddServerRequest { Server = server });
@@ -78,7 +92,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
         {
             DeleteAllServers();
 
-            var directory = new ServerDirectory();
+            var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
             directory.AddServer(new AddServerRequest { Server = server });
@@ -94,7 +108,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
         {
             DeleteAllServers();
 
-            var directory = new ServerDirectory();
+            var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
             directory.AddServer(new AddServerRequest { Server = server });
@@ -108,7 +122,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
         {
             DeleteAllServers();
 
-            var directory = new ServerDirectory();
+            var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
             directory.UpdateServer(new UpdateServerRequest { Server = server });
@@ -120,7 +134,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
         {
             DeleteAllServers();
 
-            var directory = new ServerDirectory();
+            var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
             directory.DeleteServer(new DeleteServerRequest { Server = server });

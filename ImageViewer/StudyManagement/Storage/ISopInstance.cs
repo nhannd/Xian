@@ -17,8 +17,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     public interface ISopInstance : ISopInstanceData
     {
         ISeries GetParentSeries();
-        //TODO (Marmot):FilePath?
-        string GetLocationUri();
+        string FilePath { get; }
 
         string SpecificCharacterSet { get; }
         string TransferSyntaxUid { get; }

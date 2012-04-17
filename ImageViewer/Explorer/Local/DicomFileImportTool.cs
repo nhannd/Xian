@@ -22,8 +22,6 @@ using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {
-    //TODO (Marmot): Move to viewer.
-
 	[MenuAction("Import", "explorerlocal-contextmenu/ImportDicomFiles", "Import")]
     [ActionFormerly("Import", "ClearCanvas.ImageViewer.Services.Tools.DicomFileImportTool:Import")]
     [Tooltip("Import", "TooltipImportDicomFiles")]

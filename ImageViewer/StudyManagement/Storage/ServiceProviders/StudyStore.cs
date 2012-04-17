@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
@@ -48,11 +50,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         public object GetService(Type serviceType)
         {
-            //TODO (Marmot):IStudyRootQuery, too? I think we still use that for the study locator.
             if (serviceType != typeof(IStudyStore))
                 return null;
-
-            return new StudyStoreQueryProxy();
+            
+            return new ProxyGenerator().CreateInterfaceProxyWithTargetInterface(
+                typeof(IStudyStore), new StudyStoreQueryProxy()
+                , new IInterceptor[] { new BasicFaultInterceptor() });
         }
 
         #endregion
