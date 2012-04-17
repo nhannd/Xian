@@ -16,6 +16,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,7 +29,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -126,6 +126,13 @@
       <DependentUpon>RenameNodeComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\RenameNodeComponentView.cs" />
+    <Compile Include="AlertViewerComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AlertViewerComponentControl.Designer.cs">
+      <DependentUpon>AlertViewerComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AlertViewerComponentView.cs" />
     <Compile Include="CustomTableCellEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -199,6 +206,12 @@
     </Compile>
     <Compile Include="TextBoxToolbarItem.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="AlertNotificationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AlertNotificationForm.Designer.cs">
+      <DependentUpon>AlertNotificationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TitleBar.cs">
       <SubType>Component</SubType>
@@ -496,6 +509,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AlertViewerComponentControl.resx">
+      <DependentUpon>AlertViewerComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="DateTimeField.resx">
       <DependentUpon>DateTimeField.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -631,6 +648,9 @@
     <EmbeddedResource Include="IndicatorLight.resx">
       <DependentUpon>IndicatorLight.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AlertNotificationForm.resx">
+      <DependentUpon>AlertNotificationForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WorkspaceDialogBoxForm.resx">
       <DependentUpon>WorkspaceDialogBoxForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -718,6 +738,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\close.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

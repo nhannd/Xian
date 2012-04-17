@@ -50,6 +50,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         private DesktopForm _form;
         private OrderedSet<WorkspaceView> _workspaceActivationOrder;
 
+    	private IDesktopAlertContext _alertContext;
+    	private AlertNotificationForm _errorNotificationDialog;
+		private AlertNotificationForm _infoNotificationDialog;
+
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -583,6 +588,30 @@ namespace ClearCanvas.Desktop.View.WinForms
             return mb.Show(message, title, buttons, _form);
         }
 
+    	public void SetAlertContext(IDesktopAlertContext alertContext)
+    	{
+    		_alertContext = alertContext;
+    	}
+
+    	/// <summary>
+    	/// Shows an alert notification in front of this window.
+    	/// </summary>
+    	public virtual void ShowAlert(AlertNotificationArgs args)
+    	{
+    		var dialog = GetAlertDialog(args.Level);
+    		var icon = _alertContext.GetIcon(args.Level);
+    		var c = _alertContext.UnacknowledgedErrorWarningCount;
+    		dialog.AlertIcon = icon.CreateIcon(IconSize.Large, new ResourceResolver(typeof (DesktopWindow).Assembly));
+    		dialog.Message = args.Message;
+    		dialog.LinkText = args.LinkText;
+    		dialog.LinkHandler = AlertLinkHandler(args.LinkAction);
+			dialog.OpenLogLinkText = args.Level != AlertLevel.Info && c > 1 ? string.Format(SR.LinkMoreNewAlerts, c - 1) : SR.LinkViewAllAlerts;
+ 			dialog.Popup(args.Level == AlertLevel.Info && GetAlertDialog(AlertLevel.Error).Visible ? 1 : 0);
+			
+			// steal focus back - there is no point in having the alert dialog be the active window
+			_form.Activate();
+		}
+
     	/// <summary>
     	/// Shows a 'Save file' dialog in front of this window.
     	/// </summary>
@@ -717,6 +746,18 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (disposing && _form != null)
             {
+				if(_infoNotificationDialog != null)
+				{
+					_infoNotificationDialog.Dispose();
+					_infoNotificationDialog = null;
+				}
+				if (_errorNotificationDialog != null)
+				{
+					_errorNotificationDialog.Dispose();
+					_errorNotificationDialog = null;
+				}
+
+
 				_form.VisibleChanged -= new EventHandler(FormVisibleChangedEventHandler);
 				_form.Activated -= new EventHandler(FormActivatedEventHandler);
 				_form.Deactivate -= new EventHandler(FormDeactivateEventHandler);
@@ -854,5 +895,57 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return true;
 		}
 
+		private System.Action AlertLinkHandler(Action<DesktopWindow> linkAction)
+		{
+			return delegate
+			{
+				try
+				{
+					if (linkAction != null)
+					{
+						linkAction(_desktopWindow);
+					}
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			};
+		}
+
+		private AlertNotificationForm GetAlertDialog(AlertLevel level)
+		{
+			if(level == AlertLevel.Info)
+			{
+				if (_infoNotificationDialog == null)
+				{
+					_infoNotificationDialog = new AlertNotificationForm(_form, Application.Name) {AutoDismiss = true};
+					_infoNotificationDialog.OpenLogClicked += AlertDialogOpenLogClicked;
+					_infoNotificationDialog.Dismissed += AlertDialogDismissed;
+				}
+				return _infoNotificationDialog;
+			}
+			if (_errorNotificationDialog == null)
+			{
+				_errorNotificationDialog = new AlertNotificationForm(_form, Application.Name);
+				_errorNotificationDialog.OpenLogClicked += AlertDialogOpenLogClicked;
+				_errorNotificationDialog.Dismissed += AlertDialogDismissed;
+			}
+			return _errorNotificationDialog;
+		}
+
+		private void AlertDialogDismissed(object sender, AlertNotificationForm.DismissedEventArgs e)
+		{
+			// if the alert dialog was manually dismissed by the user, consider that an acknowledgement of all alerts
+			if(!e.AutoDismissed)
+			{
+				_alertContext.AcknowledgeAll();
+			}
+		}
+
+		private void AlertDialogOpenLogClicked(object sender, EventArgs e)
+		{
+			_alertContext.ShowAlertViewer();
+		}
 	}
 }

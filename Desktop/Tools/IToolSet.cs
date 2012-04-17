@@ -23,6 +23,14 @@ namespace ClearCanvas.Desktop.Tools
         /// Gets the tools contained in this tool set.
         /// </summary>
         ITool[] Tools { get; }
+
+		/// <summary>
+		/// Finds the tool of the specified type.
+		/// </summary>
+		/// <typeparam name="TTool"></typeparam>
+		/// <returns>The instance of the tool of the specified type, or null if no such exists.</returns>
+		TTool Find<TTool>()
+			where TTool: ITool;
         
         /// <summary>
         /// Returns the union of all actions defined by all tools in this tool set.

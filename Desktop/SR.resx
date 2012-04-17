@@ -472,4 +472,13 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="TooltipImportSettingsMetaData" xml:space="preserve">
     <value>Import settings meta-data from local plugins</value>
   </data>
+  <data name="AlertFilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="AlertFilterErrorsAndWarnings" xml:space="preserve">
+    <value>Errors and Warnings</value>
+  </data>
+  <data name="AlertFilterErrorsOnly" xml:space="preserve">
+    <value>Errors only</value>
+  </data>
 </root>

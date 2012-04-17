@@ -61,6 +61,33 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string AlertFilterAll {
+            get {
+                return ResourceManager.GetString("AlertFilterAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Errors and Warnings.
+        /// </summary>
+        public static string AlertFilterErrorsAndWarnings {
+            get {
+                return ResourceManager.GetString("AlertFilterErrorsAndWarnings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Errors only.
+        /// </summary>
+        public static string AlertFilterErrorsOnly {
+            get {
+                return ResourceManager.GetString("AlertFilterErrorsOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default Theme.
         /// </summary>
         public static string DescriptionDefaultTheme {
