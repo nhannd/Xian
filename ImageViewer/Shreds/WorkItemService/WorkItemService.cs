@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         }
                     }
                 }
-
+                
                 var item = new WorkItem
                                {
                                    Request = request.Request,
@@ -109,6 +109,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                    Status = WorkItemStatusEnum.Pending
                                };
 
+                var studyRequest = request.Request as WorkItemStudyRequest;
+                if (studyRequest != null)
+                    item.StudyInstanceUid = studyRequest.Study.StudyInstanceUid;
+                
+
                 broker.AddWorkItem(item);
                 
                 context.Commit();
@@ -119,7 +124,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             try
             {
                 PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", response.Item);
-                WorkItemProcessor.Instance.SignalThread();
+                if (WorkItemProcessor.Instance != null)
+                    WorkItemProcessor.Instance.SignalThread();
             }
             catch (Exception e)
             {

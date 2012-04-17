@@ -46,30 +46,39 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		public PatientRootPatientIdentifier(IPatientRootData other)
 		{
+            CopyFrom((IPatientData)other);
 			CopyFrom(other);
 		}
 
-		private void CopyFrom(IPatientRootData other)
+        public PatientRootPatientIdentifier(IPatientData other)
+        {
+            CopyFrom(other);
+        }
+
+        private void CopyFrom(IPatientData other)
+        {
+            PatientId = other.PatientId;
+            PatientsName = other.PatientsName;
+            PatientsBirthDate = other.PatientsBirthDate;
+            PatientsBirthTime = other.PatientsBirthTime;
+            PatientsSex = other.PatientsSex;
+
+            PatientSpeciesDescription = other.PatientSpeciesDescription;
+            PatientSpeciesCodeSequenceCodingSchemeDesignator = other.PatientSpeciesCodeSequenceCodingSchemeDesignator;
+            PatientSpeciesCodeSequenceCodeValue = other.PatientSpeciesCodeSequenceCodeValue;
+            PatientSpeciesCodeSequenceCodeMeaning = other.PatientSpeciesCodeSequenceCodeMeaning;
+            PatientBreedDescription = other.PatientBreedDescription;
+            PatientBreedCodeSequenceCodingSchemeDesignator = other.PatientBreedCodeSequenceCodingSchemeDesignator;
+            PatientBreedCodeSequenceCodeValue = other.PatientBreedCodeSequenceCodeValue;
+            PatientBreedCodeSequenceCodeMeaning = other.PatientBreedCodeSequenceCodeMeaning;
+            ResponsiblePerson = other.ResponsiblePerson;
+            ResponsiblePersonRole = other.ResponsiblePersonRole;
+            ResponsibleOrganization = other.ResponsibleOrganization;
+        }
+
+	    private void CopyFrom(IPatientRootData other)
 		{
-			PatientId = other.PatientId;
-			PatientsName = other.PatientsName;
-			PatientsBirthDate = other.PatientsBirthDate;
-			PatientsBirthTime = other.PatientsBirthTime;
-			PatientsSex = other.PatientsSex;
-
-			PatientSpeciesDescription = other.PatientSpeciesDescription;
-			PatientSpeciesCodeSequenceCodingSchemeDesignator = other.PatientSpeciesCodeSequenceCodingSchemeDesignator;
-			PatientSpeciesCodeSequenceCodeValue = other.PatientSpeciesCodeSequenceCodeValue;
-			PatientSpeciesCodeSequenceCodeMeaning = other.PatientSpeciesCodeSequenceCodeMeaning;
-			PatientBreedDescription = other.PatientBreedDescription;
-			PatientBreedCodeSequenceCodingSchemeDesignator = other.PatientBreedCodeSequenceCodingSchemeDesignator;
-			PatientBreedCodeSequenceCodeValue = other.PatientBreedCodeSequenceCodeValue;
-			PatientBreedCodeSequenceCodeMeaning = other.PatientBreedCodeSequenceCodeMeaning;
-			ResponsiblePerson = other.ResponsiblePerson;
-			ResponsiblePersonRole = other.ResponsiblePersonRole;
-			ResponsibleOrganization = other.ResponsibleOrganization;
-
-			NumberOfPatientRelatedStudies = other.NumberOfPatientRelatedStudies;
+	   	    NumberOfPatientRelatedStudies = other.NumberOfPatientRelatedStudies;
 			NumberOfPatientRelatedSeries = other.NumberOfPatientRelatedSeries;
 			NumberOfPatientRelatedInstances = other.NumberOfPatientRelatedInstances;
 		}

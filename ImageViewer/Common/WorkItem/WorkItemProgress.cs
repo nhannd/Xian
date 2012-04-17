@@ -175,20 +175,26 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public int ImagesToSend { get; set; }
 
         [DataMember(IsRequired = true)]
-        public int ImagesWarning { get; set; }
+        public int WarningSubOperations { get; set; }
 
         [DataMember(IsRequired = true)]
-        public int ImagesError { get; set; }
+        public int FailureSubOperations { get; set; }
 
         [DataMember(IsRequired = true)]
-        public int ImagesSuccess { get; set; }
+        public int SuccessSubOperations { get; set; }
+
+        public int RemainingSubOperations { get { return ImagesToSend - (WarningSubOperations + FailureSubOperations + SuccessSubOperations); } }
 
         public override string Status
         {
             get
             {
-                
-                return string.Format("");
+                if (ImagesToSend == 0)
+                    return SR.Progress_Pending;
+
+                return string.Format("{0} Images Sent, {1} Images Failed, {2} Images Pending",
+                                     SuccessSubOperations + WarningSubOperations, FailureSubOperations,
+                                     RemainingSubOperations);
             }
         }
 
@@ -197,7 +203,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get
             {
                 if (ImagesToSend > 0)
-                    return (Decimal)(ImagesWarning+ImagesError+ImagesSuccess) / ImagesToSend;
+                    return (Decimal)(WarningSubOperations+FailureSubOperations+SuccessSubOperations) / ImagesToSend;
 
                 return new decimal(0.0);
             }

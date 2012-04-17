@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DICOM Send Images.
+        /// </summary>
+        internal static string ActivityTypeEnumDicomSendSop {
+            get {
+                return ResourceManager.GetString("ActivityTypeEnumDicomSendSop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM Send Study.
         /// </summary>
         internal static string ActivityTypeEnumDicomSendStudy {
@@ -178,6 +187,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Images Sent, {1} Images Failed, {2} Images Pending.
+        /// </summary>
+        internal static string DicomSend_Status {
+            get {
+                return ResourceManager.GetString("DicomSend_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM Send to {0}.
         /// </summary>
         internal static string DicomSendRequest_ActivityDescription {
@@ -192,6 +210,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string DicomSendSeriesRequest_ActivityDescription {
             get {
                 return ResourceManager.GetString("DicomSendSeriesRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DICOM Send Images to {0}.
+        /// </summary>
+        internal static string DicomSendSopRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("DicomSendSopRequest_ActivityDescription", resourceCulture);
             }
         }
         

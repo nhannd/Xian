@@ -243,4 +243,13 @@
   <data name="PublishFilesRequest_ActivityDescription" xml:space="preserve">
     <value>Publish Files to {0}</value>
   </data>
+  <data name="ActivityTypeEnumDicomSendSop" xml:space="preserve">
+    <value>DICOM Send Images</value>
+  </data>
+  <data name="DicomSendSopRequest_ActivityDescription" xml:space="preserve">
+    <value>DICOM Send Images to {0}</value>
+  </data>
+  <data name="DicomSend_Status" xml:space="preserve">
+    <value>{0} Images Sent, {1} Images Failed, {2} Images Pending</value>
+  </data>
 </root>

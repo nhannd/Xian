@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -19,40 +20,39 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 {
+    /// <summary>
+    /// Internal inherited <see cref="StorageScu"/> class.
+    /// </summary>
     internal class ImageViewerStorageScu : StorageScu
     {
+        #region Public Members
+
+        /// <summary>
+        /// Gets a value indicating whether or not the operation as a whole (as opposed to an individual sub-operation) has failed.
+        /// </summary>
+        /// <remarks>
+        /// Typically, this refers to exceptions being thrown on the connection socket.
+        /// </remarks>
+        public bool Failed { get; private set; }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="localAETitle">The local AE Title.</param>
+        /// <param name="request">The <see cref="WorkItemRequest"/> for the association.</param>
         public ImageViewerStorageScu(string localAETitle, DicomSendRequest request)
             : base(localAETitle, request.AeTitle, request.Host, request.Port)
         {
         }
 
-        /// <summary>
-        /// Load all of the instances in a given <see cref="SeriesXml"/> file into the component for sending.
-        /// </summary>
-        /// <param name="seriesXml"></param>
-        /// <param name="location"></param>
-        /// <param name="patientsName"></param>
-        /// <param name="patientId"></param>
-        /// <param name="studyXml"></param>
-        private void LoadSeriesFromSeriesXml(StudyXml studyXml, StudyLocation location, SeriesXml seriesXml,
-                                             string patientsName, string patientId)
-        {
-            foreach (InstanceXml instanceXml in seriesXml)
-            {
-                var instance =
-                    new StorageInstance(location.GetSopInstancePath(seriesXml.SeriesInstanceUid,
-                                                                    instanceXml.SopInstanceUid));
+        #endregion
 
-                AddStorageInstance(instance);
-                instance.SopClass = instanceXml.SopClass;
-                instance.TransferSyntax = instanceXml.TransferSyntax;
-                instance.SopInstanceUid = instanceXml.SopInstanceUid;
-                instance.PatientId = patientId;
-                instance.PatientsName = patientsName;
-                instance.StudyInstanceUid = studyXml.StudyInstanceUid;
-            }
-        }
-
+        #region Public Methods
+        
         /// <summary>
         /// Load all of the instances in a given <see cref="StudyXml"/> file into the component for sending.
         /// </summary>
@@ -84,6 +84,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
         }
 
+        /// <summary>
+        /// Blocking method to do the send.
+        /// </summary>
         public void DoSend()
         {
             Failed = false;
@@ -116,6 +119,36 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 AuditSendOperation(false);
             }
         }
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Load all of the instances in a given <see cref="SeriesXml"/> file into the component for sending.
+        /// </summary>
+        /// <param name="seriesXml"></param>
+        /// <param name="location"></param>
+        /// <param name="patientsName"></param>
+        /// <param name="patientId"></param>
+        /// <param name="studyXml"></param>
+        private void LoadSeriesFromSeriesXml(StudyXml studyXml, StudyLocation location, SeriesXml seriesXml,
+                                             string patientsName, string patientId)
+        {
+            foreach (InstanceXml instanceXml in seriesXml)
+            {
+                var instance =
+                    new StorageInstance(location.GetSopInstancePath(seriesXml.SeriesInstanceUid,
+                                                                    instanceXml.SopInstanceUid));
+
+                AddStorageInstance(instance);
+                instance.SopClass = instanceXml.SopClass;
+                instance.TransferSyntax = instanceXml.TransferSyntax;
+                instance.SopInstanceUid = instanceXml.SopInstanceUid;
+                instance.PatientId = patientId;
+                instance.PatientsName = patientsName;
+                instance.StudyInstanceUid = studyXml.StudyInstanceUid;
+            }
+        }
 
         private void AuditSendOperation(bool noExceptions)
         {
@@ -146,8 +179,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
         }
 
         private void SendInternal()
-        {
-     
+        {     
             base.Send();
 
             Join(new TimeSpan(0, 0, 0, 0, 1000));
@@ -186,23 +218,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
         }
 
-
         private void OnSendError(string message)
         {
             FailureDescription = message;
+            Platform.Log(LogLevel.Error, message);
         }
 
-        #region IStorageScu Members
-
-        /// <summary>
-        /// Gets a value indicating whether or not the operation as a whole (as opposed to an individual sub-operation) has failed.
-        /// </summary>
-        /// <remarks>
-        /// Typically, this refers to exceptions being thrown on the connection socket.
-        /// </remarks>
-        public bool Failed { get; private set; }
-
-        #endregion
+        #endregion        
     }
 }
 

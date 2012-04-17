@@ -16,6 +16,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
@@ -41,9 +42,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         DicomSendSeries = 8,
         [EnumMember]
-        AutoRoute = 9,
+        DicomSendSop = 9,
         [EnumMember]
-        PublishFiles = 10,
+        AutoRoute = 10,
+        [EnumMember]
+        PublishFiles = 11,
     }
 
     public static class WorkItemRequestTypeProvider
@@ -59,6 +62,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           //Study related requests
                                                           typeof (WorkItemStudyRequest),
                                                           typeof (DicomSendRequest),
+                                                          typeof (DicomSendSopRequest),
                                                           typeof (DicomSendSeriesRequest),
                                                           typeof (DicomSendStudyRequest),
                                                           typeof (PublishFilesRequest),
@@ -122,6 +126,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public WorkItemPatient()
         { }
 
+        public WorkItemPatient(IPatientData p) 
+            : base(p)
+        { }
+
         public WorkItemPatient(DicomAttributeCollection c)
             : base(c)
         { }
@@ -133,6 +141,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public WorkItemStudy()
         { }
+
+        public WorkItemStudy(IStudyData s) 
+            : base(s)
+        {}
 
         public WorkItemStudy(DicomAttributeCollection c)
             : base(c)
@@ -215,6 +227,34 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, AeTitle); }
         }
     }
+
+    
+        /// <summary>
+    /// <see cref="WorkItemRequest"/> for sending series to a DICOM AE.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("75BD907A-45D3-471B-AD0A-DE13D422A794")]
+    public class DicomSendSopRequest : DicomSendRequest
+    {
+        public DicomSendSopRequest()
+        {
+            Type = WorkItemTypeEnum.DicomSend;
+            Priority = WorkItemPriorityEnum.Normal;
+            ActivityType = ActivityTypeEnum.DicomSendSop;
+        }
+
+        [DataMember(IsRequired = true)]
+        public string SeriesInstanceUid { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public List<string> SopInstanceUids { get; set; }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DicomSendSopRequest_ActivityDescription, AeTitle); }
+        }
+    }
+
 
     /// <summary>
     /// <see cref="WorkItemRequest"/> for publishing files to a DICOM AE.
