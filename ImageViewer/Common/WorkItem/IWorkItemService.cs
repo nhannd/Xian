@@ -42,6 +42,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public WorkItemPriorityEnum? Priority { get; set; }
 
         [DataMember]
+        public WorkItemStatusEnum? Status { get; set; }
+
+        [DataMember]
         public DateTime? ScheduledTime { get; set; }
 
         [DataMember]
@@ -49,6 +52,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [DataMember]
         public bool? Cancel { get; set; }
+
+        [DataMember]
+        public bool? Delete { get; set; }
+
     }
 
     [DataContract]

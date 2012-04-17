@@ -142,30 +142,57 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 var broker = context.GetWorkItemBroker();
                 var workItem = broker.GetWorkItem(request.Identifier);
+                bool deleted = false;
 
-                if (request.ExpirationTime.HasValue)
-                    workItem.ExpirationTime = request.ExpirationTime.Value;
-                if (request.Priority.HasValue)
-                    workItem.Priority = request.Priority.Value;
-                if (request.ScheduledTime.HasValue)
-                    workItem.ScheduledTime = request.ScheduledTime.Value;
-
-                if (request.Cancel.HasValue && request.Cancel.Value)
+                if (request.Delete.HasValue && request.Delete.Value)
                 {
-                    if (workItem.Progress == null || workItem.Progress.IsCancelable)
+                    if (workItem.Status != WorkItemStatusEnum.InProgress)
                     {
-                        if (workItem.Status.Equals(WorkItemStatusEnum.Idle)
-                            || workItem.Status.Equals(WorkItemStatusEnum.Pending))
-                            workItem.Status = WorkItemStatusEnum.Canceled;
-                        else if (workItem.Status.Equals(WorkItemStatusEnum.InProgress))
+                        workItem.Status = WorkItemStatusEnum.Deleted;
+                        deleted = true;
+                    }
+                }
+                if (!deleted)
+                {
+                    if (request.ExpirationTime.HasValue)
+                        workItem.ExpirationTime = request.ExpirationTime.Value;
+                    if (request.Priority.HasValue)
+                        workItem.Priority = request.Priority.Value;
+                    if (request.Status.HasValue && workItem.Status != WorkItemStatusEnum.InProgress)
+                        workItem.Status = request.Status.Value;
+                    if (request.ScheduledTime.HasValue)
+                        workItem.ScheduledTime = request.ScheduledTime.Value;
+
+                    if (request.Cancel.HasValue && request.Cancel.Value)
+                    {
+                        if (workItem.Progress == null || workItem.Progress.IsCancelable)
                         {
-                            // Abort the WorkItem
-                            WorkItemProcessor.Instance.Cancel(workItem.Oid);
+                            if (workItem.Status.Equals(WorkItemStatusEnum.Idle)
+                                || workItem.Status.Equals(WorkItemStatusEnum.Pending))
+                                workItem.Status = WorkItemStatusEnum.Canceled;
+                            else if (workItem.Status.Equals(WorkItemStatusEnum.InProgress))
+                            {
+                                // Abort the WorkItem
+                                WorkItemProcessor.Instance.Cancel(workItem.Oid);
+                            }
                         }
                     }
                 }
+
                 context.Commit();
+
+                response.Item = WorkItemHelper.FromWorkItem(workItem);
+            } 
+
+            try
+            {
+                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", response.Item);
             }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
+            }  
+
             return response;
         }
 
