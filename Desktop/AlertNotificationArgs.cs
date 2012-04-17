@@ -28,15 +28,11 @@ namespace ClearCanvas.Desktop
 			Message = message;
 			LinkText = linkText;
 			LinkAction = linkAction;
-
-			AutoDismiss = level == AlertLevel.Info;	// by default, only Info alerts are auto-dismissed
 		}
 
 		public AlertLevel Level { get; set; }
 		public string Message { get; set; }
 		public string LinkText { get; set; }
 		public Action<DesktopWindow> LinkAction { get; set; }
-		public string Title { get; set; }
-		public bool AutoDismiss { get; set; }
 	}
 }

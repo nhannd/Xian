@@ -9,6 +9,9 @@
 
 #endregion
 
+using System;
+using System.Linq;
+
 namespace ClearCanvas.Desktop.View.WinForms
 {
     /// <summary>
@@ -16,7 +19,24 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </summary>
     public partial class AlertViewerComponentControl : ApplicationComponentUserControl
     {
-        private readonly AlertViewerComponent _component;
+		class FilterItem
+		{
+			private readonly Func<object, string> _formatter;
+			public FilterItem(object item, Func<object, string> formatter)
+			{
+				Item = item;
+				_formatter = formatter;
+			}
+
+			public object Item { get; private set; }
+
+			public override string ToString()
+			{
+				return _formatter(this.Item);
+			}
+		}
+
+		private readonly AlertViewerComponent _component;
 
         /// <summary>
         /// Constructor
@@ -28,9 +48,21 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _component = component;
 
-        	_alertTableView.Table = _component.Alerts;
-        	_alertTableView.ToolbarModel = _component.AlertActions;
+			ToolStripBuilder.BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _toolbar.Items, _component.AlertActions.ChildNodes);
+			
+			_alertTableView.Table = _component.Alerts;
         	_alertTableView.MenuModel = _component.AlertActions;
-        }
+
+			// need to work with these manually, because data-binding doesn't work well with toolstrip comboboxes
+			_filter.Items.AddRange(_component.FilterChoices.Cast<object>().Select(i => new FilterItem(i, _component.FormatFilter)).ToArray());
+			_filter.SelectedIndex = 0;
+			_filter.SelectedIndexChanged += _activityFilter_SelectedIndexChanged;
+		}
+
+		private void _activityFilter_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			_component.Filter = ((FilterItem)_filter.SelectedItem).Item;
+		}
+
 	}
 }

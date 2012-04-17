@@ -124,6 +124,7 @@
     <Compile Include="Async.cs" />
     <Compile Include="AsyncTask.cs" />
     <Compile Include="AlertViewerComponent.cs" />
+    <Compile Include="IDesktopAlertContext.cs" />
     <Compile Include="Tables\ComboBoxCellEditor.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafAction.cs" />
@@ -604,6 +605,12 @@
     <EmbeddedResource Include="Icons\InfoSmall.png" />
     <EmbeddedResource Include="Icons\InfoTipSmall.png" />
     <EmbeddedResource Include="Icons\WarningSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ErrorMini.png" />
+    <EmbeddedResource Include="Icons\InfoMini.png" />
+    <EmbeddedResource Include="Icons\InfoTipMini.png" />
+    <EmbeddedResource Include="Icons\WarningMini.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

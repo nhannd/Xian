@@ -207,11 +207,11 @@
     <Compile Include="TextBoxToolbarItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TimedDialogForm.cs">
+    <Compile Include="AlertNotificationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TimedDialogForm.Designer.cs">
-      <DependentUpon>TimedDialogForm.cs</DependentUpon>
+    <Compile Include="AlertNotificationForm.Designer.cs">
+      <DependentUpon>AlertNotificationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TitleBar.cs">
       <SubType>Component</SubType>
@@ -648,8 +648,8 @@
     <EmbeddedResource Include="IndicatorLight.resx">
       <DependentUpon>IndicatorLight.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TimedDialogForm.resx">
-      <DependentUpon>TimedDialogForm.cs</DependentUpon>
+    <EmbeddedResource Include="AlertNotificationForm.resx">
+      <DependentUpon>AlertNotificationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkspaceDialogBoxForm.resx">
       <DependentUpon>WorkspaceDialogBoxForm.cs</DependentUpon>
@@ -738,6 +738,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\close.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

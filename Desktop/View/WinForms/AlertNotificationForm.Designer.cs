@@ -1,6 +1,6 @@
 ﻿namespace ClearCanvas.Desktop.View.WinForms
 {
-    partial class TimedDialogForm
+    partial class AlertNotificationForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,25 +29,52 @@
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TimedDialogForm));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AlertNotificationForm));
 			this._hostPanel = new System.Windows.Forms.Panel();
+			this._closeButton = new System.Windows.Forms.PictureBox();
+			this._icon = new System.Windows.Forms.PictureBox();
 			this._contextualLink = new System.Windows.Forms.LinkLabel();
 			this._message = new System.Windows.Forms.Label();
 			this._timer = new System.Windows.Forms.Timer(this.components);
+			this._openLogLink = new System.Windows.Forms.LinkLabel();
 			this._hostPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._closeButton)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._icon)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _hostPanel
 			// 
 			resources.ApplyResources(this._hostPanel, "_hostPanel");
+			this._hostPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this._hostPanel.Controls.Add(this._openLogLink);
+			this._hostPanel.Controls.Add(this._closeButton);
+			this._hostPanel.Controls.Add(this._icon);
 			this._hostPanel.Controls.Add(this._contextualLink);
 			this._hostPanel.Controls.Add(this._message);
 			this._hostPanel.Name = "_hostPanel";
 			// 
+			// _closeButton
+			// 
+			resources.ApplyResources(this._closeButton, "_closeButton");
+			this._closeButton.Name = "_closeButton";
+			this._closeButton.TabStop = false;
+			this._closeButton.Click += new System.EventHandler(this._closeButton_Click);
+			this._closeButton.Paint += new System.Windows.Forms.PaintEventHandler(this._closeButton_Paint);
+			this._closeButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this._closeButton_MouseDown);
+			this._closeButton.MouseEnter += new System.EventHandler(this._closeButton_MouseEnter);
+			this._closeButton.MouseLeave += new System.EventHandler(this._closeButton_MouseLeave);
+			this._closeButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this._closeButton_MouseUp);
+			// 
+			// _icon
+			// 
+			resources.ApplyResources(this._icon, "_icon");
+			this._icon.Name = "_icon";
+			this._icon.TabStop = false;
+			// 
 			// _contextualLink
 			// 
 			resources.ApplyResources(this._contextualLink, "_contextualLink");
-			this._contextualLink.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
+			this._contextualLink.AutoEllipsis = true;
 			this._contextualLink.Name = "_contextualLink";
 			this._contextualLink.TabStop = true;
 			this._contextualLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._contextualLink_LinkClicked);
@@ -62,21 +89,30 @@
 			// 
 			this._timer.Tick += new System.EventHandler(this.OnTimerTick);
 			// 
-			// TimedDialogForm
+			// _openLogLink
+			// 
+			resources.ApplyResources(this._openLogLink, "_openLogLink");
+			this._openLogLink.AutoEllipsis = true;
+			this._openLogLink.Name = "_openLogLink";
+			this._openLogLink.TabStop = true;
+			this._openLogLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openLogLink_LinkClicked);
+			// 
+			// AlertNotificationForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._hostPanel);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "TimedDialogForm";
+			this.Name = "AlertNotificationForm";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TimedDialogForm_FormClosing);
 			this._hostPanel.ResumeLayout(false);
-			this._hostPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._closeButton)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._icon)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -88,5 +124,8 @@
 		private System.Windows.Forms.LinkLabel _contextualLink;
 		private System.Windows.Forms.Label _message;
 		private System.Windows.Forms.Timer _timer;
+		private System.Windows.Forms.PictureBox _icon;
+		private System.Windows.Forms.PictureBox _closeButton;
+		private System.Windows.Forms.LinkLabel _openLogLink;
     }
 }

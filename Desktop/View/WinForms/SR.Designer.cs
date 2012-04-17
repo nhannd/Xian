@@ -244,6 +244,24 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to + {0} more new errors/warnings.
+        /// </summary>
+        internal static string LinkMoreNewAlerts {
+            get {
+                return ResourceManager.GetString("LinkMoreNewAlerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View all alerts.
+        /// </summary>
+        internal static string LinkViewAllAlerts {
+            get {
+                return ResourceManager.GetString("LinkViewAllAlerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main Menu.
         /// </summary>
         internal static string MenuBar {

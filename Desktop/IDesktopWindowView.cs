@@ -54,6 +54,12 @@ namespace ClearCanvas.Desktop
 		DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons);
 
 		/// <summary>
+		/// Sets the alert context.
+		/// </summary>
+		/// <param name="alertContext"></param>
+    	void SetAlertContext(IDesktopAlertContext alertContext);
+	
+		/// <summary>
 		/// Shows an alert notification in front of this window.
 		/// </summary>
 		void ShowAlert(AlertNotificationArgs args);

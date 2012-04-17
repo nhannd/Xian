@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
                     message = SR.MessageFailedToStartReindex;
                 }
 
-                TimedDialog.Show(message, linkText, () => ActivityMonitorManager.Show(desktopWindow));
+				desktopWindow.ShowAlert(AlertLevel.Info, message, linkText, ActivityMonitorManager.Show);
             }
             catch (Exception e)
             {

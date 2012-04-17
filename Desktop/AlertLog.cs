@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 
@@ -23,7 +24,24 @@ namespace ClearCanvas.Desktop
 		Error
 	}
 
-	internal class Alert
+	public static class AlertLevelExtensions
+	{
+		public static IconSet GetIcon(this AlertLevel level)
+		{
+			switch (level)
+			{
+				case AlertLevel.Info:
+					return new IconSet("InfoMini.png", "InfoSmall.png", "InfoMedium.png");
+				case AlertLevel.Warning:
+					return new IconSet("WarningMini.png", "WarningSmall.png", "WarningMedium.png");
+				case AlertLevel.Error:
+					return new IconSet("ErrorMini.png", "ErrorSmall.png", "ErrorMedium.png");
+			}
+			throw new ArgumentOutOfRangeException();
+		}
+	}
+
+	public class Alert
 	{
 		public Alert(AlertLevel level, DateTime time, string message)
 		{
@@ -35,9 +53,10 @@ namespace ClearCanvas.Desktop
 		public AlertLevel Level { get; private set; }
 		public DateTime Time { get; private set; }
 		public string Message { get; private set; }
+		public bool Acknowledged { get; set; }
 	}
 
-	internal class AlertLog
+	public class AlertLog
 	{
 
 		private static readonly AlertLog _instance = new AlertLog();
@@ -68,6 +87,17 @@ namespace ClearCanvas.Desktop
 			EventsHelper.Fire(AlertLogged, this, new ItemEventArgs<Alert>(alert));
 		}
 
+		public void AcknowledgeAll()
+		{
+			foreach (var alert in _alerts)
+			{
+				alert.Acknowledged = true;
+			}
+		}
+
+		/// <summary>
+		/// Returns the entries in chronological order.
+		/// </summary>
 		public IEnumerable<Alert> Entries
 		{
 			get { return _alerts; }

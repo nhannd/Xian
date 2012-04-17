@@ -59,37 +59,63 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AlertViewerComponentControl));
 			this._alertTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._toolbar = new System.Windows.Forms.ToolStrip();
+			this._filter = new System.Windows.Forms.ToolStripComboBox();
+			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+			this._toolbar.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _alertTableView
 			// 
-			this._alertTableView.ColumnHeaderTooltip = null;
-			this._alertTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._alertTableView.Location = new System.Drawing.Point(0, 0);
-			this._alertTableView.Margin = new System.Windows.Forms.Padding(4);
+			resources.ApplyResources(this._alertTableView, "_alertTableView");
 			this._alertTableView.MultiLine = true;
 			this._alertTableView.MultiSelect = false;
 			this._alertTableView.Name = "_alertTableView";
 			this._alertTableView.ReadOnly = false;
-			this._alertTableView.Size = new System.Drawing.Size(326, 741);
-			this._alertTableView.SortButtonTooltip = null;
-			this._alertTableView.TabIndex = 3;
+			this._alertTableView.ShowColumnHeading = false;
+			this._alertTableView.ShowToolbar = false;
+			// 
+			// _toolbar
+			// 
+			this._toolbar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this._toolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1,
+            this._filter});
+			resources.ApplyResources(this._toolbar, "_toolbar");
+			this._toolbar.Name = "_toolbar";
+			// 
+			// _filter
+			// 
+			this._filter.Name = "_filter";
+			resources.ApplyResources(this._filter, "_filter");
+			// 
+			// toolStripLabel1
+			// 
+			this.toolStripLabel1.Name = "toolStripLabel1";
+			resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
 			// 
 			// AlertViewerComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._toolbar);
 			this.Controls.Add(this._alertTableView);
 			this.Name = "AlertViewerComponentControl";
-			this.Size = new System.Drawing.Size(326, 741);
+			this._toolbar.ResumeLayout(false);
+			this._toolbar.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
         #endregion
 
 		private TableView _alertTableView;
+		private System.Windows.Forms.ToolStrip _toolbar;
+		private System.Windows.Forms.ToolStripComboBox _filter;
+		private System.Windows.Forms.ToolStripLabel toolStripLabel1;
 
 
 	}
