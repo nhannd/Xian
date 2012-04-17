@@ -11,9 +11,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
@@ -42,8 +44,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SendStudyInternal()
 		{
-            throw new NotImplementedException("Marmot - need to restore this.");
-
 			if (!Enabled || this.Context.SelectedStudy == null)
 				return;
 
@@ -81,55 +81,39 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			AuditedInstances sentInstances = new AuditedInstances();
 
 			List<string> studyUids = new List<string>();
-			foreach (StudyItem item in this.Context.SelectedStudies)
-			{
-				studyUids.Add(item.StudyInstanceUid);
-				sentInstances.AddInstance(item.PatientId, item.PatientsName, item.StudyInstanceUid);
-			}
-
+	
 		    //TODO (Marmot):Restore.
-            /*
-			DicomSendServiceClient client = new DicomSendServiceClient();
-
-			try
-			{
-				client.Open();
-
+            var client = new DicomSendClient();
+            foreach (StudyItem item in this.Context.SelectedStudies)
+            {
+                studyUids.Add(item.StudyInstanceUid);
+                sentInstances.AddInstance(item.PatientId, item.PatientsName, item.StudyInstanceUid);
                 foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
-				{
-					var request = new SendStudiesRequest();
+                {
                     var aeInformation = new ApplicationEntity
-                                            {
-                                                AETitle = destination.AETitle,
-                                                ScpParameters = new ScpParameters(destination.HostName, destination.Port)
-                                            };
-				    request.DestinationAEInformation = aeInformation;
-					request.StudyInstanceUids = studyUids;
-					client.SendStudies(request);
-				}
+                    {
+                        AETitle = destination.AETitle,
+                        ScpParameters = new ScpParameters(destination.HostName, destination.Port)
+                    };
 
-				client.Close();
+                    try
+                    {
+                        client.MoveStudy(aeInformation, item, WorkItemPriorityEnum.Normal);
+                    }
+                    catch (EndpointNotFoundException)
+                    {
+                        result = EventResult.SeriousFailure;
+                        this.Context.DesktopWindow.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning, MessageBoxActions.Ok);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, this.Context.DesktopWindow);
+                    }
 
-			    //TODO (Marmot): Restore - tell the user it's been scheduled.
-                //LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
-			}
-			catch (EndpointNotFoundException)
-			{
-				client.Abort();
-				result = EventResult.SeriousFailure;
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning, MessageBoxActions.Ok);
-			}
-			catch (Exception e)
-			{
-				result = EventResult.MajorFailure;
-				ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, this.Context.DesktopWindow);
-			}
-			finally
-			{
-                foreach (IServerTreeDicomServer destinationAE in serverTreeComponent.SelectedServers.Servers)
-					AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.HostName, sentInstances, EventSource.CurrentUser, result);
-			}
-            */
+                    foreach (IServerTreeDicomServer destinationAE in serverTreeComponent.SelectedServers.Servers)
+                        AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.HostName, sentInstances, EventSource.CurrentUser, result);
+                }
+            }
 		}
 
         protected override void OnSelectedStudyChanged(object sender, EventArgs e)

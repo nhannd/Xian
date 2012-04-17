@@ -12,12 +12,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.Auditing;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Common
@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Common
 				try
 				{
 					FileInfo[] files = subDirectory.GetFiles();
-					if (files == null || files.Length == 0)
+					if (files.Length == 0)
 						subDirectory.Delete();
 				}
 				catch (Exception e)
@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Common
 			return tempDirectory;
 		}
 
-		private static void SaveFiles(IEnumerable<DicomFile> files, string tempDirectoryPrefix, out string tempDirectory)
+		private static void SaveFiles(IEnumerable<DicomFile> files, string tempDirectoryPrefix, out string tempDirectory, out List<string> savedFiles )
 		{
 			tempDirectory = Path.Combine(Path.GetTempPath(), "ClearCanvas");
 			tempDirectory = Path.Combine(tempDirectory, "Publishing");
@@ -93,11 +93,13 @@ namespace ClearCanvas.ImageViewer.Common
 			DeleteEmptyFolders(tempDirectory);
 			tempDirectory = GetTempDirectory(tempDirectory, tempDirectoryPrefix);
 			Directory.CreateDirectory(tempDirectory);
+            savedFiles = new List<string>();
 
 			foreach (DicomFile file in files)
 			{
 				string savePath = Path.Combine(tempDirectory, file.DataSet[DicomTags.SopInstanceUid] + ".dcm");
 				file.Save(savePath);
+                savedFiles.Add(savePath);
 			}
 		}
 
@@ -121,11 +123,12 @@ namespace ClearCanvas.ImageViewer.Common
 
 			// cache files to temporary storage
 			string tempFileDirectory;
-			SaveFiles(files, @"Local", out tempFileDirectory);
+		    List<string> savedFiles;
+
+		    SaveFiles(files, @"Local", out tempFileDirectory, out savedFiles);
 
 			// setup auditing information
-			var result = EventResult.Success;
-			var auditedInstances = GetAuditedInstances(files, true);
+		    var auditedInstances = GetAuditedInstances(files, true);
 
 		    var importClient = new DicomFileImportClient();
 
@@ -136,12 +139,11 @@ namespace ClearCanvas.ImageViewer.Common
 		{
 			if (files == null || files.Count == 0)
 				return;
-
-            throw new NotImplementedException("Marmot - need to restore this functionality.");
-            /*
+            
 			// cache files to temporary storage
 			string tempFileDirectory;
-			SaveFiles(files, destinationServer.AETitle, out tempFileDirectory);
+		    List<string> savedFiles;
+            SaveFiles(files, destinationServer.AETitle, out tempFileDirectory, out savedFiles);
 
             //TODO (Marmot):Restore.
 
@@ -149,24 +151,14 @@ namespace ClearCanvas.ImageViewer.Common
 			var result = EventResult.Success;
 			var auditedInstances = GetAuditedInstances(files, false);
 
-			var client = new DicomSendServiceClient();
 			try
 			{
-				var request = new SendFilesRequest();
-				request.FilePaths = new[] {tempFileDirectory};
-				request.FileExtensions = new string[0];
-				request.Recursive = true;
-				request.DeletionBehaviour = DeletionBehaviour.DeleteOnSuccess;
-				request.DestinationAEInformation = destinationServer;
-				request.IsBackground = isBackground;
-
-				client.Open();
-				client.SendFiles(request);
-				client.Close();
+                var client = new DicomSendClient();
+			    client.PublishFiles(destinationServer, new StudyRootStudyIdentifier(CollectionUtils.FirstElement(files).DataSet),
+			                        DeletionBehaviour.DeleteOnSuccess, savedFiles);
 			}
 			catch (Exception ex)
 			{
-				client.Abort();
 				result = EventResult.MajorFailure;
 
 				var message = string.Format("Failed to connect to the dicom send service to send files.  The files must be published manually (location: {0})", tempFileDirectory);
@@ -176,8 +168,7 @@ namespace ClearCanvas.ImageViewer.Common
 			{
 				// audit attempt to update instances on remote server
 				AuditHelper.LogUpdateInstances(new[] {destinationServer.AETitle}, auditedInstances, EventSource.CurrentUser, result);
-			}
-        */
+			}        
 		}
 	}
 }

@@ -41,21 +41,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             {
                 string message;
                 var client = new ReindexClient();
-                if (client.Reindex())
-                {
-                    if (client.Request.Status == WorkItemStatusEnum.InProgress)
-                        message = SR.MessageReindexInProgress;
-                    else if (client.Request.Status == WorkItemStatusEnum.Idle)
-                        message = SR.MessageReindexInProgress;
-                    else if (client.Request.Status == WorkItemStatusEnum.Pending)
-                        message = SR.MessageReindexScheduled;
-                    else
-                        message = SR.MessageFailedToStartReindex;
-                }
+                client.Reindex();
+
+                if (client.Request.Status == WorkItemStatusEnum.InProgress)
+                    message = SR.MessageReindexInProgress;
+                else if (client.Request.Status == WorkItemStatusEnum.Idle)
+                    message = SR.MessageReindexInProgress;
+                else if (client.Request.Status == WorkItemStatusEnum.Pending)
+                    message = SR.MessageReindexScheduled;
                 else
-                {
                     message = SR.MessageFailedToStartReindex;
-                }
 
                 TimedDialog.Show(message, linkText, () => ActivityMonitorManager.Show(desktopWindow));
             }

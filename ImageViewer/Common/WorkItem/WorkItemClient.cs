@@ -7,9 +7,10 @@ using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    public abstract class WorkItemClient
+    public class WorkItemClient
     {
         public WorkItemData Request { get; set; }
+        public Exception Exception { get; set; }
 
         public void Cancel()
         {
@@ -63,6 +64,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             catch (Exception ex)
             {
+                Exception = ex;
                 result = EventResult.MajorFailure;
 
                 var message = string.Format("Failed to connect to the work item service to import files.  The files must be imported manually (location: {0})", importFolder);
@@ -95,6 +97,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             catch (Exception ex)
             {
+                Exception = ex;
                 result = EventResult.MajorFailure;
 
                 var message = string.Format("Failed to connect to the work item service to import files.  The files must be imported manually (location: {0})", importFolder);
@@ -124,8 +127,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 InsertRequest(request);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Exception = ex;
                 result = EventResult.MajorFailure;
                 throw;
             }
@@ -144,13 +148,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public void RunApplication(string[] args)
         {
-            if (new ReindexClient().Reindex())
+            try
             {
+                var client = new ReindexClient();
+                client.Reindex();
                 Console.WriteLine("The re-index has been scheduled.");
-                return;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to start re-index.");
             }
 
-            Console.WriteLine("Failed to start re-index.");
             Environment.ExitCode = 1;
         }
 
@@ -159,26 +167,26 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     public class ReindexClient : WorkItemClient
     {
-        public bool Reindex()
+        public void Reindex()
         {
             var request = new ReindexRequest();
 
             try
             {
                 InsertRequest(request);
-                return true;
             }
             catch (Exception ex)
             {
+                Exception = ex;
                 Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToStartReindex);
-                return false;
+                throw;
             }
         }
     }
 
     public class DicomSendClient : WorkItemClient
     {
-        public bool MoveStudy(ApplicationEntity remoteAEInfo, StudyRootStudyIdentifier study)
+        public void MoveStudy(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, WorkItemPriorityEnum priority)
         {
             try
             {
@@ -187,24 +195,23 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     AeTitle = remoteAEInfo.AETitle,
                     Host = remoteAEInfo.ScpParameters.HostName,
                     Port = remoteAEInfo.ScpParameters.Port,
-                    Priority = WorkItemPriorityEnum.Stat,
+                    Priority = priority,
                     Study = new WorkItemStudy(study),
                     Patient = new WorkItemPatient(study)
 
                 };
-
                 
                 InsertRequest(request);
-                return true;
             }
             catch (Exception ex)
             {
+                Exception = ex;
                 Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendStudy);
-                return false;
+                throw;
             }
         }
 
-        public bool MoveSeries(ApplicationEntity remoteAEInfo, StudyRootStudyIdentifier study, string[] seriesInstanceUids)
+        public void MoveSeries(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
         {
             try
             {
@@ -214,23 +221,22 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                       Host = remoteAEInfo.ScpParameters.HostName,
                                       Port = remoteAEInfo.ScpParameters.Port,
                                       SeriesInstanceUids = new List<string>(),
-                                      Priority = WorkItemPriorityEnum.Stat,
+                                      Priority = priority,
                                       Study = new WorkItemStudy(study),
                                       Patient = new WorkItemPatient(study)
                                   };
 
                 request.SeriesInstanceUids.AddRange(seriesInstanceUids);
                 InsertRequest(request);
-                return true;
             }
             catch (Exception ex)
             {
-                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendSeries);
-                return false;
+                Exception = ex;
+                throw;
             }
         }
 
-        public bool MoveSops(ApplicationEntity remoteAEInfo, StudyRootStudyIdentifier study, string seriesInstanceUid, string[] sopInstanceUids)
+        public void MoveSops(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
         {
             try
             {
@@ -241,18 +247,43 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                       Port = remoteAEInfo.ScpParameters.Port,
                                       SeriesInstanceUid = seriesInstanceUid,
                                       SopInstanceUids = new List<string>(),
-                                      Priority = WorkItemPriorityEnum.Stat,
+                                      Priority = priority,
                                       Study = new WorkItemStudy(study),
                                       Patient = new WorkItemPatient(study)
                                   };
                 request.SopInstanceUids.AddRange(sopInstanceUids);
                 InsertRequest(request);
-                return true;
             }
             catch (Exception ex)
             {
+                Exception = ex;
                 Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendSops);
-                return false;
+                throw;
+            }
+        }
+
+        public void PublishFiles(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, DeletionBehaviour behaviour, List<string> files  )
+        {
+            try
+            {
+                var request = new PublishFilesRequest
+                                  {
+                                      AeTitle = remoteAEInfo.AETitle,
+                                      Host = remoteAEInfo.ScpParameters.HostName,
+                                      Port = remoteAEInfo.ScpParameters.Port,
+                                      Priority = WorkItemPriorityEnum.Stat,
+                                      DeletionBehaviour = behaviour,
+                                      Study = new WorkItemStudy(study),
+                                      Patient = new WorkItemPatient(study),
+                                      FilePaths = files
+                                  };
+                InsertRequest(request);
+            }
+            catch (Exception ex)
+            {
+                Exception = ex;
+                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendSops);
+                throw;
             }
         }
     }
