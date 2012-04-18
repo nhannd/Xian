@@ -44,11 +44,11 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </remarks>
     public class DesktopWindowView : DesktopObjectView, IDesktopWindowView
     {
-        private static OrderedSet<DesktopWindowView> _desktopWindowActivationOrder = new OrderedSet<DesktopWindowView>();
+        private static readonly OrderedSet<DesktopWindowView> _desktopWindowActivationOrder = new OrderedSet<DesktopWindowView>();
 
-    	private DesktopWindow _desktopWindow;
+    	private readonly DesktopWindow _desktopWindow;
         private DesktopForm _form;
-        private OrderedSet<WorkspaceView> _workspaceActivationOrder;
+        private readonly OrderedSet<WorkspaceView> _workspaceActivationOrder;
 
     	private IDesktopAlertContext _alertContext;
     	private AlertNotificationForm _errorNotificationDialog;
@@ -66,21 +66,22 @@ namespace ClearCanvas.Desktop.View.WinForms
             _workspaceActivationOrder = new OrderedSet<WorkspaceView>();
 
             // listen to some events on the form
-            _form.VisibleChanged += new EventHandler(FormVisibleChangedEventHandler);
-            _form.Activated += new EventHandler(FormActivatedEventHandler);
-            _form.Deactivate += new EventHandler(FormDeactivateEventHandler);
-            _form.FormClosing += new FormClosingEventHandler(FormFormClosingEventHandler);
-            _form.TabbedGroups.PageCloseRequest += new TabbedGroups.PageCloseRequestHandler(TabbedGroupPageClosePressedEventHandler);
-            _form.TabbedGroups.PageChanged += new TabbedGroups.PageChangeHandler(TabbedGroupPageChangedEventHandler);
+            _form.VisibleChanged += FormVisibleChangedEventHandler;
+            _form.Activated += FormActivatedEventHandler;
+            _form.Deactivate += FormDeactivateEventHandler;
+            _form.FormClosing += FormFormClosingEventHandler;
+            _form.TabbedGroups.PageCloseRequest += TabbedGroupPageClosePressedEventHandler;
+            _form.TabbedGroups.PageChanged += TabbedGroupPageChangedEventHandler;
+
             // NY: We subscribe to ContentHiding instead of ContentHidden because ContentHidden
             // is fired when the user double clicks the caption bar of a docking window, which
             // results in a crash. (Ticket #144)
-            _form.DockingManager.ContentHiding += new DockingManager.ContentHidingHandler(DockingManagerContentHidingEventHandler);
-            _form.DockingManager.ContentShown += new DockingManager.ContentHandler(DockingManagerContentShownEventHandler);
-            _form.DockingManager.ContentAutoHideOpening += new DockingManager.ContentHandler(DockingManagerContentAutoHideOpeningEventHandler);
-            _form.DockingManager.ContentAutoHideClosed += new DockingManager.ContentHandler(DockingManagerContentAutoHideClosedEventHandler);
-            _form.DockingManager.WindowActivated += new DockingManager.WindowHandler(DockingManagerWindowActivatedEventHandler);
-            _form.DockingManager.WindowDeactivated += new DockingManager.WindowHandler(FormDockingManagerWindowDeactivatedEventHandler);
+            _form.DockingManager.ContentHiding += DockingManagerContentHidingEventHandler;
+            _form.DockingManager.ContentShown += DockingManagerContentShownEventHandler;
+            _form.DockingManager.ContentAutoHideOpening += DockingManagerContentAutoHideOpeningEventHandler;
+            _form.DockingManager.ContentAutoHideClosed += DockingManagerContentAutoHideClosedEventHandler;
+            _form.DockingManager.WindowActivated += DockingManagerWindowActivatedEventHandler;
+            _form.DockingManager.WindowDeactivated += FormDockingManagerWindowDeactivatedEventHandler;
         }
 
     	internal string DesktopWindowName
@@ -91,7 +92,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         #region Form Event Handlers
 
         /// <summary>
-        /// Cancels the forms closing event, and raises our <see cref="CloseRequested"/> event instead.
+		/// Cancels the forms closing event, and raises our <see cref="IDesktopObjectView.CloseRequested"/> event instead.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -140,7 +141,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void FormActivatedEventHandler(object sender, EventArgs e)
         {
             // de-activate the previous window before activating the new one
-            DesktopWindowView lastActive = _desktopWindowActivationOrder.LastElement;
+            var lastActive = _desktopWindowActivationOrder.LastElement;
             if (lastActive != this)
             {
                 if (lastActive != null)
@@ -192,7 +193,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             // Remove the tab
             TabPageCollection tabPages;
-            bool found = FindTabPageCollection(_form.TabbedGroups.RootSequence, workspaceView.TabPage, out tabPages);
+            var found = FindTabPageCollection(_form.TabbedGroups.RootSequence, workspaceView.TabPage, out tabPages);
             if (found)
                 tabPages.Remove(workspaceView.TabPage);
 
@@ -212,13 +213,13 @@ namespace ClearCanvas.Desktop.View.WinForms
                 Crownwood.DotNetMagic.Controls.TabPage tabPage,
                 out TabPageCollection containingCollection)
         {
-            for (int i = 0; i < nodeGroup.Count; i++)
+            for (var i = 0; i < nodeGroup.Count; i++)
             {
-                TabGroupBase node = nodeGroup[i];
+                var node = nodeGroup[i];
 
                 if (node.IsSequence)
                 {
-                    bool found = FindTabPageCollection(node as TabGroupSequence, tabPage, out containingCollection);
+                    var found = FindTabPageCollection(node as TabGroupSequence, tabPage, out containingCollection);
 
                     if (found)
                         return true;
@@ -226,7 +227,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 if (node.IsLeaf)
                 {
-                    TabGroupLeaf leaf = node as TabGroupLeaf;
+                    var leaf = (TabGroupLeaf)node;
                     if (leaf.TabPages.Contains(tabPage))
                     {
                         containingCollection = leaf.TabPages;
@@ -241,7 +242,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void TabbedGroupPageClosePressedEventHandler(TabbedGroups groups, TGCloseRequestEventArgs e)
         {
-            WorkspaceView wv = (WorkspaceView)e.TabPage.Tag;
+            var wv = (WorkspaceView)e.TabPage.Tag;
 
             // We cancel so that DotNetMagic doesn't remove the tab; we want
             // to do that programatically
@@ -254,14 +255,14 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void TabbedGroupPageChangedEventHandler(TabbedGroups tg, Crownwood.DotNetMagic.Controls.TabPage tp)
         {
             // de-activate the previous workspace before activating the new one
-            WorkspaceView lastActive = _workspaceActivationOrder.LastElement;
+            var lastActive = _workspaceActivationOrder.LastElement;
             if (lastActive != null)
             {
                 lastActive.SetActiveStatus(false);
             }
 
             // important to check tp != null to account for the case where the last workspace closes
-            WorkspaceView nowActive = (tp != null) ? (WorkspaceView)tp.Tag : null;
+            var nowActive = (tp != null) ? (WorkspaceView)tp.Tag : null;
             if (nowActive != null)
             {
                 nowActive.SetVisibleStatus(true);   // the very first time the page is selected, need to change its visible status
@@ -280,9 +281,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         	// so the shelf will be the correct size.  This would be done automatically when the
 			// control gets added - we're just doing it a bit prematurely in order to get the correct size.
         	control.Font = _form.DockingManager.TabControlFont;
-        	Size displaySize = control.Size;
+        	var displaySize = control.Size;
 
-			Content content = _form.DockingManager.Contents.Add(control, title);
+			var content = _form.DockingManager.Contents.Add(control, title);
 			content.Tag = shelfView;
 
 			if (shelfRestoreStream != null)
@@ -406,9 +407,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             for (int i = 0; i < _form.DockingManager.Contents.Count; i++)
             {
-                Content content = _form.DockingManager.Contents[i];
+                var content = _form.DockingManager.Contents[i];
 
-                ShelfView shelfView = (ShelfView)content.Tag;
+                var shelfView = (ShelfView)content.Tag;
                 if ((shelfView.DisplayHint & ShelfDisplayHint.HideOnWorkspaceOpen) != 0)
                 {
                     shelfView.Hide();
@@ -444,7 +445,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void DockingManagerContentHidingEventHandler(Content c, CancelEventArgs cea)
         {
             // this event is fired when the X on the shelf is clicked
-            ShelfView shelfView = (ShelfView)c.Tag;
+            var shelfView = (ShelfView)c.Tag;
 
             // don't let dotnetmagic remove the shelf
             cea.Cancel = true;
@@ -458,7 +459,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void DockingManagerContentAutoHideClosedEventHandler(Content c, EventArgs cea)
         {
-            ShelfView shelfView = (ShelfView)c.Tag;
+            var shelfView = (ShelfView)c.Tag;
 
             shelfView.SetActiveStatus(false);   // force active to false, since the dotnetmagic events are not reliable
             shelfView.SetVisibleStatus(false);
@@ -466,32 +467,32 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void DockingManagerContentAutoHideOpeningEventHandler(Content c, EventArgs cea)
         {
-            ShelfView shelfView = (ShelfView)c.Tag;
+            var shelfView = (ShelfView)c.Tag;
             shelfView.SetVisibleStatus(true);
         }
 
         private void FormDockingManagerWindowDeactivatedEventHandler(DockingManager dm, Window wd)
         {
-            Content content = (wd as WindowContent).CurrentContent;
+            var content = ((WindowContent) wd).CurrentContent;
 
             // seems that content may sometimes be null - not sure why
             // in this case, just ignore the event
             if (content != null)
             {
-                ShelfView shelfView = (ShelfView)content.Tag;
+                var shelfView = (ShelfView)content.Tag;
                 shelfView.SetActiveStatus(false);
             }
         }
 
         private void DockingManagerWindowActivatedEventHandler(DockingManager dm, Window wd)
         {
-            Content content = (wd as WindowContent).CurrentContent;
+            var content = ((WindowContent) wd).CurrentContent;
 
             // seems that content may sometimes be null - not sure why
             // in this case, just ignore the event
             if (content != null)
             {
-                ShelfView shelfView = (ShelfView)content.Tag;
+                var shelfView = (ShelfView)content.Tag;
                 // when activated, report both visible and active status
                 shelfView.SetVisibleStatus(true);
                 shelfView.SetActiveStatus(true);
@@ -573,21 +574,26 @@ namespace ClearCanvas.Desktop.View.WinForms
             _form.ToolbarModel = model;
         }
 
-        /// <summary>
-        /// Displays a message box.
-        /// </summary>
-        /// <remarks>
-        /// Override this method if you need to customize the display of message boxes.
-        /// </remarks>
-        /// <param name="message"></param>
-        /// <param name="buttons"></param>
-        /// <returns></returns>
-        public virtual DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons)
+    	/// <summary>
+    	/// Displays a message box.
+    	/// </summary>
+    	/// <remarks>
+    	/// Override this method if you need to customize the display of message boxes.
+    	/// </remarks>
+    	/// <param name="message"></param>
+    	/// <param name="title"> </param>
+    	/// <param name="buttons"></param>
+    	/// <returns></returns>
+    	public virtual DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons)
         {
-            MessageBox mb = new MessageBox();
+            var mb = new MessageBox();
             return mb.Show(message, title, buttons, _form);
         }
 
+    	/// <summary>
+    	/// Sets the alert context.
+    	/// </summary>
+    	/// <param name="alertContext"></param>
     	public void SetAlertContext(IDesktopAlertContext alertContext)
     	{
     		_alertContext = alertContext;
@@ -603,7 +609,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     		var c = _alertContext.UnacknowledgedErrorWarningCount;
     		dialog.AlertIcon = icon.CreateIcon(IconSize.Large, new ResourceResolver(typeof (DesktopWindow).Assembly));
     		dialog.Message = args.Message;
-    		dialog.LinkText = args.LinkText;
+    		dialog.LinkText = args.LinkText ?? "";
     		dialog.LinkHandler = AlertLinkHandler(args.LinkAction);
 			dialog.OpenLogLinkText = args.Level != AlertLevel.Info && c > 1 ? string.Format(SR.LinkMoreNewAlerts, c - 1) : SR.LinkViewAllAlerts;
  			dialog.Popup(args.Level == AlertLevel.Info && GetAlertDialog(AlertLevel.Error).Visible ? 1 : 0);
@@ -758,18 +764,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 				}
 
 
-				_form.VisibleChanged -= new EventHandler(FormVisibleChangedEventHandler);
-				_form.Activated -= new EventHandler(FormActivatedEventHandler);
-				_form.Deactivate -= new EventHandler(FormDeactivateEventHandler);
-				_form.FormClosing -= new FormClosingEventHandler(FormFormClosingEventHandler);
-				_form.TabbedGroups.PageCloseRequest -= new TabbedGroups.PageCloseRequestHandler(TabbedGroupPageClosePressedEventHandler);
-				_form.TabbedGroups.PageChanged -= new TabbedGroups.PageChangeHandler(TabbedGroupPageChangedEventHandler);
-				_form.DockingManager.ContentHiding -= new DockingManager.ContentHidingHandler(DockingManagerContentHidingEventHandler);
-				_form.DockingManager.ContentShown -= new DockingManager.ContentHandler(DockingManagerContentShownEventHandler);
-				_form.DockingManager.ContentAutoHideOpening -= new DockingManager.ContentHandler(DockingManagerContentAutoHideOpeningEventHandler);
-				_form.DockingManager.ContentAutoHideClosed -= new DockingManager.ContentHandler(DockingManagerContentAutoHideClosedEventHandler);
-				_form.DockingManager.WindowActivated -= new DockingManager.WindowHandler(DockingManagerWindowActivatedEventHandler);
-				_form.DockingManager.WindowDeactivated -= new DockingManager.WindowHandler(FormDockingManagerWindowDeactivatedEventHandler);
+				_form.VisibleChanged -= FormVisibleChangedEventHandler;
+				_form.Activated -= FormActivatedEventHandler;
+				_form.Deactivate -= FormDeactivateEventHandler;
+				_form.FormClosing -= FormFormClosingEventHandler;
+				_form.TabbedGroups.PageCloseRequest -= TabbedGroupPageClosePressedEventHandler;
+				_form.TabbedGroups.PageChanged -= TabbedGroupPageChangedEventHandler;
+				_form.DockingManager.ContentHiding -= DockingManagerContentHidingEventHandler;
+				_form.DockingManager.ContentShown -= DockingManagerContentShownEventHandler;
+				_form.DockingManager.ContentAutoHideOpening -= DockingManagerContentAutoHideOpeningEventHandler;
+				_form.DockingManager.ContentAutoHideClosed -= DockingManagerContentAutoHideClosedEventHandler;
+				_form.DockingManager.WindowActivated -= DockingManagerWindowActivatedEventHandler;
+				_form.DockingManager.WindowDeactivated -= FormDockingManagerWindowDeactivatedEventHandler;
 
                 try
                 {
@@ -836,7 +842,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				screenRectangle = WinFormsScreen.PrimaryScreen.Bounds;
 
 				// Make the window size 75% of the primary screen
-				float scale = 0.75f;
+				const float scale = 0.75f;
 				_form.Width = (int)(screenRectangle.Width * scale);
 				_form.Height = (int)(screenRectangle.Height * scale);
 
@@ -881,8 +887,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			dialog.RestoreDirectory = true;
 			dialog.Title = args.Title;
 
-			dialog.Filter = StringUtilities.Combine(args.Filters, "|",
-				delegate(FileExtensionFilter f) { return f.Description + "|" + f.Filter; });
+			dialog.Filter = StringUtilities.Combine(args.Filters, "|", f => f.Description + "|" + f.Filter);
 		}
 
 		private bool ValidateFileSavePath(string filePath, FileDialogCreationArgs args)

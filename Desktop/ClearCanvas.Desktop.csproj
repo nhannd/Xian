@@ -113,6 +113,7 @@
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />
     <Compile Include="Actions\ObservablePropertyCoupler.cs" />
     <Compile Include="Actions\TextBoxAction.cs" />
+    <Compile Include="AlertLevel.cs" />
     <Compile Include="AlertLog.cs" />
     <Compile Include="AlertNotificationArgs.cs" />
     <Compile Include="ApplicationSettingsRegistry.cs" />

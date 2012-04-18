@@ -16,30 +16,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
-	public enum AlertLevel
-	{
-		Info,
-		Warning,
-		Error
-	}
-
-	internal static class AlertLevelExtensions
-	{
-		public static IconSet GetIcon(this AlertLevel level)
-		{
-			switch (level)
-			{
-				case AlertLevel.Info:
-					return new IconSet("InfoMini.png", "InfoSmall.png", "InfoMedium.png");
-				case AlertLevel.Warning:
-					return new IconSet("WarningMini.png", "WarningSmall.png", "WarningMedium.png");
-				case AlertLevel.Error:
-					return new IconSet("ErrorMini.png", "ErrorSmall.png", "ErrorMedium.png");
-			}
-			throw new ArgumentOutOfRangeException();
-		}
-	}
-
+	/// <summary>
+	/// Represents a record of an alert.
+	/// </summary>
 	internal class Alert
 	{
 		public Alert(AlertLevel level, DateTime time, string message)
@@ -55,11 +34,17 @@ namespace ClearCanvas.Desktop
 		public bool Acknowledged { get; set; }
 	}
 
+	/// <summary>
+	/// Maintains a log of alerts that have occured during process execution.
+	/// </summary>
 	internal class AlertLog
 	{
 
 		private static readonly AlertLog _instance = new AlertLog();
 
+		/// <summary>
+		/// Gets the singleton instance of the alert log.
+		/// </summary>
 		internal static AlertLog Instance
 		{
 			get { return _instance; }
@@ -70,11 +55,17 @@ namespace ClearCanvas.Desktop
 
 		private AlertLog()
 		{
-			
 		}
 
+		/// <summary>
+		/// Occurs when a new alert is logged.
+		/// </summary>
 		public event EventHandler<ItemEventArgs<Alert>>  AlertLogged;
 
+		/// <summary>
+		/// Logs a new alert.
+		/// </summary>
+		/// <param name="args"></param>
 		public void Log(AlertNotificationArgs args)
 		{
 			var alert = new Alert(args.Level, Platform.Time, args.Message);
@@ -86,6 +77,9 @@ namespace ClearCanvas.Desktop
 			EventsHelper.Fire(AlertLogged, this, new ItemEventArgs<Alert>(alert));
 		}
 
+		/// <summary>
+		/// Marks any unacknowledged alerts as being acknowledged.
+		/// </summary>
 		public void AcknowledgeAll()
 		{
 			foreach (var alert in _alerts)
@@ -95,7 +89,7 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Returns the entries in chronological order.
+		/// Returns the alert log entries in chronological order.
 		/// </summary>
 		public IEnumerable<Alert> Entries
 		{

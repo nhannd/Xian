@@ -1,4 +1,15 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
@@ -18,6 +29,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			public bool AutoDismissed { get; private set; }
 		}
 
+    	private static readonly TimeSpan LongLingerTime = TimeSpan.FromSeconds(4);
+		private static readonly TimeSpan ShortLingerTime = TimeSpan.FromSeconds(1);
 
         private readonly double _minOpacity;
         private readonly double _maxOpacity;
@@ -34,8 +47,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public AlertNotificationForm(DesktopForm owner, string title)
         {
-            //SuspendLayout();
-            
             InitializeComponent();
 
 			this.Text = title;
@@ -43,7 +54,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _maxOpacity = 1.0;
             _minOpacity = 0.3;
-           // ResumeLayout();
 
         	var resolver = new ResourceResolver(typeof (AlertNotificationForm).Assembly);
 			using (var s = resolver.OpenResource("close.bmp"))
@@ -52,7 +62,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
         }
 
-    	public event EventHandler<DismissedEventArgs> Dismissed;
+		#region Public API
+
+		public event EventHandler<DismissedEventArgs> Dismissed;
 		public event EventHandler OpenLogClicked;
 
     	public bool AutoDismiss { get; set; }
@@ -88,7 +100,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// reset all the parameters
 			_slot = slot;
 			this.Opacity = 1.0;
-			_lingerTime = TimeSpan.FromSeconds(3);
+			_lingerTime = LongLingerTime;
 			_startTicks = Environment.TickCount;
 
 			SetLocation();
@@ -99,10 +111,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_timer.Start();
 		}
 
-		public void Show(DesktopForm owner, int slot)
-		{
-			Show(owner);
-		}
+		#endregion
+
+		#region Helpers
 
 		private void _contextualLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
@@ -155,27 +166,31 @@ namespace ClearCanvas.Desktop.View.WinForms
             _stay = true;
             Opacity = 1.0;
             //Once the user puts their mouse over, after that we always fade out in one second if the mouse is outside.
-            _lingerTime = TimeSpan.FromSeconds(1);
+        	_lingerTime = ShortLingerTime;
             Invalidate();
         }
 
         private void OnTimerTick(object sender, EventArgs e)
         {
+			// if we're not in auto-dismiss mode, nothing to do here
 			if (!AutoDismiss)
 				return;
 
+			// if user has mouse over, stay open
             if (IsMouseOver())
             {
                 Stay();
                 return;
             }
-            else if (_stay)
-            {
-                _stay = false;
-                _startTicks = Environment.TickCount;
-            }
 
-            var elapsed = Environment.TickCount - _startTicks;
+			// if user had mouse over, and now moved away, begin linger period
+        	if (_stay)
+        	{
+        		_stay = false;
+        		_startTicks = Environment.TickCount;
+        	}
+
+        	var elapsed = Environment.TickCount - _startTicks;
             var remaining = _lingerTime.TotalMilliseconds - elapsed;
             if (remaining <= 0)
             {
@@ -205,7 +220,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			EventsHelper.Fire(Dismissed, this, new DismissedEventArgs(auto));
     	}
 
-		private void TimedDialogForm_FormClosing(object sender, FormClosingEventArgs e)
+		private void OnFormClosing(object sender, FormClosingEventArgs e)
 		{
 			if(e.CloseReason == System.Windows.Forms.CloseReason.UserClosing)
 			{
@@ -213,6 +228,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 				Dismiss(false);
 			}
 		}
+
+		#endregion
 
 		#region Close button event handlers
 
@@ -267,7 +284,5 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		#endregion
-
-
 	}
 }

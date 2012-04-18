@@ -109,7 +109,7 @@
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TimedDialogForm_FormClosing);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			this._hostPanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._closeButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._icon)).EndInit();

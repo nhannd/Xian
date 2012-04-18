@@ -9,8 +9,6 @@
 
 #endregion
 
-#pragma warning disable 1591
-
 using System;
 using System.Collections;
 using System.Linq;
@@ -26,8 +24,12 @@ namespace ClearCanvas.Desktop
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class AlertViewerTool : Tool<IDesktopToolContext>
 	{
+		private const string ShelfName = "DesktopAlertViewerShelf";
 		private Shelf _shelf;
 
+		/// <summary>
+		/// Show the alert viewer shelf.
+		/// </summary>
 		public void Show()
 		{
 			if(_shelf == null)
@@ -36,7 +38,8 @@ namespace ClearCanvas.Desktop
 					this.Context.DesktopWindow,
 					new AlertViewerComponent(),
 					SR.TitleAlertViewer,
-					ShelfDisplayHint.DockRight);
+					ShelfName,
+					ShelfDisplayHint.DockRight|ShelfDisplayHint.DockAutoHide);
 				_shelf.Closed += (sender, args) => _shelf = null;
 			}
 			else

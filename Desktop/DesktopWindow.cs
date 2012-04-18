@@ -121,15 +121,15 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		protected internal const string GlobalToolbars = "global-toolbars";
 
-		private Application _application;
+		private readonly Application _application;
 		private WorkspaceCollection _workspaces;
 		private ShelfCollection _shelves;
 		private DialogBoxCollection _dialogs;
-		private string _baseTitle;
+		private readonly string _baseTitle;
 
 		private IToolSet _desktopTools;
-		private string _menuActionSite;
-		private string _toolbarActionSite;
+		private readonly string _menuActionSite;
+		private readonly string _toolbarActionSite;
 
 		private ActionModelNode _menuModel;
 		private ActionModelNode _toolbarModel;
@@ -202,23 +202,39 @@ namespace ClearCanvas.Desktop
 		/// <returns>The button the user selected to dismiss the message box.</returns>
 		public DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons)
 		{
-			AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+			AssertState(new[] { DesktopObjectState.Open, DesktopObjectState.Closing });
 
 			return this.DesktopWindowView.ShowMessageBox(message, title, buttons);
 		}
 
+		/// <summary>
+		/// Shows a desktop alert.
+		/// </summary>
+		/// <param name="level">The alert level.</param>
+		/// <param name="message">The message to display.</param>
 		public void ShowAlert(AlertLevel level, string message)
 		{
 			var args = new AlertNotificationArgs(level, message);
 			ShowAlert(args);
 		}
 
+		/// <summary>
+		/// Shows a desktop alert.
+		/// </summary>
+		/// <param name="level">The alert level.</param>
+		/// <param name="message">The message to display.</param>
+		/// <param name="linkText">The link text to display.</param>
+		/// <param name="linkAction">The link action to display.</param>
 		public void ShowAlert(AlertLevel level, string message, string linkText, Action<DesktopWindow> linkAction)
 		{
 			var args = new AlertNotificationArgs(level, message, linkText, linkAction);
 			ShowAlert(args);
 		}
 
+		/// <summary>
+		/// Shows a desktop alert.
+		/// </summary>
+		/// <param name="args"></param>
 		public void ShowAlert(AlertNotificationArgs args)
 		{
 			AssertState(new[] { DesktopObjectState.Open, DesktopObjectState.Closing });
@@ -236,7 +252,7 @@ namespace ClearCanvas.Desktop
 		/// <returns>The button the user selected to dismiss the dialog.</returns>
 		public DialogBoxAction ShowDialogBox(DialogBoxCreationArgs args)
 		{
-			AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+			AssertState(new[] { DesktopObjectState.Open, DesktopObjectState.Closing });
 
 			DialogBox dialog = _dialogs.AddNew(args);
 			return dialog.RunModal();
@@ -249,7 +265,7 @@ namespace ClearCanvas.Desktop
 		/// <returns></returns>
 		public FileDialogResult ShowSaveFileDialogBox(FileDialogCreationArgs args)
 		{
-			AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+			AssertState(new[] { DesktopObjectState.Open, DesktopObjectState.Closing });
 
 			return this.DesktopWindowView.ShowSaveFileDialogBox(args);
 		}
@@ -261,7 +277,7 @@ namespace ClearCanvas.Desktop
 		/// <returns></returns>
 		public FileDialogResult ShowOpenFileDialogBox(FileDialogCreationArgs args)
 		{
-			AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+			AssertState(new[] { DesktopObjectState.Open, DesktopObjectState.Closing });
 
 			return this.DesktopWindowView.ShowOpenFileDialogBox(args);
 		}
@@ -273,7 +289,7 @@ namespace ClearCanvas.Desktop
 		/// <returns></returns>
 		public FileDialogResult ShowSelectFolderDialogBox(SelectFolderDialogCreationArgs args)
 		{
-			AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+			AssertState(new[] { DesktopObjectState.Open, DesktopObjectState.Closing });
 
 			return this.DesktopWindowView.ShowSelectFolderDialogBox(args);
 		}
@@ -322,8 +338,7 @@ namespace ClearCanvas.Desktop
 		protected internal override bool CanClose()
 		{
 			// we can close if all workspaces can close without interacting
-			return CollectionUtils.TrueForAll<Workspace>(_workspaces,
-				delegate(Workspace w) { return w.CanClose(); });
+			return CollectionUtils.TrueForAll(_workspaces, w => w.CanClose());
 		}
 
 		/// <summary>
@@ -333,8 +348,8 @@ namespace ClearCanvas.Desktop
 		/// <returns>Whether or not all affected objects were closed successfully.</returns>
 		protected override bool PrepareClose(CloseReason reason)
 		{
-			List<Workspace> workspaces = new List<Workspace>(_workspaces);
-			foreach (Workspace workspace in workspaces)
+			var workspaces = new List<Workspace>(_workspaces);
+			foreach (var workspace in workspaces)
 			{
 				// if the workspace is still open, try to close it
 				// (the check is necessary because there is no guarantee that the workspace is still open)
@@ -343,8 +358,8 @@ namespace ClearCanvas.Desktop
 					return false;
 			}
 
-			List<Shelf> shelves = new List<Shelf>(_shelves);
-			foreach (Shelf shelf in shelves)
+			var shelves = new List<Shelf>(_shelves);
+			foreach (var shelf in shelves)
 			{
 				// if the shelf is still open, close it
 				// (the check is necessary because there is no guarantee that the shelf is still open)
@@ -368,7 +383,7 @@ namespace ClearCanvas.Desktop
 			if (disposing)
 			{
 				if (_desktopTools != null)
-					(_desktopTools as IDisposable).Dispose();
+					_desktopTools.Dispose();
 
 				if (_dialogs != null)
 					(_dialogs as IDisposable).Dispose();
@@ -399,14 +414,7 @@ namespace ClearCanvas.Desktop
 		/// <returns>The title for the window.</returns>
 		protected virtual string MakeTitle(string baseTitle, Workspace activeWorkspace)
 		{
-			if (activeWorkspace != null)
-			{
-				return string.Format(SR.FormatDesktopWindowTitle, activeWorkspace.Title, baseTitle);
-			}
-			else
-			{
-				return baseTitle;
-			}
+			return activeWorkspace != null ? string.Format(SR.FormatDesktopWindowTitle, activeWorkspace.Title, baseTitle) : baseTitle;
 		}
 
 		/// <summary>
