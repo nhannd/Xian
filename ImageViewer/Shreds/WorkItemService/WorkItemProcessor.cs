@@ -351,6 +351,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
 
                 context.Commit();
+                if (workItems.Count > 0)
+                    return workItems;
+            }
+
+            // Get entries already marked as deleted by the GUI.
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            {
+                var workItemBroker = context.GetWorkItemBroker();
+
+                var workItems = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.Deleted, null);
+
+                if (workItems.Count > count)
+                    return workItems.GetRange(0, count);
+
                 return workItems;
             }
         }

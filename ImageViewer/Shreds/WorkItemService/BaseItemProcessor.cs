@@ -346,7 +346,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 return false;
 
             list = CollectionUtils.Select(list,
-                                          item => item.Status != WorkItemStatusEnum.Complete);
+                                          item => item.Status != WorkItemStatusEnum.Complete
+                                                  && item.Status != WorkItemStatusEnum.Deleted
+                                                  && item.Status != WorkItemStatusEnum.Canceled
+                                                  && item.Status != WorkItemStatusEnum.Failed);
 
             return list.Count > 0;
         }
