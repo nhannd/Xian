@@ -138,6 +138,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                                        DeleteTime = now.AddHours(2),
                                        ExpirationTime = now.AddMinutes(2),
                                        StudyInstanceUid = _studyInstanceUid,
+                                       Status = WorkItemStatusEnum.Pending
                                    };
 
                     workItemBroker.AddWorkItem(WorkItem);

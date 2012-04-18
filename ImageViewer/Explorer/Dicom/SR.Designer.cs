@@ -232,6 +232,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Activity Monitor.
+        /// </summary>
+        internal static string LinkOpenActivityMonitor {
+            get {
+                return ResourceManager.GetString("LinkOpenActivityMonitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string MenuDeleteStudy {
@@ -350,6 +359,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The send to {0} has been scheduled..
+        /// </summary>
+        internal static string MessageFormatSendStudyScheduled {
+            get {
+                return ResourceManager.GetString("MessageFormatSendStudyScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} of the selected studies are on a non-streaming server and cannot be opened..
         /// </summary>
         internal static string MessageFormatXNonStreamingStudiesCannotBeOpened {
@@ -451,15 +469,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string MessageSendDicomServerServiceNotRunning {
             get {
                 return ResourceManager.GetString("MessageSendDicomServerServiceNotRunning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The send has been scheduled..
-        /// </summary>
-        internal static string MessageSendStudyScheduled {
-            get {
-                return ResourceManager.GetString("MessageSendStudyScheduled", resourceCulture);
             }
         }
         

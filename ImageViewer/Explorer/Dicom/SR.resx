@@ -174,6 +174,9 @@
   <data name="FormatUnableToQueryServer" xml:space="preserve">
     <value>Unable to Query server {0}:  {1}</value>
   </data>
+  <data name="LinkOpenActivityMonitor" xml:space="preserve">
+    <value>Open Activity Monitor</value>
+  </data>
   <data name="MenuDeleteStudy" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -253,8 +256,8 @@ Please ensure the ClearCanvas Service is running or contact your system administ
     <value>Failed to send the selected studies because the DICOM Server service is not running.
 Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
-  <data name="MessageSendStudyScheduled" xml:space="preserve">
-    <value>The send has been scheduled.</value>
+  <data name="MessageFormatSendStudyScheduled" xml:space="preserve">
+    <value>The send to {0} has been scheduled.</value>
   </data>
   <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
     <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
