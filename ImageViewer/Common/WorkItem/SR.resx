@@ -252,4 +252,10 @@
   <data name="DicomSend_Status" xml:space="preserve">
     <value>{0} Images Sent, {1} Images Failed, {2} Images Pending</value>
   </data>
+  <data name="Progress_Complete" xml:space="preserve">
+    <value>Completed.</value>
+  </data>
+  <data name="ReindexProgress_StatusNoStudies" xml:space="preserve">
+    <value>No studies found during reindex.</value>
+  </data>
 </root>

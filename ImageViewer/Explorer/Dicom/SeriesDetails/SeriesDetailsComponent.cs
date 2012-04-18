@@ -316,7 +316,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			IStudyRootQuery query;
 			if (_server.IsLocalServer)
 			{
-			    query = new StudyStoreBridge();
+			    //TODO (Marmot): not ideal.
+			    query = new StoreStudyRootQuery();
 			}
 			else
 			{

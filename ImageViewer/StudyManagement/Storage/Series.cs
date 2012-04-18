@@ -14,7 +14,10 @@ using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -117,5 +120,95 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         }
 
         #endregion
-	}
+
+	    public int[] BitsAllocatedInSeries
+	    {
+	        get 
+            { 
+                return SopInstances.Cast<SopInstance>()
+                    .Where(s => s.BitsAllocated.HasValue)
+                    .Select(s => s.BitsAllocated).Cast<int>().Distinct().ToArray(); 
+            }
+	    }
+
+        public int[] BitsStoredInSeries
+        {
+            get
+            {
+                return SopInstances.Cast<SopInstance>()
+                    .Where(s => s.BitsStored.HasValue)
+                    .Select(s => s.BitsStored).Cast<int>().Distinct().ToArray();
+            }
+        }
+
+        public string[] PhotometricInterpretationsInSeries
+        {
+            get
+            {
+                return SopInstances.Cast<SopInstance>()
+                    .Where(s => !String.IsNullOrEmpty(s.PhotometricInterpretation))
+                    .Select(s => s.PhotometricInterpretation).Distinct().ToArray();
+            }
+        }
+
+        public string[] SourceAETitlesInSeries
+        {
+            get
+            {
+                return SopInstances.Cast<SopInstance>()
+                    .Where(s => !String.IsNullOrEmpty(s.SourceAETitle))
+                    .Select(s => s.SourceAETitle).Distinct().ToArray();
+            }
+        }
+
+        public string[] TransferSyntaxesInSeries
+        {
+            get
+            {
+                return SopInstances.Cast<SopInstance>()
+                    .Where(s => !String.IsNullOrEmpty(s.TransferSyntaxUid))
+                    .Select(s => s.TransferSyntaxUid).Distinct().ToArray();
+            }
+        }
+
+	    internal SeriesEntry ToStoreEntry()
+        {
+            var entry = new SeriesEntry
+            {
+                Series = new SeriesIdentifier(this)
+                {
+                    InstanceAvailability = "ONLINE",
+                    RetrieveAeTitle = Utilities.GetLocalServerAETitle(),
+                    SpecificCharacterSet = SpecificCharacterSet
+                },
+                Data = new SeriesEntryData
+                {
+                    BitsAllocatedInSeries = BitsAllocatedInSeries,
+                    BitsStoredInSeries = BitsStoredInSeries,
+                    DeleteTime = GetScheduledDeleteTime(),
+                    PhotometricInterpretationsInSeries = PhotometricInterpretationsInSeries,
+                    SourceAETitlesInSeries = SourceAETitlesInSeries,
+                    TransferSyntaxesInSeries = TransferSyntaxesInSeries
+                }
+            };
+            return entry;
+        }
+
+        private DateTime? GetScheduledDeleteTime()
+        {
+            //TODO (Marmot):Fill this in when we have the request object.
+
+            return null;
+            //using (var context = new DataAccessContext())
+            //{
+            //    var broker = context.GetWorkItemBroker();
+            //    var items = broker.GetWorkItems(WorkItemTypeEnum.SeriesDelete, null, StudyInstanceUid);
+            //    if (items == null || items.Count == 0)
+            //        return null;
+
+            //    var validItems = items.Where(w => w.Status != WorkItemStatusEnum.Failed && w.Status != WorkItemStatusEnum.Canceled);
+            //    var requests = validItems.Select(w => w.Request).OfType<>()
+            //}
+        }
+    }
 }

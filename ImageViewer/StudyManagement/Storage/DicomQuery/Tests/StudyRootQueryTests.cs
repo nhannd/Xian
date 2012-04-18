@@ -25,8 +25,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
     {
         private const string _testDatabaseFilename = "test_store.sdf";
         
-        private const string _utf8 = "ISO_IR 192";
-
         [TestFixtureSetUp]
         public void Setup()
         {

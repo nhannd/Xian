@@ -1,13 +1,13 @@
 ﻿using System.Runtime.Serialization;
 namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 {
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	[StudyRuleDataContract("fafdf01d-c4c7-4ab9-a1d3-2912c8526c79")]
 	public abstract class RuleAction
 	{
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	[StudyRuleDataContract("689f312b-f3c4-4497-9f52-62318d327921")]
 	public class SendStudyAction : RuleAction
 	{
@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 		public int CompressionLevel { get; set; }
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	[StudyRuleDataContract("bd06d020-d41f-4c34-9598-460022e3fca5")]
 	public class DeleteStudyAction : RuleAction
 	{

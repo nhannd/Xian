@@ -73,7 +73,8 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			StudyDate = other.StudyDate;
 			StudyTime = other.StudyTime;
 			ModalitiesInStudy = other.ModalitiesInStudy;
-			StudyInstanceUid = other.StudyInstanceUid;
+            SopClassesInStudy = other.SopClassesInStudy;
+            StudyInstanceUid = other.StudyInstanceUid;
 			NumberOfStudyRelatedSeries = other.NumberOfStudyRelatedSeries;
 			NumberOfStudyRelatedInstances = other.NumberOfStudyRelatedInstances;
 		}
@@ -93,6 +94,12 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	    /// </summary>
 	    [DicomField(DicomTags.StudyInstanceUid, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = true)]
 	    public string StudyInstanceUid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the modalities in the identified study.
+        /// </summary>
+        [DicomField(DicomTags.SopClassesInStudy, CreateEmptyElement = true, SetNullValueIfEmpty = true), DataMember(IsRequired = false)]
+        public string[] SopClassesInStudy { get; set; }
 
 	    /// <summary>
 	    /// Gets or sets the modalities in the identified study.

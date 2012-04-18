@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
-    public abstract class StudyStore : IStudyStore
+    public abstract class StudyStore : IStudyStoreQuery
     {
         static StudyStore()
         {
             try
             {
-                var service = Platform.GetService<IStudyStore>();
+                var service = Platform.GetService<IStudyStoreQuery>();
                 IsSupported = service != null;
                 var disposable = service as IDisposable;
                 if (disposable != null)
@@ -32,11 +30,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         public static bool IsSupported { get; private set; }
 
         public abstract GetStudyCountResult GetStudyCount(GetStudyCountRequest request);
-
-        public abstract IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria);
-
-        public abstract IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria);
-
-        public abstract IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria);
+        public abstract GetStudyEntriesResult GetStudyEntries(GetStudyEntriesRequest request);
+        public abstract GetSeriesEntriesResult GetSeriesEntries(GetSeriesEntriesRequest request);
+        public abstract GetImageEntriesResult GetImageEntries(GetImageEntriesRequest request);
     }
 }

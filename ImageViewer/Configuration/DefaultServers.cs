@@ -52,8 +52,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
             if (includeLocal)
             {
-                if (StudyStore.IsSupported)
-                    yield return new StudyStoreBridge();
+                if (StudyStore.IsSupported) //Not ideal.
+                    yield return new StoreStudyRootQuery();
             }
 
             string localAE = DicomServerConfigurationHelper.AETitle;

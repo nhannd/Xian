@@ -6,7 +6,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class TimePropertyFilter<T> : PropertyFilter<T>
+    internal abstract class TimePropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
+        where TDatabaseObject : class
     {
         private bool _isRange;
         private long? _time1Ticks;
@@ -52,27 +53,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             //TimeParser.Parse(Criterion.GetString(0, ""), out time1, out time2, out _isRange);
         }
 
-        protected virtual IQueryable<T> AddEqualsToQuery(IQueryable<T> query, long timeTicks)
+        protected virtual IQueryable<TDatabaseObject> AddEqualsToQuery(IQueryable<TDatabaseObject> query, long timeTicks)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddEqualsToQuery must be implemented.");
         }
 
-        protected virtual IQueryable<T> AddLessOrEqualToQuery(IQueryable<T> query, long timeTicks)
+        protected virtual IQueryable<TDatabaseObject> AddLessOrEqualToQuery(IQueryable<TDatabaseObject> query, long timeTicks)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddLessOrEqualToQuery must be implemented.");
         }
 
-        protected virtual IQueryable<T> AddGreaterOrEqualToQuery(IQueryable<T> query, long timeTicks)
+        protected virtual IQueryable<TDatabaseObject> AddGreaterOrEqualToQuery(IQueryable<TDatabaseObject> query, long timeTicks)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddGreaterOrEqualToQuery must be implemented.");
         }
 
-        protected virtual IQueryable<T> AddBetweenTimesToQuery(IQueryable<T> query, long startTimeTicks, long endTimeTicks)
+        protected virtual IQueryable<TDatabaseObject> AddBetweenTimesToQuery(IQueryable<TDatabaseObject> query, long startTimeTicks, long endTimeTicks)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddBetweenTimesToQuery must be implemented.");
         }
 
-        protected sealed override IQueryable<T> AddToQuery(IQueryable<T> query)
+        protected sealed override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
         {
             if (Time1Ticks != null && Time2Ticks != null)
                 return AddBetweenTimesToQuery(query, Time1Ticks.Value, Time2Ticks.Value);
@@ -91,9 +92,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return base.AddToQuery(query);
         }
 
-        protected sealed override System.Collections.Generic.IEnumerable<T> FilterResults(System.Collections.Generic.IEnumerable<T> results)
+        protected sealed override System.Collections.Generic.IEnumerable<TDatabaseObject> FilterResults(System.Collections.Generic.IEnumerable<TDatabaseObject> results)
         {
-            throw new NotSupportedException("Any time filtering supported is done in the database only.");
+            throw new NotSupportedException("Any time filtering is done in the database only.");
         }
     }
 }

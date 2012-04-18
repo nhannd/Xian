@@ -17,7 +17,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Common.LocalDataStore;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -164,28 +164,10 @@ namespace ClearCanvas.ImageViewer.TestTools
 				}
 
 				//trigger an import of the anonymized files.
-				LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
-				client.Open();
-				try
-				{
-					FileImportRequest request = new FileImportRequest();
-					request.BadFileBehaviour = BadFileBehaviour.Move;
-					request.FileImportBehaviour = FileImportBehaviour.Move;
-					List<string> path = new List<string>();
-					path.Add(_tempPath);
-					request.FilePaths = path;
-					request.Recursive = true;
-					request.IsBackground = true;
-					client.Import(request);
-					client.Close();
-				}
-				catch
-				{
-					client.Abort();
-					throw;
-				}
+			    var client = new DicomFileImportClient();
+                client.ImportFileList(new List<string> {_tempPath}, BadFileBehaviourEnum.Move, FileImportBehaviourEnum.Move);
 
-				context.Complete();
+                context.Complete();
 			}
 			catch(Exception e)
 			{
@@ -202,7 +184,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 			}
 
 			this.Enabled = LocalStudyLoader != null && 
-			               LocalDataStoreActivityMonitor.IsConnected && 
+			               WorkItemActivityMonitor.IsRunning && 
 			               this.Context.SelectedStudies.Count == 1 && 
 			               this.Context.SelectedServerGroup.IsLocalDatastore;
 		}

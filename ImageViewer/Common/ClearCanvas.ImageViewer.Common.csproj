@@ -106,9 +106,11 @@
     <Compile Include="LargeObjectContainerCache.cs" />
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
-    <Compile Include="StudyManagement\IStudyStore.cs" />
+    <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
     <Compile Include="StudyManagement\Rules\RuleTransformer.cs" />
     <Compile Include="StudyManagement\Rules\Tests\RuleTransformerTests.cs" />
+    <Compile Include="StudyManagement\StoreEntries.cs" />
+    <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />
     <Compile Include="MemoryCollector.cs" />
     <Compile Include="MemoryManagementSettings.cs" />

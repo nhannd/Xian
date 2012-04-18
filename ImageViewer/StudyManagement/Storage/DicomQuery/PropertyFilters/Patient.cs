@@ -6,7 +6,7 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
-    internal class PatientId : StringPropertyFilter<Study>
+    internal class PatientId : StringDicomPropertyFilter<Study>
     {
         public PatientId(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientId), criteria)
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsName : StringPropertyFilter<Study>
+    internal class PatientsName : StringDicomPropertyFilter<Study>
     {
         public PatientsName(DicomAttributeCollection criteria)
             : base(DicomTags.PatientsName, criteria)
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsSex : StringPropertyFilter<Study>
+    internal class PatientsSex : StringDicomPropertyFilter<Study>
     {
         public PatientsSex(DicomAttributeCollection criteria)
             : base(DicomTags.PatientsSex, criteria)
@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsBirthDate : DatePropertyFilter<Study>
+    internal class PatientsBirthDate : DateDicomPropertyFilter<Study>
     {
         public PatientsBirthDate(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientsBirthDate), criteria)

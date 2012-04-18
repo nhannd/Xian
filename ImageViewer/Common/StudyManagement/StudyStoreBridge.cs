@@ -1,43 +1,23 @@
 ﻿using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using System;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
-    public class StudyStoreBridge : IStudyRootQueryBridge
+    public class StudyStoreBridge : IDisposable
     {
-        private IStudyStore _real;
-        private IStudyRootQueryBridge _realBridge;
+        private IStudyStoreQuery _real;
 
         public StudyStoreBridge()
-            :this(Platform.GetService<IStudyStore>())
+            :this(Platform.GetService<IStudyStoreQuery>())
         {
         }
 
-        public StudyStoreBridge(IStudyStore real)
+        public StudyStoreBridge(IStudyStoreQuery real)
         {
             _real = real;
-            _realBridge = new StudyRootQueryBridge(_real);
-        }
-
-        public IComparer<StudyRootStudyIdentifier> StudyComparer
-        {
-            get { return _realBridge.StudyComparer; }
-            set { _realBridge.StudyComparer = value; }
-        }
-
-        public IComparer<SeriesIdentifier> SeriesComparer
-        {
-            get { return _realBridge.SeriesComparer; }
-            set { _realBridge.SeriesComparer = value; }
-        }
-
-        public IComparer<ImageIdentifier> ImageComparer
-        {
-            get { return _realBridge.ImageComparer; }
-            set { _realBridge.ImageComparer = value; }
         }
 
         public int GetStudyCount()
@@ -45,68 +25,108 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             return _real.GetStudyCount(new GetStudyCountRequest()).StudyCount;
         }
 
-        public int GetStudyCount(StudyRootStudyIdentifier queryIdentifier)
+        public int GetStudyCount(StudyRootStudyIdentifier criteria)
         {
-            return _real.GetStudyCount(new GetStudyCountRequest{QueryIdentifier = queryIdentifier}).StudyCount;
+            return _real.GetStudyCount(new GetStudyCountRequest
+                                           {
+                                               Criteria = new StudyEntry{Study = criteria}
+                                           }).StudyCount;
         }
 
-        public IList<StudyRootStudyIdentifier> QueryByAccessionNumber(string accessionNumber)
+        public IList<StudyEntry> GetStudyEntries()
         {
-            return _realBridge.QueryByAccessionNumber(accessionNumber);
+            return GetStudyEntries(null as StudyEntry);
         }
 
-        public IList<StudyRootStudyIdentifier> QueryByPatientId(string patientId)
+        public IList<StudyEntry> GetStudyEntries(StudyRootStudyIdentifier criteria)
         {
-            return _realBridge.QueryByPatientId(patientId);
+            return GetStudyEntries(new StudyEntry {Study = criteria});
         }
 
-        public IList<StudyRootStudyIdentifier> QueryByStudyInstanceUid(string studyInstanceUid)
+        public IList<StudyEntry> GetStudyEntries(StudyEntry criteria)
         {
-            return _realBridge.QueryByStudyInstanceUid(studyInstanceUid);
+            return _real.GetStudyEntries(new GetStudyEntriesRequest {Criteria = criteria}).StudyEntries;
         }
 
-        public IList<StudyRootStudyIdentifier> QueryByStudyInstanceUid(IEnumerable<string> studyInstanceUids)
+        public IList<StudyEntry> QueryByAccessionNumber(string accessionNumber)
         {
-            return _realBridge.QueryByStudyInstanceUid(studyInstanceUids);
+            return _real.GetStudyEntries(
+                new GetStudyEntriesRequest
+                    {
+                        Criteria = new StudyEntry
+                                       {
+                                           Study = new StudyRootStudyIdentifier { AccessionNumber = accessionNumber }
+                                       }
+                    }).StudyEntries;
         }
 
-        public IList<SeriesIdentifier> SeriesQuery(string studyInstanceUid)
+        public IList<StudyEntry> QueryByPatientId(string patientId)
         {
-            return _realBridge.SeriesQuery(studyInstanceUid);
+            return _real.GetStudyEntries(
+                new GetStudyEntriesRequest
+                    {
+                        Criteria = new StudyEntry
+                                       {
+                                           Study = new StudyRootStudyIdentifier { PatientId = patientId }
+                                       }
+                    }).StudyEntries;
         }
 
-        public IList<ImageIdentifier> ImageQuery(string studyInstanceUid, string seriesInstanceUid)
+        public IList<StudyEntry> QueryByStudyInstanceUid(string studyInstanceUid)
         {
-            return _realBridge.ImageQuery(studyInstanceUid, seriesInstanceUid);
+            return _real.GetStudyEntries(
+                new GetStudyEntriesRequest
+                    {
+                        Criteria = new StudyEntry
+                                       {
+                                           Study = new StudyRootStudyIdentifier { StudyInstanceUid = studyInstanceUid }
+                                       }
+                    }).StudyEntries;
         }
 
-        public IList<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria)
+        public IList<StudyEntry> QueryByStudyInstanceUid(IEnumerable<string> studyInstanceUids)
         {
-            return _realBridge.Query(queryCriteria);
+            return _real.GetStudyEntries(
+                new GetStudyEntriesRequest
+                    {
+                        Criteria = new StudyEntry
+                                       {
+                                           Study = new StudyRootStudyIdentifier
+                                                       {
+                                                           StudyInstanceUid = DicomStringHelper.GetDicomStringArray(studyInstanceUids)
+                                                       }
+                                       }
+                    }).StudyEntries;
         }
 
-        public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
+        public IList<SeriesEntry> GetSeriesEntries(string studyInstanceUid)
         {
-            return _realBridge.StudyQuery(queryCriteria);
+            return _real.GetSeriesEntries(
+                new GetSeriesEntriesRequest
+                {
+                    Criteria = new SeriesEntry
+                    {
+                        Series = new SeriesIdentifier { StudyInstanceUid = studyInstanceUid }
+                    }
+                }).SeriesEntries;
         }
 
-        public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
+        public IList<ImageEntry> GetImageEntries(string studyInstanceUid, string seriesInstanceUid)
         {
-            return _realBridge.SeriesQuery(queryCriteria);
-        }
-
-        public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
-        {
-            return _realBridge.ImageQuery(queryCriteria);
+            return _real.GetImageEntries(
+                new GetImageEntriesRequest
+                {
+                    Criteria = new ImageEntry
+                    {
+                        Image = new ImageIdentifier{StudyInstanceUid = studyInstanceUid, SeriesInstanceUid = seriesInstanceUid}
+                    }
+                }).ImageEntries;
         }
 
         public void Dispose()
         {
-            if (_realBridge == null)
+            if (_real == null)
                 return;
-
-            _realBridge.Dispose();
-            _realBridge = null;
 
             var disposable = _real as IDisposable;
             if (disposable == null)

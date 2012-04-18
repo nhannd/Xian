@@ -1,60 +1,66 @@
 ﻿using System;
-using System.Collections.Generic;
 using Castle.Core.Interceptor;
 using Castle.DynamicProxy;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 {
-    internal class StudyStoreQueryProxy : IStudyStore
+    internal class StudyStoreQueryProxy : IStudyStoreQuery
     {
-        public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
-        {
-            using (var context = new DataAccessContext())
-            {
-                return context.GetStudyStoreQuery().StudyQuery(queryCriteria);
-            }
-        }
-
-        public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
-        {
-            using (var context = new DataAccessContext())
-            {
-                return context.GetStudyStoreQuery().SeriesQuery(queryCriteria);
-            }
-        }
-
-        public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
-        {
-            using (var context = new DataAccessContext())
-            {
-                return context.GetStudyStoreQuery().ImageQuery(queryCriteria);
-            }
-        }
+        #region IStudyStoreQuery Members
 
         public GetStudyCountResult GetStudyCount(GetStudyCountRequest request)
         {
             using (var context = new DataAccessContext())
             {
-                return context.GetStudyStoreQuery().GetStudyCount(request);
+                var count = context.GetStudyStoreQuery().GetStudyCount(request.Criteria);
+                return new GetStudyCountResult { StudyCount = count };
             }
         }
+
+        public GetStudyEntriesResult GetStudyEntries(GetStudyEntriesRequest request)
+        {
+            using (var context = new DataAccessContext())
+            {
+                var entries = context.GetStudyStoreQuery().GetStudyEntries(request.Criteria);
+                return new GetStudyEntriesResult {StudyEntries = entries};
+            }
+        }
+
+        public GetSeriesEntriesResult GetSeriesEntries(GetSeriesEntriesRequest request)
+        {
+            using (var context = new DataAccessContext())
+            {
+                var entries = context.GetStudyStoreQuery().GetSeriesEntries(request.Criteria);
+                return new GetSeriesEntriesResult { SeriesEntries = entries };
+            }
+        }
+
+        public GetImageEntriesResult GetImageEntries(GetImageEntriesRequest request)
+        {
+            using (var context = new DataAccessContext())
+            {
+                var entries = context.GetStudyStoreQuery().GetImageEntries(request.Criteria);
+                return new GetImageEntriesResult { ImageEntries = entries };
+            }
+        }
+
+        #endregion
     }
 
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
-    internal class StudyStoreServiceProvider : IServiceProvider
+    internal class StudyStoreQueryServiceProvider : IServiceProvider
     {
         #region IServiceProvider Members
 
         public object GetService(Type serviceType)
         {
-            if (serviceType != typeof(IStudyStore))
+            if (serviceType != typeof(IStudyStoreQuery))
                 return null;
             
             return new ProxyGenerator().CreateInterfaceProxyWithTargetInterface(
-                typeof(IStudyStore), new StudyStoreQueryProxy()
+                typeof(IStudyStoreQuery), new StudyStoreQueryProxy()
                 , new IInterceptor[] { new BasicFaultInterceptor() });
         }
 

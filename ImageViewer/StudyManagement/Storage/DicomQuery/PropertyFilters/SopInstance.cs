@@ -74,13 +74,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class InstanceNumber : PropertyFilter<SopInstance>
+    internal class InstanceNumber : DicomPropertyFilter<SopInstance>
     {
         public InstanceNumber(DicomAttributeCollection criteria)
             : base(DicomTags.InstanceNumber, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override IEnumerable<SopInstance> FilterResults(IEnumerable<SopInstance> results)
@@ -100,8 +100,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         public SopClassUid(DicomAttributeCollection criteria)
             : base(DicomTags.SopClassUid, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override IEnumerable<SopInstance> FilterResults(IEnumerable<SopInstance> results)

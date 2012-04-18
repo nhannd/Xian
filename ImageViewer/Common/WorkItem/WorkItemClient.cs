@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
             Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest
                                                                                {
-                                                                                   Delete = true, 
+                                                                                   Delete = true, // TODO (Marmot) - This delete flag could be removed, and we could just use the status
                                                                                    Identifier = WorkItem.Identifier
                                                                                }));        
             WorkItem = response.Item;
