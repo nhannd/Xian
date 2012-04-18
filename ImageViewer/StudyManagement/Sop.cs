@@ -543,7 +543,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		string[] IStudyData.ModalitiesInStudy
+        string[] IStudyData.SopClassesInStudy
+        {
+            get
+            {
+                if (_parentSeries != null && _parentSeries.ParentStudy != null)
+                    return _parentSeries.ParentStudy.SopClassesInStudy;
+
+                return null;
+            }
+        }
+        
+        string[] IStudyData.ModalitiesInStudy
 		{
 			get
 			{

@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         public StudyLocation(DicomMessageBase message)
         {
             Study = new Study();
-            Study.Initialize(message);
+            Study.Update(message);
 
             StudyFolder = Path.Combine(GetFileStoreDirectory(), Study.StudyInstanceUid);
         }

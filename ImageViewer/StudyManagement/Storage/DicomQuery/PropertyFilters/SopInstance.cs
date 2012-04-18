@@ -2,12 +2,13 @@
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
     internal class SopInstanceUniqueKey
     {
-        internal class StudyInstanceUid : UidPropertyFilter<SopInstance>
+        internal class StudyInstanceUid : UidPropertyFilter<SopInstance, ImageEntry>
         {
             public StudyInstanceUid(DicomAttributeCollection criteria)
                 : base(DicomTags.StudyInstanceUid, criteria)
@@ -29,7 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             }
         }
 
-        internal class SeriesInstanceUid : UidPropertyFilter<SopInstance>
+        internal class SeriesInstanceUid : UidPropertyFilter<SopInstance, ImageEntry>
         {
             public SeriesInstanceUid(DicomAttributeCollection criteria)
                 : base(DicomTags.SeriesInstanceUid, criteria)
@@ -51,7 +52,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             }
         }
 
-        internal class SopInstanceUid : UidPropertyFilter<SopInstance>
+        internal class SopInstanceUid : UidPropertyFilter<SopInstance, ImageEntry>
         {
             public SopInstanceUid(DicomAttributeCollection criteria)
                 : base(DicomTags.SopInstanceUid, criteria)
@@ -74,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class InstanceNumber : PropertyFilter<SopInstance>
+    internal class InstanceNumber : DicomPropertyFilter<SopInstance, ImageEntry>
     {
         public InstanceNumber(DicomAttributeCollection criteria)
             : base(DicomTags.InstanceNumber, criteria)
@@ -95,7 +96,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class SopClassUid : UidPropertyFilter<SopInstance>
+    internal class SopClassUid : UidPropertyFilter<SopInstance, ImageEntry>
     {
         public SopClassUid(DicomAttributeCollection criteria)
             : base(DicomTags.SopClassUid, criteria)

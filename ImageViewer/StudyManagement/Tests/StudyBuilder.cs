@@ -132,6 +132,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
         [DicomField(DicomTags.ReferringPhysiciansName, CreateEmptyElement = false, SetNullValueIfEmpty = true)]
         public string ReferringPhysiciansName { get; set; }
 
+        string[] IStudyData.SopClassesInStudy { get { return new string[] { "" }; } }
         string[] IStudyData.ModalitiesInStudy { get { return new string[]{""}; } }
         int? IStudyData.NumberOfStudyRelatedSeries { get { return Series.Count; } }
         int? IStudyData.NumberOfStudyRelatedInstances { get { return (from s in Series from i in s.Images select i).Count(); } }

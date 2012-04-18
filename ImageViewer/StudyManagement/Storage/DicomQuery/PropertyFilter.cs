@@ -2,23 +2,28 @@
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal interface IPropertyFilter<T>
+    internal interface IPropertyFilter<TDatabaseObject, in TStoreEntry> 
+        where TDatabaseObject : class 
+        where TStoreEntry : StoreEntry
     {
-        DicomTagPath Path { get; }
-        DicomAttribute Criterion { get; }
+        //DicomTagPath Path { get; }
+        //DicomAttribute Criterion { get; }
 
-        IQueryable<T> AddToQuery(IQueryable<T> query);
-        IEnumerable<T> FilterResults(IEnumerable<T> results);
+        IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query);
+        IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results);
 
-        void SetAttributeValue(T item, DicomAttributeCollection result);
+        void SetAttributeValue(TDatabaseObject item, DicomAttributeCollection result);
     }
 
-    internal class PropertyFilter<T> : IPropertyFilter<T>
+    internal class DicomPropertyFilter<TDatabaseObject, TStudyStoreEntry> : IPropertyFilter<TDatabaseObject, TStudyStoreEntry>
+        where TDatabaseObject : class
+        where TStudyStoreEntry : StoreEntry
     {
-        protected PropertyFilter(DicomTagPath path, IDicomAttributeProvider criteria)
+        protected DicomPropertyFilter(DicomTagPath path, IDicomAttributeProvider criteria)
         {
             Path = path;
             Criterion = Path.GetAttribute(criteria);
@@ -57,24 +62,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             get { return IsReturnValueRequired || !IsCriterionEmpty; }
         }
 
-        protected virtual IQueryable<T> AddToQuery(IQueryable<T> query)
+        protected virtual IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
         {
             return query;
         }
 
-        protected virtual IEnumerable<T> FilterResults(IEnumerable<T> results)
+        protected virtual IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results)
         {
             return results;
         }
 
-        protected virtual void AddValueToResult(T item, DicomAttribute resultAttribute)
+        protected virtual void AddValueToResult(TDatabaseObject item, DicomAttribute resultAttribute)
         {
             resultAttribute.SetNullValue();
         }
 
-        #region IPropertyFilter<T> Members
+        #region IPropertyFilter<TDatabaseObject> Members
 
-        IQueryable<T> IPropertyFilter<T>.AddToQuery(IQueryable<T> query)
+        IQueryable<TDatabaseObject> IPropertyFilter<TDatabaseObject, TStudyStoreEntry>.AddToQuery(IQueryable<TDatabaseObject> query)
         {
             if (!AddToQueryEnabled || !ShouldAddToQuery)
                 return query;
@@ -82,7 +87,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return AddToQuery(query);
         }
 
-        IEnumerable<T> IPropertyFilter<T>.FilterResults(IEnumerable<T> results)
+        IEnumerable<TDatabaseObject> IPropertyFilter<TDatabaseObject, TStudyStoreEntry>.FilterResults(IEnumerable<TDatabaseObject> results)
         {
             if (!FilterResultsEnabled || !ShouldAddToQuery)
                 return results;
@@ -90,7 +95,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return FilterResults(results);
         }
 
-        void IPropertyFilter<T>.SetAttributeValue(T item, DicomAttributeCollection result)
+        void IPropertyFilter<TDatabaseObject, TStudyStoreEntry>.SetAttributeValue(TDatabaseObject item, DicomAttributeCollection result)
         {
             if (!ShouldAddToResult)
                 return;

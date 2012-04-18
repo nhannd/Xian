@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public override bool IsSupported<T>()
         {
-            if (typeof(T) == typeof(IStudyStore))
+            if (typeof(T) == typeof(IStudyStoreQuery))
                 return IsLocal && StudyStore.IsSupported;
 
             if (typeof(T) == typeof(IStudyRootQuery))
@@ -88,14 +88,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             if (!IsSupported<T>())
                 throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
 
-            if (typeof(T) == typeof(IStudyStore) && IsLocal)
-                return Platform.GetService<IStudyStore>() as T;
+            if (typeof(T) == typeof(IStudyStoreQuery) && IsLocal)
+                return Platform.GetService<IStudyStoreQuery>() as T;
 
             //TODO (Marmot): Add an extension mechanism.
             if (typeof(T) == typeof(IStudyRootQuery))
             {
                 if (IsLocal)
-                    return Platform.GetService<IStudyStore>() as T;
+                    return Platform.GetService<IStudyStoreQuery>() as T;
 
                 return new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle,
                                     AETitle, ScpParameters.HostName, ScpParameters.Port) as T;

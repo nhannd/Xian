@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class StringPropertyFilter<T> : PropertyFilter<T>
+    internal abstract class StringPropertyFilter<TDatabaseObject, TStoreEntry> : DicomPropertyFilter<TDatabaseObject, TStoreEntry>
+        where TDatabaseObject : class
+        where TStoreEntry : StoreEntry
     {
         //These are the VRs DICOM says can't be searched on with wildcards,
         //therefore any wildcard characters present in the criteria are literal.
@@ -68,7 +71,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return !String.IsNullOrEmpty(value) && value.Contains(@"\");
         }
 
-        protected sealed override IQueryable<T> AddToQuery(IQueryable<T> query)
+        protected sealed override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
         {
             if (CriterionValues.Length > 1)
                 return AddToQuery(query, CriterionValues);
@@ -76,7 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return AddToQuery(query, CriterionValue);
         }
 
-        protected IQueryable<T> AddToQuery(IQueryable<T> query, string criterionValue)
+        protected IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query, string criterionValue)
         {
             if (!IsWildcardCriterion(criterionValue))
                 return AddEqualsToQuery(query, criterionValue);
@@ -86,9 +89,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return returnQuery;
         }
 
-        protected IQueryable<T> AddToQuery(IQueryable<T> inputQuery, string[] criterionValues)
+        protected IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> inputQuery, string[] criterionValues)
         {
-            IQueryable<T> unionedQuery = null;
+            IQueryable<TDatabaseObject> unionedQuery = null;
             foreach (var criterionValue in criterionValues.Where(value => !String.IsNullOrEmpty(value)))
             {
                 var criterionQuery = AddToQuery(inputQuery, criterionValue);
@@ -98,17 +101,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return unionedQuery ?? inputQuery;
         }
 
-        protected virtual IQueryable<T> AddEqualsToQuery(IQueryable<T> query, string criterion)
+        protected virtual IQueryable<TDatabaseObject> AddEqualsToQuery(IQueryable<TDatabaseObject> query, string criterion)
         {
             throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
         }
 
-        protected virtual IQueryable<T> AddLikeToQuery(IQueryable<T> query, string criterion)
+        protected virtual IQueryable<TDatabaseObject> AddLikeToQuery(IQueryable<TDatabaseObject> query, string criterion)
         {
             throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
         }
 
-        protected virtual string GetPropertyValue(T item)
+        protected virtual string GetPropertyValue(TDatabaseObject item)
         {
             throw new NotImplementedException("GetPropertyValue must be overridden to do post-filtering.");
         }
@@ -133,7 +136,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
                    || Regex.IsMatch(value, test, RegexOptions.IgnoreCase);
         }
 
-        protected bool IsMatch(T result, string criterion)
+        protected bool IsMatch(TDatabaseObject result, string criterion)
         {
             var propertyValue = GetPropertyValue(result);
             if (String.IsNullOrEmpty(propertyValue))
@@ -150,10 +153,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return propertyValues.Any(value => IsLike(value, criterion));
         }
 
-        protected IEnumerable<T> FilterResults(IEnumerable<T> results, string[] criterionValues)
+        protected IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results, string[] criterionValues)
         {
-            var resultsList = new List<T>(results);
-            IEnumerable<T> unionedResults = null;
+            var resultsList = new List<TDatabaseObject>(results);
+            IEnumerable<TDatabaseObject> unionedResults = null;
             foreach (var criterionValue in criterionValues)
             {
                 var criterion = criterionValue;
@@ -164,7 +167,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return unionedResults ?? results;
         }
 
-        protected IEnumerable<T> FilterResults(IEnumerable<T> results, string criterionValue)
+        protected IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results, string criterionValue)
         {
             //DICOM says if we maintain an object with an empty value, it's a match for any criteria.
             if (string.IsNullOrEmpty(criterionValue))
@@ -173,7 +176,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return results.Where(result => IsMatch(result, criterionValue));
         }
 
-        protected override IEnumerable<T> FilterResults(IEnumerable<T> results)
+        protected override IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results)
         {
             if (CriterionValues.Length > 1)
             {

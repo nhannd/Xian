@@ -3,10 +3,11 @@ using System.Data.Linq.SqlClient;
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
-    internal class ResponsiblePerson : StringPropertyFilter<Study>
+    internal class ResponsiblePerson : StringPropertyFilter<Study, StudyEntry>
     {
         public ResponsiblePerson(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.ResponsiblePerson), criteria)
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class ResponsiblePersonRole : StringPropertyFilter<Study>
+    internal class ResponsiblePersonRole : StringPropertyFilter<Study, StudyEntry>
     {
         public ResponsiblePersonRole(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.ResponsiblePersonRole), criteria)
@@ -76,7 +77,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class ResponsibleOrganization : StringPropertyFilter<Study>
+    internal class ResponsibleOrganization : StringPropertyFilter<Study, StudyEntry>
     {
         public ResponsibleOrganization(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.ResponsibleOrganization), criteria)

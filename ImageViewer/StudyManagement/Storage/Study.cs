@@ -11,15 +11,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -75,6 +74,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             get { return DicomStringHelper.GetStringArray(ModalitiesInStudy); }
         }
 
+        string[] IStudyData.SopClassesInStudy
+        {
+            get { return DicomStringHelper.GetStringArray(SopClassesInStudy); }
+        }
+
         int? IStudyData.NumberOfStudyRelatedSeries
         {
             get { return NumberOfStudyRelatedSeries; }
@@ -127,13 +131,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         #region Public Methods
 
-        public void Initialize(DicomMessageBase message)
+        public void Update(DicomMessageBase dicomMessage)
         {
-            Initialize(message.DataSet);
-        }
-
-        public void Initialize(DicomAttributeCollection dataSet)
-        {
+            var dataSet = dicomMessage.DataSet;
             DicomAttribute attribute = dataSet[DicomTags.StudyInstanceUid];
             string datasetStudyUid = attribute.ToString();
             if (!String.IsNullOrEmpty(StudyInstanceUid) && StudyInstanceUid != datasetStudyUid)
@@ -248,7 +248,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
             string[] modalitiesInStudy = DicomStringHelper.GetStringArray(ModalitiesInStudy ?? "");
             ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(
-                ComputeModalitiesInStudy(modalitiesInStudy, dataSet[DicomTags.Modality].GetString(0, "")));
+                AppendIfNotIn(modalitiesInStudy, dataSet[DicomTags.Modality].GetString(0, "")));
+
+            string[] sopClassesInStudy = DicomStringHelper.GetStringArray(SopClassesInStudy ?? "");
+            SopClassesInStudy = DicomStringHelper.GetDicomStringArray(
+                AppendIfNotIn(sopClassesInStudy, dataSet[DicomTags.SopClassUid].GetString(0, "")));
+
+            string[] stationNamesInStudy = DicomStringHelper.GetStringArray(StationNamesInStudy ?? "");
+            StationNamesInStudy = DicomStringHelper.GetDicomStringArray(
+                AppendIfNotIn(stationNamesInStudy, dataSet[DicomTags.StationName].GetString(0, "")));
+
+            string[] institutionNamesInStudy = DicomStringHelper.GetStringArray(InstitutionNamesInStudy ?? "");
+            InstitutionNamesInStudy = DicomStringHelper.GetDicomStringArray(
+                AppendIfNotIn(institutionNamesInStudy, dataSet[DicomTags.InstitutionName].GetString(0, "")));
+
+            string[] photometricInterpretationsInStudy = DicomStringHelper.GetStringArray(PhotometricInterpretationsInStudy ?? "");
+            PhotometricInterpretationsInStudy = DicomStringHelper.GetDicomStringArray(
+                AppendIfNotIn(photometricInterpretationsInStudy, dataSet[DicomTags.PhotometricInterpretation].GetString(0, "")));
+
+            string[] bitsAllocatedInStudy = DicomStringHelper.GetStringArray(BitsAllocatedInStudy ?? "");
+            BitsAllocatedInStudy = DicomStringHelper.GetDicomStringArray(
+                AppendIfNotIn(bitsAllocatedInStudy, dataSet[DicomTags.BitsAllocated].GetString(0, "")));
+
+            string[] bitsStoredInStudy = DicomStringHelper.GetStringArray(BitsStoredInStudy ?? "");
+            BitsStoredInStudy = DicomStringHelper.GetDicomStringArray(
+                AppendIfNotIn(bitsStoredInStudy, dataSet[DicomTags.BitsStored].GetString(0, "")));
+
+            #region Meta Info
+
+            string[] transferSyntaxesInStudy = DicomStringHelper.GetStringArray(TransferSyntaxesInStudy ?? "");
+            TransferSyntaxesInStudy = DicomStringHelper.GetDicomStringArray(
+                AppendIfNotIn(transferSyntaxesInStudy, dicomMessage.MetaInfo[DicomTags.TransferSyntaxUid].GetString(0, "")));
+
+            string[] sourceAETitlesInStudy = DicomStringHelper.GetStringArray(SourceAETitlesInStudy ?? "");
+            SourceAETitlesInStudy = DicomStringHelper.GetDicomStringArray(
+                AppendIfNotIn(sourceAETitlesInStudy, dicomMessage.MetaInfo[DicomTags.SourceApplicationEntityTitle].GetString(0, "")));
+
+            #endregion
         }
 
         #endregion
@@ -292,21 +328,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             Platform.CheckForNullReference(studyXml, "studyXml");
             _studyXml = studyXml;
 
-            Initialize(_studyXml.First().First().Collection);
+            var file = new DicomFile(null, new DicomAttributeCollection(), _studyXml.First().First().Collection);
+            Update(file);
             //these have to be here, rather than in Initialize b/c they are 
             // computed from the series, which are parsed from the xml.
             NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
             NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
         }
 
-        private static IEnumerable<string> ComputeModalitiesInStudy(IEnumerable<string> existingModalities, string candidate)
+        private static IEnumerable<string> AppendIfNotIn(IEnumerable<string> values, string candidate)
         {
-            foreach (string existingModality in existingModalities)
+            foreach (string value in values)
             {
-                if (existingModality == candidate)
+                if (value == candidate)
                     candidate = null;
 
-                yield return existingModality;
+                yield return value;
             }
 
             if (candidate != null)
@@ -314,5 +351,37 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         }
 
         #endregion
+
+        public StudyEntry ToStoreEntry()
+        {
+            int[] bitsAllocated;
+            DicomStringHelper.TryGetIntArray(BitsAllocatedInStudy, out bitsAllocated);
+            int[] bitsStored;
+            DicomStringHelper.TryGetIntArray(BitsStoredInStudy, out bitsStored);
+
+            var entry = new StudyEntry
+            {
+                Study = new StudyRootStudyIdentifier(this)
+                {
+                    InstanceAvailability = "ONLINE",
+                    RetrieveAeTitle = Utilities.GetLocalServerAETitle(),
+                    SpecificCharacterSet = SpecificCharacterSet
+                },
+                Data = new StudyEntryData
+                {
+                    BitsAllocatedInStudy = bitsAllocated,
+                    BitsStoredInStudy = bitsStored,
+                    DeleteTime = DeleteTime,
+                    InstitutionNamesInStudy = DicomStringHelper.GetStringArray(InstitutionNamesInStudy),
+                    PhotometricInterpretationsInStudy = DicomStringHelper.GetStringArray(PhotometricInterpretationsInStudy),
+                    SourceAETitlesInStudy = DicomStringHelper.GetStringArray(SourceAETitlesInStudy),
+                    StationNamesInStudy = DicomStringHelper.GetStringArray(StationNamesInStudy),
+                    StoreTime = StoreTime,
+                    TransferSyntaxesInStudy = DicomStringHelper.GetStringArray(TransferSyntaxesInStudy)
+                }
+            };
+
+            return entry;
+        }
     }
 }

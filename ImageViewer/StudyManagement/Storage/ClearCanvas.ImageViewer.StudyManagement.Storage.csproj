@@ -105,9 +105,9 @@
     <Compile Include="DicomQuery\PropertyFilters\SopInstance.cs" />
     <Compile Include="DicomQuery\StringPropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Study.cs" />
-    <Compile Include="DicomQuery\StudyPropertyFilters.cs" />
     <Compile Include="DicomQuery\Tests\SopInstanceQueryTests.cs" />
     <Compile Include="DicomQuery\Tests\SeriesQueryTests.cs" />
+    <Compile Include="DicomQuery\Tests\StudyStoreQueryTests.cs" />
     <Compile Include="DicomQuery\Tests\TestBase.cs" />
     <Compile Include="DicomQuery\TimePropertyFilter.cs" />
     <Compile Include="DicomQuery\UidPropertyFilter.cs" />
@@ -115,7 +115,7 @@
     <Compile Include="DicomQuery\Tests\MiscellaneousTests.cs" />
     <Compile Include="DicomQuery\Tests\PropertyFilterTests.cs" />
     <Compile Include="DicomQuery\Tests\StudyRootQueryTests.cs" />
-    <Compile Include="DicomQuery\Utilities.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="ISeries.cs" />
     <Compile Include="ISopInstance.cs" />
     <Compile Include="IStudy.cs" />
@@ -162,6 +162,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="DicomQuery\Tests\test_store_insert_studies.sqlce" />
     <None Include="DicomStoreDataContext.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>DicomStoreDataContext.designer.cs</LastGenOutput>
@@ -216,14 +217,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DicomQuery\Tests\test_store.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="dicom_store.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="dicom_store.sdf" />
+    <EmbeddedResource Include="DicomQuery\Tests\test_store.sdf" />
     <Content Include="dicom_store_empty.sdf" />
     <Content Include="dicom_store_empty35.sdf" />
   </ItemGroup>

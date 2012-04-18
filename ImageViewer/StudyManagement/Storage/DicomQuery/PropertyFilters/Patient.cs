@@ -3,10 +3,11 @@ using System.Data.Linq.SqlClient;
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
-    internal class PatientId : StringPropertyFilter<Study>
+    internal class PatientId : StringPropertyFilter<Study, StudyEntry>
     {
         public PatientId(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientId), criteria)
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsName : StringPropertyFilter<Study>
+    internal class PatientsName : StringPropertyFilter<Study, StudyEntry>
     {
         public PatientsName(DicomAttributeCollection criteria)
             : base(DicomTags.PatientsName, criteria)
@@ -76,7 +77,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsSex : StringPropertyFilter<Study>
+    internal class PatientsSex : StringPropertyFilter<Study, StudyEntry>
     {
         public PatientsSex(DicomAttributeCollection criteria)
             : base(DicomTags.PatientsSex, criteria)
@@ -111,7 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsBirthDate : DatePropertyFilter<Study>
+    internal class PatientsBirthDate : DatePropertyFilter<Study, StudyEntry>
     {
         public PatientsBirthDate(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientsBirthDate), criteria)
@@ -150,7 +151,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsBirthTime : TimePropertyFilter<Study>
+    internal class PatientsBirthTime : TimePropertyFilter<Study, StudyEntry>
     {
         public PatientsBirthTime(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientsBirthTime), criteria)

@@ -16,14 +16,19 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 {
-	#region Request/Response classes
+    public static class RulesNamespace
+    {
+        public const string Value = StudyManagementNamespace.Value + "/rules";
+    }
+    
+    #region Request/Response classes
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	public class GetRulesRequest : DataContractBase
 	{
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	public class GetRulesResponse : DataContractBase
 	{
 		public GetRulesResponse(List<RuleData> rules)
@@ -35,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 		public List<RuleData> Rules { get; set; }
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	public class GetRuleRequest : DataContractBase
 	{
 		public GetRuleRequest(string ruleId)
@@ -47,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 		public string RuleId { get; set; }
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	public class GetRuleResponse : DataContractBase
 	{
 		public GetRuleResponse(RuleData rule)
@@ -59,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 		public RuleData Rule { get; set; }
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	public class PutRuleRequest : DataContractBase
 	{
 		public PutRuleRequest(RuleData rule)
@@ -71,12 +76,12 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 		public RuleData Rule { get; set; }
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	public class PutRuleResponse : DataContractBase
 	{
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	public class DeleteRuleRequest : DataContractBase
 	{
 		public DeleteRuleRequest(string ruleId)
@@ -88,18 +93,23 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 		public string RuleId { get; set; }
 	}
 
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	public class DeleteRuleResponse : DataContractBase
 	{
 	}
 
 	#endregion
 
-	public interface IStudyRulesService
+    [ServiceContract(ConfigurationName = "IStudyRulesService", Namespace = RulesNamespace.Value)]
+    public interface IStudyRulesService
 	{
-		GetRulesResponse GetRules(GetRulesRequest request);
-		GetRuleResponse GetRule(GetRuleRequest request);
-		PutRuleResponse PutRule(PutRuleRequest request);
-		DeleteRuleResponse DeleteRule(DeleteRuleRequest request);
+        [OperationContract]
+        GetRulesResponse GetRules(GetRulesRequest request);
+        [OperationContract]
+        GetRuleResponse GetRule(GetRuleRequest request);
+        [OperationContract]
+        PutRuleResponse PutRule(PutRuleRequest request);
+        [OperationContract]
+        DeleteRuleResponse DeleteRule(DeleteRuleRequest request);
 	}
 }

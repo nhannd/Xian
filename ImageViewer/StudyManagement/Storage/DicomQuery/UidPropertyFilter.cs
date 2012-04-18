@@ -3,10 +3,13 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class UidPropertyFilter<T> : PropertyFilter<T>
+    internal abstract class UidPropertyFilter<TDatabaseObject, TStoreEntry> : DicomPropertyFilter<TDatabaseObject, TStoreEntry>
+        where TDatabaseObject : class
+        where TStoreEntry : StoreEntry
     {
         private string[] _criterionValues;
 
@@ -30,17 +33,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             }    
         }
 
-        protected virtual IQueryable<T> AddUidToQuery(IQueryable<T> query, string uid)
+        protected virtual IQueryable<TDatabaseObject> AddUidToQuery(IQueryable<TDatabaseObject> query, string uid)
         {
             throw new NotImplementedException("AddUidToQuery must be implemented.");
         }
 
-        protected virtual IQueryable<T> AddUidsToQuery(IQueryable<T> query, string[] uids)
+        protected virtual IQueryable<TDatabaseObject> AddUidsToQuery(IQueryable<TDatabaseObject> query, string[] uids)
         {
             throw new NotImplementedException("AddUidsToQuery must be implemented.");
         }
 
-        protected override IQueryable<T> AddToQuery(IQueryable<T> query)
+        protected override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
         {
             if (CriterionValues.Length == 0)
                 return base.AddToQuery(query);

@@ -12,7 +12,9 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
@@ -96,7 +98,41 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			get { return _xml.TransferSyntax.UidString; }
 		}
 
-		public bool IsStoredTag(uint tag)
+        public int? BitsAllocated
+        {
+            get 
+            { 
+                int bitsAllocated;
+                if (this[DicomTags.BitsAllocated].TryGetInt32(0, out bitsAllocated))
+                    return bitsAllocated;
+
+                return null;
+            }
+        }
+
+        public int? BitsStored
+        {
+            get
+            {
+                int bitsStored;
+                if (this[DicomTags.BitsStored].TryGetInt32(0, out bitsStored))
+                    return bitsStored;
+
+                return null;
+            }
+        }
+
+        public string PhotometricInterpretation
+        {
+            get { return this[DicomTags.PhotometricInterpretation].GetString(0, null); }
+        }
+
+        public string SourceAETitle
+        {
+            get { return this[DicomTags.SourceApplicationEntityTitle].GetString(0, null); }
+        }
+
+        public bool IsStoredTag(uint tag)
 		{
 			DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
 			if (dicomTag == null)
@@ -168,5 +204,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		}
 
 		#endregion
-	}
+
+        public ImageEntry ToStoreEntry()
+        {
+            var entry = new ImageEntry
+                                   {
+                                       Image = new ImageIdentifier(this)
+                                                   {
+                                                       InstanceAvailability = "ONLINE",
+                                                       RetrieveAeTitle = Utilities.GetLocalServerAETitle(),
+                                                       SpecificCharacterSet = SpecificCharacterSet
+                                                   },
+                                       Data = new ImageEntryData
+                                                  {
+                                                      BitsAllocated = BitsAllocated,
+                                                      BitsStored = BitsStored,
+                                                      PhotometricInterpretation = PhotometricInterpretation,
+                                                      SourceAETitle = SourceAETitle,
+                                                      TransferSyntax = TransferSyntaxUid
+                                                  }
+                                   };
+            return entry;
+        }
+    }
 }

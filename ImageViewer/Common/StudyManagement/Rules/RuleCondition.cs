@@ -4,7 +4,7 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 {
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	[StudyRuleDataContract("664fcf90-fa7d-483f-b212-b1fe73e8d704")]
 	public class RuleCondition
 	{

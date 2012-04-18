@@ -1,11 +1,21 @@
 ﻿using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
-namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
+namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
     internal static class Utilities
     {
+        public static string GetLocalServerAETitle()
+        {
+            string aeTitle = null;
+            Platform.GetService<IDicomServerConfiguration>(
+                s => aeTitle = s.GetConfiguration(new GetDicomServerConfigurationRequest()).Configuration.AETitle);
+            return aeTitle;
+        }
+
         public static DicomAttribute GetAttribute(this DicomTagPath path, IDicomAttributeProvider attributes)
         {
             return GetAttribute(path, attributes, false);

@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 {
-	[DataContract]
+    [DataContract(Namespace = RulesNamespace.Value)]
 	[StudyRuleDataContract("8894a4cb-17e0-4efc-b90c-2a8985d8f516")]
 	public class RuleData
 	{
