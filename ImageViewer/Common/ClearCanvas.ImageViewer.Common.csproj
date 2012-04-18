@@ -110,6 +110,7 @@
     <Compile Include="StudyManagement\Rules\RuleTransformer.cs" />
     <Compile Include="StudyManagement\Rules\Tests\RuleTransformerTests.cs" />
     <Compile Include="StudyManagement\StoreEntries.cs" />
+    <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />
     <Compile Include="MemoryCollector.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="StudyManagement\Rules\TimeOrigin.cs" />
     <Compile Include="StudyManagement\Rules\TimeUnit.cs" />
     <Compile Include="StudyManagement\StudyStoreBridge.cs" />
+    <Compile Include="StudyManagement\Tests\StudyStoreTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
     <Compile Include="WorkItem\Tests\TestServiceProvider.cs" />
