@@ -7,12 +7,12 @@
   <Choose>
     <When Condition="'$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
-        <CommonProperties>Configuration=$(Configuration);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</CommonProperties>
+        <CommonProperties>Platform=AnyCPU;Configuration=$(Configuration);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</CommonProperties>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <CommonProperties>Configuration=$(Configuration)</CommonProperties>
+        <CommonProperties>Platform=AnyCPU;Configuration=$(Configuration)</CommonProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -37,7 +37,7 @@
       </GetFrameworkPath>
       <!--<Message Text="FrameworkPath = $(FrameworkPath)"/>-->
 
-      <MakeDir Directories="bin\$(Configuration)" Condition="!Exists('bin\$(Configuration)')" />
+    <MakeDir Directories="bin\$(Configuration)" Condition="!Exists('bin\$(Configuration)')" />
     <MSBuild Projects="..\Common\ClearCanvas.Common.csproj" Properties="$(CommonProperties)" />
     <Exec Command="$(FrameworkPath)\jsc $(EmitDebugInformation) /t:library /lib:..\Common\bin\$(Configuration) /out:bin\$(Configuration)\ClearCanvas.Jscript.dll ClearCanvas.Jscript.js AssemblyInfo.js"/>
 	</Target>
