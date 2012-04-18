@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
@@ -9,24 +10,36 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     {
         [DataMember(IsRequired = true)]
         public DateTime? StoreTime { get; set; }
+        
         [DataMember(IsRequired = true)]
         public DateTime? DeleteTime { get; set; }
 
         [DataMember(IsRequired = false)]
+        [DicomField(DicomTags.TransferSyntaxUid, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
         public string[] TransferSyntaxesInStudy { get; set; }
+        
+        [DataMember(IsRequired = false)]
+        [DicomField(DicomTags.SourceApplicationEntityTitle, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
+        public string[] SourceAETitlesInStudy { get; set; }
 
         [DataMember(IsRequired = false)]
-        public string[] SourceAETitlesInStudy { get; set; }
-        [DataMember(IsRequired = false)]
+        [DicomField(DicomTags.StationName, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
         public string[] StationNamesInStudy { get; set; }
+        
         [DataMember(IsRequired = false)]
+        [DicomField(DicomTags.InstitutionName, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
         public string[] InstitutionNamesInStudy { get; set; }
 
         [DataMember(IsRequired = false)]
+        [DicomField(DicomTags.PhotometricInterpretation, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
         public string[] PhotometricInterpretationsInStudy { get; set; }
+        
         [DataMember(IsRequired = false)]
+        //[DicomField(DicomTags.BitsStored, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
         public int[] BitsStoredInStudy { get; set; }
+
         [DataMember(IsRequired = false)]
+        //[DicomField(DicomTags.BitsAllocated, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
         public int[] BitsAllocatedInStudy { get; set; }
     }
 
