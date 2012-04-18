@@ -29,19 +29,21 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public enum WorkItemStatusEnum
     {
         [EnumMember]
-        Pending,
+        Pending = 1,
         [EnumMember]
-        InProgress,
+        InProgress = 2,
         [EnumMember]
-        Complete,
+        Complete = 3,
         [EnumMember]
-        Idle,
+        Idle = 4,
         [EnumMember]
-        Deleted,
+        Deleted = 5,
         [EnumMember]
-        Canceled,
+        Canceled = 6,
         [EnumMember]
-        Failed
+        Failed = 7,
+        [EnumMember]
+        DeleteInProgress = 8,
     }
 
     [DataContract(Name = "WorkItemType", Namespace = ImageViewerNamespace.Value)]

@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			{
 			    Platform.Log(proxy.LogLevel, "Starting processing of {0} WorkItem for OID {1}", queueItem.Type, queueItem.Oid);
 
-                if (proxy.Item.Status == WorkItemStatusEnum.Deleted)
+                if (proxy.Item.Status == WorkItemStatusEnum.Deleted || proxy.Item.Status == WorkItemStatusEnum.DeleteInProgress)
                 {
                     if (!processor.Initialize(proxy))
                     {
@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 foreach (var item in workItems)
                 {
-                    item.Status = WorkItemStatusEnum.Deleted;
+                    item.Status = WorkItemStatusEnum.DeleteInProgress;
                 }
 
                 context.Commit();
@@ -363,7 +363,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 var workItems = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.Deleted, null);
 
                 if (workItems.Count > count)
-                    return workItems.GetRange(0, count);
+                    workItems = workItems.GetRange(0, count);
+
+                foreach (var item in workItems)
+                {
+                    item.Status = WorkItemStatusEnum.DeleteInProgress;
+                }
+
+                context.Commit();
 
                 return workItems;
             }
@@ -382,6 +389,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 foreach (var item in list)
                 {
                     item.Status = WorkItemStatusEnum.Pending;
+                }
+
+                context.Commit();
+            }
+
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            {
+                var workItemBroker = context.GetWorkItemBroker();
+                var list = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.DeleteInProgress, null);
+
+                foreach (var item in list)
+                {
+                    item.Status = WorkItemStatusEnum.Deleted;
                 }
 
                 context.Commit();

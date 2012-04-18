@@ -376,6 +376,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete In Progress.
+        /// </summary>
+        internal static string WorkItemStatusEnumDeleteInProgress {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumDeleteInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed.
         /// </summary>
         internal static string WorkItemStatusEnumFailed {

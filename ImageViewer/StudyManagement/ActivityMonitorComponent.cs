@@ -296,7 +296,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					// the item is currently in the list
 					// if the item is marked deleted, or if it no longer meets the filter criteria, remove it
 					// otherwise update it
-					if (newItem.Status == WorkItemStatusEnum.Deleted || !Include(newItem))
+					if (newItem.Status == WorkItemStatusEnum.Deleted || newItem.Status == WorkItemStatusEnum.DeleteInProgress || !Include(newItem))
 						_items.RemoveAt(index);
 					else
 						_items[index] = newItem;
@@ -305,7 +305,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					// the item is not currently in the list
 					// if not deleted and it meets the filter criteria, add it
-					if (newItem.Status != WorkItemStatusEnum.Deleted && Include(newItem))
+                    if (newItem.Status != WorkItemStatusEnum.Deleted && newItem.Status != WorkItemStatusEnum.DeleteInProgress && Include(newItem))
 					{
 						_items.Add(newItem);
 					}

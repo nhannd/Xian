@@ -236,6 +236,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 var broker = context.GetWorkItemBroker();
 
                 Item = broker.GetWorkItem(Item.Oid);
+                Item.Status = WorkItemStatusEnum.Deleted;
                 broker.Delete(Item);
 
                 context.Commit();

@@ -258,4 +258,7 @@
   <data name="ReindexProgress_StatusNoStudies" xml:space="preserve">
     <value>No studies found during reindex.</value>
   </data>
+  <data name="WorkItemStatusEnumDeleteInProgress" xml:space="preserve">
+    <value>Delete In Progress</value>
+  </data>
 </root>
