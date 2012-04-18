@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public ActivityTypeEnum ActivityType
 			{
-				get { return _data.Progress != null ? _data.Request.ActivityType : ActivityTypeEnum.ReIndex; }
+				get { return _data.Request != null ? _data.Request.ActivityType : ActivityTypeEnum.ReIndex; }
 			}
 
 			public string ActivityDescription
@@ -428,6 +428,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region WorkItemActionModel
+
 		class WorkItemActionModel : SimpleActionModel
 		{
 		    private const string _deleteKey = "delete";
@@ -540,6 +542,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
                 }
             }
 		}
+
+		#endregion
 
 		private static readonly object NoFilter = new object();
 
