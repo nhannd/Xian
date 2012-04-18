@@ -259,6 +259,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Completed..
+        /// </summary>
+        internal static string Progress_Complete {
+            get {
+                return ResourceManager.GetString("Progress_Complete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pending..
         /// </summary>
         internal static string Progress_Pending {
@@ -282,6 +291,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string ReindexProgress_Status {
             get {
                 return ResourceManager.GetString("ReindexProgress_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No studies found during reindex..
+        /// </summary>
+        internal static string ReindexProgress_StatusNoStudies {
+            get {
+                return ResourceManager.GetString("ReindexProgress_StatusNoStudies", resourceCulture);
             }
         }
         

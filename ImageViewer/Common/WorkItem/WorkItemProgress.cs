@@ -158,12 +158,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public int NumberOfStudiesDeleted { get; set; }
 
+        [DataMember(IsRequired = true)]
+        public bool Complete { get; set; }
+
         public override string Status
         {
             get
             {
                 if (NumberOfStudiesDeleted == 0 && NumberOfStudiesToProcess == 0 && StudyFoldersProcessed == 0 && StudiesProcessed == 0)
-                    return SR.Progress_Pending;
+                {
+                    return Complete ? SR.ReindexProgress_StatusNoStudies : string.Empty;
+                }
 
                 return string.Format(SR.ReindexProgress_Status, StudiesProcessed, NumberOfStudiesToProcess,
                     NumberOfStudiesDeleted, StudyFoldersProcessed);
@@ -174,6 +179,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
+                if (Complete && NumberOfStudiesToProcess == 0)
+                    return new decimal(100.0);
+
                 if (NumberOfStudiesToProcess > 0)
                     return (Decimal)StudiesProcessed / NumberOfStudiesToProcess;
 

@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Progress.NumberOfStudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
+            Progress.Complete = false;
 
             Proxy.UpdateProgress();
 
@@ -87,7 +88,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                                                      Proxy.UpdateProgress();
                                                  };
             processor.Process();
-            
+
+            Progress.Complete = true;
             Proxy.Complete();
         }
 
