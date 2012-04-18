@@ -80,6 +80,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Activity Monitor.
+        /// </summary>
+        public static string LinkOpenActivityMonitor {
+            get {
+                return ResourceManager.GetString("LinkOpenActivityMonitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         public static string MenuOpenFiles {
@@ -112,6 +121,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         public static string MessageFormatImagesFailedToLoad {
             get {
                 return ResourceManager.GetString("MessageFormatImagesFailedToLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing files from {0} locations..
+        /// </summary>
+        public static string MessageFormatImportingFiles {
+            get {
+                return ResourceManager.GetString("MessageFormatImportingFiles", resourceCulture);
             }
         }
         

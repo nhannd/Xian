@@ -124,6 +124,9 @@ Please ensure the '{0}' is running or contact your system administrator for assi
   <data name="ImportDicomFiles" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="LinkOpenActivityMonitor" xml:space="preserve">
+    <value>Open Activity Monitor</value>
+  </data>
   <data name="MenuOpenFiles" xml:space="preserve">
     <value>Open</value>
   </data>
@@ -135,6 +138,9 @@ Please ensure the '{0}' is running or contact your system administrator for assi
   </data>
   <data name="MessageFormatImagesFailedToLoad" xml:space="preserve">
     <value>{0} images failed to load.</value>
+  </data>
+  <data name="MessageFormatImportingFiles" xml:space="preserve">
+    <value>Importing files from {0} locations.</value>
   </data>
   <data name="MessagePermissionToOpenFilesDenied" xml:space="preserve">
     <value>You do not have permission to open images in the viewer.</value>

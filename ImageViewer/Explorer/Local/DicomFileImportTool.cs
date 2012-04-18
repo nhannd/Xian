@@ -19,6 +19,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {
@@ -82,8 +83,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 	
 			try
 			{
+			    string linkText = SR.LinkOpenActivityMonitor;   
                 var importClient = new DicomFileImportClient();
                 importClient.ImportFileList(filePaths, BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Copy);
+                Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatImportingFiles, filePaths.Count), linkText, ActivityMonitorManager.Show);
 			}
 			catch (EndpointNotFoundException)
 			{

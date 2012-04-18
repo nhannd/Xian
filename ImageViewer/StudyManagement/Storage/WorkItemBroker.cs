@@ -68,20 +68,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         }
 
         /// <summary>
-        /// Gets the specified number of pending work items.
+        /// General the WorkItems with the specified parameters.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="status"></param>
         /// <param name="studyInstanceUid"></param>
         /// <returns></returns>
-        public IList<WorkItem> GetWorkItems(WorkItemTypeEnum? type, WorkItemStatusEnum? status, string studyInstanceUid)
+        public List<WorkItem> GetWorkItems(WorkItemTypeEnum? type, WorkItemStatusEnum? status, string studyInstanceUid)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
-
+            
             if (type.HasValue)
                 query = query.Where(w => w.Type == type.Value);
+
             if (status.HasValue)
                 query = query.Where(w => w.Status == status.Value);
+            else
+            {
+                query = query.Where(w => w.Status != WorkItemStatusEnum.Deleted);
+                query = query.Where(w => w.Status != WorkItemStatusEnum.DeleteInProgress);
+            }
+
             if (!string.IsNullOrEmpty(studyInstanceUid))
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
 

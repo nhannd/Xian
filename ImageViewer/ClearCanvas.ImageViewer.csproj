@@ -867,6 +867,7 @@
     <EmbeddedResource Include="StudyManagement\SR.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
