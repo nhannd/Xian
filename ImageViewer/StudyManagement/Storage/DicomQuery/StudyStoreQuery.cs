@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    public class StudyStoreQuery : IStudyStore
+    public class StudyStoreQuery
     {
         private readonly DicomStoreDataContext _context;
 
@@ -17,7 +17,57 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             _context = context;
         }
 
-        public IEnumerable<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria)
+        public int GetStudyCount()
+        {
+            return GetStudyCount(null);
+        }
+
+        public int GetStudyCount(StudyEntry criteria)
+        {
+            int count = criteria == null
+                            ? _context.Studies.Count()
+                            : GetStudies(criteria).Count;
+
+            return count;
+        }
+
+        public IList<StudyEntry> GetStudyEntries(StudyEntry criteria)
+        {
+            var studies = GetStudies(criteria);
+            return studies.Select(s => s.ToStoreEntry()).ToList();
+        }
+
+        public IList<SeriesEntry> GetSeriesEntries(SeriesEntry criteria)
+        {
+            var series = GetSeries(criteria);
+            return series.Select(s => s.ToStoreEntry()).ToList();
+        }
+
+        public IList<ImageEntry> GetImageEntries(ImageEntry criteria)
+        {
+            var sops = GetSopInstances(criteria);
+            return sops.Select(s => s.ToStoreEntry()).ToList();
+        }
+
+        public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier criteria)
+        {
+            var entries = GetStudies(criteria);
+            return entries.Select(e => e.ToStoreEntry().Study).ToList();
+        }
+
+        public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier criteria)
+        {
+            var entries = GetSeries(criteria);
+            return entries.Select(e => e.ToStoreEntry().Series).ToList();
+        }
+
+        public IList<ImageIdentifier> ImageQuery(ImageIdentifier criteria)
+        {
+            var entries = GetSopInstances(criteria);
+            return entries.Select(e => e.ToStoreEntry().Image).ToList();
+        }
+
+        public IList<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria)
         {
             Platform.CheckForNullReference(queryCriteria, "queryCriteria");
 
@@ -35,40 +85,99 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             }
         }
 
-        public GetStudyCountResult GetStudyCount(GetStudyCountRequest request)
+        private IEnumerable<Study> GetStudies(StudyRootStudyIdentifier criteria)
         {
-            int count = request.QueryIdentifier == null ? _context.Studies.Count() : StudyQuery(request.QueryIdentifier).Count;
-            return new GetStudyCountResult{StudyCount = count};
+            return GetStudies(new StudyEntry { Study = criteria });
         }
 
-        public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
+        private IEnumerable<Series> GetSeries(SeriesIdentifier criteria)
         {
-            var criteria = queryCriteria.ToDicomAttributeCollection();
-            var results = Query(criteria);
-            return results.Select(collection => new StudyRootStudyIdentifier(collection)).ToList();
+            return GetSeries(new SeriesEntry { Series = criteria });
         }
 
-        public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
+        private IEnumerable<SopInstance> GetSopInstances(ImageIdentifier criteria)
         {
-            var criteria = queryCriteria.ToDicomAttributeCollection();
-            var results = Query(criteria);
-            return results.Select(collection => new SeriesIdentifier(collection)).ToList();
+            return GetSopInstances(new ImageEntry { Image = criteria });
         }
 
-        public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
+        private IList<Study> GetStudies(StudyEntry criteria)
         {
-            var criteria = queryCriteria.ToDicomAttributeCollection();
-            var results = Query(criteria);
-            return results.Select(collection => new ImageIdentifier(collection)).ToList();
+            try
+            {
+                //TODO (Marmot): make extended data queryable, too.
+                DicomAttributeCollection dicomCriteria;
+                if (criteria == null || criteria.Study == null)
+                    dicomCriteria = new DicomAttributeCollection();
+                else
+                    dicomCriteria = criteria.Study.ToDicomAttributeCollection();
+
+                var filters = new StudyPropertyFilters(dicomCriteria);
+                var results = filters.Query(_context.Studies);
+                return results.ToList();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("An error occurred while performing the study query.", e);
+            }
         }
 
+        private IEnumerable<Series> GetSeries(SeriesEntry criteria)
+        {
+            try
+            {
+                string studyInstanceUid = null;
+                if (criteria != null && criteria.Series != null)
+                    studyInstanceUid = criteria.Series.StudyInstanceUid;
+
+                //This will throw when Uid parameter is empty.
+                IStudy study = GetStudy(studyInstanceUid);
+
+                //TODO (Marmot): make extended data queryable, too.
+                var dicomCriteria = criteria.Series.ToDicomAttributeCollection();
+                var filters = new SeriesPropertyFilters(dicomCriteria);
+                var results = filters.FilterResults(study.GetSeries().Cast<Series>());
+                return results;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("An error occurred while performing the series query.", e);
+            }
+        }
+
+        private IEnumerable<SopInstance> GetSopInstances(ImageEntry criteria)
+        {
+            try
+            {
+                string studyInstanceUid = null, seriesInstanceUid = null;
+                if (criteria != null && criteria.Image != null)
+                {
+                    studyInstanceUid = criteria.Image.StudyInstanceUid;
+                    seriesInstanceUid = criteria.Image.SeriesInstanceUid;
+                }
+
+                //This will throw when either Uid parameter is empty.
+                var series = GetSeries(studyInstanceUid, seriesInstanceUid);
+
+                //TODO (Marmot): make extended data queryable, too.
+                var dicomCriteria = criteria.Image.ToDicomAttributeCollection();
+                var filters = new SopInstancePropertyFilters(dicomCriteria);
+                var results = filters.FilterResults(series.GetSopInstances().Cast<SopInstance>());
+                return results;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("An error occurred while performing the image query.", e);
+            }
+        }
+
+        
         private List<DicomAttributeCollection> StudyQuery(DicomAttributeCollection queryCriteria)
         {
             try
             {
                 var filters = new StudyPropertyFilters(queryCriteria);
                 var results = filters.Query(_context.Studies);
-                return filters.ConvertResults(results);
+                return filters.ConvertResultsToDataSets(results);
             }
             catch (Exception e)
             {
@@ -78,19 +187,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         private List<DicomAttributeCollection> SeriesQuery(DicomAttributeCollection queryCriteria)
         {
-            string studyUid = queryCriteria[DicomTags.StudyInstanceUid];
-            if (String.IsNullOrEmpty(studyUid))
-                throw new ArgumentException("The study uid must be specified for a series level query.");
-
-            IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyUid select s).FirstOrDefault();
-            if (study == null)
-                throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyUid));
+            var study = GetStudy(queryCriteria[DicomTags.StudyInstanceUid]);
 
             try
             {
-                var filters = new PropertyFilters<Series>(queryCriteria);
+                var filters = new SeriesPropertyFilters(queryCriteria);
                 var results = filters.FilterResults(study.GetSeries().Cast<Series>());
-                return filters.ConvertResults(results);
+                return filters.ConvertResultsToDataSets(results);
             }
             catch (Exception e)
             {
@@ -100,33 +203,49 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         private List<DicomAttributeCollection> ImageQuery(DicomAttributeCollection queryCriteria)
         {
-            string studyUid = queryCriteria[DicomTags.StudyInstanceUid];
-            string seriesUid = queryCriteria[DicomTags.SeriesInstanceUid];
-
-            if (String.IsNullOrEmpty(studyUid) || String.IsNullOrEmpty(seriesUid))
-                throw new ArgumentException("The study and series uids must be specified for an image level query.");
-
-            IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyUid select s).FirstOrDefault();
-            if (study == null)
-                throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyUid));
-
-            ISeries series = (from s in study.GetSeries() where s.SeriesInstanceUid == seriesUid select s).FirstOrDefault();
-            if (series == null)
-            {
-                string message = String.Format("No series exists with the given study and series uids ({0}, {1})", studyUid, seriesUid);
-                throw new ArgumentException(message);
-            }
-
+            var series = GetSeries(queryCriteria[DicomTags.StudyInstanceUid], queryCriteria[DicomTags.SeriesInstanceUid]);
+            
             try
             {
-                var filters = new PropertyFilters<SopInstance>(queryCriteria);
-                var results = filters.FilterResults(study.GetSopInstances().Cast<SopInstance>());
-                return filters.ConvertResults(results);
+                var filters = new SopInstancePropertyFilters(queryCriteria);
+                var results = filters.FilterResults(series.GetSopInstances().Cast<SopInstance>());
+                return filters.ConvertResultsToDataSets(results);
             }
             catch (Exception e)
             {
                 throw new Exception("An error occurred while performing the image query.", e);
             }
         }
-   }
+
+        private IStudy GetStudy(string studyInstanceUid)
+        {
+            if (String.IsNullOrEmpty(studyInstanceUid))
+                throw new ArgumentException("The study uid must be specified for a series level query.");
+
+            IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyInstanceUid select s).FirstOrDefault();
+            if (study == null)
+                throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyInstanceUid));
+
+            return study;
+        }
+
+        private ISeries GetSeries(string studyInstanceUid, string seriesInstanceUid)
+        {
+            if (String.IsNullOrEmpty(studyInstanceUid) || String.IsNullOrEmpty(seriesInstanceUid))
+                throw new ArgumentException("The study and series uids must be specified for an image level query.");
+
+            IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyInstanceUid select s).FirstOrDefault();
+            if (study == null)
+                throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyInstanceUid));
+
+            ISeries series = (from s in study.GetSeries() where s.SeriesInstanceUid == seriesInstanceUid select s).FirstOrDefault();
+            if (series == null)
+            {
+                string message = String.Format("No series exists with the given study and series uids ({0}, {1})", studyInstanceUid, seriesInstanceUid);
+                throw new ArgumentException(message);
+            }
+
+            return series;
+        }
+    }
 }

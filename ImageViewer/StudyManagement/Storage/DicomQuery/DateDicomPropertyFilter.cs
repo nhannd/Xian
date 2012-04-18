@@ -6,14 +6,15 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class DatePropertyFilter<T> : PropertyFilter<T>
+    internal abstract class DateDicomPropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
+        where TDatabaseObject : class
     {
         private bool _isRange;
         private DateTime? _date1;
         private DateTime? _date2;
         private bool _parsedCriterion;
 
-        protected DatePropertyFilter(DicomTagPath path, DicomAttributeCollection criteria)
+        protected DateDicomPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria)
             : base(path, criteria)
         {
             Platform.CheckTrue(path.ValueRepresentation.Name == "DA", "Path is not VR=DA");
@@ -49,27 +50,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             DateRangeHelper.Parse(Criterion.GetString(0, ""), out _date1, out _date2, out _isRange);
         }
 
-        protected virtual IQueryable<T> AddEqualsToQuery(IQueryable<T> query, DateTime date)
+        protected virtual IQueryable<TDatabaseObject> AddEqualsToQuery(IQueryable<TDatabaseObject> query, DateTime date)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddEqualsToQuery must be implemented.");
         }
 
-        protected virtual IQueryable<T> AddLessOrEqualToQuery(IQueryable<T> query, DateTime date)
+        protected virtual IQueryable<TDatabaseObject> AddLessOrEqualToQuery(IQueryable<TDatabaseObject> query, DateTime date)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddLessOrEqualToQuery must be implemented.");
         }
 
-        protected virtual IQueryable<T> AddGreaterOrEqualToQuery(IQueryable<T> query, DateTime date)
+        protected virtual IQueryable<TDatabaseObject> AddGreaterOrEqualToQuery(IQueryable<TDatabaseObject> query, DateTime date)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddGreaterOrEqualToQuery must be implemented.");
         }
 
-        protected virtual IQueryable<T> AddBetweenDatesToQuery(IQueryable<T> query, DateTime startDate, DateTime endDate)
+        protected virtual IQueryable<TDatabaseObject> AddBetweenDatesToQuery(IQueryable<TDatabaseObject> query, DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddBetweenDatesToQuery must be implemented.");
         }
 
-        protected sealed override IQueryable<T> AddToQuery(IQueryable<T> query)
+        protected sealed override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
         {
             if (Date1 != null && Date2 != null)
                 return AddBetweenDatesToQuery(query, Date1.Value, Date2.Value);
@@ -88,9 +89,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return base.AddToQuery(query);
         }
 
-        protected sealed override System.Collections.Generic.IEnumerable<T> FilterResults(System.Collections.Generic.IEnumerable<T> results)
+        protected sealed override System.Collections.Generic.IEnumerable<TDatabaseObject> FilterResults(System.Collections.Generic.IEnumerable<TDatabaseObject> results)
         {
-            throw new NotSupportedException("Any date filtering supported is done in the database only.");
+            throw new NotSupportedException("Any date filtering is done in the database only.");
         }
     }
 }

@@ -63,6 +63,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _sop.StudyInstanceUid; }
 		}
 
+        /// <summary>
+        /// Gets the modalities in the identified study.
+        /// </summary>
+        public string[] SopClassesInStudy
+        {
+            get
+            {
+                var sopClasses = new List<string>();
+                foreach (Series series in this.Series)
+                    foreach (var sop in series.Sops)
+                    {
+                        if (!String.IsNullOrEmpty(sop.SopClassUid) && !sopClasses.Contains(sop.SopClassUid))
+                            sopClasses.Add(sop.SopClassUid);
+                    }
+                return sopClasses.ToArray();
+            }
+        }
+
 		/// <summary>
 		/// Gets the modalities in the identified study.
 		/// </summary>
@@ -70,10 +88,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				List<string> modalities = new List<string>();
+				var modalities = new List<string>();
 				foreach(Series series in this.Series)
 				{
-					if (!modalities.Contains(series.Modality))
+					if (!String.IsNullOrEmpty(series.Modality) && !modalities.Contains(series.Modality))
 						modalities.Add(series.Modality);
 				}
 				return modalities.ToArray();

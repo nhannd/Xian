@@ -88,7 +88,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			StudyId = other.StudyId;
 			StudyDate = other.StudyDate;
 			StudyTime = other.StudyTime;
-			ModalitiesInStudy = other.ModalitiesInStudy;
+            SopClassesInStudy = other.SopClassesInStudy;
+            ModalitiesInStudy = other.ModalitiesInStudy;
 			StudyInstanceUid = other.StudyInstanceUid;
 			NumberOfStudyRelatedSeries = other.NumberOfStudyRelatedSeries;
 			NumberOfStudyRelatedInstances = other.NumberOfStudyRelatedInstances;
@@ -346,6 +347,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set { _studyTime = value; }
 		}
 
+        /// <summary>
+        /// Gets or sets the sop classes in the study.
+        /// </summary>
+        public string[] SopClassesInStudy
+        {
+            get { return _sopClassesInStudy ?? new string[0]; }
+            set { _sopClassesInStudy = value ?? new string[0]; }
+        }
+
 		/// <summary>
 		/// Gets or sets the modalities in the study.
 		/// </summary>
@@ -479,6 +489,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private string _studyTime;
         private string _studyInstanceUid;
         private string _studyLoaderName;
+        private string[] _sopClassesInStudy;
         private string[] _modalitiesInStudy;
         private int? _numberOfStudyRelatedInstances;
 		private int? _numberOfStudyRelatedSeries;

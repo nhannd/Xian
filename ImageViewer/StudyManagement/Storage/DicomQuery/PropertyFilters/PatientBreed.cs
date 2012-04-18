@@ -1,12 +1,11 @@
-﻿using System;
-using System.Data.Linq.SqlClient;
+﻿using System.Data.Linq.SqlClient;
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
-    internal class PatientBreedDescription : StringPropertyFilter<Study>
+    internal class PatientBreedDescription : StringDicomPropertyFilter<Study>
     {
         public PatientBreedDescription(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientBreedDescription), criteria)
@@ -43,7 +42,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
  
     internal class PatientBreedCodeSequence
     {
-        internal class CodingSchemeDesignator : StringPropertyFilter<Study>
+        internal class CodingSchemeDesignator : StringDicomPropertyFilter<Study>
         {
             public CodingSchemeDesignator(DicomAttributeCollection criteria)
                 : base(new DicomTagPath(DicomTags.PatientBreedCodeSequence, DicomTags.CodingSchemeDesignator), criteria)
@@ -78,7 +77,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             }
         }
 
-        internal class CodeValue : StringPropertyFilter<Study>
+        internal class CodeValue : StringDicomPropertyFilter<Study>
         {
             public CodeValue(DicomAttributeCollection criteria)
                 : base(new DicomTagPath(DicomTags.PatientBreedCodeSequence, DicomTags.CodeValue), criteria)
@@ -113,7 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             }
         }
 
-        internal class CodeMeaning : StringPropertyFilter<Study>
+        internal class CodeMeaning : StringDicomPropertyFilter<Study>
         {
             public CodeMeaning(DicomAttributeCollection criteria)
                 : base(new DicomTagPath(DicomTags.PatientBreedCodeSequence, DicomTags.CodeMeaning), criteria)

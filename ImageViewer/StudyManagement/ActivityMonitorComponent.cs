@@ -359,7 +359,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					{
 						try
 						{
-							Platform.GetService<IStudyStore>(s => _studyCount = s.GetStudyCount(new GetStudyCountRequest()).StudyCount);
+							Platform.GetService<IStudyStoreQuery>(s => _studyCount = s.GetStudyCount(new GetStudyCountRequest()).StudyCount);
 						}
 						catch (Exception e)
 						{

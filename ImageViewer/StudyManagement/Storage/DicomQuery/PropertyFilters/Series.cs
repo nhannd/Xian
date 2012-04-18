@@ -52,13 +52,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class Modality : StringPropertyFilter<Series>
+    internal class Modality : StringDicomPropertyFilter<Series>
     {
         public Modality(DicomAttributeCollection criteria)
             : base(DicomTags.Modality, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override string GetPropertyValue(Series item)
@@ -72,13 +72,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class SeriesDescription : StringPropertyFilter<Series>
+    internal class SeriesDescription : StringDicomPropertyFilter<Series>
     {
         public SeriesDescription(DicomAttributeCollection criteria)
             : base(DicomTags.SeriesDescription, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override string GetPropertyValue(Series item)
@@ -92,13 +92,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class SeriesNumber : PropertyFilter<Series>
+    internal class SeriesNumber : DicomPropertyFilter<Series>
     {
         public SeriesNumber(DicomAttributeCollection criteria)
             : base(DicomTags.SeriesNumber, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override IEnumerable<Series> FilterResults(IEnumerable<Series> results)
@@ -113,13 +113,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class NumberOfSeriesRelatedInstances : PropertyFilter<Series>
+    internal class NumberOfSeriesRelatedInstances : DicomPropertyFilter<Series>
     {
         public NumberOfSeriesRelatedInstances(DicomAttributeCollection criteria)
             : base(DicomTags.NumberOfSeriesRelatedInstances, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override void AddValueToResult(Series item, DicomAttribute resultAttribute)

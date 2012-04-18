@@ -131,6 +131,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private long _Oid;
 		
+		private System.Data.Linq.Binary _Version;
+		
 		private string _RuleId;
 		
 		private string _Name;
@@ -143,6 +145,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCreated();
     partial void OnOidChanging(long value);
     partial void OnOidChanged();
+    partial void OnVersionChanging(System.Data.Linq.Binary value);
+    partial void OnVersionChanged();
     partial void OnRuleIdChanging(string value);
     partial void OnRuleIdChanged();
     partial void OnNameChanging(string value);
@@ -176,7 +180,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RuleId", DbType="NVarChar(100) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary Version
+		{
+			get
+			{
+				return this._Version;
+			}
+			set
+			{
+				if ((this._Version != value))
+				{
+					this.OnVersionChanging(value);
+					this.SendPropertyChanging();
+					this._Version = value;
+					this.SendPropertyChanged("Version");
+					this.OnVersionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RuleId", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
 		public string RuleId
 		{
 			get
@@ -196,7 +220,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(100) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Name
 		{
 			get
@@ -265,6 +289,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private long _Oid;
 		
+		private System.Data.Linq.Binary _Version;
+		
 		private string _SpecificCharacterSet;
 		
 		private string _StudyId;
@@ -284,6 +310,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		private string _StudyDescription;
 		
 		private string _ModalitiesInStudy;
+		
+		private string _SopClassesInStudy;
+		
+		private string _TransferSyntaxesInStudy;
 		
 		private System.Nullable<int> _NumberOfStudyRelatedSeries;
 		
@@ -331,6 +361,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private string _ResponsibleOrganization;
 		
+		private string _SourceAETitlesInStudy;
+		
+		private string _StationNamesInStudy;
+		
+		private string _InstitutionNamesInStudy;
+		
+		private string _PhotometricInterpretationsInStudy;
+		
+		private string _BitsAllocatedInStudy;
+		
+		private string _BitsStoredInStudy;
+		
 		private System.Nullable<System.DateTime> _StoreTime;
 		
 		private System.DateTime _DeleteTime;
@@ -343,6 +385,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCreated();
     partial void OnOidChanging(long value);
     partial void OnOidChanged();
+    partial void OnVersionChanging(System.Data.Linq.Binary value);
+    partial void OnVersionChanged();
     partial void OnSpecificCharacterSetChanging(string value);
     partial void OnSpecificCharacterSetChanged();
     partial void OnStudyIdChanging(string value);
@@ -363,6 +407,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnStudyDescriptionChanged();
     partial void OnModalitiesInStudyChanging(string value);
     partial void OnModalitiesInStudyChanged();
+    partial void OnSopClassesInStudyChanging(string value);
+    partial void OnSopClassesInStudyChanged();
+    partial void OnTransferSyntaxesInStudyChanging(string value);
+    partial void OnTransferSyntaxesInStudyChanged();
     partial void OnNumberOfStudyRelatedSeriesChanging(System.Nullable<int> value);
     partial void OnNumberOfStudyRelatedSeriesChanged();
     partial void OnNumberOfStudyRelatedInstancesChanging(System.Nullable<int> value);
@@ -409,6 +457,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnResponsiblePersonRoleChanged();
     partial void OnResponsibleOrganizationChanging(string value);
     partial void OnResponsibleOrganizationChanged();
+    partial void OnSourceAETitlesInStudyChanging(string value);
+    partial void OnSourceAETitlesInStudyChanged();
+    partial void OnStationNamesInStudyChanging(string value);
+    partial void OnStationNamesInStudyChanged();
+    partial void OnInstitutionNamesInStudyChanging(string value);
+    partial void OnInstitutionNamesInStudyChanged();
+    partial void OnPhotometricInterpretationsInStudyChanging(string value);
+    partial void OnPhotometricInterpretationsInStudyChanged();
+    partial void OnBitsAllocatedInStudyChanging(string value);
+    partial void OnBitsAllocatedInStudyChanged();
+    partial void OnBitsStoredInStudyChanging(string value);
+    partial void OnBitsStoredInStudyChanged();
     partial void OnStoreTimeChanging(System.Nullable<System.DateTime> value);
     partial void OnStoreTimeChanged();
     partial void OnDeleteTimeChanging(System.DateTime value);
@@ -442,7 +502,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpecificCharacterSet", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary Version
+		{
+			get
+			{
+				return this._Version;
+			}
+			set
+			{
+				if ((this._Version != value))
+				{
+					this.OnVersionChanging(value);
+					this.SendPropertyChanging();
+					this._Version = value;
+					this.SendPropertyChanged("Version");
+					this.OnVersionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpecificCharacterSet", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string SpecificCharacterSet
 		{
 			get
@@ -462,7 +542,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyId", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyId", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string StudyId
 		{
 			get
@@ -482,7 +562,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyTime", DbType="BIGINT")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyTime", DbType="BIGINT", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<long> StudyTimeTicks
 		{
 			get
@@ -502,7 +582,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyTimeRaw", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyTimeRaw", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string StudyTimeRaw
 		{
 			get
@@ -522,7 +602,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyDate", DbType="DateTime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyDate", DbType="DateTime", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<System.DateTime> StudyDate
 		{
 			get
@@ -542,7 +622,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyDateRaw", DbType="NVarChar(26)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyDateRaw", DbType="NVarChar(26)", UpdateCheck=UpdateCheck.Never)]
 		public string StudyDateRaw
 		{
 			get
@@ -562,7 +642,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccessionNumber", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccessionNumber", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string AccessionNumber
 		{
 			get
@@ -602,7 +682,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyDescription", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyDescription", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string StudyDescription
 		{
 			get
@@ -622,7 +702,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModalitiesInStudy", DbType="NVarChar(256)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModalitiesInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
 		public string ModalitiesInStudy
 		{
 			get
@@ -642,7 +722,47 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NumberOfStudyRelatedSeries", DbType="Int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SopClassesInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
+		public string SopClassesInStudy
+		{
+			get
+			{
+				return this._SopClassesInStudy;
+			}
+			set
+			{
+				if ((this._SopClassesInStudy != value))
+				{
+					this.OnSopClassesInStudyChanging(value);
+					this.SendPropertyChanging();
+					this._SopClassesInStudy = value;
+					this.SendPropertyChanged("SopClassesInStudy");
+					this.OnSopClassesInStudyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TransferSyntaxesInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
+		public string TransferSyntaxesInStudy
+		{
+			get
+			{
+				return this._TransferSyntaxesInStudy;
+			}
+			set
+			{
+				if ((this._TransferSyntaxesInStudy != value))
+				{
+					this.OnTransferSyntaxesInStudyChanging(value);
+					this.SendPropertyChanging();
+					this._TransferSyntaxesInStudy = value;
+					this.SendPropertyChanged("TransferSyntaxesInStudy");
+					this.OnTransferSyntaxesInStudyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NumberOfStudyRelatedSeries", DbType="Int", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<int> NumberOfStudyRelatedSeries
 		{
 			get
@@ -662,7 +782,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NumberOfStudyRelatedInstances", DbType="Int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NumberOfStudyRelatedInstances", DbType="Int", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<int> NumberOfStudyRelatedInstances
 		{
 			get
@@ -682,7 +802,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProcedureCodeSequenceCodingSchemeDesignator", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProcedureCodeSequenceCodingSchemeDesignator", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string ProcedureCodeSequenceCodingSchemeDesignator
 		{
 			get
@@ -702,7 +822,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProcedureCodeSequenceCodeValue", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProcedureCodeSequenceCodeValue", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string ProcedureCodeSequenceCodeValue
 		{
 			get
@@ -722,7 +842,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsName", DbType="NVarChar(256)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsName", DbType="NVarChar(256)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientsName
 		{
 			get
@@ -742,7 +862,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReferringPhysiciansName", DbType="NVarChar(256)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReferringPhysiciansName", DbType="NVarChar(256)", UpdateCheck=UpdateCheck.Never)]
 		public string ReferringPhysiciansName
 		{
 			get
@@ -762,7 +882,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientId", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientId", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientId
 		{
 			get
@@ -782,7 +902,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsSex", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsSex", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientsSex
 		{
 			get
@@ -802,7 +922,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsBirthDate", DbType="DateTime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsBirthDate", DbType="DateTime", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<System.DateTime> PatientsBirthDate
 		{
 			get
@@ -822,7 +942,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsBirthDateRaw", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsBirthDateRaw", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientsBirthDateRaw
 		{
 			get
@@ -842,7 +962,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsBirthTime", DbType="BIGINT")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsBirthTime", DbType="BIGINT", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<long> PatientsBirthTimeTicks
 		{
 			get
@@ -862,7 +982,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsBirthTimeRaw", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientsBirthTimeRaw", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientsBirthTimeRaw
 		{
 			get
@@ -882,7 +1002,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientSpeciesDescription", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientSpeciesDescription", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientSpeciesDescription
 		{
 			get
@@ -902,7 +1022,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientSpeciesCodeSequenceCodingSchemeDesignator", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientSpeciesCodeSequenceCodingSchemeDesignator", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientSpeciesCodeSequenceCodingSchemeDesignator
 		{
 			get
@@ -922,7 +1042,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientSpeciesCodeSequenceCodeValue", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientSpeciesCodeSequenceCodeValue", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientSpeciesCodeSequenceCodeValue
 		{
 			get
@@ -942,7 +1062,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientSpeciesCodeSequenceCodeMeaning", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientSpeciesCodeSequenceCodeMeaning", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientSpeciesCodeSequenceCodeMeaning
 		{
 			get
@@ -962,7 +1082,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientBreedDescription", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientBreedDescription", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientBreedDescription
 		{
 			get
@@ -982,7 +1102,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientBreedCodeSequenceCodingSchemeDesignator", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientBreedCodeSequenceCodingSchemeDesignator", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientBreedCodeSequenceCodingSchemeDesignator
 		{
 			get
@@ -1002,7 +1122,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientBreedCodeSequenceCodeValue", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientBreedCodeSequenceCodeValue", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientBreedCodeSequenceCodeValue
 		{
 			get
@@ -1022,7 +1142,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientBreedCodeSequenceCodeMeaning", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PatientBreedCodeSequenceCodeMeaning", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string PatientBreedCodeSequenceCodeMeaning
 		{
 			get
@@ -1042,7 +1162,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResponsiblePerson", DbType="NVarChar(256)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResponsiblePerson", DbType="NVarChar(256)", UpdateCheck=UpdateCheck.Never)]
 		public string ResponsiblePerson
 		{
 			get
@@ -1062,7 +1182,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResponsiblePersonRole", DbType="NVarChar(16)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResponsiblePersonRole", DbType="NVarChar(16)", UpdateCheck=UpdateCheck.Never)]
 		public string ResponsiblePersonRole
 		{
 			get
@@ -1082,7 +1202,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResponsibleOrganization", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResponsibleOrganization", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string ResponsibleOrganization
 		{
 			get
@@ -1102,7 +1222,127 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StoreTime", DbType="DateTime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SourceAETitlesInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
+		public string SourceAETitlesInStudy
+		{
+			get
+			{
+				return this._SourceAETitlesInStudy;
+			}
+			set
+			{
+				if ((this._SourceAETitlesInStudy != value))
+				{
+					this.OnSourceAETitlesInStudyChanging(value);
+					this.SendPropertyChanging();
+					this._SourceAETitlesInStudy = value;
+					this.SendPropertyChanged("SourceAETitlesInStudy");
+					this.OnSourceAETitlesInStudyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StationNamesInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
+		public string StationNamesInStudy
+		{
+			get
+			{
+				return this._StationNamesInStudy;
+			}
+			set
+			{
+				if ((this._StationNamesInStudy != value))
+				{
+					this.OnStationNamesInStudyChanging(value);
+					this.SendPropertyChanging();
+					this._StationNamesInStudy = value;
+					this.SendPropertyChanged("StationNamesInStudy");
+					this.OnStationNamesInStudyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InstitutionNamesInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
+		public string InstitutionNamesInStudy
+		{
+			get
+			{
+				return this._InstitutionNamesInStudy;
+			}
+			set
+			{
+				if ((this._InstitutionNamesInStudy != value))
+				{
+					this.OnInstitutionNamesInStudyChanging(value);
+					this.SendPropertyChanging();
+					this._InstitutionNamesInStudy = value;
+					this.SendPropertyChanged("InstitutionNamesInStudy");
+					this.OnInstitutionNamesInStudyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhotometricInterpretationsInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
+		public string PhotometricInterpretationsInStudy
+		{
+			get
+			{
+				return this._PhotometricInterpretationsInStudy;
+			}
+			set
+			{
+				if ((this._PhotometricInterpretationsInStudy != value))
+				{
+					this.OnPhotometricInterpretationsInStudyChanging(value);
+					this.SendPropertyChanging();
+					this._PhotometricInterpretationsInStudy = value;
+					this.SendPropertyChanged("PhotometricInterpretationsInStudy");
+					this.OnPhotometricInterpretationsInStudyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BitsAllocatedInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
+		public string BitsAllocatedInStudy
+		{
+			get
+			{
+				return this._BitsAllocatedInStudy;
+			}
+			set
+			{
+				if ((this._BitsAllocatedInStudy != value))
+				{
+					this.OnBitsAllocatedInStudyChanging(value);
+					this.SendPropertyChanging();
+					this._BitsAllocatedInStudy = value;
+					this.SendPropertyChanged("BitsAllocatedInStudy");
+					this.OnBitsAllocatedInStudyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BitsStoredInStudy", DbType="NVarChar(4000)", UpdateCheck=UpdateCheck.Never)]
+		public string BitsStoredInStudy
+		{
+			get
+			{
+				return this._BitsStoredInStudy;
+			}
+			set
+			{
+				if ((this._BitsStoredInStudy != value))
+				{
+					this.OnBitsStoredInStudyChanging(value);
+					this.SendPropertyChanging();
+					this._BitsStoredInStudy = value;
+					this.SendPropertyChanged("BitsStoredInStudy");
+					this.OnBitsStoredInStudyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StoreTime", DbType="DateTime", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<System.DateTime> StoreTime
 		{
 			get
@@ -1122,7 +1362,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteTime", DbType="DateTime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime DeleteTime
 		{
 			get
@@ -1142,7 +1382,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Deleted", DbType="Bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Deleted", DbType="Bit NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public bool Deleted
 		{
 			get
@@ -1191,6 +1431,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private long _Oid;
 		
+		private System.Data.Linq.Binary _Version;
+		
 		private System.DateTime _InsertTime;
 		
 		private System.DateTime _ScheduledTime;
@@ -1221,6 +1463,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCreated();
     partial void OnOidChanging(long value);
     partial void OnOidChanged();
+    partial void OnVersionChanging(System.Data.Linq.Binary value);
+    partial void OnVersionChanged();
     partial void OnInsertTimeChanging(System.DateTime value);
     partial void OnInsertTimeChanged();
     partial void OnScheduledTimeChanging(System.DateTime value);
@@ -1271,6 +1515,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary Version
+		{
+			get
+			{
+				return this._Version;
+			}
+			set
+			{
+				if ((this._Version != value))
+				{
+					this.OnVersionChanging(value);
+					this.SendPropertyChanging();
+					this._Version = value;
+					this.SendPropertyChanged("Version");
+					this.OnVersionChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InsertTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime InsertTime
 		{
@@ -1291,7 +1555,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScheduledTime", DbType="DateTime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScheduledTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime ScheduledTime
 		{
 			get
@@ -1311,7 +1575,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpirationTime", DbType="DateTime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpirationTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime ExpirationTime
 		{
 			get
@@ -1331,7 +1595,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteTime", DbType="DateTime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime DeleteTime
 		{
 			get
@@ -1351,7 +1615,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="SmallInt NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="SmallInt NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemStatusEnum Status
 		{
 			get
@@ -1391,7 +1655,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Priority", DbType="SmallInt NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Priority", DbType="SmallInt NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemPriorityEnum Priority
 		{
 			get
@@ -1411,7 +1675,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyInstanceUid", DbType="NVarChar(64)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudyInstanceUid", DbType="NVarChar(64)", UpdateCheck=UpdateCheck.Never)]
 		public string StudyInstanceUid
 		{
 			get
@@ -1471,7 +1735,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FailureCount", DbType="SmallInt NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FailureCount", DbType="SmallInt NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public int FailureCount
 		{
 			get
@@ -1545,6 +1809,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private long _Oid;
 		
+		private System.Data.Linq.Binary _Version;
+		
 		private System.Nullable<long> _WorkItemOid;
 		
 		private string _SeriesInstanceUid;
@@ -1567,6 +1833,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCreated();
     partial void OnOidChanging(long value);
     partial void OnOidChanged();
+    partial void OnVersionChanging(System.Data.Linq.Binary value);
+    partial void OnVersionChanged();
     partial void OnWorkItemOidChanging(System.Nullable<long> value);
     partial void OnWorkItemOidChanged();
     partial void OnSeriesInstanceUidChanging(string value);
@@ -1605,6 +1873,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._Oid = value;
 					this.SendPropertyChanged("Oid");
 					this.OnOidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary Version
+		{
+			get
+			{
+				return this._Version;
+			}
+			set
+			{
+				if ((this._Version != value))
+				{
+					this.OnVersionChanging(value);
+					this.SendPropertyChanging();
+					this._Version = value;
+					this.SendPropertyChanged("Version");
+					this.OnVersionChanged();
 				}
 			}
 		}
@@ -1673,7 +1961,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Complete", DbType="Bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Complete", DbType="Bit NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public bool Complete
 		{
 			get
@@ -1693,7 +1981,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FailureCount", DbType="TinyInt")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FailureCount", DbType="TinyInt", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<byte> FailureCount
 		{
 			get
@@ -1713,7 +2001,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_File", DbType="NVarChar(128)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_File", DbType="NVarChar(128)", UpdateCheck=UpdateCheck.Never)]
 		public string File
 		{
 			get
@@ -1733,7 +2021,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Failed", DbType="Bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Failed", DbType="Bit NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public bool Failed
 		{
 			get
@@ -1816,6 +2104,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private long _Oid;
 		
+		private System.Data.Linq.Binary _Version;
+		
 		private string _Name;
 		
 		private string _Description;
@@ -1838,6 +2128,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCreated();
     partial void OnOidChanging(long value);
     partial void OnOidChanged();
+    partial void OnVersionChanging(System.Data.Linq.Binary value);
+    partial void OnVersionChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
     partial void OnDescriptionChanging(string value);
@@ -1881,6 +2173,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary Version
+		{
+			get
+			{
+				return this._Version;
+			}
+			set
+			{
+				if ((this._Version != value))
+				{
+					this.OnVersionChanging(value);
+					this.SendPropertyChanging();
+					this._Version = value;
+					this.SendPropertyChanged("Version");
+					this.OnVersionChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(64) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Name
 		{
@@ -1901,7 +2213,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(64) NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(64) NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public string Description
 		{
 			get
@@ -1921,7 +2233,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Location", DbType="NVarChar(64) NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Location", DbType="NVarChar(64) NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public string Location
 		{
 			get
@@ -1941,7 +2253,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AETitle", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AETitle", DbType="NVarChar(64) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string AETitle
 		{
 			get
@@ -1961,7 +2273,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostName", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostName", DbType="NVarChar(64) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string HostName
 		{
 			get
@@ -1981,7 +2293,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Port", DbType="Int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Port", DbType="Int", UpdateCheck=UpdateCheck.Never)]
 		public int Port
 		{
 			get
@@ -2001,7 +2313,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StreamingHeaderPort", DbType="Int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StreamingHeaderPort", DbType="Int", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<int> StreamingHeaderPort
 		{
 			get
@@ -2021,7 +2333,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StreamingImagePort", DbType="Int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StreamingImagePort", DbType="Int", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<int> StreamingImagePort
 		{
 			get
@@ -2070,6 +2382,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private long _Oid;
 		
+		private System.Data.Linq.Binary _Version;
+		
 		private string _Name;
 		
 		private string _Value;
@@ -2080,6 +2394,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnCreated();
     partial void OnOidChanging(long value);
     partial void OnOidChanged();
+    partial void OnVersionChanging(System.Data.Linq.Binary value);
+    partial void OnVersionChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
     partial void OnValueChanging(string value);
@@ -2107,6 +2423,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._Oid = value;
 					this.SendPropertyChanged("Oid");
 					this.OnOidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary Version
+		{
+			get
+			{
+				return this._Version;
+			}
+			set
+			{
+				if ((this._Version != value))
+				{
+					this.OnVersionChanging(value);
+					this.SendPropertyChanging();
+					this._Version = value;
+					this.SendPropertyChanged("Version");
+					this.OnVersionChanged();
 				}
 			}
 		}

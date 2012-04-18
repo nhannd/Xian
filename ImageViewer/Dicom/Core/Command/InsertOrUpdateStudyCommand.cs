@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
             Study.Deleted = false;
 
-            Study.Initialize(_messageBase);
+            Study.Update(_messageBase);
             
             Study.NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
             Study.NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;

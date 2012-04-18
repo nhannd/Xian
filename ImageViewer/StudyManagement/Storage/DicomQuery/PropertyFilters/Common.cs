@@ -1,22 +1,21 @@
-﻿using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Common.DicomServer;
+﻿using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
     #region InstanceAvailability
 
-    internal class InstanceAvailability<T> : PropertyFilter<T>
+    internal class InstanceAvailability<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
+        where TDatabaseObject : class
     {
         public InstanceAvailability(IDicomAttributeProvider criteria)
             : base(DicomTags.InstanceAvailability, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = false;
-            base.IsReturnValueRequired = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = false;
+            IsReturnValueRequired = true;
         }
 
-        protected override void AddValueToResult(T item, DicomAttribute resultAttribute)
+        protected override void AddValueToResult(TDatabaseObject item, DicomAttribute resultAttribute)
         {
             resultAttribute.SetString(0, "ONLINE");
         }
@@ -50,22 +49,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region RetrieveAETitle
 
-    internal class RetrieveAETitle<T> : PropertyFilter<T>
+    internal class RetrieveAETitle<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
+        where TDatabaseObject : class
     {
         public RetrieveAETitle(IDicomAttributeProvider criteria)
             : base(DicomTags.RetrieveAeTitle, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = false;
-            base.IsReturnValueRequired = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = false;
+            IsReturnValueRequired = true;
         }
 
-        protected override void AddValueToResult(T item, DicomAttribute resultAttribute)
+        protected override void AddValueToResult(TDatabaseObject item, DicomAttribute resultAttribute)
         {
-            var aeTitle = string.Empty;
-            var request = new GetDicomServerConfigurationRequest();
-            Platform.GetService<IDicomServerConfiguration>(s => aeTitle = s.GetConfiguration(request).Configuration.AETitle);
-            resultAttribute.SetString(0,aeTitle);
+            resultAttribute.SetString(0, Utilities.GetLocalServerAETitle());
         }
     }
 
@@ -97,14 +94,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region Specific Character Set
 
-    internal abstract class SpecificCharacterSet<T> : PropertyFilter<T>
+    internal abstract class SpecificCharacterSet<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
+        where TDatabaseObject : class
     {
         protected SpecificCharacterSet(IDicomAttributeProvider criteria)
             : base(DicomTags.SpecificCharacterSet, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = false;
-            base.IsReturnValueRequired = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = false;
+            IsReturnValueRequired = true;
         }
     }
 

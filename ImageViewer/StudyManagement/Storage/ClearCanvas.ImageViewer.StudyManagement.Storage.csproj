@@ -93,29 +93,33 @@
     <Compile Include="ConfigurationBroker.cs" />
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="DeviceBroker.cs" />
+    <Compile Include="DicomQuery\DicomPropertyFilter.cs" />
+    <Compile Include="DicomQuery\MultiValuedPropertyRule.cs" />
     <Compile Include="DicomQuery\PropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Common.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Patient.cs" />
     <Compile Include="DicomQuery\PropertyFilters\PatientSpecies.cs" />
     <Compile Include="DicomQuery\PropertyFilters\PatientBreed.cs" />
-    <Compile Include="DicomQuery\DatePropertyFilter.cs" />
+    <Compile Include="DicomQuery\DateDicomPropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Responsibility.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Series.cs" />
     <Compile Include="DicomQuery\PropertyFilters\SopInstance.cs" />
-    <Compile Include="DicomQuery\StringPropertyFilter.cs" />
+    <Compile Include="DicomQuery\PropertyFilters\StudyData.cs" />
+    <Compile Include="DicomQuery\QueryUtilities.cs" />
+    <Compile Include="DicomQuery\StringDicomPropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Study.cs" />
-    <Compile Include="DicomQuery\StudyPropertyFilters.cs" />
     <Compile Include="DicomQuery\Tests\SopInstanceQueryTests.cs" />
     <Compile Include="DicomQuery\Tests\SeriesQueryTests.cs" />
+    <Compile Include="DicomQuery\Tests\StudyStoreQueryTests.cs" />
     <Compile Include="DicomQuery\Tests\TestBase.cs" />
-    <Compile Include="DicomQuery\TimePropertyFilter.cs" />
-    <Compile Include="DicomQuery\UidPropertyFilter.cs" />
+    <Compile Include="DicomQuery\TimeDicomPropertyFilter.cs" />
+    <Compile Include="DicomQuery\UidDicomPropertyFilter.cs" />
     <Compile Include="DicomQuery\StudyStoreQuery.cs" />
     <Compile Include="DicomQuery\Tests\MiscellaneousTests.cs" />
     <Compile Include="DicomQuery\Tests\PropertyFilterTests.cs" />
     <Compile Include="DicomQuery\Tests\StudyRootQueryTests.cs" />
-    <Compile Include="DicomQuery\Utilities.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="ISeries.cs" />
     <Compile Include="ISopInstance.cs" />
     <Compile Include="IStudy.cs" />
@@ -162,6 +166,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="DicomQuery\Tests\test_store_insert_studies.sqlce" />
     <None Include="DicomStoreDataContext.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>DicomStoreDataContext.designer.cs</LastGenOutput>
@@ -216,14 +221,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DicomQuery\Tests\test_store.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="dicom_store.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="dicom_store.sdf" />
+    <EmbeddedResource Include="DicomQuery\Tests\test_store.sdf" />
     <Content Include="dicom_store_empty.sdf" />
     <Content Include="dicom_store_empty35.sdf" />
   </ItemGroup>
