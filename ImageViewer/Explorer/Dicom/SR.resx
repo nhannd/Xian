@@ -253,6 +253,9 @@ Please ensure the ClearCanvas Service is running or contact your system administ
     <value>Failed to send the selected studies because the DICOM Server service is not running.
 Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
+  <data name="MessageSendStudyScheduled" xml:space="preserve">
+    <value>The send has been scheduled.</value>
+  </data>
   <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
     <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
   </data>

@@ -95,6 +95,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     try
                     {
                         client.MoveStudy(aeInformation, item, WorkItemPriorityEnum.Normal);
+                        Context.DesktopWindow.ShowAlert(AlertLevel.Info, SR.MessageSendStudyScheduled);
                     }
                     catch (EndpointNotFoundException)
                     {

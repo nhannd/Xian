@@ -455,6 +455,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The send has been scheduled..
+        /// </summary>
+        internal static string MessageSendStudyScheduled {
+            get {
+                return ResourceManager.GetString("MessageSendStudyScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} of the selected studies are in use.  Please close all relevant workspaces before deleting..
         /// </summary>
         internal static string MessageSomeOfSelectedStudiesInUse {
