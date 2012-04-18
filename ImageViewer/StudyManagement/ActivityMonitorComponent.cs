@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public ActivityTypeEnum ActivityType
 			{
-				get { return _data.Progress != null ? _data.Request.ActivityType : ActivityTypeEnum.ReIndex; }
+				get { return _data.Request != null ? _data.Request.ActivityType : ActivityTypeEnum.ReIndex; }
 			}
 
 			public string ActivityDescription
