@@ -6,8 +6,10 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class StringDicomPropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>,
-        IMultiValuedPropertyFilter<TDatabaseObject> where TDatabaseObject : class
+    internal abstract class StringDicomPropertyFilter<TDatabaseObject> 
+        : DicomPropertyFilter<TDatabaseObject>
+        , IMultiValuedPropertyFilter<TDatabaseObject>
+        where TDatabaseObject : class
     {
         private string[] _criterionValues;
         private readonly MultiValuedPropertyRule<TDatabaseObject> _rule;
@@ -67,7 +69,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return DicomStringHelper.GetStringArray(GetPropertyValue(item));
         }
 
-        protected sealed override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
+        protected override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
         {
             return _rule.AddToQuery(query);
         }

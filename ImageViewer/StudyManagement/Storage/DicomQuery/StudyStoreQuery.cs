@@ -67,17 +67,35 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return entries.Select(e => e.ToStoreEntry().Image).ToList();
         }
 
-        private IList<Study> GetStudies(StudyRootStudyIdentifier criteria)
+        public IList<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria)
+        {
+            Platform.CheckForNullReference(queryCriteria, "queryCriteria");
+
+            string level = queryCriteria[DicomTags.QueryRetrieveLevel].ToString();
+            switch (level)
+            {
+                case "STUDY":
+                    return StudyQuery(queryCriteria);
+                case "SERIES":
+                    return SeriesQuery(queryCriteria);
+                case "IMAGE":
+                    return ImageQuery(queryCriteria);
+                default:
+                    throw new ArgumentException(String.Format("Invalid query level: {0}", level));
+            }
+        }
+
+        private IEnumerable<Study> GetStudies(StudyRootStudyIdentifier criteria)
         {
             return GetStudies(new StudyEntry { Study = criteria });
         }
 
-        private IList<Series> GetSeries(SeriesIdentifier criteria)
+        private IEnumerable<Series> GetSeries(SeriesIdentifier criteria)
         {
             return GetSeries(new SeriesEntry { Series = criteria });
         }
 
-        private IList<SopInstance> GetSopInstances(ImageIdentifier criteria)
+        private IEnumerable<SopInstance> GetSopInstances(ImageIdentifier criteria)
         {
             return GetSopInstances(new ImageEntry { Image = criteria });
         }
@@ -103,7 +121,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             }
         }
 
-        private IList<Series> GetSeries(SeriesEntry criteria)
+        private IEnumerable<Series> GetSeries(SeriesEntry criteria)
         {
             try
             {
@@ -118,7 +136,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
                 var dicomCriteria = criteria.Series.ToDicomAttributeCollection();
                 var filters = new SeriesPropertyFilters(dicomCriteria);
                 var results = filters.FilterResults(study.GetSeries().Cast<Series>());
-                return results.ToList();
+                return results;
             }
             catch (Exception e)
             {
@@ -126,7 +144,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             }
         }
 
-        private IList<SopInstance> GetSopInstances(ImageEntry criteria)
+        private IEnumerable<SopInstance> GetSopInstances(ImageEntry criteria)
         {
             try
             {
@@ -144,7 +162,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
                 var dicomCriteria = criteria.Image.ToDicomAttributeCollection();
                 var filters = new SopInstancePropertyFilters(dicomCriteria);
                 var results = filters.FilterResults(series.GetSopInstances().Cast<SopInstance>());
-                return results.ToList();
+                return results;
             }
             catch (Exception e)
             {
@@ -152,24 +170,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             }
         }
 
-        public IList<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria)
-        {
-            Platform.CheckForNullReference(queryCriteria, "queryCriteria");
-
-            string level = queryCriteria[DicomTags.QueryRetrieveLevel].ToString();
-            switch (level)
-            {
-                case "STUDY":
-                    return StudyQuery(queryCriteria);
-                case "SERIES":
-                    return SeriesQuery(queryCriteria);
-                case "IMAGE":
-                    return ImageQuery(queryCriteria);
-                default:
-                    throw new ArgumentException(String.Format("Invalid query level: {0}", level));
-            }
-        }
-
+        
         private List<DicomAttributeCollection> StudyQuery(DicomAttributeCollection queryCriteria)
         {
             try

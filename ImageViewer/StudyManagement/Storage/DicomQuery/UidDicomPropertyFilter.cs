@@ -33,12 +33,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected virtual IQueryable<TDatabaseObject> AddUidToQuery(IQueryable<TDatabaseObject> query, string uid)
         {
-            throw new NotImplementedException("AddUidToQuery must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled=true, AddUidToQuery must be implemented.");
         }
 
         protected virtual IQueryable<TDatabaseObject> AddUidsToQuery(IQueryable<TDatabaseObject> query, string[] uids)
         {
-            throw new NotImplementedException("AddUidsToQuery must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled=true, AddUidsToQuery must be implemented.");
         }
 
         protected override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)

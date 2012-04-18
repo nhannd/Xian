@@ -52,22 +52,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected virtual IQueryable<TDatabaseObject> AddEqualsToQuery(IQueryable<TDatabaseObject> query, DateTime date)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddEqualsToQuery must be implemented.");
         }
 
         protected virtual IQueryable<TDatabaseObject> AddLessOrEqualToQuery(IQueryable<TDatabaseObject> query, DateTime date)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddLessOrEqualToQuery must be implemented.");
         }
 
         protected virtual IQueryable<TDatabaseObject> AddGreaterOrEqualToQuery(IQueryable<TDatabaseObject> query, DateTime date)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddGreaterOrEqualToQuery must be implemented.");
         }
 
         protected virtual IQueryable<TDatabaseObject> AddBetweenDatesToQuery(IQueryable<TDatabaseObject> query, DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddBetweenDatesToQuery must be implemented.");
         }
 
         protected sealed override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected sealed override System.Collections.Generic.IEnumerable<TDatabaseObject> FilterResults(System.Collections.Generic.IEnumerable<TDatabaseObject> results)
         {
-            throw new NotSupportedException("Any date filtering supported is done in the database only.");
+            throw new NotSupportedException("Any date filtering is done in the database only.");
         }
     }
 }

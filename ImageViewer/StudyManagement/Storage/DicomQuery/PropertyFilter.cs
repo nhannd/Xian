@@ -5,7 +5,7 @@ using ClearCanvas.Dicom;
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
     /// <summary>
-    /// Base class for <see cref="PropertyFilter{TDatabaseObject"/>s.
+    /// Base class for <see cref="PropertyFilter{TDatabaseObject}"/>s.
     /// </summary>
     /// <remarks><see cref="DicomPropertyFilter{TDatabaseObject}"/>s use the template and rule
     /// design patterns to allow subclasses to implement only what they need to, and not have

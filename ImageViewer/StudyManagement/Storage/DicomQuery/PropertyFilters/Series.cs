@@ -57,8 +57,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         public Modality(DicomAttributeCollection criteria)
             : base(DicomTags.Modality, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override string GetPropertyValue(Series item)
@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         public SeriesDescription(DicomAttributeCollection criteria)
             : base(DicomTags.SeriesDescription, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override string GetPropertyValue(Series item)
@@ -97,8 +97,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         public SeriesNumber(DicomAttributeCollection criteria)
             : base(DicomTags.SeriesNumber, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override IEnumerable<Series> FilterResults(IEnumerable<Series> results)
@@ -118,8 +118,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         public NumberOfSeriesRelatedInstances(DicomAttributeCollection criteria)
             : base(DicomTags.NumberOfSeriesRelatedInstances, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = true;
         }
 
         protected override void AddValueToResult(Series item, DicomAttribute resultAttribute)

@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
     /// This interface can be implemented by any <see cref="PropertyFilter{TDatabaseObject}"/> whether
     /// its property is single-valued, or multi-valued, and it will work fine. However, in the case where
     /// a property is known to potentially be multi-valued, that must be taken into account in the
-    /// <see cref="PropertyFilter{TDatabaseObject"/>'s AddToQuery overrides.</remarks>
+    /// <see cref="PropertyFilter{TDatabaseObject}"/>'s AddToQuery overrides.</remarks>
     internal interface IMultiValuedPropertyFilter<TDatabaseObject> : IPropertyFilter<TDatabaseObject> where TDatabaseObject : class
     {
         string[] CriterionValues { get; }
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return returnQuery;
         }
 
-        private IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> inputQuery, string[] criterionValues)
+        private IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> inputQuery, IEnumerable<string> criterionValues)
         {
             IQueryable<TDatabaseObject> unionedQuery = null;
             foreach (var criterionValue in criterionValues.Where(value => !String.IsNullOrEmpty(value)))
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             return propertyValues.Any(value => QueryUtilities.IsLike(value, criterion));
         }
 
-        private IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results, string[] criterionValues)
+        private IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results, IEnumerable<string> criterionValues)
         {
             var resultsList = new List<TDatabaseObject>(results);
             IEnumerable<TDatabaseObject> unionedResults = null;

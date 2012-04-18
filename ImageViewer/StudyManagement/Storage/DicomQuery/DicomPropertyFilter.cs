@@ -4,7 +4,7 @@ using ClearCanvas.Dicom.Utilities;
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
     /// <summary>
-    /// Base class for <see cref="PropertyFilter{TDatabaseObject"/>s that are 1:1 with a DICOM Attribute
+    /// Base class for <see cref="PropertyFilter{TDatabaseObject}"/>s that are 1:1 with a DICOM Attribute
     /// that can be queried and returned according to Part 4 of the DICOM standard.
     /// </summary>
     /// <remarks><see cref="DicomPropertyFilter{TDatabaseObject}"/>s use the template and rule

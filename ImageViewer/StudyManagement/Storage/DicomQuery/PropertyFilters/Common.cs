@@ -55,9 +55,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         public RetrieveAETitle(IDicomAttributeProvider criteria)
             : base(DicomTags.RetrieveAeTitle, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = false;
-            base.IsReturnValueRequired = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = false;
+            IsReturnValueRequired = true;
         }
 
         protected override void AddValueToResult(TDatabaseObject item, DicomAttribute resultAttribute)
@@ -100,9 +100,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         protected SpecificCharacterSet(IDicomAttributeProvider criteria)
             : base(DicomTags.SpecificCharacterSet, criteria)
         {
-            base.AddToQueryEnabled = false;
-            base.FilterResultsEnabled = false;
-            base.IsReturnValueRequired = true;
+            AddToQueryEnabled = false;
+            FilterResultsEnabled = false;
+            IsReturnValueRequired = true;
         }
     }
 
