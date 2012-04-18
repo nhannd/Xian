@@ -174,6 +174,9 @@
   <data name="MessageReindexServiceNotRunning" xml:space="preserve">
     <value>The service must be running to start a re-index.</value>
   </data>
+  <data name="MessageTotalFailedWorkItems" xml:space="preserve">
+    <value>There are {0} failed work items.</value>
+  </data>
   <data name="MessageWorkItemFailed" xml:space="preserve">
     <value>{0} failed.</value>
   </data>

@@ -428,6 +428,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region WorkItemActionModel
+
 		class WorkItemActionModel : SimpleActionModel
 		{
 		    private const string _deleteKey = "delete";
@@ -540,6 +542,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
                 }
             }
 		}
+
+		#endregion
 
 		private static readonly object NoFilter = new object();
 
