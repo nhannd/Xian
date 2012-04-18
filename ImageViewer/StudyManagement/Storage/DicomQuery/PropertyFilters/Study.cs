@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
-    internal class StudyInstanceUid : UidPropertyFilter<Study, StudyEntry>
+    internal class StudyInstanceUid : UidPropertyFilter<Study>
     {
         public StudyInstanceUid(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyInstanceUid), criteria)
@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region Strings
 
-    internal class StudyId : StringPropertyFilter<Study, StudyEntry>
+    internal class StudyId : StringDicomPropertyFilter<Study>
     {
         public StudyId(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyId), criteria)
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class StudyDescription : StringPropertyFilter<Study, StudyEntry>
+    internal class StudyDescription : StringDicomPropertyFilter<Study>
     {
         public StudyDescription(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyDescription), criteria)
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class AccessionNumber : StringPropertyFilter<Study, StudyEntry>
+    internal class AccessionNumber : StringDicomPropertyFilter<Study>
     {
         public AccessionNumber(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.AccessionNumber), criteria)
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     internal class ProcedureCodeSequence
     {
-        internal class CodeValue : StringPropertyFilter<Study, StudyEntry>
+        internal class CodeValue : StringDicomPropertyFilter<Study>
         {
             public CodeValue(DicomAttributeCollection criteria)
                 : base(new DicomTagPath(DicomTags.ProcedureCodeSequence, DicomTags.CodeValue), criteria)
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             }
         }
 
-        internal class CodingSchemeDesignator : StringPropertyFilter<Study, StudyEntry>
+        internal class CodingSchemeDesignator : StringDicomPropertyFilter<Study>
         {
             public CodingSchemeDesignator(DicomAttributeCollection criteria)
                 : base(new DicomTagPath(DicomTags.ProcedureCodeSequence, DicomTags.CodingSchemeDesignator), criteria)
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class ModalitiesInStudy : StringPropertyFilter<Study, StudyEntry>
+    internal class ModalitiesInStudy : StringDicomPropertyFilter<Study>
     {
         public ModalitiesInStudy(DicomAttributeCollection criteria)
             : base(DicomTags.ModalitiesInStudy, criteria)
@@ -259,7 +259,55 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class ReferringPhysiciansName : StringPropertyFilter<Study, StudyEntry>
+    internal class SopClassesInStudy : StringDicomPropertyFilter<Study>
+    {
+        public SopClassesInStudy(DicomAttributeCollection criteria)
+            : base(DicomTags.SopClassesInStudy, criteria)
+        {
+            AddToQueryEnabled = true;
+            FilterResultsEnabled = true;
+        }
+
+        protected override string GetPropertyValue(Study item)
+        {
+            return item.SopClassesInStudy;
+        }
+
+        protected override IQueryable<Study> AddEqualsToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.SopClassesInStudy == null
+                        || study.SopClassesInStudy == ""
+                        || study.SopClassesInStudy == criterion
+                        || SqlMethods.Like(study.SopClassesInStudy, String.Format(@"{0}\%", criterion))
+                        || SqlMethods.Like(study.SopClassesInStudy, String.Format(@"%\{0}", criterion))
+                        || SqlMethods.Like(study.SopClassesInStudy, String.Format(@"%\{0}\%", criterion))
+                   select study;
+        }
+
+        protected override IQueryable<Study> AddLikeToQuery(IQueryable<Study> query, string criterion)
+        {
+            //DICOM says for any keys (required or optional) that we support matching on will always consider
+            //an empty value to be a match regardless of what the criteria is.
+            return from study in query
+                   where study.SopClassesInStudy == null
+                        || study.SopClassesInStudy == ""
+                        || SqlMethods.Like(study.SopClassesInStudy, criterion)
+                        || SqlMethods.Like(study.SopClassesInStudy, String.Format(@"{0}\%", criterion))
+                        || SqlMethods.Like(study.SopClassesInStudy, String.Format(@"%\{0}", criterion))
+                        || SqlMethods.Like(study.SopClassesInStudy, String.Format(@"%{0}\%", criterion))
+                   select study;
+        }
+
+        protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
+        {
+            resultAttribute.SetStringValue(item.SopClassesInStudy);
+        }
+    }
+
+    internal class ReferringPhysiciansName : StringDicomPropertyFilter<Study>
     {
         public ReferringPhysiciansName(DicomAttributeCollection criteria)
             : base(DicomTags.ReferringPhysiciansName, criteria)
@@ -298,7 +346,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region Dates
 
-    internal class StudyDate : DatePropertyFilter<Study, StudyEntry>
+    internal class StudyDate : DateDicomPropertyFilter<Study>
     {
         public StudyDate(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyDate), criteria)
@@ -341,7 +389,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region Times
 
-    internal class StudyTime : TimePropertyFilter<Study, StudyEntry>
+    internal class StudyTime : TimePropertyFilter<Study>
     {
         public StudyTime(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.StudyTime), criteria)
@@ -386,7 +434,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
     #region Non-Queryable
 
-    internal class NumberOfStudyRelatedInstances : DicomPropertyFilter<Study, StudyEntry>
+    internal class NumberOfStudyRelatedInstances : DicomPropertyFilter<Study>
     {
         public NumberOfStudyRelatedInstances(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.NumberOfStudyRelatedInstances), criteria)
@@ -402,7 +450,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class NumberOfStudyRelatedSeries : DicomPropertyFilter<Study, StudyEntry>
+    internal class NumberOfStudyRelatedSeries : DicomPropertyFilter<Study>
     {
         public NumberOfStudyRelatedSeries(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.NumberOfStudyRelatedSeries), criteria)

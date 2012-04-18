@@ -11,13 +11,8 @@
 
 #if UNIT_TESTS
 
-using System;
-using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
@@ -54,8 +49,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         {
             using (var context = CreateContext())
             {
-                var count = context.GetStudyStoreQuery().GetStudyCount(new StudyEntry{Study = new StudyRootStudyIdentifier{PatientId = "SCS*"}});
+                var count = context.GetStudyStoreQuery().GetStudyCount(
+                    new StudyEntry
+                        {
+                            Study = new StudyRootStudyIdentifier{PatientId = "SCS*"}
+                        });
                 Assert.AreEqual(3, count);
+            }
+        }
+
+        [Test]
+        public void SelectPatientIdEquals()
+        {
+            using (var context = CreateContext())
+            {
+                var query = context.GetStudyStoreQuery();
+                var criteria = new StudyRootStudyIdentifier
+                {
+                    PatientId = "12345678"
+                };
+
+                var results = query.GetStudyEntries(new StudyEntry{Study = criteria});
+                Assert.AreEqual(1, results.Count);
+                Assert.AreEqual(criteria.PatientId, results[0].Study.PatientId);
             }
         }
     }

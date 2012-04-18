@@ -3,20 +3,18 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class DatePropertyFilter<TDatabaseObject, TStoreEntry> : DicomPropertyFilter<TDatabaseObject, TStoreEntry>
+    internal abstract class DateDicomPropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
-        where TStoreEntry : StoreEntry
     {
         private bool _isRange;
         private DateTime? _date1;
         private DateTime? _date2;
         private bool _parsedCriterion;
 
-        protected DatePropertyFilter(DicomTagPath path, DicomAttributeCollection criteria)
+        protected DateDicomPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria)
             : base(path, criteria)
         {
             Platform.CheckTrue(path.ValueRepresentation.Name == "DA", "Path is not VR=DA");

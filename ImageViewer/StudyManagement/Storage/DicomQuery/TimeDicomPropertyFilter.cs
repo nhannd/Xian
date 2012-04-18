@@ -3,13 +3,11 @@ using System.Linq;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class TimePropertyFilter<TDatabaseObject, TStoreEntry> : DicomPropertyFilter<TDatabaseObject, TStoreEntry>
+    internal abstract class TimePropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
-        where TStoreEntry : StoreEntry
     {
         private bool _isRange;
         private long? _time1Ticks;

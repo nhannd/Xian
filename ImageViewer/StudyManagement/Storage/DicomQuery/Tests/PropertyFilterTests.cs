@@ -23,11 +23,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         public T TheProperty;
     }
 
-    internal class TestEntry : StoreEntry
-    {
-    }
-
-    internal class TestStringPropertyFilter : StringPropertyFilter<TestObject<string>, TestEntry>
+    internal class TestStringPropertyFilter : StringDicomPropertyFilter<TestObject<string>>
     {
         public bool CalledAddEqualsToQuery;
         public bool CalledAddLikeToQuery;
@@ -97,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             var result = new DicomAttributeCollection();
 
             var filter = new TestStringPropertyFilter(DicomTags.PatientId, criteria);
-            var iFilter = (IPropertyFilter<TestObject<string>, TestEntry>) filter;
+            var iFilter = (IPropertyFilter<TestObject<string>>) filter;
             iFilter.AddToQuery(null);
             iFilter.FilterResults(testObjects);
             iFilter.SetAttributeValue(testObjects[0], result);
@@ -124,7 +120,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             var result = new DicomAttributeCollection();
 
             var filter = new TestStringPropertyFilter(DicomTags.PatientId, criteria);
-            var iFilter = (IPropertyFilter<TestObject<string>, TestEntry>)filter;
+            var iFilter = (IPropertyFilter<TestObject<string>>)filter;
             iFilter.AddToQuery(null);
             iFilter.FilterResults(testObjects);
             iFilter.SetAttributeValue(testObjects[0], result);
@@ -176,7 +172,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             var result = new DicomAttributeCollection();
 
             var filter = new TestStringPropertyFilter(DicomTags.PatientId, criteria);
-            var iFilter = (IPropertyFilter<TestObject<string>, TestEntry>)filter;
+            var iFilter = (IPropertyFilter<TestObject<string>>)filter;
             iFilter.AddToQuery(null);
             iFilter.FilterResults(testObjects);
             iFilter.SetAttributeValue(testObjects[0], result);
@@ -207,7 +203,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             var result = new DicomAttributeCollection();
 
             var filter = new TestStringPropertyFilter(DicomTags.PatientId, criteria);
-            var iFilter = (IPropertyFilter<TestObject<string>, TestEntry>)filter;
+            var iFilter = (IPropertyFilter<TestObject<string>>)filter;
             iFilter.AddToQuery(null);
             iFilter.FilterResults(testObjects);
             iFilter.SetAttributeValue(testObjects[0], result);
@@ -241,7 +237,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
             var result = new DicomAttributeCollection();
 
             var filter = new TestStringPropertyFilter(DicomTags.StudyInstanceUid, criteria);
-            var iFilter = (IPropertyFilter<TestObject<string>, TestEntry>)filter;
+            var iFilter = (IPropertyFilter<TestObject<string>>)filter;
             iFilter.AddToQuery(null);
             iFilter.FilterResults(testObjects);
             iFilter.SetAttributeValue(testObjects[0], result);

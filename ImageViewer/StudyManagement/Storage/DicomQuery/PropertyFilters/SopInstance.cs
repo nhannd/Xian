@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 {
     internal class SopInstanceUniqueKey
     {
-        internal class StudyInstanceUid : UidPropertyFilter<SopInstance, ImageEntry>
+        internal class StudyInstanceUid : UidPropertyFilter<SopInstance>
         {
             public StudyInstanceUid(DicomAttributeCollection criteria)
                 : base(DicomTags.StudyInstanceUid, criteria)
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             }
         }
 
-        internal class SeriesInstanceUid : UidPropertyFilter<SopInstance, ImageEntry>
+        internal class SeriesInstanceUid : UidPropertyFilter<SopInstance>
         {
             public SeriesInstanceUid(DicomAttributeCollection criteria)
                 : base(DicomTags.SeriesInstanceUid, criteria)
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             }
         }
 
-        internal class SopInstanceUid : UidPropertyFilter<SopInstance, ImageEntry>
+        internal class SopInstanceUid : UidPropertyFilter<SopInstance>
         {
             public SopInstanceUid(DicomAttributeCollection criteria)
                 : base(DicomTags.SopInstanceUid, criteria)
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class InstanceNumber : DicomPropertyFilter<SopInstance, ImageEntry>
+    internal class InstanceNumber : DicomPropertyFilter<SopInstance>
     {
         public InstanceNumber(DicomAttributeCollection criteria)
             : base(DicomTags.InstanceNumber, criteria)
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class SopClassUid : UidPropertyFilter<SopInstance, ImageEntry>
+    internal class SopClassUid : UidPropertyFilter<SopInstance>
     {
         public SopClassUid(DicomAttributeCollection criteria)
             : base(DicomTags.SopClassUid, criteria)

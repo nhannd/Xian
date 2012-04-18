@@ -4,44 +4,35 @@ using System.Linq;
 using ClearCanvas.Dicom;
 using System;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal class PropertyFilters<TDatabaseObject, TStoreEntry>
+    internal class PropertyFilters<TDatabaseObject>
         where TDatabaseObject : class
-        where TStoreEntry : StoreEntry, new()
     {
         private readonly DicomAttributeCollection _criteria;
-        private IList<IPropertyFilter<TDatabaseObject, TStoreEntry>> _filters;
+        private IList<IPropertyFilter<TDatabaseObject>> _filters;
 
         public PropertyFilters(DicomAttributeCollection criteria)
         {
             _criteria = criteria;
         }
 
-        private IEnumerable<IPropertyFilter<TDatabaseObject, TStoreEntry>> Filters
+        private IEnumerable<IPropertyFilter<TDatabaseObject>> Filters
         {
             get { return _filters ?? (_filters = CreateFilters(_criteria)); }
         }
 
-        protected virtual List<IPropertyFilter<TDatabaseObject, TStoreEntry>> CreateFilters(
+        protected virtual List<IPropertyFilter<TDatabaseObject>> CreateFilters(
             DicomAttributeCollection criteria)
         {
-            var filters = new List<IPropertyFilter<TDatabaseObject, TStoreEntry>>();
-            var types = typeof (PropertyFilters<TDatabaseObject, TStoreEntry>).Assembly.GetTypes()
-                .Where(t => typeof (IPropertyFilter<TDatabaseObject, TStoreEntry>).IsAssignableFrom(t));
+            var types = typeof (PropertyFilters<TDatabaseObject>).Assembly.GetTypes()
+                .Where(t => typeof (IPropertyFilter<TDatabaseObject>).IsAssignableFrom(t));
 
-            foreach (var type in types)
-            {
-                var constructor = type.GetConstructor(new[] {typeof (DicomAttributeCollection)});
-                if (constructor != null)
-                    filters.Add(
-                        (IPropertyFilter<TDatabaseObject, TStoreEntry>)
-                        Activator.CreateInstance(type, new object[] {criteria}));
-            }
-
-            return filters;
+            return (from type in types
+                    let constructor = type.GetConstructor(new[] {typeof (DicomAttributeCollection)})
+                    where constructor != null
+                    select (IPropertyFilter<TDatabaseObject>)Activator.CreateInstance(type, new object[] {criteria})).ToList();
         }
 
         protected virtual IQueryable<TDatabaseObject> Query(IQueryable<TDatabaseObject> initialQuery)
@@ -52,8 +43,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         public IEnumerable<TDatabaseObject> Query(Table<TDatabaseObject> table)
         {
             var query = Query(table.AsQueryable());
-            var results = query.AsEnumerable(); //TODO (CR) - what is the reason for this line?
-            return FilterResults(results);
+            return FilterResults(query.AsEnumerable());
         }
 
         public IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> items)
@@ -77,18 +67,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         }
     }
 
-    internal class StudyPropertyFilters : PropertyFilters<Study, StudyEntry>
+    internal class StudyPropertyFilters : PropertyFilters<Study>
     {
         public StudyPropertyFilters(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
 
-        protected override List<IPropertyFilter<Study, StudyEntry>> CreateFilters(DicomAttributeCollection criteria)
+        protected override List<IPropertyFilter<Study>> CreateFilters(DicomAttributeCollection criteria)
         {
             var filters = base.CreateFilters(criteria);
             var modalitiesInStudyPath = new DicomTagPath(DicomTags.ModalitiesInStudy);
-            var dicomFilters = filters.OfType<DicomPropertyFilter<Study, StudyEntry>>().ToList();
+            var dicomFilters = filters.OfType<DicomPropertyFilter<Study>>().ToList();
             var modalitiesInStudyIndex = dicomFilters.FindIndex(f => f.Path.Equals(modalitiesInStudyPath));
             var modalitiesInStudyFilter = filters[modalitiesInStudyIndex];
 
@@ -109,7 +99,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         }
     }
 
-    internal class SeriesPropertyFilters : PropertyFilters<Series, SeriesEntry>
+    internal class SeriesPropertyFilters : PropertyFilters<Series>
     {
         public SeriesPropertyFilters(DicomAttributeCollection criteria)
             : base(criteria)
@@ -117,12 +107,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         }
     }
 
-    internal class SopInstancePropertyFilters : PropertyFilters<SopInstance, ImageEntry>
+    internal class SopInstancePropertyFilters : PropertyFilters<SopInstance>
     {
         public SopInstancePropertyFilters(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
     }
-
 }

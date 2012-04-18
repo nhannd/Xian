@@ -3,13 +3,11 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class UidPropertyFilter<TDatabaseObject, TStoreEntry> : DicomPropertyFilter<TDatabaseObject, TStoreEntry>
+    internal abstract class UidPropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
-        where TStoreEntry : StoreEntry
     {
         private string[] _criterionValues;
 

@@ -1,34 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class StringPropertyFilter<TDatabaseObject, TStoreEntry> : DicomPropertyFilter<TDatabaseObject, TStoreEntry>
+    internal abstract class StringDicomPropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
-        where TStoreEntry : StoreEntry
     {
-        //These are the VRs DICOM says can't be searched on with wildcards,
-        //therefore any wildcard characters present in the criteria are literal.
-        private static readonly string[] WildcardExcludedVRs = { "DA", "TM", "DT", "SL", "SS", "US", "UL", "FL", "FD", "OB", "OW", "UN", "AT", "DS", "IS", "AS", "UI" };
-
         private string[] _criterionValues;
 
-        protected StringPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria) 
+        protected StringDicomPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria) 
             : base(path, criteria)
         {
         }
 
-        protected StringPropertyFilter(DicomTag tag, DicomAttributeCollection criteria)
+        protected StringDicomPropertyFilter(DicomTag tag, DicomAttributeCollection criteria)
             : this(new DicomTagPath(tag), criteria)
         {
         }
 
-        protected StringPropertyFilter(uint tag, DicomAttributeCollection criteria)
+        protected StringDicomPropertyFilter(uint tag, DicomAttributeCollection criteria)
             : this(new DicomTagPath(tag), criteria)
         {
         }
@@ -37,8 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
             get 
             {
-                return _criterionValues ??
-                    (_criterionValues = DicomStringHelper.GetStringArray(CriterionValue) ?? new string[0]);
+                return _criterionValues ?? (_criterionValues = DicomStringHelper.GetStringArray(CriterionValue) ?? new string[0]);
             }
         }
 
@@ -52,23 +44,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
         protected internal bool IsWildcardCriterionAllowed
         {
-            get { return !WildcardExcludedVRs.Any(excludedVr => excludedVr == Path.ValueRepresentation.Name); }    
+            get { return QueryUtilities.IsWildcardCriterionAllowed(Path.ValueRepresentation); }
         }
 
-        internal bool IsWildcardCriterion(string criterion)
+        protected internal bool IsWildcardCriterion(string criterion)
         {
-            if (!IsWildcardCriterionAllowed)
-                return false;
-
-            if (String.IsNullOrEmpty(criterion))
-                return false;
-
-            return criterion.Contains("*") || criterion.Contains("?");
-        }
-
-        internal bool IsMultiValued(string value)
-        {
-            return !String.IsNullOrEmpty(value) && value.Contains(@"\");
+            return QueryUtilities.IsWildcardCriterion(Path.ValueRepresentation, criterion);
         }
 
         protected sealed override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
@@ -116,26 +97,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             throw new NotImplementedException("GetPropertyValue must be overridden to do post-filtering.");
         }
 
-        protected bool AreEqual(string value, string criterion)
-        {
-            //DICOM says if we manage an object having no value, it's considered a match.
-            return String.IsNullOrEmpty(value)
-            //DICOM says matching is case sensitive, but that's just silly.
-                || 0 == string.Compare(value, criterion, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        protected bool IsLike(string value, string criterion)
-        {
-            string test = criterion.Replace("*", ".*"); //zero or more characters
-            test = test.Replace("?", "."); //single character
-            test = String.Format("^{0}", test); //match at beginning
-
-            //DICOM says if we manage an object having no value, it's considered a match.
-            return String.IsNullOrEmpty(value)
-                   //DICOM says matching is case sensitive, but that's just silly.
-                   || Regex.IsMatch(value, test, RegexOptions.IgnoreCase);
-        }
-
         protected bool IsMatch(TDatabaseObject result, string criterion)
         {
             var propertyValue = GetPropertyValue(result);
@@ -148,9 +109,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             var propertyValues = DicomStringHelper.GetStringArray(propertyValue);
 
             if (!IsWildcardCriterion(criterion))
-                return propertyValues.Any(value => AreEqual(value, criterion));
+                return propertyValues.Any(value => QueryUtilities.AreEqual(value, criterion));
 
-            return propertyValues.Any(value => IsLike(value, criterion));
+            return propertyValues.Any(value => QueryUtilities.IsLike(value, criterion));
         }
 
         protected IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results, string[] criterionValues)

@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
-    internal class PatientId : StringPropertyFilter<Study, StudyEntry>
+    internal class PatientId : StringDicomPropertyFilter<Study>
     {
         public PatientId(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientId), criteria)
@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsName : StringPropertyFilter<Study, StudyEntry>
+    internal class PatientsName : StringDicomPropertyFilter<Study>
     {
         public PatientsName(DicomAttributeCollection criteria)
             : base(DicomTags.PatientsName, criteria)
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsSex : StringPropertyFilter<Study, StudyEntry>
+    internal class PatientsSex : StringDicomPropertyFilter<Study>
     {
         public PatientsSex(DicomAttributeCollection criteria)
             : base(DicomTags.PatientsSex, criteria)
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsBirthDate : DatePropertyFilter<Study, StudyEntry>
+    internal class PatientsBirthDate : DateDicomPropertyFilter<Study>
     {
         public PatientsBirthDate(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientsBirthDate), criteria)
@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class PatientsBirthTime : TimePropertyFilter<Study, StudyEntry>
+    internal class PatientsBirthTime : TimePropertyFilter<Study>
     {
         public PatientsBirthTime(DicomAttributeCollection criteria)
             : base(new DicomTagPath(DicomTags.PatientsBirthTime), criteria)

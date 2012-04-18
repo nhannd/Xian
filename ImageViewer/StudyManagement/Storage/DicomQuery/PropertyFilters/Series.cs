@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 {
     internal class SeriesUniqueKey
     {
-        internal class StudyInstanceUid : UidPropertyFilter<Series, SeriesEntry>
+        internal class StudyInstanceUid : UidPropertyFilter<Series>
         {
             public StudyInstanceUid(DicomAttributeCollection criteria) 
                 : base(DicomTags.StudyInstanceUid, criteria)
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
             }
         }
 
-        internal class SeriesInstanceUid : UidPropertyFilter<Series, SeriesEntry>
+        internal class SeriesInstanceUid : UidPropertyFilter<Series>
         {
             public SeriesInstanceUid(DicomAttributeCollection criteria)
                 : base(DicomTags.SeriesInstanceUid, criteria)
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class Modality : StringPropertyFilter<Series, SeriesEntry>
+    internal class Modality : StringDicomPropertyFilter<Series>
     {
         public Modality(DicomAttributeCollection criteria)
             : base(DicomTags.Modality, criteria)
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class SeriesDescription : StringPropertyFilter<Series, SeriesEntry>
+    internal class SeriesDescription : StringDicomPropertyFilter<Series>
     {
         public SeriesDescription(DicomAttributeCollection criteria)
             : base(DicomTags.SeriesDescription, criteria)
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class SeriesNumber : DicomPropertyFilter<Series, SeriesEntry>
+    internal class SeriesNumber : DicomPropertyFilter<Series>
     {
         public SeriesNumber(DicomAttributeCollection criteria)
             : base(DicomTags.SeriesNumber, criteria)
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
         }
     }
 
-    internal class NumberOfSeriesRelatedInstances : DicomPropertyFilter<Series, SeriesEntry>
+    internal class NumberOfSeriesRelatedInstances : DicomPropertyFilter<Series>
     {
         public NumberOfSeriesRelatedInstances(DicomAttributeCollection criteria)
             : base(DicomTags.NumberOfSeriesRelatedInstances, criteria)
