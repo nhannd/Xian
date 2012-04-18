@@ -3,7 +3,15 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal class DicomPropertyFilter<TDatabaseObject> : PropertyFilter<TDatabaseObject>
+    /// <summary>
+    /// Base class for <see cref="PropertyFilter{TDatabaseObject"/>s that are 1:1 with a DICOM Attribute
+    /// that can be queried and returned according to Part 4 of the DICOM standard.
+    /// </summary>
+    /// <remarks><see cref="DicomPropertyFilter{TDatabaseObject}"/>s use the template and rule
+    /// design patterns to allow subclasses to implement only what they need to, and not have
+    /// to worry about providing any logic. Subclasses should only have to filter SQL queries
+    /// and return property values for post-filtering.</remarks>
+    internal abstract class DicomPropertyFilter<TDatabaseObject> : PropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
     {
         protected DicomPropertyFilter(DicomTagPath path, IDicomAttributeProvider criteria)
@@ -15,15 +23,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             FilterResultsEnabled = false;
         }
 
+        protected internal bool IsReturnValueRequired { get; set; }
+
         public DicomTagPath Path { get; private set; }
         public DicomAttribute Criterion { get; private set; }
 
-        protected internal override bool IsCriterionEmpty
+        protected internal bool IsCriterionEmpty
         {
             get { return Criterion == null || Criterion.IsEmpty; }
         }
 
-        protected internal override bool IsCriterionNull
+        protected internal bool IsCriterionNull
         {
             get { return Criterion != null && Criterion.IsNull; }
         }

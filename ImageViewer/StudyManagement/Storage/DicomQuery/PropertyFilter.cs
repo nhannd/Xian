@@ -4,6 +4,13 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
+    /// <summary>
+    /// Base class for <see cref="PropertyFilter{TDatabaseObject"/>s.
+    /// </summary>
+    /// <remarks><see cref="DicomPropertyFilter{TDatabaseObject}"/>s use the template and rule
+    /// design patterns to allow subclasses to implement only what they need to, and not have
+    /// to worry about providing any logic. Subclasses should only have to filter SQL queries
+    /// and return property values for post-filtering.</remarks>
     internal interface IPropertyFilter<TDatabaseObject> 
         where TDatabaseObject : class 
     {
@@ -15,15 +22,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
     internal abstract class PropertyFilter<TDatabaseObject> : IPropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
     {
-        /// <summary>
-        /// The value is required to be returned in the results.
-        /// </summary>
-        protected internal bool IsReturnValueRequired { get; set; }
         protected internal bool AddToQueryEnabled { get; set; }
         protected internal bool FilterResultsEnabled { get; set; }
 
-        protected internal abstract bool IsCriterionEmpty { get; }
-        protected internal abstract bool IsCriterionNull { get; }
         protected internal abstract bool ShouldAddToQuery { get; }
         protected internal virtual bool ShouldAddToResult { get; set; }
 

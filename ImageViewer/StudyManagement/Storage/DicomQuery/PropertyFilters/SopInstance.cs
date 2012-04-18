@@ -2,7 +2,6 @@
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {

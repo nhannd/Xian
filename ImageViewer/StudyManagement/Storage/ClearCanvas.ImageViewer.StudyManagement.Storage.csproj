@@ -95,6 +95,7 @@
     <Compile Include="DeviceBroker.cs" />
     <Compile Include="DicomQuery\DicomPropertyFilter.cs" />
     <Compile Include="DicomQuery\ICriterion.cs" />
+    <Compile Include="DicomQuery\MultiValuedPropertyRule.cs" />
     <Compile Include="DicomQuery\PropertyFilter.cs" />
     <Compile Include="DicomQuery\PropertyFilters.cs" />
     <Compile Include="DicomQuery\PropertyFilters\Common.cs" />

@@ -1,5 +1,4 @@
 ﻿using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {

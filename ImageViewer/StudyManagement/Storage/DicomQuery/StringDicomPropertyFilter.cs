@@ -6,14 +6,16 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 {
-    internal abstract class StringDicomPropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
-        where TDatabaseObject : class
+    internal abstract class StringDicomPropertyFilter<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>,
+        IMultiValuedPropertyFilter<TDatabaseObject> where TDatabaseObject : class
     {
         private string[] _criterionValues;
+        private readonly MultiValuedPropertyRule<TDatabaseObject> _rule;
 
         protected StringDicomPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria) 
             : base(path, criteria)
         {
+            _rule = new MultiValuedPropertyRule<TDatabaseObject>(this);
         }
 
         protected StringDicomPropertyFilter(DicomTag tag, DicomAttributeCollection criteria)
@@ -26,70 +28,33 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         {
         }
 
-        protected string[] CriterionValues
+        string[] IMultiValuedPropertyFilter<TDatabaseObject>.CriterionValues
         {
             get 
             {
-                return _criterionValues ?? (_criterionValues = DicomStringHelper.GetStringArray(CriterionValue) ?? new string[0]);
+                var criterionValue = Criterion == null ? String.Empty : Criterion.ToString();
+                return _criterionValues ?? (_criterionValues = DicomStringHelper.GetStringArray(criterionValue) ?? new string[0]);
             }
         }
 
-        protected internal string CriterionValue
-        {
-            get
-            {
-                return Criterion == null ? String.Empty : Criterion.ToString();
-            }
-        }
-
-        protected internal bool IsWildcardCriterionAllowed
+        bool IMultiValuedPropertyFilter<TDatabaseObject>.IsWildcardCriterionAllowed
         {
             get { return QueryUtilities.IsWildcardCriterionAllowed(Path.ValueRepresentation); }
         }
 
-        protected internal bool IsWildcardCriterion(string criterion)
+        bool IMultiValuedPropertyFilter<TDatabaseObject>.IsWildcardCriterion(string criterion)
         {
             return QueryUtilities.IsWildcardCriterion(Path.ValueRepresentation, criterion);
         }
 
-        protected sealed override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
+        IQueryable<TDatabaseObject> IMultiValuedPropertyFilter<TDatabaseObject>.AddEqualsToQuery(IQueryable<TDatabaseObject> query, string criterion)
         {
-            if (CriterionValues.Length > 1)
-                return AddToQuery(query, CriterionValues);
-
-            return AddToQuery(query, CriterionValue);
+            return AddEqualsToQuery(query, criterion);
         }
 
-        protected IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query, string criterionValue)
+        IQueryable<TDatabaseObject> IMultiValuedPropertyFilter<TDatabaseObject>.AddLikeToQuery(IQueryable<TDatabaseObject> query, string criterion)
         {
-            if (!IsWildcardCriterion(criterionValue))
-                return AddEqualsToQuery(query, criterionValue);
-
-            var sqlCriterion = criterionValue.Replace("*", "%").Replace("?", "_");
-            var returnQuery = AddLikeToQuery(query, sqlCriterion);
-            return returnQuery;
-        }
-
-        protected IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> inputQuery, string[] criterionValues)
-        {
-            IQueryable<TDatabaseObject> unionedQuery = null;
-            foreach (var criterionValue in criterionValues.Where(value => !String.IsNullOrEmpty(value)))
-            {
-                var criterionQuery = AddToQuery(inputQuery, criterionValue);
-                unionedQuery = unionedQuery == null ? criterionQuery : unionedQuery.Union(criterionQuery);
-            }
-
-            return unionedQuery ?? inputQuery;
-        }
-
-        protected virtual IQueryable<TDatabaseObject> AddEqualsToQuery(IQueryable<TDatabaseObject> query, string criterion)
-        {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
-        }
-
-        protected virtual IQueryable<TDatabaseObject> AddLikeToQuery(IQueryable<TDatabaseObject> query, string criterion)
-        {
-            throw new NotImplementedException("If AddToQueryEnabled is true, this must be implemented.");
+            return AddLikeToQuery(query, criterion);
         }
 
         protected virtual string GetPropertyValue(TDatabaseObject item)
@@ -97,58 +62,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
             throw new NotImplementedException("GetPropertyValue must be overridden to do post-filtering.");
         }
 
-        protected bool IsMatch(TDatabaseObject result, string criterion)
+        string[] IMultiValuedPropertyFilter<TDatabaseObject>.GetPropertyValues(TDatabaseObject item)
         {
-            var propertyValue = GetPropertyValue(result);
-            if (String.IsNullOrEmpty(propertyValue))
-            {
-                //DICOM says if we maintain an object with an empty value, it's a match for any criteria.
-                return true;
-            }
-
-            var propertyValues = DicomStringHelper.GetStringArray(propertyValue);
-
-            if (!IsWildcardCriterion(criterion))
-                return propertyValues.Any(value => QueryUtilities.AreEqual(value, criterion));
-
-            return propertyValues.Any(value => QueryUtilities.IsLike(value, criterion));
+            return DicomStringHelper.GetStringArray(GetPropertyValue(item));
         }
 
-        protected IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results, string[] criterionValues)
+        protected sealed override IQueryable<TDatabaseObject> AddToQuery(IQueryable<TDatabaseObject> query)
         {
-            var resultsList = new List<TDatabaseObject>(results);
-            IEnumerable<TDatabaseObject> unionedResults = null;
-            foreach (var criterionValue in criterionValues)
-            {
-                var criterion = criterionValue;
-                var criterionResults = resultsList.Where(result => IsMatch(result, criterion));
-                unionedResults = unionedResults == null ? criterionResults : unionedResults.Union(criterionResults);
-            }
-
-            return unionedResults ?? results;
-        }
-
-        protected IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results, string criterionValue)
-        {
-            //DICOM says if we maintain an object with an empty value, it's a match for any criteria.
-            if (string.IsNullOrEmpty(criterionValue))
-                return results;
-
-            return results.Where(result => IsMatch(result, criterionValue));
+            return _rule.AddToQuery(query);
         }
 
         protected override IEnumerable<TDatabaseObject> FilterResults(IEnumerable<TDatabaseObject> results)
         {
-            if (CriterionValues.Length > 1)
-            {
-                var filtered = FilterResults(results, CriterionValues);
-                return filtered;
-            }
-            else
-            {
-                var filtered = FilterResults(results, CriterionValue);
-                return filtered;
-            }
+            return _rule.FilterResults(results);
+        }
+
+        protected virtual IQueryable<TDatabaseObject> AddEqualsToQuery(IQueryable<TDatabaseObject> query, string criterion)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddEqualsToQuery must be implemented.");
+        }
+
+        protected virtual IQueryable<TDatabaseObject> AddLikeToQuery(IQueryable<TDatabaseObject> query, string criterion)
+        {
+            throw new NotImplementedException("If AddToQueryEnabled is true, AddLikeToQuery must be implemented.");
         }
     }
 }
