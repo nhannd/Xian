@@ -62,8 +62,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AlertViewerComponentControl));
 			this._alertTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._toolbar = new System.Windows.Forms.ToolStrip();
-			this._filter = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+			this._filter = new System.Windows.Forms.ToolStripComboBox();
 			this._toolbar.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -86,15 +86,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 			resources.ApplyResources(this._toolbar, "_toolbar");
 			this._toolbar.Name = "_toolbar";
 			// 
-			// _filter
-			// 
-			this._filter.Name = "_filter";
-			resources.ApplyResources(this._filter, "_filter");
-			// 
 			// toolStripLabel1
 			// 
 			this.toolStripLabel1.Name = "toolStripLabel1";
 			resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
+			// 
+			// _filter
+			// 
+			this._filter.Name = "_filter";
+			resources.ApplyResources(this._filter, "_filter");
 			// 
 			// AlertViewerComponentControl
 			// 

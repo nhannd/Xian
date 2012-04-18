@@ -157,10 +157,10 @@
     <value>17, 17</value>
   </metadata>
   <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>33, 22</value>
+    <value>36, 22</value>
   </data>
   <data name="toolStripLabel1.Text" xml:space="preserve">
-    <value>Filter</value>
+    <value>Show</value>
   </data>
   <data name="_filter.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 25</value>
@@ -198,17 +198,17 @@
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
     <value>326, 669</value>
   </data>
-  <data name="&gt;&gt;_filter.Name" xml:space="preserve">
-    <value>_filter</value>
-  </data>
-  <data name="&gt;&gt;_filter.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;toolStripLabel1.Name" xml:space="preserve">
     <value>toolStripLabel1</value>
   </data>
   <data name="&gt;&gt;toolStripLabel1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_filter.Name" xml:space="preserve">
+    <value>_filter</value>
+  </data>
+  <data name="&gt;&gt;_filter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>AlertViewerComponentControl</value>

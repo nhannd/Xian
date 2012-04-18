@@ -115,6 +115,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void _openLogLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			EventsHelper.Fire(OpenLogClicked, this, EventArgs.Empty);
+			Dismiss(false);
 		}
 
 		private void SetLocation()

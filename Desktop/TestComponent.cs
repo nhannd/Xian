@@ -11,6 +11,7 @@
 
 #pragma warning disable 1591
 
+using System;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
@@ -71,6 +72,21 @@ namespace ClearCanvas.Desktop
 			ApplicationComponent.LaunchAsWorkspaceDialog(this.Host.DesktopWindow, new TestComponent("WorkspaceDialog from " + _name), "WorkspaceDialog from " + _name);
 		}
 
+		public void AlertError()
+		{
+			ShowAlert(AlertLevel.Error);
+		}
+
+		public void AlertWarning()
+		{
+			ShowAlert(AlertLevel.Warning);
+		}
+
+		public void AlertInfo()
+		{
+			ShowAlert(AlertLevel.Info);
+		}
+
         public void SetTitle()
         {
             this.Host.Title = _text;
@@ -91,5 +107,29 @@ namespace ClearCanvas.Desktop
             this.Exit(ApplicationComponentExitCode.Accepted);
         }
 
+		private void ShowAlert(AlertLevel level)
+		{
+			switch (level)
+			{
+				case AlertLevel.Info:
+					var a = new AlertNotificationArgs(level,  "Wherever you go, there you are.",
+								  "Go there", window => window.ShowMessageBox("there", MessageBoxActions.Ok));
+					this.Host.DesktopWindow.ShowAlert(a);
+					break;
+				case AlertLevel.Warning:
+					var b = new AlertNotificationArgs(level, "Power corrupts; absolute power corrupts absolutely.",
+								  "Get some power", window => window.ShowMessageBox("power", MessageBoxActions.Ok));
+					this.Host.DesktopWindow.ShowAlert(b);
+					break;
+				case AlertLevel.Error:
+					var c = new AlertNotificationArgs(level, "Disco inferno!",
+								  "Go to the disco", window => window.ShowMessageBox("disco", MessageBoxActions.Ok));
+					this.Host.DesktopWindow.ShowAlert(c);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("level");
+			}
+
+		}
     }
 }

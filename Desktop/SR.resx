@@ -481,4 +481,22 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="AlertFilterErrorsOnly" xml:space="preserve">
     <value>Errors only</value>
   </data>
+  <data name="ColumnLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="ColumnMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="ColumnTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="MenuAlertViewer" xml:space="preserve">
+    <value>Alerts</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="TitleAlertViewer" xml:space="preserve">
+    <value>Alerts</value>
+  </data>
 </root>

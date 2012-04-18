@@ -88,6 +88,33 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Level.
+        /// </summary>
+        public static string ColumnLevel {
+            get {
+                return ResourceManager.GetString("ColumnLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message.
+        /// </summary>
+        public static string ColumnMessage {
+            get {
+                return ResourceManager.GetString("ColumnMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        public static string ColumnTime {
+            get {
+                return ResourceManager.GetString("ColumnTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default Theme.
         /// </summary>
         public static string DescriptionDefaultTheme {
@@ -583,6 +610,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alerts.
+        /// </summary>
+        public static string MenuAlertViewer {
+            get {
+                return ResourceManager.GetString("MenuAlertViewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string MenuCloseWindow {
@@ -754,6 +790,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        public static string MenuView {
+            get {
+                return ResourceManager.GetString("MenuView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The background task is still running.  Are you sure you want to cancel?.
         /// </summary>
         public static string MessageConfirmCancelTask {
@@ -885,6 +930,15 @@ namespace ClearCanvas.Desktop {
         public static string TitleAdd {
             get {
                 return ResourceManager.GetString("TitleAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alerts.
+        /// </summary>
+        public static string TitleAlertViewer {
+            get {
+                return ResourceManager.GetString("TitleAlertViewer", resourceCulture);
             }
         }
         

@@ -22,7 +22,7 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
-	[MenuAction("show", "global-menus/Test/Alert Viewer", "Show")]
+	[MenuAction("show", "global-menus/MenuView/MenuAlertViewer", "Show")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class AlertViewerTool : Tool<IDesktopToolContext>
 	{
@@ -35,7 +35,7 @@ namespace ClearCanvas.Desktop
 				_shelf = ApplicationComponent.LaunchAsShelf(
 					this.Context.DesktopWindow,
 					new AlertViewerComponent(),
-					"Alerts",
+					SR.TitleAlertViewer,
 					ShelfDisplayHint.DockRight);
 				_shelf.Closed += (sender, args) => _shelf = null;
 			}
@@ -72,52 +72,25 @@ namespace ClearCanvas.Desktop
 		private readonly AlertLog _log = AlertLog.Instance;
 		private Filters _filter;
 
-		private readonly CrudActionModel _alertActions;
+		private readonly SimpleActionModel _alertActions;
 
 		public AlertViewerComponent()
 		{
 			_alertTable = new Table<Alert>();
-			_alertActions = new CrudActionModel(true, true, true);
+			_alertActions = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 		}
 
 		public override void Start()
 		{
 			base.Start();
 
-			_alertTable.Columns.Add(new TableColumn<Alert, IconSet>("Level", GetAlertIcon, 0.1f));
-			_alertTable.Columns.Add(new TableColumn<Alert, string>("Message", a => a.Message, 0.9f));
-			_alertTable.Columns.Add(new TableColumn<Alert, string>("Time", a => Format.DateTime(a.Time), 0.4f));
+			_alertTable.Columns.Add(new TableColumn<Alert, IconSet>(SR.ColumnLevel, GetAlertIcon, 0.1f));
+			_alertTable.Columns.Add(new TableColumn<Alert, string>(SR.ColumnMessage, a => a.Message, 0.9f));
+			_alertTable.Columns.Add(new TableColumn<Alert, string>(SR.ColumnTime, a => Format.DateTime(a.Time), 0.4f));
 
 			Refresh();
 
 			_log.AlertLogged += AlertLoggedEventHandler;
-
-			_alertActions.Add.SetClickHandler(() => AddAlert(AlertLevel.Info));
-			_alertActions.Edit.SetClickHandler(() => AddAlert(AlertLevel.Warning));
-			_alertActions.Delete.SetClickHandler(() => AddAlert(AlertLevel.Error));
-		}
-
-		private void AddAlert(AlertLevel level)
-		{
-			var msg = "";
-			switch (level)
-			{
-				case AlertLevel.Info:
-					msg = "It's a quiet day in the office.";
-					break;
-				case AlertLevel.Warning:
-					msg = "Power corrupts, and absolute power corrupts absolutely.";
-					break;
-				case AlertLevel.Error:
-					msg = "You know, I thought everything was alright, but now that I'm looking into it, it's clear there are some issues here, and I'm not sure what we can do about it.";
-					break;
-				default:
-					throw new ArgumentOutOfRangeException("level");
-			}
-
-			var alert = new AlertNotificationArgs(level, msg,
-			                      "Link", window => window.ShowMessageBox("test", MessageBoxActions.Ok));
-			this.Host.DesktopWindow.ShowAlert(alert);
 		}
 
 		public override void Stop()

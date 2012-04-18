@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 
@@ -24,7 +23,7 @@ namespace ClearCanvas.Desktop
 		Error
 	}
 
-	public static class AlertLevelExtensions
+	internal static class AlertLevelExtensions
 	{
 		public static IconSet GetIcon(this AlertLevel level)
 		{
@@ -41,7 +40,7 @@ namespace ClearCanvas.Desktop
 		}
 	}
 
-	public class Alert
+	internal class Alert
 	{
 		public Alert(AlertLevel level, DateTime time, string message)
 		{
@@ -56,12 +55,12 @@ namespace ClearCanvas.Desktop
 		public bool Acknowledged { get; set; }
 	}
 
-	public class AlertLog
+	internal class AlertLog
 	{
 
 		private static readonly AlertLog _instance = new AlertLog();
 
-		public static AlertLog Instance
+		internal static AlertLog Instance
 		{
 			get { return _instance; }
 		}
