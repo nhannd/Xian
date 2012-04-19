@@ -16,10 +16,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 			DicomTagDictionary.GetDicomTag("StationName"),
 			DicomTagDictionary.GetDicomTag("InstitutionName"),
 			DicomTagDictionary.GetDicomTag("ReferringPhysiciansName"),
-			DicomTagDictionary.GetDicomTag("TransferSyntaxUid"),
-			DicomTagDictionary.GetDicomTag("PhotometricInterpretation"),
-			DicomTagDictionary.GetDicomTag("BitsAllocated"),
-			DicomTagDictionary.GetDicomTag("BitsStored"),
 			DicomTagDictionary.GetDicomTag("PatientsBirthDate"),
 			DicomTagDictionary.GetDicomTag("StudyDate")
 		};
