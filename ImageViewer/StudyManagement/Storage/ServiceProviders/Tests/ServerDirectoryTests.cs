@@ -28,10 +28,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
         [TestFixtureSetUp]
         public void Initialize()
         {
-            var extensionFactory = new UnitTestExtensionFactory(new Dictionary<Type, Type>
-                                                                    {
-                                                                        { typeof(ServiceProviderExtensionPoint), typeof(ServerDirectoryServiceProvider) }  
-                                                                    });
+            var extensionFactory = new UnitTestExtensionFactory
+                                       {
+                                            { typeof(ServiceProviderExtensionPoint), typeof(DicomServerConfigurationServiceProvider) },
+                                            { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryServiceProvider) }
+                                       };
+
             Platform.SetExtensionFactory(extensionFactory);
         }
 

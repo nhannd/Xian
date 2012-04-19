@@ -12,8 +12,11 @@
 #if UNIT_TESTS
 
 using System.Linq;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
@@ -28,6 +31,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
         [TestFixtureSetUp]
         public void Setup()
         {
+            var extensionFactory = new UnitTestExtensionFactory
+                                       {
+                                            { typeof(ServiceProviderExtensionPoint), typeof(DicomServerConfigurationServiceProvider) },
+                                            { typeof(ServiceProviderExtensionPoint), typeof(StudyStoreQueryServiceProvider) },
+                                            { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryServiceProvider) }
+                                       };
+
+            Platform.SetExtensionFactory(extensionFactory);
+
             DatabaseHelper.CreateDatabase(_testDatabaseFilename, DatabaseHelper.GetDatabaseFilePath(_testDatabaseFilename));
         }
 
