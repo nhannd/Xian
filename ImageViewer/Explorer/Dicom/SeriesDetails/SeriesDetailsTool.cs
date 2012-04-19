@@ -59,11 +59,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}
 		}
 
-		protected SeriesDetailsComponent SeriesDetailsComponent
-		{
-			get { return Context.Component; }
-		}
-
 		protected IPatientData Patient
 		{
 			get { return Context.Patient; }

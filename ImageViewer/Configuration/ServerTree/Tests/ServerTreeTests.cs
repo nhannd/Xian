@@ -2,7 +2,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.Dicom.Utilities.Rules.Specifications;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
@@ -11,13 +14,20 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
     [TestFixture]
     public class ServerTreeTests
     {
+        [TestFixtureSetUp]
+        public void Initialize()
+        {
+            var extensionFactory = new NullExtensionFactory();
+            Platform.SetExtensionFactory(extensionFactory);
+        }
+
         [Test]
         public void TestCreateExampleTree()
         {
             var tree = new ServerTree(null);
             AssertExampleTree(tree);
 
-            tree = new ServerTree(null, null);
+            tree = new ServerTree(null, null, false);
             AssertExampleTree(tree);
         }
 

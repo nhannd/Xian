@@ -61,11 +61,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Retrieve Series.
+        ///   Looks up a localized string similar to Delete Series.
+        /// </summary>
+        internal static string MenuDeleteSeries {
+            get {
+                return ResourceManager.GetString("MenuDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve Series.
         /// </summary>
         internal static string MenuRetrieveSeries {
             get {
                 return ResourceManager.GetString("MenuRetrieveSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Series.
+        /// </summary>
+        internal static string MenuSendSeries {
+            get {
+                return ResourceManager.GetString("MenuSendSeries", resourceCulture);
             }
         }
         
@@ -124,6 +142,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Series.
+        /// </summary>
+        internal static string ToolbarDeleteSeries {
+            get {
+                return ResourceManager.GetString("ToolbarDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrieve Series.
         /// </summary>
         internal static string ToolbarRetrieveSeries {
@@ -133,11 +160,38 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Retrieves the selected series.
+        ///   Looks up a localized string similar to Send Series.
+        /// </summary>
+        internal static string ToolbarSendSeries {
+            get {
+                return ResourceManager.GetString("ToolbarSendSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the selected series from local storage.
+        /// </summary>
+        internal static string TooltipDeleteSeries {
+            get {
+                return ResourceManager.GetString("TooltipDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve the selected series.
         /// </summary>
         internal static string TooltipRetrieveSeries {
             get {
                 return ResourceManager.GetString("TooltipRetrieveSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send the selected series to another DICOM device.
+        /// </summary>
+        internal static string TooltipSendSeries {
+            get {
+                return ResourceManager.GetString("TooltipSendSeries", resourceCulture);
             }
         }
         

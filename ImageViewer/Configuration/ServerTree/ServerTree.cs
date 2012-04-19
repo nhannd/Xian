@@ -28,6 +28,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         }
 
         internal ServerTree(StoredServerGroup rootGroup, List<ApplicationEntity> directoryServers)
+            : this(rootGroup, directoryServers, true)
+        {
+        }
+
+        internal ServerTree(StoredServerGroup rootGroup, List<ApplicationEntity> directoryServers, bool save)
         {
             LocalServer = new ServerTreeLocalServer();
 
@@ -53,7 +58,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             {
                 AddExamples();
                 //TODO (Marmot): Move the add examples code out.
-                Save();
+                if (save)
+                    Save();
             }
             else
             {

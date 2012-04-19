@@ -12,7 +12,10 @@
 #if UNIT_TESTS
 
 using System.Linq;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
@@ -20,6 +23,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
     [TestFixture]
     public class SopInstanceQueryTests : TestBase
     {
+        [TestFixtureSetUp]
+        public void Initialize()
+        {
+            var extensionFactory = new UnitTestExtensionFactory
+                                       {
+                                            { typeof(ServiceProviderExtensionPoint), typeof(DicomServerConfigurationServiceProvider) },
+                                            { typeof(ServiceProviderExtensionPoint), typeof(StudyStoreQueryServiceProvider) },
+                                            { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryServiceProvider) }
+                                       };
+
+            Platform.SetExtensionFactory(extensionFactory);
+        }
+
         [Test]
         public void SelectAllSops()
         {
