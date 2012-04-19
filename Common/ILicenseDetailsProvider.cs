@@ -51,6 +51,17 @@ namespace ClearCanvas.Common
         /// License expiry time or NULL if the license will not expire
         /// </returns>
         DateTime? GetExpiryTime();
+
+        /// <summary>
+        /// Gets a boolean value indicating whether the current license on local machine is for evaluation.
+        /// </summary>
+        /// <returns>
+        /// True if it's an evaluation license. False otherwise (see remark)
+        /// </returns>
+        /// <remarks>
+        /// The implementation of ILicenseDetailsProvider decides what value to return when license is invalid or does not exist.
+        /// </remarks>
+        bool IsEvaluationLicense();
 	}
 
 	/// <summary>
@@ -124,6 +135,11 @@ namespace ClearCanvas.Common
 		    public DateTime? GetExpiryTime()
 		    {
                 return null;
+		    }
+
+		    public bool IsEvaluationLicense()
+		    {
+                return false;
 		    }
 		}
 	}
