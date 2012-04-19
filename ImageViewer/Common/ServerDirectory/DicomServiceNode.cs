@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public string Location
         {
-            get { return Real.AETitle; }
+            get { return Real.Location; }
         }
 
         public IScpParameters ScpParameters
@@ -77,13 +77,10 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             if (typeof(T) == typeof(IStudyRootQuery))
                 return IsLocal || ScpParameters != null;
 
-            //if (typeof(T).Equals(typeof(IHeaderStreamingService)))
-            //    return StreamingParameters != null;
-
             return false;
         }
 
-        protected override T GetService<T>()
+        public override T GetService<T>()
         {
             if (!IsSupported<T>())
                 throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
@@ -102,8 +99,6 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             }
 
             throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
-            //if (typeof(T).Equals(typeof(IHeaderStreamingService)))
-            //    return new HeaderStreamingClient
         }
     }
 }

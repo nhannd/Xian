@@ -20,9 +20,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
-using ClearCanvas.ImageViewer.Configuration.ServerTree;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Utilities;
@@ -62,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		private readonly StudyItem _studyItem;
 		private readonly Table<SeriesIdentifier> _seriesTable;
 		private readonly IList<ISeriesData> _seriesList;
-		private readonly IServerTreeNode _server;
+        private readonly IDicomServiceNode _server;
 
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarActionModel;
@@ -71,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		private IList<ISeriesData> _selectedSeries;
 		private ISelection _selection;
 
-		internal SeriesDetailsComponent(StudyItem studyItem, IServerTreeNode server)
+		internal SeriesDetailsComponent(StudyItem studyItem, IDicomServiceNode server)
 		{
 			_studyItem = studyItem;
 			_seriesTable = new Table<SeriesIdentifier>();
@@ -311,32 +309,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		internal void RefreshInternal()
 		{
 			_seriesTable.Items.Clear();
-
-		    //TODO (Marmot): Perfect candidate for service node changes.
-			IStudyRootQuery query;
-			if (_server.IsLocalServer)
-			{
-			    //TODO (Marmot): not ideal.
-			    query = new StoreStudyRootQuery();
-			}
-			else
-			{
-                var server = (IServerTreeDicomServer)_server;
-				query = new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle, server.AETitle, server.HostName, server.Port);
-			}
-
-			try
-			{
-				SeriesIdentifier identifier = new SeriesIdentifier();
-				identifier.StudyInstanceUid = _studyItem.StudyInstanceUid;
-				IList<SeriesIdentifier> results = query.SeriesQuery(identifier);
-				_seriesTable.Items.AddRange(results);
-			}
-			finally
-			{
-				if (query is IDisposable)
-					((IDisposable)query).Dispose();
-			}
+		    var identifier = new SeriesIdentifier {StudyInstanceUid = _studyItem.StudyInstanceUid};
+		    IList<SeriesIdentifier> results = null;
+            _server.GetService<IStudyRootQuery>(s => results = s.SeriesQuery(identifier));
+			_seriesTable.Items.AddRange(results);
 		}
 
 		public void Close()

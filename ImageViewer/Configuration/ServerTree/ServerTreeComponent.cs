@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		ServerTree ServerTree { get; }
 
-		AEServerGroup SelectedServers { get; }
+		DicomServiceNodeList SelectedServers { get; }
 		event EventHandler SelectedServerChanged;
 
 		bool IsReadOnly { get; }
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 				get { return _component._serverTree; }
 			}
 
-			public AEServerGroup SelectedServers
+			public DicomServiceNodeList SelectedServers
 			{
 				get { return _component.SelectedServers; }
 			}
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		private ServerTree _serverTree;
 		private event EventHandler _selectedServerChanged;
-		private AEServerGroup _selectedServers;
+		private DicomServiceNodeList _selectedServers;
 		private int _updateType;
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarModel;
@@ -120,14 +120,14 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		public ServerTreeComponent()
 		{
-			_selectedServers = new AEServerGroup();
+			_selectedServers = new DicomServiceNodeList();
 			_serverTree = new ServerTree();
 
-			if (_serverTree.CurrentNode != null && (_serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalServer))
+			if (_serverTree.CurrentNode != null)
 			{
-				_selectedServers.Servers.Add(_serverTree.CurrentNode);
+			    _selectedServers.AddRange(_serverTree.CurrentNode.ToDicomServiceNodes());
 				_selectedServers.Name = _serverTree.CurrentNode.DisplayName;
-				_selectedServers.GroupID = _serverTree.CurrentNode.Path;
+				_selectedServers.Id = _serverTree.CurrentNode.Path;
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			get { return _serverTree; }
 		}
 
-		public AEServerGroup SelectedServers
+		public DicomServiceNodeList SelectedServers
 		{
 			get { return _selectedServers; }
 		}
@@ -204,27 +204,16 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		#endregion
 
-		public void SetSelection(IServerTreeNode dataNode)
+		public void SetSelection(IServerTreeNode serverTreeNode)
 		{
-			if (dataNode.IsServer || dataNode.IsLocalServer)
-			{
-				_selectedServers = new AEServerGroup();
-				_selectedServers.Servers.Add(dataNode);
-				_selectedServers.Name = dataNode.DisplayName;
-				_selectedServers.GroupID = dataNode.Path;
-				_serverTree.CurrentNode = dataNode;
-				FireSelectedServerChangedEvent();
-			}
-			else if (dataNode.IsServerGroup)
-			{
-				_selectedServers = new AEServerGroup();
-				_selectedServers.Servers = _serverTree.FindChildServers(dataNode as IServerTreeGroup);
-				_selectedServers.GroupID = dataNode.Path;
-				_selectedServers.Name = dataNode.DisplayName;
-				_serverTree.CurrentNode = dataNode;
-				FireSelectedServerChangedEvent();
-			}
+		    _selectedServers = new DicomServiceNodeList(serverTreeNode.ToDicomServiceNodes())
+		                           {
+		                               Name = serverTreeNode.DisplayName,
+		                               Id = serverTreeNode.Path
+		                           };
 
+		    _serverTree.CurrentNode = serverTreeNode;
+            FireSelectedServerChangedEvent();
 		}
 
 		public bool NodeMoved(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)

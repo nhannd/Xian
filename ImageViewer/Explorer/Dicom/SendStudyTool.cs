@@ -66,13 +66,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (code != ApplicationComponentExitCode.Accepted)
 				return;
 
-			if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Servers == null || serverTreeComponent.SelectedServers.Servers.Count == 0)
+			if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Count == 0)
 			{
 				Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
 				return;
 			}
 
-			if (serverTreeComponent.SelectedServers.Servers.Count > 1)
+			if (serverTreeComponent.SelectedServers.Count > 1)
 			{
 				if (Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
@@ -84,13 +84,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             foreach (StudyItem item in Context.SelectedStudies)
             {
                 studyUids.Add(item.StudyInstanceUid);
-                foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
+                foreach (var destination in serverTreeComponent.SelectedServers)
                 {
-                    var aeInformation = new ApplicationEntity
-                    {
-                        AETitle = destination.AETitle,
-                        ScpParameters = new ScpParameters(destination.HostName, destination.Port)
-                    };
+                    var aeInformation = new ApplicationEntity(destination);
 
                     try
                     {
@@ -123,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void UpdateEnabled()
 		{
 			Enabled = (this.Context.SelectedStudy != null &&
-			           this.Context.SelectedServerGroup.IsLocalServer &&
+			           this.Context.SelectedServers.IsLocalServer &&
 			           WorkItemActivityMonitor.IsRunning);
 		}
 	}

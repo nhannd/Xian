@@ -17,7 +17,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Configuration;
-using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -33,11 +32,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class OpenStudyTool : StudyBrowserTool
 	{
-		public OpenStudyTool()
-		{
-
-		}
-
 		public override void Initialize()
 		{
 			base.Initialize();
@@ -86,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				                     AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer
 				                 };
 
-			    if (Context.SelectedServerGroup.IsLocalServer)
+			    if (Context.SelectedServers.IsLocalServer)
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
 						helper.AddStudy(study.StudyInstanceUid, study.Server, LocalStudyLoaderName);
@@ -98,6 +92,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						var server = study.Server as IApplicationEntity;
 						if (server != null)
 						{
+						    //TODO (Marmot): fix.
 							if (server.StreamingParameters != null)
 								helper.AddStudy(study.StudyInstanceUid, study.Server, StreamingStudyLoaderName);
 							else
@@ -117,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (GetAtLeastOneServerSupportsLoading() || base.Context.SelectedServerGroup.Servers.Count == 0)
+			if (GetAtLeastOneServerSupportsLoading() || base.Context.SelectedServers.Count == 0)
 				Context.DefaultActionHandler = OpenStudy;
 		}
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
@@ -132,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-			if (Context.SelectedServerGroup.IsLocalServer)
+			if (Context.SelectedServers.IsLocalServer)
 			{
 				Enabled = Context.SelectedStudy != null;
 			}
@@ -149,26 +144,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private int GetNumberOfSelectedStudies()
 		{
-			if (Context.SelectedStudy == null)
-				return 0;
-
-			return Context.SelectedStudies.Count;
+		    return Context.SelectedStudy == null ? 0 : Context.SelectedStudies.Count;
 		}
 
-		private bool GetAtLeastOneServerSupportsLoading()
+	    private bool GetAtLeastOneServerSupportsLoading()
 		{
-			if (Context.SelectedServerGroup.IsLocalServer && base.IsLocalStudyLoaderSupported)
-				return true;
-
-			foreach (IServerTreeDicomServer server in base.Context.SelectedServerGroup.Servers)
-			{
-				if (server.IsStreaming && base.IsStreamingStudyLoaderSupported)
-					return true;
-				else if (!server.IsStreaming && base.IsRemoteStudyLoaderSupported)
-					return true;
-			}
-
-			return false;
+		    return base.Context.SelectedServers != null && Context.SelectedServers.AnySupport<IStudyLoader>();
 		}
 
 		private int GetNumberOfLoadableStudies()
@@ -177,11 +158,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			if (Context.SelectedStudy != null)
 			{
-				if (Context.SelectedServerGroup.IsLocalServer && IsLocalStudyLoaderSupported)
+				if (Context.SelectedServers.IsLocalServer && IsLocalStudyLoaderSupported)
 					return Context.SelectedStudies.Count;
 
 				foreach (StudyItem study in Context.SelectedStudies)
 				{
+				    //TODO (Marmot):
                     var server = study.Server as IApplicationEntity;
 					if (server != null)
 					{

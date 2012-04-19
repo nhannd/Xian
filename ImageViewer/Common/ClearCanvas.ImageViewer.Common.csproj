@@ -112,6 +112,7 @@
     <Compile Include="StudyManagement\StoreEntries.cs" />
     <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
+    <Compile Include="StudyManagement\StudyRootQueryAdapter.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />
     <Compile Include="MemoryCollector.cs" />
     <Compile Include="MemoryManagementSettings.cs" />

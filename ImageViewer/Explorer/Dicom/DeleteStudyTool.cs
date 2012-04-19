@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void UpdateEnabled()
 		{
 			this.Enabled = (this.Context.SelectedStudy != null &&
-			                this.Context.SelectedServerGroup.IsLocalServer &&
+			                this.Context.SelectedServers.IsLocalServer &&
 			                WorkItemActivityMonitor.IsRunning);
 		}
 

@@ -37,10 +37,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 		}
 
         internal static List<IDicomServiceNode> SelectFrom(ServerTree.ServerTree serverTree)
-		{
-            var allServers = serverTree.FindChildServers().OfType<IServerTreeDicomServer>();
-			return SelectFrom(allServers);
-		}
+        {
+            return serverTree.RootServerGroup.ToDicomServiceNodes();
+        }
 
         public static List<IDicomServiceNode> GetAll()
 		{

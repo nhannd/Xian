@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
@@ -18,7 +19,7 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
-    public static class Extensions
+    public static class ServerTreeExtensions
     {
         public static ApplicationEntity ToDataContract(this IServerTreeDicomServer server)
         {
@@ -32,6 +33,22 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
                 ae.StreamingParameters = new StreamingParameters(server.HeaderServicePort, server.WadoServicePort);
             
             return ae;
+        }
+
+        public static List<IDicomServiceNode> ToDicomServiceNodes(this IServerTreeNode serverTreeNode)
+        {
+            Platform.CheckForNullReference(serverTreeNode, "serverTreeNode");
+            if (serverTreeNode.IsLocalServer)
+                return new List<IDicomServiceNode>{ ServerDirectory.GetLocalServer() };
+
+            if (serverTreeNode.IsServer)
+                return new List<IDicomServiceNode>{((IServerTreeDicomServer)serverTreeNode).ToDicomServiceNode()};
+
+            var group = (IServerTreeGroup) serverTreeNode;
+            var childServers = new List<IDicomServiceNode>();
+            childServers.AddRange(group.ChildGroups.SelectMany(g => g.ToDicomServiceNodes()));
+            childServers.AddRange(group.Servers.Cast<IServerTreeDicomServer>().Select(g => g.ToDicomServiceNode()));
+            return childServers;
         }
 
         public static IDicomServiceNode ToDicomServiceNode(this IServerTreeDicomServer server)

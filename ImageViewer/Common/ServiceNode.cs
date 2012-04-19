@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageViewer.Common
     {
         bool IsSupported<T>() where T : class;
         void GetService<T>(Action<T> service) where T : class;
+        T GetService<T>() where T : class;
     }
 
     public abstract class ServiceNode : IServiceNode
@@ -33,11 +34,12 @@ namespace ClearCanvas.ImageViewer.Common
             }
             catch (Exception)
             {
-                if (service is IDisposable)
+                var disposable = service as IDisposable;
+                if (disposable != null)
                 {
                     try
                     {
-                        ((IDisposable)service).Dispose();
+                        disposable.Dispose();
                     }
                     catch (Exception ex)
                     {
@@ -51,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Common
 
         #endregion
 
-        protected abstract T GetService<T>() where T : class;
+        public abstract T GetService<T>() where T : class;
     }
 
     public static class ServiceNodeExtensions

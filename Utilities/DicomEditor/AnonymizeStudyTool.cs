@@ -175,7 +175,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			this.Enabled = LocalStudyLoader != null && 
 							WorkItemActivityMonitor.IsRunning && 
 							this.Context.SelectedStudies.Count == 1 && 
-							this.Context.SelectedServerGroup.IsLocalServer;
+							this.Context.SelectedServers.IsLocalServer;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

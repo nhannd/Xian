@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 		private void UpdateEnabled()
 		{
 			base.Enabled = this.IsLocalStudyLoaderSupported
-						   && base.Context.SelectedServerGroup != null && base.Context.SelectedServerGroup.IsLocalServer
+						   && base.Context.SelectedServers != null && base.Context.SelectedServers.IsLocalServer
 						   && base.Context.SelectedStudies != null && base.Context.SelectedStudies.Count > 0;
 		}
 
