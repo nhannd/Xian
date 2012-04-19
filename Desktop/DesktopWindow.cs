@@ -227,7 +227,11 @@ namespace ClearCanvas.Desktop
 		/// <param name="linkAction">The link action to display.</param>
 		public void ShowAlert(AlertLevel level, string message, string linkText, Action<DesktopWindow> linkAction)
 		{
-			var args = new AlertNotificationArgs(level, message, linkText, linkAction);
+			var args = new AlertNotificationArgs(level, message)
+			{
+				LinkText = linkText,
+				LinkAction = linkAction,
+			};
 			ShowAlert(args);
 		}
 

@@ -31,27 +31,35 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AlertNotificationForm));
 			this._hostPanel = new System.Windows.Forms.Panel();
+			this._openLogLink = new System.Windows.Forms.LinkLabel();
 			this._closeButton = new System.Windows.Forms.PictureBox();
 			this._icon = new System.Windows.Forms.PictureBox();
 			this._contextualLink = new System.Windows.Forms.LinkLabel();
 			this._message = new System.Windows.Forms.Label();
 			this._timer = new System.Windows.Forms.Timer(this.components);
-			this._openLogLink = new System.Windows.Forms.LinkLabel();
+			this._contentPanel = new System.Windows.Forms.Panel();
 			this._hostPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._closeButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._icon)).BeginInit();
+			this._contentPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _hostPanel
 			// 
 			resources.ApplyResources(this._hostPanel, "_hostPanel");
 			this._hostPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this._hostPanel.Controls.Add(this._contentPanel);
 			this._hostPanel.Controls.Add(this._openLogLink);
 			this._hostPanel.Controls.Add(this._closeButton);
-			this._hostPanel.Controls.Add(this._icon);
-			this._hostPanel.Controls.Add(this._contextualLink);
-			this._hostPanel.Controls.Add(this._message);
 			this._hostPanel.Name = "_hostPanel";
+			// 
+			// _openLogLink
+			// 
+			resources.ApplyResources(this._openLogLink, "_openLogLink");
+			this._openLogLink.AutoEllipsis = true;
+			this._openLogLink.Name = "_openLogLink";
+			this._openLogLink.TabStop = true;
+			this._openLogLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openLogLink_LinkClicked);
 			// 
 			// _closeButton
 			// 
@@ -89,13 +97,14 @@
 			// 
 			this._timer.Tick += new System.EventHandler(this.OnTimerTick);
 			// 
-			// _openLogLink
+			// _contentPanel
 			// 
-			resources.ApplyResources(this._openLogLink, "_openLogLink");
-			this._openLogLink.AutoEllipsis = true;
-			this._openLogLink.Name = "_openLogLink";
-			this._openLogLink.TabStop = true;
-			this._openLogLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openLogLink_LinkClicked);
+			this._contentPanel.BackColor = System.Drawing.SystemColors.ControlLightLight;
+			this._contentPanel.Controls.Add(this._icon);
+			this._contentPanel.Controls.Add(this._message);
+			this._contentPanel.Controls.Add(this._contextualLink);
+			resources.ApplyResources(this._contentPanel, "_contentPanel");
+			this._contentPanel.Name = "_contentPanel";
 			// 
 			// AlertNotificationForm
 			// 
@@ -113,6 +122,7 @@
 			this._hostPanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._closeButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._icon)).EndInit();
+			this._contentPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -127,5 +137,6 @@
 		private System.Windows.Forms.PictureBox _icon;
 		private System.Windows.Forms.PictureBox _closeButton;
 		private System.Windows.Forms.LinkLabel _openLogLink;
+		private System.Windows.Forms.Panel _contentPanel;
     }
 }
