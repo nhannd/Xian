@@ -57,7 +57,7 @@ namespace ClearCanvas.Desktop
 	/// Components should extend this class rather than implement <see cref="IApplicationComponent"/> directly,
 	/// as it provides a default implementation suitable for most situations.
 	/// </remarks>
-	public abstract class ApplicationComponent : IApplicationComponent, INotifyPropertyChanged, IDataErrorInfo
+	public abstract class ApplicationComponent : IApplicationComponent, IDataErrorInfo
 	{
 
 		#region LaunchAsWorkspace overloads
