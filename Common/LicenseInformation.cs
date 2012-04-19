@@ -207,7 +207,7 @@ namespace ClearCanvas.Common
 
 				lock (_syncRoot)
 				{
-					return _licenseDetailsProvider.GetExpiryTime();
+					return _licenseDetailsProvider.GetExpiryDate();
 				}
 			}
 		}

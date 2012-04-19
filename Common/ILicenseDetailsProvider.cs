@@ -37,31 +37,30 @@ namespace ClearCanvas.Common
 		DateTime? FirstRun { get; }
 
 		/// <summary>
-		/// Gets the status if the license is for a limited-use trial.
+		/// Gets the status of the license if it is a time-limited trial.
 		/// </summary>
 		/// <param name="timeRemaining">Time remaining in trial period.</param>
 		/// <returns>True if license is for a limited-use trial; False otherwise.</returns>
 		bool GetTrialStatus(out TimeSpan? timeRemaining);
 
+		/// <summary>
+		/// Gets the license expiry date in local time.
+		/// </summary>
+		/// <returns>
+		/// License expiry time or NULL if the license does not expire.
+		/// </returns>
+		DateTime? GetExpiryDate();
 
-        /// <summary>
-        /// Gets the license expiry (local) time 
-        /// </summary>
-        /// <returns>
-        /// License expiry time or NULL if the license will not expire
-        /// </returns>
-        DateTime? GetExpiryTime();
-
-        /// <summary>
-        /// Gets a boolean value indicating whether the current license on local machine is for evaluation.
-        /// </summary>
-        /// <returns>
-        /// True if it's an evaluation license. False otherwise (see remark)
-        /// </returns>
-        /// <remarks>
-        /// The implementation of ILicenseDetailsProvider decides what value to return when license is invalid or does not exist.
-        /// </remarks>
-        bool IsEvaluationLicense();
+		/// <summary>
+		/// Gets a boolean value indicating whether the current license on local machine is for evaluation purposes.
+		/// </summary>
+		/// <returns>
+		/// True if it's an evaluation license. False otherwise (see remark)
+		/// </returns>
+		/// <remarks>
+		/// The implementation of ILicenseDetailsProvider decides what value to return when license is invalid or does not exist.
+		/// </remarks>
+		bool IsEvaluationLicense();
 	}
 
 	/// <summary>
@@ -132,15 +131,15 @@ namespace ClearCanvas.Common
 				return false;
 			}
 
-		    public DateTime? GetExpiryTime()
-		    {
-                return null;
-		    }
+			public DateTime? GetExpiryDate()
+			{
+				return null;
+			}
 
-		    public bool IsEvaluationLicense()
-		    {
-                return false;
-		    }
+			public bool IsEvaluationLicense()
+			{
+				return false;
+			}
 		}
 	}
 }
