@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	public interface ISeriesDetailsToolContext : IToolContext
 	{
 		IPatientData Patient { get; }
-		IStudyData Study { get; }
+        IStudyRootData Study { get; }
 		IList<ISeriesData> AllSeries { get; }
 		IList<ISeriesData> SelectedSeries { get; }
 		event EventHandler SelectedSeriesChanged;

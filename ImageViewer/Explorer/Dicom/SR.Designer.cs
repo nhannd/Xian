@@ -626,6 +626,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send Series.
+        /// </summary>
+        internal static string TitleSendSeries {
+            get {
+                return ResourceManager.GetString("TitleSendSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Send Study.
         /// </summary>
         internal static string TitleSendStudy {

@@ -361,7 +361,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 				get { return _component.StudyItem; }
 			}
 
-			public IStudyData Study
+            public IStudyRootData Study
 			{
 				get { return _component.StudyItem; }
 			}

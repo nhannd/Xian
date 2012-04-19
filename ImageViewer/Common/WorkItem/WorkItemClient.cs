@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
@@ -233,7 +233,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     public class DicomSendClient : WorkItemClient
     {
-        public void MoveStudy(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, WorkItemPriorityEnum priority)
+        public void MoveStudy(ApplicationEntity remoteAEInfo, IStudyRootData study, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -271,7 +271,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void MoveSeries(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
+        public void MoveSeries(ApplicationEntity remoteAEInfo, IStudyRootData study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -309,7 +309,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void MoveSops(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
+        public void MoveSops(ApplicationEntity remoteAEInfo, IStudyRootData study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -348,7 +348,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void PublishFiles(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, DeletionBehaviour behaviour, List<string> files  )
+        public void PublishFiles(ApplicationEntity remoteAEInfo, IStudyRootData study, DeletionBehaviour behaviour, List<string> files)
         {
             EventResult result = EventResult.Success;
             try

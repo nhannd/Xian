@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="LinkOpenActivityMonitor" xml:space="preserve">
+    <value>Open Activity Monitor</value>
+  </data>
   <data name="MenuDeleteSeries" xml:space="preserve">
     <value>Delete Series</value>
   </data>
@@ -129,11 +132,30 @@
   <data name="MenuShowSeriesDetails" xml:space="preserve">
     <value>View Series Details</value>
   </data>
+  <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
+    <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
+  </data>
+  <data name="MessageFailedToSendSeries" xml:space="preserve">
+    <value>Failed to initiate sending of the selected items.</value>
+  </data>
+  <data name="MessageFormatSendSeriesScheduled" xml:space="preserve">
+    <value>The send of {0} series to {1} has been scheduled.</value>
+  </data>
+  <data name="MessageSelectDestination" xml:space="preserve">
+    <value>Please select a destination.</value>
+  </data>
+  <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
+    <value>Failed to send the selected studies because the DICOM Server service is not running.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
+  </data>
   <data name="TitleModality" xml:space="preserve">
     <value>Modality</value>
   </data>
   <data name="TitleNumberOfSeriesRelatedInstances" xml:space="preserve">
     <value>Instances</value>
+  </data>
+  <data name="TitleSendSeries" xml:space="preserve">
+    <value>Send Series</value>
   </data>
   <data name="TitleSeriesDescription" xml:space="preserve">
     <value>Description</value>

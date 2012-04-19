@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SendStudyInternal()
 		{
-			if (!Enabled || this.Context.SelectedStudy == null)
+			if (!Enabled || Context.SelectedStudy == null)
 				return;
 
 		    var serverTreeComponent = new ServerTreeComponent
@@ -78,12 +78,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 			}
 
-			var studyUids = new List<string>();
-	
             var client = new DicomSendClient();
             foreach (StudyItem item in Context.SelectedStudies)
             {
-                studyUids.Add(item.StudyInstanceUid);
                 foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
                 {
                     var aeInformation = new ApplicationEntity
@@ -122,8 +119,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-			Enabled = (this.Context.SelectedStudy != null &&
-			           this.Context.SelectedServerGroup.IsLocalServer &&
+			Enabled = (Context.SelectedStudy != null &&
+			           Context.SelectedServerGroup.IsLocalServer &&
 			           WorkItemActivityMonitor.IsRunning);
 		}
 	}

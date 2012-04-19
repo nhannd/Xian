@@ -16,32 +16,32 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
-	[ButtonAction("activate", ToolbarActionSite + "/ToolbarSendSeries", "SendSeries")]
-    [MenuAction("activate", ContextMenuActionSite + "/MenuSendSeries", "SendSeries")]
-    [Tooltip("activate", "TooltipSendSeries")]
-    [IconSet("activate", "Icons.SendSeriesToolSmall.png", "Icons.SendSeriesToolSmall.png", "Icons.SendSeriesToolSmall.png")]
-	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Send)]
-    [ExtensionOf(typeof (SeriesDetailsToolExtensionPoint))]
-    public class SendSeriesTool : SeriesDetailsTool
-	{
-        public void SendSeries()
-		{
+    [ButtonAction("activate", ToolbarActionSite + "/ToolbarDeleteSeries", "DeleteSeries")]
+    [MenuAction("activate", ContextMenuActionSite + "/MenuDeleteSeries", "DeleteSeries")]
+    [Tooltip("activate", "TooltipDeleteSeries")]
+    [IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+    [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Delete)]
+    [ExtensionOf(typeof(SeriesDetailsToolExtensionPoint))]
+    public class DeleteSeriesTool : SeriesDetailsTool
+    {
+        public void DeleteSeries()
+        {
             throw new NotImplementedException("Marmot - need to restore this.");
-		}
+        }
 
-		protected override void OnSelectedSeriesChanged()
-		{
-			UpdateEnabled();
-		}
+        protected override void OnSelectedSeriesChanged()
+        {
+            UpdateEnabled();
+        }
 
-		private void UpdateEnabled()
-		{
-			Enabled = (Context.SelectedSeries != null &&
-			           Context.SelectedSeries.Count > 0 &&
-			           //TODO (Marmot): This determines local/remote; will be fixing this shortly.
+        private void UpdateEnabled()
+        {
+            Enabled = (Context.SelectedSeries != null &&
+                       Context.SelectedSeries.Count > 0 &&
+                //TODO (Marmot): This determines local/remote; will be fixing this shortly.
                        Server == null &&
-			           WorkItemActivityMonitor.IsRunning);
-		}
-	}
+                       WorkItemActivityMonitor.IsRunning);
+        }
+    }
 }
