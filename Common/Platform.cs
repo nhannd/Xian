@@ -163,7 +163,17 @@ namespace ClearCanvas.Common
         /// <param name="factory"></param>
         public static void SetExtensionFactory(IExtensionFactory factory)
         {
-            ExtensionPoint.SetExtensionFactory(factory);
+            lock (_syncRoot)
+            {
+                //I'm sure there are other places where this might be a problem, but if
+                //you use an extension factory that creates service provider extensions,
+                //you can get UnknownServiceException problems in unit tests unless
+                //these 2 variables are repopulated.
+                _serviceProviders = null;
+                _duplexServiceProviders = null;
+            }
+
+		    ExtensionPoint.SetExtensionFactory(factory);
         }
 #endif
 

@@ -217,11 +217,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                                                    },
                                        Data = new ImageEntryData
                                                   {
-                                                      BitsAllocated = BitsAllocated,
-                                                      BitsStored = BitsStored,
-                                                      PhotometricInterpretation = PhotometricInterpretation,
-                                                      SourceAETitle = SourceAETitle,
-                                                      TransferSyntax = TransferSyntaxUid
+                                                      SourceAETitle = SourceAETitle
                                                   }
                                    };
             return entry;

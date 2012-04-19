@@ -262,23 +262,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             InstitutionNamesInStudy = DicomStringHelper.GetDicomStringArray(
                 AppendIfNotIn(institutionNamesInStudy, dataSet[DicomTags.InstitutionName].GetString(0, "")));
 
-            string[] photometricInterpretationsInStudy = DicomStringHelper.GetStringArray(PhotometricInterpretationsInStudy ?? "");
-            PhotometricInterpretationsInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(photometricInterpretationsInStudy, dataSet[DicomTags.PhotometricInterpretation].GetString(0, "")));
-
-            string[] bitsAllocatedInStudy = DicomStringHelper.GetStringArray(BitsAllocatedInStudy ?? "");
-            BitsAllocatedInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(bitsAllocatedInStudy, dataSet[DicomTags.BitsAllocated].GetString(0, "")));
-
-            string[] bitsStoredInStudy = DicomStringHelper.GetStringArray(BitsStoredInStudy ?? "");
-            BitsStoredInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(bitsStoredInStudy, dataSet[DicomTags.BitsStored].GetString(0, "")));
-
             #region Meta Info
-
-            string[] transferSyntaxesInStudy = DicomStringHelper.GetStringArray(TransferSyntaxesInStudy ?? "");
-            TransferSyntaxesInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(transferSyntaxesInStudy, dicomMessage.MetaInfo[DicomTags.TransferSyntaxUid].GetString(0, "")));
 
             string[] sourceAETitlesInStudy = DicomStringHelper.GetStringArray(SourceAETitlesInStudy ?? "");
             SourceAETitlesInStudy = DicomStringHelper.GetDicomStringArray(
@@ -354,11 +338,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         public StudyEntry ToStoreEntry()
         {
-            int[] bitsAllocated;
-            DicomStringHelper.TryGetIntArray(BitsAllocatedInStudy, out bitsAllocated);
-            int[] bitsStored;
-            DicomStringHelper.TryGetIntArray(BitsStoredInStudy, out bitsStored);
-
             var entry = new StudyEntry
             {
                 Study = new StudyRootStudyIdentifier(this)
@@ -369,15 +348,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 },
                 Data = new StudyEntryData
                 {
-                    BitsAllocatedInStudy = bitsAllocated,
-                    BitsStoredInStudy = bitsStored,
                     DeleteTime = DeleteTime,
                     InstitutionNamesInStudy = DicomStringHelper.GetStringArray(InstitutionNamesInStudy),
-                    PhotometricInterpretationsInStudy = DicomStringHelper.GetStringArray(PhotometricInterpretationsInStudy),
                     SourceAETitlesInStudy = DicomStringHelper.GetStringArray(SourceAETitlesInStudy),
                     StationNamesInStudy = DicomStringHelper.GetStringArray(StationNamesInStudy),
-                    StoreTime = StoreTime,
-                    TransferSyntaxesInStudy = DicomStringHelper.GetStringArray(TransferSyntaxesInStudy)
+                    StoreTime = StoreTime
                 }
             };
 

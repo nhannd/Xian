@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="MenuDeleteSeries" xml:space="preserve">
+    <value>Delete Series</value>
+  </data>
   <data name="MenuRetrieveSeries" xml:space="preserve">
-    <value>&amp;Retrieve Series</value>
+    <value>Retrieve Series</value>
+  </data>
+  <data name="MenuSendSeries" xml:space="preserve">
+    <value>Send Series</value>
   </data>
   <data name="MenuShowSeriesDetails" xml:space="preserve">
     <value>View Series Details</value>
@@ -138,11 +144,23 @@
   <data name="TitleSeriesNumber" xml:space="preserve">
     <value>Number</value>
   </data>
+  <data name="ToolbarDeleteSeries" xml:space="preserve">
+    <value>Delete Series</value>
+  </data>
   <data name="ToolbarRetrieveSeries" xml:space="preserve">
     <value>Retrieve Series</value>
   </data>
+  <data name="ToolbarSendSeries" xml:space="preserve">
+    <value>Send Series</value>
+  </data>
+  <data name="TooltipDeleteSeries" xml:space="preserve">
+    <value>Delete the selected series from local storage</value>
+  </data>
   <data name="TooltipRetrieveSeries" xml:space="preserve">
-    <value>Retrieves the selected series</value>
+    <value>Retrieve the selected series</value>
+  </data>
+  <data name="TooltipSendSeries" xml:space="preserve">
+    <value>Send the selected series to another DICOM device</value>
   </data>
   <data name="TooltipSeriesDetails" xml:space="preserve">
     <value>View Series Details</value>

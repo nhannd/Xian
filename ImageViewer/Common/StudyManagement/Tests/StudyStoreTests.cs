@@ -31,14 +31,9 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
                                                    },
                                        Data = new StudyEntryData
                                                   {
-                                                      TransferSyntaxesInStudy = new string[]{TransferSyntax.ExplicitVrLittleEndian.UidString, TransferSyntax.ImplicitVrLittleEndian.UidString},
                                                       SourceAETitlesInStudy = new string[]{"PACS1", "PACS2"},
                                                       StationNamesInStudy = new string[] { "STN1", "STN2" },
                                                       InstitutionNamesInStudy = new string[] { "INST1", "INST2" },
-
-                                                      PhotometricInterpretationsInStudy = new string[] { "MONOCHROME1", "MONOCHROME2" },
-                                                      BitsAllocatedInStudy = new int[] { 16, 8 },
-                                                      BitsStoredInStudy = new int[] { 16, 15, 11 }
                                                   }
                                    };
 
