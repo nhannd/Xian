@@ -107,8 +107,6 @@
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
-    <Compile Include="StudyManagement\Rules\RuleTransformer.cs" />
-    <Compile Include="StudyManagement\Rules\Tests\RuleTransformerTests.cs" />
     <Compile Include="StudyManagement\StoreEntries.cs" />
     <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
@@ -204,6 +202,9 @@
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="StudyManagement\Rules\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

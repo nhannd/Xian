@@ -16,8 +16,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 			DicomTagDictionary.GetDicomTag("StationName"),
 			DicomTagDictionary.GetDicomTag("InstitutionName"),
 			DicomTagDictionary.GetDicomTag("ReferringPhysiciansName"),
-			DicomTagDictionary.GetDicomTag("PatientsBirthDate"),
-			DicomTagDictionary.GetDicomTag("StudyDate")
 		};
 
 		public RuleCondition()
