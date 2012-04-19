@@ -178,17 +178,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 Series = new SeriesIdentifier(this)
                 {
                     InstanceAvailability = "ONLINE",
-                    RetrieveAeTitle = Utilities.GetLocalServerAETitle(),
+                    RetrieveAeTitle = Utilities.GetLocalServerAETitle(),    
                     SpecificCharacterSet = SpecificCharacterSet
                 },
                 Data = new SeriesEntryData
                 {
-                    BitsAllocatedInSeries = BitsAllocatedInSeries,
-                    BitsStoredInSeries = BitsStoredInSeries,
                     DeleteTime = GetScheduledDeleteTime(),
-                    PhotometricInterpretationsInSeries = PhotometricInterpretationsInSeries,
-                    SourceAETitlesInSeries = SourceAETitlesInSeries,
-                    TransferSyntaxesInSeries = TransferSyntaxesInSeries
+                    SourceAETitlesInSeries = SourceAETitlesInSeries
                 }
             };
             return entry;
