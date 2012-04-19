@@ -29,6 +29,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             get { return _context ?? (_context = new DataAccessContext(DataAccessContext.WorkItemMutex)); }
         }
 
+        public Study ContextStudy { get; set; }
+
         public ViewerCommandProcessorContext()
         {
             BackupDirectory = Path.GetTempPath();

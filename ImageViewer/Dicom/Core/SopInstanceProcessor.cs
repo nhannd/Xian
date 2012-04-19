@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// <summary>
         /// Represents a file to be processed by <see cref="SopInstanceProcessor"/>
         /// </summary>
-        public class ProcessorFile
+        public class ProcessorFile : IDisposable
         {
             public ProcessorFile(DicomFile file, WorkItemUid uid)
             {
@@ -58,6 +58,12 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             /// An optional <see cref="WorkItemUid"/> associated with the file to be processed.  Will be updated appropriately.
             /// </summary>
             public WorkItemUid ItemUid { get; set; }
+
+            public void Dispose()
+            {
+                File = null;
+                ItemUid = null;
+            }
         }
         #endregion
 

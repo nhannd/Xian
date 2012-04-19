@@ -27,9 +27,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         private readonly string _studyInstanceUid;
         private readonly StudyXml _studyXml;
         private readonly StudyLocation _location;
-
-        public bool Created { get; private set; }
-        public Study Study { get; private set; }        
+        
+        public ViewerCommandProcessorContext Context { get { return ProcessorContext as ViewerCommandProcessorContext; } } 
 
         public InsertOrUpdateStudyCommand(StudyLocation location, DicomMessageBase message, StudyXml xml) : base("Insert or Update Study Command")
         {
@@ -41,28 +40,25 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         protected override void OnExecute(CommandProcessor theProcessor)
         {
-            var broker = DataAccessContext.GetStudyBroker();
-            Study = broker.GetStudy(_studyInstanceUid);
-            Created = false;
-
-            if (Study == null)
+            if (Context.ContextStudy == null)
             {
-                // This is a bit of a hack to handle batch processing of studies
-                Study = _location.Study;
-                Created = true;
-                Study.DeleteTime = DateTime.Now.AddDays(1);
-                Study.StoreTime = Platform.Time;                
+                var broker = DataAccessContext.GetStudyBroker();
+                Context.ContextStudy = broker.GetStudy(_studyInstanceUid);
+
+                if (Context.ContextStudy == null)
+                {
+                    // This is a bit of a hack to handle batch processing of studies
+                    Context.ContextStudy = _location.Study;
+                    Context.ContextStudy.DeleteTime = DateTime.Now.AddDays(1);
+                    Context.ContextStudy.StoreTime = Platform.Time;
+                    broker.AddStudy(Context.ContextStudy);
+                }
             }
 
-            Study.Deleted = false;
-
-            Study.Update(_messageBase);
-            
-            Study.NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
-            Study.NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
-
-            if (Created)
-                broker.AddStudy(Study);
+            Context.ContextStudy.Deleted = false;            
+            Context.ContextStudy.NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
+            Context.ContextStudy.NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
+            Context.ContextStudy.Update(_messageBase);
         }
     }
 }

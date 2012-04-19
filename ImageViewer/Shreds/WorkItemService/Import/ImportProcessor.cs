@@ -68,6 +68,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             else
             {
                 ImportFiles(Request.FilePaths, Request.FileExtensions, Request.Recursive);
+                GC.Collect();
             }
 
             if (CancelPending)
