@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         private static string GetUserName()
         {
             IPrincipal p = Thread.CurrentPrincipal;
-            if (p == null || p.Identity == null || string.IsNullOrEmpty(p.Identity.Name))
+            if (p == null || string.IsNullOrEmpty(p.Identity.Name))
                 return string.Format("{0}@{1}", Environment.UserName, Environment.UserDomainName);
             return p.Identity.Name;
         }
@@ -152,7 +152,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             finally
             {
-                //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
                 AuditHelper.LogCreateInstances(new string[0], auditedInstances, EventSource.CurrentUser, result);
             }
         }
@@ -182,7 +181,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             finally
             {
-                //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
                 AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, result);
             }
         }
@@ -227,6 +225,66 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 Exception = ex;
                 Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToStartReindex);
                 throw;
+            }
+        }
+    }
+
+    public class DeleteClient : WorkItemClient
+    {
+        public void DeleteStudy(IStudyRootData study)
+        {
+            EventResult result = EventResult.Success;
+            try
+            {
+                var request = new DeleteStudyRequest
+                                  {
+                                      Study = new WorkItemStudy(study),
+                                      Patient = new WorkItemPatient(study)
+                                  };
+
+                InsertRequest(request);
+            }
+            catch (Exception ex)
+            {
+                result = EventResult.MajorFailure;
+                Exception = ex;
+                throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogDeleteStudies(AuditHelper.LocalAETitle, instances, EventSource.CurrentUser, result);
+            }
+        }
+
+        public void DeleteSeries(IStudyRootData study, List<string> seriesInstanceUids)
+        {
+            EventResult result = EventResult.Success;
+            try
+            {
+                var request = new DeleteSeriesRequest
+                {
+                    Study = new WorkItemStudy(study),
+                    Patient = new WorkItemPatient(study),
+                    SeriesInstanceUids = seriesInstanceUids
+                };
+
+                InsertRequest(request);
+            }
+            catch (Exception ex)
+            {
+                result = EventResult.MajorFailure;
+                Exception = ex;
+                throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogUpdateInstances(new List<string> {AuditHelper.LocalAETitle}, instances, EventSource.CurrentUser, result);
             }
         }
     }

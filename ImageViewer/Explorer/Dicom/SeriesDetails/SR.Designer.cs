@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected series?.
+        /// </summary>
+        internal static string MessageConfirmDeleteSeries {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have selected multiple servers to send to.  Are you sure you want to continue?.
         /// </summary>
         internal static string MessageConfirmSendToMultipleServers {
@@ -115,11 +124,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate deletion of the series..
+        /// </summary>
+        internal static string MessageFailedToDeleteSeries {
+            get {
+                return ResourceManager.GetString("MessageFailedToDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to initiate sending of the selected items..
         /// </summary>
         internal static string MessageFailedToSendSeries {
             get {
                 return ResourceManager.GetString("MessageFailedToSendSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the {0} selected series?.
+        /// </summary>
+        internal static string MessageFormatConfirmDeleteSeries {
+            get {
+                return ResourceManager.GetString("MessageFormatConfirmDeleteSeries", resourceCulture);
             }
         }
         
@@ -148,6 +175,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         internal static string MessageSendDicomServerServiceNotRunning {
             get {
                 return ResourceManager.GetString("MessageSendDicomServerServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected study is currently in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageStudyInUse {
+            get {
+                return ResourceManager.GetString("MessageStudyInUse", resourceCulture);
             }
         }
         

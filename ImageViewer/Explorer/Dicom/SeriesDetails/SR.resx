@@ -132,11 +132,20 @@
   <data name="MenuShowSeriesDetails" xml:space="preserve">
     <value>View Series Details</value>
   </data>
+  <data name="MessageConfirmDeleteSeries" xml:space="preserve">
+    <value>Are you sure you want to delete the selected series?</value>
+  </data>
   <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
     <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
   </data>
+  <data name="MessageFailedToDeleteSeries" xml:space="preserve">
+    <value>Failed to initiate deletion of the series.</value>
+  </data>
   <data name="MessageFailedToSendSeries" xml:space="preserve">
     <value>Failed to initiate sending of the selected items.</value>
+  </data>
+  <data name="MessageFormatConfirmDeleteSeries" xml:space="preserve">
+    <value>Are you sure you want to delete the {0} selected series?</value>
   </data>
   <data name="MessageFormatSendSeriesScheduled" xml:space="preserve">
     <value>The send of {0} series to {1} has been scheduled.</value>
@@ -147,6 +156,9 @@
   <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
     <value>Failed to send the selected studies because the DICOM Server service is not running.
 Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
+  </data>
+  <data name="MessageStudyInUse" xml:space="preserve">
+    <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
   </data>
   <data name="TitleModality" xml:space="preserve">
     <value>Modality</value>

@@ -211,7 +211,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public int SuccessSubOperations { get; set; }
 
-        public int RemainingSubOperations { get { return ImagesToSend - (WarningSubOperations + FailureSubOperations + SuccessSubOperations); } }
+        public int RemainingSubOperations
+        {
+            get { return ImagesToSend - (WarningSubOperations + FailureSubOperations + SuccessSubOperations); }
+        }
 
         public override string Status
         {
@@ -220,7 +223,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 if (ImagesToSend == 0)
                     return SR.Progress_Pending;
 
-                return string.Format("{0} Images Sent, {1} Images Failed, {2} Images Pending",
+                return string.Format(SR.DicomSendProgress_Status,
                                      SuccessSubOperations + WarningSubOperations, FailureSubOperations,
                                      RemainingSubOperations);
             }
@@ -231,7 +234,46 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get
             {
                 if (ImagesToSend > 0)
-                    return (Decimal)(WarningSubOperations+FailureSubOperations+SuccessSubOperations) / ImagesToSend;
+                    return (Decimal) (WarningSubOperations + FailureSubOperations + SuccessSubOperations)/ImagesToSend;
+
+                return new decimal(0.0);
+            }
+        }
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemProgressDataContract("179B5CD7-8C67-44C1-8211-5B800FE069C4")]
+    public class DeleteProgress : WorkItemProgress
+    {
+        public DeleteProgress()
+        {
+            IsCancelable = false;
+        }
+
+        [DataMember(IsRequired = true)]
+        public int ImagesToDelete { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int ImagesDeleted { get; set; }
+
+        public override string Status
+        {
+            get
+            {
+                if (ImagesToDelete == 0)
+                    return SR.Progress_Pending;
+
+                return string.Format(SR.DeleteProgress_Status,
+                                     ImagesDeleted, ImagesToDelete - ImagesDeleted);
+            }
+        }
+
+        public override Decimal PercentComplete
+        {
+            get
+            {
+                if (ImagesToDelete > 0)
+                    return (Decimal)(ImagesDeleted) / ImagesToDelete;
 
                 return new decimal(0.0);
             }

@@ -332,6 +332,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate deletion of the selected items..
+        /// </summary>
+        internal static string MessageFailedToDeleteStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to open the selected study..
         /// </summary>
         internal static string MessageFailedToOpenStudy {
@@ -622,15 +631,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string TitleSend {
             get {
                 return ResourceManager.GetString("TitleSend", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Send Series.
-        /// </summary>
-        internal static string TitleSendSeries {
-            get {
-                return ResourceManager.GetString("TitleSendSeries", resourceCulture);
             }
         }
         

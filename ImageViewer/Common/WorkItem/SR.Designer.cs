@@ -70,6 +70,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Series.
+        /// </summary>
+        internal static string ActivityTypeEnumDeleteeries {
+            get {
+                return ResourceManager.GetString("ActivityTypeEnumDeleteeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Study.
+        /// </summary>
+        internal static string ActivityTypeEnumDeleteStudy {
+            get {
+                return ResourceManager.GetString("ActivityTypeEnumDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM Receive.
         /// </summary>
         internal static string ActivityTypeEnumDicomReceive {
@@ -160,6 +178,33 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Images Deleted, {1} Images Remaining.
+        /// </summary>
+        internal static string DeleteProgress_Status {
+            get {
+                return ResourceManager.GetString("DeleteProgress_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Series.
+        /// </summary>
+        internal static string DeleteSeriesRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("DeleteSeriesRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Study.
+        /// </summary>
+        internal static string DeleteStudyRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("DeleteStudyRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto Route to {0}.
         /// </summary>
         internal static string DicomAutoRouteRequest_ActivityDescription {
@@ -192,6 +237,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string DicomSend_Status {
             get {
                 return ResourceManager.GetString("DicomSend_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Images Sent, {1} Images Failed, {2} Images Pending.
+        /// </summary>
+        internal static string DicomSendProgress_Status {
+            get {
+                return ResourceManager.GetString("DicomSendProgress_Status", resourceCulture);
             }
         }
         
@@ -417,6 +471,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string WorkItemStatusEnumPending {
             get {
                 return ResourceManager.GetString("WorkItemStatusEnumPending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Series.
+        /// </summary>
+        internal static string WorkItemTypeEnumDeleteSeries {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Study.
+        /// </summary>
+        internal static string WorkItemTypeEnumDeleteStudy {
+            get {
+                return ResourceManager.GetString("WorkItemTypeEnumDeleteStudy", resourceCulture);
             }
         }
         

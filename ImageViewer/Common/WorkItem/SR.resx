@@ -261,4 +261,28 @@
   <data name="WorkItemStatusEnumDeleteInProgress" xml:space="preserve">
     <value>Delete In Progress</value>
   </data>
+  <data name="ActivityTypeEnumDeleteeries" xml:space="preserve">
+    <value>Delete Series</value>
+  </data>
+  <data name="ActivityTypeEnumDeleteStudy" xml:space="preserve">
+    <value>Delete Study</value>
+  </data>
+  <data name="DeleteProgress_Status" xml:space="preserve">
+    <value>{0} Images Deleted, {1} Images Remaining</value>
+  </data>
+  <data name="DeleteSeriesRequest_ActivityDescription" xml:space="preserve">
+    <value>Delete Series</value>
+  </data>
+  <data name="DeleteStudyRequest_ActivityDescription" xml:space="preserve">
+    <value>Delete Study</value>
+  </data>
+  <data name="DicomSendProgress_Status" xml:space="preserve">
+    <value>{0} Images Sent, {1} Images Failed, {2} Images Pending</value>
+  </data>
+  <data name="WorkItemTypeEnumDeleteSeries" xml:space="preserve">
+    <value>Delete Series</value>
+  </data>
+  <data name="WorkItemTypeEnumDeleteStudy" xml:space="preserve">
+    <value>Delete Study</value>
+  </data>
 </root>

@@ -10,7 +10,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
@@ -27,12 +29,84 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
     {
         public void DeleteSeries()
         {
-            throw new NotImplementedException("Marmot - need to restore this.");
+            if (!Enabled || Context.SelectedSeries == null)
+                return;
+
+            if (StudyInUse())
+                return;
+
+            if (!ConfirmDeletion())
+                return;
+
+            //TODO (Marmot):Restore.
+            try
+            {
+                var client = new DeleteClient();
+                var seriesList = new List<string>();
+                foreach (var series in Context.SelectedSeries)
+                {
+                    seriesList.Add(series.SeriesInstanceUid);
+                }
+
+                client.DeleteSeries(Context.Study, seriesList);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, SR.MessageFailedToDeleteSeries, Context.DesktopWindow);
+            }
         }
 
         protected override void OnSelectedSeriesChanged()
         {
             UpdateEnabled();
+        }
+
+        private bool ConfirmDeletion()
+        {
+            string message = Context.SelectedSeries.Count == 1
+                                 ? SR.MessageConfirmDeleteSeries
+                                 : String.Format(SR.MessageFormatConfirmDeleteSeries, Context.SelectedSeries.Count);
+
+            DialogBoxAction action = Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+
+            if (action == DialogBoxAction.Yes)
+                return true;
+            return false;
+        }
+
+        // This is a total hack to prevent a user from deleting a study
+        // that is currently in use.  The proper way of doing this is
+        // to lock the study when it's in use.  But for now, this will do.
+        private bool StudyInUse()
+        {
+            IEnumerable<IImageViewer> imageViewers = GetImageViewers();
+
+            foreach (IImageViewer imageViewer in imageViewers)
+            {
+                if (imageViewer.StudyTree.GetStudy(Context.Study.StudyInstanceUid) != null)
+                {
+                    string message = SR.MessageStudyInUse;
+                    Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private IEnumerable<IImageViewer> GetImageViewers()
+        {
+            var imageViewers = new List<IImageViewer>();
+
+            foreach (Workspace workspace in Context.DesktopWindow.Workspaces)
+            {
+                IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
+                if (viewer == null)
+                    continue;
+
+                imageViewers.Add(viewer);
+            }
+
+            return imageViewers;
         }
 
         private void UpdateEnabled()
