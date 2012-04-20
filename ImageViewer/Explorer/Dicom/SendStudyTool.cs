@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [Tooltip("activate", "TooltipSendStudy")]
 	[IconSet("activate", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
 
-    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Send)]
+    [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Send)]
 
 	//TODO (Marmot):Restore.
 
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SendStudyInternal()
 		{
-			if (!Enabled || this.Context.SelectedStudy == null)
+			if (!Enabled || Context.SelectedStudy == null)
 				return;
 
 		    var serverTreeComponent = new ServerTreeComponent
@@ -66,27 +66,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (code != ApplicationComponentExitCode.Accepted)
 				return;
 
-			if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Count == 0)
+			if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Servers == null || serverTreeComponent.SelectedServers.Servers.Count == 0)
 			{
 				Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
 				return;
 			}
 
-			if (serverTreeComponent.SelectedServers.Count > 1)
+			if (serverTreeComponent.SelectedServers.Servers.Count > 1)
 			{
 				if (Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
 			}
 
-			var studyUids = new List<string>();
-	
             var client = new DicomSendClient();
-            foreach (var item in Context.SelectedStudies)
+            foreach (StudyItem item in Context.SelectedStudies)
             {
-                studyUids.Add(item.StudyInstanceUid);
-                foreach (var destination in serverTreeComponent.SelectedServers)
+                foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
                 {
-                    var aeInformation = new ApplicationEntity(destination);
+                    var aeInformation = new ApplicationEntity
+                    {
+                        AETitle = destination.AETitle,
+                        ScpParameters = new ScpParameters(destination.HostName, destination.Port)
+                    };
 
                     try
                     {
@@ -118,9 +119,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-		    //TODO (Marmot): server.IsSupported<ISend>
-			Enabled = (this.Context.SelectedStudy != null &&
-			           this.Context.SelectedServers.IsLocalServer &&
+			Enabled = (Context.SelectedStudy != null &&
+			           Context.SelectedServerGroup.IsLocalServer &&
 			           WorkItemActivityMonitor.IsRunning);
 		}
 	}

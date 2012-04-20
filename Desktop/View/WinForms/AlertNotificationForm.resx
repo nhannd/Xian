@@ -125,15 +125,120 @@
   <data name="_hostPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_icon.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 12</value>
+  </data>
+  <data name="_icon.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 48</value>
+  </data>
+  <data name="_icon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
+    <value>CenterImage</value>
+  </data>
+  <data name="_icon.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;_icon.Name" xml:space="preserve">
+    <value>_icon</value>
+  </data>
+  <data name="&gt;&gt;_icon.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_icon.Parent" xml:space="preserve">
+    <value>_contentPanel</value>
+  </data>
+  <data name="&gt;&gt;_icon.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_message.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="_message.Location" type="System.Drawing.Point, System.Drawing">
+    <value>73, 12</value>
+  </data>
+  <data name="_message.Size" type="System.Drawing.Size, System.Drawing">
+    <value>244, 48</value>
+  </data>
+  <data name="_message.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="_message.Text" xml:space="preserve">
+    <value>message</value>
+  </data>
+  <data name="_message.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;_message.Name" xml:space="preserve">
+    <value>_message</value>
+  </data>
+  <data name="&gt;&gt;_message.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_message.Parent" xml:space="preserve">
+    <value>_contentPanel</value>
+  </data>
+  <data name="&gt;&gt;_message.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_contextualLink.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="_contextualLink.Location" type="System.Drawing.Point, System.Drawing">
+    <value>73, 62</value>
+  </data>
+  <data name="_contextualLink.Size" type="System.Drawing.Size, System.Drawing">
+    <value>244, 13</value>
+  </data>
+  <data name="_contextualLink.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="_contextualLink.Text" xml:space="preserve">
+    <value>link</value>
+  </data>
+  <data name="&gt;&gt;_contextualLink.Name" xml:space="preserve">
+    <value>_contextualLink</value>
+  </data>
+  <data name="&gt;&gt;_contextualLink.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_contextualLink.Parent" xml:space="preserve">
+    <value>_contentPanel</value>
+  </data>
+  <data name="&gt;&gt;_contextualLink.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="_contentPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 24</value>
+  </data>
+  <data name="_contentPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="_contentPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>325, 84</value>
+  </data>
+  <data name="_contentPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;_contentPanel.Name" xml:space="preserve">
+    <value>_contentPanel</value>
+  </data>
+  <data name="&gt;&gt;_contentPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_contentPanel.Parent" xml:space="preserve">
+    <value>_hostPanel</value>
+  </data>
+  <data name="&gt;&gt;_contentPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="_openLogLink.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
   <data name="_openLogLink.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_openLogLink.Location" type="System.Drawing.Point, System.Drawing">
-    <value>80, 105</value>
+    <value>80, 112</value>
   </data>
   <data name="_openLogLink.Size" type="System.Drawing.Size, System.Drawing">
     <value>242, 13</value>
@@ -157,7 +262,7 @@
     <value>_hostPanel</value>
   </data>
   <data name="&gt;&gt;_openLogLink.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="_closeButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>309, 5</value>
@@ -178,88 +283,7 @@
     <value>_hostPanel</value>
   </data>
   <data name="&gt;&gt;_closeButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="_icon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 32</value>
-  </data>
-  <data name="_icon.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 48</value>
-  </data>
-  <data name="_icon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
-    <value>CenterImage</value>
-  </data>
-  <data name="_icon.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;_icon.Name" xml:space="preserve">
-    <value>_icon</value>
-  </data>
-  <data name="&gt;&gt;_icon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_icon.Parent" xml:space="preserve">
-    <value>_hostPanel</value>
-  </data>
-  <data name="&gt;&gt;_icon.ZOrder" xml:space="preserve">
     <value>2</value>
-  </data>
-  <data name="_contextualLink.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="_contextualLink.Location" type="System.Drawing.Point, System.Drawing">
-    <value>72, 82</value>
-  </data>
-  <data name="_contextualLink.Size" type="System.Drawing.Size, System.Drawing">
-    <value>242, 13</value>
-  </data>
-  <data name="_contextualLink.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="_contextualLink.Text" xml:space="preserve">
-    <value>link</value>
-  </data>
-  <data name="&gt;&gt;_contextualLink.Name" xml:space="preserve">
-    <value>_contextualLink</value>
-  </data>
-  <data name="&gt;&gt;_contextualLink.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_contextualLink.Parent" xml:space="preserve">
-    <value>_hostPanel</value>
-  </data>
-  <data name="&gt;&gt;_contextualLink.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="_message.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="_message.Location" type="System.Drawing.Point, System.Drawing">
-    <value>72, 32</value>
-  </data>
-  <data name="_message.Size" type="System.Drawing.Size, System.Drawing">
-    <value>242, 48</value>
-  </data>
-  <data name="_message.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="_message.Text" xml:space="preserve">
-    <value>message</value>
-  </data>
-  <data name="_message.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;_message.Name" xml:space="preserve">
-    <value>_message</value>
-  </data>
-  <data name="&gt;&gt;_message.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_message.Parent" xml:space="preserve">
-    <value>_hostPanel</value>
-  </data>
-  <data name="&gt;&gt;_message.ZOrder" xml:space="preserve">
-    <value>4</value>
   </data>
   <data name="_hostPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -268,7 +292,7 @@
     <value>0, 0</value>
   </data>
   <data name="_hostPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>327, 128</value>
+    <value>327, 135</value>
   </data>
   <data name="_hostPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -298,7 +322,7 @@
     <value>True</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>327, 128</value>
+    <value>327, 135</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>Manual</value>

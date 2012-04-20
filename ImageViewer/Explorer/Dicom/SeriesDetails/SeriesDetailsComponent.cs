@@ -20,7 +20,10 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Configuration.ServerTree;
+using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Utilities;
 
@@ -56,10 +59,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	{
 		private event EventHandler _selectedSeriesChanged;
 
-        private readonly IStudyRootStudyIdentifier _study;
+		private readonly StudyItem _studyItem;
 		private readonly Table<SeriesIdentifier> _seriesTable;
 		private readonly IList<ISeriesData> _seriesList;
-        private readonly IDicomServiceNode _server;
+		private readonly IServerTreeNode _server;
 
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarActionModel;
@@ -68,9 +71,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		private IList<ISeriesData> _selectedSeries;
 		private ISelection _selection;
 
-        internal SeriesDetailsComponent(IStudyRootStudyIdentifier study, IDicomServiceNode server)
+		internal SeriesDetailsComponent(StudyItem studyItem, IServerTreeNode server)
 		{
-            _study = study;
+			_studyItem = studyItem;
 			_seriesTable = new Table<SeriesIdentifier>();
 			_seriesList = new ReadOnlyListWrapper<ISeriesData>(_seriesTable.Items);
 			_selectedSeries = new ReadOnlyListWrapper<ISeriesData>();
@@ -79,15 +82,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		string ISeriesDetailComponentViewModel.PatientId
 		{
-			get { return _study.PatientId; }	
+			get { return _studyItem.PatientId; }	
 		}
 
 		string ISeriesDetailComponentViewModel.PatientsName
 		{
 			get
 			{	
-				if (_study.PatientsName != null)
-					return new PersonName(_study.PatientsName).FormattedName;
+				if (_studyItem.PatientsName != null)
+					return _studyItem.PatientsName.FormattedName;
 				return "";
 			}
 		}
@@ -96,9 +99,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(_study.PatientsBirthDate))
+				if (!string.IsNullOrEmpty(_studyItem.PatientsBirthDate))
 				{
-					DateTime? date = DateParser.Parse(_study.PatientsBirthDate);
+					DateTime? date = DateParser.Parse(_studyItem.PatientsBirthDate);
 					if (date.HasValue)
 						return Format.Date(date);
 				}
@@ -109,16 +112,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		string ISeriesDetailComponentViewModel.AccessionNumber
 		{
-			get { return _study.AccessionNumber; }
+			get { return _studyItem.AccessionNumber; }
 		}
 
 		string ISeriesDetailComponentViewModel.StudyDate
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(_study.StudyDate))
+				if (!string.IsNullOrEmpty(_studyItem.StudyDate))
 				{
-					DateTime? date = DateParser.Parse(_study.StudyDate);
+					DateTime? date = DateParser.Parse(_studyItem.StudyDate);
 					if (date.HasValue)
 						return Format.Date(date);
 				}
@@ -129,17 +132,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		string ISeriesDetailComponentViewModel.StudyDescription
 		{
-			get { return _study.StudyDescription; }
+			get { return _studyItem.StudyDescription; }
 		}
 
-	    protected internal IDicomServiceNode Server
-	    {
-            get { return _server; }
-	    }
-
-	    protected internal IStudyRootData Study
+		protected internal StudyItem StudyItem
 		{
-			get { return _study; }
+			get { return _studyItem; }
 		}
 
 		public IList<ISeriesData> Series
@@ -313,10 +311,32 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		internal void RefreshInternal()
 		{
 			_seriesTable.Items.Clear();
-		    var identifier = new SeriesIdentifier {StudyInstanceUid = _study.StudyInstanceUid};
-		    IList<SeriesIdentifier> results = null;
-            _server.GetService<IStudyRootQuery>(s => results = s.SeriesQuery(identifier));
-			_seriesTable.Items.AddRange(results);
+
+		    //TODO (Marmot): Perfect candidate for service node changes.
+			IStudyRootQuery query;
+			if (_server.IsLocalServer)
+			{
+			    //TODO (Marmot): not ideal.
+			    query = new StoreStudyRootQuery();
+			}
+			else
+			{
+                var server = (IServerTreeDicomServer)_server;
+				query = new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle, server.AETitle, server.HostName, server.Port);
+			}
+
+			try
+			{
+				SeriesIdentifier identifier = new SeriesIdentifier();
+				identifier.StudyInstanceUid = _studyItem.StudyInstanceUid;
+				IList<SeriesIdentifier> results = query.SeriesQuery(identifier);
+				_seriesTable.Items.AddRange(results);
+			}
+			finally
+			{
+				if (query is IDisposable)
+					((IDisposable)query).Dispose();
+			}
 		}
 
 		public void Close()
@@ -336,14 +356,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 				_component = component;
 			}
 
-		    public IDicomServiceNode Server
-		    {
-                get { return _component._server; }
-		    }
-
-			public IStudyRootData Study
+			public IPatientData Patient
 			{
-				get { return _component.Study; }
+				get { return _component.StudyItem; }
+			}
+
+            public IStudyRootData Study
+			{
+				get { return _component.StudyItem; }
 			}
 
 			public IList<ISeriesData> AllSeries

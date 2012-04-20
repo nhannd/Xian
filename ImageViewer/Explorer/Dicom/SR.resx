@@ -361,4 +361,7 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="ValidationInvalidLastNameSearch" xml:space="preserve">
     <value>The value contains invalid characters or is incorrectly formatted (Example: Doe, J)</value>
   </data>
+  <data name="MessageFailedToDeleteStudy" xml:space="preserve">
+    <value>Failed to initiate deletion of the selected items.</value>
+  </data>
 </root>

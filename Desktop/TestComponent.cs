@@ -112,24 +112,24 @@ namespace ClearCanvas.Desktop
 			switch (level)
 			{
 				case AlertLevel.Info:
-					var a = new AlertNotificationArgs(level,  "Wherever you go, there you are.",
-								  "Go there", window => window.ShowMessageBox("there", MessageBoxActions.Ok));
-					this.Host.DesktopWindow.ShowAlert(a);
+					this.Host.DesktopWindow.ShowAlert(level, "Wherever you go, there you are.",
+								  "Go there", window => HandleLink(window, "there you are"));
 					break;
 				case AlertLevel.Warning:
-					var b = new AlertNotificationArgs(level, "Power corrupts; absolute power corrupts absolutely.",
-								  "Get some power", window => window.ShowMessageBox("power", MessageBoxActions.Ok));
-					this.Host.DesktopWindow.ShowAlert(b);
+					this.Host.DesktopWindow.ShowAlert(level, "Power corrupts; absolute power corrupts absolutely.");
 					break;
 				case AlertLevel.Error:
-					var c = new AlertNotificationArgs(level, "Disco inferno!",
-								  "Go to the disco", window => window.ShowMessageBox("disco", MessageBoxActions.Ok));
-					this.Host.DesktopWindow.ShowAlert(c);
+					this.Host.DesktopWindow.ShowAlert(level, "Disco inferno!",
+								  "Go to the disco", window => HandleLink(window, "disco"));
 					break;
 				default:
 					throw new ArgumentOutOfRangeException("level");
 			}
+		}
 
+		private void HandleLink(DesktopWindow window, string message)
+		{
+			window.ShowMessageBox(message, MessageBoxActions.Ok);
 		}
     }
 }

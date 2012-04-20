@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Activity Monitor.
+        /// </summary>
+        internal static string LinkOpenActivityMonitor {
+            get {
+                return ResourceManager.GetString("LinkOpenActivityMonitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Series.
         /// </summary>
         internal static string MenuDeleteSeries {
@@ -97,6 +106,88 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected series?.
+        /// </summary>
+        internal static string MessageConfirmDeleteSeries {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have selected multiple servers to send to.  Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmSendToMultipleServers {
+            get {
+                return ResourceManager.GetString("MessageConfirmSendToMultipleServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate deletion of the series..
+        /// </summary>
+        internal static string MessageFailedToDeleteSeries {
+            get {
+                return ResourceManager.GetString("MessageFailedToDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate sending of the selected items..
+        /// </summary>
+        internal static string MessageFailedToSendSeries {
+            get {
+                return ResourceManager.GetString("MessageFailedToSendSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the {0} selected series?.
+        /// </summary>
+        internal static string MessageFormatConfirmDeleteSeries {
+            get {
+                return ResourceManager.GetString("MessageFormatConfirmDeleteSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The send of {0} series to {1} has been scheduled..
+        /// </summary>
+        internal static string MessageFormatSendSeriesScheduled {
+            get {
+                return ResourceManager.GetString("MessageFormatSendSeriesScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select a destination..
+        /// </summary>
+        internal static string MessageSelectDestination {
+            get {
+                return ResourceManager.GetString("MessageSelectDestination", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to send the selected studies because the DICOM Server service is not running.
+        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageSendDicomServerServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageSendDicomServerServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected study is currently in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageStudyInUse {
+            get {
+                return ResourceManager.GetString("MessageStudyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Modality.
         /// </summary>
         internal static string TitleModality {
@@ -111,6 +202,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         internal static string TitleNumberOfSeriesRelatedInstances {
             get {
                 return ResourceManager.GetString("TitleNumberOfSeriesRelatedInstances", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Series.
+        /// </summary>
+        internal static string TitleSendSeries {
+            get {
+                return ResourceManager.GetString("TitleSendSeries", resourceCulture);
             }
         }
         

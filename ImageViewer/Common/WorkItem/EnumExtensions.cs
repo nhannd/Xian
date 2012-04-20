@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 					return SR.WorkItemTypeEnumStudyDelete;
 				case WorkItemTypeEnum.StudyProcess:
 					return SR.WorkItemTypeEnumStudyProcess;
-			}
+            }
 			throw new NotImplementedException();
 		}
 
@@ -102,6 +102,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     return SR.ActivityTypeEnumReIndex;
                 case ActivityTypeEnum.ReapplyRules:
                     return SR.ActivityTypeEnumReapplyRules;
+                case ActivityTypeEnum.DeleteStudy:
+                    return SR.ActivityTypeEnumDeleteStudy;
+                case ActivityTypeEnum.DeleteSeries:
+                    return SR.ActivityTypeEnumDeleteeries;
             }
             throw new NotImplementedException();
         }

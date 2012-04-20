@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         private static string GetUserName()
         {
             IPrincipal p = Thread.CurrentPrincipal;
-            if (p == null || p.Identity == null || string.IsNullOrEmpty(p.Identity.Name))
+            if (p == null || string.IsNullOrEmpty(p.Identity.Name))
                 return string.Format("{0}@{1}", Environment.UserName, Environment.UserDomainName);
             return p.Identity.Name;
         }
@@ -152,7 +152,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             finally
             {
-                //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
                 AuditHelper.LogCreateInstances(new string[0], auditedInstances, EventSource.CurrentUser, result);
             }
         }
@@ -182,7 +181,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             finally
             {
-                //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
                 AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, result);
             }
         }
@@ -231,9 +229,69 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
+    public class DeleteClient : WorkItemClient
+    {
+        public void DeleteStudy(IStudyRootData study)
+        {
+            EventResult result = EventResult.Success;
+            try
+            {
+                var request = new DeleteStudyRequest
+                                  {
+                                      Study = new WorkItemStudy(study),
+                                      Patient = new WorkItemPatient(study)
+                                  };
+
+                InsertRequest(request);
+            }
+            catch (Exception ex)
+            {
+                result = EventResult.MajorFailure;
+                Exception = ex;
+                throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogDeleteStudies(AuditHelper.LocalAETitle, instances, EventSource.CurrentUser, result);
+            }
+        }
+
+        public void DeleteSeries(IStudyRootData study, List<string> seriesInstanceUids)
+        {
+            EventResult result = EventResult.Success;
+            try
+            {
+                var request = new DeleteSeriesRequest
+                {
+                    Study = new WorkItemStudy(study),
+                    Patient = new WorkItemPatient(study),
+                    SeriesInstanceUids = seriesInstanceUids
+                };
+
+                InsertRequest(request);
+            }
+            catch (Exception ex)
+            {
+                result = EventResult.MajorFailure;
+                Exception = ex;
+                throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogUpdateInstances(new List<string> {AuditHelper.LocalAETitle}, instances, EventSource.CurrentUser, result);
+            }
+        }
+    }
+
     public class DicomSendClient : WorkItemClient
     {
-        public void MoveStudy(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, WorkItemPriorityEnum priority)
+        public void MoveStudy(ApplicationEntity remoteAEInfo, IStudyRootData study, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -271,7 +329,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void MoveSeries(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
+        public void MoveSeries(ApplicationEntity remoteAEInfo, IStudyRootData study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -309,7 +367,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void MoveSops(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
+        public void MoveSops(ApplicationEntity remoteAEInfo, IStudyRootData study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -348,7 +406,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void PublishFiles(ApplicationEntity remoteAEInfo, IStudyRootStudyIdentifier study, DeletionBehaviour behaviour, List<string> files  )
+        public void PublishFiles(ApplicationEntity remoteAEInfo, IStudyRootData study, DeletionBehaviour behaviour, List<string> files)
         {
             EventResult result = EventResult.Success;
             try

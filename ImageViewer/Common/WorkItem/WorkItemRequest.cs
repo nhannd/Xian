@@ -47,6 +47,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         AutoRoute = 10,
         [EnumMember]
         PublishFiles = 11,
+        [EnumMember]
+        DeleteStudy = 12,
+        [EnumMember]
+        DeleteSeries = 13,
     }
 
     public static class WorkItemRequestTypeProvider
@@ -71,6 +75,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (StudyProcessRequest),
                                                           typeof (DicomReceiveRequest),
                                                           typeof (ImportStudyRequest),
+                                                          typeof (DeleteStudyRequest),
+                                                          typeof (DeleteSeriesRequest),
 
                                                           // WorkItemProgress related
                                                           typeof (WorkItemProgress),
@@ -78,6 +84,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (ImportFilesProgress),
                                                           typeof (ReindexProgress),
                                                           typeof (DicomSendProgress),
+                                                          typeof (DeleteProgress),
                                                       };
 
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider ignored)
@@ -102,6 +109,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [XmlInclude(typeof(StudyProcessRequest))]
     [XmlInclude(typeof(DicomReceiveRequest))]
     [XmlInclude(typeof(ImportStudyRequest))]
+    [XmlInclude(typeof(DeleteStudyRequest))]
+    [XmlInclude(typeof(DeleteSeriesRequest))]
     [DataContract(Namespace = ImageViewerNamespace.Value)]
 	[WorkItemRequestDataContract("b2d86945-96b7-4563-8281-02142e84ffc3")]
     public abstract class WorkItemRequest : DataContractBase
@@ -473,6 +482,49 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override string ActivityDescription
         {
             get { return SR.ReindexRequest_ActivityDescription; }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="WorkItemRequest"/> for deleting a study.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("0A7BE406-E5BE-4E10-997F-BCA37D53FED7")]
+    public class DeleteStudyRequest : WorkItemStudyRequest
+    {
+        public DeleteStudyRequest()
+        {
+            Type = WorkItemTypeEnum.StudyDelete;
+            Priority = WorkItemPriorityEnum.Stat;
+            ActivityType = ActivityTypeEnum.DeleteStudy;
+        }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DeleteStudyRequest_ActivityDescription); }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="WorkItemRequest"/> for deleting series.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("64BCF5FF-1AFD-409B-B0EB-1E576124D61E")]
+    public class DeleteSeriesRequest : WorkItemStudyRequest
+    {
+        public DeleteSeriesRequest()
+        {
+            Type = WorkItemTypeEnum.SeriesDelete;
+            Priority = WorkItemPriorityEnum.Stat;
+            ActivityType = ActivityTypeEnum.DeleteSeries;
+        }
+
+        [DataMember(IsRequired = false)]
+        public List<string> SeriesInstanceUids { get; set; }
+
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DeleteSeriesRequest_ActivityDescription); }
         }
     }
 }

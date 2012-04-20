@@ -16,7 +16,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -28,85 +27,36 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 
     [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Delete)]
-	//TODO (Marmot): Restore.
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class DeleteStudyTool : StudyBrowserTool
 	{
-		private void DeleteStudy()
-		{
-            throw new NotImplementedException("Marmot - need to restore this.");
+        public void DeleteStudy()
+        {
+            if (!Enabled || Context.SelectedStudy == null)
+                return;
 
-			if (!Enabled || this.Context.SelectedStudy == null)
-				return;
+            if (AtLeastOneStudyInUse())
+                return;
 
-			if (AtLeastOneStudyInUse())
-				return;
+            if (!ConfirmDeletion())
+                return;
 
-			if (!ConfirmDeletion())
-				return;
+            //TODO (Marmot):Restore.
+            try
+            {
+                var client = new DeleteClient();
+                foreach (StudyItem study in Context.SelectedStudies)
+                {
+                    client.DeleteStudy(study);
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, SR.MessageFailedToDeleteStudy, Context.DesktopWindow);
+            }
+        }
 
-			List<string> deleteStudies = CollectionUtils.Map<StudyItem, string>(this.Context.SelectedStudies,
-                                                    delegate(StudyItem study)
-                                                    	{
-                                                    		return study.StudyInstanceUid;
-                 
-                                                        });
-		    //TODO (Marmot):Restore.
-
-            /*
-			DeleteInstancesRequest request = new DeleteInstancesRequest();
-			request.DeletePriority = DeletePriority.High;
-			request.InstanceLevel = InstanceLevel.Study;
-			request.InstanceUids = deleteStudies;
-
-			try
-			{
-				BackgroundTask task = new BackgroundTask(TaskMethod, false, deleteStudies);
-				ProgressDialog.Show(task, Application.DesktopWindows.ActiveWindow, true);
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, SR.MessageFailedToDeleteStudy, this.Context.DesktopWindow);
-			}
-             * */
-		}
-
-		private void TaskMethod(IBackgroundTaskContext context)
-		{
-		    //TODO (Marmot): Restore.
-            /*
-			DeleteInstancesRequest request = new DeleteInstancesRequest();
-			request.DeletePriority = DeletePriority.High;
-			request.InstanceLevel = InstanceLevel.Study;
-			request.InstanceUids = (List<string>) context.UserState;
-
-			context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageDeletingStudies));
-
-			try
-			{
-				LocalDataStoreDeletionHelper.DeleteInstancesAndWait(request, 500,
-							delegate(LocalDataStoreDeletionHelper.DeletionProgressInformation progress)
-							{
-								int total = progress.NumberDeleted + progress.NumberRemaining;
-								int percent = (int)(progress.NumberDeleted / (float)total * 100F);
-								context.ReportProgress(new BackgroundTaskProgress(percent, SR.MessageDeletingStudies));
-								return true;
-							});
-
-				context.Complete(null);
-
-				AuditedInstances deletedInstances = new AuditedInstances();
-				((List<string>) context.UserState).ForEach(delegate(string studyInstanceUid) { deletedInstances.AddInstance(studyInstanceUid); });
-				AuditHelper.LogDeleteStudies(AuditHelper.LocalAETitle, deletedInstances, EventSource.CurrentUser, EventResult.Success);
-			}
-			catch(Exception e)
-			{
-				context.Error(e);
-			}
-             */
-		}
-
-		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
+	    protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
 			UpdateEnabled();
 		}
@@ -118,25 +68,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-			this.Enabled = (this.Context.SelectedStudy != null &&
-			                this.Context.SelectedServers.IsLocalServer &&
-			                WorkItemActivityMonitor.IsRunning);
+		    Enabled = (Context.SelectedStudy != null &&
+		               Context.SelectedServerGroup.IsLocalServer &&
+		               WorkItemActivityMonitor.IsRunning);
 		}
 
 		private bool ConfirmDeletion()
 		{
-			string message;
-			if (this.Context.SelectedStudies.Count == 1)
-				message = SR.MessageConfirmDeleteStudy;
-			else
-				message = String.Format(SR.MessageConfirmDeleteStudies, this.Context.SelectedStudies.Count);
+		    string message = Context.SelectedStudies.Count == 1 
+		                         ? SR.MessageConfirmDeleteStudy 
+		                         : String.Format(SR.MessageConfirmDeleteStudies, Context.SelectedStudies.Count);
 
-			DialogBoxAction action = this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+			DialogBoxAction action = Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
 
 			if (action == DialogBoxAction.Yes)
 				return true;
-			else
-				return false;
+		    return false;
 		}
 
 		// This is a total hack to prevent a user from deleting a study
@@ -144,10 +91,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		// to lock the study when it's in use.  But for now, this will do.
 		private bool AtLeastOneStudyInUse()
 		{
-            var studiesInUse = GetStudiesInUse();
+			IEnumerable<StudyItem> studiesInUse = GetStudiesInUse();
 
 			var setStudyUidsInUse = new Dictionary<string, string>();
-            foreach (var item in studiesInUse)
+			foreach (StudyItem item in studiesInUse)
 				setStudyUidsInUse[item.StudyInstanceUid] = item.StudyInstanceUid;
 
 			// No studies in use.  Just return.
@@ -157,29 +104,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			string message;
 
 			// Notify the user
-			if (this.Context.SelectedStudies.Count == 1)
+			if (Context.SelectedStudies.Count == 1)
 			{
 				message = SR.MessageSelectedStudyInUse;
 			}
 			else
 			{
-				if (setStudyUidsInUse.Count == 1)
-					message = SR.MessageOneOfSelectedStudiesInUse;
-				else
-					message = String.Format(SR.MessageSomeOfSelectedStudiesInUse, setStudyUidsInUse.Count);
+				message = setStudyUidsInUse.Count == 1 
+                    ? SR.MessageOneOfSelectedStudiesInUse 
+                    : String.Format(SR.MessageSomeOfSelectedStudiesInUse, setStudyUidsInUse.Count);
 			}
 
-			this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+			Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
 
 			return true;
 		}
 
-        private IList<StudyTableItem> GetStudiesInUse()
+		private IEnumerable<StudyItem> GetStudiesInUse()
 		{
-            List<StudyTableItem> studiesInUse = new List<StudyTableItem>();
+			var studiesInUse = new List<StudyItem>();
 			IEnumerable<IImageViewer> imageViewers = GetImageViewers();
 
-			foreach (var study in this.Context.SelectedStudies)
+			foreach (StudyItem study in Context.SelectedStudies)
 			{
 				foreach (IImageViewer imageViewer in imageViewers)
 				{
@@ -191,11 +137,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return studiesInUse;
 		}
 
-		private IEnumerable<IImageViewer> GetImageViewers()
+		private List<IImageViewer> GetImageViewers()
 		{
-			List<IImageViewer> imageViewers = new List<IImageViewer>();
+			var imageViewers = new List<IImageViewer>();
 
-			foreach (Workspace workspace in this.Context.DesktopWindow.Workspaces)
+			foreach (Workspace workspace in Context.DesktopWindow.Workspaces)
 			{
                 IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
 				if (viewer == null)

@@ -10,38 +10,112 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
-	[ButtonAction("activate", ToolbarActionSite + "/ToolbarSendSeries", "SendSeries")]
-    [MenuAction("activate", ContextMenuActionSite + "/MenuSendSeries", "SendSeries")]
-    [Tooltip("activate", "TooltipSendSeries")]
-    [IconSet("activate", "Icons.SendSeriesToolSmall.png", "Icons.SendSeriesToolSmall.png", "Icons.SendSeriesToolSmall.png")]
-	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Send)]
-    [ExtensionOf(typeof (SeriesDetailsToolExtensionPoint))]
-    public class SendSeriesTool : SeriesDetailsTool
-	{
-        public void SendSeries()
-		{
-            throw new NotImplementedException("Marmot - need to restore this.");
-		}
+    [ButtonAction("activate", ToolbarActionSite + "/ToolbarDeleteSeries", "DeleteSeries")]
+    [MenuAction("activate", ContextMenuActionSite + "/MenuDeleteSeries", "DeleteSeries")]
+    [Tooltip("activate", "TooltipDeleteSeries")]
+    [IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+    [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Delete)]
+    [ExtensionOf(typeof(SeriesDetailsToolExtensionPoint))]
+    public class DeleteSeriesTool : SeriesDetailsTool
+    {
+        public void DeleteSeries()
+        {
+            if (!Enabled || Context.SelectedSeries == null)
+                return;
 
-		protected override void OnSelectedSeriesChanged()
-		{
-			UpdateEnabled();
-		}
+            if (StudyInUse())
+                return;
 
-		private void UpdateEnabled()
-		{
-			Enabled = (Context.SelectedSeries != null &&
-			           Context.SelectedSeries.Count > 0 &&
-			           //TODO (Marmot): This determines local/remote; will be fixing this shortly.
+            if (!ConfirmDeletion())
+                return;
+
+            //TODO (Marmot):Restore.
+            try
+            {
+                var client = new DeleteClient();
+                var seriesList = new List<string>();
+                foreach (var series in Context.SelectedSeries)
+                {
+                    seriesList.Add(series.SeriesInstanceUid);
+                }
+
+                client.DeleteSeries(Context.Study, seriesList);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, SR.MessageFailedToDeleteSeries, Context.DesktopWindow);
+            }
+        }
+
+        protected override void OnSelectedSeriesChanged()
+        {
+            UpdateEnabled();
+        }
+
+        private bool ConfirmDeletion()
+        {
+            string message = Context.SelectedSeries.Count == 1
+                                 ? SR.MessageConfirmDeleteSeries
+                                 : String.Format(SR.MessageFormatConfirmDeleteSeries, Context.SelectedSeries.Count);
+
+            DialogBoxAction action = Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+
+            if (action == DialogBoxAction.Yes)
+                return true;
+            return false;
+        }
+
+        // This is a total hack to prevent a user from deleting a study
+        // that is currently in use.  The proper way of doing this is
+        // to lock the study when it's in use.  But for now, this will do.
+        private bool StudyInUse()
+        {
+            IEnumerable<IImageViewer> imageViewers = GetImageViewers();
+
+            foreach (IImageViewer imageViewer in imageViewers)
+            {
+                if (imageViewer.StudyTree.GetStudy(Context.Study.StudyInstanceUid) != null)
+                {
+                    string message = SR.MessageStudyInUse;
+                    Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private IEnumerable<IImageViewer> GetImageViewers()
+        {
+            var imageViewers = new List<IImageViewer>();
+
+            foreach (Workspace workspace in Context.DesktopWindow.Workspaces)
+            {
+                IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
+                if (viewer == null)
+                    continue;
+
+                imageViewers.Add(viewer);
+            }
+
+            return imageViewers;
+        }
+
+        private void UpdateEnabled()
+        {
+            Enabled = (Context.SelectedSeries != null &&
+                       Context.SelectedSeries.Count > 0 &&
+                //TODO (Marmot): This determines local/remote; will be fixing this shortly.
                        Server == null &&
-			           WorkItemActivityMonitor.IsRunning);
-		}
-	}
+                       WorkItemActivityMonitor.IsRunning);
+        }
+    }
 }

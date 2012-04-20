@@ -78,6 +78,8 @@
     <Compile Include="Command\SaveStudyXmlCommand.cs" />
     <Compile Include="Command\ViewerCommandProcessor.cs" />
     <Compile Include="Command\ViewerCommandProcessorContext.cs" />
+    <Compile Include="DeleteSeriesUtility.cs" />
+    <Compile Include="DeleteStudyUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReindexProcessor.cs" />
     <Compile Include="ReprocessStudyFolder.cs" />

@@ -26,18 +26,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
     }
 
     /// <summary>
-    /// Enum for telling when processing is complete for a WorkQueue item.
-    /// </summary>
-    public enum WorkItemProcessStatus
-    {
-        Complete,
-        Pending,
-        Idle,
-        IdleNoDelete,
-        CompleteDelayDelete
-    }
-
-    /// <summary>
     /// Proxy class for updating the status and progress of a <see cref="WorkItem"/>.
     /// </summary>
     public class WorkItemStatusProxy
