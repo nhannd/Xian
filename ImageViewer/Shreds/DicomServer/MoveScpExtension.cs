@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
@@ -19,7 +20,7 @@ using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
@@ -366,7 +367,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return true;
 			}
 
-			var remoteAE = RemoteServerDirectory.Lookup(message.MoveDestination);
+		    var remoteAE = ServerDirectory.GetRemoteServersByAETitle(message.MoveDestination).FirstOrDefault();
             if (remoteAE == null)
 			{
 				server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),

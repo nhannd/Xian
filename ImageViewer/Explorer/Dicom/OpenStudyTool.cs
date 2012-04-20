@@ -11,7 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -80,26 +80,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				                     AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer
 				                 };
 
-			    if (Context.SelectedServers.IsLocalServer)
-				{
-					foreach (StudyItem study in Context.SelectedStudies)
-						helper.AddStudy(study.StudyInstanceUid, study.Server, LocalStudyLoaderName);
-				}
-				else
-				{
-					foreach (StudyItem study in Context.SelectedStudies)
-					{
-						var server = study.Server as IApplicationEntity;
-						if (server != null)
-						{
-						    //TODO (Marmot): fix.
-							if (server.StreamingParameters != null)
-								helper.AddStudy(study.StudyInstanceUid, study.Server, StreamingStudyLoaderName);
-							else
-								helper.AddStudy(study.StudyInstanceUid, study.Server, RemoteStudyLoaderName);
-						}
-					}
-				}
+				foreach (var study in Context.SelectedStudies)
+					helper.AddStudy(study.StudyInstanceUid, study.Server);
 
 				helper.Title = ImageViewerComponent.CreateTitle(GetSelectedPatients());
 				helper.OpenStudies();
@@ -127,22 +109,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-			if (Context.SelectedServers.IsLocalServer)
-			{
-				Enabled = Context.SelectedStudy != null;
-			}
-			else
-			{
-				if (Context.SelectedStudy != null)
-					Enabled = GetAtLeastOneServerSupportsLoading();
-				else
-					Enabled = false;
-			}
-
-			SetDoubleClickHandler();
+		    Enabled = Context.SelectedStudy != null && GetAtLeastOneServerSupportsLoading();
+		    SetDoubleClickHandler();
 		}
 
-		private int GetNumberOfSelectedStudies()
+	    private int GetNumberOfSelectedStudies()
 		{
 		    return Context.SelectedStudy == null ? 0 : Context.SelectedStudies.Count;
 		}
@@ -154,37 +125,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private int GetNumberOfLoadableStudies()
 		{
-			int number = 0;
-
-			if (Context.SelectedStudy != null)
-			{
-				if (Context.SelectedServers.IsLocalServer && IsLocalStudyLoaderSupported)
-					return Context.SelectedStudies.Count;
-
-				foreach (StudyItem study in Context.SelectedStudies)
-				{
-				    //TODO (Marmot):
-                    var server = study.Server as IApplicationEntity;
-					if (server != null)
-					{
-                        if (server.StreamingParameters != null && IsStreamingStudyLoaderSupported)
-							++number;
-                        else if (server.StreamingParameters == null && IsRemoteStudyLoaderSupported)
-							++number;
-					}
-				}
-			}
-
-			return number;
+		    return base.Context.SelectedStudies.Count(s => s.Server.IsSupported<IStudyLoader>());
 		}
 
 		private IEnumerable<IPatientData> GetSelectedPatients()
 		{
-			if (base.Context.SelectedStudy != null)
-			{
-				foreach (StudyItem studyItem in base.Context.SelectedStudies)
-					yield return studyItem;
-			}
-		}
+            if (base.Context.SelectedStudy != null)
+            {
+                foreach (var studyItem in Context.SelectedStudies)
+                    yield return studyItem;
+            }
+        }
 	}
 }

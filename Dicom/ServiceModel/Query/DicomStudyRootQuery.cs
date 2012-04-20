@@ -13,9 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Network.Scu;
-using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
@@ -26,19 +25,20 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	public class DicomStudyRootQuery : IStudyRootQuery
 	{
 		private readonly string _localAE;
-		private readonly string _remoteAE;
-		private readonly string _remoteHost;
-		private readonly int _remotePort;
+	    private readonly IApplicationEntity _remoteAE;
 
 		public DicomStudyRootQuery(string localAETitle, string remoteAETitle, string remoteHost, int remotePort)
+            : this(localAETitle, new ApplicationEntity(remoteAETitle, remoteAETitle, String.Empty, String.Empty){ScpParameters = new ScpParameters(remoteHost, remotePort)})
 		{
-			_localAE = localAETitle;
-			_remoteAE = remoteAETitle;
-			_remoteHost = remoteHost;
-			_remotePort = remotePort;
 		}
 
-		#region IStudyRootQuery Members
+		public DicomStudyRootQuery(string localAETitle, IApplicationEntity remoteAE)
+		{
+		    _localAE = localAETitle;
+		    _remoteAE = remoteAE;
+		}
+
+	    #region IStudyRootQuery Members
 
 		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
 		{
@@ -62,9 +62,13 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			where TFindScu : FindScuBase, new()
 		{
 			Platform.CheckForEmptyString(_localAE, "localAE");
-			Platform.CheckForEmptyString(_remoteAE, "remoteAE");
-			Platform.CheckForEmptyString(_remoteHost, "remoteHost");
-			Platform.CheckArgumentRange(_remotePort, 1, 65535, "remotePort");
+			Platform.CheckForNullReference(_remoteAE, "remoteAE");
+
+            Platform.CheckForEmptyString(_remoteAE.AETitle, "AETitle");
+
+            Platform.CheckForNullReference(_remoteAE.ScpParameters, "ScpParameters");
+            Platform.CheckArgumentRange(_remoteAE.ScpParameters.Port, 1, 65535, "Port");
+            Platform.CheckForEmptyString(_remoteAE.ScpParameters.HostName, "HostName");
 
 			if (queryCriteria == null)
 			{
@@ -108,7 +112,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 			    try
 				{
-					scuResults = scu.Find(_localAE, _remoteAE, _remoteHost, _remotePort, criteria);
+					scuResults = scu.Find(_localAE, _remoteAE.AETitle, _remoteAE.ScpParameters.HostName, _remoteAE.ScpParameters.Port, criteria);
 					scu.Join();
 
 					if (scu.Status == ScuOperationStatus.Canceled)
@@ -185,10 +189,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			foreach (DicomAttributeCollection result in scuResults)
 			{
 				TIdentifier identifier = Identifier.FromDicomAttributeCollection<TIdentifier>(result);
-				if (String.IsNullOrEmpty(identifier.RetrieveAeTitle))
-					identifier.RetrieveAeTitle = _remoteAE;
+                if (String.IsNullOrEmpty(identifier.RetrieveAeTitle) || identifier.RetrieveAeTitle == _remoteAE.AETitle)
+                    identifier.RetrieveAE = _remoteAE;
 
-				results.Add(identifier);
+			    results.Add(identifier);
 			}
 
 			return results;
@@ -196,7 +200,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		public override string ToString()
 		{
-			return _remoteAE;
+			return _remoteAE.ToString();
 		}
 
 		protected virtual void Dispose(bool disposing)

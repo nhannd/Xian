@@ -31,22 +31,21 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	{
 		public void Open()
 		{
+		    var studyLoaders = new List<IStudyLoader>();
 			int sopCount = 0;
-			List<IStudyLoader> studyLoaders = new List<IStudyLoader>();
-			foreach (StudyManagement.StudyItem studyItem in base.Context.SelectedStudies)
+			foreach (var studyItem in base.Context.SelectedStudies)
 			{
-				IStudyLoader localStudyLoader = CreateLoader();
-				if (localStudyLoader == null)
-					return;
+                if (!studyItem.Server.IsSupported<IStudyLoader>())
+                    return;
 
-				studyLoaders.Add(localStudyLoader);
-				sopCount += localStudyLoader.Start(new StudyLoaderArgs(studyItem.StudyInstanceUid, studyItem.Server));
+			    var loader = studyItem.Server.GetService<IStudyLoader>();
+                studyLoaders.Add(loader);
+			    sopCount += loader.Start(new StudyLoaderArgs(studyItem.StudyInstanceUid, studyItem.Server));
 			}
 
 			bool success = false;
-			StudyFilterComponent component = new StudyFilterComponent();
-			component.BulkOperationsMode = true;
-			BackgroundTask task = new BackgroundTask(c =>
+		    var component = new StudyFilterComponent {BulkOperationsMode = true};
+		    var task = new BackgroundTask(c =>
 			                                         	{
 			                                         		c.ReportProgress(new BackgroundTaskProgress(0, sopCount, SR.MessageLoading));
 			                                         		if (c.CancelRequested)
@@ -98,14 +97,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 
 		private void UpdateEnabled()
 		{
-			base.Enabled = this.IsLocalStudyLoaderSupported
-						   && base.Context.SelectedServers != null && base.Context.SelectedServers.IsLocalServer
-						   && base.Context.SelectedStudies != null && base.Context.SelectedStudies.Count > 0;
-		}
-
-		private static IStudyLoader CreateLoader()
-		{
-			return StudyLoader.Create("DICOM_LOCAL");
+		    base.Enabled = Context.SelectedStudies.Count > 0
+                //TODO (Marmot):Not sure why it was restricted to local, but I'm leaving it.
+                && base.Context.SelectedServers.IsLocalServer
+                && base.Context.SelectedServers.AllSupport<IStudyLoader>();
 		}
 	}
 }

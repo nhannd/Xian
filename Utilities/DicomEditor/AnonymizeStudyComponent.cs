@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Validation;
@@ -83,17 +84,19 @@ namespace ClearCanvas.Utilities.DicomEditor
 		private bool _preserveSeriesData;
 		private bool _keepReportsAndAttachments = false;
 
-		internal AnonymizeStudyComponent(StudyItem studyItem)
+		internal AnonymizeStudyComponent(IStudyRootData studyItem)
 		{
-			_original = new StudyData();
-			_original.AccessionNumber = studyItem.AccessionNumber;
-			_original.PatientsName = studyItem.PatientsName;
-			_original.PatientId = studyItem.PatientId;
-			_original.StudyDescription = studyItem.StudyDescription;
-			_original.PatientsBirthDateRaw = studyItem.PatientsBirthDate;
-			_original.StudyDateRaw = studyItem.StudyDate;
+		    _original = new StudyData
+		                    {
+		                        AccessionNumber = studyItem.AccessionNumber,
+		                        PatientsName = new PersonName(studyItem.PatientsName),
+		                        PatientId = studyItem.PatientId,
+		                        StudyDescription = studyItem.StudyDescription,
+		                        PatientsBirthDateRaw = studyItem.PatientsBirthDate,
+		                        StudyDateRaw = studyItem.StudyDate
+		                    };
 
-			_anonymized = _original.Clone();
+		    _anonymized = _original.Clone();
 
 			_validator = new DicomAnonymizer.ValidationStrategy();
 		}

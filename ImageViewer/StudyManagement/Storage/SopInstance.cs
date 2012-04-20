@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
@@ -212,7 +213,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                                        Image = new ImageIdentifier(this)
                                                    {
                                                        InstanceAvailability = "ONLINE",
-                                                       RetrieveAeTitle = Utilities.GetLocalServerAETitle(),
+                                                       RetrieveAE = ServerDirectory.GetLocalServer(),
                                                        SpecificCharacterSet = SpecificCharacterSet
                                                    },
                                        Data = new ImageEntryData

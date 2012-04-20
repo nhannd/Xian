@@ -144,10 +144,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		// to lock the study when it's in use.  But for now, this will do.
 		private bool AtLeastOneStudyInUse()
 		{
-			IList<StudyItem> studiesInUse = GetStudiesInUse();
+            var studiesInUse = GetStudiesInUse();
 
-			Dictionary<string, string> setStudyUidsInUse = new Dictionary<string, string>();
-			foreach (StudyItem item in studiesInUse)
+			var setStudyUidsInUse = new Dictionary<string, string>();
+            foreach (var item in studiesInUse)
 				setStudyUidsInUse[item.StudyInstanceUid] = item.StudyInstanceUid;
 
 			// No studies in use.  Just return.
@@ -174,12 +174,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return true;
 		}
 
-		private IList<StudyItem> GetStudiesInUse()
+        private IList<StudyTableItem> GetStudiesInUse()
 		{
-			List<StudyItem> studiesInUse = new List<StudyItem>();
+            List<StudyTableItem> studiesInUse = new List<StudyTableItem>();
 			IEnumerable<IImageViewer> imageViewers = GetImageViewers();
 
-			foreach (StudyItem study in this.Context.SelectedStudies)
+			foreach (var study in this.Context.SelectedStudies)
 			{
 				foreach (IImageViewer imageViewer in imageViewers)
 				{

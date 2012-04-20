@@ -314,10 +314,10 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public OpenStudyInfo(string studyInstanceUid, string sourceAE)
+		public OpenStudyInfo(string studyInstanceUid, string sourceAETitle)
 		{
 			StudyInstanceUid = studyInstanceUid;
-			SourceAETitle = sourceAE;
+			SourceAETitle = sourceAETitle;
 		}
 
 		/// <summary>

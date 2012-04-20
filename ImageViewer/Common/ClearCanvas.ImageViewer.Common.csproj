@@ -127,7 +127,6 @@
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="RetryableCommandExecutor.cs" />
     <Compile Include="ServerDirectory\DataContracts.cs" />
-    <Compile Include="ServerDirectory\Extensions.cs" />
     <Compile Include="ServerDirectory\IServerDirectory.cs" />
     <Compile Include="ServerDirectory\DicomServiceNode.cs" />
     <Compile Include="ServerDirectory\ServerDirectoryBridge.cs" />

@@ -12,6 +12,7 @@
 using ClearCanvas.Dicom;
 using System;
 using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -117,17 +118,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		bool IsStored { get; }
 
 		/// <summary>
-		/// Gets the name of the <see cref="IStudyLoader"/> that created this data source.
+		/// Gets the source server where this data source was loaded from.
 		/// </summary>
-		string StudyLoaderName { get; }
-
-		/// <summary>
-		/// Gets an object representing the source server where this data source was loaded from.
-		/// </summary>
-		/// <remarks>
-		/// When non-null, this object is most likely an <see cref="ApplicationEntity"/>, but is not guaranteed to be one.
-		/// </remarks>
-		object Server { get; }
+		IDicomServiceNode Server { get; }
 
 		/// <summary>
 		/// Gets a value indicating whether or not the SOP instance is an image.

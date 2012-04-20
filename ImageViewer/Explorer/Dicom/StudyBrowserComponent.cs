@@ -22,12 +22,9 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -43,9 +40,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	public interface IStudyBrowserToolContext : IToolContext
 	{
-		StudyItem SelectedStudy { get; }
+        StudyTableItem SelectedStudy { get; }
 
-		ReadOnlyCollection<StudyItem> SelectedStudies { get; }
+        ReadOnlyCollection<StudyTableItem> SelectedStudies { get; }
 
 		DicomServiceNodeList SelectedServers { get; }
 
@@ -77,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			#region IStudyBrowserToolContext Members
 
-			public StudyItem SelectedStudy
+            public StudyTableItem SelectedStudy
 			{
 				get
 				{
@@ -85,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			public ReadOnlyCollection<StudyItem> SelectedStudies
+            public ReadOnlyCollection<StudyTableItem> SelectedStudies
 			{
 				get
 				{
@@ -144,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private readonly Dictionary<string, SearchResult> _searchResults;
 	    private SearchResult _currentSearchResult;
 
-		private readonly Table<StudyItem> _dummyStudyTable;
+		private readonly Table<StudyTableItem> _dummyStudyTable;
 		private event EventHandler _studyTableChanged;
 		private bool _filterDuplicateStudies = true;
 
@@ -169,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public StudyBrowserComponent()
 		{
-			_dummyStudyTable = new Table<StudyItem>();
+			_dummyStudyTable = new Table<StudyTableItem>();
 			_searchResults = new Dictionary<string, SearchResult>();
             _lastQueryCriteria = new StudyRootStudyIdentifier();
 		}
@@ -266,7 +263,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public Table<StudyItem> StudyTable
+		public Table<StudyTableItem> StudyTable
 		{
 			get
 			{
@@ -291,18 +288,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			remove { _studyTableChanged -= value; }
 		}
 
-		public StudyItem SelectedStudy
+        public StudyTableItem SelectedStudy
 		{
-			get { return _currentSelection == null ? null : _currentSelection.Item as StudyItem; }
+            get { return _currentSelection == null ? null : _currentSelection.Item as StudyTableItem; }
 		}
 
-		public ReadOnlyCollection<StudyItem> SelectedStudies
+        public ReadOnlyCollection<StudyTableItem> SelectedStudies
 		{
 			get
 			{
-				var selectedStudies = new List<StudyItem>();
+                var selectedStudies = new List<StudyTableItem>();
 				if (_currentSelection != null)
-				    selectedStudies.AddRange(_currentSelection.Items.Cast<StudyItem>());
+                    selectedStudies.AddRange(_currentSelection.Items.Cast<StudyTableItem>());
 
 				return selectedStudies.AsReadOnly();
 			}
@@ -359,7 +356,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		    _lastQueryCriteria = criteria;
 			var failedServerInfo = new List<KeyValuePair<string, Exception>>();
-			var aggregateStudyItemList = new StudyItemList();
+			var aggregateStudyItemList = new List<StudyTableItem>();
 
 			Async.Invoke(this,
                          () => aggregateStudyItemList = Query(criteria, failedServerInfo),
@@ -447,30 +444,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			NotifyPropertyChanged("ResultsTitle");
 		}
 
-		private StudyItemList Query(StudyRootStudyIdentifier criteria, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
+		private List<StudyTableItem> Query(StudyRootStudyIdentifier criteria, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
 		{
-			var aggregateStudyItemList = new StudyItemList();
+			var aggregateItems = new List<StudyTableItem>();
 
 			foreach (var server in _selectedServers)
 			{
-				var serverStudyItemList = new StudyItemList();
+				var serverItems = new List<StudyTableItem>();
 				var serverHasError = false;
 
 				try
 				{
-				    //TODO (Marmot):In the interest of getting stuff working again. Will remove shortly.
-				    string loaderName = server.IsLocal ? "DICOM_LOCAL" : "CC_STREAMING";
 				    var storeQuery = server.IsSupported<IStudyStoreQuery>()
 				                         ? server.GetService<IStudyStoreQuery>()
 				                         : new StudyRootQueryAdapter(server.GetService<IStudyRootQuery>());
 				    try
 				    {
                         using (var bridge = new StudyStoreBridge(storeQuery))
-                        {
-                            var entries = bridge.GetStudyEntries(criteria);
-                            //TODO (Marmot):just to get stuff compiling again.
-                            aggregateStudyItemList.AddRange(entries.Select(s => new StudyItem(s.Study, server, loaderName)));
-                        }
+                            serverItems = bridge.GetStudyEntries(criteria).Select(e => new StudyTableItem(e)).ToList();
 				    }
                     finally
 				    {
@@ -489,15 +480,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 
 				if (!serverHasError)
-					aggregateStudyItemList.AddRange(serverStudyItemList);
+					aggregateItems.AddRange(serverItems);
 			}
 
-			return aggregateStudyItemList;
+			return aggregateItems;
 		}
 
-		private void OnSearchCompleted(StudyItemList aggregateStudyItemList, List<KeyValuePair<string, Exception>> failedServerInfo)
+		private void OnSearchCompleted(List<StudyTableItem> aggregateItems, List<KeyValuePair<string, Exception>> failedServerInfo)
 		{
-			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
+			CurrentSearchResult.Refresh(aggregateItems, _filterDuplicateStudies);
 
 			if (failedServerInfo.Count > 0)
 			{

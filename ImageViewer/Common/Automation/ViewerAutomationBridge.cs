@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -113,12 +114,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		public IList<Viewer> GetViewers(string primaryStudyInstanceUid)
 		{
 			Platform.CheckForEmptyString(primaryStudyInstanceUid, "primaryStudyInstanceUid");
-
-			return CollectionUtils.Select(GetViewers(),
-						delegate(Viewer viewer)
-						{
-							return viewer.PrimaryStudyInstanceUid == primaryStudyInstanceUid;
-						});
+			return GetViewers().Where(viewer => viewer.PrimaryStudyInstanceUid == primaryStudyInstanceUid).ToList();
 		}
 
 		/// <summary>
@@ -171,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public Viewer OpenStudiesByAccessionNumber(IEnumerable<string> accessionNumbers)
 		{
-			List<StudyRootStudyIdentifier> studies = new List<StudyRootStudyIdentifier>();
+			var studies = new List<StudyRootStudyIdentifier>();
 
 			foreach (string accessionNumber in accessionNumbers)
 				studies.AddRange(_studyRootQueryBridge.QueryByAccessionNumber(accessionNumber));
@@ -192,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public Viewer OpenStudiesByPatientId(IEnumerable<string> patientIds)
 		{
-			List<StudyRootStudyIdentifier> studies = new List<StudyRootStudyIdentifier>();
+			var studies = new List<StudyRootStudyIdentifier>();
 
 			foreach (string patientId in patientIds)
 				studies.AddRange(_studyRootQueryBridge.QueryByPatientId(patientId));
@@ -205,12 +201,14 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public Viewer OpenStudies(List<OpenStudyInfo> studiesToOpen)
 		{
-			OpenStudiesRequest request = new OpenStudiesRequest();
-			request.ActivateIfAlreadyOpen = _openStudiesBehaviour.ActivateExistingViewer;
-			request.ReportFaultToUser = _openStudiesBehaviour.ReportFaultToUser;
-			request.StudiesToOpen = studiesToOpen;
+		    var request = new OpenStudiesRequest
+		                      {
+		                          ActivateIfAlreadyOpen = _openStudiesBehaviour.ActivateExistingViewer,
+		                          ReportFaultToUser = _openStudiesBehaviour.ReportFaultToUser,
+		                          StudiesToOpen = studiesToOpen
+		                      };
 
-			return _viewerAutomationClient.OpenStudies(request).Viewer;
+		    return _viewerAutomationClient.OpenStudies(request).Viewer;
 		}
 
 		/// <summary>
@@ -218,9 +216,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public void ActivateViewer(Viewer viewer)
 		{
-			ActivateViewerRequest request = new ActivateViewerRequest();
-			request.Viewer = viewer;
-			_viewerAutomationClient.ActivateViewer(request);
+		    var request = new ActivateViewerRequest {Viewer = viewer};
+		    _viewerAutomationClient.ActivateViewer(request);
 		}
 
 		/// <summary>
@@ -229,9 +226,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// <param name="viewer"></param>
 		public void CloseViewer(Viewer viewer)
 		{
-			CloseViewerRequest request = new CloseViewerRequest();
-			request.Viewer = viewer;
-			_viewerAutomationClient.CloseViewer(request);
+		    var request = new CloseViewerRequest {Viewer = viewer};
+		    _viewerAutomationClient.CloseViewer(request);
 		}
 
 		/// <summary>
@@ -239,7 +235,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public IList<string> GetViewerAdditionalStudies(Viewer viewer)
 		{
-			GetViewerInfoRequest request = new GetViewerInfoRequest();
+			var request = new GetViewerInfoRequest();
 			return _viewerAutomationClient.GetViewerInfo(request).AdditionalStudyInstanceUids;
 		}
 
@@ -263,26 +259,13 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 
 		private IList<Viewer> GetViewers(IEnumerable<StudyRootStudyIdentifier> studies)
 		{
-			List<string> studyInstanceUids = CollectionUtils.Map<StudyRootStudyIdentifier, string>(studies,
-				delegate(StudyRootStudyIdentifier identifier)
-				{
-					return identifier.StudyInstanceUid;
-				});
-
-			return CollectionUtils.Select(GetViewers(),
-				delegate(Viewer viewer)
-				{
-					return studyInstanceUids.Contains(viewer.PrimaryStudyInstanceUid);
-				});
+			var studyInstanceUids = studies.Select(identifier => identifier.StudyInstanceUid).ToList();
+			return GetViewers().Where(viewer => studyInstanceUids.Contains(viewer.PrimaryStudyInstanceUid)).ToList();
 		}
 
 		private static List<OpenStudyInfo> Convert(IEnumerable<StudyRootStudyIdentifier> studyIdentifiers)
 		{
-			return CollectionUtils.Map<StudyRootStudyIdentifier, OpenStudyInfo>(studyIdentifiers,
-															delegate(StudyRootStudyIdentifier studyIdentifier)
-															{
-																return new OpenStudyInfo(studyIdentifier);
-															});
+		    return studyIdentifiers.Select(identifier => new OpenStudyInfo(identifier)).ToList();
 		}
 
 		/// <summary>

@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 {
@@ -90,7 +91,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// <returns>A context object that should be disposed in order to unregister the data sources.</returns>
 		public static UnitTestStudyProviderContext RegisterStudies(IEnumerable<ISopDataSource> sopDataSources)
 		{
-			return RegisterStudies(new object(), sopDataSources);
+			return RegisterStudies(null, sopDataSources);
 		}
 
 		/// <summary>
@@ -103,7 +104,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// <param name="server">Specifies the "server" on which these data sources "reside."</param>
 		/// <param name="sopDataSources">The <see cref="ISopDataSource"/>s to be registered.</param>
 		/// <returns>A context object that should be disposed in order to unregister the data sources.</returns>
-		public static UnitTestStudyProviderContext RegisterStudies(object server, IEnumerable<ISopDataSource> sopDataSources)
+		public static UnitTestStudyProviderContext RegisterStudies(IDicomServiceNode server, IEnumerable<ISopDataSource> sopDataSources)
 		{
 			var unitTestStudyProvider = new UnitTestStudyProviderContext(server, sopDataSources);
 			RegisterStudyProvider(unitTestStudyProvider);
@@ -208,7 +209,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// </summary>
 		public sealed class UnitTestStudyProviderContext : IUnitTestStudyProvider, IDisposable
 		{
-			internal UnitTestStudyProviderContext(object server, IEnumerable<ISopDataSource> sopDataSources)
+			internal UnitTestStudyProviderContext(IDicomServiceNode server, IEnumerable<ISopDataSource> sopDataSources)
 			{
 				Platform.CheckForNullReference(server, "server");
 				Platform.CheckForNullReference(sopDataSources, "sopDataSources");
@@ -228,7 +229,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			/// <summary>
 			/// Gets the "server" on which the represented data sources "reside."
 			/// </summary>
-			public object Server { get; private set; }
+			public IDicomServiceNode Server { get; private set; }
 
 			/// <summary>
 			/// Gets the represented data sources.

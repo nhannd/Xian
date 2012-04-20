@@ -16,6 +16,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
@@ -92,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			StudyItemList studyItemList = new StudyItemList();
 			foreach (DicomAttributeCollection result in results)
 			{
-				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer, Name);
+				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer.ToServiceNode());
 
 				//TODO: add DicomField attributes to the StudyItem class (implement typeconverter for PersonName class).
 				item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].GetString(0, "");

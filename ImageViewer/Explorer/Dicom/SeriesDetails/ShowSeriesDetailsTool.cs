@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
@@ -34,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	{
 		public override void Initialize()
 		{
-			base.Initialize();
+			Initialize();
 
 			UpdateEnabled();
 		}
@@ -51,35 +52,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		private void UpdateEnabled()
 		{
-			if (base.Context.SelectedServers == null)
-				base.Enabled = false;
-			else if (base.Context.SelectedServers.IsLocalServer)
-				base.Enabled = StudyStore.IsSupported && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
-			else
-				base.Enabled = base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1 &&
-					GetServerForStudy(base.Context.SelectedStudy) != null;
-		}
-
-		private IDicomServiceNode GetServerForStudy(StudyItem studyItem)
-		{
-			if (base.Context.SelectedServers == null || base.Context.SelectedServers.Count == 0)
+			if (Context.SelectedServers == null)
 			{
-				return null;
+			    Enabled = false;
 			}
-			else if (base.Context.SelectedServers.Count == 1)
+			else if (Context.SelectedStudy == null || Context.SelectedStudies.Count > 1)
 			{
-				return base.Context.SelectedServers[0];
+			    Enabled = false;
 			}
-			else
+            else
 			{
-			    //TODO (Marmot):
-                var ae = studyItem.Server as IApplicationEntity;
-                if (ae == null)
-                    return null;
-
-			    return Context.SelectedServers.FirstOrDefault(s => s.Name == ae.Name);
+			    Enabled = Context.SelectedStudy.Server != null &&
+			              Context.SelectedStudy.Server.IsSupported<IStudyRootQuery>();
 			}
-		}
+        }
 
 		public void Show()
 		{
@@ -90,8 +76,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 			try
 			{
-				var component = new SeriesDetailsComponent(base.Context.SelectedStudy, GetServerForStudy(base.Context.SelectedStudy));
-				ApplicationComponent.LaunchAsDialog(base.Context.DesktopWindow, component, SR.TitleSeriesDetails);
+				var component = new SeriesDetailsComponent(Context.SelectedStudy, Context.SelectedStudy.Server);
+				ApplicationComponent.LaunchAsDialog(Context.DesktopWindow, component, SR.TitleSeriesDetails);
 			}
 			catch(Exception e)
 			{

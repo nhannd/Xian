@@ -21,7 +21,6 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Utilities;
 
@@ -57,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	{
 		private event EventHandler _selectedSeriesChanged;
 
-		private readonly StudyItem _studyItem;
+        private readonly IStudyRootStudyIdentifier _study;
 		private readonly Table<SeriesIdentifier> _seriesTable;
 		private readonly IList<ISeriesData> _seriesList;
         private readonly IDicomServiceNode _server;
@@ -69,9 +68,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		private IList<ISeriesData> _selectedSeries;
 		private ISelection _selection;
 
-		internal SeriesDetailsComponent(StudyItem studyItem, IDicomServiceNode server)
+        internal SeriesDetailsComponent(IStudyRootStudyIdentifier study, IDicomServiceNode server)
 		{
-			_studyItem = studyItem;
+            _study = study;
 			_seriesTable = new Table<SeriesIdentifier>();
 			_seriesList = new ReadOnlyListWrapper<ISeriesData>(_seriesTable.Items);
 			_selectedSeries = new ReadOnlyListWrapper<ISeriesData>();
@@ -80,15 +79,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		string ISeriesDetailComponentViewModel.PatientId
 		{
-			get { return _studyItem.PatientId; }	
+			get { return _study.PatientId; }	
 		}
 
 		string ISeriesDetailComponentViewModel.PatientsName
 		{
 			get
 			{	
-				if (_studyItem.PatientsName != null)
-					return _studyItem.PatientsName.FormattedName;
+				if (_study.PatientsName != null)
+					return new PersonName(_study.PatientsName).FormattedName;
 				return "";
 			}
 		}
@@ -97,9 +96,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(_studyItem.PatientsBirthDate))
+				if (!string.IsNullOrEmpty(_study.PatientsBirthDate))
 				{
-					DateTime? date = DateParser.Parse(_studyItem.PatientsBirthDate);
+					DateTime? date = DateParser.Parse(_study.PatientsBirthDate);
 					if (date.HasValue)
 						return Format.Date(date);
 				}
@@ -110,16 +109,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		string ISeriesDetailComponentViewModel.AccessionNumber
 		{
-			get { return _studyItem.AccessionNumber; }
+			get { return _study.AccessionNumber; }
 		}
 
 		string ISeriesDetailComponentViewModel.StudyDate
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(_studyItem.StudyDate))
+				if (!string.IsNullOrEmpty(_study.StudyDate))
 				{
-					DateTime? date = DateParser.Parse(_studyItem.StudyDate);
+					DateTime? date = DateParser.Parse(_study.StudyDate);
 					if (date.HasValue)
 						return Format.Date(date);
 				}
@@ -130,12 +129,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		string ISeriesDetailComponentViewModel.StudyDescription
 		{
-			get { return _studyItem.StudyDescription; }
+			get { return _study.StudyDescription; }
 		}
 
-		protected internal StudyItem StudyItem
+	    protected internal IDicomServiceNode Server
+	    {
+            get { return _server; }
+	    }
+
+	    protected internal IStudyRootData Study
 		{
-			get { return _studyItem; }
+			get { return _study; }
 		}
 
 		public IList<ISeriesData> Series
@@ -309,7 +313,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		internal void RefreshInternal()
 		{
 			_seriesTable.Items.Clear();
-		    var identifier = new SeriesIdentifier {StudyInstanceUid = _studyItem.StudyInstanceUid};
+		    var identifier = new SeriesIdentifier {StudyInstanceUid = _study.StudyInstanceUid};
 		    IList<SeriesIdentifier> results = null;
             _server.GetService<IStudyRootQuery>(s => results = s.SeriesQuery(identifier));
 			_seriesTable.Items.AddRange(results);
@@ -332,14 +336,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 				_component = component;
 			}
 
-			public IPatientData Patient
-			{
-				get { return _component.StudyItem; }
-			}
+		    public IDicomServiceNode Server
+		    {
+                get { return _component._server; }
+		    }
 
-			public IStudyData Study
+			public IStudyRootData Study
 			{
-				get { return _component.StudyItem; }
+				get { return _component.Study; }
 			}
 
 			public IList<ISeriesData> AllSeries

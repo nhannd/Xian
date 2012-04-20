@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -20,7 +19,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -237,41 +235,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_cancel = true;
 		}
 
-		private static StudyItem ConvertToStudyItem(IStudyRootStudyIdentifier study)
+		private static StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
 		{
-			string studyLoaderName;
-            IApplicationEntity applicationEntity = null;
-
-		    // TODO (Marmot): Change to use the node to determine capabilities.
-			var node = FindServer(study.RetrieveAeTitle);
-			if (node.IsLocal)
-			{
-				studyLoaderName = "DICOM_LOCAL";
-			}
-			else
-			{
-				studyLoaderName = node.StreamingParameters != null ? "CC_STREAMING" : "DICOM_REMOTE";
-			    applicationEntity = node.ToDataContract();
-			}
-
-			var item = new StudyItem(study, applicationEntity, studyLoaderName){ InstanceAvailability = study.InstanceAvailability };
+		    study.ResolveServer(true);
+		    var item = new StudyItem(study);
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 
 			return item;
-		}
-
-		private static IDicomServiceNode FindServer(string aeTitle)
-		{
-            using (var bridge = new ServerDirectoryBridge())
-            {
-                var local = bridge.GetLocalServer();
-                if (local.AETitle == aeTitle)
-                    return local;
-            }
-
-            using (var bridge = new ServerDirectoryBridge())
-                return bridge.GetServersByAETitle(aeTitle).FirstOrDefault();
 		}
 	}
 }

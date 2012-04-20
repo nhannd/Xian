@@ -99,6 +99,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StudyBrowserComponent.cs" />
     <Compile Include="SearchResult2.cs" />
+    <Compile Include="StudyTable.cs" />
+    <Compile Include="StudyTableItem.cs" />
     <Compile Include="Tests\MiscellaneousTests.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

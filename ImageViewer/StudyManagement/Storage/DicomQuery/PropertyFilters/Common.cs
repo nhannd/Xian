@@ -1,4 +1,5 @@
 ﻿using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFilters
 {
@@ -62,7 +63,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.PropertyFil
 
         protected override void AddValueToResult(TDatabaseObject item, DicomAttribute resultAttribute)
         {
-            resultAttribute.SetString(0, Utilities.GetLocalServerAETitle());
+            resultAttribute.SetString(0, ServerDirectory.GetLocalServer().AETitle);
         }
     }
 

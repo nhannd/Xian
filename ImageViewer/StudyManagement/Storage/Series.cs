@@ -16,6 +16,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
@@ -178,7 +179,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 Series = new SeriesIdentifier(this)
                 {
                     InstanceAvailability = "ONLINE",
-                    RetrieveAeTitle = Utilities.GetLocalServerAETitle(),    
+                    RetrieveAE = ServerDirectory.GetLocalServer(),
                     SpecificCharacterSet = SpecificCharacterSet
                 },
                 Data = new SeriesEntryData

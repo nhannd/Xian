@@ -26,12 +26,12 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             Real = (ApplicationEntity) server;
         }
 
+        //TODO (Marmot): Don't hold on to it, just look it up via the directory?
         protected ApplicationEntity Real { get; private set; }
 
         #region Implementation of IDicomServiceNode
 
         public bool IsLocal { get; private set; }
-        public bool SupportsStreaming { get { return StreamingParameters != null; } }
         
         #endregion
 
@@ -99,6 +99,11 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             }
 
             throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
+        }
+
+        public override string ToString()
+        {
+            return Real.ToString();
         }
     }
 }

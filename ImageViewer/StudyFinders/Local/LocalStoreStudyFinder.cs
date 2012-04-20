@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Macros;
@@ -86,12 +87,13 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Local
 			collection[DicomTags.ResponsiblePersonRole].SetStringValue("");
 			collection[DicomTags.ResponsibleOrganization].SetStringValue(GetString(queryParams, "ResponsibleOrganization"));
 
-            StudyItemList studyItemList = new StudyItemList();
+            var localServer = ServerDirectory.GetLocalServer();
+            var studyItemList = new StudyItemList();
 			using (var context = new DataAccessContext())
 			{
 				foreach (DicomAttributeCollection result in context.GetStudyStoreQuery().Query(collection))
 				{
-					StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].ToString(), null, Name);
+                    var item = new StudyItem(result[DicomTags.StudyInstanceUid].ToString(), localServer);
 					item.SpecificCharacterSet = result.SpecificCharacterSet;
 					item.PatientId = result[DicomTags.PatientId].ToString();
 					item.PatientsName = new PersonName(result[DicomTags.PatientsName].ToString());

@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [Tooltip("activate", "TooltipSendStudy")]
 	[IconSet("activate", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
 
-    [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Send)]
+    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Send)]
 
 	//TODO (Marmot):Restore.
 
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			var studyUids = new List<string>();
 	
             var client = new DicomSendClient();
-            foreach (StudyItem item in Context.SelectedStudies)
+            foreach (var item in Context.SelectedStudies)
             {
                 studyUids.Add(item.StudyInstanceUid);
                 foreach (var destination in serverTreeComponent.SelectedServers)
@@ -118,6 +118,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
+		    //TODO (Marmot): server.IsSupported<ISend>
 			Enabled = (this.Context.SelectedStudy != null &&
 			           this.Context.SelectedServers.IsLocalServer &&
 			           WorkItemActivityMonitor.IsRunning);

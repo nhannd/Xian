@@ -1,21 +1,23 @@
 ﻿using System;
+using System.Linq;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-    //TODO (Marmot): Find places where IApplicationEntity is used and see if we can switch to using these.
     public interface IDicomServiceNode : IServiceNode, IApplicationEntity
     {
         bool IsLocal { get; }
-        bool SupportsStreaming { get; }
     }
 
     public interface IServiceNode
     {
         bool IsSupported<T>() where T : class;
-        void GetService<T>(Action<T> service) where T : class;
+        void GetService<T>(Action<T> withService) where T : class;
         T GetService<T>() where T : class;
     }
 
@@ -26,11 +28,18 @@ namespace ClearCanvas.ImageViewer.Common
         public abstract bool IsSupported<T>() where T : class;
         public void GetService<T>(Action<T> withService) where T : class
         {
-            var service = GetService<T>();
+            WithService(GetService<T>(), withService);
+        }
 
+        #endregion
+
+        public abstract T GetService<T>() where T : class;
+
+        public static void WithService<T>(T service, Action<T> withService) where T : class
+        {
             try
             {
-                withService(service);    
+                withService(service);
             }
             catch (Exception)
             {
@@ -50,17 +59,56 @@ namespace ClearCanvas.ImageViewer.Common
                 throw;
             }
         }
-
-        #endregion
-
-        public abstract T GetService<T>() where T : class;
     }
 
     public static class ServiceNodeExtensions
     {
+        public static IDicomServiceNode ToServiceNode(this DicomServerConfiguration serverConfiguration)
+        {
+            Platform.CheckForNullReference(serverConfiguration, "serverConfiguration");
+            return new DicomServiceNode(serverConfiguration);
+        }
+
+        public static IDicomServiceNode ToServiceNode(this IApplicationEntity server)
+        {
+            Platform.CheckForNullReference(server, "server");
+            var dicomServiceNode = server as IDicomServiceNode;
+            if (dicomServiceNode != null)
+                return dicomServiceNode;
+            
+            return new DicomServiceNode(server);
+        }
+
         public static ApplicationEntity ToDataContract(this IDicomServiceNode serviceNode)
         {
             return new ApplicationEntity(serviceNode);
+        }
+
+        public static bool ResolveServer(this Identifier identifier, bool defaultToLocal)
+        {
+            var server = FindServer(identifier, defaultToLocal);
+            if (server != null)
+            {
+                identifier.RetrieveAE = server;
+                return true;
+            }
+
+            return false;
+        }
+
+        public static IDicomServiceNode FindServer(this IIdentifier identifier, bool defaultToLocal)
+        {
+            IDicomServiceNode server = null;
+            if (identifier.RetrieveAE != null)
+                server = identifier.RetrieveAE.ToServiceNode();
+
+            if (!String.IsNullOrEmpty(identifier.RetrieveAeTitle))
+                server = ServerDirectory.ServerDirectory.GetRemoteServersByAETitle(identifier.RetrieveAeTitle).FirstOrDefault();
+
+            if (server == null && defaultToLocal)
+                server = ServerDirectory.ServerDirectory.GetLocalServer();
+
+            return server;
         }
     }
 

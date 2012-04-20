@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
@@ -37,13 +38,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		protected internal const string ColumnNumberOfInstances = @"Instances";
 		protected const string ColumnServer = @"Server";
 		protected const string ColumnAvailability = @"Availability";
+        protected const string ColumnDeleteOn = @"Delete On";
 
 		private string _serverGroupName;
 		private bool _isLocalServer;
 		private int _numberOfChildServers;
 
-		private readonly Table<StudyItem> _studyTable;
-		private readonly List<StudyItem> _hiddenItems;
+		private readonly Table<StudyTableItem> _studyTable;
+        private readonly List<StudyTableItem> _hiddenItems;
 
 		private bool _filterDuplicates;
 		private bool _everSearched;
@@ -58,8 +60,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_isLocalServer = false;
 			_numberOfChildServers = 1;
 
-			_hiddenItems = new List<StudyItem>();
-			_studyTable = new Table<StudyItem>();
+            _hiddenItems = new List<StudyTableItem>();
+            _studyTable = new Table<StudyTableItem>();
             _setChangedStudies = new Dictionary<string, string>();
 		}
 
@@ -98,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public Table<StudyItem> StudyTable
+		public Table<StudyTableItem> StudyTable
 		{
 			get { return _studyTable; }
 		}
@@ -156,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		    SetResultsTitle();
 		}
 
-		public void Refresh(StudyItemList studies, bool filterDuplicates)
+        public void Refresh(List<StudyTableItem> tableItems, bool filterDuplicates)
 		{
 			_everSearched = true;
 			_filterDuplicates = filterDuplicates;
@@ -164,20 +166,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _setChangedStudies.Clear();
 
 			_hiddenItems.Clear();
-			IList<StudyItem> filteredStudies = new List<StudyItem>(studies);
-			RemoveDuplicates(filteredStudies, _hiddenItems);
+            var filteredItems = new List<StudyTableItem>(tableItems);
+			RemoveDuplicates(filteredItems, _hiddenItems);
 			HasDuplicates = _hiddenItems.Count > 0;
 
 			if (!_filterDuplicates)
 			{
 				_hiddenItems.Clear();
 				_studyTable.Items.Clear();
-				_studyTable.Items.AddRange(studies);
+				_studyTable.Items.AddRange(tableItems);
 			}
 			else
 			{
 				_studyTable.Items.Clear();
-				_studyTable.Items.AddRange(filteredStudies);
+				_studyTable.Items.AddRange(filteredItems);
 			}
 
 			StudyTable.Sort();
@@ -200,41 +202,41 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
-	    private static void RemoveDuplicates(IList<StudyItem> allStudies, List<StudyItem> removed)
+        private static void RemoveDuplicates(IList<StudyTableItem> allItems, List<StudyTableItem> removedItems)
 		{
-			removed.Clear();
+			removedItems.Clear();
 
-			var uniqueStudies = new Dictionary<string, StudyItem>();
-			foreach (StudyItem study in allStudies)
+            var uniqueItems = new Dictionary<string, StudyTableItem>();
+            foreach (StudyTableItem item in allItems)
 			{
-				StudyItem existing;
-				if (uniqueStudies.TryGetValue(study.StudyInstanceUid, out existing))
-				{
-                    var server = study.Server as IApplicationEntity;
+				StudyTableItem existing;
+                if (uniqueItems.TryGetValue(item.StudyInstanceUid, out existing))
+                {
+                    var server = item.Server;
 					//we will only replace an existing entry if this study's server is streaming.
 					if (server != null && server.StreamingParameters != null)
 					{
 						//only replace existing entry if it is on a non-streaming server.
-                        server = existing.Server as IApplicationEntity;
+                        server = existing.Server;
                         if (server == null || server.StreamingParameters == null)
 						{
-							removed.Add(existing);
-							uniqueStudies[study.StudyInstanceUid] = study;
+							removedItems.Add(existing);
+							uniqueItems[item.StudyInstanceUid] = item;
 							continue;
 						}
 					}
 
 					//this study is a duplicate.
-					removed.Add(study);
+					removedItems.Add(item);
 				}
 				else
 				{
-					uniqueStudies[study.StudyInstanceUid] = study;
+                    uniqueItems[item.StudyInstanceUid] = item;
 				}
 			}
 
-			foreach (StudyItem study in removed)
-				allStudies.Remove(study);
+			foreach (StudyTableItem removedItem in removedItems)
+				allItems.Remove(removedItem);
 		}
 
 	    protected virtual void InitializeTable()
@@ -249,18 +251,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_studyTable.Sort(new TableSortParams(column, true));
 		}
 
-		protected IEnumerable<TableColumnBase<StudyItem>> CreateExtensionColumns()
+		protected IEnumerable<TableColumnBase<StudyTableItem>> CreateExtensionColumns()
 		{
-			var columns = new List<TableColumnBase<StudyItem>>();
+			var columns = new List<TableColumnBase<StudyTableItem>>();
 			try
 			{
 				// Create and add any extension columns
-				StudyColumnExtensionPoint xp = new StudyColumnExtensionPoint();
-				foreach (object obj in xp.CreateExtensions())
-				{
-					IStudyColumn newColumn = (IStudyColumn)obj;
+				var xp = new StudyColumnExtensionPoint();
+                foreach (IStudyColumn extensionColumn in xp.CreateExtensions())
+                {
+                    IStudyColumn newColumn = extensionColumn;
 
-					var column = new TableColumn<StudyItem, string>(
+					var column = new TableColumn<StudyTableItem, string>(
 						newColumn.Name,
 						item => (newColumn.GetValue(item) ?? "").ToString(),
 						newColumn.WidthFactor);
@@ -273,150 +275,142 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return columns;
 		}
 
-		protected static IEnumerable<TableColumnBase<StudyItem>> CreateDefaultColumns()
+		protected static IEnumerable<TableColumnBase<StudyTableItem>> CreateDefaultColumns()
 		{
-			var columns = new List<TableColumnBase<StudyItem>>();
-			TableColumn<StudyItem, string> column;
+			var columns = new List<TableColumnBase<StudyTableItem>>();
+			TableColumn<StudyTableItem, string> column;
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnPatientId,
 				SR.ColumnHeadingPatientId,
-				delegate(StudyItem item) { return item.PatientId; },
+				item => item.PatientId,
 				0.5f);
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnLastName,
 				SR.ColumnHeadingLastName,
-				delegate(StudyItem item) { return item.PatientsName.LastName; },
+				item => new PersonName(item.PatientsName).LastName,
 				0.5f);
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnFirstName,
 				SR.ColumnHeadingFirstName,
-				delegate(StudyItem item) { return item.PatientsName.FirstName; },
+                item => new PersonName(item.PatientsName).FirstName,
 				0.5f);
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnIdeographicName,
 				SR.ColumnHeadingIdeographicName,
-				delegate(StudyItem item) { return item.PatientsName.Ideographic; },
+				item => new PersonName(item.PatientsName).Ideographic,
 				0.5f) { Visible = false };
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnPhoneticName,
 				SR.ColumnHeadingPhoneticName,
-				delegate(StudyItem item) { return item.PatientsName.Phonetic; },
+                item => new PersonName(item.PatientsName).Phonetic,
 				0.5f) { Visible = false };
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnDateOfBirth,
 				SR.ColumnHeadingDateOfBirth,
-				delegate(StudyItem item) { return FormatDicomDA(item.PatientsBirthDate); },
+				item => FormatDicomDA(item.PatientsBirthDate),
 				null,
 				0.4F,
-				delegate(StudyItem one, StudyItem two) { return one.PatientsBirthDate.CompareTo(two.PatientsBirthDate); });
+				//TODO (Marmot):
+				(one, two) => one.PatientsBirthDate.CompareTo(two.PatientsBirthDate));
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnAccessionNumber,
 				SR.ColumnHeadingAccessionNumber,
-				delegate(StudyItem item) { return item.AccessionNumber; },
+				item => item.AccessionNumber,
 				0.45F);
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnStudyDate,
 				SR.ColumnHeadingStudyDate,
-				delegate(StudyItem item) { return FormatDicomDA(item.StudyDate); },
+				item => FormatDicomDA(item.StudyDate),
 				null,
 				0.4F,
-				delegate(StudyItem one, StudyItem two) { return one.StudyDate.CompareTo(two.StudyDate); });
+				(one, two) => one.StudyDate.CompareTo(two.StudyDate));
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnStudyDescription,
 				SR.ColumnHeadingStudyDescription,
-				delegate(StudyItem item) { return item.StudyDescription; },
+				item => item.StudyDescription,
 				0.75F);
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
+			column = new TableColumn<StudyTableItem, string>(
 				ColumnModality,
 				SR.ColumnHeadingModality,
-				delegate(StudyItem item) { return DicomStringHelper.GetDicomStringArray(SortModalities(item.ModalitiesInStudy)); },
+				item => DicomStringHelper.GetDicomStringArray(SortModalities(item.ModalitiesInStudy)),
 				0.25f);
 
 			columns.Add(column);
 
-			var iconColumn = new TableColumn<StudyItem, IconSet>(
+			var iconColumn = new TableColumn<StudyTableItem, IconSet>(
 				ColumnAttachments,
 				SR.ColumnHeadingAttachments,
 				GetAttachmentsIcon,
 				0.25f)
 								{
 									ResourceResolver = new ApplicationThemeResourceResolver(typeof(SearchResult).Assembly),
-									Comparison = (x, y) => x.HasAttachments().CompareTo(y.HasAttachments())
+                                    Comparison = (x, y) => x.HasAttachments().CompareTo(y.HasAttachments())
 								};
 
 			columns.Add(iconColumn);
 
-			column = new TableColumn<StudyItem, string>(
-				ColumnReferringPhysician,
-				SR.ColumnHeadingReferringPhysician,
-				delegate(StudyItem item)
-				{
-					if (item.ReferringPhysiciansName != null)
-						return item.ReferringPhysiciansName.FormattedName;
-					else
-						return "";
-				},
-				0.6f);
+            column = new TableColumn<StudyTableItem, string>(
+                ColumnReferringPhysician,
+                SR.ColumnHeadingReferringPhysician,
+                delegate(StudyTableItem entry)
+                    {
+                        var name = new PersonName(entry.ReferringPhysiciansName ?? "");
+                        return name.FormattedName;
+                    },
+                0.6f);
 
 			columns.Add(column);
 			return columns;
 		}
 
-		protected static IEnumerable<TableColumnBase<StudyItem>> CreateInstanceCountColumns()
+		protected static IEnumerable<TableColumnBase<StudyTableItem>> CreateInstanceCountColumns()
 		{
-			var column = new TableColumn<StudyItem, string>(
+			var column = new TableColumn<StudyTableItem, string>(
 				ColumnNumberOfInstances,
 				SR.ColumnHeadingNumberOfInstances,
-				delegate(StudyItem item)
-				{
-					if (item.NumberOfStudyRelatedInstances.HasValue)
-						return item.NumberOfStudyRelatedInstances.ToString();
-					else
-						return "";
-				},
+				item => item.NumberOfStudyRelatedInstances.HasValue ? item.NumberOfStudyRelatedInstances.ToString() : "",
 				null,
 				0.3f,
-					delegate(StudyItem study1, StudyItem study2)
+					delegate(StudyTableItem entry1, StudyTableItem entry2)
 					{
-						int? instances1 = study1.NumberOfStudyRelatedInstances;
-						int? instances2 = study2.NumberOfStudyRelatedInstances;
+						int? instances1 = entry1.NumberOfStudyRelatedInstances;
+                        int? instances2 = entry2.NumberOfStudyRelatedInstances;
 
 						if (instances1 == null)
 						{
 							if (instances2 == null)
 								return 0;
-							else
-								return 1;
+							return 1;
 						}
-						else if (instances2 == null)
+						if (instances2 == null)
 						{
 							return -1;
 						}
@@ -424,26 +418,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						return -instances1.Value.CompareTo(instances2.Value);
 					});
 
-			return new TableColumnBase<StudyItem>[] { column };
+			return new TableColumnBase<StudyTableItem>[] { column };
 		}
 
-		protected static IEnumerable<TableColumnBase<StudyItem>> CreateServerColumns()
+		protected static IEnumerable<TableColumnBase<StudyTableItem>> CreateServerColumns()
 		{
-			var columns = new List<TableColumnBase<StudyItem>>();
-			var column = new TableColumn<StudyItem, string>(ColumnServer, SR.ColumnHeadingServer,
-														delegate(StudyItem item)
-														{
-															return (item.Server == null) ? "" : item.Server.ToString();
-														},
+			var columns = new List<TableColumnBase<StudyTableItem>>();
+			var column = new TableColumn<StudyTableItem, string>(ColumnServer, SR.ColumnHeadingServer,
+                                                             item => (item.Server == null) ? "" : item.Server.ToString(),
 														0.3f);
 
 			columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(ColumnAvailability, SR.ColumnHeadingAvailability,
-														delegate(StudyItem item)
-														{
-															return item.InstanceAvailability ?? "";
-														},
+			column = new TableColumn<StudyTableItem, string>(ColumnAvailability, SR.ColumnHeadingAvailability,
+			                                             item => item.InstanceAvailability ?? "",
 														0.3f);
 
 			columns.Add(column);
@@ -457,7 +445,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateServerColumnsVisibility()
 		{
-			TableColumnBase<StudyItem> column = FindColumn(ColumnServer);
+			TableColumnBase<StudyTableItem> column = FindColumn(ColumnServer);
 			if (column != null)
 			{
 				if (_isLocalServer || _numberOfChildServers == 1)
@@ -476,18 +464,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		protected TableColumnBase<StudyItem> FindColumn(string columnHeading)
+		protected TableColumnBase<StudyTableItem> FindColumn(string columnHeading)
 		{
-			foreach (TableColumnBase<StudyItem> column in StudyTable.Columns)
-			{
-				if (column.Name == columnHeading)
-					return column;
-			}
-
-			return null;
+		    return StudyTable.Columns.FirstOrDefault(column => column.Name == columnHeading);
 		}
 
-		protected void OnColumnValueChanged(object sender, ItemEventArgs<StudyItem> e)
+	    protected void OnColumnValueChanged(object sender, ItemEventArgs<StudyTableItem> e)
 		{
 			this.StudyTable.Items.NotifyItemUpdated(e.Item);
 		}
@@ -503,9 +485,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return date.ToString(Format.DateFormat);
 		}
 
-		private static IconSet GetAttachmentsIcon(StudyItem item)
+		private static IconSet GetAttachmentsIcon(StudyTableItem entry)
 		{
-			return item.HasAttachments() ? new IconSet("AttachmentsExtraSmall.png") : null;
+			return entry.HasAttachments() ? new IconSet("AttachmentsExtraSmall.png") : null;
 		}
 
 		private static string[] SortModalities(IEnumerable<string> modalities)

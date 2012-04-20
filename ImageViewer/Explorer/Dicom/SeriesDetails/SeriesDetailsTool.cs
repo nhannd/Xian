@@ -16,6 +16,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
@@ -24,15 +25,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 	public interface ISeriesDetailsToolContext : IToolContext
 	{
-		IPatientData Patient { get; }
-		IStudyData Study { get; }
+	    IDicomServiceNode Server { get; }
+		IStudyRootData Study { get; }
 		IList<ISeriesData> AllSeries { get; }
 		IList<ISeriesData> SelectedSeries { get; }
 		event EventHandler SelectedSeriesChanged;
 		void RefreshSeriesTable();
 
-		//TODO (CR Sept 2010): don't expose the component.
-		SeriesDetailsComponent Component { get; }
 		IDesktopWindow DesktopWindow { get; }
 	}
 
@@ -59,19 +58,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}
 		}
 
-		protected IPatientData Patient
-		{
-			get { return Context.Patient; }
-		}
-
-		protected IStudyData Study
+		protected IStudyRootData Study
 		{
 			get { return Context.Study; }
 		}
 
-		protected object Server
+		protected IDicomServiceNode Server
 		{
-			get { return Context.Component.StudyItem.Server; }
+			get { return Context.Server; }
 		}
 
 		protected IList<ISeriesData> AllSeries
@@ -115,11 +109,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		protected virtual void OnSelectedSeriesChanged()
 		{
 			this.Enabled = this.Context.SelectedSeries.Count > 0;
-		}
-
-		protected bool IsStudyLoaderSupported
-		{
-			get { return ImageViewerComponent.IsStudyLoaderSupported(Context.Component.StudyItem.StudyLoaderName); }
 		}
 	}
 }

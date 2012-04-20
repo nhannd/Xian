@@ -9,11 +9,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -23,58 +20,34 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class LoadStudyArgs
 	{
-		private string _studyInstanceUid;
-		private object _server;
-		private string _studyLoaderName;
-
-		/// <summary>
-		/// Constructs a new <see cref="LoadStudyArgs"/> using the specified parameters.
-		/// </summary>
-		/// <param name="studyInstanceUid">The Study Instance UID of the study to be loaded.</param>
-		/// <param name="server">An object specifying the server to retrieve the study from, such as
-		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.</param>
-		/// <param name="studyLoaderName">The name of the <see cref="IStudyLoader"/> to use, which is specified by <see cref="IStudyLoader.Name"/>.</param>
-		public LoadStudyArgs(
-			string studyInstanceUid, 
-			object server, 
-			string studyLoaderName)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="studyInstanceUid"></param>
+        /// <param name="server"></param>
+		public LoadStudyArgs(string studyInstanceUid, IDicomServiceNode server)
 		{
-			Platform.CheckForNullReference(studyLoaderName, "studyLoaderName");
 			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUids");
-
-			_studyInstanceUid = studyInstanceUid;
-			_server = server;
-			_studyLoaderName = studyLoaderName;
+            Platform.CheckForNullReference(server, "server");
+            StudyInstanceUid = studyInstanceUid;
+			Server = server;
 		}
 
 		internal LoadStudyArgs(StudyItem studyItem)
-		: this(studyItem.StudyInstanceUid, studyItem.Server, studyItem.StudyLoaderName)
+		: this(studyItem.StudyInstanceUid, studyItem.Server)
 		{
 		}
 
-		/// <summary>
-		/// Gets the Study Instance UID of the study to be loaded.
-		/// </summary>
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-		}
+	    /// <summary>
+	    /// Gets the Study Instance UID of the study to be loaded.
+	    /// </summary>
+	    public string StudyInstanceUid { get; private set; }
 
-		/// <summary>
-		/// Gets the server to load the study from, such as
-		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.
-		/// </summary>
-		public object Server
-		{
-			get { return _server; }
-		}
+	    //TODO (Marmot):IApplicationEntity?
 
-		/// <summary>
-		/// Gets the name of the <see cref="IStudyLoader"/> to use, which is specified by <see cref="IStudyLoader.Name"/>.
-		/// </summary>
-		public string StudyLoaderName
-		{
-			get { return _studyLoaderName; }
-		}
+        /// <summary>
+        /// Gets the server from which the study can be loaded.
+        /// </summary>
+	    public IDicomServiceNode Server { get; private set; }
 	}
 }
