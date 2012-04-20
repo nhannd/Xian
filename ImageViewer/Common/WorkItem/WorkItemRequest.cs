@@ -84,6 +84,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (ImportFilesProgress),
                                                           typeof (ReindexProgress),
                                                           typeof (DicomSendProgress),
+                                                          typeof (DeleteProgress),
                                                       };
 
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider ignored)
