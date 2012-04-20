@@ -19,14 +19,14 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
 	/// <summary>
-	/// Delegate used with <see cref="ProcessorThreadPool"/> class.
+	/// Delegate used with <see cref="WorkItemThreadPool"/> class.
 	/// </summary>
 	/// <param name="processor">The WorkItem processor.</param>
 	/// <param name="queueItem">The actual WorkItem item.</param>
 	internal delegate void WorkItemThreadDelegate(IWorkItemProcessor processor, WorkItem queueItem);
 
 	/// <summary>
-    /// Class used to pass parameters to threads in the <see cref="ProcessorThreadPool"/>.
+    /// Class used to pass parameters to threads in the <see cref="WorkItemThreadPool"/>.
 	/// </summary>
 	internal class WorkItemThreadParameter
 	{
@@ -61,10 +61,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 	/// Class for managing the WorkItem thread pool.
 	/// </summary>
 	/// <remarks>
-	/// This class is used to keep track of the current types of WorkItem entries being processed and 
-	/// for requested new queue entries based on the current types being processed.
+	/// This class is used to keep track of the current priorities of WorkItem entries being processed and 
+	/// for requested new queue entries being processed.
 	/// </remarks>
-	internal class ProcessorThreadPool : ItemProcessingThreadPool<WorkItemThreadParameter>
+	internal class WorkItemThreadPool : ItemProcessingThreadPool<WorkItemThreadParameter>
 	{
 		#region Private Members
 		private readonly object _syncLock = new object();
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		/// </summary>
         /// <param name="statThreadCount">Total threads to be put in the thread pool.</param>
         /// <param name="normalThreadCount"></param>
-		public ProcessorThreadPool(int statThreadCount, int normalThreadCount)
+		public WorkItemThreadPool(int statThreadCount, int normalThreadCount)
 			: base(statThreadCount + normalThreadCount)
 		{
 		    _normalThreads = normalThreadCount;

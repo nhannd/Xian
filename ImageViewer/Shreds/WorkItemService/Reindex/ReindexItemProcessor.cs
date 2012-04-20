@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Progress.IsCancelable = false;
             Proxy.UpdateProgress();
 
-            var processor = new ReindexProcessor();
+            var processor = new ReindexUtility();
 
             processor.Initialize();
 
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
             Proxy.UpdateProgress();
 
-            processor.StudyFolderProcessedEvent += delegate(object sender, ReindexProcessor.StudyEventArgs e)
+            processor.StudyFolderProcessedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
                                              {
                                                  Progress.StudyFoldersProcessed++;
                                                  Progress.StudiesProcessed++;
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                                                    Proxy.UpdateProgress();
                                                };
 
-            processor.StudyProcessedEvent += delegate(object sender, ReindexProcessor.StudyEventArgs e)
+            processor.StudyProcessedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
                                                  {
                                                      Progress.StudiesProcessed++;
                                                      Proxy.Item.StudyInstanceUid = string.Empty;

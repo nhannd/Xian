@@ -189,7 +189,7 @@
   <data name="WorkItemServiceDescription" xml:space="preserve">
     <value>Hosts the WorkItem Services</value>
   </data>
-  <data name="WorkitemProcessorDescription" xml:space="preserve">
+  <data name="WorkItemProcessorDescription" xml:space="preserve">
     <value>Hosts the WorkItem Processor Service</value>
   </data>
   <data name="WorkItemProcessorService" xml:space="preserve">

@@ -14,13 +14,12 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 {
     /// <summary>
     /// Processor for <see cref="WorkItemTypeEnum.StudyProcess"/> entries.
@@ -146,6 +145,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
             // Loop through requerying the database
             while (successfulProcessCount > lastSuccessProcessCount)
             {
+                // If we're just doing a few at a time, less than the batch size, Postpone for now
+                if (lastSuccessProcessCount != -1 && (successfulProcessCount - lastSuccessProcessCount) < WorkItemServiceSettings.Instance.StudyProcessBatchSize)
+                    break;
+
                 lastSuccessProcessCount = successfulProcessCount;
 
                 LoadUids();
@@ -234,7 +237,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
 
             try
             {
-                var fileList = new List<SopInstanceProcessor.ProcessorFile>();
+                var fileList = new List<ProcessStudyUtility.ProcessorFile>();
 
                 foreach (var uid in sops)
                 {
@@ -242,10 +245,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
                         ? Path.Combine(Location.StudyFolder, uid.File) 
                         : Location.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
 
-                    fileList.Add(new SopInstanceProcessor.ProcessorFile(path,uid));
+                    fileList.Add(new ProcessStudyUtility.ProcessorFile(path,uid));
                 }
 
-                var processor = new SopInstanceProcessor(Location);
+                var processor = new ProcessStudyUtility(Location);
 
                 processor.ProcessBatch(fileList, studyXml);
 

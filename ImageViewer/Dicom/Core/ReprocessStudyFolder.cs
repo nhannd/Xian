@@ -22,7 +22,7 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 namespace ClearCanvas.ImageViewer.Dicom.Core
 {
     /// <summary>
-    /// Class for reprocessing Study.  Primarily used by <see cref="ReindexProcessor"/>.
+    /// Class for reprocessing Study.  Primarily used by <see cref="ReindexUtility"/>.
     /// </summary>
     public class ReprocessStudyFolder
     {
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             try
             {                        
                 var studyXml = Location.LoadStudyXml();
-                var fileList = new List<SopInstanceProcessor.ProcessorFile>();
+                var fileList = new List<ProcessStudyUtility.ProcessorFile>();
 
                 FileProcessor.Process(Location.StudyFolder, "*.dcm", delegate(string file)
                                                            {
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                                                        var context =
                                                                            new ImportStudyContext(
                                                                                dicomFile.SourceApplicationEntityTitle);
-                                                                       var importer = new SopInstanceImporter(context);
+                                                                       var importer = new ImportFilesUtility(context);
                                                                        var result = importer.Import(dicomFile, BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
                                                                        if (!result.DicomStatus.Equals(DicomStatuses.Success))
                                                                        {
@@ -98,11 +98,11 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                                                    }
                                                                    else
                                                                    {
-                                                                       fileList.Add(new SopInstanceProcessor.ProcessorFile(dicomFile, null));
+                                                                       fileList.Add(new ProcessStudyUtility.ProcessorFile(dicomFile, null));
 
                                                                        if (fileList.Count > 19)
                                                                        {
-                                                                           var p = new SopInstanceProcessor(Location);
+                                                                           var p = new ProcessStudyUtility(Location);
 
                                                                            p.ProcessBatch(fileList, studyXml);
 
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                                            }, true);
                 if (fileList.Count > 0)
                 {
-                    var p = new SopInstanceProcessor(Location);
+                    var p = new ProcessStudyUtility(Location);
 
                     p.ProcessBatch(fileList, studyXml);
                 }
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                                                        var context =
                                                                            new ImportStudyContext(
                                                                                lastFile.SourceApplicationEntityTitle);
-                                                                       var importer = new SopInstanceImporter(context);
+                                                                       var importer = new ImportFilesUtility(context);
                                                                        importer.Import(lastFile,BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
                                                                    }
                                                                }
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 
                 if (lastFile !=null)
                 {
-                    var p = new SopInstanceProcessor(Location);
+                    var p = new ProcessStudyUtility(Location);
 
                     p.ProcessFile(lastFile, studyXml, null);
                 }

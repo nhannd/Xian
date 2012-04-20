@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
     /// <summary>
     /// Processor for <see cref="WorkItemTypeEnum.Import"/> <see cref="WorkItem"/>s.
     /// </summary>
-    public class ImportProcessor : BaseItemProcessor<ImportFilesRequest,ImportFilesProgress>
+    public class ImportItemProcessor : BaseItemProcessor<ImportFilesRequest,ImportFilesProgress>
     {
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
                 dicomFile.Load(readOptions);
 
-                var importer = new SopInstanceImporter(context);
+                var importer = new ImportFilesUtility(context);
 
                 DicomProcessingResult result = importer.Import(dicomFile, Request.BadFileBehaviour, Request.FileImportBehaviour);
 

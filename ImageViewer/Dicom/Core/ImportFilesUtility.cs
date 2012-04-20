@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     /// <summary>
     /// A context object used when importing a batch of DICOM SOP Instances from a DICOM association.
     /// </summary>
-    public class DicomReceiveImportContext : SopInstanceImporterContext
+    public class DicomReceiveImportContext : ImportFilesContext
     {
         /// <summary>
         /// Constructor.
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     /// <summary>
     /// A context object used when importing a batch of DICOM SOP Instances from disk.
     /// </summary>
-    public class ImportStudyContext : SopInstanceImporterContext
+    public class ImportStudyContext : ImportFilesContext
     {
         /// <summary>
         /// Constructor.
@@ -111,18 +111,18 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     }
 
     /// <summary>
-    /// Encapsulates the context of the application when <see cref="SopInstanceImporter"/> is called.
+    /// Encapsulates the context of the application when <see cref="ImportFilesUtility"/> is called.
     /// </summary>
-    public abstract class SopInstanceImporterContext
+    public abstract class ImportFilesContext
     {
      
         #region Constructors
 
         /// <summary>
-        /// Creates an instance of <see cref="SopInstanceImporterContext"/> to be used
-        /// by <see cref="SopInstanceImporter"/> 
+        /// Creates an instance of <see cref="ImportFilesContext"/> to be used
+        /// by <see cref="ImportFilesUtility"/> 
         /// </summary>
-        protected SopInstanceImporterContext(string sourceAE)
+        protected ImportFilesContext(string sourceAE)
         {
             StudyWorkItems = new ObservableDictionary<string, WorkItem>();
             ImportType = WorkItemTypeEnum.StudyProcess;
@@ -157,20 +157,26 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     /// <summary>
     /// Import utility for importing specific SOP Instances, either in memory from the network or on disk.
     /// </summary>
-    public class SopInstanceImporter
+    /// <remarks>
+    /// <para>
+    /// Note that the files being imported do not have to belong to the same study.  ImportFilesUtility will 
+    /// automatically detect the study the files belong to, and import them to the proper location.
+    /// </para>
+    /// </remarks>
+    public class ImportFilesUtility
     {
         #region Private Members
-        private readonly SopInstanceImporterContext _context; 
+        private readonly ImportFilesContext _context; 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Creates an instance of <see cref="SopInstanceImporter"/> to import DICOM object(s)
+        /// Creates an instance of <see cref="ImportFilesUtility"/> to import DICOM object(s)
         /// into the system.
         /// </summary>
         /// <param name="context">The context of the operation.</param>
-        public SopInstanceImporter(SopInstanceImporterContext context)
+        public ImportFilesUtility(ImportFilesContext context)
         {
             Platform.CheckForNullReference(context, "context");
             _context = context;

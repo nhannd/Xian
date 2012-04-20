@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
     /// <summary>
     /// Class for performing a Reindex of the database.
     /// </summary>
-    public class ReindexProcessor
+    public class ReindexUtility
     {
         #region Private members
 
@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
         #region Constructors
 
-        public ReindexProcessor()
+        public ReindexUtility()
         {
             FilestoreDirectory = GetFileStoreDirectory();
             DirectoryList = new List<string>();

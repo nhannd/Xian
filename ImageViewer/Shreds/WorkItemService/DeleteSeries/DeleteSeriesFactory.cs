@@ -12,19 +12,19 @@
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyDelete
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteSeries
 {
-    [ExtensionOf(typeof (WorkItemFactoryExtensionPoint))]
-    public class StudyDeleteFactory : IWorkItemProcessorFactory
+    [ExtensionOf(typeof(WorkItemFactoryExtensionPoint))]
+    public class SeriesDeleteFactory : IWorkItemProcessorFactory
     {
         public WorkItemTypeEnum GetWorkQueueType()
         {
-            return WorkItemTypeEnum.StudyDelete;
+            return WorkItemTypeEnum.SeriesDelete;
         }
 
         public IWorkItemProcessor GetItemProcessor()
         {
-            return new StudyDeleteProcessor();
+            return new SeriesDeleteProcessor();
         }
     }
 }

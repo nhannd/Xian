@@ -95,17 +95,17 @@
     <Compile Include="WorkItemService\DicomSend\DicomSendItemProcessor.cs" />
     <Compile Include="WorkItemService\DicomSend\ImageViewerStorageScu.cs" />
     <Compile Include="WorkItemService\Import\ImportFactory.cs" />
-    <Compile Include="WorkItemService\Import\ImportProcessor.cs" />
+    <Compile Include="WorkItemService\Import\ImportItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexFactory.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexItemProcessor.cs" />
-    <Compile Include="WorkItemService\SeriesDelete\SeriesDeleteFactory.cs" />
-    <Compile Include="WorkItemService\SeriesDelete\SeriesDeleteProcessor.cs" />
-    <Compile Include="WorkItemService\StudyDelete\StudyDeleteFactory.cs" />
-    <Compile Include="WorkItemService\StudyDelete\StudyDeleteProcessor.cs" />
-    <Compile Include="WorkItemService\StudyProcess\StudyProcessFactory.cs" />
-    <Compile Include="WorkItemService\StudyProcess\StudyProcessProcessor.cs" />
+    <Compile Include="WorkItemService\DeleteSeries\DeleteSeriesFactory.cs" />
+    <Compile Include="WorkItemService\DeleteSeries\DeleteSeriesItemProcessor.cs" />
+    <Compile Include="WorkItemService\DeleteStudy\DeleteStudyFactory.cs" />
+    <Compile Include="WorkItemService\DeleteStudy\DeleteStudyItemProcessor.cs" />
+    <Compile Include="WorkItemService\ProcessStudy\ProcessStudyFactory.cs" />
+    <Compile Include="WorkItemService\ProcessStudy\ProcessStudyItemProcessor.cs" />
     <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />
     <Compile Include="WorkItemService\WorkItemFactoryExtensionPoint.cs" />
     <Compile Include="WorkItemService\WorkItemProcessor.cs" />
@@ -115,7 +115,7 @@
     <Compile Include="WorkItemService\WorkItemServiceSettings.cs" />
     <Compile Include="WorkItemService\WorkItemServiceType.cs" />
     <Compile Include="WorkItemService\WorkItemStatusProxy.cs" />
-    <Compile Include="WorkItemService\ProcessorThreadPool.cs" />
+    <Compile Include="WorkItemService\WorkItemThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

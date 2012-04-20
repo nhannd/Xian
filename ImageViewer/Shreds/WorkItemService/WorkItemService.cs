@@ -17,10 +17,19 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
+    /// <summary>
+    /// Implementation of <see cref="IWorkItemService"/> for processing requests to manipulate WorkItems.
+    /// </summary>
     public class WorkItemService : IWorkItemService
     {
+        #region Private Members
+
         private static WorkItemService _instance;
         private bool _disabled;
+
+        #endregion
+
+        #region Properties
 
         public static WorkItemService Instance
         {
@@ -29,25 +38,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 if (_instance == null)
                 {
                     _instance = new WorkItemService();
-                    _instance.Initialize();
                 }
 
                 return _instance;
             }
         }
 
-        private void Initialize()
-        {
-            try
-            {
-             
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-                _disabled = true;
-            }
-        }
+        #endregion
+
+        #region Public Methods
 
         public void Start()
         {
@@ -58,20 +57,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Warn, e, "Failed to start purge timer; old items will never be purged.");
+                Platform.Log(LogLevel.Warn, e, "Failed to start WorkItemService.");
             }
         }
 
         public void Stop()
         {
             CheckDisabled();
-   
-        }
-
-        private void CheckDisabled()
-        {
-            if (_disabled)
-                throw new Exception(SR.ExceptionServiceHasBeenDisabled);
         }
 
         public WorkItemInsertResponse Insert(WorkItemInsertRequest request)
@@ -243,5 +235,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 throw new WorkItemServiceException(exceptionMessage);
             }
         }
+
+        #endregion
+
+        #region Private Methods
+
+        private void CheckDisabled()
+        {
+            if (_disabled)
+                throw new Exception(SR.ExceptionServiceHasBeenDisabled);
+        }
+
+        #endregion
     }
 }

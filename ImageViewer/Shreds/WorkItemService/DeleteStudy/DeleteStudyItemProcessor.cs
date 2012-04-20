@@ -9,16 +9,13 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyDelete
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
 {
-    public class StudyDeleteProcessor : BaseItemProcessor<DeleteStudyRequest, DeleteProgress>
+    public class DeleteStudyItemProcessor : BaseItemProcessor<DeleteStudyRequest, DeleteProgress>
     {
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
