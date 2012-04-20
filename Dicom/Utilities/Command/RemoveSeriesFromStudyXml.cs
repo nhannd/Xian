@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -11,19 +11,18 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
+namespace ClearCanvas.Dicom.Utilities.Command
 {
-    internal class RemoveSeriesFromStudyXml : CommandBase
+    public class RemoveSeriesFromStudyXml : CommandBase
     {
         private readonly StudyXml _studyXml;
         private readonly string _seriesUid;
         private SeriesXml _oldSeriesXml;
         private readonly string _studyInstanceUid;
 
-        public RemoveSeriesFromStudyXml(StudyXml studyXml, string seriesUid) 
+        public RemoveSeriesFromStudyXml(StudyXml studyXml, string seriesUid)
             : base(String.Format("Remove series {0} from study XML of study {1}", seriesUid, studyXml.StudyInstanceUid), true)
         {
             _studyXml = studyXml;
@@ -31,7 +30,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             _studyInstanceUid = studyXml.StudyInstanceUid;
         }
 
-		protected override void OnExecute(CommandProcessor theProcessor)
+        protected override void OnExecute(CommandProcessor theProcessor)
         {
             // backup
             if (_studyXml.Contains(_seriesUid))
@@ -45,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 
         protected override void OnUndo()
         {
-            if (_oldSeriesXml!=null)
+            if (_oldSeriesXml != null)
             {
                 Platform.Log(LogLevel.Info, "Restoring series {0} in StudyXML for study {1}", _seriesUid, _studyInstanceUid);
                 _studyXml[_seriesUid] = _oldSeriesXml;

@@ -84,7 +84,6 @@
     <Compile Include="WebDeleteStudy\DeleteSeriesFromDBCommand.cs" />
     <Compile Include="WebDeleteStudy\Extensions\LogHistory\LogHistoryExtension.cs" />
     <Compile Include="WebDeleteStudy\IWebDeleteProcessorExtension.cs" />
-    <Compile Include="WebDeleteStudy\RemoveSeriesFromStudyXml.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyItemProcessor.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyFactoryExtension.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyItemProcessor.cs" />

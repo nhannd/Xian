@@ -9,11 +9,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.SeriesDelete
 {
@@ -39,13 +36,30 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.SeriesDelete
                 Proxy.Postpone();
                 return;
             }
-            
-            // Reset progress, in case of retry
-            Progress.IsCancelable = false;
-            Progress.ImagesDeleted = 0;
-            Progress.ImagesToDelete = 0;
 
-            Proxy.UpdateProgress();
+            var deleteSeries = new DeleteSeriesUtility();
+            deleteSeries.Initialize(Location, Request.SeriesInstanceUids);
+
+            if (deleteSeries.DeletingAllSeries())
+            {
+                var deleteStudy = new DeleteStudyUtility();
+                deleteStudy.Initialize(Location);
+                Progress.ImagesToDelete = deleteStudy.NumberOfStudyRelatedInstances;
+                Progress.ImagesDeleted = 0;
+                Proxy.UpdateProgress();
+
+                deleteStudy.Process();
+            }
+            else
+            {
+                Progress.ImagesToDelete = deleteSeries.NumberOfSeriesRelatedInstances;
+                Progress.ImagesDeleted = 0;
+                Proxy.UpdateProgress();
+
+                deleteSeries.Process();
+            }
+
+            Progress.ImagesDeleted = Progress.ImagesToDelete;            
 
             Proxy.Complete();
         }

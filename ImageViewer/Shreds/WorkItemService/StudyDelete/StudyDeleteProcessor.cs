@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyDelete
 {
@@ -44,7 +45,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyDelete
             Progress.ImagesDeleted = 0;
             Progress.ImagesToDelete = 0;
 
+            var delete = new DeleteStudyUtility();
+
+            delete.Initialize(Location);
+
+            Progress.ImagesToDelete = delete.NumberOfStudyRelatedInstances;
             Proxy.UpdateProgress();
+
+            delete.Process();
+            Progress.ImagesDeleted = delete.NumberOfStudyRelatedInstances;
 
             Proxy.Complete();
         }
