@@ -1,21 +1,18 @@
 ﻿using System;
 using System.ServiceModel;
-using Castle.Core.Interceptor;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 {
-    internal class BasicFaultInterceptor : IInterceptor
+    internal class ServiceProxyHelper
     {
-        #region IInterceptor Members
-
-        public void Intercept(IInvocation invocation)
+        public static TResult Call<TInput, TResult>(Func<TInput, TResult> function, TInput input)
         {
             try
             {
-                invocation.Proceed();
+                return function(input);
             }
-            catch(FaultException)
+            catch (FaultException)
             {
                 throw;
             }
@@ -25,7 +22,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                 throw new FaultException();
             }
         }
-
-        #endregion
     }
 }

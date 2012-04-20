@@ -24,6 +24,32 @@ using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 {
+    [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint))]
+    internal class StudyFinderServiceProvider : ServiceNodeServiceProvider
+    {
+        private bool IsRemoteServiceNode
+        {
+            get
+            {
+                var dicomServiceNode = Context.ServiceNode as IDicomServiceNode;
+                return dicomServiceNode != null && !dicomServiceNode.IsLocal;
+            }
+        }
+
+        public override bool IsSupported(Type type)
+        {
+            return type == typeof(IStudyFinder) && IsRemoteServiceNode;
+        }
+
+        public override object GetService(Type type)
+        {
+            if (IsSupported(type))
+                return new RemoteStudyFinder();
+
+            return false;
+        }
+    }
+
     [ExtensionOf(typeof(StudyFinderExtensionPoint))]
     public class RemoteStudyFinder : StudyFinder
 	{

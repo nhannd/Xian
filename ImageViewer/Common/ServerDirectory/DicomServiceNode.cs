@@ -1,4 +1,3 @@
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -77,18 +76,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             if (typeof(T) == typeof(IStudyRootQuery))
                 return IsLocal || ScpParameters != null;
 
-            return false;
+            return base.IsSupported<T>();
         }
 
         public override T GetService<T>()
         {
-            if (!IsSupported<T>())
-                throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
-
             if (typeof(T) == typeof(IStudyStoreQuery) && IsLocal)
                 return Platform.GetService<IStudyStoreQuery>() as T;
 
-            //TODO (Marmot): Add an extension mechanism.
             if (typeof(T) == typeof(IStudyRootQuery))
             {
                 if (IsLocal)
@@ -98,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
                                     AETitle, ScpParameters.HostName, ScpParameters.Port) as T;
             }
 
-            throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
+            return base.GetService<T>();
         }
 
         public override string ToString()

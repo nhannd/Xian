@@ -106,8 +106,8 @@
     <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\v4.0\$(PlatformSubFolder)\sqlce*.dll" />
     <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\v4.0\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
     <!-- We're using Castle for dynamic in-proc service proxies. It is actually separate from NHibernate. -->
-    <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.DynamicProxy2.dll" />
-    <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.Core.dll" />
+    <!--<DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.DynamicProxy2.dll" />
+    <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.Core.dll" />-->
   </ItemGroup>
 
   <ItemGroup>

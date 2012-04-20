@@ -65,13 +65,13 @@
   <ItemGroup>
     <Compile Include="LocalStoreSopDataSource.cs" />
     <Compile Include="LocalStoreStudyLoader.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PreLoadingSettings.cs" />
     <Compile Include="PreLoadingSettings.Designer.cs">
+      <DependentUpon>PreLoadingSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PreLoadingSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

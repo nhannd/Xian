@@ -52,12 +52,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
-      <HintPath>..\..\..\ReferencedAssemblies\NHibernate2.1\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.DynamicProxy2">
-      <HintPath>..\..\..\ReferencedAssemblies\NHibernate2.1\Castle.DynamicProxy2.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
@@ -119,6 +113,7 @@
     <Compile Include="DicomQuery\Tests\MiscellaneousTests.cs" />
     <Compile Include="DicomQuery\Tests\PropertyFilterTests.cs" />
     <Compile Include="DicomQuery\Tests\StudyRootQueryTests.cs" />
+    <Compile Include="ServiceProviders\ServiceProxyHelper.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="ISeries.cs" />
     <Compile Include="ISopInstance.cs" />
@@ -134,7 +129,6 @@
     <Compile Include="RuleActionType.cs" />
     <Compile Include="DataAccessContext.cs" />
     <Compile Include="Series.cs" />
-    <Compile Include="ServiceProviders\BasicFaultInterceptor.cs" />
     <Compile Include="ServiceProviders\StudyRulesService.cs" />
     <Compile Include="ServiceProviders\StudyStore.cs" />
     <Compile Include="SopInstance.cs" />

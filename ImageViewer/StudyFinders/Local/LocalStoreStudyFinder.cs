@@ -13,8 +13,10 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Macros;
@@ -22,6 +24,32 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Local
 {
+    [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint))]
+    internal class StudyFinderServiceProvider : ServiceNodeServiceProvider
+    {
+        private bool IsLocalServiceNode
+        {
+            get
+            {
+                var dicomServiceNode = Context.ServiceNode as IDicomServiceNode;
+                return dicomServiceNode != null && dicomServiceNode.IsLocal && StudyStore.IsSupported;
+            }
+        }
+
+        public override bool IsSupported(Type type)
+        {
+            return type == typeof(IStudyFinder) && IsLocalServiceNode;
+        }
+
+        public override object GetService(Type type)
+        {
+            if (IsSupported(type))
+                return new LocalStoreStudyFinder();
+
+            return false;
+        }
+    }
+
     //TODO (Marmot):Move once IStudyFinder gets moved to Common.
 
     [ExtensionOf(typeof(StudyFinderExtensionPoint))]

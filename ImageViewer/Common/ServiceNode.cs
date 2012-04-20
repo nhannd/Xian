@@ -25,7 +25,19 @@ namespace ClearCanvas.ImageViewer.Common
     {
         #region IServiceNode Members
 
-        public abstract bool IsSupported<T>() where T : class;
+        public virtual bool IsSupported<T>() where T : class
+        {
+            var context = new ServiceNodeServiceProviderContext(this);
+            foreach (IServiceNodeServiceProvider provider in new ServiceNodeServiceProviderExtensionPoint().CreateExtensions())
+            {
+                provider.SetContext(context);
+                if (provider.IsSupported(typeof(T)))
+                    return true;
+            }
+
+            return false;
+        }
+
         public void GetService<T>(Action<T> withService) where T : class
         {
             WithService(GetService<T>(), withService);
@@ -33,7 +45,19 @@ namespace ClearCanvas.ImageViewer.Common
 
         #endregion
 
-        public abstract T GetService<T>() where T : class;
+        public virtual T GetService<T>() where T : class
+        {
+            var context = new ServiceNodeServiceProviderContext(this);
+            foreach (IServiceNodeServiceProvider provider in new ServiceNodeServiceProviderExtensionPoint().CreateExtensions())
+            {
+                provider.SetContext(context);
+                var service = provider.GetService(typeof(T));
+                if (service != null)
+                    return service as T;
+            }
+
+            throw new NotSupportedException(String.Format("Service node doesn't support service '{0}'.", typeof(T).FullName));
+        }
 
         public static void WithService<T>(T service, Action<T> withService) where T : class
         {
@@ -112,14 +136,48 @@ namespace ClearCanvas.ImageViewer.Common
         }
     }
 
-    // TODO (CR Mar 2012): Later, so services provided by service nodes can be extended.
-    //public interface IServerNodeServiceProvider
-    //{
-    //    bool Supports(Type type, IServerNode serverNode);
-    //    object GetService(Type type, IServerNode serverNode);
-    //}
+    internal class ServiceNodeServiceProviderContext : IServiceNodeServiceProviderContext
+    {
+        public ServiceNodeServiceProviderContext(IServiceNode serviceNode)
+        {
+            ServiceNode = serviceNode;
+        }
 
-    //public class ServiceNodeServiceProviderExtensionPoint : ExtensionPoint<IServerNodeServiceProvider>
-    //{
-    //}
+        public IServiceNode ServiceNode { get; set; }
+    }
+
+    public interface IServiceNodeServiceProviderContext
+    {
+        IServiceNode ServiceNode { get; }
+    }
+
+    public interface IServiceNodeServiceProvider
+    {
+        void SetContext(IServiceNodeServiceProviderContext context);
+
+        bool IsSupported(Type type);
+        object GetService(Type type);
+    }
+
+    public abstract class ServiceNodeServiceProvider : IServiceNodeServiceProvider
+    {
+        protected IServiceNodeServiceProviderContext Context { get; private set; }
+
+        public abstract bool IsSupported(Type type);
+        public abstract object GetService(Type type);
+
+        #region IServiceNodeServiceProvider Members
+
+        void IServiceNodeServiceProvider.SetContext(IServiceNodeServiceProviderContext context)
+        {
+            Context = context;
+        }
+
+        #endregion
+    }
+
+    [ExtensionPoint]
+    public class ServiceNodeServiceProviderExtensionPoint : ExtensionPoint<IServiceNodeServiceProvider>
+    {
+    }
 }

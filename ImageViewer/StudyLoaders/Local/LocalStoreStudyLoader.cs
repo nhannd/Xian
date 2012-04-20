@@ -11,12 +11,40 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {
+    [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint))]
+    internal class StudyLoaderServiceProvider : ServiceNodeServiceProvider
+    {
+        private bool IsLocalServiceNode
+        {
+            get
+            {
+                var dicomServiceNode = Context.ServiceNode as IDicomServiceNode;
+                return dicomServiceNode != null && dicomServiceNode.IsLocal && StudyStore.IsSupported;
+            }
+        }
+
+        public override bool IsSupported(System.Type type)
+        {
+            return type == typeof (IStudyLoader) && IsLocalServiceNode;
+        }
+
+        public override object GetService(System.Type type)
+        {
+            if (IsSupported(type))
+                return new LocalStoreStudyLoader();
+
+            return false;
+        }
+    }
+
     //TODO (Marmot):Move once IStudyLoader is moved to Common?
 
     [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
