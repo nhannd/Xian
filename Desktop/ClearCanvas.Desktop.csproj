@@ -200,6 +200,7 @@
     <Compile Include="IWorkspaceDialogBoxView.cs" />
     <Compile Include="IPagingController.cs" />
     <Compile Include="Configuration\IUserUpgradeProgressDialogView.cs" />
+    <Compile Include="FeatureAuthorizationSpecification.cs" />
     <Compile Include="LocalePolicy.cs" />
     <Compile Include="LocalePolicy.Designer.cs">
       <AutoGen>True</AutoGen>
