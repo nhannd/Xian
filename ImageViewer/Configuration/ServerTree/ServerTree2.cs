@@ -125,8 +125,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
         #endregion
 
-
-
         public IServerTreeNode FindServer(string path)
         {
             return FindServer(RootServerGroup, path);

@@ -16,6 +16,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
@@ -23,6 +24,29 @@ using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 {
+    [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint))]
+    internal class StudyFinderServiceProvider : ServiceNodeServiceProvider
+    {
+        private bool IsRemoteServiceNode
+        {
+            get
+            {
+                var dicomServiceNode = Context.ServiceNode as IDicomServiceNode;
+                return dicomServiceNode != null && !dicomServiceNode.IsLocal;
+            }
+        }
+
+        public override bool IsSupported(Type type)
+        {
+            return type == typeof(IStudyFinder) && IsRemoteServiceNode;
+        }
+
+        public override object GetService(Type type)
+        {
+            return IsSupported(type) ? new RemoteStudyFinder() : null;
+        }
+    }
+
     [ExtensionOf(typeof(StudyFinderExtensionPoint))]
     public class RemoteStudyFinder : StudyFinder
 	{
@@ -92,7 +116,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			StudyItemList studyItemList = new StudyItemList();
 			foreach (DicomAttributeCollection result in results)
 			{
-				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer, Name);
+				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer.ToServiceNode());
 
 				//TODO: add DicomField attributes to the StudyItem class (implement typeconverter for PersonName class).
 				item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].GetString(0, "");

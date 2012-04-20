@@ -1,10 +1,10 @@
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
@@ -26,12 +26,12 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             Real = (ApplicationEntity) server;
         }
 
+        //TODO (Marmot): Don't hold on to it, just look it up via the directory?
         protected ApplicationEntity Real { get; private set; }
 
         #region Implementation of IDicomServiceNode
 
         public bool IsLocal { get; private set; }
-        public bool SupportsStreaming { get { return StreamingParameters != null; } }
         
         #endregion
 
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public string Location
         {
-            get { return Real.AETitle; }
+            get { return Real.Location; }
         }
 
         public IScpParameters ScpParameters
@@ -71,39 +71,53 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public override bool IsSupported<T>()
         {
-            if (typeof(T) == typeof(IStudyStoreQuery))
-                return IsLocal && StudyStore.IsSupported;
-
-            if (typeof(T) == typeof(IStudyRootQuery))
-                return IsLocal || ScpParameters != null;
-
-            //if (typeof(T).Equals(typeof(IHeaderStreamingService)))
-            //    return StreamingParameters != null;
-
-            return false;
-        }
-
-        protected override T GetService<T>()
-        {
-            if (!IsSupported<T>())
-                throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
-
-            if (typeof(T) == typeof(IStudyStoreQuery) && IsLocal)
-                return Platform.GetService<IStudyStoreQuery>() as T;
-
-            //TODO (Marmot): Add an extension mechanism.
-            if (typeof(T) == typeof(IStudyRootQuery))
+            if (IsLocal)
             {
-                if (IsLocal)
-                    return Platform.GetService<IStudyStoreQuery>() as T;
+                if (typeof(T) == typeof(IWorkItemService) && WorkItemActivityMonitor.IsSupported)
+                    return true;
 
-                return new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle,
-                                    AETitle, ScpParameters.HostName, ScpParameters.Port) as T;
+                if (typeof(T) == typeof(IStudyStoreQuery) && StudyStore.IsSupported)
+                    return true;
+
+                if (typeof(T) == typeof(IStudyRootQuery) && StudyStore.IsSupported)
+                    return true;
+            }
+            else
+            {
+                if (typeof(T) == typeof(IStudyRootQuery))
+                    return ScpParameters != null;
             }
 
-            throw new NotSupportedException(String.Format("DICOM Service node doesn't support service '{0}'", typeof(T).FullName));
-            //if (typeof(T).Equals(typeof(IHeaderStreamingService)))
-            //    return new HeaderStreamingClient
+            return base.IsSupported<T>();
+        }
+
+        public override T GetService<T>()
+        {
+            //TODO (Marmot): Is this weird??
+            if (IsLocal)
+            {
+                if (typeof(T) == typeof(IWorkItemService) && WorkItemActivityMonitor.IsSupported)
+                    return Platform.GetService<IWorkItemService>() as T;
+
+                if (typeof(T) == typeof(IStudyStoreQuery) && StudyStore.IsSupported)
+                    return Platform.GetService<IStudyStoreQuery>() as T;
+
+                if (typeof(T) == typeof(IStudyRootQuery) && StudyStore.IsSupported)
+                    return new StoreStudyRootQuery() as T;
+            }
+            else
+            {
+                if (typeof(T) == typeof(IStudyRootQuery) && ScpParameters != null)
+                    return new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle,
+                                        AETitle, ScpParameters.HostName, ScpParameters.Port) as T;
+            }
+
+            return base.GetService<T>();
+        }
+
+        public override string ToString()
+        {
+            return Real.ToString();
         }
     }
 }

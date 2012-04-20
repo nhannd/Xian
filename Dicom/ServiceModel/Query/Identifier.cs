@@ -9,133 +9,171 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
-	public interface IIdentifier
-	{
-		[DicomField(DicomTags.SpecificCharacterSet)]
-		string SpecificCharacterSet { get; }
+    public interface IIdentifier
+    {
+        [DicomField(DicomTags.SpecificCharacterSet)]
+        string SpecificCharacterSet { get; }
 
-		[DicomField(DicomTags.RetrieveAeTitle)]
-		string RetrieveAeTitle { get; }
+        [DicomField(DicomTags.RetrieveAeTitle)]
+        string RetrieveAeTitle { get; }
 
-	    //TODO (Marmot): RetrieveApplicationEntity
+        [DicomField(DicomTags.InstanceAvailability)]
+        string InstanceAvailability { get; }
 
-		[DicomField(DicomTags.InstanceAvailability)]
-		string InstanceAvailability { get; }
-	}
+        IApplicationEntity RetrieveAE { get; }
+    }
 
-	/// <summary>
-	/// Base class for Dicom query Identifiers.
-	/// </summary>
-	[DataContract(Namespace = QueryNamespace.Value)]
-	public abstract class Identifier : IIdentifier
-	{
-		#region Private Fields
+    /// <summary>
+    /// Base class for Dicom query Identifiers.
+    /// </summary>
+    [DataContract(Namespace = QueryNamespace.Value)]
+    public abstract class Identifier : IIdentifier
+    {
+        #region Private Fields
 
-		private string _specificCharacterSet = "";
-		private string _retrieveAeTitle = "";
-		private string _instanceAvailability = "";
+        private IApplicationEntity _retrieveAe;
+        private string _retrieveAeTitle;
 
-		#endregion
+        #endregion
 
-		#region Internal Constructors
+        #region Internal Constructors
 
-		internal Identifier()
-		{
-		}
+        internal Identifier()
+        {
+            InstanceAvailability = "";
+            _retrieveAeTitle = "";
+            SpecificCharacterSet = "";
+        }
 
-		internal Identifier(IIdentifier other)
-		{
-			SpecificCharacterSet = other.SpecificCharacterSet;
-			InstanceAvailability = other.InstanceAvailability;
-			RetrieveAeTitle = other.RetrieveAeTitle;
-		}
+        internal Identifier(IIdentifier other)
+            : this()
+        {
+            if (other == null)
+                return;
 
-		internal Identifier(DicomAttributeCollection attributes)
-		{
-			Initialize(attributes);
-		}
+            SpecificCharacterSet = other.SpecificCharacterSet;
+            InstanceAvailability = other.InstanceAvailability;
+            RetrieveAeTitle = other.RetrieveAeTitle;
+            RetrieveAE = other.RetrieveAE;
+        }
 
-		#endregion
+        internal Identifier(DicomAttributeCollection attributes)
+            : this()
+        {
+            Initialize(attributes);
+        }
 
-		internal void Initialize(DicomAttributeCollection attributes)
-		{
-			attributes.LoadDicomFields(this);
-		}
+        #endregion
 
-		#region Public Properties
+        internal void Initialize(DicomAttributeCollection attributes)
+        {
+            attributes.LoadDicomFields(this);
+        }
 
-		/// <summary>
-		/// Gets the level of the query.
-		/// </summary>
-		public abstract string QueryRetrieveLevel { get; }
+        #region Public Properties
 
-		/// <summary>
-		/// Gets or sets the Specific Character set of the identified instance.
-		/// </summary>
-		[DicomField(DicomTags.SpecificCharacterSet)] //only include in rq when set explicitly.
-		[DataMember(IsRequired = false)]
-		public string SpecificCharacterSet
-		{
-			get { return _specificCharacterSet; }
-			set { _specificCharacterSet = value; }
-		}
+        /// <summary>
+        /// Gets the level of the query.
+        /// </summary>
+        public abstract string QueryRetrieveLevel { get; }
 
-		/// <summary>
-		/// Gets or sets the AE Title the identified instance can be retrieved from.
-		/// </summary>
-		[DicomField(DicomTags.RetrieveAeTitle)]
-		[DataMember(IsRequired = false)]
-		public string RetrieveAeTitle
-		{
-			get { return _retrieveAeTitle; }
-			set { _retrieveAeTitle = value; }
-		}
+        /// <summary>
+        /// Gets or sets the Specific Character set of the identified instance.
+        /// </summary>
+        [DicomField(DicomTags.SpecificCharacterSet), DataMember(IsRequired = false)]
+        public string SpecificCharacterSet { get; set; }
 
-		/// <summary>
-		/// Gets or sets the availability of the identified instance.
-		/// </summary>
-		[DicomField(DicomTags.InstanceAvailability)]
-		[DataMember(IsRequired = false)]
-		public string InstanceAvailability
-		{
-			get { return _instanceAvailability; }
-			set { _instanceAvailability = value; }
-		}
+        /// <summary>
+        /// Gets or sets the availability of the identified instance.
+        /// </summary>
+        [DicomField(DicomTags.InstanceAvailability), DataMember(IsRequired = false)]
+        public string InstanceAvailability { get; set; }
 
-		#endregion
+        /// <summary>
+        /// Gets or sets the AE Title the identified instance can be retrieved from.
+        /// </summary>
+        /// <remarks>This property's value never takes precedence over <see cref="RetrieveAE"/>,
+        /// since it actually provides less information.</remarks>
+        /// <exception cref="InvalidOperationException">thrown when trying to set this property and <see cref="RetrieveAE"/> is non-null.</exception>
+        [DicomField(DicomTags.RetrieveAeTitle)]
+        [DataMember(IsRequired = false)]
+        public string RetrieveAeTitle
+        {
+            get
+            {
+                if (RetrieveAE != null)
+                    return RetrieveAE.AETitle;
 
-		#region Public Methods
+                return _retrieveAeTitle;
+            }
+            set
+            {
+                if (RetrieveAE != null)
+                    throw new InvalidOperationException(
+                        "The Retrieve AE Title cannot currently be set because RetrieveAE is non-null.");
 
-		/// <summary>
-		/// Converts this object into a <see cref="DicomAttributeCollection"/>.
-		/// </summary>
-		public DicomAttributeCollection ToDicomAttributeCollection()
-		{
-			DicomAttributeCollection attributes = new DicomAttributeCollection();
-			if (!string.IsNullOrEmpty(_specificCharacterSet))
-				attributes.SpecificCharacterSet = _specificCharacterSet;
+                _retrieveAeTitle = value;
+            }
+        }
 
-			attributes[DicomTags.QueryRetrieveLevel].SetStringValue(QueryRetrieveLevel);
-			attributes.SaveDicomFields(this);
+        /// <summary>
+        /// Gets or sets the AE from which the identified instance can be retrieved.
+        /// </summary>
+        /// <remarks>This property's value always takes precedence over <see cref="RetrieveAeTitle"/>, since it provides more information.</remarks>
+        public IApplicationEntity RetrieveAE
+        {
+            get { return _retrieveAe; }
+            set
+            {
+                if (value == null)
+                {
+                    _retrieveAe = null;
+                }
+                else
+                {
+                    _retrieveAe = value;
+                    //AE has more information and takes precedence.
+                    _retrieveAeTitle = null;
+                }
+            }
+        }
 
-			return attributes;
-		}
+        #endregion
 
-		/// <summary>
-		/// Factory method to create an <see cref="Identifier"/> of type <typeparamref name="T"/> from
-		/// the given <see cref="DicomAttributeCollection"/>.
-		/// </summary>
-		public static T FromDicomAttributeCollection<T>(DicomAttributeCollection attributes) where T : Identifier, new()
-		{
-			T identifier = new T();
-			identifier.Initialize(attributes);
-			return identifier;
-		}
+        #region Public Methods
 
-		#endregion
-	}
+        /// <summary>
+        /// Converts this object into a <see cref="DicomAttributeCollection"/>.
+        /// </summary>
+        public DicomAttributeCollection ToDicomAttributeCollection()
+        {
+            var attributes = new DicomAttributeCollection();
+            if (!string.IsNullOrEmpty(SpecificCharacterSet))
+                attributes.SpecificCharacterSet = SpecificCharacterSet;
+
+            attributes[DicomTags.QueryRetrieveLevel].SetStringValue(QueryRetrieveLevel);
+            attributes.SaveDicomFields(this);
+
+            return attributes;
+        }
+
+        /// <summary>
+        /// Factory method to create an <see cref="Identifier"/> of type <typeparamref name="T"/> from
+        /// the given <see cref="DicomAttributeCollection"/>.
+        /// </summary>
+        public static T FromDicomAttributeCollection<T>(DicomAttributeCollection attributes) where T : Identifier, new()
+        {
+            var identifier = new T();
+            identifier.Initialize(attributes);
+            return identifier;
+        }
+
+        #endregion
+    }
 }

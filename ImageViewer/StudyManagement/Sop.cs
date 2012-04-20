@@ -122,21 +122,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public IImageIdentifier GetIdentifier()
 		{
-			var studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName)
-			                      	{InstanceAvailability = "ONLINE"};
+		    var studyIdentifier = GetStudyIdentifier();
 			return new ImageIdentifier(this, studyIdentifier);
 		}
 
 		internal IStudyRootStudyIdentifier GetStudyIdentifier()
 		{
-			return new StudyItem(this, this, DataSource.Server, DataSource.StudyLoaderName)
-			                 	{InstanceAvailability = "ONLINE"};
+			return new StudyItem(this, this, DataSource.Server){InstanceAvailability = "ONLINE"};
 		}
 
 		internal ISeriesIdentifier GetSeriesIdentifier()
 		{
-			var studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName)
-			                      	{InstanceAvailability = "ONLINE"};
+		    var studyIdentifier = GetStudyIdentifier();
 			return new SeriesIdentifier(this, studyIdentifier);
 		}
 

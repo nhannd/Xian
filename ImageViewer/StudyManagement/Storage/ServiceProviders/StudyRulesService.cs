@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Castle.Core.Interceptor;
-using Castle.DynamicProxy;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
@@ -17,15 +15,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             if (serviceType != typeof(IStudyRulesService))
                 return null;
 
-            return new ProxyGenerator().CreateInterfaceProxyWithTargetInterface(
-                typeof(IStudyRulesService), new StudyRulesService()
-                , new IInterceptor[] { new BasicFaultInterceptor() });
+		    return new StudyRulesServiceProxy();
 		}
 
 		#endregion
 	}
 
-	internal class StudyRulesService : IStudyRulesService
+    internal class StudyRulesServiceProxy : IStudyRulesService
+    {
+        public StudyRulesServiceProxy()
+        {
+            Real = new StudyRulesService();
+        }
+
+        private IStudyRulesService Real { get; set; }
+
+        public GetRulesResponse GetRules(GetRulesRequest request)
+        {
+            return ServiceProxyHelper.Call(Real.GetRules, request);
+        }
+
+        public GetRuleResponse GetRule(GetRuleRequest request)
+        {
+            return ServiceProxyHelper.Call(Real.GetRule, request);
+        }
+
+        public PutRuleResponse PutRule(PutRuleRequest request)
+        {
+            return ServiceProxyHelper.Call(Real.PutRule, request);
+        }
+
+        public DeleteRuleResponse DeleteRule(DeleteRuleRequest request)
+        {
+            return ServiceProxyHelper.Call(Real.DeleteRule, request);
+        }
+    }
+
+    internal class StudyRulesService : IStudyRulesService
 	{
 		#region Implementation of IStudyRulesService
 

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -133,24 +134,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (String.IsNullOrEmpty(studyUids))
                 return;
 
-            var queryParams = new QueryParameters();
-            queryParams["StudyInstanceUid"] = studyUids;
-
             try
             {
-                //TODO (Marmot): use service node?
-                StudyItemList studies = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
-                foreach (StudyItem item in studies)
+                var criteria = new StudyRootStudyIdentifier { StudyInstanceUid = studyUids };
+                var request = new GetStudyEntriesRequest { Criteria = new StudyEntry { Study = criteria } };
+                
+                IList<StudyEntry> entries = null;
+                
+                //We're doing it this way here because it's local only.
+                Platform.GetService<IStudyStoreQuery>(s => entries = s.GetStudyEntries(request).StudyEntries);
+
+                foreach (var entry in entries)
                 {
                     //What's left over in this list has been deleted.
-                    changed.Remove(item.StudyInstanceUid);
-                    UpdateStudy(item);
+                    changed.Remove(entry.Study.StudyInstanceUid);
+                    UpdateTableItem(entry);
                 }
-            }
-            catch (StudyFinderNotFoundException e)
-            {
-                //should never get here, really.
-                Platform.Log(LogLevel.Error, e);
             }
             catch (Exception e)
             {
@@ -164,18 +163,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             SetResultsTitle();
         }
 
-        private void UpdateStudy(StudyItem study)
+        private void UpdateTableItem(StudyEntry entry)
         {
             //don't need to check this again, it's just paranoia
-            if (!StudyExists(study.StudyInstanceUid))
+            if (!StudyExists(entry.Study.StudyInstanceUid))
             {
-                StudyTable.Items.Add(study);
+                StudyTable.Items.Add(entry);
             }
             else
             {
-                int index = GetStudyIndex(study.StudyInstanceUid);
+                int index = GetStudyIndex(entry.Study.StudyInstanceUid);
                 //just update this since the rest won't change.
-                UpdateItem(StudyTable.Items[index], study);
+                StudyTable.Items[index].Entry = entry;
                 StudyTable.Items.NotifyItemUpdated(index);
             }
         }
@@ -199,33 +198,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private int GetStudyIndex(string studyInstanceUid)
         {
             return StudyTable.Items.FindIndex(test => test.StudyInstanceUid == studyInstanceUid);
-        }
-        
-        private static void UpdateItem(StudyItem existingItem, StudyItem sourceItem)
-        {
-            //TODO: later, make each item have a 'changed' event for the properties instead of doing this
-            existingItem.AccessionNumber = sourceItem.AccessionNumber;
-            existingItem.ReferringPhysiciansName = sourceItem.ReferringPhysiciansName;
-            existingItem.ModalitiesInStudy = sourceItem.ModalitiesInStudy;
-            existingItem.NumberOfStudyRelatedInstances = sourceItem.NumberOfStudyRelatedInstances;
-            existingItem.PatientId = sourceItem.PatientId;
-            existingItem.PatientsName = sourceItem.PatientsName;
-            existingItem.PatientsBirthDate = sourceItem.PatientsBirthDate;
-            existingItem.SpecificCharacterSet = sourceItem.SpecificCharacterSet;
-            existingItem.StudyDate = sourceItem.StudyDate;
-            existingItem.StudyDescription = sourceItem.StudyDescription;
-
-            existingItem.PatientSpeciesDescription = sourceItem.PatientSpeciesDescription;
-            existingItem.PatientSpeciesCodeSequenceCodingSchemeDesignator = sourceItem.PatientSpeciesCodeSequenceCodingSchemeDesignator;
-            existingItem.PatientSpeciesCodeSequenceCodeValue = sourceItem.PatientSpeciesCodeSequenceCodeValue;
-            existingItem.PatientSpeciesCodeSequenceCodeMeaning = sourceItem.PatientSpeciesCodeSequenceCodeMeaning;
-            existingItem.PatientBreedDescription = sourceItem.PatientBreedDescription;
-            existingItem.PatientBreedCodeSequenceCodingSchemeDesignator = sourceItem.PatientBreedCodeSequenceCodingSchemeDesignator;
-            existingItem.PatientBreedCodeSequenceCodeValue = sourceItem.PatientBreedCodeSequenceCodeValue;
-            existingItem.PatientBreedCodeSequenceCodeMeaning = sourceItem.PatientBreedCodeSequenceCodeMeaning;
-            existingItem.ResponsibleOrganization = sourceItem.ResponsibleOrganization;
-            existingItem.ResponsiblePersonRole = sourceItem.ResponsiblePersonRole;
-            existingItem.ResponsiblePerson = sourceItem.ResponsiblePerson;
         }
     }
 }

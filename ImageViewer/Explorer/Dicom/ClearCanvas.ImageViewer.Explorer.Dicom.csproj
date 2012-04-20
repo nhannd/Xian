@@ -52,6 +52,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -79,7 +80,6 @@
     <Compile Include="ISearchPanelComponent.cs" />
     <Compile Include="IStudyBrowserComponent.cs" />
     <Compile Include="IStudyColumn.cs" />
-    <Compile Include="QueryStringHelper.cs" />
     <Compile Include="RetrieveStudyTool.cs" />
     <Compile Include="SearchPanelComponent.cs" />
     <Compile Include="SearchResult.cs" />
@@ -87,6 +87,14 @@
     <Compile Include="SearchResultColumnOption.cs" />
     <Compile Include="SearchResultColumnOptionCollection.cs" />
     <Compile Include="SendStudyTool.cs" />
+    <Compile Include="SeriesDetails\DeleteSeriesTool.cs" />
+    <Compile Include="SeriesDetails\RetrieveSeriesTool.cs" />
+    <Compile Include="SeriesDetails\SendSeriesTool.cs" />
+    <Compile Include="SeriesDetails\SeriesDetailsComponent.cs" />
+    <Compile Include="SeriesDetails\SeriesDetailsTool.cs" />
+    <Compile Include="SeriesDetails\SeriesTableItem.cs" />
+    <Compile Include="SeriesDetails\ShowSeriesDetailsTool.cs" />
+    <Compile Include="SeriesDetails\SR.Designer.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -99,6 +107,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StudyBrowserComponent.cs" />
     <Compile Include="SearchResult2.cs" />
+    <Compile Include="StudyTable.cs" />
+    <Compile Include="StudyTableItem.cs" />
+    <Compile Include="Tests\MiscellaneousTests.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -138,6 +150,7 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="SeriesDetails\SR.resx" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -204,6 +217,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\SendStudyToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SeriesDetails\Icons\DeleteToolSmall.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\RetrieveSeriesToolLarge.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\RetrieveSeriesToolMedium.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\RetrieveSeriesToolSmall.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\SendSeriesToolLarge.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\SendSeriesToolMedium.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\SendSeriesToolSmall.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\ShowSeriesDetailsToolLarge.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\ShowSeriesDetailsToolMedium.png" />
+    <EmbeddedResource Include="SeriesDetails\Icons\ShowSeriesDetailsToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

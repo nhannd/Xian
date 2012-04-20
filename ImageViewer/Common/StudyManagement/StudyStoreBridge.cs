@@ -11,7 +11,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         private IStudyStoreQuery _real;
 
         public StudyStoreBridge()
-            :this(Platform.GetService<IStudyStoreQuery>())
         {
         }
 
@@ -20,14 +19,19 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             _real = real;
         }
 
+        private IStudyStoreQuery Real
+        {
+            get { return _real ?? (_real = Platform.GetService<IStudyStoreQuery>()); }
+        }
+
         public int GetStudyCount()
         {
-            return _real.GetStudyCount(new GetStudyCountRequest()).StudyCount;
+            return Real.GetStudyCount(new GetStudyCountRequest()).StudyCount;
         }
 
         public int GetStudyCount(StudyRootStudyIdentifier criteria)
         {
-            return _real.GetStudyCount(new GetStudyCountRequest
+            return Real.GetStudyCount(new GetStudyCountRequest
                                            {
                                                Criteria = new StudyEntry{Study = criteria}
                                            }).StudyCount;
@@ -45,12 +49,12 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public IList<StudyEntry> GetStudyEntries(StudyEntry criteria)
         {
-            return _real.GetStudyEntries(new GetStudyEntriesRequest {Criteria = criteria}).StudyEntries;
+            return Real.GetStudyEntries(new GetStudyEntriesRequest { Criteria = criteria }).StudyEntries;
         }
 
         public IList<StudyEntry> QueryByAccessionNumber(string accessionNumber)
         {
-            return _real.GetStudyEntries(
+            return Real.GetStudyEntries(
                 new GetStudyEntriesRequest
                     {
                         Criteria = new StudyEntry
@@ -62,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public IList<StudyEntry> QueryByPatientId(string patientId)
         {
-            return _real.GetStudyEntries(
+            return Real.GetStudyEntries(
                 new GetStudyEntriesRequest
                     {
                         Criteria = new StudyEntry
@@ -74,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public IList<StudyEntry> QueryByStudyInstanceUid(string studyInstanceUid)
         {
-            return _real.GetStudyEntries(
+            return Real.GetStudyEntries(
                 new GetStudyEntriesRequest
                     {
                         Criteria = new StudyEntry
@@ -86,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public IList<StudyEntry> QueryByStudyInstanceUid(IEnumerable<string> studyInstanceUids)
         {
-            return _real.GetStudyEntries(
+            return Real.GetStudyEntries(
                 new GetStudyEntriesRequest
                     {
                         Criteria = new StudyEntry
@@ -101,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public IList<SeriesEntry> GetSeriesEntries(string studyInstanceUid)
         {
-            return _real.GetSeriesEntries(
+            return Real.GetSeriesEntries(
                 new GetSeriesEntriesRequest
                 {
                     Criteria = new SeriesEntry
@@ -113,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public IList<ImageEntry> GetImageEntries(string studyInstanceUid, string seriesInstanceUid)
         {
-            return _real.GetImageEntries(
+            return Real.GetImageEntries(
                 new GetImageEntriesRequest
                 {
                     Criteria = new ImageEntry

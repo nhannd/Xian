@@ -22,9 +22,9 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -40,11 +40,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	public interface IStudyBrowserToolContext : IToolContext
 	{
-		StudyItem SelectedStudy { get; }
+        StudyTableItem SelectedStudy { get; }
 
-		ReadOnlyCollection<StudyItem> SelectedStudies { get; }
+        ReadOnlyCollection<StudyTableItem> SelectedStudies { get; }
 
-		AEServerGroup SelectedServerGroup { get; }
+		DicomServiceNodeList SelectedServers { get; }
 
 		event EventHandler SelectedStudyChanged;
 
@@ -52,10 +52,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 
-		IDesktopWindow DesktopWindow { get; }
+	    void RefreshStudyTable();
 
-		void RefreshStudyTable();
-	}
+		IDesktopWindow DesktopWindow { get; }
+    }
 
 	[AssociateView(typeof(StudyBrowserComponentViewExtensionPoint))]
 	public partial class StudyBrowserComponent : ApplicationComponent, IStudyBrowserComponent
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			#region IStudyBrowserToolContext Members
 
-			public StudyItem SelectedStudy
+            public StudyTableItem SelectedStudy
 			{
 				get
 				{
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			public ReadOnlyCollection<StudyItem> SelectedStudies
+            public ReadOnlyCollection<StudyTableItem> SelectedStudies
 			{
 				get
 				{
@@ -90,9 +90,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			public AEServerGroup SelectedServerGroup
+			public DicomServiceNodeList SelectedServers
 			{
-				get { return _component._selectedServerGroup; }
+				get { return _component._selectedServers; }
 			}
 
 			public event EventHandler SelectedStudyChanged
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				try
 				{
-					_component.Search(_component._lastQueryParametersList);
+					_component.Search(_component._lastQueryCriteria);
 				}
 				catch (Exception e)
 				{
@@ -137,18 +137,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#region Fields
 
-		private List<QueryParameters> _lastQueryParametersList;
+		private StudyRootStudyIdentifier _lastQueryCriteria;
 		private readonly Dictionary<string, SearchResult> _searchResults;
 	    private SearchResult _currentSearchResult;
 
-		private readonly Table<StudyItem> _dummyStudyTable;
+		private readonly Table<StudyTableItem> _dummyStudyTable;
 		private event EventHandler _studyTableChanged;
 		private bool _filterDuplicateStudies = true;
 
 		private ISelection _currentSelection;
 		private event EventHandler _selectedStudyChangedEvent;
 
-		private AEServerGroup _selectedServerGroup = new AEServerGroup();
+		private DicomServiceNodeList _selectedServers = new DicomServiceNodeList();
 		private event EventHandler _selectedServerChangedEvent;
 
 		private ToolSet _toolSet;
@@ -166,35 +166,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public StudyBrowserComponent()
 		{
-			_dummyStudyTable = new Table<StudyItem>();
+			_dummyStudyTable = new Table<StudyTableItem>();
 			_searchResults = new Dictionary<string, SearchResult>();
-
-            var queryParams = new QueryParameters();
-			_lastQueryParametersList = new List<QueryParameters> { queryParams };
+            _lastQueryCriteria = new StudyRootStudyIdentifier();
 		}
 
 		#region Properties/Events
 
-		public AEServerGroup SelectedServerGroup
+		public DicomServiceNodeList SelectedServers
 		{
-			get { return _selectedServerGroup; }
+			get { return _selectedServers; }
 			set
 			{
-                if (ReferenceEquals(value, _selectedServerGroup))
+                if (ReferenceEquals(value, _selectedServers))
                     return;
 
-                _selectedServerGroup = value;
+                _selectedServers = value;
 
 			    SearchResult searchResult;
-				if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
+				if (!_searchResults.ContainsKey(_selectedServers.Id))
 				{
 					searchResult = new SearchResult();
 					searchResult.Initialize();
-					_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
+					_searchResults.Add(_selectedServers.Id, searchResult);
 				}
                 else
 				{
-				    searchResult = _searchResults[_selectedServerGroup.GroupID];
+				    searchResult = _searchResults[_selectedServers.Id];
 				}
 
 			    CurrentSearchResult = searchResult;
@@ -265,7 +263,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public Table<StudyItem> StudyTable
+		public Table<StudyTableItem> StudyTable
 		{
 			get
 			{
@@ -290,18 +288,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			remove { _studyTableChanged -= value; }
 		}
 
-		public StudyItem SelectedStudy
+        public StudyTableItem SelectedStudy
 		{
-			get { return _currentSelection == null ? null : _currentSelection.Item as StudyItem; }
+            get { return _currentSelection == null ? null : _currentSelection.Item as StudyTableItem; }
 		}
 
-		public ReadOnlyCollection<StudyItem> SelectedStudies
+        public ReadOnlyCollection<StudyTableItem> SelectedStudies
 		{
 			get
 			{
-				var selectedStudies = new List<StudyItem>();
+                var selectedStudies = new List<StudyTableItem>();
 				if (_currentSelection != null)
-				    selectedStudies.AddRange(_currentSelection.Items.Cast<StudyItem>());
+                    selectedStudies.AddRange(_currentSelection.Items.Cast<StudyTableItem>());
 
 				return selectedStudies.AsReadOnly();
 			}
@@ -336,19 +334,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		#region IStudyBrowserComponent implementation
 
-		public virtual void Search(List<QueryParameters> queryParametersList)
+		public virtual void Search(StudyRootStudyIdentifier criteria)
 		{
-            if (_selectedServerGroup == null)
+            if (_selectedServers == null)
                 return;
 
 			// cancel any pending searches
 			Async.CancelPending(this);
 
-			var isOpenSearchQuery = CollectionUtils.TrueForAll(queryParametersList, q => CollectionUtils.TrueForAll(q.Values, string.IsNullOrEmpty));
-
-			if (!_selectedServerGroup.IsLocalServer && isOpenSearchQuery)
+			if (!_selectedServers.IsLocalServer)
 			{
-				if (Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
+                if (criteria.IsOpenQuery() && Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
 			}
 
@@ -358,16 +354,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			EventsHelper.Fire(this.SearchStarted, this, EventArgs.Empty);
 
-			_lastQueryParametersList = new List<QueryParameters>(queryParametersList);
+		    _lastQueryCriteria = criteria;
 			var failedServerInfo = new List<KeyValuePair<string, Exception>>();
-			var aggregateStudyItemList = new StudyItemList();
+			var aggregateStudyItemList = new List<StudyTableItem>();
 
 			Async.Invoke(this,
-						 () => aggregateStudyItemList = Query(queryParametersList, failedServerInfo),
+                         () => aggregateStudyItemList = Query(criteria, failedServerInfo),
 						 () => OnSearchCompleted(aggregateStudyItemList, failedServerInfo));
 		}
 
-		public virtual void CancelSearch()
+	    public virtual void CancelSearch()
 		{
 			if(!_searchInProgress)
 				return;
@@ -430,9 +426,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	    private void OnSelectedServerChanged()
 		{
-			CurrentSearchResult.ServerGroupName = _selectedServerGroup.Name;
-			CurrentSearchResult.IsLocalServer = _selectedServerGroup.IsLocalServer;
-			CurrentSearchResult.NumberOfChildServers = _selectedServerGroup.Servers.Count;
+			CurrentSearchResult.ServerGroupName = _selectedServers.Name;
+			CurrentSearchResult.IsLocalServer = _selectedServers.IsLocalServer;
+			CurrentSearchResult.NumberOfChildServers = _selectedServers.Count;
             CurrentSearchResult.FilterDuplicates = _filterDuplicateStudies;
 
 			CurrentSearchResult.UpdateColumnVisibility();
@@ -448,77 +444,43 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			NotifyPropertyChanged("ResultsTitle");
 		}
 
-		private StudyItemList Query(List<QueryParameters> queryParamsList, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
+		private List<StudyTableItem> Query(StudyRootStudyIdentifier criteria, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
 		{
-			StudyItemList aggregateStudyItemList = new StudyItemList();
+			var aggregateItems = new List<StudyTableItem>();
 
-			foreach (IServerTreeNode serverNode in _selectedServerGroup.Servers)
+			foreach (var server in _selectedServers)
 			{
-				var serverStudyItemList = new StudyItemList();
+				var serverItems = new List<StudyTableItem>();
 				var serverHasError = false;
 
 				try
 				{
-					foreach (var q in queryParamsList)
-					{
-						// Make sure the query parameters sent contains all user specified parameters, plus any keys defined in 
-                        // OpenSearchQueryParams but not in user specified parameters.
-
-					    var openParams = new QueryParameters();
-                        var queryParams = MergeQueryParams(q, openParams);
-
-						if (serverNode.IsLocalServer)
-						{
-							var studyItemList = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
-							serverStudyItemList.AddRange(studyItemList);
-						}
-						else if (serverNode.IsServer)
-						{
-                            var server = (IServerTreeDicomServer)serverNode;
-                            IApplicationEntity ae = server.ToDataContract();
-
-							var studyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
-							serverStudyItemList.AddRange(studyItemList);
-						}
-						else
-						{
-							throw new Exception("The specified server object is not queryable.");
-						}
-					}
+				    var storeQuery = server.IsSupported<IStudyStoreQuery>()
+				                         ? server.GetService<IStudyStoreQuery>()
+				                         : new StudyRootQueryStoreAdapter(server.GetService<IStudyRootQuery>());
+                    
+                        using (var bridge = new StudyStoreBridge(storeQuery))
+                            serverItems = bridge.GetStudyEntries(criteria).Select(e => new StudyTableItem(e)).ToList();
 				}
 				catch (Exception e)
 				{
-                    Platform.Log(LogLevel.Error, e, "Failed to query server '{0}'.", serverNode.Name);
+                    Platform.Log(LogLevel.Error, e, "Failed to query server '{0}'.", server.Name);
 					
                     // keep track of the failed server names and exceptions
-					failedServerInfo.Add(new KeyValuePair<string, Exception>(serverNode.Name, e));
+					failedServerInfo.Add(new KeyValuePair<string, Exception>(server.Name, e));
 					serverHasError = true;
 				}
 
 				if (!serverHasError)
-					aggregateStudyItemList.AddRange(serverStudyItemList);
+					aggregateItems.AddRange(serverItems);
 			}
 
-			return aggregateStudyItemList;
+			return aggregateItems;
 		}
 
-		private static QueryParameters MergeQueryParams(QueryParameters primary, QueryParameters secondary)
+		private void OnSearchCompleted(List<StudyTableItem> aggregateItems, List<KeyValuePair<string, Exception>> failedServerInfo)
 		{
-			// Merge the primary with secondary query parameters.  If the key exist in both, keep the value in the primary
-			// Otherwise, add the value in the secondary to the merged query parameters.
-			var merged = new QueryParameters(primary);
-			foreach (var k in secondary.Keys)
-			{
-				if (!merged.ContainsKey(k))
-					merged.Add(k, secondary[k]);
-			}
-
-			return merged;
-		}
-
-		private void OnSearchCompleted(StudyItemList aggregateStudyItemList, List<KeyValuePair<string, Exception>> failedServerInfo)
-		{
-			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
+			CurrentSearchResult.Refresh(aggregateItems, _filterDuplicateStudies);
 
 			if (failedServerInfo.Count > 0)
 			{
@@ -548,6 +510,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			EventsHelper.Fire(this.SearchEnded, this, EventArgs.Empty);
 		}
+
 
         private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{

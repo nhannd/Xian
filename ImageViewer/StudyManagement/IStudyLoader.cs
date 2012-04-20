@@ -9,7 +9,9 @@
 
 #endregion
 
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -19,15 +21,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public class StudyLoaderArgs
 	{
 		private readonly string _studyInstanceUid;
-		private readonly object _server;
+        private readonly IApplicationEntity _server;
 
 		/// <summary>
 		/// Constructs a new <see cref="StudyLoaderArgs"/> using the specified parameters.
 		/// </summary>
 		/// <param name="studyInstanceUid">The Study Instance UID of the study to be loaded.</param>
-		/// <param name="server">An object specifying the server to retrieve the study from, such as
-		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.</param>
-		public StudyLoaderArgs(string studyInstanceUid, object server)
+		/// <param name="server">The server from which the study should be loaded.</param>
+		public StudyLoaderArgs(string studyInstanceUid, IApplicationEntity server)
 		{
 			_studyInstanceUid = studyInstanceUid;
 			_server = server;
@@ -42,10 +43,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the server to load the study from, such as <code>null</code> for the local
-		/// server or an <see cref="ApplicationEntity"/> object specifying the remote server.
+		/// Gets the server to load the study from.
 		/// </summary>
-		public object Server
+        public IApplicationEntity Server
 		{
 			get { return _server; }
 		}

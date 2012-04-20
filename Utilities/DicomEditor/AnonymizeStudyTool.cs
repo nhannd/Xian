@@ -40,42 +40,24 @@ namespace ClearCanvas.Utilities.DicomEditor
 	{
 		private volatile AnonymizeStudyComponent _component;
 		private string _tempPath;
-		private static object _localStudyLoader = null;
 		
-		public AnonymizeStudyTool()
-		{
-		}
-
-		private static IStudyLoader LocalStudyLoader
-		{
-			get
-			{
-				if (_localStudyLoader == null)
-					_localStudyLoader = StudyLoader.Create("DICOM_LOCAL") ?? new object();
-
-				return _localStudyLoader as IStudyLoader;
-			}
-		}
-
 		public void AnonymizeStudy()
 		{
-			StudyItem selectedStudy = this.Context.SelectedStudy;
-
-			_component = new AnonymizeStudyComponent(this.Context.SelectedStudy);
+			_component = new AnonymizeStudyComponent(Context.SelectedStudy);
 			if (ApplicationComponentExitCode.Accepted == 
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, _component, SR.TitleAnonymizeStudy))
+				ApplicationComponent.LaunchAsDialog(Context.DesktopWindow, _component, SR.TitleAnonymizeStudy))
 			{
 				BackgroundTask task = null;
 				try
 				{
-					task = new BackgroundTask(Anonymize, false, this.Context.SelectedStudy);
-					ProgressDialog.Show(task, this.Context.DesktopWindow, true);
+					task = new BackgroundTask(Anonymize, false, Context.SelectedStudy);
+					ProgressDialog.Show(task, Context.DesktopWindow, true);
 				}
 				catch(Exception e)
 				{
 					Platform.Log(LogLevel.Error, e);
 					string message = String.Format(SR.MessageFormatStudyMustBeDeletedManually, _tempPath);
-					this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+					Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
 				}
 				finally
 				{
@@ -90,8 +72,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 		private void Anonymize(IBackgroundTaskContext context)
 		{
             //TODO (Marmot) This probably should be its own WorkItem type and have it done in the background there.
-			StudyItem study = (StudyItem)context.UserState;
-			AuditedInstances anonymizedInstances = new AuditedInstances();
+            var study = (StudyTableItem)context.UserState;
+			var anonymizedInstances = new AuditedInstances();
 
 			try
 			{
@@ -102,26 +84,25 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 				context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
 
-				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(study.StudyInstanceUid, null));
+			    var loader = study.Server.GetService<IStudyLoader>();
+				int numberOfSops = loader.Start(new StudyLoaderArgs(study.StudyInstanceUid, null));
 				if (numberOfSops <= 0)
 					return;
 
-				DicomAnonymizer anonymizer = new DicomAnonymizer();
-				anonymizer.StudyDataPrototype = _component.AnonymizedData;
+			    var anonymizer = new DicomAnonymizer {StudyDataPrototype = _component.AnonymizedData};
 
-				if (_component.PreserveSeriesData)
+			    if (_component.PreserveSeriesData)
 				{
 					//The default anonymizer removes the series data, so we just clone the original.
-					anonymizer.AnonymizeSeriesDataDelegate = 
-						delegate(SeriesData original) { return original.Clone(); };
+					anonymizer.AnonymizeSeriesDataDelegate = original => original.Clone();
 				}
 
 				string patientsSex = null;
-				List<string> filePaths = new List<string>();
+				var filePaths = new List<string>();
 
 				for (int i = 0; i < numberOfSops; ++i)
 				{
-					using (var sop = LocalStudyLoader.LoadNextSop())
+					using (var sop = loader.LoadNextSop())
 					{
 						if (sop != null && (_component.KeepReportsAndAttachments || !IsReportOrAttachmentSopClass(sop.SopClassUid)))
 						{
@@ -129,22 +110,23 @@ namespace ClearCanvas.Utilities.DicomEditor
 							if (patientsSex == null)
 								anonymizer.StudyDataPrototype.PatientsSex = patientsSex = sop.PatientsSex ?? "";
 
-							if (sop.DataSource is ILocalSopDataSource)
-							{
-								string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
-								DicomFile file = ((ILocalSopDataSource) sop.DataSource).File;
+						    var localSopDataSource = sop.DataSource as ILocalSopDataSource;
+						    if (localSopDataSource != null)
+						    {
+						        string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
+						        DicomFile file = (localSopDataSource).File;
 
-								// make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
-								file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
-								anonymizer.Anonymize(file);
-								filePaths.Add(filename);
-								file.Save(filename);
+						        // make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
+						        file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
+						        anonymizer.Anonymize(file);
+						        filePaths.Add(filename);
+						        file.Save(filename);
 
-								string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-								string patientId = file.DataSet[DicomTags.PatientId].ToString();
-								string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
-								anonymizedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
-							}
+						        string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+						        string patientId = file.DataSet[DicomTags.PatientId].ToString();
+						        string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
+						        anonymizedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+						    }
 						}
 					}
 
@@ -166,16 +148,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 		private void UpdateEnabled()
 		{
-			if (this.Context.SelectedStudy == null)
-			{
-				this.Enabled = false;
-				return;
-			}
-
-			this.Enabled = LocalStudyLoader != null && 
-							WorkItemActivityMonitor.IsRunning && 
-							this.Context.SelectedStudies.Count == 1 && 
-							this.Context.SelectedServerGroup.IsLocalServer;
+		    Enabled = Context.SelectedStudies.Count == 1
+		              && Context.SelectedServers.AllSupport<IWorkItemService>()
+		              && WorkItemActivityMonitor.IsRunning;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

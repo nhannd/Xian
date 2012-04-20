@@ -10,7 +10,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         private IStudyStoreQuery _real;
 
         public StoreStudyRootQuery()
-            : this(Platform.GetService<IStudyStoreQuery>())
         {
         }
 
@@ -19,26 +18,31 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             _real = real;
         }
 
+        private IStudyStoreQuery Real
+        {
+            get { return _real ?? (_real = Platform.GetService<IStudyStoreQuery>()); }
+        }
+
         #region IStudyRootQuery Members
 
         public System.Collections.Generic.IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
         {
             var criteria = new StudyEntry {Study = queryCriteria};
-            var result = _real.GetStudyEntries(new GetStudyEntriesRequest {Criteria = criteria});
+            var result = Real.GetStudyEntries(new GetStudyEntriesRequest {Criteria = criteria});
             return result.StudyEntries.Select(e => e.Study).ToList();
         }
 
         public System.Collections.Generic.IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
         {
             var criteria = new SeriesEntry {Series = queryCriteria};
-            var result = _real.GetSeriesEntries(new GetSeriesEntriesRequest {Criteria = criteria});
+            var result = Real.GetSeriesEntries(new GetSeriesEntriesRequest { Criteria = criteria });
             return result.SeriesEntries.Select(e => e.Series).ToList();
         }
 
         public System.Collections.Generic.IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
         {
             var criteria = new ImageEntry { Image = queryCriteria };
-            var result = _real.GetImageEntries(new GetImageEntriesRequest { Criteria = criteria });
+            var result = Real.GetImageEntries(new GetImageEntriesRequest { Criteria = criteria });
             return result.ImageEntries.Select(e => e.Image).ToList();
         }
 

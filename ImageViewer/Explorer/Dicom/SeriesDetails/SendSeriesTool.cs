@@ -11,12 +11,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -62,39 +64,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
             if (code != ApplicationComponentExitCode.Accepted)
                 return;
 
-            if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Servers == null || serverTreeComponent.SelectedServers.Servers.Count == 0)
+            if (serverTreeComponent.SelectedServers.Count == 0)
             {
                 Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
                 return;
             }
 
-            if (serverTreeComponent.SelectedServers.Servers.Count > 1)
+            if (serverTreeComponent.SelectedServers.Count > 1)
             {
                 if (Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
                     return;
             }
 
-            var seriesUids = new List<string>();
-
             var client = new DicomSendClient();
-            foreach (ISeriesData item in Context.SelectedSeries)
-            {
-                seriesUids.Add(item.SeriesInstanceUid);
-            }
+            var seriesUids = Context.SelectedSeries.Select(item => item.SeriesInstanceUid).ToList();
 
-            foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
+            foreach (var destination in serverTreeComponent.SelectedServers)
             {
-                var aeInformation = new ApplicationEntity
-                                        {
-                                            AETitle = destination.AETitle,
-                                            ScpParameters = new ScpParameters(destination.HostName, destination.Port)
-                                        };
                 try
                 {
-                    client.MoveSeries(aeInformation, Context.Study, seriesUids.ToArray(), WorkItemPriorityEnum.Normal);
+                    client.MoveSeries(destination.ToDataContract(), Context.Study, seriesUids.ToArray(), WorkItemPriorityEnum.Normal);
                     Context.DesktopWindow.ShowAlert(AlertLevel.Info,
                                                     string.Format(SR.MessageFormatSendSeriesScheduled, seriesUids.Count,
-                                                                  aeInformation.AETitle, new PersonName(Patient.PatientsName).FormattedName),
+                                                                  destination.Name, new PersonName(Patient.PatientsName).FormattedName),
                                                     SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                 }
                 catch (EndpointNotFoundException)
@@ -116,11 +108,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
         private void UpdateEnabled()
         {
-            Enabled = (Context.SelectedSeries != null &&
-                       Context.SelectedSeries.Count > 0 &&
-                //TODO (Marmot): This determines local/remote; will be fixing this shortly.
-                       Server == null &&
-                       WorkItemActivityMonitor.IsRunning);
+            Enabled = Context.SelectedSeries.Count > 0
+                        && Server.IsSupported<IWorkItemService>()
+                        && WorkItemActivityMonitor.IsRunning;
         }
     }
 }

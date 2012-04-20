@@ -75,7 +75,6 @@
     <Compile Include="DicomServer\DicomServerServiceType.cs" />
     <Compile Include="DicomServer\DicomServerSettings.cs" />
     <Compile Include="DicomServer\MoveScpExtension.cs" />
-    <Compile Include="DicomServer\RemoteServerDirectory.cs" />
     <Compile Include="DicomServer\DicomRetrieveManager.cs" />
     <Compile Include="DicomServer\ScpExtension.cs" />
     <Compile Include="DicomServer\StoreScpExtension.cs" />

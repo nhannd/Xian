@@ -12,8 +12,6 @@
 using System;
 using System.IO;
 using System.ServiceModel;
-using Castle.Core.Interceptor;
-using Castle.DynamicProxy;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using DicomServerConfigurationContract = ClearCanvas.ImageViewer.Common.DicomServer.DicomServerConfiguration;
@@ -30,17 +28,72 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             if (serviceType != typeof (IDicomServerConfiguration))
                 return null;
 
-            return new ProxyGenerator().CreateInterfaceProxyWithTargetInterface(
-                typeof (IDicomServerConfiguration), new DicomServerConfiguration()
-                , new IInterceptor[] {new BasicFaultInterceptor()});
+            return new DicomServerConfigurationProxy();
         }
 
         #endregion
     }
 
+    internal class DicomServerConfigurationProxy : IDicomServerConfiguration
+    {
+        private readonly IDicomServerConfiguration _real;
+
+        public DicomServerConfigurationProxy()
+        {
+            _real = new DicomServerConfiguration();
+        }
+
+        public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
+        {
+            return ServiceProxyHelper.Call(_real.GetConfiguration, request);
+        }
+
+        public UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request)
+        {
+            return ServiceProxyHelper.Call(_real.UpdateConfiguration, request);
+        }
+    }
+
     internal class DicomServerConfiguration : IDicomServerConfiguration
     {
-        private static readonly string _configurationKey = typeof(DicomServerConfigurationContract).FullName;
+        private static readonly string _configurationKey = typeof (DicomServerConfigurationContract).FullName;
+
+        private static readonly object _cacheLock = new object();
+        private static DateTime? _cachedTime;
+        private static DicomServerConfigurationContract _cachedValue;
+
+        private DicomServerConfigurationContract CachedValue
+        {
+            get
+            {
+                lock (_cacheLock)
+                {
+                    if (!_cachedTime.HasValue)
+                        return null;
+
+                    var elapsed = DateTime.Now - _cachedTime.Value;
+                    if (elapsed > TimeSpan.FromSeconds(30))
+                        _cachedValue = null;
+
+                    return _cachedValue;
+                }
+            }
+            set
+            {
+                lock (_cacheLock)
+                {
+                    if (value == null)
+                    {
+                        _cachedTime = null;
+                        _cachedValue = null;
+                        return;
+                    }
+
+                    _cachedValue = value;
+                    _cachedTime = DateTime.Now;
+                }
+            }
+        }
 
         //Note: the installer is supposed to set these defaults. These are the bottom of the barrel, last-ditch defaults.
         #region Defaults
@@ -71,6 +124,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
         {
+            //TODO (Marmot): cache the values so we don't hit the database constantly?
             DicomServerConfigurationContract configuration;
             using (var context = new DataAccessContext())
             {
@@ -86,6 +140,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             if (String.IsNullOrEmpty(configuration.FileStoreDirectory))
                 configuration.FileStoreDirectory = DefaultFileStoreLocation;
 
+            CachedValue = configuration;
             return new GetDicomServerConfigurationResult { Configuration = configuration };
         }
 
@@ -103,6 +158,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             {
                 context.GetConfigurationBroker().SetDataContractValue(_configurationKey, request.Configuration);
                 context.Commit();
+                
+                //Make a copy because the one in the request is a reference object that the caller could change afterwards.
+                CachedValue = new DicomServerConfigurationContract
+                                  {
+                                      AETitle = request.Configuration.AETitle,
+                                      FileStoreDirectory = request.Configuration.FileStoreDirectory,
+                                      HostName = request.Configuration.HostName,
+                                      Port = request.Configuration.Port
+                                  };
             }
 
             //TODO (Marmot): While it doesn't do any harm to do this here, the listener should also poll periodically for configuration changes, just in case.
@@ -118,7 +182,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                 Platform.Log(LogLevel.Warn, e, "Failed to restart the DICOM Server.");
                 throw;
             }
-
+            
             return new UpdateDicomServerConfigurationResult();
         }
 

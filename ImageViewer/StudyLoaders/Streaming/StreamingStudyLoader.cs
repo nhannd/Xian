@@ -19,34 +19,36 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	//TODO (CR February 2011) - Low: this is not ideal, but at the moment I can't think of a better way to do it.
-
-	public interface IStreamingStudyLoaderConfiguration
+    [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint))]
+    internal class StudyLoaderServiceProvider : ServiceNodeServiceProvider
     {
-        string GetClientAETitle();
-    }
-
-    /// <summary>
-    /// This class is intended to be used for the workstation
-    /// </summary>
-    public class DefaultStreamingStudyLoaderConfigurationProvider : IStreamingStudyLoaderConfiguration
-    {
-        public string GetClientAETitle()
+        private bool IsStreamingServiceNode
         {
-            return DicomServerConfigurationHelper.AETitle;
+            get
+            {
+                var dicomServiceNode = Context.ServiceNode as IDicomServiceNode;
+                return dicomServiceNode != null && dicomServiceNode.StreamingParameters != null;
+            }
+        }
+
+        public override bool IsSupported(Type type)
+        {
+            return type == typeof(IStudyLoader) && IsStreamingServiceNode;
+        }
+
+        public override object GetService(Type type)
+        {
+            return IsSupported(type) ? new StreamingStudyLoader() : null;
         }
     }
-
-    public class StreamingStudyLoaderConfigurationExtensionPoint : ExtensionPoint<IStreamingStudyLoaderConfiguration>
-    { }
-
 
     [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
     public class StreamingStudyLoader : StudyLoader
@@ -153,7 +155,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 client.Open();
                 XmlDocument headerXmlDocument;
 
-                using (Stream stream = client.GetStudyHeader(GetClientAETitle(), headerParams))
+                using (Stream stream = client.GetStudyHeader(ServerDirectory.GetLocalServer().AETitle, headerParams))
                 {
                     headerXmlDocument = DecompressHeaderStreamToXml(stream);
                     stream.Close();
@@ -192,21 +194,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
                 throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
             }
-        }
-
-        private string GetClientAETitle()
-        {
-            IStreamingStudyLoaderConfiguration config = null;
-            try
-            {
-                config = new StreamingStudyLoaderConfigurationExtensionPoint().CreateExtension() as IStreamingStudyLoaderConfiguration;
-            }
-            catch (Exception)
-            {
-                config = new DefaultStreamingStudyLoaderConfigurationProvider();
-            }
-
-            return config.GetClientAETitle();
         }
 
         private static XmlDocument DecompressHeaderStreamToXml(Stream stream)

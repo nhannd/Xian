@@ -13,7 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Configuration.ServerTree;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -39,7 +39,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void RetrieveStudy()
 		{
-            throw new NotImplementedException("Marmot - need to restore this.");
+		    //TODO (Marmot):Restore.
+            base.Context.DesktopWindow.ShowMessageBox("Restore!", MessageBoxActions.Ok);
             /*
 
             if (!Enabled || Context.SelectedServerGroup.IsLocalDatastore || Context.SelectedStudy == null)
@@ -109,23 +110,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private bool GetAtLeastOneServerSupportsLoading()
 		{
-			if (Context.SelectedServerGroup.IsLocalServer && base.IsLocalStudyLoaderSupported)
-				return true;
-
-			foreach (IServerTreeDicomServer server in base.Context.SelectedServerGroup.Servers)
-			{
-				if (server.IsStreaming && base.IsStreamingStudyLoaderSupported)
-					return true;
-				else if (!server.IsStreaming && base.IsRemoteStudyLoaderSupported)
-					return true;
-			}
-
-			return false;
-		}
+            return Context.SelectedServers.AnySupport<IStudyLoader>();
+        }
 
 		private void SetDoubleClickHandler()
 		{
-			if (!GetAtLeastOneServerSupportsLoading() && base.Context.SelectedServerGroup.Servers.Count > 0)
+			if (!GetAtLeastOneServerSupportsLoading() && base.Context.SelectedServers.Count > 0)
 				Context.DefaultActionHandler = RetrieveStudy;
 		}
 
@@ -142,9 +132,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-			Enabled = (Context.SelectedStudy != null &&
-			                !Context.SelectedServerGroup.IsLocalServer &&
-			                WorkItemActivityMonitor.IsRunning);
-		}
+            //TODO (Marmot):Supports IRetrieveStudy? Hardly seems worth it for what it is.
+			Enabled = Context.SelectedStudies.Count > 0
+                        && !Context.SelectedServers.IsLocalServer
+                        && WorkItemActivityMonitor.IsRunning;
+    	}
 	}
 }

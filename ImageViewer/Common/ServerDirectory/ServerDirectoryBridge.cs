@@ -8,50 +8,57 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
     public class ServerDirectoryBridge : IDisposable
     {
-        private IServerDirectory _serverDirectory;
+        private IServerDirectory _real;
 
         public ServerDirectoryBridge()
-            : this(Platform.GetService<IServerDirectory>())
         {
         }
 
         public ServerDirectoryBridge(IServerDirectory serverDirectory)
         {
             Platform.CheckForNullReference(serverDirectory, "serverDirectory");
-            _serverDirectory = serverDirectory;
+            _real = serverDirectory;
+        }
+
+        private IServerDirectory Real
+        {
+            get { return _real ?? (_real = Platform.GetService<IServerDirectory>()); }
         }
 
         public IDicomServiceNode GetLocalServer()
         {
-            DicomServerConfigurationHelper.Refresh(false);
-            return new DicomServiceNode(DicomServerConfigurationHelper.DicomServerConfiguration);
+            DicomServerConfiguration configuration = null;
+            Platform.GetService<IDicomServerConfiguration>(
+                s => configuration = s.GetConfiguration(new GetDicomServerConfigurationRequest()).Configuration);
+
+            return new DicomServiceNode(configuration);
         }
 
         public List<IDicomServiceNode> GetServers()
         {
-            var servers = _serverDirectory.GetServers(new GetServersRequest()).Servers;
+            var servers = Real.GetServers(new GetServersRequest()).Servers;
             return servers.Select(s => s.ToServiceNode()).ToList();
         }
 
         public List<IDicomServiceNode> GetServersByAETitle(string aeTitle)
         {
-            var servers = _serverDirectory.GetServers(new GetServersRequest{AETitle = aeTitle}).Servers;
+            var servers = Real.GetServers(new GetServersRequest { AETitle = aeTitle }).Servers;
             return servers.Select(s => s.ToServiceNode()).ToList();
         }
 
         public IDicomServiceNode GetServerByName(string name)
         {
-            var servers = _serverDirectory.GetServers(new GetServersRequest { Name = name}).Servers;
+            var servers = Real.GetServers(new GetServersRequest { Name = name }).Servers;
             return servers.Select(s => s.ToServiceNode()).FirstOrDefault();
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!(_serverDirectory is IDisposable))
+            if (!(_real is IDisposable))
                 return;
 
-            ((IDisposable)_serverDirectory).Dispose();
-            _serverDirectory = null;
+            ((IDisposable)_real).Dispose();
+            _real = null;
         }
 
         #region IDisposable Members

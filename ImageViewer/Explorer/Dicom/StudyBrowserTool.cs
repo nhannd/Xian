@@ -20,38 +20,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private bool _enabled;
 		private event EventHandler _enabledChangedEvent;
 
-		protected const string LocalStudyLoaderName = "DICOM_LOCAL";
-		protected const string RemoteStudyLoaderName = "DICOM_REMOTE";
-		protected const string StreamingStudyLoaderName = "CC_STREAMING";
-
-		protected bool IsLocalStudyLoaderSupported
-		{
-			get { return ImageViewerComponent.IsStudyLoaderSupported(LocalStudyLoaderName); }
-		}
-
-		protected bool IsStreamingStudyLoaderSupported
-		{
-			get { return ImageViewerComponent.IsStudyLoaderSupported(StreamingStudyLoaderName); }
-		}
-
-		protected bool IsRemoteStudyLoaderSupported
-		{
-			get { return ImageViewerComponent.IsStudyLoaderSupported(RemoteStudyLoaderName); }
-		}
-
 		public override void Initialize()
 		{
 			base.Initialize();
-			this.Context.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
-			this.Context.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
+			Context.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
+			Context.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 		}
 
 		protected virtual void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
-			if (this.Context.SelectedStudy != null)
-				this.Enabled = true;
+			if (Context.SelectedStudy != null)
+				Enabled = true;
 			else
-				this.Enabled = false;
+				Enabled = false;
 		}
 
 		protected abstract void OnSelectedServerChanged(object sender, EventArgs e);

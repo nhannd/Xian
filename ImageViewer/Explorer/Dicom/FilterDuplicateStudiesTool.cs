@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateState()
 		{
-			if (!_parent.SelectedServerGroup.IsLocalServer && _parent.SelectedServerGroup.Servers.Count > 1)
+			if (!_parent.SelectedServers.IsLocalServer && _parent.SelectedServers.Count > 1)
 			{
 				if (_parent.CurrentSearchResult != null)
 					this.Enabled = _parent.CurrentSearchResult.HasDuplicates;

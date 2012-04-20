@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.Tests
 				{
 					using (var viewer = new ImageViewerComponent(new LayoutManager()))
 					{
-						viewer.LoadStudy(new LoadStudyArgs(HashUid("StudyA"), studyProviderContext.Server, UnitTestStudyLoader.StudyLoaderId));
+						viewer.LoadStudy(new LoadStudyArgs(HashUid("StudyA"), studyProviderContext.Server));
 						viewer.Layout();
 
 						Assert.AreEqual(9, viewer.LogicalWorkspace.ImageSets[0].DisplaySets.Count, "There should be 9 display sets here");

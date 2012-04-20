@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		static StudyLoaderMap()
 		{
-			StudyLoaderMap map = new StudyLoaderMap();
+			var map = new StudyLoaderMap();
 			_supportedStudyLoaders = new Dictionary<string, string>();
 			foreach (IStudyLoader loader in map._studyLoaderMap.Values)
 				_supportedStudyLoaders[loader.Name] = loader.Name;

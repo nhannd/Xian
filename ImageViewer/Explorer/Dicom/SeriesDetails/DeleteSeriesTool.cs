@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -31,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
     {
         public void DeleteSeries()
         {
-            if (!Enabled || Context.SelectedSeries == null)
+            if (!Enabled)
                 return;
 
             if (StudyInUse())
@@ -40,16 +41,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
             if (!ConfirmDeletion())
                 return;
 
-            //TODO (Marmot):Restore.
             try
             {
                 var client = new DeleteClient();
-                var seriesList = new List<string>();
-                foreach (var series in Context.SelectedSeries)
-                {
-                    seriesList.Add(series.SeriesInstanceUid);
-                }
-
+                var seriesList = Context.SelectedSeries.Select(series => series.SeriesInstanceUid).ToList();
                 client.DeleteSeries(Context.Study, seriesList);
                 Context.DesktopWindow.ShowAlert(AlertLevel.Info,
                                 string.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, new PersonName(Patient.PatientsName).FormattedName),
@@ -101,27 +96,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
         private IEnumerable<IImageViewer> GetImageViewers()
         {
-            var imageViewers = new List<IImageViewer>();
-
-            foreach (Workspace workspace in Context.DesktopWindow.Workspaces)
-            {
-                IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
-                if (viewer == null)
-                    continue;
-
-                imageViewers.Add(viewer);
-            }
-
-            return imageViewers;
+            return Context.DesktopWindow.Workspaces
+                .Select(ImageViewerComponent.GetAsImageViewer).Where(viewer => viewer != null);
         }
 
         private void UpdateEnabled()
         {
-            Enabled = (Context.SelectedSeries != null &&
-                       Context.SelectedSeries.Count > 0 &&
-                //TODO (Marmot): This determines local/remote; will be fixing this shortly.
-                       Server == null &&
-                       WorkItemActivityMonitor.IsRunning);
+            Enabled = Context.SelectedSeries.Count > 0 
+                        && Server.IsSupported<IWorkItemService>()
+                        && WorkItemActivityMonitor.IsRunning;
         }
     }
 }

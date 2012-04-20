@@ -36,11 +36,6 @@ namespace ClearCanvas.ImageViewer.Common.Automation
     [Obsolete("Use GetViewers instead.")]
     public class NoActiveViewersFault
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public NoActiveViewersFault()
-		{}
 	}
 
     /// <summary>
@@ -49,11 +44,6 @@ namespace ClearCanvas.ImageViewer.Common.Automation
     [DataContract(Namespace = AutomationNamespace.Value)]
     public class NoViewersFault
     {
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public NoViewersFault()
-        { }
     }
 
 	/// <summary>
@@ -62,9 +52,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class ViewerNotFoundFault
 	{
-		private string _failureDescription;
-
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		public ViewerNotFoundFault()
@@ -76,19 +64,14 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public ViewerNotFoundFault(string failureDescription)
 		{
-			_failureDescription = failureDescription;
+			FailureDescription = failureDescription;
 		}
 
-		/// <summary>
-		/// Textual description of the failure.
-		/// </summary>
-		[DataMember(IsRequired = false)]
-		public string FailureDescription
-		{
-			get { return _failureDescription; }
-			set { _failureDescription = value; }
-		}
-
+	    /// <summary>
+	    /// Textual description of the failure.
+	    /// </summary>
+	    [DataMember(IsRequired = false)]
+	    public string FailureDescription { get; set; }
 	}
 
 	/// <summary>
@@ -97,9 +80,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class OpenStudiesFault
 	{
-		private string _failureDescription;
-
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		public OpenStudiesFault()
@@ -111,18 +92,14 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public OpenStudiesFault(string failureDescription)
 		{
-			_failureDescription = failureDescription;
+			FailureDescription = failureDescription;
 		}
 
-		/// <summary>
-		/// Textual description of the failure.
-		/// </summary>
-		[DataMember(IsRequired = false)]
-		public string FailureDescription
-		{
-			get { return _failureDescription; }
-			set { _failureDescription = value; }
-		}
+	    /// <summary>
+	    /// Textual description of the failure.
+	    /// </summary>
+	    [DataMember(IsRequired = false)]
+	    public string FailureDescription { get; set; }
 	}
 
     /// <summary>
@@ -144,16 +121,13 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class Viewer
 	{
-		private Guid _identifier;
-		private string _primaryStudyInstanceUid;
-
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		public Viewer(Guid identifier, string primaryStudyInstanceUid)
 		{
-			_identifier = identifier;
-			_primaryStudyInstanceUid = primaryStudyInstanceUid;
+			Identifier = identifier;
+			PrimaryStudyInstanceUid = primaryStudyInstanceUid;
 		}
 
 		/// <summary>
@@ -171,52 +145,43 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		{
 		}
 
-		/// <summary>
-		/// Gets or sets the unique identifier of this <see cref="Viewer"/>.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public Guid Identifier
-		{
-			get { return _identifier; }
-			set { _identifier = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the unique identifier of this <see cref="Viewer"/>.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public Guid Identifier { get; set; }
 
-		/// <summary>
-		/// Gets or sets the study instance uid of the primary study, or study of interest.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public string PrimaryStudyInstanceUid
-		{
-			get { return _primaryStudyInstanceUid; }
-			set { _primaryStudyInstanceUid = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the study instance uid of the primary study, or study of interest.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public string PrimaryStudyInstanceUid { get; set; }
 
-		public override bool Equals(object obj)
+	    public override bool Equals(object obj)
 		{
 			if (obj is Viewer)
-				return (obj as Viewer).Identifier == this.Identifier;
-			else 
-				return false;
+				return (obj as Viewer).Identifier == Identifier;
+            return false;
 		}
 
 		public override int GetHashCode()
 		{
-			return this.Identifier.GetHashCode();
+			return Identifier.GetHashCode();
 		}
 
 		public override string ToString()
 		{
-			return this.Identifier.ToString();
+			return Identifier.ToString();
 		}
 
 		public static bool operator == (Viewer viewer1, Viewer viewer2)
 		{
-			return Object.Equals(viewer1, viewer2);
+			return Equals(viewer1, viewer2);
 		}
 
 		public static bool operator !=(Viewer viewer1, Viewer viewer2)
 		{
-			return !Object.Equals(viewer1, viewer2);
+			return !Equals(viewer1, viewer2);
 		}
 	}
 
@@ -227,25 +192,19 @@ namespace ClearCanvas.ImageViewer.Common.Automation
     [Obsolete("Use GetViewers method.")]
     public class GetActiveViewersResult
 	{
-		private List<Viewer> _activeViewers;
-
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		public GetActiveViewersResult()
 		{
-			_activeViewers = new List<Viewer>();
+			ActiveViewers = new List<Viewer>();
 		}
 
-		/// <summary>
-		/// The currently active <see cref="Viewer"/>s.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public List<Viewer> ActiveViewers
-		{
-			get { return _activeViewers; }
-			set { _activeViewers = value; }
-		}
+	    /// <summary>
+	    /// The currently active <see cref="Viewer"/>s.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public List<Viewer> ActiveViewers { get; set; }
 	}
 
     [DataContract(Namespace = AutomationNamespace.Value)]
@@ -279,24 +238,11 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class GetViewerInfoRequest
 	{
-		private Viewer _viewer;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public GetViewerInfoRequest()
-		{
-		}
-
-		/// <summary>
-		/// Gets or sets the viewer whose info is to be retrieved.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public Viewer Viewer
-		{
-			get { return _viewer; }
-			set { _viewer = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the viewer whose info is to be retrieved.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public Viewer Viewer { get; set; }
 	}
 
 	/// <summary>
@@ -305,28 +251,22 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class GetViewerInfoResult
 	{
-		private List<string> _additionalStudyInstanceUids;
-
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		public GetViewerInfoResult()
 		{
-			_additionalStudyInstanceUids = new List<string>();
+			AdditionalStudyInstanceUids = new List<string>();
 		}
 
-		/// <summary>
-		/// Gets or sets the study instance uids contained within the <see cref="GetViewerInfoRequest.Viewer"/>,
-		/// not including the <see cref="Viewer.PrimaryStudyInstanceUid"/>, or study of interest.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public List<string> AdditionalStudyInstanceUids
-		{
-			get { return _additionalStudyInstanceUids; }
-			set { _additionalStudyInstanceUids = value; }
-		}
-	
-		//TODO: later, could add layout information, visible display sets, etc.
+	    /// <summary>
+	    /// Gets or sets the study instance uids contained within the <see cref="GetViewerInfoRequest.Viewer"/>,
+	    /// not including the <see cref="Viewer.PrimaryStudyInstanceUid"/>, or study of interest.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public List<string> AdditionalStudyInstanceUids { get; set; }
+
+	    //TODO: later, could add layout information, visible display sets, etc.
 	}
 
 	/// <summary>
@@ -335,14 +275,12 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class OpenStudiesResult
 	{
-		private Viewer _viewer;
-
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		public OpenStudiesResult(Viewer viewer)
 		{
-			_viewer = viewer;
+			Viewer = viewer;
 		}
 
 		/// <summary>
@@ -352,15 +290,11 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		{
 		}
 
-		/// <summary>
-		/// Gets or sets the <see cref="Viewer"/> in which the studies were opened.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public Viewer Viewer
-		{
-			get { return _viewer; }
-			set { _viewer = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the <see cref="Viewer"/> in which the studies were opened.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public Viewer Viewer { get; set; }
 	}
 
 	/// <summary>
@@ -369,10 +303,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class OpenStudyInfo
 	{
-		private string _studyInstanceUid;
-		private string _sourceAETitle;
-
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		public OpenStudyInfo(StudyIdentifier studyIdentifier)
@@ -383,10 +314,10 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public OpenStudyInfo(string studyInstanceUid, string sourceAE)
+		public OpenStudyInfo(string studyInstanceUid, string sourceAETitle)
 		{
-			_studyInstanceUid = studyInstanceUid;
-			_sourceAETitle = sourceAE;
+			StudyInstanceUid = studyInstanceUid;
+			SourceAETitle = sourceAETitle;
 		}
 
 		/// <summary>
@@ -404,26 +335,18 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		{
 		}
 
-		/// <summary>
-		/// The Study Instance Uid of the study to be opened.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
+	    /// <summary>
+	    /// The Study Instance Uid of the study to be opened.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public string StudyInstanceUid { get; set; }
 
 	    // TODO (CR Mar 2012): Pass in an AE object?
-		/// <summary>
-		/// The AE Title where the study is known to reside.
-		/// </summary>
-		[DataMember(IsRequired = false)]
-		public string SourceAETitle
-		{
-			get { return _sourceAETitle; }
-			set { _sourceAETitle = value; }
-		}
+	    /// <summary>
+	    /// The AE Title where the study is known to reside.
+	    /// </summary>
+	    [DataMember(IsRequired = false)]
+	    public string SourceAETitle { get; set; }
 	}
 
     /// <summary>
@@ -471,44 +394,26 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class OpenStudiesRequest
 	{
-		private List<OpenStudyInfo> _studiesToOpen;
-		private bool? _activateIfAlreadyOpen;
+	    /// <summary>
+	    /// Gets or sets the list of studies to open; the first study in the list
+	    /// will be taken to be the primary study or study of interest (<see cref="Viewer.PrimaryStudyInstanceUid"/>).
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public List<OpenStudyInfo> StudiesToOpen { get; set; }
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public OpenStudiesRequest()
-		{
-		}
+	    /// <summary>
+	    /// Gets or sets a value indicating whether or not to simply
+	    /// activate the viewer if the requested primary study is already
+	    /// the primary study in an existing <see cref="Viewer"/>.
+	    /// </summary>
+	    /// <remarks>
+	    /// When this value is false, a new <see cref="Viewer"/> will always be opened
+	    /// whether or not the primary study is already the primary study in other <see cref="Viewer"/>s.
+	    /// </remarks>
+	    [DataMember(IsRequired = false)]
+	    public bool? ActivateIfAlreadyOpen { get; set; }
 
-		/// <summary>
-		/// Gets or sets the list of studies to open; the first study in the list
-		/// will be taken to be the primary study or study of interest (<see cref="Viewer.PrimaryStudyInstanceUid"/>).
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public List<OpenStudyInfo> StudiesToOpen
-		{
-			get { return _studiesToOpen; }
-			set { _studiesToOpen = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether or not to simply
-		/// activate the viewer if the requested primary study is already
-		/// the primary study in an existing <see cref="Viewer"/>.
-		/// </summary>
-		/// <remarks>
-		/// When this value is false, a new <see cref="Viewer"/> will always be opened
-		/// whether or not the primary study is already the primary study in other <see cref="Viewer"/>s.
-		/// </remarks>
-		[DataMember(IsRequired = false)]
-		public bool? ActivateIfAlreadyOpen
-		{
-			get { return _activateIfAlreadyOpen; }
-			set { _activateIfAlreadyOpen = value; }
-		}
-
-        /// <summary>
+	    /// <summary>
         /// Specifies whether or not prior studies should be automatically searched for
         /// and loaded into the viewer along with the requested studies.
         /// </summary>
@@ -537,24 +442,11 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class CloseViewerRequest
 	{
-		private Viewer _viewer;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public CloseViewerRequest()
-		{
-		}
-
-		/// <summary>
-		/// Gets or sets the <see cref="Viewer"/> to be closed.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public Viewer Viewer
-		{
-			get { return _viewer; }
-			set { _viewer = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the <see cref="Viewer"/> to be closed.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public Viewer Viewer { get; set; }
 	}
 
 	/// <summary>
@@ -563,24 +455,11 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class ActivateViewerRequest
 	{
-		private Viewer _viewer;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public ActivateViewerRequest()
-		{
-		}
-
-		/// <summary>
-		/// Gets or sets the <see cref="Viewer"/> to activate.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public Viewer Viewer
-		{
-			get { return _viewer; }
-			set { _viewer = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the <see cref="Viewer"/> to activate.
+	    /// </summary>
+	    [DataMember(IsRequired = true)]
+	    public Viewer Viewer { get; set; }
 	}
 
 	#endregion
@@ -590,93 +469,45 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class DicomExplorerNotFoundFault
 	{
-		public DicomExplorerNotFoundFault()
-		{
-		}
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class ServerNotFoundFault
 	{
-		public ServerNotFoundFault()
-		{
-		}
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class NoLocalStoreFault
 	{
-		public NoLocalStoreFault()
-		{
-		}
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class DicomExplorerSearchCriteria
 	{
-		private string _patientId;
-		private string _patientsName;
-		private string _accessionNumber;
-		private string _studyDescription;
-		private DateTime? _studyDateFrom;
-		private DateTime? _studyDateTo;
-		private string _referringPhysiciansName;
-		private List<string> _modalities = new List<string>();
+	    private List<string> _modalities = new List<string>();
 
-		public DicomExplorerSearchCriteria()
-		{
-		}
+	    [DataMember(IsRequired = true)]
+	    public DateTime? StudyDateFrom { get; set; }
 
-		[DataMember(IsRequired = true)]
-		public DateTime? StudyDateFrom
-		{
-			get { return _studyDateFrom; }
-			set { _studyDateFrom = value; }
-		}
+	    [DataMember(IsRequired = true)]
+	    public DateTime? StudyDateTo { get; set; }
 
-		[DataMember(IsRequired = true)]
-		public DateTime? StudyDateTo
-		{
-			get { return _studyDateTo; }
-			set { _studyDateTo = value; }
-		}
+	    [DataMember(IsRequired = true)]
+	    public string PatientId { get; set; }
 
-		[DataMember(IsRequired = true)]
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
+	    [DataMember(IsRequired = true)]
+	    public string PatientsName { get; set; }
 
-		[DataMember(IsRequired = true)]
-		public string PatientsName
-		{
-			get { return _patientsName; }
-			set { _patientsName = value; }
-		}
+	    [DataMember(IsRequired = true)]
+	    public string AccessionNumber { get; set; }
 
-		[DataMember(IsRequired = true)]
-		public string AccessionNumber
-		{
-			get { return _accessionNumber; }
-			set { _accessionNumber = value; }
-		}
+	    [DataMember(IsRequired = true)]
+	    public string StudyDescription { get; set; }
 
-		[DataMember(IsRequired = true)]
-		public string StudyDescription
-		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
-		}
+	    [DataMember(IsRequired = false)]
+	    public string ReferringPhysiciansName { get; set; }
 
-		[DataMember(IsRequired = false)]
-		public string ReferringPhysiciansName
-		{
-			get { return _referringPhysiciansName; }
-			set { _referringPhysiciansName = value; }
-		}
-
-		[DataMember(IsRequired = true)]
+	    [DataMember(IsRequired = true)]
 		public List<string> Modalities
 		{
 			get { return _modalities; }
@@ -687,18 +518,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public abstract class SearchStudiesRequest
 	{
-		private DicomExplorerSearchCriteria _searchCriteria;
-
-		public SearchStudiesRequest()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public DicomExplorerSearchCriteria SearchCriteria
-		{
-			get { return _searchCriteria; }
-			set { _searchCriteria = value; }
-		}
+	    [DataMember(IsRequired = true)]
+	    public DicomExplorerSearchCriteria SearchCriteria { get; set; }
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
@@ -709,34 +530,18 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class SearchLocalStudiesResult
 	{
-		public SearchLocalStudiesResult()
-		{
-		}
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class SearchRemoteStudiesRequest : SearchStudiesRequest
 	{
-		private string _aeTitle;
-
-		public SearchRemoteStudiesRequest()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public string AETitle
-		{
-			get { return _aeTitle; }
-			set { _aeTitle = value; }
-		}
+	    [DataMember(IsRequired = true)]
+	    public string AETitle { get; set; }
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class SearchRemoteStudiesResult
 	{
-		public SearchRemoteStudiesResult()
-		{
-		}
 	}
 
 	#endregion

@@ -11,8 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
+using System.Linq;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -22,8 +22,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public abstract class StudyLoader : IStudyLoader
 	{
 		private readonly string _name;
-		private IPrefetchingStrategy _prefetchingStrategy;
-		private object _currentServer;
+        private IDicomServiceNode _currentServer;
 
 		/// <summary>
 		/// Constructs a new <see cref="StudyLoader"/> with the given <paramref name="name"/>.
@@ -43,16 +42,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _name; }
 		}
 
-		/// <summary>
-		/// Gets or sets the study loader's pixel data prefetching strategy.
-		/// </summary>
-		public IPrefetchingStrategy PrefetchingStrategy
-		{
-			get { return _prefetchingStrategy; }
-			protected set { _prefetchingStrategy = value; }
-		}
+	    /// <summary>
+	    /// Gets or sets the study loader's pixel data prefetching strategy.
+	    /// </summary>
+	    public IPrefetchingStrategy PrefetchingStrategy { get; protected set; }
 
-		/// <summary>
+	    /// <summary>
 		/// Called by <see cref="Start"/> to begin prefetching.
 		/// </summary>
 		protected abstract int OnStart(StudyLoaderArgs studyLoaderArgs);
@@ -85,7 +80,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>Number of images in study.</returns>
 		public int Start(StudyLoaderArgs studyLoaderArgs)
 		{
-			_currentServer = studyLoaderArgs.Server;
+			_currentServer = studyLoaderArgs.Server.ToServiceNode();
 
 			try
 			{
@@ -109,22 +104,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Implementers of <see cref="IStudyLoader"/> should avoid loading pixel data
 		/// in this method for performance reasons.
 		/// </remarks>
-		public Sop LoadNextSop()
+        public Sop LoadNextSop()
 		{
-				SopDataSource dataSource = LoadNextSopDataSource();
-				if (dataSource == null)
-				{
-					_currentServer = null;
-					return null;
-				}
+		    SopDataSource dataSource = LoadNextSopDataSource();
+		    if (dataSource == null)
+		    {
+		        _currentServer = null;
+		        return null;
+		    }
 
-				dataSource.StudyLoaderName = Name;
-				dataSource.Server = _currentServer;
-
-				return CreateSop(dataSource);
+		    dataSource.Server = _currentServer;
+		    return CreateSop(dataSource);
 		}
 
-		#endregion
+	    #endregion
 
 		/// <summary>
 		/// Creates all available study loaders.
@@ -132,19 +125,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>All the loaders, or an empty array if none exist.</returns>
 		public static List<IStudyLoader> CreateAll()
 		{
-			var studyLoaders = new List<IStudyLoader>();
-
 			try
 			{
-				var xp = new StudyLoaderExtensionPoint();
-				foreach (IStudyLoader loader in xp.CreateExtensions())
-					studyLoaders.Add(loader);
+			    return new StudyLoaderExtensionPoint().CreateExtensions().Cast<IStudyLoader>().ToList();
 			}
 			catch (NotSupportedException)
 			{
+                return new List<IStudyLoader>();
 			}
-
-			return studyLoaders;
 		}
 
 		/// <summary>
@@ -153,7 +141,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>The loader, or null if it doesn't exist.</returns>
 		public static IStudyLoader Create(string name)
 		{
-			return CollectionUtils.SelectFirst(CreateAll(), loader => loader.Name == name);
+		    return CreateAll().FirstOrDefault(loader => loader.Name == name);
 		}
 	}
 }

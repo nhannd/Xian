@@ -10,11 +10,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -25,8 +24,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	public interface IStudyBrowserComponent : IApplicationComponent
 	{
-		AEServerGroup SelectedServerGroup { get; set; }
-		void Search(List<QueryParameters> queryParameters);
+		DicomServiceNodeList SelectedServers { get; set; }
+		void Search(StudyRootStudyIdentifier queryCriteria);
 		void CancelSearch();
 
 		event EventHandler SearchStarted;

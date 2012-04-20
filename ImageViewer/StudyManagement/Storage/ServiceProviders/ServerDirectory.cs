@@ -13,11 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using Castle.Core.Interceptor;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
-using Castle.DynamicProxy;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 {
@@ -31,28 +29,60 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             if (serviceType != typeof (IServerDirectory))
                 return null;
 
-            return new ProxyGenerator().CreateInterfaceProxyWithTargetInterface(
-                typeof (IServerDirectory), new ServerDirectory()
-                , new IInterceptor[] {new ServerDirectoryFaultInterceptor()});
+            return new ServerDirectoryProxy();
         }
 
         #endregion
     }
 
-    internal class ServerDirectoryFaultInterceptor : IInterceptor
+    internal class ServerDirectoryProxy : IServerDirectory
     {
-        #region IInterceptor Members
+        private readonly IServerDirectory _real;
 
-        public void Intercept(IInvocation invocation)
+        public ServerDirectoryProxy()
+        {
+            _real = new ServerDirectory();
+        }
+
+        #region IServerDirectory Members
+
+        public GetServersResult GetServers(GetServersRequest request)
+        {
+            return Call(_real.GetServers, request);
+        }
+
+        public AddServerResult AddServer(AddServerRequest request)
+        {
+            return Call(_real.AddServer, request);
+        }
+
+        public UpdateServerResult UpdateServer(UpdateServerRequest request)
+        {
+            return Call(_real.UpdateServer, request);
+        }
+
+        public DeleteServerResult DeleteServer(DeleteServerRequest request)
+        {
+            return Call(_real.DeleteServer, request);
+        }
+
+        public DeleteAllServersResult DeleteAllServers(DeleteAllServersRequest request)
+        {
+            return Call(_real.DeleteAllServers, request);
+        }
+
+        #endregion
+
+        private TResult Call<TInput, TResult>(Func<TInput, TResult> function, TInput input)
         {
             try
             {
-                invocation.Proceed();
+                return function(input);
             }
             catch (ArgumentException e)
             {
                 Platform.Log(LogLevel.Error, e);
-                if (invocation.Method.Name == "AddServer")
+                if (function.Method.Name == "AddServer")
                     throw new FaultException<ServerExistsFault>(new ServerExistsFault());
 
                 throw new FaultException<ServerNotFoundFault>(new ServerNotFoundFault());
@@ -67,8 +97,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                 throw new FaultException();
             }
         }
-
-        #endregion
     }
 
     internal class ServerDirectory : IServerDirectory

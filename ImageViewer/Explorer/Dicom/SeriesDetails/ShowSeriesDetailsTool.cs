@@ -11,13 +11,9 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom.Iod;
-using ClearCanvas.ImageViewer.Configuration.ServerTree;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
@@ -32,10 +28,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class ShowSeriesDetailsTool : StudyBrowserTool
 	{
-		public ShowSeriesDetailsTool()
-		{
-		}
-
 		public override void Initialize()
 		{
 			base.Initialize();
@@ -55,43 +47,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		private void UpdateEnabled()
 		{
-		    //TODO (Marmot): Perfect candidate for service node changes.
-			if (base.Context.SelectedServerGroup == null)
-				base.Enabled = false;
-			else if (base.Context.SelectedServerGroup.IsLocalServer)
-				base.Enabled = StudyStore.IsSupported && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
-			else
-				base.Enabled = base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1 &&
-					GetServerForStudy(base.Context.SelectedStudy) != null;
-		}
-
-		private IServerTreeNode GetServerForStudy(StudyItem studyItem)
-		{
-			if (base.Context.SelectedServerGroup == null || base.Context.SelectedServerGroup.Servers.Count == 0)
+			if (Context.SelectedServers == null)
 			{
-				return null;
+			    Enabled = false;
 			}
-			else if (base.Context.SelectedServerGroup.Servers.Count == 1)
+			else if (Context.SelectedStudy == null || Context.SelectedStudies.Count > 1)
 			{
-				return base.Context.SelectedServerGroup.Servers[0];
+			    Enabled = false;
 			}
-			else
+            else
 			{
-				return CollectionUtils.SelectFirst(Context.SelectedServerGroup.Servers,
-					delegate(IServerTreeNode server)
-					{
-                        var theServer = server as IServerTreeDicomServer;
-						if (theServer != null)
-						{
-                            var ae = studyItem.Server as IApplicationEntity;
-							if (ae != null)
-								return theServer.AETitle == ae.AETitle;
-						}
-
-						return false;
-					});
+			    Enabled = Context.SelectedStudy.Server != null &&
+			              Context.SelectedStudy.Server.IsSupported<IStudyRootQuery>();
 			}
-		}
+        }
 
 		public void Show()
 		{
@@ -102,9 +71,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 			try
 			{
-				SeriesDetailsComponent component =
-					new SeriesDetailsComponent(base.Context.SelectedStudy, GetServerForStudy(base.Context.SelectedStudy));
-				ApplicationComponent.LaunchAsDialog(base.Context.DesktopWindow, component, SR.TitleSeriesDetails);
+				var component = new SeriesDetailsComponent(Context.SelectedStudy);
+				ApplicationComponent.LaunchAsDialog(Context.DesktopWindow, component, SR.TitleSeriesDetails);
 			}
 			catch(Exception e)
 			{

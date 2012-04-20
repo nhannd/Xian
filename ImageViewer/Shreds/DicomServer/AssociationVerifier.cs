@@ -10,6 +10,7 @@
 #endregion
 
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -23,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			result = DicomRejectResult.Permanent;
 			reason = DicomRejectReason.NoReasonGiven;
 
-			if (!DicomServerSettings.Instance.AllowUnknownCaller && null == RemoteServerDirectory.Lookup(callingAE))
+			if (!DicomServerSettings.Instance.AllowUnknownCaller && ServerDirectory.GetRemoteServersByAETitle(callingAE).Count == 0)
 			{
 				reason = DicomRejectReason.CallingAENotRecognized;
 			}

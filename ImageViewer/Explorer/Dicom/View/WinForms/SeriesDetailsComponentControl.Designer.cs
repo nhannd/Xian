@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms
+namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
     partial class SeriesDetailsComponentControl
     {

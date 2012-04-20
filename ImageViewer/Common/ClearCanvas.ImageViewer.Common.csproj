@@ -110,6 +110,7 @@
     <Compile Include="StudyManagement\StoreEntries.cs" />
     <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
+    <Compile Include="StudyManagement\StudyRootQueryStoreAdapter.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />
     <Compile Include="MemoryCollector.cs" />
     <Compile Include="MemoryManagementSettings.cs" />
@@ -124,7 +125,6 @@
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="RetryableCommandExecutor.cs" />
     <Compile Include="ServerDirectory\DataContracts.cs" />
-    <Compile Include="ServerDirectory\Extensions.cs" />
     <Compile Include="ServerDirectory\IServerDirectory.cs" />
     <Compile Include="ServerDirectory\DicomServiceNode.cs" />
     <Compile Include="ServerDirectory\ServerDirectoryBridge.cs" />

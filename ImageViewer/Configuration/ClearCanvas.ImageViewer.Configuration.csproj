@@ -111,8 +111,8 @@
     <Compile Include="ServerTree\ServerTreeComponent.cs" />
     <Compile Include="ServerTree\ServerTreeConfigurationComponent.cs" />
     <Compile Include="ServerTree\ServerTreeTool.cs" />
-    <Compile Include="ServerTree\AEServerGroup.cs" />
-    <Compile Include="ServerTree\Extensions.cs" />
+    <Compile Include="ServerTree\DicomServiceNodeList.cs" />
+    <Compile Include="ServerTree\ServerTreeExtensions.cs" />
     <Compile Include="ServerTree\IServerTreeNode.cs" />
     <Compile Include="ServerTree\LegacyXml\Extensions.cs" />
     <Compile Include="ServerTree\LegacyXml\LocalDataStore.cs" />
@@ -131,6 +131,9 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ServerTree\Tests\TestHelper.cs" />
+    <Compile Include="ServerTree\Tests\TestServiceProvider.cs" />
+    <Compile Include="ServerTree\Tests\UtilityTests.cs" />
     <Compile Include="ServerTree\Tests\ServerTreeTests.cs" />
     <Compile Include="ServerTree\VerifyServerTool.cs" />
     <Compile Include="SR.Designer.cs">

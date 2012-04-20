@@ -216,12 +216,10 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         internal void SaveServersToDirectory(IServerDirectory directory)
         {
             //Get all the DICOM servers from the directory.
-            var directoryServers = directory.GetServers(new GetServersRequest()).Servers
-                                        .OfType<ApplicationEntity>().ToList();
+            var directoryServers = directory.GetServers(new GetServersRequest()).Servers.ToList();
 
             //Convert the tree items to data contracts.
-            var treeServers = RootServerGroup.GetAllServers()
-                                    .OfType<IServerTreeDicomServer>().Select(a => a.ToDataContract());
+            var treeServers = RootServerGroup.GetAllServers().OfType<IServerTreeDicomServer>().Select(a => a.ToDataContract());
             
             //Figure out which items have been deleted.
             var deleted = from d in directoryServers where !treeServers.Any(t => t.Name == d.Name) select d;

@@ -20,6 +20,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Automation;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Configuration;
@@ -320,17 +321,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 		private static void CompleteOpenStudyInfo(List<OpenStudyInfo> openStudyInfo)
 		{
-			List<OpenStudyInfo> incomplete = CollectionUtils.Select(openStudyInfo,
-						delegate(OpenStudyInfo info) { return String.IsNullOrEmpty(info.SourceAETitle); });
+		    var incomplete = openStudyInfo.Where(info => String.IsNullOrEmpty(info.SourceAETitle)).ToList();
 			
 			//only go looking for studies if the source ae title is unspecified.
 			if (incomplete.Count == 0)
 				return;
 
-			List<string> incompleteStudyUids = CollectionUtils.Map<OpenStudyInfo, string>(incomplete,
-				delegate(OpenStudyInfo info) { return info.StudyInstanceUid; });
+			List<string> incompleteStudyUids = incomplete.Select(info => info.StudyInstanceUid).ToList();
 
-			using (StudyRootQueryBridge bridge = new StudyRootQueryBridge(GetStudyRootQuery()))
+			using (var bridge = new StudyRootQueryBridge(GetStudyRootQuery()))
 			{
 				IList<StudyRootStudyIdentifier> foundStudies = bridge.QueryByStudyInstanceUid(incompleteStudyUids);
 				foreach (StudyRootStudyIdentifier study in foundStudies)
@@ -350,34 +349,18 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		private static IImageViewer LaunchViewer(OpenStudiesRequest request, string primaryStudyInstanceUid)
 		{
 			CompleteOpenStudyInfo(request.StudiesToOpen);
-			var serverMap = GetServerMap(request.StudiesToOpen);
-
-		    ImageViewerComponent viewer;
+		    
+            ImageViewerComponent viewer;
             if (!request.LoadPriors.HasValue || request.LoadPriors.Value)
                 viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
             else
                 viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended, PriorStudyFinder.Null);
 
-			var loadStudyArgs = new List<LoadStudyArgs>();
+			var loadStudyArgs = (from info in request.StudiesToOpen 
+                                 let server = ServerDirectory.GetRemoteServersByAETitle(info.SourceAETitle).FirstOrDefault() ?? ServerDirectory.GetLocalServer()
+                                 select new LoadStudyArgs(info.StudyInstanceUid, server)).ToList();
 
-			foreach (OpenStudyInfo info in request.StudiesToOpen)
-			{
-				//None of the servers should be empty now, but if they are, assume local.
-				//The worst that will happen is it will fail to load when it doesn't exist.
-				IApplicationEntity server = null;
-				string loader = "DICOM_LOCAL";
-
-				if (!String.IsNullOrEmpty(info.SourceAETitle) && serverMap.ContainsKey(info.SourceAETitle))
-				{
-					server = serverMap[info.SourceAETitle];
-					if (server != null)
-						loader = "CC_STREAMING";
-				}
-
-				loadStudyArgs.Add(new LoadStudyArgs(info.StudyInstanceUid, server, loader));
-			}
-
-			try
+		    try
 			{
 				viewer.LoadStudies(loadStudyArgs);
 			}
@@ -430,31 +413,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 
 			throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(), "The primary study could not be loaded.");
-		}
-
-	    //TODO (Marmot): Can use dicom service nodes and GetService.
-		private static IDictionary<string, IApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
-		{
-            var serverMap = new Dictionary<string, IApplicationEntity>();
-
-		    string localAE = DicomServerConfigurationHelper.AETitle;
-			serverMap[localAE] = null;
-
-			foreach (OpenStudyInfo info in openStudies)
-			{
-				if (!String.IsNullOrEmpty(info.SourceAETitle) && !serverMap.ContainsKey(info.SourceAETitle))
-				{
-                    using (var bridge = new ServerDirectoryBridge())
-                    {
-                        var server = bridge.GetServersByAETitle(info.SourceAETitle).FirstOrDefault();
-                        //only add streaming servers.
-                        if (server != null && server.StreamingParameters != null)
-                            serverMap[info.SourceAETitle] = server;
-                    }
-				}
-			}
-
-			return serverMap;
 		}
 
 		private static void ReportLoadFailures(object loadFailures)

@@ -5,7 +5,6 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.Dicom.Utilities.Rules.Specifications;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
@@ -25,16 +24,16 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         public void TestCreateExampleTree()
         {
             var tree = new ServerTree(null);
-            AssertExampleTree(tree);
+            TestHelper.AssertExampleTree(tree);
 
             tree = new ServerTree(null, null, false);
-            AssertExampleTree(tree);
+            TestHelper.AssertExampleTree(tree);
         }
 
         [Test]
         public void TestGetAllServers()
         {
-            var tree = CreateTestTree1();
+            var tree = TestHelper.CreateTestTree1();
             var allServers = tree.RootServerGroup.GetAllServers();
             Assert.AreEqual(4, allServers.Count);
         }
@@ -43,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         public void TestCreateStoredTreeFromDirectory()
         {
             List<ApplicationEntity> directoryServers;
-            var tree = CreateTestTree1(out directoryServers);
+            var tree = TestHelper.CreateTestTree1(out directoryServers);
 
             Assert.AreEqual(2, tree.RootServerGroup.ChildGroups.Count);
             Assert.AreEqual(2, tree.RootServerGroup.Servers.Count);
@@ -91,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         [Test]
         public void TestCreateFromLegacyXml()
         {
-            var tree = CreateTestTree1();
+            var tree = TestHelper.CreateTestTree1();
             Assert.AreEqual(2, tree.RootServerGroup.ChildGroups.Count);
 
         }
@@ -102,86 +101,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         }
 
         #endregion
-
-        private static ServerTree CreateTestTree1()
-        {
-            List<ApplicationEntity> dummy;
-            return CreateTestTree1(out dummy);
-        }
-
-        private static ServerTree CreateTestTree1(out List<ApplicationEntity> directoryServers)
-        {
-            var rootGroup = CreateStoredServerGroup1();
-            directoryServers = CreateDirectoryServers1();
-            return new ServerTree(rootGroup, directoryServers);
-        }
-
-        private static StoredServerGroup CreateStoredServerGroup1()
-        {
-            return new StoredServerGroup(@"My Servers")
-                       {
-                           ChildGroups =
-                               {
-                                   new StoredServerGroup("Empty"),
-                                   new StoredServerGroup("Test")
-                                       {
-                                           DirectoryServerReferences =
-                                               {
-                                                   new DirectoryServerReference("server1"),
-                                                   new DirectoryServerReference("server2")
-                                               }
-                                       }
-
-                               },
-                           DirectoryServerReferences =
-                               {
-                                   new DirectoryServerReference("server3"),
-                                   new DirectoryServerReference("server4")
-                               }
-                       };
-        }
-
-        private static List<ApplicationEntity> CreateDirectoryServers1()
-        {
-            return new List<ApplicationEntity>
-                       {
-                           new ApplicationEntity
-                               {
-                                   Name = "server1",
-                                   AETitle = "server1",
-                                   ScpParameters = new ScpParameters("server1", 104)
-                               },
-                           new ApplicationEntity
-                               {
-                                   Name = "server2",
-                                   AETitle = "server2",
-                                   ScpParameters = new ScpParameters("server2", 104)
-                               },
-                           new ApplicationEntity
-                               {
-                                   Name = "server3",
-                                   AETitle = "server3",
-                                   ScpParameters = new ScpParameters("server3", 104)
-                               },
-                           new ApplicationEntity
-                               {
-                                   Name = "server4",
-                                   AETitle = "server4",
-                                   ScpParameters = new ScpParameters("server4", 104)
-                               }
-                       };
-        }
-
-        private static void AssertExampleTree(ServerTree tree)
-        {
-            Assert.IsNotNull(tree.LocalServer);
-            Assert.IsNotNull(tree.RootServerGroup);
-            Assert.AreEqual(1, tree.RootServerGroup.Servers.Count);
-            Assert.AreEqual(1, tree.RootServerGroup.ChildGroups.Count);
-
-            Assert.AreEqual(SR.ExampleServer, tree.RootServerGroup.Servers[0].Name);
-            Assert.AreEqual(SR.ExampleGroup, tree.RootServerGroup.ChildGroups[0].Name);
-        }
     }
 }
 

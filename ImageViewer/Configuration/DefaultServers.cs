@@ -16,7 +16,6 @@ using System.Linq;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 
@@ -37,10 +36,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 		}
 
         internal static List<IDicomServiceNode> SelectFrom(ServerTree.ServerTree serverTree)
-		{
-            var allServers = serverTree.FindChildServers().OfType<IServerTreeDicomServer>();
-			return SelectFrom(allServers);
-		}
+        {
+            return serverTree.RootServerGroup.ToDicomServiceNodes();
+        }
 
         public static List<IDicomServiceNode> GetAll()
 		{
@@ -52,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
             if (includeLocal)
             {
-                if (StudyStore.IsSupported) //Not ideal.
+                if (StudyStore.IsSupported)
                     yield return new StoreStudyRootQuery();
             }
 

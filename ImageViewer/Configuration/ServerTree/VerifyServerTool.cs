@@ -16,6 +16,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -27,13 +28,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
 	public class VerifyServerTool : ServerTreeTool
 	{
-		public VerifyServerTool()
-		{
-		}
-
 		private bool NoServersSelected()
 		{
-			return this.Context.SelectedServers == null || this.Context.SelectedServers.Servers == null || this.Context.SelectedServers.Servers.Count == 0;
+			return this.Context.SelectedServers == null || this.Context.SelectedServers.Count == 0;
 		}
 
 		private void VerifyServer()
@@ -52,19 +49,19 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		    try
 		    {
-                string myAE = DicomServerConfigurationHelper.AETitle;
+		        var localServer = ServerDirectory.GetLocalServer();
 
-                StringBuilder msgText = new StringBuilder();
+                var msgText = new StringBuilder();
                 msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
-                foreach (IServerTreeDicomServer server in this.Context.SelectedServers.Servers)
+                foreach (var server in this.Context.SelectedServers)
                 {
-                    using (VerificationScu scu = new VerificationScu())
+                    using (var scu = new VerificationScu())
                     {
-                        VerificationResult result = scu.Verify(myAE, server.AETitle, server.HostName, server.Port);
+                        VerificationResult result = scu.Verify(localServer.AETitle, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
                         if (result == VerificationResult.Success)
-                            msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
+                            msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Name);
                         else
-                            msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
+                            msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Name);
 
                         // must wait for the SCU thread to release the connection properly before disposal, otherwise we might end up aborting the connection instead
                         scu.Join(new TimeSpan(0, 0, 2));
