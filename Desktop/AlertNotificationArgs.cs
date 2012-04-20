@@ -25,24 +25,9 @@ namespace ClearCanvas.Desktop
 		/// <param name="level"></param>
 		/// <param name="message"></param>
 		public AlertNotificationArgs(AlertLevel level, string message)
-			:this(level, message, null, null)
 		{
-			
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="level"></param>
-		/// <param name="message"></param>
-		/// <param name="linkText"></param>
-		/// <param name="linkAction"></param>
-		public AlertNotificationArgs(AlertLevel level, string message, string linkText, Action<DesktopWindow> linkAction)
-		{
-			Level = level;
-			Message = message;
-			LinkText = linkText;
-			LinkAction = linkAction;
+			this.Level = level;
+			this.Message = message;
 		}
 
 		/// <summary>
