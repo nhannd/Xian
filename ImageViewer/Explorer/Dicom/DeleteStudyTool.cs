@@ -11,11 +11,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	{
         public void DeleteStudy()
         {
-            if (!Enabled || Context.SelectedStudy == null)
+            if (!Enabled)
                 return;
 
             if (AtLeastOneStudyInUse())
@@ -41,11 +41,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (!ConfirmDeletion())
                 return;
 
-            //TODO (Marmot):Restore.
             try
             {
                 var client = new DeleteClient();
-                foreach (StudyItem study in Context.SelectedStudies)
+                foreach (var study in Context.SelectedStudies)
                 {
                     client.DeleteStudy(study);
                 }
@@ -68,9 +67,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-		    Enabled = (Context.SelectedStudy != null &&
-		               Context.SelectedServerGroup.IsLocalServer &&
-		               WorkItemActivityMonitor.IsRunning);
+            Enabled = Context.SelectedStudies.Count > 0
+                        && Context.SelectedServers.AllSupport<IWorkItemService>()
+                        && WorkItemActivityMonitor.IsRunning;
 		}
 
 		private bool ConfirmDeletion()
@@ -91,10 +90,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		// to lock the study when it's in use.  But for now, this will do.
 		private bool AtLeastOneStudyInUse()
 		{
-			IEnumerable<StudyItem> studiesInUse = GetStudiesInUse();
+			var studiesInUse = GetStudiesInUse();
 
 			var setStudyUidsInUse = new Dictionary<string, string>();
-			foreach (StudyItem item in studiesInUse)
+			foreach (var item in studiesInUse)
 				setStudyUidsInUse[item.StudyInstanceUid] = item.StudyInstanceUid;
 
 			// No studies in use.  Just return.
@@ -120,18 +119,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return true;
 		}
 
-		private IEnumerable<StudyItem> GetStudiesInUse()
+        private IEnumerable<StudyTableItem> GetStudiesInUse()
 		{
-			var studiesInUse = new List<StudyItem>();
+			var studiesInUse = new List<StudyTableItem>();
 			IEnumerable<IImageViewer> imageViewers = GetImageViewers();
 
-			foreach (StudyItem study in Context.SelectedStudies)
+			foreach (var selectedStudy in Context.SelectedStudies)
 			{
-				foreach (IImageViewer imageViewer in imageViewers)
-				{
-					if (imageViewer.StudyTree.GetStudy(study.StudyInstanceUid) != null)
-						studiesInUse.Add(study);
-				}
+			    var study = selectedStudy;
+			    var matchingStudies = from imageViewer in imageViewers
+			                          where imageViewer.StudyTree.GetStudy(study.StudyInstanceUid) != null
+			                          select study;
+
+			    studiesInUse.AddRange(matchingStudies);
 			}
 
 			return studiesInUse;
@@ -139,18 +139,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private List<IImageViewer> GetImageViewers()
 		{
-			var imageViewers = new List<IImageViewer>();
-
-			foreach (Workspace workspace in Context.DesktopWindow.Workspaces)
-			{
-                IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
-				if (viewer == null)
-					continue;
-
-                imageViewers.Add(viewer);
-			}
-
-			return imageViewers;
+		    return Context.DesktopWindow.Workspaces
+                .Select(ImageViewerComponent.GetAsImageViewer).Where(viewer => viewer != null).ToList();
 		}
 	}
 }

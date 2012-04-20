@@ -13,7 +13,6 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -110,8 +109,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private bool GetAtLeastOneServerSupportsLoading()
 		{
-		    //TODO (Marmot):
-            return base.Context.SelectedServers != null && Context.SelectedServers.AnySupport<IStudyLoader>();
+            return Context.SelectedServers.AnySupport<IStudyLoader>();
         }
 
 		private void SetDoubleClickHandler()
@@ -133,9 +131,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-			Enabled = (Context.SelectedStudy != null &&
-			                !Context.SelectedServers.IsLocalServer &&
-			                WorkItemActivityMonitor.IsRunning);
-		}
+            //TODO (Marmot):Supports IRetrieveStudy? Hardly seems worth it for what it is.
+			Enabled = Context.SelectedStudies.Count > 0
+                        && !Context.SelectedServers.IsLocalServer
+                        && WorkItemActivityMonitor.IsRunning;
+    	}
 	}
 }

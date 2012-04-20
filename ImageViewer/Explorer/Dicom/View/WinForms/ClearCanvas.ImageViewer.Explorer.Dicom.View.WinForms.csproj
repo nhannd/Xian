@@ -93,6 +93,13 @@
       <DependentUpon>SearchPanelComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SearchPanelComponentView.cs" />
+    <Compile Include="SeriesBrowserComponentView.cs" />
+    <Compile Include="SeriesDetailsComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SeriesDetailsComponentControl.Designer.cs">
+      <DependentUpon>SeriesDetailsComponentControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -137,6 +144,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="SeriesDetailsComponentControl.resx">
+      <DependentUpon>SeriesDetailsComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StudyBrowserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudyBrowserControl.cs</DependentUpon>

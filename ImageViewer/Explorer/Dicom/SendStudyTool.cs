@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SendStudyInternal()
 		{
-			if (!Enabled || Context.SelectedStudy == null)
+			if (!Enabled)
 				return;
 
 		    var serverTreeComponent = new ServerTreeComponent
@@ -66,33 +66,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (code != ApplicationComponentExitCode.Accepted)
 				return;
 
-			if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Servers == null || serverTreeComponent.SelectedServers.Servers.Count == 0)
+			if (serverTreeComponent.SelectedServers.Count == 0)
 			{
 				Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
 				return;
 			}
 
-			if (serverTreeComponent.SelectedServers.Servers.Count > 1)
+			if (serverTreeComponent.SelectedServers.Count > 1)
 			{
 				if (Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
 			}
 
             var client = new DicomSendClient();
-            foreach (StudyItem item in Context.SelectedStudies)
+            foreach (var item in Context.SelectedStudies)
             {
-                foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
+                foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers)
                 {
-                    var aeInformation = new ApplicationEntity
-                    {
-                        AETitle = destination.AETitle,
-                        ScpParameters = new ScpParameters(destination.HostName, destination.Port)
-                    };
-
                     try
                     {
-                        client.MoveStudy(aeInformation, item, WorkItemPriorityEnum.Normal);
-                        Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudyScheduled,aeInformation.AETitle),
+                        client.MoveStudy(destination.ToDataContract(), item, WorkItemPriorityEnum.Normal);
+                        Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudyScheduled, destination.Name),
                                                         SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                     }
                     catch (EndpointNotFoundException)
@@ -119,9 +113,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-			Enabled = (Context.SelectedStudy != null &&
-			           Context.SelectedServerGroup.IsLocalServer &&
-			           WorkItemActivityMonitor.IsRunning);
+			Enabled = Context.SelectedStudies.Count > 0
+			          && Context.SelectedServers.AllSupport<IWorkItemService>()
+                      && WorkItemActivityMonitor.IsRunning;
 		}
 	}
 }

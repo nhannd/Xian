@@ -148,16 +148,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 		private void UpdateEnabled()
 		{
-			if (Context.SelectedStudy == null)
-			{
-				Enabled = false;
-				return;
-			}
-
-			Enabled = Context.SelectedServers.IsLocalServer && 
-							WorkItemActivityMonitor.IsRunning && 
-							Context.SelectedStudies.Count == 1 && 
-							Context.SelectedServers.IsLocalServer;
+		    Enabled = Context.SelectedStudies.Count == 1
+		              && Context.SelectedServers.AllSupport<IWorkItemService>()
+		              && WorkItemActivityMonitor.IsRunning;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

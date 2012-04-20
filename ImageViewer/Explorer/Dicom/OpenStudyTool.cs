@@ -43,8 +43,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			try
 			{
-				int numberOfSelectedStudies = GetNumberOfSelectedStudies();
-				if (numberOfSelectedStudies == 0)
+			    int numberOfSelectedStudies = Context.SelectedStudies.Count;
+                if (Context.SelectedStudies.Count == 0)
 					return;
 
 				if (!PermissionsHelper.IsInRole(ImageViewer.AuthorityTokens.Study.Open))
@@ -109,18 +109,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-		    Enabled = Context.SelectedStudy != null && GetAtLeastOneServerSupportsLoading();
+		    Enabled = Context.SelectedStudies.Count > 0 && GetAtLeastOneServerSupportsLoading();
 		    SetDoubleClickHandler();
-		}
-
-	    private int GetNumberOfSelectedStudies()
-		{
-		    return Context.SelectedStudy == null ? 0 : Context.SelectedStudies.Count;
 		}
 
 	    private bool GetAtLeastOneServerSupportsLoading()
 		{
-		    return base.Context.SelectedServers != null && Context.SelectedServers.AnySupport<IStudyLoader>();
+		    return Context.SelectedServers.AnySupport<IStudyLoader>();
 		}
 
 		private int GetNumberOfLoadableStudies()
@@ -130,11 +125,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private IEnumerable<IPatientData> GetSelectedPatients()
 		{
-            if (base.Context.SelectedStudy != null)
-            {
-                foreach (var studyItem in Context.SelectedStudies)
-                    yield return studyItem;
-            }
-        }
+		    return Context.SelectedStudies.Cast<IPatientData>();
+		}
 	}
 }

@@ -12,7 +12,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Linq;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -20,10 +21,10 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Utilities;
 
@@ -32,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	//TODO (CR Sept 2010): get rid of this - the public API of an application component
 	//is meant for the view to consume.  It would be better to expose methods on the context 
 	//rather than the component itself and delete the explicit interface.
-	public interface ISeriesDetailComponentViewModel
+    public interface ISeriesDetailComponentViewModel
 	{
 		string PatientId { get; }
 		string PatientsName { get; }
@@ -43,8 +44,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		ActionModelRoot ToolbarActionModel { get; }
 		ActionModelRoot ContextMenuActionModel { get; }
 		ITable SeriesTable { get; }
-		IList<ISeriesData> Series { get; }
-		IList<ISeriesData> SelectedSeries { get; }
+        IList<SeriesTableItem> Series { get; }
+        IList<SeriesTableItem> SelectedSeries { get; }
 		event EventHandler SelectedSeriesChanged;
 		void SetSeriesSelection(ISelection selection);
 		void Refresh();
@@ -59,25 +60,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	{
 		private event EventHandler _selectedSeriesChanged;
 
-		private readonly StudyItem _studyItem;
-		private readonly Table<SeriesIdentifier> _seriesTable;
-		private readonly IList<ISeriesData> _seriesList;
-		private readonly IServerTreeNode _server;
+        private readonly StudyTableItem _studyItem;
+        private readonly Table<SeriesTableItem> _seriesTable;
+        private readonly IList<SeriesTableItem> _seriesList;
 
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarActionModel;
 		private ActionModelRoot _contextActionModel;
 
-		private IList<ISeriesData> _selectedSeries;
+        private IList<SeriesTableItem> _selectedSeries;
 		private ISelection _selection;
 
-		internal SeriesDetailsComponent(StudyItem studyItem, IServerTreeNode server)
+		internal SeriesDetailsComponent(StudyTableItem studyItem)
 		{
 			_studyItem = studyItem;
-			_seriesTable = new Table<SeriesIdentifier>();
-			_seriesList = new ReadOnlyListWrapper<ISeriesData>(_seriesTable.Items);
-			_selectedSeries = new ReadOnlyListWrapper<ISeriesData>();
-			_server = server;
+            _seriesTable = new Table<SeriesTableItem>();
+            _seriesList = new ReadOnlyListWrapper<SeriesTableItem>(_seriesTable.Items);
+            _selectedSeries = new ReadOnlyListWrapper<SeriesTableItem>();
 		}
 
 		string ISeriesDetailComponentViewModel.PatientId
@@ -90,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			get
 			{	
 				if (_studyItem.PatientsName != null)
-					return _studyItem.PatientsName.FormattedName;
+					return new PersonName(_studyItem.PatientsName).FormattedName;
 				return "";
 			}
 		}
@@ -135,17 +134,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			get { return _studyItem.StudyDescription; }
 		}
 
-		protected internal StudyItem StudyItem
+        protected internal StudyTableItem StudyItem
 		{
 			get { return _studyItem; }
 		}
 
-		public IList<ISeriesData> Series
+        public IList<SeriesTableItem> Series
 		{
 			get { return _seriesList; }
 		}
 
-		public IList<ISeriesData> SelectedSeries
+        public IList<SeriesTableItem> SelectedSeries
 		{
 			get { return _selectedSeries; }
 			private set
@@ -188,9 +187,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 				//TODO (CR Sept 2010): since we're creating a new wrapper, why not just use
 				//ReadOnlyCollection<T> and CollectionUtils.Cast<T>?
 				if (_selection != null)
-					SelectedSeries = new ReadOnlyListWrapper<ISeriesData>(_selection.Items);
+                    SelectedSeries = new ReadOnlyListWrapper<SeriesTableItem>(_selection.Items);
 				else
-					SelectedSeries = new ReadOnlyListWrapper<ISeriesData>();
+                    SelectedSeries = new ReadOnlyListWrapper<SeriesTableItem>();
 			}
 		}
 
@@ -223,10 +222,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		private void InitializeTable()
 		{
 			ITableColumn column = new TableColumn<SeriesIdentifier, string>(
-				SR.TitleSeriesNumber, delegate(SeriesIdentifier identifier)
-				                      	{
-				                      		return identifier.SeriesNumber.HasValue ? identifier.SeriesNumber.ToString() : "";
-										},
+				                        SR.TitleSeriesNumber,
+                                        identifier => identifier.SeriesNumber.HasValue ? identifier.SeriesNumber.ToString() : "",
 										null, .2F, delegate(SeriesIdentifier series1, SeriesIdentifier series2)
 										{
 											int? seriesNumber1 = series1.SeriesNumber;
@@ -312,31 +309,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		{
 			_seriesTable.Items.Clear();
 
-		    //TODO (Marmot): Perfect candidate for service node changes.
-			IStudyRootQuery query;
-			if (_server.IsLocalServer)
-			{
-			    //TODO (Marmot): not ideal.
-			    query = new StoreStudyRootQuery();
-			}
-			else
-			{
-                var server = (IServerTreeDicomServer)_server;
-				query = new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle, server.AETitle, server.HostName, server.Port);
-			}
-
 			try
 			{
-				SeriesIdentifier identifier = new SeriesIdentifier();
-				identifier.StudyInstanceUid = _studyItem.StudyInstanceUid;
-				IList<SeriesIdentifier> results = query.SeriesQuery(identifier);
-				_seriesTable.Items.AddRange(results);
+                var storeQuery = _studyItem.Server.IsSupported<IStudyStoreQuery>()
+                                     ? _studyItem.Server.GetService<IStudyStoreQuery>()
+                                     : new StudyRootQueryAdapter(_studyItem.Server.GetService<IStudyRootQuery>());
+
+                using (var bridge = new StudyStoreBridge(storeQuery))
+                {
+                    var entries = bridge.GetSeriesEntries(_studyItem.StudyInstanceUid);
+                    _seriesTable.Items.AddRange(entries.Select(e => new SeriesTableItem(e)));
+                }
 			}
-			finally
-			{
-				if (query is IDisposable)
-					((IDisposable)query).Dispose();
-			}
+            catch(Exception e)
+            {
+                ExceptionHandler.Report(e, Host.DesktopWindow);
+            }
 		}
 
 		public void Close()
@@ -356,22 +344,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 				_component = component;
 			}
 
-			public IPatientData Patient
+            public IDicomServiceNode Server
+            {
+                get { return Study.Server; }
+            }
+
+            public StudyTableItem Study
 			{
 				get { return _component.StudyItem; }
 			}
 
-            public IStudyRootData Study
-			{
-				get { return _component.StudyItem; }
-			}
-
-			public IList<ISeriesData> AllSeries
+            public IList<SeriesTableItem> AllSeries
 			{
 				get { return _component.Series; }
 			}
 
-			public IList<ISeriesData> SelectedSeries
+            public IList<SeriesTableItem> SelectedSeries
 			{
 				get { return _component.SelectedSeries; }
 			}
@@ -385,12 +373,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			public void RefreshSeriesTable()
 			{
 				_component.Refresh();
-			}
-
-			//TODO (CR Sept 2010): anything that needs to be done should be exposed via the context
-			public SeriesDetailsComponent Component
-			{
-				get { return _component; }
 			}
 
 			public IDesktopWindow DesktopWindow

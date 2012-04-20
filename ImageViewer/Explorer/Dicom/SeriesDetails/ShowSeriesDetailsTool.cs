@@ -10,15 +10,10 @@
 #endregion
 
 using System;
-using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
@@ -35,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	{
 		public override void Initialize()
 		{
-			Initialize();
+			base.Initialize();
 
 			UpdateEnabled();
 		}
@@ -76,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 			try
 			{
-				var component = new SeriesDetailsComponent(Context.SelectedStudy, Context.SelectedStudy.Server);
+				var component = new SeriesDetailsComponent(Context.SelectedStudy);
 				ApplicationComponent.LaunchAsDialog(Context.DesktopWindow, component, SR.TitleSeriesDetails);
 			}
 			catch(Exception e)

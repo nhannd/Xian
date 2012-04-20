@@ -458,17 +458,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				    var storeQuery = server.IsSupported<IStudyStoreQuery>()
 				                         ? server.GetService<IStudyStoreQuery>()
 				                         : new StudyRootQueryAdapter(server.GetService<IStudyRootQuery>());
-				    try
-				    {
+                    
                         using (var bridge = new StudyStoreBridge(storeQuery))
                             serverItems = bridge.GetStudyEntries(criteria).Select(e => new StudyTableItem(e)).ToList();
-				    }
-                    finally
-				    {
-				        var disposable = storeQuery as IDisposable;
-				        if (disposable != null)
-				            disposable.Dispose();
-				    }
 				}
 				catch (Exception e)
 				{

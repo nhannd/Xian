@@ -16,8 +16,9 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails;
 
-namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms
+namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
     /// <summary>
 	/// Provides a Windows Forms view onto <see cref="SeriesDetailsComponent"/>.

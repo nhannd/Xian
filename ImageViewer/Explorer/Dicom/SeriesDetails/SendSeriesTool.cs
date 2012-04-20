@@ -62,13 +62,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
             if (code != ApplicationComponentExitCode.Accepted)
                 return;
 
-            if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Servers == null || serverTreeComponent.SelectedServers.Servers.Count == 0)
+            if (serverTreeComponent.SelectedServers.Count == 0)
             {
                 Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
                 return;
             }
 
-            if (serverTreeComponent.SelectedServers.Servers.Count > 1)
+            if (serverTreeComponent.SelectedServers.Count > 1)
             {
                 if (Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
                     return;
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 seriesUids.Add(item.SeriesInstanceUid);
             }
 
-            foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
+            foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers)
             {
                 var aeInformation = new ApplicationEntity
                                         {
@@ -116,11 +116,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
         private void UpdateEnabled()
         {
-            Enabled = (Context.SelectedSeries != null &&
-                       Context.SelectedSeries.Count > 0 &&
-                //TODO (Marmot): This determines local/remote; will be fixing this shortly.
-                       Server == null &&
-                       WorkItemActivityMonitor.IsRunning);
+            Enabled = Context.SelectedSeries.Count > 0
+                        && Server.IsSupported<IWorkItemService>()
+                        && WorkItemActivityMonitor.IsRunning;
         }
     }
 }

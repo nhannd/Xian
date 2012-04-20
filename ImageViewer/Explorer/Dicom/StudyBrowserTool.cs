@@ -23,16 +23,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public override void Initialize()
 		{
 			base.Initialize();
-			this.Context.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
-			this.Context.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
+			Context.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
+			Context.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 		}
 
 		protected virtual void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
-			if (this.Context.SelectedStudy != null)
-				this.Enabled = true;
+			if (Context.SelectedStudy != null)
+				Enabled = true;
 			else
-				this.Enabled = false;
+				Enabled = false;
 		}
 
 		protected abstract void OnSelectedServerChanged(object sender, EventArgs e);
