@@ -26,7 +26,6 @@ namespace ClearCanvas.Common
 		private static string _licenseKey;
 		private static string _machineIdentifier;
 		private static int _sessionCount;
-	    private static int _isEvaluation;
 
 		private static void CheckLicenseProvider()
 		{
@@ -183,19 +182,36 @@ namespace ClearCanvas.Common
 			}
 		}
 
-        /// <summary>
-        /// Checks if the current license is for evaluation
-        /// </summary>
+		/// <summary>
+		/// Checks if a specific feature is authorized by the license.
+		/// </summary>
+		/// <param name="featureToken"></param>
+		/// <returns></returns>
+		public static bool IsFeatureAuthorized(string featureToken)
+		{
+			if (string.IsNullOrEmpty(featureToken)) return true;
+
+			CheckLicenseDetailsProvider();
+
+			lock (_syncRoot)
+			{
+				return _licenseDetailsProvider.IsFeatureAuthorized(featureToken);
+			}
+		}
+
+		/// <summary>
+		/// Checks if the current license is for evaluation
+		/// </summary>
 		public static bool IsEvaluation
 		{
 			get
 			{
-                CheckLicenseDetailsProvider();
+				CheckLicenseDetailsProvider();
 
-                lock (_syncRoot)
-                {
-                    return  _licenseDetailsProvider.IsEvaluationLicense();
-                }
+				lock (_syncRoot)
+				{
+					return _licenseDetailsProvider.IsEvaluationLicense();
+				}
 			}
 		}
 
@@ -212,9 +228,9 @@ namespace ClearCanvas.Common
 			}
 		}
 
-        /// <summary>
-        /// Checks if the current license has expired
-        /// </summary>
+		/// <summary>
+		/// Checks if the current license has expired
+		/// </summary>
 		public static bool Expired
 		{
 			get

@@ -13,84 +13,101 @@ using System;
 
 namespace ClearCanvas.Common
 {
-    /// <summary>
-    /// Describes an extension.  
-    /// </summary>
-    /// <remarks>
-    /// Instances of this class are constructed by the framework when it processes
-    /// plugins looking for extensions.
-    /// </remarks>
-    public class ExtensionInfo : IBrowsable
-    {
-        private readonly Type _extensionClass;
-        private readonly Type _pointExtended;
-        private readonly string _name;
-        private readonly string _description;
-    	private readonly bool _enabled;
+	/// <summary>
+	/// Describes an extension.  
+	/// </summary>
+	/// <remarks>
+	/// Instances of this class are constructed by the framework when it processes
+	/// plugins looking for extensions.
+	/// </remarks>
+	public class ExtensionInfo : IBrowsable
+	{
+		private readonly Type _extensionClass;
+		private readonly Type _pointExtended;
+		private readonly string _name;
+		private readonly string _description;
+		private readonly bool _enabled;
+		private readonly string _featureToken;
 
-		//TODO (CR February 2011): ExtensionInfo constructor public???
-        /// <summary>
-        /// Internal constructor.
-        /// </summary>
 		public ExtensionInfo(Type extensionClass, Type pointExtended, string name, string description, bool enabled)
-        {
-            _extensionClass = extensionClass;
-            _pointExtended = pointExtended;
-            _name = name;
-            _description = description;
-        	_enabled = enabled;
-        }
+			: this(extensionClass, pointExtended, name, description, enabled, null) {}
 
-        /// <summary>
-        /// The class that implements the extension.
-        /// </summary>
-        public Type ExtensionClass
-        {
-            get { return _extensionClass; }
-        }
-
-        /// <summary>
-        /// The class that defines the extension point which this extension extends.
-        /// </summary>
-        public Type PointExtended
-        {
-            get { return _pointExtended; }
-        }
+		public ExtensionInfo(Type extensionClass, Type pointExtended, string name, string description, bool enabled, string featureToken)
+		{
+			_extensionClass = extensionClass;
+			_pointExtended = pointExtended;
+			_name = name;
+			_description = description;
+			_enabled = enabled;
+			_featureToken = featureToken;
+		}
 
 		/// <summary>
-		/// Gets a value indicatign whether this extension is enabled.
+		/// Gets the type that implements the extension.
 		/// </summary>
-    	public bool Enabled
-    	{
+		public Type ExtensionClass
+		{
+			get { return _extensionClass; }
+		}
+
+		/// <summary>
+		/// Gets the extension point type which this extension extends.
+		/// </summary>
+		public Type PointExtended
+		{
+			get { return _pointExtended; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether or not this extension is enabled by application configuration.
+		/// </summary>
+		public bool Enabled
+		{
 			get { return _enabled; }
-    	}
+		}
 
-        #region IBrowsable Members
+		/// <summary>
+		/// Gets a value indicating whether or not this extension is authorized by application licensing.
+		/// </summary>
+		public bool Authorized
+		{
+			get { return string.IsNullOrEmpty(_featureToken) || LicenseInformation.IsFeatureAuthorized(_featureToken); }
+		}
 
-        /// <summary>
-        /// Friendly name of this extension, if one exists, otherwise null.
-        /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
+		/// <summary>
+		/// Gets the feature identification token to be checked against application licensing.
+		/// </summary>
+		public string FeatureToken
+		{
+			get { return _featureToken; }
+		}
 
-        /// <summary>
-        /// A friendly description of this extension, if one exists, otherwise null.
-        /// </summary>
-        public string Description
-        {
-            get { return _description; }
-        }
+		#region IBrowsable Members
 
-        /// <summary>
-        /// Formal name of this extension, which is the fully qualified name of the extension class.
-        /// </summary>
-        public string FormalName
-        {
-            get { return _extensionClass.FullName; }
-        }
+		/// <summary>
+		/// Gets a friendly name of this extension, if one exists, otherwise null.
+		/// </summary>
+		public string Name
+		{
+			get { return _name; }
+		}
 
-        #endregion
-    }
+		/// <summary>
+		/// Gets a friendly description of this extension, if one exists, otherwise null.
+		/// </summary>
+		public string Description
+		{
+			get { return _description; }
+		}
+
+		/// <summary>
+		/// Gets the formal name of this extension, which is the fully qualified name of the extension class.
+		/// </summary>
+		public string FormalName
+		{
+			get { return _extensionClass.FullName; }
+		}
+
+		#endregion
+	}
 }
