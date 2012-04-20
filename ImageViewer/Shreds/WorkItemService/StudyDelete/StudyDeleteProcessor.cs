@@ -59,9 +59,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyDelete
         }
 
         public override bool CanStart(out string reason)
-        {            
+        {
+            var relatedList = FindRelatedWorkItems(null, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress });
+
             reason = string.Empty;
-            return !InProgressWorkItems();
+
+            if (relatedList.Count > 0)
+            {
+                reason = "There are related WorkItems for the study being processed.";
+                return false;
+            }
+            return true;
         }
     }
 }

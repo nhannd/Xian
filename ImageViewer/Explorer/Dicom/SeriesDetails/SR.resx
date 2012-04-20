@@ -147,8 +147,11 @@
   <data name="MessageFormatConfirmDeleteSeries" xml:space="preserve">
     <value>Are you sure you want to delete the {0} selected series?</value>
   </data>
+  <data name="MessageFormatDeleteSeriesScheduled" xml:space="preserve">
+    <value>The deletion of {0} series in the study for {1} has been scheduled.</value>
+  </data>
   <data name="MessageFormatSendSeriesScheduled" xml:space="preserve">
-    <value>The send of {0} series to {1} has been scheduled.</value>
+    <value>The send of {0} series to {1} for {2} has been scheduled.</value>
   </data>
   <data name="MessageSelectDestination" xml:space="preserve">
     <value>Please select a destination.</value>

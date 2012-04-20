@@ -84,6 +84,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public override void Stop()
         {
+            // Stop the processor first, so status updates go out.
+            _processor.Stop();
+
             if (_workItemActivityMonitorServiceWCFInitialized)
             {
                 try
@@ -120,8 +123,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 Platform.Log(LogLevel.Error, e);
             }
-
-            _processor.Stop();
         }
 
         public override string GetDisplayName()

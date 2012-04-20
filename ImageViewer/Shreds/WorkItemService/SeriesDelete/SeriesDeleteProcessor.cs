@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 
@@ -65,9 +66,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.SeriesDelete
         }
 
         public override bool CanStart(out string reason)
-        {            
+        {
+            var relatedList = FindRelatedWorkItems(null, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress });
+
             reason = string.Empty;
-            return !InProgressWorkItems();
+
+            if (relatedList.Count > 0)
+            {
+                reason = "There are related WorkItems for the study being processed.";
+                return false;
+            }
+            return true;
         }
     }
 }

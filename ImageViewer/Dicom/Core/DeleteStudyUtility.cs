@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                         NumberOfStudyRelatedInstances = study.NumberOfStudyRelatedInstances.Value;
                 }
             }
-        }
+        }        
 
         public bool Process()
         {

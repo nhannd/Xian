@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Images Deleted, {1} Images Remaining.
+        ///   Looks up a localized string similar to {0} Images Deleted.
         /// </summary>
         internal static string DeleteProgress_Status {
             get {

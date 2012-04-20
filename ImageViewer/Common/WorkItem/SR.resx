@@ -268,7 +268,7 @@
     <value>Delete Study</value>
   </data>
   <data name="DeleteProgress_Status" xml:space="preserve">
-    <value>{0} Images Deleted, {1} Images Remaining</value>
+    <value>{0} Images Deleted</value>
   </data>
   <data name="DeleteSeriesRequest_ActivityDescription" xml:space="preserve">
     <value>Delete Series</value>

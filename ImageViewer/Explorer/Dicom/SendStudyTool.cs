@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -79,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
             var client = new DicomSendClient();
-            foreach (StudyItem item in Context.SelectedStudies)
+            foreach (StudyItem study in Context.SelectedStudies)
             {
                 foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers.Servers)
                 {
@@ -91,8 +90,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
                     try
                     {
-                        client.MoveStudy(aeInformation, item, WorkItemPriorityEnum.Normal);
-                        Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudyScheduled,aeInformation.AETitle),
+                        client.MoveStudy(aeInformation, study, WorkItemPriorityEnum.Normal);
+                        Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudyScheduled,aeInformation.AETitle,study.PatientsName.FormattedName),
                                                         SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                     }
                     catch (EndpointNotFoundException)

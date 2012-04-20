@@ -151,7 +151,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The send of {0} series to {1} has been scheduled..
+        ///   Looks up a localized string similar to The deletion of {0} series in the study for {1} has been scheduled..
+        /// </summary>
+        internal static string MessageFormatDeleteSeriesScheduled {
+            get {
+                return ResourceManager.GetString("MessageFormatDeleteSeriesScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The send of {0} series to {1} for {2} has been scheduled..
         /// </summary>
         internal static string MessageFormatSendSeriesScheduled {
             get {

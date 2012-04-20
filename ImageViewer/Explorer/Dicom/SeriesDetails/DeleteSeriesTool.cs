@@ -14,7 +14,9 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
@@ -49,6 +51,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 }
 
                 client.DeleteSeries(Context.Study, seriesList);
+                Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+                                string.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, new PersonName(Patient.PatientsName).FormattedName),
+                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+
             }
             catch (Exception e)
             {

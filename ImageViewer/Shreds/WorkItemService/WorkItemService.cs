@@ -111,8 +111,18 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 var studyRequest = request.Request as WorkItemStudyRequest;
                 if (studyRequest != null)
+                {
                     item.StudyInstanceUid = studyRequest.Study.StudyInstanceUid;
-                
+
+                    if (request.Request.Type == WorkItemTypeEnum.StudyDelete)
+                    {
+                        // Mark studies to delete as "deleted" in the database.
+                        var studyBroker = context.GetStudyBroker();
+                        var study = studyBroker.GetStudy(studyRequest.Study.StudyInstanceUid);
+                        study.Deleted = true;
+                    }
+                }
+
 
                 broker.AddWorkItem(item);
                 

@@ -261,10 +261,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get
             {
                 if (ImagesToDelete == 0)
-                    return SR.Progress_Pending;
+                    return string.Empty;
 
-                return string.Format(SR.DeleteProgress_Status,
-                                     ImagesDeleted, ImagesToDelete - ImagesDeleted);
+                return string.Format(SR.DeleteProgress_Status,ImagesDeleted);
             }
         }
 

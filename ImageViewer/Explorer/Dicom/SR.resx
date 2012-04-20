@@ -257,7 +257,7 @@ Please ensure the ClearCanvas Service is running or contact your system administ
 Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageFormatSendStudyScheduled" xml:space="preserve">
-    <value>The send to {0} has been scheduled.</value>
+    <value>The send to {0} for {1} has been scheduled.</value>
   </data>
   <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
     <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
@@ -363,5 +363,8 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   </data>
   <data name="MessageFailedToDeleteStudy" xml:space="preserve">
     <value>Failed to initiate deletion of the selected items.</value>
+  </data>
+  <data name="MessageFormatDeleteStudyScheduled" xml:space="preserve">
+    <value>A study for  {0} has been scheduled for deletion.</value>
   </data>
 </root>

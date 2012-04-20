@@ -48,6 +48,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 foreach (StudyItem study in Context.SelectedStudies)
                 {
                     client.DeleteStudy(study);
+                    Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+                          string.Format(SR.MessageFormatDeleteStudyScheduled, study.PatientsName.FormattedName),
+                          SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                 }
             }
             catch (Exception e)
