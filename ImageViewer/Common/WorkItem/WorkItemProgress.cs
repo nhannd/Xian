@@ -147,16 +147,19 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         [DataMember(IsRequired = true)]
-        public int NumberOfStudiesToProcess { get; set; }
+        public int StudiesToProcess { get; set; }
 
         [DataMember(IsRequired = true)]
         public int StudiesProcessed { get; set; }
 
         [DataMember(IsRequired = true)]
+        public int StudyFoldersToProcess { get; set; }
+
+        [DataMember(IsRequired = true)]
         public int StudyFoldersProcessed { get; set; }
 
         [DataMember(IsRequired = true)]
-        public int NumberOfStudiesDeleted { get; set; }
+        public int StudiesDeleted { get; set; }
 
         [DataMember(IsRequired = true)]
         public bool Complete { get; set; }
@@ -165,13 +168,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (NumberOfStudiesDeleted == 0 && NumberOfStudiesToProcess == 0 && StudyFoldersProcessed == 0 && StudiesProcessed == 0)
+                if (StudiesDeleted == 0 && StudiesToProcess == 0 && StudyFoldersProcessed == 0 && StudyFoldersToProcess == 0 && StudiesProcessed == 0)
                 {
                     return Complete ? SR.ReindexProgress_StatusNoStudies : string.Empty;
                 }
 
-                return string.Format(SR.ReindexProgress_Status, StudiesProcessed, NumberOfStudiesToProcess,
-                    NumberOfStudiesDeleted, StudyFoldersProcessed);
+                return string.Format(SR.ReindexProgress_Status, StudiesProcessed, StudiesToProcess,
+                    StudyFoldersProcessed, StudyFoldersToProcess, StudiesDeleted);
             }
         }
 
@@ -179,11 +182,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (Complete && NumberOfStudiesToProcess == 0)
+                if (Complete && StudiesToProcess == 0)
                     return new decimal(100.0);
 
-                if (NumberOfStudiesToProcess > 0)
-                    return (Decimal)StudiesProcessed / NumberOfStudiesToProcess;
+                if (StudiesToProcess > 0 || StudyFoldersToProcess > 0)
+                    return (Decimal)(StudiesProcessed + StudyFoldersProcessed) / (StudiesToProcess+StudyFoldersToProcess);
 
                 return new decimal(0.0);
             }

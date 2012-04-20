@@ -259,10 +259,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
        
                 reprocessor.Process();
                 
-                if (!reprocessor.StudyStoredInDatabase)                
-                    EventsHelper.Fire(_studyFolderProcessedEvent, this, new StudyEventArgs { StudyInstanceUid = studyInstanceUid });                
-                else
-                    EventsHelper.Fire(_studyProcessedEvent, this, new StudyEventArgs {StudyInstanceUid = studyInstanceUid});
+                EventsHelper.Fire(_studyFolderProcessedEvent, this, new StudyEventArgs { StudyInstanceUid = studyInstanceUid });                
             }
             catch (Exception x)
             {
