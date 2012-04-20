@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -81,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             var client = new DicomSendClient();
             foreach (var item in Context.SelectedStudies)
             {
-                foreach (IServerTreeDicomServer destination in serverTreeComponent.SelectedServers)
+                foreach (var destination in serverTreeComponent.SelectedServers)
                 {
                     try
                     {

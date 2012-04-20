@@ -218,10 +218,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		private void InitializeTable()
 		{
-			ITableColumn column = new TableColumn<SeriesIdentifier, string>(
+			ITableColumn column = new TableColumn<SeriesTableItem, string>(
 				                        SR.TitleSeriesNumber,
                                         identifier => identifier.SeriesNumber.HasValue ? identifier.SeriesNumber.ToString() : "",
-										null, .2F, delegate(SeriesIdentifier series1, SeriesIdentifier series2)
+										null, .2F, delegate(SeriesTableItem series1, SeriesTableItem series2)
 										{
 											int? seriesNumber1 = series1.SeriesNumber;
 											int? seriesNumber2 = series2.SeriesNumber;
@@ -243,30 +243,30 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			
 			_seriesTable.Columns.Add(column);
 
-			column = new TableColumn<SeriesIdentifier, string>(
-			SR.TitleModality, delegate(SeriesIdentifier identifier)
+			column = new TableColumn<SeriesTableItem, string>(
+			SR.TitleModality, delegate(SeriesTableItem identifier)
 									{
 										return identifier.Modality;
 									}, .2F);
 
 			_seriesTable.Columns.Add(column);
 
-			column = new TableColumn<SeriesIdentifier, string>(
-					SR.TitleSeriesDescription, delegate(SeriesIdentifier identifier)
+			column = new TableColumn<SeriesTableItem, string>(
+					SR.TitleSeriesDescription, delegate(SeriesTableItem identifier)
 											{
 												return identifier.SeriesDescription;
 											}, 0.4F);
 
 			_seriesTable.Columns.Add(column);
 
-			column = new TableColumn<SeriesIdentifier, string>(
-		SR.TitleNumberOfSeriesRelatedInstances, delegate(SeriesIdentifier identifier)
+			column = new TableColumn<SeriesTableItem, string>(
+		SR.TitleNumberOfSeriesRelatedInstances, delegate(SeriesTableItem identifier)
 								{
 									if (identifier.NumberOfSeriesRelatedInstances.HasValue)
 										return identifier.NumberOfSeriesRelatedInstances.Value.ToString();
 									else
 										return "";
-								},null , 0.2F, delegate(SeriesIdentifier series1, SeriesIdentifier series2)
+								},null , 0.2F, delegate(SeriesTableItem series1, SeriesTableItem series2)
 				                      	         	{
 				                      	         		int? instances1 = series1.NumberOfSeriesRelatedInstances;
 														int? instances2 = series2.NumberOfSeriesRelatedInstances;
@@ -310,7 +310,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			{
                 var storeQuery = _studyItem.Server.IsSupported<IStudyStoreQuery>()
                                      ? _studyItem.Server.GetService<IStudyStoreQuery>()
-                                     : new StudyRootQueryAdapter(_studyItem.Server.GetService<IStudyRootQuery>());
+                                     : new StudyRootQueryStoreAdapter(_studyItem.Server.GetService<IStudyRootQuery>());
 
                 using (var bridge = new StudyStoreBridge(storeQuery))
                 {

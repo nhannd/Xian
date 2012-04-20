@@ -5,11 +5,11 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
-    public class StudyRootQueryAdapter : IStudyStoreQuery, IDisposable
+    public class StudyRootQueryStoreAdapter : IStudyStoreQuery, IDisposable
     {
         private IStudyRootQuery _studyRootQuery;
 
-        public StudyRootQueryAdapter(IStudyRootQuery studyRootQuery)
+        public StudyRootQueryStoreAdapter(IStudyRootQuery studyRootQuery)
         {
             Platform.CheckForNullReference(studyRootQuery, "studyRootQuery");
             _studyRootQuery = studyRootQuery;
@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             return new GetStudyEntriesResult
                        {
                            StudyEntries = _studyRootQuery.StudyQuery(request.Criteria.Study)
-                            .Select(s => new StudyEntry {Study = s}).ToList()
+                            .Select(identifier => new StudyEntry { Study = identifier }).ToList()
                        };
         }
 
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             return new GetSeriesEntriesResult
             {
                 SeriesEntries = _studyRootQuery.SeriesQuery(request.Criteria.Series)
-                 .Select(s => new SeriesEntry { Series = s }).ToList()
+                 .Select(identifier => new SeriesEntry { Series = identifier }).ToList()
             };
         }
 
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             return new GetImageEntriesResult
             {
                 ImageEntries = _studyRootQuery.ImageQuery(request.Criteria.Image)
-                 .Select(i => new ImageEntry { Image = i }).ToList()
+                                    .Select(identifier => new ImageEntry { Image = identifier }).ToList()
             };
         }
 

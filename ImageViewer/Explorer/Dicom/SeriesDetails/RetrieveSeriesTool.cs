@@ -28,9 +28,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	{
 		public void RetrieveSeries()
 		{
-            throw new NotImplementedException("Marmot - need to restore this.");
+		    //TODO (Marmot):Restore this.
+		    base.Context.DesktopWindow.ShowMessageBox("Restore!", MessageBoxActions.Ok);
 
-            /*
+		    /*
 
 			if (!Enabled || SelectedSeries.Count == 0)
 				return;
@@ -100,10 +101,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		private void UpdateEnabled()
 		{
-			Enabled = (Context.SelectedSeries != null &&
-			           Context.SelectedSeries.Count > 0 &&
-			           Server != null &&
-			           WorkItemActivityMonitor.IsRunning);
+		    Enabled = Context.SelectedSeries.Count > 0
+                      && !Context.Server.IsLocal
+		              && WorkItemActivityMonitor.IsRunning;
 		}
 
 		private static DateTime ParseDicomDate(string dicomDate)

@@ -43,10 +43,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
         public override object GetService(Type type)
         {
-            if (IsSupported(type))
-                return new RemoteStudyFinder();
-
-            return false;
+            return IsSupported(type) ? new RemoteStudyFinder() : null;
         }
     }
 

@@ -43,10 +43,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Local
 
         public override object GetService(Type type)
         {
-            if (IsSupported(type))
-                return new LocalStoreStudyFinder();
-
-            return false;
+            return IsSupported(type) ? new LocalStoreStudyFinder() : null;
         }
     }
 

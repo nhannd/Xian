@@ -38,10 +38,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 
         public override object GetService(System.Type type)
         {
-            if (IsSupported(type))
-                return new LocalStoreStudyLoader();
-
-            return false;
+            return IsSupported(type) ? new LocalStoreStudyLoader() : null;
         }
     }
 

@@ -457,7 +457,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 				    var storeQuery = server.IsSupported<IStudyStoreQuery>()
 				                         ? server.GetService<IStudyStoreQuery>()
-				                         : new StudyRootQueryAdapter(server.GetService<IStudyRootQuery>());
+				                         : new StudyRootQueryStoreAdapter(server.GetService<IStudyRootQuery>());
                     
                         using (var bridge = new StudyStoreBridge(storeQuery))
                             serverItems = bridge.GetStudyEntries(criteria).Select(e => new StudyTableItem(e)).ToList();

@@ -4,6 +4,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
@@ -70,27 +71,45 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public override bool IsSupported<T>()
         {
-            if (typeof(T) == typeof(IStudyStoreQuery))
-                return IsLocal && StudyStore.IsSupported;
+            if (IsLocal)
+            {
+                if (typeof(T) == typeof(IWorkItemService) && WorkItemActivityMonitor.IsSupported)
+                    return true;
 
-            if (typeof(T) == typeof(IStudyRootQuery))
-                return IsLocal || ScpParameters != null;
+                if (typeof(T) == typeof(IStudyStoreQuery) && StudyStore.IsSupported)
+                    return true;
+
+                if (typeof(T) == typeof(IStudyRootQuery) && StudyStore.IsSupported)
+                    return true;
+            }
+            else
+            {
+                if (typeof(T) == typeof(IStudyRootQuery))
+                    return ScpParameters != null;
+            }
 
             return base.IsSupported<T>();
         }
 
         public override T GetService<T>()
         {
-            if (typeof(T) == typeof(IStudyStoreQuery) && IsLocal)
-                return Platform.GetService<IStudyStoreQuery>() as T;
-
-            if (typeof(T) == typeof(IStudyRootQuery))
+            //TODO (Marmot): Is this weird??
+            if (IsLocal)
             {
-                if (IsLocal)
+                if (typeof(T) == typeof(IWorkItemService) && WorkItemActivityMonitor.IsSupported)
+                    return Platform.GetService<IWorkItemService>() as T;
+
+                if (typeof(T) == typeof(IStudyStoreQuery) && StudyStore.IsSupported)
                     return Platform.GetService<IStudyStoreQuery>() as T;
 
-                return new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle,
-                                    AETitle, ScpParameters.HostName, ScpParameters.Port) as T;
+                if (typeof(T) == typeof(IStudyRootQuery) && StudyStore.IsSupported)
+                    return new StoreStudyRootQuery() as T;
+            }
+            else
+            {
+                if (typeof(T) == typeof(IStudyRootQuery) && ScpParameters != null)
+                    return new DicomStudyRootQuery(DicomServerConfigurationHelper.AETitle,
+                                        AETitle, ScpParameters.HostName, ScpParameters.Port) as T;
             }
 
             return base.GetService<T>();

@@ -16,7 +16,6 @@ using System.Linq;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
-using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 
@@ -51,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
             if (includeLocal)
             {
-                if (StudyStore.IsSupported) //Not ideal.
+                if (StudyStore.IsSupported)
                     yield return new StoreStudyRootQuery();
             }
 

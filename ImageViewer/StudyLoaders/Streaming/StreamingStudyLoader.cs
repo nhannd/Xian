@@ -24,7 +24,6 @@ using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -47,10 +46,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
         public override object GetService(Type type)
         {
-            if (IsSupported(type))
-                return new StreamingStudyLoader();
-
-            return false;
+            return IsSupported(type) ? new StreamingStudyLoader() : null;
         }
     }
 

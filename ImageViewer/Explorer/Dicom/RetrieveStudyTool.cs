@@ -39,7 +39,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void RetrieveStudy()
 		{
-            throw new NotImplementedException("Marmot - need to restore this.");
+		    //TODO (Marmot):Restore.
+            base.Context.DesktopWindow.ShowMessageBox("Restore!", MessageBoxActions.Ok);
             /*
 
             if (!Enabled || Context.SelectedServerGroup.IsLocalDatastore || Context.SelectedStudy == null)
