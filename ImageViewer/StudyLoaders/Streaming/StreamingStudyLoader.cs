@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
         {
-            var serverAe = studyLoaderArgs.Server as IApplicationEntity;
+            var serverAe = studyLoaderArgs.Server;
             Platform.CheckForNullReference(serverAe, "Server");
             Platform.CheckMemberIsSet(serverAe.StreamingParameters, "StreamingParameters");
             _serverAe = serverAe;

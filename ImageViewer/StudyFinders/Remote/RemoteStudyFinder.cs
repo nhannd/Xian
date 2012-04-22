@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
         public override StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
-            var selectedServer = (IApplicationEntity)targetServer;
+            var selectedServer = ((IApplicationEntity) targetServer).ToServiceNode();
 
             //.NET strings are unicode, therefore, so is all the query data.
             const string utf8 = "ISO_IR 192";
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			StudyItemList studyItemList = new StudyItemList();
 			foreach (DicomAttributeCollection result in results)
 			{
-				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer.ToServiceNode());
+				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer);
 
 				//TODO: add DicomField attributes to the StudyItem class (implement typeconverter for PersonName class).
 				item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].GetString(0, "");

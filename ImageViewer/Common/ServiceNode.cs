@@ -132,12 +132,15 @@ namespace ClearCanvas.ImageViewer.Common
             return false;
         }
 
+        //TODO (Marmot):Name?
         public static IDicomServiceNode FindServer(this IIdentifier identifier, bool defaultToLocal)
         {
-            IDicomServiceNode server = null;
             if (identifier.RetrieveAE != null)
-                server = identifier.RetrieveAE.ToServiceNode();
+                return identifier.RetrieveAE.ToServiceNode();
 
+            Platform.Log(LogLevel.Debug, "Identifier.RetrieveAE is not set.");
+
+            IDicomServiceNode server = null;
             if (!String.IsNullOrEmpty(identifier.RetrieveAeTitle))
                 server = ServerDirectory.ServerDirectory.GetRemoteServersByAETitle(identifier.RetrieveAeTitle).FirstOrDefault();
 

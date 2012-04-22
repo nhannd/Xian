@@ -124,7 +124,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
         {
-            //TODO (Marmot): cache the values so we don't hit the database constantly?
+            var cachedValue = CachedValue;
+            if (cachedValue != null)
+                return new GetDicomServerConfigurationResult {Configuration = cachedValue};
+
             DicomServerConfigurationContract configuration;
             using (var context = new DataAccessContext())
             {
