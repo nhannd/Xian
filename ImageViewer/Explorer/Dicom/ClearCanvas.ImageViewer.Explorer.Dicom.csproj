@@ -94,7 +94,11 @@
     <Compile Include="SeriesDetails\SeriesDetailsTool.cs" />
     <Compile Include="SeriesDetails\SeriesTableItem.cs" />
     <Compile Include="SeriesDetails\ShowSeriesDetailsTool.cs" />
-    <Compile Include="SeriesDetails\SR.Designer.cs" />
+    <Compile Include="SeriesDetails\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -150,7 +154,10 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SeriesDetails\SR.resx" />
+    <EmbeddedResource Include="SeriesDetails\SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

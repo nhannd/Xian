@@ -193,19 +193,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
         private DateTime? GetScheduledDeleteTime()
         {
-            //TODO (Marmot):Fill this in when we have the request object.
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetWorkItemBroker();
+                var items = broker.GetWorkItems(WorkItemTypeEnum.SeriesDelete, null, StudyInstanceUid);
+                if (items == null || items.Count == 0)
+                    return null;
 
-            return null;
-            //using (var context = new DataAccessContext())
-            //{
-            //    var broker = context.GetWorkItemBroker();
-            //    var items = broker.GetWorkItems(WorkItemTypeEnum.SeriesDelete, null, StudyInstanceUid);
-            //    if (items == null || items.Count == 0)
-            //        return null;
+                var validItems = items.Where(item => item.Status != WorkItemStatusEnum.Failed && item.Status != WorkItemStatusEnum.Canceled);
+                var deleteItems = validItems
+                                    .Where(item => item.Request is DeleteSeriesRequest)
+                                    .Where(item => ((DeleteSeriesRequest) item.Request).SeriesInstanceUids.Contains(SeriesInstanceUid)).ToList();
 
-            //    var validItems = items.Where(w => w.Status != WorkItemStatusEnum.Failed && w.Status != WorkItemStatusEnum.Canceled);
-            //    var requests = validItems.Select(w => w.Request).OfType<>()
-            //}
+                if (!deleteItems.Any())
+                    return null;
+
+                return deleteItems.Min(item => item.DeleteTime);
+            }
         }
     }
 }

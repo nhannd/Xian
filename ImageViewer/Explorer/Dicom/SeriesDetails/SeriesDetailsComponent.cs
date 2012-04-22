@@ -287,7 +287,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 													});
 
 			_seriesTable.Columns.Add(column);
-		}
+
+            if (!_studyItem.Server.IsLocal)
+                return;
+
+            column = new TableColumn<SeriesTableItem, bool>(
+                SR.TitleDeleteScheduled, identifier => identifier.DeleteTime.HasValue, 0.3F);
+
+            _seriesTable.Columns.Add(column);
+        }
 
 		public void Refresh()
 		{

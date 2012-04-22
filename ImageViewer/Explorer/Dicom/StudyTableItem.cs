@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public IDicomServiceNode Server
         {
-            get { return ((IIdentifier)this).RetrieveAE as IDicomServiceNode; }
+            get { return (IDicomServiceNode)((IIdentifier)this).RetrieveAE; }
         }
 
         #endregion

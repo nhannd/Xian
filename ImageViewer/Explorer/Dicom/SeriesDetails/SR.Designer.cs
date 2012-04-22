@@ -197,6 +197,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Scheduled.
+        /// </summary>
+        internal static string TitleDeleteScheduled {
+            get {
+                return ResourceManager.GetString("TitleDeleteScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Modality.
         /// </summary>
         internal static string TitleModality {

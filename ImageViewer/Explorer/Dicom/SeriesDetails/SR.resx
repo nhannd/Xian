@@ -163,6 +163,9 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="MessageStudyInUse" xml:space="preserve">
     <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
   </data>
+  <data name="TitleDeleteScheduled" xml:space="preserve">
+    <value>Delete Scheduled</value>
+  </data>
   <data name="TitleModality" xml:space="preserve">
     <value>Modality</value>
   </data>
