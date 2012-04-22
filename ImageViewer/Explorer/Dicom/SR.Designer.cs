@@ -160,6 +160,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string ColumnHeadingPatientName {
+            get {
+                return ResourceManager.GetString("ColumnHeadingPatientName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Phonetic Name.
         /// </summary>
         internal static string ColumnHeadingPhoneticName {

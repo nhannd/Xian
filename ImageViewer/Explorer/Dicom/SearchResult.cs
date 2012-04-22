@@ -131,6 +131,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public void Initialize()
 		{
             _studyTable.Initialize();
+            //_studyTable.UseSinglePatientNameColumn = true;
             SetResultsTitle();
 		}
 

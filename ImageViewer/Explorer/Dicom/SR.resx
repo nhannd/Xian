@@ -370,6 +370,9 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="ColumnHeadingDeleteOn" xml:space="preserve">
     <value>Delete On</value>
   </data>
+  <data name="ColumnHeadingPatientName" xml:space="preserve">
+    <value>Name</value>
+  </data>
   <data name="FormatDueToday" xml:space="preserve">
     <value>Today {0}</value>
   </data>

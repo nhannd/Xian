@@ -13,6 +13,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     public class StudyTable : Table<StudyTableItem>
     {
         public const string ColumnNamePatientId = @"Patient ID";
+        public const string ColumnNamePatientName = @"Patient Name";
         public const string ColumnNameLastName = @"Last Name";
         public const string ColumnNameFirstName = @"First Name";
         public const string ColumnNameIdeographicName = @"Ideographic Name";
@@ -30,6 +31,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public const string ColumnNameAvailability = @"Availability";
 
         private TableColumn<StudyTableItem, string> ColumnPatientId { get; set; }
+        private TableColumn<StudyTableItem, string> ColumnPatientName { get; set; }
         private TableColumn<StudyTableItem, string> ColumnLastName { get; set; }
         private TableColumn<StudyTableItem, string> ColumnFirstName { get; set; }
         private TableColumn<StudyTableItem, string> ColumnIdeographicName { get; set; }
@@ -46,12 +48,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private TableColumn<StudyTableItem, string> ColumnServer { get; set; }
         private TableColumn<StudyTableItem, string> ColumnAvailability { get; set; }
 
+        public bool UseSinglePatientNameColumn
+        {
+            get { return ColumnPatientName.Visible; }
+            set
+            {
+                ColumnPatientName.Visible = value;
+                ColumnLastName.Visible = !value;
+                ColumnFirstName.Visible = !value;
+            }
+        }
+
         public void Initialize()
         {
             AddExtensionColumns();
             AddDefaultColumns();
-            AddInstanceCountColumns();
-            AddServerColumns();
 
             Sort(new TableSortParams(ColumnLastName, true));
         }
@@ -84,6 +95,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 0.5f);
 
             Columns.Add(ColumnPatientId);
+
+            ColumnPatientName = new TableColumn<StudyTableItem, string>(
+                ColumnNamePatientName,
+                SR.ColumnHeadingPatientName,
+                item => new PersonName(item.PatientsName).FormattedName,
+                0.6f);
+
+            Columns.Add(ColumnPatientName);
+            //Hide by default.
+            ColumnPatientName.Visible = false;
 
             ColumnLastName = new TableColumn<StudyTableItem, string>(
                 ColumnNameLastName,
@@ -122,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 SR.ColumnHeadingDateOfBirth,
                 item => FormatDicomDA(item.PatientsBirthDate),
                 null,
-                0.4F,
+                0.3F,
                 //TODO (Marmot):
                 (one, two) => one.PatientsBirthDate.CompareTo(two.PatientsBirthDate));
 
@@ -132,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 ColumnNameAccessionNumber,
                 SR.ColumnHeadingAccessionNumber,
                 item => item.AccessionNumber,
-                0.45F);
+                0.40F);
 
             Columns.Add(ColumnAccessionNumber);
 
@@ -141,7 +162,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 SR.ColumnHeadingStudyDate,
                 item => FormatDicomDA(item.StudyDate),
                 null,
-                0.4F,
+                0.3F,
                 (one, two) => one.StudyDate.CompareTo(two.StudyDate));
 
             Columns.Add(ColumnStudyDate);
@@ -150,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 ColumnNameStudyDescription,
                 SR.ColumnHeadingStudyDescription,
                 item => item.StudyDescription,
-                0.75F);
+                0.7F);
 
             Columns.Add(ColumnStudyDescription);
 
@@ -182,51 +203,45 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                         var name = new PersonName(entry.ReferringPhysiciansName ?? "");
                         return name.FormattedName;
                     },
-                0.6f);
+                0.5f);
 
             Columns.Add(ColumnReferringPhysician);
 
-            ColumnDeleteOn = new TableColumn<StudyTableItem, string>(
-                ColumnNameDeleteOn,
-                SR.ColumnHeadingDeleteOn,
-                entry => FormatDeleteOn(entry.DeleteTime),
-                0.2f);
-
-            Columns.Add(ColumnDeleteOn);
-        }
-
-        private void AddInstanceCountColumns()
-        {
             ColumnNumberOfInstances = new TableColumn<StudyTableItem, string>(
                 ColumnNameNumberOfInstances,
                 SR.ColumnHeadingNumberOfInstances,
                 item => item.NumberOfStudyRelatedInstances.HasValue ? item.NumberOfStudyRelatedInstances.ToString() : "",
                 null,
-                0.3f,
+                0.2f,
                 delegate(StudyTableItem entry1, StudyTableItem entry2)
+                {
+                    int? instances1 = entry1.NumberOfStudyRelatedInstances;
+                    int? instances2 = entry2.NumberOfStudyRelatedInstances;
+
+                    if (instances1 == null)
                     {
-                        int? instances1 = entry1.NumberOfStudyRelatedInstances;
-                        int? instances2 = entry2.NumberOfStudyRelatedInstances;
-
-                        if (instances1 == null)
-                        {
-                            if (instances2 == null)
-                                return 0;
-                            return 1;
-                        }
                         if (instances2 == null)
-                        {
-                            return -1;
-                        }
+                            return 0;
+                        return 1;
+                    }
+                    if (instances2 == null)
+                    {
+                        return -1;
+                    }
 
-                        return -instances1.Value.CompareTo(instances2.Value);
-                    });
+                    return -instances1.Value.CompareTo(instances2.Value);
+                });
 
             Columns.Add(ColumnNumberOfInstances);
-        }
 
-        private void AddServerColumns()
-        {
+            ColumnDeleteOn = new TableColumn<StudyTableItem, string>(
+                ColumnNameDeleteOn,
+                SR.ColumnHeadingDeleteOn,
+                entry => FormatDeleteOn(entry.DeleteTime),
+                0.3f);
+
+            Columns.Add(ColumnDeleteOn);
+
             ColumnServer = new TableColumn<StudyTableItem, string>(ColumnNameServer, SR.ColumnHeadingServer,
                                                                  item => (item.Server == null) ? "" : item.Server.Name,
                                                                  0.3f);
