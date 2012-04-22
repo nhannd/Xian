@@ -228,7 +228,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private void AddServerColumns()
         {
             ColumnServer = new TableColumn<StudyTableItem, string>(ColumnNameServer, SR.ColumnHeadingServer,
-                                                                 item => (item.Server == null) ? "" : item.Server.ToString(),
+                                                                 item => (item.Server == null) ? "" : item.Server.Name,
                                                                  0.3f);
 
             Columns.Add(ColumnServer);
