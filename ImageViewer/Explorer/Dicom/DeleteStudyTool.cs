@@ -15,7 +15,9 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -48,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 {
                     client.DeleteStudy(study);
                     Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                          string.Format(SR.MessageFormatDeleteStudyScheduled, study.PatientsName.FormattedName),
+                          string.Format(SR.MessageFormatDeleteStudyScheduled, new PersonName(study.PatientsName).FormattedName),
                           SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                 }
             }

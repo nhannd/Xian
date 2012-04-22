@@ -80,7 +80,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns>Number of images in study.</returns>
 		public int Start(StudyLoaderArgs studyLoaderArgs)
 		{
-			_currentServer = studyLoaderArgs.Server.ToServiceNode();
+            if (studyLoaderArgs.Server != null)
+			    _currentServer = studyLoaderArgs.Server.ToServiceNode();
 
 			try
 			{

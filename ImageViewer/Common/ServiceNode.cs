@@ -26,13 +26,19 @@ namespace ClearCanvas.ImageViewer.Common
         #region IServiceNode Members
 
         public virtual bool IsSupported<T>() where T : class
-        {
-            var context = new ServiceNodeServiceProviderContext(this);
-            foreach (IServiceNodeServiceProvider provider in new ServiceNodeServiceProviderExtensionPoint().CreateExtensions())
+        {            
+            try
             {
-                provider.SetContext(context);
-                if (provider.IsSupported(typeof(T)))
-                    return true;
+                var context = new ServiceNodeServiceProviderContext(this);
+                foreach (IServiceNodeServiceProvider provider in new ServiceNodeServiceProviderExtensionPoint().CreateExtensions())
+                {
+                    provider.SetContext(context);
+                    if (provider.IsSupported(typeof(T)))
+                        return true;
+                }
+            }
+            catch (NotSupportedException)
+            {
             }
 
             return false;
@@ -47,13 +53,19 @@ namespace ClearCanvas.ImageViewer.Common
 
         public virtual T GetService<T>() where T : class
         {
-            var context = new ServiceNodeServiceProviderContext(this);
-            foreach (IServiceNodeServiceProvider provider in new ServiceNodeServiceProviderExtensionPoint().CreateExtensions())
+            try
             {
-                provider.SetContext(context);
-                var service = provider.GetService(typeof(T));
-                if (service != null)
-                    return service as T;
+                var context = new ServiceNodeServiceProviderContext(this);
+                foreach (IServiceNodeServiceProvider provider in new ServiceNodeServiceProviderExtensionPoint().CreateExtensions())
+                {
+                    provider.SetContext(context);
+                    var service = provider.GetService(typeof(T));
+                    if (service != null)
+                        return service as T;
+                }
+            }
+            catch (NotSupportedException)
+            {
             }
 
             throw new NotSupportedException(String.Format("Service node doesn't support service '{0}'.", typeof(T).FullName));

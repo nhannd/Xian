@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 var seriesList = Context.SelectedSeries.Select(series => series.SeriesInstanceUid).ToList();
                 client.DeleteSeries(Context.Study, seriesList);
                 Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                                string.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, new PersonName(Patient.PatientsName).FormattedName),
+                                string.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, new PersonName(Context.Study.PatientsName).FormattedName),
                                 SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
 
             }

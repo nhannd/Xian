@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             //don't need to check this again, it's just paranoia
             if (!StudyExists(entry.Study.StudyInstanceUid))
             {
-                StudyTable.Items.Add(entry);
+                StudyTable.Items.Add(new StudyTableItem(entry));
             }
             else
             {

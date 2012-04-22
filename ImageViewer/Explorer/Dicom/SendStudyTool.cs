@@ -15,6 +15,7 @@ using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -80,14 +81,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
             var client = new DicomSendClient();
-            foreach (var item in Context.SelectedStudies)
+            foreach (var study in Context.SelectedStudies)
             {
                 foreach (var destination in serverTreeComponent.SelectedServers)
                 {
                     try
                     {
-                        client.MoveStudy(destination.ToDataContract(), item, WorkItemPriorityEnum.Normal);
-                        Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudyScheduled,aeInformation.AETitle,study.PatientsName.FormattedName),
+                        client.MoveStudy(destination.ToDataContract(), study, WorkItemPriorityEnum.Normal);
+                        Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudyScheduled, destination.Name, new PersonName(study.PatientsName).FormattedName),
                                                         SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                     }
                     catch (EndpointNotFoundException)

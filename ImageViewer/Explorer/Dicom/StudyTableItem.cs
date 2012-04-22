@@ -161,6 +161,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return Identifier.PatientsBirthDate; }
         }
 
+        //TODO (Marmot): Make it a PersonName. Too much of a pain to keep doing new PersonName(...).
         public string PatientsName
         {
             get { return Identifier.PatientsName; }

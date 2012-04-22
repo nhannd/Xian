@@ -28,7 +28,6 @@ namespace ClearCanvas.ImageViewer.Common
 			: base(message, innerException) {}
 	}
 
-    //TODO (Marmot): change to use the work queue.
 	public static class DicomFilePublisher
 	{
 		private static void DeleteEmptyFolders(string directory)
@@ -131,7 +130,6 @@ namespace ClearCanvas.ImageViewer.Common
 		    var auditedInstances = GetAuditedInstances(files, true);
 
 		    var importClient = new DicomFileImportClient();
-
             importClient.PublishLocal(tempFileDirectory,auditedInstances,BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
 		}
 

@@ -176,18 +176,16 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         private static IDicomServiceNode ResolveRemoteServer(string aetitle)
 		{
-            using (var bridge = new ServerDirectoryBridge())
-                return bridge.GetServersByAETitle(aetitle).FirstOrDefault(s => s.ScpParameters != null);
+            return ServerDirectory.GetRemoteServersByAETitle(aetitle).FirstOrDefault(s => s.ScpParameters != null);
 		}
 
 		private static bool StudyExistsOnLocal(string studyInstanceUid)
 		{
-		    //TODO (Marmot): service nodes.
 		    using (var bridge = new StudyStoreBridge())
 		        return bridge.QueryByStudyInstanceUid(studyInstanceUid).Count > 0;
 		}
 
-        private static bool StudyExistsOnRemote(IServiceNode server, string studyInstanceUid)
+        private static bool StudyExistsOnRemote(IDicomServiceNode server, string studyInstanceUid)
 		{
             IList<StudyRootStudyIdentifier> result = null;
             server.GetService<IStudyRootQuery>(s => result = 
