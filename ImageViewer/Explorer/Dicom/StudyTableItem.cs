@@ -22,6 +22,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
                 _entry = value;
                 _entry.Study.ResolveServer(true);
+                if (_entry.Data == null)
+                    _entry.Data = new StudyEntryData();
             }
         }
 

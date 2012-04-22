@@ -367,4 +367,19 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="MessageFormatDeleteStudyScheduled" xml:space="preserve">
     <value>A study for  {0} has been scheduled for deletion.</value>
   </data>
+  <data name="ColumnHeadingDeleteOn" xml:space="preserve">
+    <value>Delete On</value>
+  </data>
+  <data name="FormatDueToday" xml:space="preserve">
+    <value>Today {0}</value>
+  </data>
+  <data name="FormatDueTomorrow" xml:space="preserve">
+    <value>Tomorrow {0}</value>
+  </data>
+  <data name="FormatDueYesterday" xml:space="preserve">
+    <value>Yesterday {0}</value>
+  </data>
+  <data name="PastDue" xml:space="preserve">
+    <value>Past Due</value>
+  </data>
 </root>

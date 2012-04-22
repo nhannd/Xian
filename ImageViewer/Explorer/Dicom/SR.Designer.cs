@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete On.
+        /// </summary>
+        internal static string ColumnHeadingDeleteOn {
+            get {
+                return ResourceManager.GetString("ColumnHeadingDeleteOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Name.
         /// </summary>
         internal static string ColumnHeadingFirstName {
@@ -192,6 +201,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string ColumnHeadingStudyDescription {
             get {
                 return ResourceManager.GetString("ColumnHeadingStudyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Today {0}.
+        /// </summary>
+        internal static string FormatDueToday {
+            get {
+                return ResourceManager.GetString("FormatDueToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tomorrow {0}.
+        /// </summary>
+        internal static string FormatDueTomorrow {
+            get {
+                return ResourceManager.GetString("FormatDueTomorrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yesterday {0}.
+        /// </summary>
+        internal static string FormatDueYesterday {
+            get {
+                return ResourceManager.GetString("FormatDueYesterday", resourceCulture);
             }
         }
         
@@ -586,6 +622,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string NotificationReindexScheduled {
             get {
                 return ResourceManager.GetString("NotificationReindexScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Past Due.
+        /// </summary>
+        internal static string PastDue {
+            get {
+                return ResourceManager.GetString("PastDue", resourceCulture);
             }
         }
         
