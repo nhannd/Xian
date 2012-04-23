@@ -313,6 +313,18 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                 }
                 else if (propType == typeof(DateTime))
                     prop.SetValue(entity, reader.GetDateTime(i), null);
+                else if (propType == typeof(DateTime?))
+                {
+                    if (reader.IsDBNull(i))
+                    {
+                        prop.SetValue(entity, null, null);
+                    }
+                    else
+                    {
+                        prop.SetValue(entity, reader.GetDateTime(i), null);
+                    }
+                    
+                }
                 else if (propType == typeof(bool))
                     prop.SetValue(entity, reader.GetBoolean(i), null);
                 else if (propType == typeof(Int32))
