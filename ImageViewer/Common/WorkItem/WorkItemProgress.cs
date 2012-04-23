@@ -17,7 +17,7 @@ using ClearCanvas.Common.Serialization;
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
     [XmlInclude(typeof(ImportFilesProgress))]
-    [XmlInclude(typeof(StudyProcessProgress))]
+    [XmlInclude(typeof(ProcessStudyProgress))]
     [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemProgressDataContract("b2dcf1f6-6e1a-48cd-b807-b720811a6575")]
     public abstract class WorkItemProgress : DataContractBase
@@ -91,9 +91,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemProgressDataContract("8C994CAB-630E-4a92-AA5B-7BF5D6095D6D")]
-    public class StudyProcessProgress : WorkItemProgress
+    public class ProcessStudyProgress : WorkItemProgress
     {
-        public StudyProcessProgress()
+        public ProcessStudyProgress()
         {
             IsCancelable = true;
         }

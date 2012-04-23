@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 {
                     item.StudyInstanceUid = studyRequest.Study.StudyInstanceUid;
 
-                    if (request.Request.Type == WorkItemTypeEnum.StudyDelete)
+                    if (request.Request.Type == WorkItemTypeEnum.DeleteStudy)
                     {
                         // Mark studies to delete as "deleted" in the database.
                         var studyBroker = context.GetStudyBroker();

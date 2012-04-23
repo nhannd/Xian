@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                     var workItemList = workItemBroker.GetWorkItems(null, null, _location.Study.StudyInstanceUid);
                     foreach (var workItem in workItemList)
                     {
-                        if (workItem.Type != WorkItemTypeEnum.StudyDelete && workItem.Type != WorkItemTypeEnum.SeriesDelete)
+                        if (workItem.Type != WorkItemTypeEnum.DeleteStudy && workItem.Type != WorkItemTypeEnum.DeleteSeries)
                         {
                             // Delete the related rows
                             foreach (var entity in workItem.WorkItemUids)

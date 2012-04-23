@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
     {
         public WorkItemTypeEnum GetWorkQueueType()
         {
-            return WorkItemTypeEnum.StudyDelete;
+            return WorkItemTypeEnum.DeleteStudy;
         }
 
         public IWorkItemProcessor GetItemProcessor()

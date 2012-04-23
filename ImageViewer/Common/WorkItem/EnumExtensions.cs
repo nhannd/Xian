@@ -30,11 +30,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 					return SR.WorkItemTypeEnumReapplyRules;
 				case WorkItemTypeEnum.ReIndex:
 					return SR.WorkItemTypeEnumReIndex;
-				case WorkItemTypeEnum.SeriesDelete:
+				case WorkItemTypeEnum.DeleteSeries:
 					return SR.WorkItemTypeEnumSeriesDelete;
-				case WorkItemTypeEnum.StudyDelete:
+				case WorkItemTypeEnum.DeleteStudy:
 					return SR.WorkItemTypeEnumStudyDelete;
-				case WorkItemTypeEnum.StudyProcess:
+				case WorkItemTypeEnum.ProcessStudy:
 					return SR.WorkItemTypeEnumStudyProcess;
             }
 			throw new NotImplementedException();

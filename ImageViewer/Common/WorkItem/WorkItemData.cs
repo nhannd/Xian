@@ -50,11 +50,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public enum WorkItemTypeEnum
     {
         [EnumMember]
-        StudyProcess = 1,
+        ProcessStudy = 1,
         [EnumMember]
-        StudyDelete = 2,
+        DeleteStudy = 2,
         [EnumMember]
-        SeriesDelete = 3,
+        DeleteSeries = 3,
         [EnumMember]
         Import = 4,
         [EnumMember]

@@ -22,9 +22,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 {
     /// <summary>
-    /// Processor for <see cref="WorkItemTypeEnum.StudyProcess"/> entries.
+    /// Processor for <see cref="WorkItemTypeEnum.ProcessStudy"/> entries.
     /// </summary>
-    public class StudyProcessProcessor : BaseItemProcessor<StudyProcessRequest,StudyProcessProgress>
+    public class StudyProcessProcessor : BaseItemProcessor<ProcessStudyRequest,ProcessStudyProgress>
     {
         /// <summary>
         /// Cleanup any failed items in the queue and delete the queue entry.

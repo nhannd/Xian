@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public override StudyProcessRequest CreateRequest(DicomMessageBase message)
+        public override ProcessStudyRequest CreateRequest(DicomMessageBase message)
         {
             var request = new DicomReceiveRequest
                               {
@@ -93,11 +93,11 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         }
 
         /// <summary>
-        /// Create a <see cref="StudyProcessRequest"/> object for a specific SOP Instnace.
+        /// Create a <see cref="ProcessStudyRequest"/> object for a specific SOP Instnace.
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public override StudyProcessRequest CreateRequest(DicomMessageBase message)
+        public override ProcessStudyRequest CreateRequest(DicomMessageBase message)
         {
             var request = new ImportStudyRequest
                               {
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         protected ImportFilesContext(string sourceAE)
         {
             StudyWorkItems = new ObservableDictionary<string, WorkItem>();
-            ImportType = WorkItemTypeEnum.StudyProcess;
+            ImportType = WorkItemTypeEnum.ProcessStudy;
             SourceAE = sourceAE;
         }
 
@@ -147,11 +147,11 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         public ObservableDictionary<string,WorkItem> StudyWorkItems { get; private set; }
 
         /// <summary>
-        /// Abstract method for creating a <see cref="StudyProcessRequest"/> object for the given DICOM message.
+        /// Abstract method for creating a <see cref="ProcessStudyRequest"/> object for the given DICOM message.
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public abstract StudyProcessRequest CreateRequest(DicomMessageBase message);
+        public abstract ProcessStudyRequest CreateRequest(DicomMessageBase message);
     }
 
     /// <summary>
