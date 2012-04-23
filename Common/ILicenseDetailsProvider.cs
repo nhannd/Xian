@@ -68,6 +68,12 @@ namespace ClearCanvas.Common
 		/// <param name="featureToken"></param>
 		/// <returns></returns>
 		bool IsFeatureAuthorized(string featureToken);
+
+        /// <summary>
+        /// Gets a value indicating whether a license exists locally
+        /// </summary>
+        /// <returns></returns>
+	    bool IsLicenseInstalled();
 	}
 
 	/// <summary>
@@ -152,6 +158,11 @@ namespace ClearCanvas.Common
 			{
 				return true;
 			}
+
+		    public bool IsLicenseInstalled()
+		    {
+                return true;
+		    }
 		}
 	}
 }

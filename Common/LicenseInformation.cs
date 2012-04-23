@@ -240,6 +240,20 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Checks if a license is installed. The license can 
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsLicenseInstalled()
+        {
+            CheckLicenseDetailsProvider();
+
+            lock (_syncRoot)
+            {
+                return _licenseDetailsProvider.IsLicenseInstalled();
+            }
+        }
+
 		/// <summary>
 		/// Forces license information to be reloaded when it is requested next time
 		/// </summary>
@@ -247,5 +261,6 @@ namespace ClearCanvas.Common
 		{
 			_machineIdentifier = null; // will force reload when requested
 		}
+
 	}
 }

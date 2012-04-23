@@ -100,12 +100,23 @@ namespace ClearCanvas.Desktop.Help
         private void AddLicenseLabels()
         {
             // Add some labels that are controlled by license
-            if (LicenseInformation.IsEvaluation)
+            bool isEvaluation = false;
+            bool expired = false;
+            if (!LicenseInformation.IsLicenseInstalled())
             {
-                var expired = LicenseInformation.Expired;
+                isEvaluation = true;
+                expired = true;
+            }
+            else if (LicenseInformation.IsEvaluation)
+            {
+                expired = LicenseInformation.Expired;
+            }
+
+            if (isEvaluation)
+            {
                 var evaluationLabel = new Label()
-                {
-                    Text = !expired ? SR.LabelEvaluation : SR.LabelEvaluationExpired,
+                 {
+                    Text = expired ? SR.LabelEvaluationExpired : SR.LabelEvaluation,
                     Visible = AboutSettings.Default.EvaluationVisible,
                     BackColor = System.Drawing.Color.Transparent,
                     Location = AboutSettings.Default.EvaluationLocation,
@@ -114,12 +125,13 @@ namespace ClearCanvas.Desktop.Help
                     ForeColor = AboutSettings.Default.EvaluationForeColor,
                     TextAlign = AboutSettings.Default.EvaluationTextAlign
                 };
+                    
                 if (AboutSettings.Default.EvaluationFontBold)
                     evaluationLabel.Font = new Font(evaluationLabel.Font, FontStyle.Bold);
 
                 this.Controls.Add(evaluationLabel);
-
             }
+
 
             if (LicenseInformation.DiagnosticUse != LicenseDiagnosticUse.Allowed)
             {
