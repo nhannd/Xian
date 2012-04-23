@@ -22,13 +22,13 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 namespace ClearCanvas.ImageViewer.Dicom.Core
 {
     /// <summary>
-    /// Processor for Sop Instances being inserted into the database.
+    /// Utility for processing files within a study.
     /// </summary>
-    public class SopInstanceProcessor
+    public class ProcessStudyUtility
     {           
         #region Subclass
         /// <summary>
-        /// Represents a file to be processed by <see cref="SopInstanceProcessor"/>
+        /// Represents a file to be processed by <see cref="ProcessStudyUtility"/>
         /// </summary>
         public class ProcessorFile : IDisposable
         {
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// </para>
         /// </remarks>
         /// <param name="location">The StudyLocation for the study being processed</param>
-        public SopInstanceProcessor(StudyLocation location)
+        public ProcessStudyUtility(StudyLocation location)
         {
             Platform.CheckForNullReference(location, "location");
             StudyLocation = location;
@@ -98,12 +98,12 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         #region Public Methods
 
         /// <summary>
-        /// Process a specific DICOM file related to a <see cref="WorkItem"/> request.
+        /// Process a specific DICOM file which may be related to a <see cref="WorkItem"/> request.
         /// </summary>
         /// <remarks>
         /// <para>
         /// On success and if <see cref="uid"/> is set, the <see cref="WorkItemUid"/> field is marked as complete.  If processing fails, 
-        /// the FailureCount field is incremented.
+        /// the FailureCount field is incremented for the <see cref="WorkItemUid"/>.
         /// </para>
         /// </remarks>
         /// <param name="studyXml">The <see cref="StudyXml"/> file to update with information from the file.</param>

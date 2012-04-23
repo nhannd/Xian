@@ -14,7 +14,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
     /// <summary>
-    /// Plugin for WorkQueue item processors.
+    /// Plugin for WorkItem processors implementing <see cref="IWorkItemProcessorFactory"/>.
     /// </summary>
     [ExtensionPoint]
     public class WorkItemFactoryExtensionPoint : ExtensionPoint<IWorkItemProcessorFactory>

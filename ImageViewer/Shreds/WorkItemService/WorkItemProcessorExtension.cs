@@ -10,7 +10,6 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
@@ -26,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public override string GetDescription()
         {
-            return SR.WorkitemProcessorDescription;
+            return SR.WorkItemProcessorDescription;
         }
 
         protected override IList<QueueProcessor> GetProcessors()

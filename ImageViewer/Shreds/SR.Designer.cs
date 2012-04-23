@@ -306,9 +306,9 @@ namespace ClearCanvas.ImageViewer.Shreds {
         /// <summary>
         ///   Looks up a localized string similar to Hosts the WorkItem Processor Service.
         /// </summary>
-        internal static string WorkitemProcessorDescription {
+        internal static string WorkItemProcessorDescription {
             get {
-                return ResourceManager.GetString("WorkitemProcessorDescription", resourceCulture);
+                return ResourceManager.GetString("WorkItemProcessorDescription", resourceCulture);
             }
         }
         

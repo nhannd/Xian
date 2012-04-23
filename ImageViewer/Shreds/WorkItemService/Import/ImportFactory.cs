@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         public IWorkItemProcessor GetItemProcessor()
         {
-            return new ImportProcessor();
+            return new ImportItemProcessor();
         }
     }
 }

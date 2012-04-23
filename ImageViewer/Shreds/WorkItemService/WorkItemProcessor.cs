@@ -20,16 +20,17 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
     /// <summary>
-    /// Engine for acquiring WorkQueue items and finding plugins to process them.
+    /// Engine for acquiring WorkItems and finding plugins to process them.
     /// </summary>
     sealed public class WorkItemProcessor : QueueProcessor
     {
         #region Members
 
         private readonly Dictionary<WorkItemTypeEnum, IWorkItemProcessorFactory> _extensions = new Dictionary<WorkItemTypeEnum, IWorkItemProcessorFactory>();
-		private readonly ProcessorThreadPool _threadPool;
+		private readonly WorkItemThreadPool _threadPool;
         private readonly ManualResetEvent _threadStop;
         private readonly string _name;
+
         #endregion
 
 		#region Constructor
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             _name = name;
             _threadStop = new ManualResetEvent(false);
 
-			_threadPool = new ProcessorThreadPool(numberStatThreads,numberNormalThreads)
+			_threadPool = new WorkItemThreadPool(numberStatThreads,numberNormalThreads)
 			                  {
 			                      ThreadPoolName = name + " Pool"
 			                  };
@@ -49,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             if (factories == null || factories.Length == 0)
             {
                 // No extension for the workqueue processor. 
-                Platform.Log(LogLevel.Warn, "No WorkItemFactory Extension found.");
+                Platform.Log(LogLevel.Fatal, "No WorkItemFactory Extensions found.");
             }
             else
             {
@@ -92,10 +93,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         }
         #endregion
 
-
         #region Public Methods
         /// <summary>
-        /// Stop the WorkQueue processor
+        /// Signal the processor to stop sleeping and check for Shutdown or new WorkItem
         /// </summary>
         public void SignalThread()
         {
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         }
 
         /// <summary>
-		/// Stop the WorkQueue processor
+        /// Stop the WorkItem processor
 		/// </summary>
 		public override void RequestStop()
 		{
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		/// The processing thread.
 		/// </summary>
 		/// <remarks>
-		/// This method queries the database for WorkQueue entries to work on, and then uses
+        /// This method queries the database for WorkItem entries to work on, and then uses
 		/// a thread pool to process the entries.
 		/// </remarks>
         protected override void RunCore()
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		    if (!_threadPool.Active)
 		        _threadPool.Start();
 
-		    Platform.Log(LogLevel.Info, "Work Item Processor running...");
+		    Platform.Log(LogLevel.Info, "WorkItem Processor running...");
 
             while (true)
             {
@@ -196,8 +196,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         {
                             Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkItem processor.");
                             var proxy = new WorkItemStatusProxy(item);
-                            proxy.Fail("No plugin to handle WorkItem type: " + item.Type,WorkItemFailureType.Fatal);
-                   
+                            proxy.Fail("No plugin to handle WorkItem type: " + item.Type, WorkItemFailureType.Fatal);                   
                         }
                     }
                 }
@@ -321,8 +320,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
             catch (Exception x)
             {
-                // Todo, this may be settable to Info by design
-                Platform.Log(LogLevel.Error, x, "Unexpected error querying for {0} {1} priority WorkItems", count, stat ? "Stat" : "Normal");
+                Platform.Log(LogLevel.Warn, x, "Unexpected error querying for {0} {1} priority WorkItems", count, stat ? "Stat" : "Normal");
                 return null;
             }
         }

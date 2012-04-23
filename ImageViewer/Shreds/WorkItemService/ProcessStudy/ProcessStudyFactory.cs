@@ -12,7 +12,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.StudyProcess
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 {
     [ExtensionOf(typeof(WorkItemFactoryExtensionPoint))]
     public class StudyProcessFactory : IWorkItemProcessorFactory

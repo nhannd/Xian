@@ -13,6 +13,9 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
+    /// <summary>
+    /// Factory for creating <see cref="IWorkItemProcessor"/> instances.
+    /// </summary>
     public interface IWorkItemProcessorFactory
     {
         WorkItemTypeEnum GetWorkQueueType();

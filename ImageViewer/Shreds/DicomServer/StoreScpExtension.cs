@@ -15,8 +15,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
-using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
@@ -147,7 +145,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                     (sender, e) => WorkItemPublisher.Publish(WorkItemHelper.FromWorkItem(e.Item));
             }
 
-		    var importer = new SopInstanceImporter(_importContext);
+		    var importer = new ImportFilesUtility(_importContext);
 
 		    var result = importer.Import(message,BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);
             if (result.Successful)

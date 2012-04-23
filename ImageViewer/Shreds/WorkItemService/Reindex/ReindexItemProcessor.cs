@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Progress.IsCancelable = false;
             Proxy.UpdateProgress();
 
-            var processor = new ReindexProcessor();
+            var processor = new ReindexUtility();
 
             processor.Initialize();
 
@@ -56,35 +56,34 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             }
 
             // Reset progress, in case of retry
-            Progress.NumberOfStudiesToProcess = processor.DatabaseStudiesToScan + processor.StudyFoldersToScan;
-            Progress.NumberOfStudiesDeleted = 0;
+            Progress.StudiesToProcess = processor.DatabaseStudiesToScan;
+            Progress.StudyFoldersToProcess = processor.StudyFoldersToScan;
+            Progress.StudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
             Progress.Complete = false;
 
             Proxy.UpdateProgress();
 
-            processor.StudyFolderProcessedEvent += delegate(object sender, ReindexProcessor.StudyEventArgs e)
+            processor.StudyFolderProcessedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
                                              {
                                                  Progress.StudyFoldersProcessed++;
-                                                 Progress.StudiesProcessed++;
                                                  Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
                                                  Proxy.UpdateProgress();
                                              };
 
             processor.StudyDeletedEvent += delegate
                                                {
-                                                   Progress.NumberOfStudiesDeleted++;
+                                                   Progress.StudiesDeleted++;
                                                    Progress.StudiesProcessed++;
                                                    Proxy.Item.StudyInstanceUid = string.Empty;
                                                    Proxy.UpdateProgress();
                                                };
 
-            processor.StudyProcessedEvent += delegate(object sender, ReindexProcessor.StudyEventArgs e)
+            processor.StudyProcessedEvent += delegate
                                                  {
                                                      Progress.StudiesProcessed++;
                                                      Proxy.Item.StudyInstanceUid = string.Empty;
-                                                     Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
                                                      Proxy.UpdateProgress();
                                                  };
             processor.Process();

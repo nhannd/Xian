@@ -13,18 +13,14 @@ using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.SeriesDelete
+namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteSeries
 {
 
     public class SeriesDeleteProcessor : BaseItemProcessor<DeleteSeriesRequest, DeleteProgress>
     {
-        public override bool Initialize(WorkItemStatusProxy proxy)
-        {
-            bool initResult = base.Initialize(proxy);
-                       
-            return initResult;
-        }
-
+        /// <summary>
+        /// Process the Series delete request.
+        /// </summary>
         public override void Process()
         {
             if (CancelPending)
