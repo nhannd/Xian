@@ -160,6 +160,7 @@
     <Compile Include="KeyStrokeCaptureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="LanguagePickerActionView.cs" />
     <Compile Include="LocalePicker.cs">
       <SubType>UserControl</SubType>
     </Compile>

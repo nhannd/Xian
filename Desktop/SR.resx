@@ -481,4 +481,7 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="LabelEvaluationWithDays" xml:space="preserve">
     <value>Evaluation ({0} days)</value>
   </data>
+  <data name="MessageDisplayLanguageChangedRestartRequired" xml:space="preserve">
+    <value>The application must restart in order to apply the new display language. Would you like to restart now?</value>
+  </data>
 </root>

@@ -94,6 +94,7 @@
     <Compile Include="Actions\ActionSet.cs" />
     <Compile Include="Actions\ActionViewContext.cs" />
     <Compile Include="Actions\ITextBoxAction.cs" />
+    <Compile Include="Actions\LanguagePickerAction.cs" />
     <Compile Include="Actions\Tests\MockActionPermissionAttribute.cs" />
     <Compile Include="Actions\DropDownActionAttribute.cs" />
     <Compile Include="Actions\CrudActionModel.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="ReorderableGalleryComponent.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="StackTabPage.cs" />
+    <Compile Include="StockChangeLanguageTool.cs" />
     <Compile Include="StockDesktopTools.cs" />
     <Compile Include="SuggestionProviderBase.cs" />
     <Compile Include="Tables\TableCellEditor.cs" />
