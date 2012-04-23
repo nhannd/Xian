@@ -109,6 +109,7 @@ namespace ClearCanvas.Desktop.Help
             }
             else if (LicenseInformation.IsEvaluation)
             {
+                isEvaluation = true; 
                 expired = LicenseInformation.Expired;
             }
 
