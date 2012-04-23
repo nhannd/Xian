@@ -18,6 +18,8 @@
     <UpgradeBackupLocation />
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetFrameworkProfile />
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
     <PublishUrl>http://localhost/ClearCanvas.ImageViewer.Web/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -32,8 +34,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkSubset>
-    </TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -138,6 +138,10 @@
     <ProjectReference Include="..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Layout\Basic\ClearCanvas.ImageViewer.Layout.Basic.csproj">
       <Project>{EA38C1F1-C4BD-4ED7-9B60-C95DF22D6A72}</Project>

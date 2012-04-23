@@ -21,6 +21,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Layout.Basic;
 using ClearCanvas.ImageViewer.StudyManagement;
 using Patient=ClearCanvas.ImageViewer.StudyManagement.Patient;
@@ -208,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 			    }
 			}
 
-		    var item = new StudyItem(study, applicationEntity, studyLoaderName);
+		    var item = new StudyItem(study, ServiceNodeExtensions.ToServiceNode(applicationEntity));
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 

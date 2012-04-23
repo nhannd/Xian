@@ -19,6 +19,8 @@ using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Web.Common.Messages;
 using ClearCanvas.Web.Common;
@@ -394,39 +396,30 @@ namespace ClearCanvas.ImageViewer.Web
             return sb.ToString();
         }
 
-
-
-	    public static LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
-	    {
+        public static LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
+        {
 
             // TODO: Need to think about this more. What's the best way to swap different loader?
             // Do we need to support loading studies from multiple servers? 
 
-            if (WebViewerServices.Default.StudyLoaderName.Equals("CC_WEBSTATION_STREAMING"))
-	        {
-	            string host = WebViewerServices.Default.ArchiveServerHostname;
-	            int port = WebViewerServices.Default.ArchiveServerPort;
+            string host = WebViewerServices.Default.ArchiveServerHostname;
+            int port = WebViewerServices.Default.ArchiveServerPort;
 
-	            int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
-	            int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
+            int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
+            int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
 
-	            var serverAe =
-	                new ClearCanvas.Dicom.ServiceModel.ApplicationEntity(identifier.RetrieveAeTitle);
-	            serverAe.ScpParameters = new ScpParameters(host, port);
-	            serverAe.StreamingParameters = new StreamingParameters(headerPort, wadoPort);
-                // TODO (Marmot) - Need to figure out how this works with the changes for Marmot
-	            return new LoadStudyArgs(identifier.StudyInstanceUid, serverAe, WebViewerServices.Default.StudyLoaderName);
-	        }
-	        else
-	        {
-	            throw new NotSupportedException("Only streaming study loader is supported at this time");
-	        }
-	    }
-
-        
+            var serverAe = new ApplicationEntity(identifier.RetrieveAeTitle)
+                               {
+                                   ScpParameters = new ScpParameters(host, port),
+                                   StreamingParameters = new StreamingParameters(headerPort, wadoPort)
+                               };
 
 
-        private ImageViewerComponent CreateViewerComponent(StartViewerApplicationRequest request)
+            // TODO (Marmot) - Need to figure out how this works with the changes for Marmot
+            return new LoadStudyArgs(identifier.StudyInstanceUid, ServiceNodeExtensions.ToServiceNode(serverAe));
+        }
+
+	    private ImageViewerComponent CreateViewerComponent(StartViewerApplicationRequest request)
         {
             var keyImagesOnly = request.LoadStudyOptions != null && request.LoadStudyOptions.KeyImagesOnly;
             var excludePriors = request.LoadStudyOptions != null && request.LoadStudyOptions.ExcludePriors;
