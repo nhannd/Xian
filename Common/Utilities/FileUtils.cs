@@ -168,12 +168,20 @@ namespace ClearCanvas.Common.Utilities
 
                     string backup = Path.Combine(string.IsNullOrEmpty(backupDirectory)
                                                      ? sourceInfo.Directory.FullName
-                                                     : backupDirectory, 
-                                                 String.Format("{0}.bak({1})", sourceInfo.Name, i));
+                                                     : backupDirectory,
+                                                 i < 20
+                                                     ? String.Format("{0}.bak({1})", sourceInfo.Name, i)
+                                                     : Guid.NewGuid().ToString() + Path.GetExtension(sourceInfo.FullName));
 
                     try
                     {
-                    	using (FileStream stream =
+                        if (File.Exists(backup))
+                        {
+                            i++;
+                            continue;
+                        }
+
+                        using (FileStream stream =
                     			FileStreamOpener.OpenForSoleUpdate(backup, FileMode.CreateNew, RETRY_MIN_DELAY))
                     	{
                     		stream.Close();

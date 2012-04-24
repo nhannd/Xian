@@ -53,6 +53,14 @@ namespace ClearCanvas.Dicom.Utilities.Command
                 FileUtils.Copy(_sourceFile, _destinationFile, !_failIfExists);
             else
                 FileUtils.Copy(_sourceFile, _destinationFile, false);
+
+            try
+            {
+                if ((File.GetAttributes(_destinationFile) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    File.SetAttributes(_destinationFile, FileAttributes.Normal);
+            }
+            catch (Exception)
+            { }
         }
 
         private void Backup()

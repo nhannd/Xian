@@ -26,7 +26,7 @@ namespace ClearCanvas.Common.Utilities
     public static class FileStreamOpener
     {
         #region Private Members
-        private const int RETRY_MIN_DELAY = 100; 
+        private const int RETRY_MIN_DELAY = 250; 
         private const int FILE_MISSING_OVERRIDE_TIMEOUT = 2; // # of seconds to abort if the file is missing.
         #endregion
 
@@ -109,19 +109,19 @@ namespace ClearCanvas.Common.Utilities
             {
                 try
                 {
-                	stream =
-                		new FileStream(path, mode, FileAccess.Write, FileShare.Read
+                    stream =
+                        new FileStream(path, mode, FileAccess.Write, FileShare.Read
                         /* don't block others from reading this file */, 65536 /* This was configurable in the past, but we never changed it */,
-                		               FileOptions.WriteThrough /* WriteThrough mode could be turned off in the past */);
+                                       FileOptions.WriteThrough /* WriteThrough mode could be turned off in the past */);
                     break;
                 }
-                catch(FileNotFoundException)
+                catch (FileNotFoundException)
                 {
                     // The caller should've used FileMode.CreateNew or FileMode.OpenOrCreate
                     // Nothing can be done if it doesn't.
                     throw;
                 }
-                catch(DirectoryNotFoundException)
+                catch (DirectoryNotFoundException)
                 {
                     // The path is invalid
                     throw;
