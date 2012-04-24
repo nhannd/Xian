@@ -107,6 +107,8 @@
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
+    <Compile Include="StudyManagement\Rules\IRulesAction.cs" />
+    <Compile Include="StudyManagement\Rules\IRulesEngine.cs" />
     <Compile Include="StudyManagement\StoreEntries.cs" />
     <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />

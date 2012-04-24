@@ -17,7 +17,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
     {
         public ViewerCommandProcessor(string description) 
             : base(description, new ViewerCommandProcessorContext())
-        {
-        }
+        {}
+
+        public ViewerCommandProcessorContext ViewerContext { get { return ProcessorContext as ViewerCommandProcessorContext; } }
     }
 }

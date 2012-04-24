@@ -1,0 +1,37 @@
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.WorkItem;
+
+namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
+{
+    
+    public class RulesEngineExtensionPoint : ExtensionPoint<IRulesEngine>    
+    {}
+
+    public interface IRulesEngine
+    {
+        /// <summary>
+        /// Apply the Study level rules to a Study.
+        /// </summary>
+        /// <param name="study">The study to apply the rules to.</param>
+        /// <param name="workItem">The WorkItem applying the rules.</param>
+        void ApplyStudyRules(StudyEntry study, WorkItemData workItem);
+
+        /// <summary>
+        /// Apply the Study level rules to a Study.
+        /// </summary>
+        /// <param name="study">The study to apply the rules to.</param>
+        void ApplyStudyRules(StudyEntry study);
+
+    }
+}

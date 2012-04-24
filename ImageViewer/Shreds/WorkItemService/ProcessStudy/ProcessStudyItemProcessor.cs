@@ -15,6 +15,8 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
@@ -26,6 +28,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
     /// </summary>
     public class StudyProcessProcessor : BaseItemProcessor<ProcessStudyRequest,ProcessStudyProgress>
     {
+        public Study Study { get; set; }
+
         /// <summary>
         /// Cleanup any failed items in the queue and delete the queue entry.
         /// </summary>
@@ -96,7 +100,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     Proxy.Postpone();
                 else if (now > Proxy.Item.ExpirationTime)
                 {
-                    // TODO (Marmot) Need to apply Study Level Rules here!
+                    var ep = new RulesEngineExtensionPoint();
+                    if (Study == null)
+                        Study = LoadRelatedStudy();
+
+                    StudyEntry studyEntry = Study.ToStoreEntry();
+                    foreach (IRulesEngine engine in ep.CreateExtensions())
+                    {
+                        engine.ApplyStudyRules(studyEntry, WorkItemHelper.FromWorkItem( Proxy.Item));
+                    }
 
                     Proxy.Complete();
                 }
@@ -254,7 +266,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 
                 Progress.NumberOfFilesProcessed += fileList.Count;
                 Proxy.UpdateProgress();
-
+                Study = processor.StudyLocation.Study;
                 return true;
             }
             catch (Exception e)

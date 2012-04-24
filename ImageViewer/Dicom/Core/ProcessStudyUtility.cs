@@ -208,6 +208,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                             "Unexpected failure (" + processor.FailureReason + ") executing command for Study: " +
                             StudyLocation.Study.StudyInstanceUid, processor.FailureException);
                     }
+
+                    StudyLocation.Study = processor.ViewerContext.ContextStudy;
+
                     Platform.Log(LogLevel.Info, "Processed {0} SOPs for Study {1}", list.Count,StudyLocation.Study.StudyInstanceUid );
 
                 }

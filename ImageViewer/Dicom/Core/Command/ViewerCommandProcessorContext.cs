@@ -11,6 +11,7 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
@@ -33,7 +34,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         public ViewerCommandProcessorContext()
         {
-            BackupDirectory = Path.GetTempPath();
+            BackupDirectory = Path.Combine(Path.GetTempPath(),ProductInformation.Component);
+            Directory.CreateDirectory(BackupDirectory);
         }
 
         public void Dispose()
@@ -76,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         public string TempDirectory
         {
-            get { return Path.GetTempPath(); }
+            get { return BackupDirectory; }
         }
 
         public string BackupDirectory

@@ -83,11 +83,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReindexUtility.cs" />
     <Compile Include="ReprocessStudyFolder.cs" />
-    <Compile Include="Rules\AutoRoute\AutoRouteActionItem.cs" />
-    <Compile Include="Rules\AutoRoute\AutoRouteActionOperator.cs" />
-    <Compile Include="Rules\AutoRoute\InsertAutoRouteCommand.cs" />
-    <Compile Include="Rules\ViewerActionContext.cs" />
-    <Compile Include="Rules\ViewerRulesEngine.cs" />
     <Compile Include="ImportFilesUtility.cs" />
     <Compile Include="ProcessStudyUtility.cs" />
   </ItemGroup>
@@ -130,9 +125,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Rules\DeleteStudy\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -389,6 +389,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             return configuration;
         }
 
+        protected Study LoadRelatedStudy()
+        {
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetStudyBroker();           
+                    
+                if (!string.IsNullOrEmpty(Proxy.Item.StudyInstanceUid))
+                    return broker.GetStudy(Proxy.Item.StudyInstanceUid);
+
+                return null;
+            }
+        }
+
         #endregion
+
+
     }
 }
