@@ -210,4 +210,7 @@
   <data name="ExceptionErrorProcessingRefresh" xml:space="preserve">
     <value>Failed to process WorkItem Refresh request.</value>
   </data>
+  <data name="FilestoreManagementShred" xml:space="preserve">
+    <value>Filestore Management Processor</value>
+  </data>
 </root>
