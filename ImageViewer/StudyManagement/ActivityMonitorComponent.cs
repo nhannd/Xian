@@ -331,7 +331,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		class StudyCountWatcher : IDisposable
 		{
-			private int _studyCount;
+			private int _studyCount = -1;
 			private readonly Timer _throttleTimer;
 			private readonly System.Action _onChanged;
 
@@ -584,7 +584,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .8f });
             _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatus, w => w.Status.GetDescription()) { WidthFactor = .4f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus));
-            _workItems.Columns.Add(new TableColumn<WorkItem, DateTime>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .6f });
+            _workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .6f });
             _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .3f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon) { WidthFactor = .5f});
 

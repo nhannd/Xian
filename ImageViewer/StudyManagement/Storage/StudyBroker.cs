@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -65,6 +66,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             return (from s in Context.Studies                    
                     select s).ToList();
         }
+
+		public List<Study> GetStudiesForDeletion(DateTime now, int batchSize)
+		{
+			return (from s in Context.Studies
+					where s.DeleteTime < now && !s.Deleted
+					orderby s.DeleteTime ascending 
+					select s)
+					.Take(batchSize)
+					.ToList();
+		}		 
 
         /// <summary>
         /// Delete Study entity.

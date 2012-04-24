@@ -196,6 +196,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filestore Management Processor.
+        /// </summary>
+        internal static string FilestoreManagementShred {
+            get {
+                return ResourceManager.GetString("FilestoreManagementShred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enumerating: {0}.
         /// </summary>
         internal static string FormatEnumeratingFile {
