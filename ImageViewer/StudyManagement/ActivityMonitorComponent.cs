@@ -331,7 +331,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		class StudyCountWatcher : IDisposable
 		{
-			private int _studyCount;
+			private int _studyCount = -1;
 			private readonly Timer _throttleTimer;
 			private readonly System.Action _onChanged;
 
