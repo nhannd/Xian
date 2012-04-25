@@ -25,19 +25,19 @@ namespace ClearCanvas.ImageViewer.Common
     {
         private class CommandLine : ClearCanvas.Common.Utilities.CommandLine
         {
-            [CommandLineParameter("ae", "Sets the AE title of dicom server.", Required = true)]
+            [CommandLineParameter("ae", "Sets the AE title of the local DICOM server.", Required = true)]
             public string AETitle { get; set;}
 
-            [CommandLineParameter("host", "Sets the host name of the DICOM server.", Required = false)]
+            [CommandLineParameter("host", "Sets the host name of the local DICOM server.", Required = false)]
             public string HostName { get; set; }
 
-            [CommandLineParameter("port", "Sets the listening port of the dicom server.", Required = true)]
+            [CommandLineParameter("port", "Sets the listening port of the local DICOM server.", Required = true)]
             public int Port { get; set; }
 
             [CommandLineParameter("filestore", "Sets the location of the file store.", Required = false)]
             public string FileStoreDirectory { get; set; }
 
-            [CommandLineParameter("minspacebytes", "Sets the minimum used space required for the server to continue accepting studies.", Required = false)]
+            [CommandLineParameter("minspacebytes", "Sets the minimum used space required on the file store volume for the server to continue accepting studies.", Required = false)]
             public long? MinimumFreeSpaceBytes { get; set; }
         }
 

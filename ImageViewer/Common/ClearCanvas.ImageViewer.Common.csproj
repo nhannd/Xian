@@ -95,9 +95,6 @@
     <Compile Include="DicomServer\DicomServerClient.cs" />
     <Compile Include="DicomServer\IDicomServerConfiguration.cs" />
     <Compile Include="DicomServer\IDicomServer.cs" />
-    <Compile Include="DiskspaceManager\DataContracts.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerServiceClient.cs" />
-    <Compile Include="DiskspaceManager\IDiskspaceManagerService.cs" />
     <Compile Include="ExtensionData.cs" />
     <Compile Include="FilteredGroup.cs" />
     <Compile Include="IBlockingEnumerator.cs" />

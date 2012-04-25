@@ -14,15 +14,15 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
-using ClearCanvas.ImageViewer.Common.DiskspaceManager;
 
-namespace ClearCanvas.ImageViewer.Services.Tools
+namespace ClearCanvas.ImageViewer.Configuration
 {
+
     /// <summary>
-    /// Extension point for views onto <see cref="DiskspaceManagerConfigurationComponent"/>
+    /// Extension point for views onto <see cref="StorageConfigurationComponent"/>
     /// </summary>
     [ExtensionPoint]
-	public sealed class DiskspaceManagerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class StorageConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
@@ -32,53 +32,27 @@ namespace ClearCanvas.ImageViewer.Services.Tools
     /// <summary>
     /// DiskspaceManagerConfigurationComponent class
     /// </summary>
-    [AssociateView(typeof(DiskspaceManagerConfigurationComponentViewExtensionPoint))]
-    public class DiskspaceManagerConfigurationComponent : ConfigurationApplicationComponent
+    [AssociateView(typeof(StorageConfigurationComponentViewExtensionPoint))]
+    public class StorageConfigurationComponent : ConfigurationApplicationComponent
     {
-		private static readonly int _minCheckFrequency = 1;
-		private static readonly int _maxCheckFrequency = 10;
-    	private static readonly long _watermarkMinDifferenceBytes = 5*1024*1024;
-
 		private string _driveName;
 		private long _driveSize;
 		private string _driveDisplay;
 
-		private float _lowWatermark;
         private float _highWatermark;
-		private string _lowWatermarkBytesDisplay;
 		private string _highWatermarkBytesDisplay;
-		private float _watermarkMinDifference;
 		
-		private long _spaceUsed;
+		private long _spaceUsedBytes;
 		private float _spaceUsedPercent;
 		private string _spaceUsedPercentDisplay;
 		private string _spaceUsedBytesDisplay;
-        
-		private int _checkFrequency;
 
     	private string _studyCountText;
-		private bool _enforceStudyLimit;
-    	private int _studyLimit;
-		private int _minStudyLimit;
-		private int _maxStudyLimit;
-
-		private bool _enabled;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public DiskspaceManagerConfigurationComponent()
+        
+        public StorageConfigurationComponent()
         {
         }
-
-		private void LowWatermarkChanged()
-		{
-			_lowWatermarkBytesDisplay = GetSpaceDescription(_lowWatermark / 100F);
-			
-			NotifyPropertyChanged("LowWatermark");
-			NotifyPropertyChanged("LowatermarkBytesDisplay");
-		}
-
+        /*
 		private void HighWatermarkChanged()
 		{
 			_highWatermarkBytesDisplay = GetSpaceDescription(_highWatermark / 100F);
@@ -109,8 +83,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				_highWatermark = serviceInformation.HighWatermark;
 				HighWatermarkChanged();
 
-				_spaceUsed = serviceInformation.UsedSpace;
-				_spaceUsedPercent = _spaceUsed / (float)_driveSize * 100F;
+				_spaceUsedBytes = serviceInformation.UsedSpace;
+				_spaceUsedPercent = _spaceUsedBytes / (float)_driveSize * 100F;
 				_spaceUsedPercentDisplay = _spaceUsedPercent.ToString("F3");
 				_spaceUsedBytesDisplay = GetSpaceDescription(_spaceUsedPercent / 100F);
 				
@@ -138,12 +112,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				_highWatermark = 0.0F;
 				_highWatermarkBytesDisplay = "";
 				
-				_spaceUsed = 0;
+				_spaceUsedBytes = 0;
 				_spaceUsedPercent = 0F;
 				_spaceUsedPercentDisplay = "";
 				_spaceUsedBytesDisplay = "";
 
-				_studyCountText = SR.MessageStudyCountUnavailable;
+				_studyCountText = Services.SR.MessageStudyCountUnavailable;
 				_enforceStudyLimit = false;
 				_studyLimit = 0;
 				_minStudyLimit = 0;
@@ -168,29 +142,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			NotifyAllPropertiesChanged();
 		}
 		
+         */
 		public override void Save()
         {
-			DiskspaceManagerServiceClient serviceClient = new DiskspaceManagerServiceClient();
-
-			try
-			{
-				serviceClient.Open();
-				DiskspaceManagerServiceConfiguration newConfiguration = new DiskspaceManagerServiceConfiguration();
-                newConfiguration.LowWatermark = _lowWatermark;
-                newConfiguration.HighWatermark = _highWatermark;
-                newConfiguration.CheckFrequency = _checkFrequency;
-				newConfiguration.EnforceStudyLimit = _enforceStudyLimit;
-				newConfiguration.StudyLimit = _studyLimit;
-				serviceClient.UpdateServiceConfiguration(newConfiguration);
-                serviceClient.Close();
-            }
-            catch
-            {
-				serviceClient.Abort();
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateDiskspaceManagementSettings, MessageBoxActions.Ok);
-            }
         }
 
+        /*
 		private string GetSpaceDescription(float percentSpace)
 		{
 			double space = (double)percentSpace * this.DriveSize;
@@ -257,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public long SpaceUsed
 		{
-			get { return _spaceUsed; }
+			get { return _spaceUsedBytes; }
 		}
 
 		public float SpaceUsedPercent
@@ -416,7 +373,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				}
 			}
 		}
-
 		#endregion
+        */
     }
 }

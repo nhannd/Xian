@@ -29,9 +29,9 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
-    partial class DiskspaceManagerConfigurationComponentControl
+    partial class StorageConfigurationComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DiskspaceManagerConfigurationComponentControl));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StorageConfigurationComponentControl));
 			this._tbLowWatermark = new System.Windows.Forms.TrackBar();
 			this._tbHighWatermark = new System.Windows.Forms.TrackBar();
 			this._pbUsedSpace = new System.Windows.Forms.ProgressBar();

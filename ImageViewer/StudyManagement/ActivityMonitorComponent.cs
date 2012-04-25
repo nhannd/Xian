@@ -464,10 +464,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get
 				{
 					if (_diskspace == null)
-					{
-						_diskspace = new Diskspace(StorageConfiguration.FileStoreDirectory.Substring(0, 1));
-					}
-					return _diskspace;
+						_diskspace = new Diskspace(StorageConfiguration.FileStoreDrive);
+
+                    return _diskspace;
 				}
 			}
 

@@ -86,6 +86,7 @@
     </Compile>
     <Compile Include="DicomPublishingHelper.cs" />
     <Compile Include="DicomServerConfigurationComponent.cs" />
+    <Compile Include="StorageConfigurationComponent.cs" />
     <Compile Include="PublishingConfigurationComponent.cs" />
     <Compile Include="PublishingConfigurationPageProvider.cs" />
     <Compile Include="PublishingSettings.cs" />

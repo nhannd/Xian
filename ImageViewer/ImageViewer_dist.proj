@@ -50,8 +50,8 @@
   <Choose>
     <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
-        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
         <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</OptionsFlags>-->
         <OptionsFlags>ExcludeStudyComposer</OptionsFlags>
       </PropertyGroup>
@@ -159,11 +159,6 @@
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ServiceToolsFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />
-    <ServiceToolsFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -352,10 +347,6 @@
     <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.DicomExplorer_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
   </Target>
 
-  <Target Name="Copy Service Tools">
-    <Copy SourceFiles="@(ServiceToolsFiles)" DestinationFolder="$(PluginsDirectory)" />
-  </Target>
-  
   <Target Name="Copy Desktop Services">
     <Copy SourceFiles="@(DesktopServiceFiles)" DestinationFolder="$(PluginsDirectory)" />
     <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.DesktopServices_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
@@ -411,9 +402,6 @@
     <RegexIsMatch Pattern="ExcludeStudyBrowser" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyBrowser" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="ExcludeServiceTools" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeServiceTools" />
-    </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeDesktopServices" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDesktopServices" />
     </RegexIsMatch>
@@ -459,7 +447,6 @@
 
     <CallTarget Condition="!$(ExcludeHelpFiles)" Targets="Copy Help Files" />
     <CallTarget Condition="!$(ExcludeStudyBrowser)" Targets="Copy Study Browser" />
-    <CallTarget Condition="!$(ExcludeServiceTools)" Targets="Copy Service Tools" />
     <CallTarget Condition="!$(ExcludeDesktopServices)" Targets="Copy Desktop Services" />
     <CallTarget Condition="!$(ExcludeStudyComposer)" Targets="Copy Study Composer" />
     <CallTarget Condition="!$(ExcludeDicomEditor)" Targets="Copy Dicom Editor" />

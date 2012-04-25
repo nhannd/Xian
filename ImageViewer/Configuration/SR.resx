@@ -169,11 +169,26 @@ Please choose another Server Group Name.</value>
     <value>Streaming Header Port: {0}
 Streaming Image Port: {1}</value>
   </data>
+  <data name="LabelBytes" xml:space="preserve">
+    <value>bytes</value>
+  </data>
   <data name="LabelContextMenu" xml:space="preserve">
     <value>Context Menu</value>
   </data>
+  <data name="LabelGigabytes" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="LabelKilobytes" xml:space="preserve">
+    <value>KB</value>
+  </data>
   <data name="LabelMainMenu" xml:space="preserve">
     <value>Main Menu</value>
+  </data>
+  <data name="LabelMegabytes" xml:space="preserve">
+    <value>MB</value>
+  </data>
+  <data name="LabelTerabytes" xml:space="preserve">
+    <value>TB</value>
   </data>
   <data name="LabelToolbar" xml:space="preserve">
     <value>Toolbar</value>

@@ -13,19 +13,19 @@ using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="DiskspaceManagerConfigurationComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="StorageConfigurationComponent"/>
     /// </summary>
-    public partial class DiskspaceManagerConfigurationComponentControl : ApplicationComponentUserControl
+    public partial class StorageConfigurationComponentControl : ApplicationComponentUserControl
     {
-        private DiskspaceManagerConfigurationComponent _component;
+        private StorageConfigurationComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public DiskspaceManagerConfigurationComponentControl(DiskspaceManagerConfigurationComponent component)
+        public StorageConfigurationComponentControl(StorageConfigurationComponent component)
             : base(component)
         {
             InitializeComponent();
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
         private void OnRefreshClick(object sender, EventArgs e)
         {
-            _component.Refresh();
+            //_component.Refresh();
         }
     }
 }

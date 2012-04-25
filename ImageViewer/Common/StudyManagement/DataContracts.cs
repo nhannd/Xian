@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -197,6 +200,67 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         [DataMember(IsRequired = false)]
         public long? MinimumFreeSpaceBytes { get; set; }
+
+        public float? MinimumFreeSpacePercent
+        {
+            get
+            {
+                var minimumFreeSpaceBytes = MinimumFreeSpaceBytes;
+                if (!minimumFreeSpaceBytes.HasValue)
+                    return null;
+
+                double ratio = (double)minimumFreeSpaceBytes.Value / FileStoreDrive.TotalSize;
+                return (float) ratio*100;
+            }
+        }
+
+        public float? MaximumUsedSpacePercent
+        {
+            get 
+            { 
+                var maximumUsedSpaceBytes = MaximumUsedSpaceBytes;
+                if (!maximumUsedSpaceBytes.HasValue)
+                    return null;
+
+                double ratio = (double)maximumUsedSpaceBytes.Value / FileStoreDrive.TotalSize;
+                return (float)ratio * 100;
+            }
+        }
+
+        public long? MaximumUsedSpaceBytes
+        {
+            get 
+            {
+                if (!MinimumFreeSpaceBytes.HasValue)
+                    return null;
+
+                var drive = FileStoreDrive;
+                if (drive == null)
+                    return null;
+
+                return drive.TotalSize - MinimumFreeSpaceBytes.Value;
+            }
+        }
+
+        public string FileStoreDriveName
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(FileStoreDirectory)
+                    ? Path.GetPathRoot(FileStoreDirectory)
+                    : null;
+            }
+        }
+
+        public DriveInfo FileStoreDrive
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(FileStoreDirectory) 
+                    ? new DriveInfo(FileStoreDriveName)
+                    : null;
+            }
+        }
 
         public override int GetHashCode()
         {
