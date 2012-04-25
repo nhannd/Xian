@@ -1,6 +1,7 @@
 #if UNIT_TESTS
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
@@ -29,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         public WorkItemTypeEnum[] WorkItemTypeFilters { get; set; }
         public long[] WorkItemIdFilters { get; set; }
 
-        public event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
+        public event EventHandler<WorkItemsChangedEventArgs> WorkItemsChanged;
         public event EventHandler StudiesCleared;
         
         public void Refresh()
@@ -39,10 +40,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
     	#endregion
 
-        void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
+        void IWorkItemActivityCallback.WorkItemsChanged(List<WorkItemData> workItems)
         {
-            if (this.WorkItemMatchesFilters(workItemData))
-                EventsHelper.Fire(WorkItemChanged, this, new WorkItemChangedEventArgs(workItemData));
+            EventsHelper.Fire(WorkItemsChanged, this, new WorkItemsChangedEventArgs(workItems));
         }
 
         void IWorkItemActivityCallback.StudiesCleared()

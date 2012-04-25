@@ -36,8 +36,7 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 
 		protected override IList<QueueProcessor> GetProcessors()
 		{
-			// todo externalize these constants?
-			return new QueueProcessor[] {new FilestoreManagementProcessor(100, TimeSpan.FromSeconds(10))};
+			return new QueueProcessor[] {new FilestoreManagementProcessor(10, TimeSpan.FromMinutes(10))};
 		}
 	}
 }

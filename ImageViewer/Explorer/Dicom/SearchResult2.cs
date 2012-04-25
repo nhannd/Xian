@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             _activityMonitor = WorkItemActivityMonitor.Create();
             _activityMonitor.IsConnectedChanged += OnIsConnectedChanged;
-            _activityMonitor.WorkItemChanged += OnWorkItemChanged;
+            _activityMonitor.WorkItemsChanged += OnWorkItemsChanged;
             _activityMonitor.StudiesCleared += OnStudiesCleared;
 
             UpdateReindexing();
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (_activityMonitor != null)
             {
                 _activityMonitor.IsConnectedChanged -= OnIsConnectedChanged;
-                _activityMonitor.WorkItemChanged -= OnWorkItemChanged;
+                _activityMonitor.WorkItemsChanged -= OnWorkItemsChanged;
                 _activityMonitor.StudiesCleared -= OnStudiesCleared;
                 _activityMonitor.Dispose();
                 _activityMonitor = null;
@@ -94,25 +94,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             UpdateReindexing();
         }
 
-        private void OnWorkItemChanged(object sender, WorkItemChangedEventArgs args)
+        private void OnWorkItemsChanged(object sender, WorkItemsChangedEventArgs args)
         {
-            if (args.ItemData == null)
+            if (args.ChangedItems == null)
                 return;
 
-            switch (args.ItemData.Type)
-            {
-                case WorkItemTypeEnum.DicomSend:
-                case WorkItemTypeEnum.ReapplyRules:
-                    return;
-                case WorkItemTypeEnum.ReIndex:
-                    Reindexing = args.ItemData.Status == WorkItemStatusEnum.InProgress;
-                    break;
-            }
+        	foreach (var item in args.ChangedItems)
+        	{
+				switch (item.Type)
+				{
+					case WorkItemTypeEnum.DicomSend:
+					case WorkItemTypeEnum.ReapplyRules:
+						return;
+					case WorkItemTypeEnum.ReIndex:
+						Reindexing = item.Status == WorkItemStatusEnum.InProgress;
+						break;
+				}
 
-            if (!String.IsNullOrEmpty(args.ItemData.StudyInstanceUid))
-                _setChangedStudies[args.ItemData.StudyInstanceUid] = args.ItemData.StudyInstanceUid;
+				if (!String.IsNullOrEmpty(item.StudyInstanceUid))
+					_setChangedStudies[item.StudyInstanceUid] = item.StudyInstanceUid;
 
-            _processStudiesEventPublisher.Publish(this, EventArgs.Empty);
+				_processStudiesEventPublisher.Publish(this, EventArgs.Empty);
+			}
+
         }
 
         private void OnStudiesCleared(object sender, EventArgs e)

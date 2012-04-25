@@ -49,7 +49,6 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 {
                     // This is a bit of a hack to handle batch processing of studies
                     Context.ContextStudy = _location.Study;
-                    Context.ContextStudy.DeleteTime = DateTime.Now.AddDays(1);
                     Context.ContextStudy.StoreTime = Platform.Time;
                     broker.AddStudy(Context.ContextStudy);
                 }

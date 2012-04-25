@@ -1,6 +1,7 @@
 ﻿#if UNIT_TESTS
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -105,17 +106,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             var callback = (IWorkItemActivityCallback) service;
 
             var item = new WorkItemData { Type = WorkItemTypeEnum.DicomRetrieve };
-            
-            callback.WorkItemChanged(item);
+        	var items = new List<WorkItemData> {item};
+
+			callback.WorkItemsChanged(items);
             Assert.AreEqual(0, WorkItemChangedCallbackCount);
 
             service.Subscribe(new WorkItemSubscribeRequest());
 
-            callback.WorkItemChanged(item);
+			callback.WorkItemsChanged(items);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
 
             service.Unsubscribe(new WorkItemUnsubscribeRequest {Type = null});
-            callback.WorkItemChanged(item);
+			callback.WorkItemsChanged(items);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
         }
 
@@ -212,56 +214,55 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             ResetCallbackFields();
 
             var item = new WorkItemData { Type = WorkItemTypeEnum.DicomRetrieve };
-            SubscribeAndPause(monitor, WorkItemChanged1);
+			var items = new List<WorkItemData> { item };
+			SubscribeAndPause(monitor, WorkItemChanged1);
 
-            WaitForEvents(() => callback.WorkItemChanged(item), 1);
+			WaitForEvents(() => callback.WorkItemsChanged(items), 1);
             Assert.AreEqual(1, WorkItemChanged1Count);
             Assert.AreEqual(0, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
-            monitor.WorkItemTypeFilters = new[] {WorkItemTypeEnum.DicomRetrieve};
             SubscribeAndPause(monitor, WorkItemChanged2);
-            WaitForEvents(() => callback.WorkItemChanged(item), 2);
+			WaitForEvents(() => callback.WorkItemsChanged(items), 2);
             Assert.AreEqual(2, WorkItemChanged1Count);
             Assert.AreEqual(1, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
             item.Type = WorkItemTypeEnum.DicomSend;
-            callback.WorkItemChanged(item);
+			callback.WorkItemsChanged(items);
             Thread.Sleep(100);
-            Assert.AreEqual(2, WorkItemChanged1Count);
-            Assert.AreEqual(1, WorkItemChanged2Count);
+            Assert.AreEqual(3, WorkItemChanged1Count);
+            Assert.AreEqual(2, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
             UnsubscribeAndPause(monitor, WorkItemChanged1);
-            callback.WorkItemChanged(item);
+			callback.WorkItemsChanged(items);
             Thread.Sleep(100);
-            Assert.AreEqual(2, WorkItemChanged1Count);
-            Assert.AreEqual(1, WorkItemChanged2Count);
+            Assert.AreEqual(3, WorkItemChanged1Count);
+            Assert.AreEqual(3, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
-            monitor.WorkItemTypeFilters = new[] { WorkItemTypeEnum.DicomSend};
             SubscribeAndPause(monitor, WorkItemChanged1);
             UnsubscribeAndPause(monitor, WorkItemChanged2);
             SubscribeAndPause(monitor, WorkItemChanged3);
-            WaitForEvents(() => callback.WorkItemChanged(item), 2);
-            Assert.AreEqual(3, WorkItemChanged1Count);
-            Assert.AreEqual(1, WorkItemChanged2Count);
+			WaitForEvents(() => callback.WorkItemsChanged(items), 2);
+            Assert.AreEqual(4, WorkItemChanged1Count);
+            Assert.AreEqual(3, WorkItemChanged2Count);
             Assert.AreEqual(1, WorkItemChanged3Count);
 
             //TODO (Marmot): Expand to include multiple filters, etc.
         }
 
-        private void SubscribeAndPause(IWorkItemActivityMonitor monitor, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        private void SubscribeAndPause(IWorkItemActivityMonitor monitor, EventHandler<WorkItemsChangedEventArgs> eventHandler)
         {
-            monitor.WorkItemChanged += eventHandler;
+            monitor.WorkItemsChanged += eventHandler;
             //It may take a sec for the monitor to subscribe via the actual service.
             Thread.Sleep(100);
         }
 
-        private void UnsubscribeAndPause(IWorkItemActivityMonitor monitor, EventHandler<WorkItemChangedEventArgs> eventHandler)
+        private void UnsubscribeAndPause(IWorkItemActivityMonitor monitor, EventHandler<WorkItemsChangedEventArgs> eventHandler)
         {
-            monitor.WorkItemChanged -= eventHandler;
+            monitor.WorkItemsChanged -= eventHandler;
             //It may take a sec for the monitor to unsubscribe via the actual service.
             Thread.Sleep(100);
         }
@@ -304,7 +305,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         #region IWorkItemActivityCallback Members
 
-        void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
+        void IWorkItemActivityCallback.WorkItemsChanged(List<WorkItemData> workItems)
         {
             lock (_syncLock)
             {
@@ -336,7 +337,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             }
         }
 
-        private void WorkItemChanged1(object sender, WorkItemChangedEventArgs e)
+        private void WorkItemChanged1(object sender, WorkItemsChangedEventArgs e)
         {
             lock (_syncLock)
             {
@@ -346,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             }
         }
 
-        private void WorkItemChanged2(object sender, WorkItemChangedEventArgs e)
+        private void WorkItemChanged2(object sender, WorkItemsChangedEventArgs e)
         {
             lock (_syncLock)
             {
@@ -356,7 +357,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             }
         }
 
-        private void WorkItemChanged3(object sender, WorkItemChangedEventArgs e)
+        private void WorkItemChanged3(object sender, WorkItemsChangedEventArgs e)
         {
             lock (_syncLock)
             {

@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             try
             {
                 Item.Progress = Progress;
-                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", WorkItemHelper.FromWorkItem(Item));
+				WorkItemActivityPublisher.WorkItemsChanged(WorkItemHelper.FromWorkItem(Item));
             }
             catch (Exception e)
             {

@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
             try
             {
-                PublishManager<IWorkItemActivityCallback>.Publish("StudiesCleared", WorkItemHelper.FromWorkItem(Proxy.Item));
+                WorkItemActivityPublisher.StudiesCleared();
             }
             catch (Exception e)
             {

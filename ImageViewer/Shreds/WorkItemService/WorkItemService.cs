@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             try
             {
-                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", response.Item);
+				WorkItemActivityPublisher.WorkItemsChanged(response.Item);
                 if (WorkItemProcessor.Instance != null)
                     WorkItemProcessor.Instance.SignalThread();
             }
@@ -188,8 +188,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             try
             {
-                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", response.Item);
-            }
+				WorkItemActivityPublisher.WorkItemsChanged(response.Item);
+			}
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
@@ -224,8 +224,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", request.Item);
-                return new WorkItemPublishResponse();
+				WorkItemActivityPublisher.WorkItemsChanged(request.Item);
+				return new WorkItemPublishResponse();
             }
             catch (Exception e)
             {

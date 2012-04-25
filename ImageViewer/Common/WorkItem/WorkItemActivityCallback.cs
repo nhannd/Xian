@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
@@ -20,14 +21,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         void StudiesCleared();
 
         [OperationContract(IsOneWay = true)]
-        void WorkItemChanged(WorkItemData workItemData);
+        void WorkItemsChanged(List<WorkItemData> workItems);
     }
 
     public abstract class WorkItemActivityCallback : IWorkItemActivityCallback
     {
         private class NilCallback : WorkItemActivityCallback
         {
-            public override void WorkItemChanged(WorkItemData workItemData)
+            public override void WorkItemsChanged(List<WorkItemData> workItems)
             {
             }
 
@@ -40,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         #region IWorkItemActivityCallback Members
 
-        public abstract void WorkItemChanged(WorkItemData workItemData);
+        public abstract void WorkItemsChanged(List<WorkItemData> workItems);
 
         public abstract void StudiesCleared();
 

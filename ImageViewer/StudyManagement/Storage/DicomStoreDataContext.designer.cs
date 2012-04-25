@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Version
 		{
 			get
@@ -367,7 +367,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private System.Nullable<System.DateTime> _StoreTime;
 		
-		private System.DateTime _DeleteTime;
+		private System.Nullable<System.DateTime> _DeleteTime;
 		
 		private bool _Deleted;
 		
@@ -455,7 +455,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnInstitutionNamesInStudyChanged();
     partial void OnStoreTimeChanging(System.Nullable<System.DateTime> value);
     partial void OnStoreTimeChanged();
-    partial void OnDeleteTimeChanging(System.DateTime value);
+    partial void OnDeleteTimeChanging(System.Nullable<System.DateTime> value);
     partial void OnDeleteTimeChanged();
     partial void OnDeletedChanging(bool value);
     partial void OnDeletedChanged();
@@ -486,7 +486,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Version
 		{
 			get
@@ -1266,8 +1266,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
-		public System.DateTime DeleteTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteTime", DbType="DateTime", UpdateCheck=UpdateCheck.Never)]
+		public System.Nullable<System.DateTime> DeleteTime
 		{
 			get
 			{
@@ -1419,7 +1419,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Version
 		{
 			get
@@ -1781,7 +1781,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Version
 		{
 			get
@@ -2077,7 +2077,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Version
 		{
 			get
@@ -2331,7 +2331,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Version", AutoSync=AutoSync.Always, DbType="rowversion", CanBeNull=true, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Version
 		{
 			get

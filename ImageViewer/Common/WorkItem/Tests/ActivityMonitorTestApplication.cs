@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
             _workItemActivityMonitor = WorkItemActivityMonitor.Create(false);
             _workItemActivityMonitor.IsConnectedChanged += OnIsConnectedChanged;
-            _workItemActivityMonitor.WorkItemChanged += OnWorkItemChanged;
+            _workItemActivityMonitor.WorkItemsChanged += OnWorkItemsChanged;
             
             Console.WriteLine("Press <Enter> to terminate.");
             Console.WriteLine();
@@ -30,24 +30,28 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             Console.ReadLine();
 
             _workItemActivityMonitor.IsConnectedChanged -= OnIsConnectedChanged;
-            _workItemActivityMonitor.WorkItemChanged -= OnWorkItemChanged;
+            _workItemActivityMonitor.WorkItemsChanged -= OnWorkItemsChanged;
             _workItemActivityMonitor.Dispose();
         }
 
         #endregion
 
-        private void OnWorkItemChanged(object sender, WorkItemChangedEventArgs e)
+        private void OnWorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
         {
-            if (e.ItemData != null && e.ItemData.Request != null)
-            {
-                Console.WriteLine("Received WorkItemChanged event: {0}:{1}.", e.ItemData.Request.ActivityType,
-                                  e.ItemData.Request.ActivityDescription);
-                if (e.ItemData.Progress != null)
-                    Console.WriteLine("  Progress: {0}, Details: {1}.", e.ItemData.Progress.Status,
-                        e.ItemData.Progress.StatusDetails);
-            }
-            else
-                Console.WriteLine("Received WorkItemChanged event.");
+        	foreach (var workItem in e.ChangedItems)
+        	{
+				if (workItem.Request != null)
+				{
+					Console.WriteLine("Received WorkItemsChanged event: {0}:{1}.", workItem.Request.ActivityType,
+									  workItem.Request.ActivityDescription);
+					if (workItem.Progress != null)
+						Console.WriteLine("  Progress: {0}, Details: {1}.", workItem.Progress.Status,
+							workItem.Progress.StatusDetails);
+				}
+				else
+					Console.WriteLine("Received WorkItemsChanged event.");
+			}
+
         }
 
         private void OnIsConnectedChanged(object sender, EventArgs e)
