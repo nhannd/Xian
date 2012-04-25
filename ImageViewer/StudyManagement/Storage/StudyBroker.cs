@@ -67,10 +67,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                     select s).ToList();
         }
 
+		/// <summary>
+		/// Get studies that are eligible for deletion as of the specified time.
+		/// </summary>
+		/// <param name="now"></param>
+		/// <param name="batchSize"></param>
+		/// <returns></returns>
 		public List<Study> GetStudiesForDeletion(DateTime now, int batchSize)
 		{
 			return (from s in Context.Studies
-					where s.DeleteTime < now && !s.Deleted
+					where !s.Deleted && s.DeleteTime != null && s.DeleteTime < now
 					orderby s.DeleteTime ascending 
 					select s)
 					.Take(batchSize)
