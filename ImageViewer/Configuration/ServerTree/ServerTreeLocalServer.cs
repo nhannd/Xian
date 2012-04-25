@@ -12,6 +12,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -20,59 +21,34 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         private string _path;
         private string _parentPath;
 
-        private static readonly IDicomServerConfigurationProvider _dicomServerConfigurationProvider;
+        private DicomServerConfiguration _dicomServerConfiguration;
+        private StorageConfiguration _storageConfiguration;
 
-        static ServerTreeLocalServer()
+        private DicomServerConfiguration DicomServerConfiguration
         {
-            _dicomServerConfigurationProvider = DicomServerConfigurationHelper.GetConfigurationProvider();
+            get { return _dicomServerConfiguration ?? (_dicomServerConfiguration = DicomServer.GetConfiguration()); }
         }
 
-        internal IDicomServerConfigurationProvider DicomServerConfigurationProvider
+        private StorageConfiguration StorageConfiguration
         {
-            get { return _dicomServerConfigurationProvider; }
+            get { return _storageConfiguration ?? (_storageConfiguration = StudyStore.GetConfiguration()); }
         }
 
-        public string AETitle
+        #region IServerTreeLocalServer Members
+
+        public string AETitle { get { return DicomServerConfiguration.AETitle; } }
+        public string HostName { get { return DicomServerConfiguration.HostName; } }
+        public int? Port { get { return DicomServerConfiguration.Port; } }
+        
+        public string FileStoreLocation { get { return StorageConfiguration.FileStoreDirectory; } }
+        
+        public void Refresh()
         {
-            get
-            {
-                RefreshConfiguration();
-                return _dicomServerConfigurationProvider.ConfigurationExists ? _dicomServerConfigurationProvider.AETitle : null;
-            }
+            _dicomServerConfiguration = DicomServer.GetConfiguration();
+            _storageConfiguration = StudyStore.GetConfiguration();
         }
 
-        public string HostName
-        {
-            get
-            {
-                RefreshConfiguration();
-                return _dicomServerConfigurationProvider.ConfigurationExists ? _dicomServerConfigurationProvider.HostName : null;
-            }
-        }
-
-        public int? Port
-        {
-            get
-            {
-                RefreshConfiguration();
-                return _dicomServerConfigurationProvider.ConfigurationExists ? _dicomServerConfigurationProvider.Port : (int?)null;
-            }
-        }
-
-        public string FileStoreLocation
-        {
-            get
-            {
-                RefreshConfiguration();
-                return _dicomServerConfigurationProvider.ConfigurationExists ? _dicomServerConfigurationProvider.FileStoreDirectory : null;
-            }
-        }
-
-        public event EventHandler ConfigurationChanged
-        {
-            add { _dicomServerConfigurationProvider.Changed += value; }
-            remove { _dicomServerConfigurationProvider.Changed -= value; }
-        }
+        #endregion
 
         #region IServerTreeNode Members
 
@@ -129,21 +105,15 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         {
             try
             {
-                if (_dicomServerConfigurationProvider.NeedsRefresh)
-                    _dicomServerConfigurationProvider.RefreshAsync();
+                var formatString = DicomServer.IsListening
+                                        ? SR.FormatLocalServerDetails
+                                        : SR.FormatLocalServerOfflineDetails;
 
-                if (_dicomServerConfigurationProvider.ConfigurationExists)
-                {
-                    var formatString = DicomServer.IsListening
-                                           ? SR.FormatLocalServerDetails
-                                           : SR.FormatLocalServerOfflineDetails;
-
-                    return String.Format(formatString,
-                                         DisplayName,
-                                         _dicomServerConfigurationProvider.AETitle,
-                                         _dicomServerConfigurationProvider.HostName,
-                                         _dicomServerConfigurationProvider.Port);
-                }
+                return String.Format(formatString,
+                                        DisplayName,
+                                        DicomServerConfiguration.AETitle,
+                                        DicomServerConfiguration.HostName,
+                                        DicomServerConfiguration.Port);
             }
             catch (Exception e)
             {
@@ -153,19 +123,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             return String.Format(SR.FormatLocalServerConfigurationUnavailable, DisplayName);
         }
         
-        private static void RefreshConfiguration()
-        {
-            try
-            {
-                if (_dicomServerConfigurationProvider.NeedsRefresh)
-                    _dicomServerConfigurationProvider.RefreshAsync();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Warn, e, "Failed to retrieve the dicom server's ae title.");
-            }
-        }
-
         internal void ChangeParentPath(string parentPath)
         {
             _parentPath = parentPath ?? "";

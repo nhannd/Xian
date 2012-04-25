@@ -128,7 +128,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		internal IStudyRootStudyIdentifier GetStudyIdentifier()
 		{
-			return new StudyItem(this, this, DataSource.Server){InstanceAvailability = "ONLINE"};
+			return new StudyRootStudyIdentifier(this, this, null)
+			           {
+			               SpecificCharacterSet = DicomStringHelper.GetDicomStringArray(SpecificCharacterSet), 
+                           RetrieveAE = DataSource.Server, 
+                           InstanceAvailability = "ONLINE"
+			           };
 		}
 
 		internal ISeriesIdentifier GetSeriesIdentifier()

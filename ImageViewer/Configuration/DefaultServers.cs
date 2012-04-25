@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     yield return new StoreStudyRootQuery();
             }
 
-            string localAE = DicomServerConfigurationHelper.AETitle;
+            string localAE = DicomServer.AETitle;
 
             var defaultServers = SelectFrom(new ServerTree.ServerTree());
             var streamingServers = defaultServers.Where(s => s.StreamingParameters != null).ToList();

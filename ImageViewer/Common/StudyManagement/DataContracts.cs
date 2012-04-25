@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using System;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
@@ -160,6 +161,69 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         ImageIdentifier IStoreEntry<ImageIdentifier>.Identifier
         {
             get { return Image; }
+        }
+
+        #endregion
+    }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class GetStorageConfigurationResult
+    {
+        [DataMember(IsRequired = true)]
+        public StorageConfiguration Configuration { get; set; }
+    }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class GetStorageConfigurationRequest
+    { }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class UpdateStorageConfigurationResult
+    {
+    }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class UpdateStorageConfigurationRequest
+    {
+        [DataMember(IsRequired = true)]
+        public StorageConfiguration Configuration { get; set; }
+    }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class StorageConfiguration : IEquatable<StorageConfiguration>
+    {
+        [DataMember(IsRequired = false)]
+        public string FileStoreDirectory { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public long? MinimumFreeSpaceBytes { get; set; }
+
+        public override int GetHashCode()
+        {
+            int hash = 0x2453671;
+
+            if (FileStoreDirectory != null)
+                hash ^= FileStoreDirectory.GetHashCode();
+            if (MinimumFreeSpaceBytes != null)
+                hash ^= MinimumFreeSpaceBytes.GetHashCode();
+
+            return hash;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is StorageConfiguration)
+                return Equals((StorageConfiguration)obj);
+
+            return false;
+        }
+
+        #region IEquatable<StorageConfiguration> Members
+
+        public bool Equals(StorageConfiguration other)
+        {
+            return FileStoreDirectory == other.FileStoreDirectory &&
+                   MinimumFreeSpaceBytes == other.MinimumFreeSpaceBytes;
         }
 
         #endregion

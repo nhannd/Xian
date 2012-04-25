@@ -163,8 +163,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return Identifier.PatientsBirthDate; }
         }
 
-        //TODO (Marmot): Make it a PersonName. Too much of a pain to keep doing new PersonName(...).
-        public string PatientsName
+        public PersonName PatientsName { get { return new PersonName(Identifier.PatientsName ?? ""); } }
+
+        string IPatientData.PatientsName
         {
             get { return Identifier.PatientsName; }
         }
@@ -184,7 +185,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             get { return Identifier.NumberOfStudyRelatedSeries; }
         }
 
-        public string ReferringPhysiciansName
+        public PersonName ReferringPhysiciansName { get { return new PersonName(Identifier.ReferringPhysiciansName ?? ""); }}
+        
+        string IStudyData.ReferringPhysiciansName
         {
             get { return Identifier.ReferringPhysiciansName; }
         }

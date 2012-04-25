@@ -64,6 +64,41 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
             }
         }
 
+        public static string AETitle
+        {
+            get { return GetConfiguration().AETitle; }
+        }
+
+        public static string HostName
+        {
+            get { return GetConfiguration().HostName; }
+        }
+
+        public static int Port
+        {
+            get { return GetConfiguration().Port; }
+        }
+
+        public static DicomServerConfiguration GetConfiguration()
+        {
+            DicomServerConfiguration configuration = null;
+            Platform.GetService<IDicomServerConfiguration>(
+                s => configuration = s.GetConfiguration(new GetDicomServerConfigurationRequest()).Configuration);
+            return configuration;
+        }
+
+        public static void UpdateConfiguration(string hostName, string aeTitle, int port)
+        {
+            Platform.GetService<IDicomServerConfiguration>(
+                s => s.UpdateConfiguration(new UpdateDicomServerConfigurationRequest
+                                               {
+                                                    Configuration = new DicomServerConfiguration
+                                                                     {
+                                                                         AETitle = aeTitle, HostName = hostName, Port = port
+                                                                     }  
+                                               }));
+        }
+
         public static void RestartListener()
         {
             Platform.GetService<IDicomServer>(s => s.RestartListener(new RestartListenerRequest()));

@@ -383,21 +383,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region DiskspaceWatcher class
 
-		class DiskspaceWatcher : IDisposable
+		class LocalServerWatcher : IDisposable
 		{
 			private Diskspace _diskspace;
 			private readonly Timer _refreshTimer;
-			private readonly System.Action _onChanged;
-			private readonly Func<string> _fileStorePathProvider;
 
-			public DiskspaceWatcher(Func<string> fileStorePathProvider, System.Action onChanged)
+		    private DicomServerConfiguration _dicomServerConfiguration;
+		    private StorageConfiguration _storageConfiguration;
+
+            private readonly System.Action _dicomServerConfigurationChanged;
+		    private readonly System.Action _studyStorageConfigurationChanged;
+            private readonly System.Action _diskSpaceUsageChanged;
+
+            public LocalServerWatcher(System.Action dicomServerConfigurationChanged, System.Action studyStorageConfigurationChanged, System.Action diskSpaceUsageChanged)
 			{
-				_fileStorePathProvider = fileStorePathProvider;
 				_refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
-				_onChanged = onChanged;
+
+                _dicomServerConfigurationChanged = dicomServerConfigurationChanged;
+                _studyStorageConfigurationChanged = studyStorageConfigurationChanged;
+                _diskSpaceUsageChanged = diskSpaceUsageChanged;
 			}
 
-			public void Start()
+		    public void Start()
 			{
 				_refreshTimer.Start();
 			}
@@ -407,13 +414,58 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_refreshTimer.Dispose();
 			}
 
-			public Diskspace Diskspace
+            private DicomServerConfiguration DicomServerConfiguration
+            {
+                get { return _dicomServerConfiguration ?? (_dicomServerConfiguration = DicomServer.GetConfiguration()); }
+                set
+                {
+                    if (Equals(value, _dicomServerConfiguration))
+                        return;
+
+                    _dicomServerConfiguration = value;
+                    _dicomServerConfigurationChanged();
+                }
+            }
+
+            private StorageConfiguration StorageConfiguration
+            {
+                get { return _storageConfiguration ?? (_storageConfiguration = StudyStore.GetConfiguration()); }
+                set
+                {
+                    if (Equals(value, _storageConfiguration))
+                        return;
+
+                    _storageConfiguration = value;
+                    _studyStorageConfigurationChanged();
+                }
+            }
+            
+		    public string AETitle
+		    {
+                get { return DicomServerConfiguration.AETitle; }
+		    }
+
+            public string HostName
+            {
+                get { return DicomServerConfiguration.HostName; }
+            }
+
+            public int Port
+            {
+                get { return DicomServerConfiguration.Port; }
+            }
+
+            public string FileStoreDirectory
+            {
+                get { return StorageConfiguration.FileStoreDirectory; }
+            }
+            public Diskspace Diskspace
 			{
 				get
 				{
 					if (_diskspace == null)
 					{
-						_diskspace = new Diskspace(_fileStorePathProvider().Substring(0, 1));
+						_diskspace = new Diskspace(StorageConfiguration.FileStoreDirectory.Substring(0, 1));
 					}
 					return _diskspace;
 				}
@@ -421,8 +473,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			private void OnTimerElapsed(object state)
 			{
-				_diskspace = null;	// invalidate
-				_onChanged();
+			    StorageConfiguration = StudyStore.GetConfiguration();
+                DicomServerConfiguration = DicomServer.GetConfiguration();
+				
+                _diskspace = null;	// invalidate disk usage
+			    _diskSpaceUsageChanged();
 			}
 		}
 
@@ -551,7 +606,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly Table<WorkItem> _workItems = new Table<WorkItem>();
 		private readonly WorkItemUpdateManager _workItemManager;
 
-		private IDicomServerConfigurationProvider _dicomConfigProvider;
 		private ConnectionState _connectionState;
 		private WorkItemStatusEnum? _statusFilter;
         private ActivityTypeEnum? _activityFilter;
@@ -559,14 +613,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private string _textFilter;
 		private readonly Timer _textFilterTimer;
 
-		private readonly DiskspaceWatcher _diskspaceWatcher;
+		private readonly LocalServerWatcher _localServerWatcher;
 		private readonly StudyCountWatcher _studyCountWatcher;
 
 	    public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
-			_diskspaceWatcher = new DiskspaceWatcher(() => this.FileStore, OnDiskspaceChanged);
+			_localServerWatcher = new LocalServerWatcher(OnDicomServerConfigurationChanged, OnStorageConfigurationChanged, OnDiskspaceChanged);
 			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
 			_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
             _workItemActionModel = new WorkItemActionModel(_workItems.Items);
@@ -575,9 +629,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public override void Start()
 		{
 			base.Start();
-
-			_dicomConfigProvider = DicomServerConfigurationHelper.GetConfigurationProvider();
-			_dicomConfigProvider.Changed += DicomServerConfigurationChanged;
 
             _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStudy, w => w.StudyInfo));
@@ -593,7 +644,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			this.ActivityMonitor.IsConnectedChanged += ActivityMonitorIsConnectedChanged;
 
-			_diskspaceWatcher.Start();
+			_localServerWatcher.Start();
 		}
 
 	    public override void Stop()
@@ -603,11 +654,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			ActivityMonitor.Dispose();
 			ActivityMonitor = null;
 
-			_dicomConfigProvider.Changed -= DicomServerConfigurationChanged;
-			_dicomConfigProvider = null;
-
 			_textFilterTimer.Dispose();
-			_diskspaceWatcher.Dispose();
+			_localServerWatcher.Dispose();
 			_studyCountWatcher.Dispose();
 
 			base.Stop();
@@ -622,34 +670,34 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public string AeTitle
 		{
-			get { return _dicomConfigProvider.AETitle; }
+			get { return _localServerWatcher.AETitle; }
 		}
 
 		public string HostName
 		{
-			get { return _dicomConfigProvider.HostName; }
+            get { return _localServerWatcher.HostName; }
 		}
 
 		public int Port
 		{
-			get { return _dicomConfigProvider.Port; }
+            get { return _localServerWatcher.Port; }
 		}
 
 		public string FileStore
 		{
-			get { return _dicomConfigProvider.FileStoreDirectory; }
+            get { return _localServerWatcher.FileStoreDirectory; }
 		}
 
 		public int DiskspaceUsedPercent
 		{
-			get { return _diskspaceWatcher.Diskspace.UsedSpacePercent; }
+			get { return _localServerWatcher.Diskspace.UsedSpacePercent; }
 		}
 
 		public string DiskspaceUsed
 		{
 			get
 			{
-				var ds = _diskspaceWatcher.Diskspace;
+				var ds = _localServerWatcher.Diskspace;
 				return string.Format(SR.DiskspaceTemplate,
 					Diskspace.FormatBytes(ds.UsedSpace),
 					Diskspace.FormatBytes(ds.TotalSpace),
@@ -797,18 +845,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			throw new NotImplementedException();
 		}
 
-		private void DicomServerConfigurationChanged(object sender, EventArgs e)
-		{
-			NotifyPropertyChanged("AeTitle");
-			NotifyPropertyChanged("HostName");
-			NotifyPropertyChanged("Port");
-			NotifyPropertyChanged("FileStore");
-
-			// if FileStore path changed, diskspace may have changed too
-			NotifyPropertyChanged("DiskspaceUsedPercent");
-			NotifyPropertyChanged("DiskspaceUsed");
-		}
-
 		private void ActivityMonitorIsConnectedChanged(object sender, EventArgs e)
 		{
 			_connectionState = _connectionState.Update();
@@ -870,6 +906,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			NotifyPropertyChanged("TotalStudies");
 		}
+
+        private void OnDicomServerConfigurationChanged()
+        {
+            NotifyPropertyChanged("AeTitle");
+            NotifyPropertyChanged("HostName");
+            NotifyPropertyChanged("Port");
+        }
+
+        private void OnStorageConfigurationChanged()
+        {
+            NotifyPropertyChanged("FileStore");
+
+            // if FileStore path changed, diskspace may have changed too
+            NotifyPropertyChanged("DiskspaceUsedPercent");
+            NotifyPropertyChanged("DiskspaceUsed");
+        }
 
 		private void OnDiskspaceChanged()
 		{

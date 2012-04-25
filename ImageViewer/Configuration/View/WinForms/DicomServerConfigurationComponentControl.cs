@@ -30,9 +30,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             InitializeComponent();
             _component = component;
 
-			_aeTitle.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_port.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			
 			_aeTitle.DataBindings.Add("Value", _component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
 			Binding portBinding = new Binding("Value", _component, "Port", true, DataSourceUpdateMode.OnPropertyChanged);
 			portBinding.Format += new ConvertEventHandler(OnPortBindingFormat);

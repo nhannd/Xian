@@ -113,7 +113,9 @@
     <Compile Include="DicomQuery\Tests\MiscellaneousTests.cs" />
     <Compile Include="DicomQuery\Tests\PropertyFilterTests.cs" />
     <Compile Include="DicomQuery\Tests\StudyRootQueryTests.cs" />
+    <Compile Include="ServiceProviders\Cache.cs" />
     <Compile Include="ServiceProviders\ServiceProxyHelper.cs" />
+    <Compile Include="ServiceProviders\StorageConfiguration.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="ISeries.cs" />
     <Compile Include="ISopInstance.cs" />

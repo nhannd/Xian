@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                     client.MoveSeries(destination.ToDataContract(), Context.Study, seriesUids.ToArray(), WorkItemPriorityEnum.Normal);
                     Context.DesktopWindow.ShowAlert(AlertLevel.Info,
                                                     string.Format(SR.MessageFormatSendSeriesScheduled, seriesUids.Count,
-                                                                  destination.Name, new PersonName(Context.Study.PatientsName).FormattedName),
+                                                                  destination.Name, Context.Study.PatientsName.FormattedName),
                                                     SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                 }
                 catch (EndpointNotFoundException)

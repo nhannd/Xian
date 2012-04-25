@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 							        		ps.PresentationSeriesNumber = seriesInfo.PresentationSeriesNumber;
 							        		ps.PresentationSeriesDateTime = seriesInfo.PresentationSeriesDateTime;
 							        		ps.PresentationInstanceNumber = seriesInfo.GetNextPresentationInstanceNumber();
-							        	    ps.SourceAETitle = DicomServerConfigurationHelper.AETitle;
+							        	    ps.SourceAETitle = DicomServer.AETitle;
 							        	});
 
 						_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			serializer.Description = _sourceInformation.Description;
 			serializer.DocumentTitle = _sourceInformation.DocumentTitle;
 			serializer.SeriesDescription = _sourceInformation.SeriesDescription;
-		    serializer.SourceAETitle = DicomServerConfigurationHelper.AETitle;
+		    serializer.SourceAETitle = DicomServer.AETitle;
 
 			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> presentationFrame in SourceFrames)
 				serializer.AddImage(presentationFrame.Key, presentationFrame.Value);

@@ -20,38 +20,6 @@ using ClearCanvas.ImageViewer.Common.DicomServer;
 namespace ClearCanvas.ImageViewer.Configuration
 {
 	/// <summary>
-	/// Exception handling policy for <see cref="DicomServerConfigurationHelper.UpdateException"/>s and <see cref="DicomServerConfigurationHelper.RefreshException"/>s.
-	/// </summary>
-	[ExceptionPolicyFor(typeof(DicomServerConfigurationHelper.UpdateException))]
-	[ExceptionPolicyFor(typeof(DicomServerConfigurationHelper.RefreshException))]
-
-	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
-	public sealed class DicomServerConfigurationHelperExceptionPolicy : IExceptionPolicy
-	{
-		#region IExceptionPolicy Members
-
-		///<summary>
-		/// Handles the specified exception.
-		///</summary>
-		public void Handle(Exception e, IExceptionHandlingContext exceptionHandlingContext)
-		{
-			if (!(e.InnerException is EndpointNotFoundException))
-				exceptionHandlingContext.Log(LogLevel.Error, e);
-
-			if (e is DicomServerConfigurationHelper.RefreshException)
-			{
-				exceptionHandlingContext.ShowMessageBox(SR.MessageFailedToRetrieveDicomServerConfiguration);
-			}
-			else if (e is DicomServerConfigurationHelper.UpdateException)
-			{
-				exceptionHandlingContext.ShowMessageBox(SR.MessageFailedToUpdateDicomServerConfiguration);
-			}
-		}
-
-		#endregion
-	}
-	
-	/// <summary>
     /// Extension point for views onto <see cref="DicomServerConfigurationComponent"/>
     /// </summary>
     [ExtensionPoint]
@@ -61,9 +29,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 
     //TODO (Marmot):Move to ImageViewer?
 
-	//NOTE: this may not be the best place for this, but it doesn't make sense to have any of these tools without
-	// the configuration components (or vice versa) anyway.
-
     /// <summary>
     /// DicomServerConfigurationComponent class
     /// </summary>
@@ -72,47 +37,20 @@ namespace ClearCanvas.ImageViewer.Configuration
     {
         private string _aeTitle;
         private int _port;
-        private string _storageDirectory;
-		private bool _enabled;
-
-    	private void Refresh()
-    	{
-    		try
-    		{
-				DicomServerConfigurationHelper.Refresh(true);
-
-    			_aeTitle = DicomServerConfigurationHelper.AETitle;
-    			_port = DicomServerConfigurationHelper.Port;
-
-    			Enabled = true;
-    		}
-    		catch(Exception e)
-    		{
-    			Enabled = false;
-				
-				_aeTitle = "";
-    			_port	= 0;
-				_storageDirectory = "";
-
-    			ExceptionHandler.Report(e, this.Host.DesktopWindow);
-    		}
-
-			NotifyPropertyChanged("AETitle");
-			NotifyPropertyChanged("Port");
-			NotifyPropertyChanged("StorageDirectory");
-    	}
 
     	public override void Start()
         {
 			base.Start();
-			Refresh();
+
+            _aeTitle = DicomServer.AETitle;
+            _port = DicomServer.Port;
 		}
 
     	public override void Save()
     	{
     		try
     		{
-    			DicomServerConfigurationHelper.Update("localhost", _aeTitle, _port, _storageDirectory);
+                DicomServer.UpdateConfiguration("localhost", _aeTitle, _port);
     		}
     		catch (Exception e)
     		{
@@ -125,8 +63,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			get
 			{
 				AETitle = AETitle.Trim();
-
-				return Enabled && base.HasValidationErrors;
+				return base.HasValidationErrors;
 			}
 		}
 
@@ -164,19 +101,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 			}
         }
 		
-		public bool Enabled
-        {
-			get { return _enabled; }
-			private set
-			{
-				if (_enabled == value)
-					return;
-
-				_enabled = value;
-				NotifyPropertyChanged("Enabled");
-			}
-        }
-
 		#endregion
     }
 }
