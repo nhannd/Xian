@@ -10,11 +10,18 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
@@ -25,6 +32,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
     /// </summary>
     internal class ImageViewerStorageScu : StorageScu
     {
+        #region Private Members
+
+        private DicomSendRequest _sendRequest;
+
+        #endregion
+
         #region Public Members
 
         /// <summary>
@@ -48,6 +61,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             : base(localAETitle, request.AeTitle, request.Host, request.Port)
         {
         }
+
+        
 
         #endregion
 
@@ -119,9 +134,219 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 AuditSendOperation(false);
             }
         }
+
+        /// <summary>
+        /// Load a list of preferred SOP Classes and Transfer Syntaxes for a Device.
+        /// </summary>
+        /// <param name="request">A read context to read from the database.</param>
+        public void LoadPreferredSyntaxes(DicomSendRequest request)
+        {
+            _sendRequest = request;
+
+            // Add a delegate to do the actual selection of the contexts;
+            PresentationContextSelectionDelegate = SelectPresentationContext;
+
+            var dic = new Dictionary<SopClass, SupportedSop>();
+     
+            foreach (var storageInstance in StorageInstanceList)
+            {
+                // skip if failed in LoadStorageInstanceInfo, ie file not found
+                if (storageInstance.SendStatus == DicomStatuses.ProcessingFailure)
+                    continue;
+
+                SupportedSop sop;
+                if (!dic.TryGetValue(storageInstance.SopClass,out sop))
+                {
+                    sop = new SupportedSop
+                              {
+                                  SopClass = storageInstance.SopClass
+                              };
+
+                    if (request.CompressionType == CompressionType.JpegLossless)
+                        sop.AddSyntax(TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
+                    else if (request.CompressionType == CompressionType.Rle)
+                        sop.AddSyntax(TransferSyntax.RleLossless);
+                    else if (request.CompressionType == CompressionType.J2KLossy)
+                        sop.AddSyntax(TransferSyntax.Jpeg2000ImageCompression);
+                    else if (request.CompressionType == CompressionType.J2KLossless)
+                        sop.AddSyntax(TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
+                    else if (request.CompressionType == CompressionType.JpegLossy)
+                    {
+                        sop.AddSyntax(TransferSyntax.JpegBaselineProcess1);
+                        sop.AddSyntax(TransferSyntax.JpegExtendedProcess24);
+                    }
+                    dic.Add(storageInstance.SopClass, sop);
+                }
+            }
+
+            SetPreferredSyntaxList(dic.Values);
+        }
         #endregion
 
         #region Private Methods
+
+        private byte SelectPresentationContext(ClientAssociationParameters association, DicomFile file, out DicomMessage message)
+        {
+            byte pcid = 0;
+
+            message = new DicomMessage(file);
+
+            if (file.TransferSyntax.Encapsulated)
+            {
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                                                                        file.TransferSyntax);
+
+                if (DicomCodecRegistry.GetCodec(file.TransferSyntax) == null)
+                    return 0;
+            }
+
+            if (pcid != 0) return pcid;
+
+            if (_sendRequest.CompressionType == CompressionType.Rle)
+            {
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.RleLossless);
+                if (pcid != 0)
+                {
+                    message.ChangeTransferSyntax(TransferSyntax.RleLossless);
+                    return pcid;
+                }
+            }
+            else if (_sendRequest.CompressionType == CompressionType.JpegLossless)
+            {
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                                                                        TransferSyntax.
+                                                                            JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
+                if (pcid != 0)
+                {
+                    message.ChangeTransferSyntax(
+                        TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
+                    return pcid;
+                }
+            }
+            else if (_sendRequest.CompressionType == CompressionType.J2KLossless)
+            {
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                                                                        TransferSyntax.
+                                                                            Jpeg2000ImageCompressionLosslessOnly);
+                if (pcid != 0)
+                {
+                    message.ChangeTransferSyntax(TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
+                    return pcid;
+                }
+            }
+            else if (_sendRequest.CompressionType == CompressionType.J2KLossy)
+            {
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                                                                        TransferSyntax.Jpeg2000ImageCompression);
+                if (pcid != 0)
+                {
+                    var doc = new XmlDocument();
+
+                    XmlElement element = doc.CreateElement("compress");
+                    doc.AppendChild(element);
+                    XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
+                    syntaxAttribute.Value = TransferSyntax.Jpeg2000ImageCompressionUid;
+                    element.Attributes.Append(syntaxAttribute);
+
+                    decimal ratio = 100.0m  / _sendRequest.CompressionLevel;
+                    XmlAttribute ratioAttribute = doc.CreateAttribute("ratio");
+                    ratioAttribute.Value = ratio.ToString(CultureInfo.InvariantCulture);
+                    element.Attributes.Append(ratioAttribute);
+
+                    syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+                    syntaxAttribute.Value = true.ToString(CultureInfo.InvariantCulture);
+                    element.Attributes.Append(syntaxAttribute);
+
+                    IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
+                    foreach (IDicomCodecFactory codec in codecs)
+                        if (codec.CodecTransferSyntax.Equals(TransferSyntax.Jpeg2000ImageCompression))
+                        {
+
+                            message.ChangeTransferSyntax(TransferSyntax.Jpeg2000ImageCompression, codec.GetDicomCodec(),
+                                                         codec.GetCodecParameters(doc));
+                            return pcid;
+                        }
+                }
+            }
+            else if (_sendRequest.CompressionType == CompressionType.JpegLossy)
+            {
+                var iod = new ImagePixelMacroIod(message.DataSet);
+
+                if (iod.BitsStored == 8)
+                {
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                                                                            TransferSyntax.JpegBaselineProcess1);
+                    if (pcid != 0)
+                    {
+                        var doc = new XmlDocument();
+
+                        XmlElement element = doc.CreateElement("compress");
+                        doc.AppendChild(element);
+                        XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
+                        syntaxAttribute.Value = TransferSyntax.JpegBaselineProcess1Uid;
+                        element.Attributes.Append(syntaxAttribute);
+
+                        syntaxAttribute = doc.CreateAttribute("quality");
+                        syntaxAttribute.Value = _sendRequest.CompressionLevel.ToString(CultureInfo.InvariantCulture);
+                        element.Attributes.Append(syntaxAttribute);
+
+                        syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+                        syntaxAttribute.Value = true.ToString(CultureInfo.InvariantCulture);
+                        element.Attributes.Append(syntaxAttribute);
+
+                        IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
+                        foreach (IDicomCodecFactory codec in codecs)
+                            if (codec.CodecTransferSyntax.Equals(TransferSyntax.Jpeg2000ImageCompression))
+                            {
+                                message.ChangeTransferSyntax(TransferSyntax.JpegBaselineProcess1, codec.GetDicomCodec(),
+                                                             codec.GetCodecParameters(doc));
+                                return pcid;
+                            }
+                    }
+                }
+                else if (iod.BitsStored == 12)
+                {
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                                                                            TransferSyntax.JpegExtendedProcess24);
+                    if (pcid != 0)
+                    {
+                        var doc = new XmlDocument();
+
+                        XmlElement element = doc.CreateElement("compress");
+                        doc.AppendChild(element);
+                        XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
+                        syntaxAttribute.Value = TransferSyntax.JpegExtendedProcess24Uid;
+                        element.Attributes.Append(syntaxAttribute);
+
+                        syntaxAttribute = doc.CreateAttribute("quality");
+                        syntaxAttribute.Value = _sendRequest.CompressionLevel.ToString(CultureInfo.InvariantCulture);
+                        element.Attributes.Append(syntaxAttribute);
+
+                        syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+                        syntaxAttribute.Value = true.ToString(CultureInfo.InvariantCulture);
+                        element.Attributes.Append(syntaxAttribute);
+
+                        IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
+                        foreach (IDicomCodecFactory codec in codecs)
+                            if (codec.CodecTransferSyntax.Equals(TransferSyntax.Jpeg2000ImageCompression))
+                            {
+                                message.ChangeTransferSyntax(TransferSyntax.JpegExtendedProcess24, codec.GetDicomCodec(),
+                                                             codec.GetCodecParameters(doc));
+                                return pcid;
+                            }
+                    }
+                }
+            }
+
+            if (pcid == 0)
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                                                                        TransferSyntax.ExplicitVrLittleEndian);
+            if (pcid == 0)
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                                                                        TransferSyntax.ImplicitVrLittleEndian);
+
+            return pcid;
+        }
 
         /// <summary>
         /// Load all of the instances in a given <see cref="SeriesXml"/> file into the component for sending.

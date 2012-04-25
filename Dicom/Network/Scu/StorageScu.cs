@@ -71,12 +71,19 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// Delegate for starting Send in ASynch mode with <see cref="BeginSend"/>.
 		/// </summary>
 		public delegate void SendDelegate();
-
+        /// <summary>
+        /// Delegate for selecting the presentation context that a SOP Uses.
+        /// </summary>
+        /// <param name="association">The association parameters.</param>
+        /// <param name="file">An input DICOM file.</param>
+        /// <param name="message">An output DICOM Message to be sent over the returned presentation context</param>
+        /// <returns>The presentation context to send over, will return 0 if none found.</returns>
+	    public delegate byte SelectPresentationContextDelegate(ClientAssociationParameters association, DicomFile file, out DicomMessage message); 
 		#endregion
 
 		#region Private Variables...
 		private readonly List<StorageInstance> _storageInstanceList = new List<StorageInstance>();
-		private Dictionary<string, TransferSyntax> _preferredSyntaxes;
+        private Dictionary<string, SupportedSop> _preferredSyntaxes;
 		private int _fileListIndex;
 		private readonly string _moveOriginatorAe;
 		private readonly ushort _moveOriginatorMessageId;
@@ -170,6 +177,11 @@ namespace ClearCanvas.Dicom.Network.Scu
 			get { return _remainingSubOperations; }
 		}
 
+        /// <summary>
+        /// Delegate that will be called to select a presentation context for sending each image.
+        /// </summary>
+        public SelectPresentationContextDelegate PresentationContextSelectionDelegate { get; set; }
+
 		#endregion
 
 		#region Public Methods...
@@ -192,16 +204,16 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// </para>
 		/// </remarks>
 		/// <param name="list"></param>
-		public void SetPreferredSyntaxList(IList<SupportedSop> list)
+		public void SetPreferredSyntaxList(IEnumerable<SupportedSop> list)
 		{
 			if (_preferredSyntaxes == null)
-				_preferredSyntaxes = new Dictionary<string, TransferSyntax>();
+                _preferredSyntaxes = new Dictionary<string, SupportedSop>();
 
 			// Store the preferred syntaxs in a dictionary to make them easier to 
 			// lookup later.
 			foreach (SupportedSop sop in list)
 			{
-				_preferredSyntaxes.Add(sop.SopClass.Uid,sop.SyntaxList[0]);
+				_preferredSyntaxes.Add(sop.SopClass.Uid,sop);
 			}
 		}
 
@@ -315,7 +327,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			try
 			{
-				SendDelegate sendDelegate = ((System.Runtime.Remoting.Messaging.AsyncResult) ar).AsyncDelegate as SendDelegate;
+				var sendDelegate = ((System.Runtime.Remoting.Messaging.AsyncResult) ar).AsyncDelegate as SendDelegate;
 
 				if (sendDelegate != null)
 				{
@@ -507,35 +519,46 @@ namespace ClearCanvas.Dicom.Network.Scu
 				return false;
 			}
 
-			DicomMessage msg = new DicomMessage(dicomFile);
+		    DicomMessage msg;
+            byte pcid = 0;
 
-			byte pcid = 0;
+            if (PresentationContextSelectionDelegate != null)
+            {
+                pcid = PresentationContextSelectionDelegate(association, dicomFile, out msg);
+            }
+            else
+            {
+                msg = new DicomMessage(dicomFile);
 
-			if (fileToSend.TransferSyntax.Encapsulated)
-			{
-				pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass, fileToSend.TransferSyntax);
+                if (fileToSend.TransferSyntax.Encapsulated)
+                {
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
+                                                                            fileToSend.TransferSyntax);
 
-				if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
-				{
-					if (pcid == 0)
-						pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-						                                                        TransferSyntax.ExplicitVrLittleEndian);
-					if (pcid == 0)
-						pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-						                                                        TransferSyntax.ImplicitVrLittleEndian);
-				}
-			}
-			else
-			{
-				if (pcid == 0)
-					pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-					                                                        TransferSyntax.ExplicitVrLittleEndian);
-				if (pcid == 0)
-					pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-					                                                        TransferSyntax.ImplicitVrLittleEndian);
-			}
+                    if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
+                    {
+                        if (pcid == 0)
+                            pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
+                                                                                    TransferSyntax.
+                                                                                        ExplicitVrLittleEndian);
+                        if (pcid == 0)
+                            pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
+                                                                                    TransferSyntax.
+                                                                                        ImplicitVrLittleEndian);
+                    }
+                }
+                else
+                {
+                    if (pcid == 0)
+                        pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
+                                                                                TransferSyntax.ExplicitVrLittleEndian);
+                    if (pcid == 0)
+                        pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
+                                                                                TransferSyntax.ImplicitVrLittleEndian);
+                }
+            }
 
-			if (pcid == 0)
+		    if (pcid == 0)
 			{
 				fileToSend.SendStatus = DicomStatuses.SOPClassNotSupported;
 				fileToSend.ExtendedFailureDescription = "No valid presentation contexts for file.";
@@ -646,22 +669,26 @@ namespace ClearCanvas.Dicom.Network.Scu
 				// Now add the preferred syntaxes, if its been set.
 				if (_preferredSyntaxes != null)
 				{
-					TransferSyntax syntax;
-					if (_preferredSyntaxes.TryGetValue(sendStruct.SopClass.Uid, out syntax))
+					SupportedSop supportedSop;
+					if (_preferredSyntaxes.TryGetValue(sendStruct.SopClass.Uid, out supportedSop))
 					{
-						byte pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
-						                                                                            syntax);
+                        foreach (TransferSyntax syntax in supportedSop.SyntaxList)
+                        {
+                            byte pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
+                                                                                                   syntax);
 
-						// If we have more than 1 transfer syntax associated with the preferred, we want to 
-						// have a dedicated presentation context for the preferred, so that we ensure it
-						// gets accepted if the SCP supports it.  This is only really going to happen if
-						// the preferred is Explicit VR Little Endian or Implicit VR Little Endian.
-						if ((pcid == 0) || (AssociationParameters.GetPresentationContextTransferSyntaxes(pcid).Count > 1))
-						{
-							pcid = AssociationParameters.AddPresentationContext(sendStruct.SopClass);
+                            // If we have more than 1 transfer syntax associated with the preferred, we want to 
+                            // have a dedicated presentation context for the preferred, so that we ensure it
+                            // gets accepted if the SCP supports it.  This is only really going to happen if
+                            // the preferred is Explicit VR Little Endian or Implicit VR Little Endian.
+                            if ((pcid == 0) ||
+                                (AssociationParameters.GetPresentationContextTransferSyntaxes(pcid).Count > 1))
+                            {
+                                pcid = AssociationParameters.AddPresentationContext(sendStruct.SopClass);
 
-							AssociationParameters.AddTransferSyntax(pcid, syntax);
-						}
+                                AssociationParameters.AddTransferSyntax(pcid, syntax);
+                            }
+                        }
 					}
 				}
 			}
@@ -738,15 +765,14 @@ namespace ClearCanvas.Dicom.Network.Scu
 				StopRunningOperation();
 				return;
 			}
-			else
-				SendCStoreUntilSuccess(client, association);
+		    SendCStoreUntilSuccess(client, association);
 		}
 
 		#endregion
 
 		#region IDisposable Members
 
-		private bool _disposed = false;
+		private bool _disposed;
 		/// <summary>
 		/// Disposes the specified disposing.
 		/// </summary>

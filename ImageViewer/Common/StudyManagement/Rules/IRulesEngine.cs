@@ -14,7 +14,6 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 {
-    
     public class RulesEngineExtensionPoint : ExtensionPoint<IRulesEngine>    
     {}
 
@@ -33,5 +32,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
         /// <param name="study">The study to apply the rules to.</param>
         void ApplyStudyRules(StudyEntry study);
 
+        /// <summary>
+        /// Apply the a Rule to all matching studies.
+        /// </summary>
+        /// <param name="rule">The rule to apply.</param>
+        /// <param name="study">The study to apply the rule to</param>
+        void ApplyStudyToRule(StudyEntry study, RuleData rule);
     }
 }

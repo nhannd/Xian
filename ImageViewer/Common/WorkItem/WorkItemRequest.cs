@@ -18,6 +18,7 @@ using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
@@ -194,7 +195,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public int Port { get; set; }
 
         [DataMember]
-        public string TransferSyntaxUid { get; set; }
+        public CompressionType CompressionType { get; set; }
+
+        [DataMember]
+        public int CompressionLevel { get; set; }
     }
 
     /// <summary>

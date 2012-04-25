@@ -15,6 +15,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
@@ -61,6 +62,28 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Cleanup any failed items in the queue and delete the queue entry.
+        /// </summary>
+        public override void Delete()
+        {
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            {
+                var broker = context.GetWorkItemUidBroker();
+                var uidBroker = context.GetWorkItemUidBroker();
+
+                var list = broker.GetWorkItemUidsForWorkItem(Proxy.Item.Oid);
+                foreach (WorkItemUid sop in list)
+                {
+                    uidBroker.Delete(sop);
+                }
+                context.Commit();
+            }
+
+            Proxy.Delete();
+        }
+
         /// <summary>
         /// Override of Cancel() routine.
         /// </summary>
@@ -92,6 +115,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             _scu = new ImageViewerStorageScu(configuration.AETitle, Request);
 
             LoadImagesToSend();
+
+            if (Request.CompressionType != CompressionType.None)
+            {
+                
+            }
 
             Progress.ImagesToSend = _scu.TotalSubOperations;            
             Progress.FailureSubOperations = 0;
