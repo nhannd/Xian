@@ -30,9 +30,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             return Channel.Unsubscribe(request);
         }
 
-        public WorkItemRefreshResponse Refresh(WorkItemRefreshRequest request)
+        public void Refresh(WorkItemRefreshRequest request)
         {
-            return Channel.Refresh(request);
+            Channel.Refresh(request);
         }
     }
 

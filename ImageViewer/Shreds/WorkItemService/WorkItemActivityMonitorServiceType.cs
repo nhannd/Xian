@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
-        public WorkItemRefreshResponse Refresh(WorkItemRefreshRequest request)
+        public void Refresh(WorkItemRefreshRequest request)
         {
             try
             {
@@ -68,7 +68,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 						WorkItemActivityPublisher.WorkItemsChanged(batch.Select(WorkItemHelper.FromWorkItem).ToList());
                     }
                 }
-                return new WorkItemRefreshResponse();
             }
             catch (Exception e)
             {
