@@ -1,6 +1,7 @@
 ﻿#if UNIT_TESTS
 
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common.Utilities;
 
@@ -39,10 +40,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         #endregion
 
-        void IWorkItemActivityCallback.WorkItemChanged(WorkItemData workItemData)
+        void IWorkItemActivityCallback.WorkItemsChanged(List<WorkItemData> workItems)
         {
             if (_isSubscribed)
-                Callback.WorkItemChanged(workItemData);
+                Callback.WorkItemsChanged(workItems);
         }
 
         void IWorkItemActivityCallback.StudiesCleared()

@@ -19,9 +19,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 _realActivityMonitor = real;
             }
 
-            public override void WorkItemChanged(WorkItemData workItemData)
+            public override void WorkItemsChanged(List<WorkItemData> workItems)
             {
-                _realActivityMonitor.OnWorkItemChanged(workItemData);
+                _realActivityMonitor.OnWorkItemsChanged(workItems);
             }
 
             public override void StudiesCleared()
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         private IList<WorkItemTypeEnum> _workItemTypeFilters;
         private IList<long> _workItemIdFilters;
-        private event EventHandler<WorkItemChangedEventArgs> _workItemChanged;
+        private event EventHandler<WorkItemsChangedEventArgs> _workItemsChanged;
         private event EventHandler _studiesCleared;
 
         private volatile IWorkItemActivityMonitorService _client;
@@ -83,48 +83,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public override WorkItemTypeEnum[] WorkItemTypeFilters
-        {
-            get
-            {
-                lock(_syncLock)
-                {
-                    return _workItemTypeFilters == null ? null : _workItemTypeFilters.ToArray();
-                }
-            }
-            set
-            {
-                lock (_syncLock)
-                {
-                    if (value == null || value.Length == 0)
-                        _workItemTypeFilters = null;
-                    else
-                        _workItemTypeFilters = value.ToList();
-                }
-            }
-        }
-
-        public override long[] WorkItemIdFilters
-        {
-            get
-            {
-                lock (_syncLock)
-                {
-                    return _workItemIdFilters == null ? null : _workItemIdFilters.ToArray();
-                }
-            }
-            set
-            {
-                lock (_syncLock)
-                {
-                    if (value == null || value.Length == 0)
-                        _workItemIdFilters = null;
-                    else
-                        _workItemIdFilters = value.ToList();
-                }
-            }
-        }
-
         public override event EventHandler StudiesCleared
         {
             add
@@ -146,13 +104,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
 
-        public override event EventHandler<WorkItemChangedEventArgs> WorkItemChanged
+        public override event EventHandler<WorkItemsChangedEventArgs> WorkItemsChanged
         {
             add
             {
                 lock (_syncLock)
                 {
-                    _workItemChanged += value;
+                    _workItemsChanged += value;
                     Monitor.Pulse(_syncLock);
                 }
             }
@@ -160,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 lock (_syncLock)
                 {
-                    _workItemChanged -= value;
+                    _workItemsChanged -= value;
                     Monitor.Pulse(_syncLock);
                 }
             }
@@ -209,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             bool subscribe;
             lock (_syncLock)
             {
-                var hasListeners = _workItemChanged != null;
+                var hasListeners = _workItemsChanged != null;
                 bool needsSubscriptionChange = _subscribedToService != hasListeners;
                 if (!needsSubscriptionChange)
                     return;
@@ -325,22 +283,21 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        private void OnWorkItemChanged(WorkItemData workItemData)
+        private void OnWorkItemsChanged(List<WorkItemData> workItems)
         {
             IList<Delegate> delegates;
             lock (_syncLock)
             {
-                if (_disposed || !this.WorkItemMatchesFilters(workItemData))
+                if (_disposed)
                     return;
 
-                delegates = _workItemChanged != null ? _workItemChanged.GetInvocationList() : new Delegate[0];
+                delegates = _workItemsChanged != null ? _workItemsChanged.GetInvocationList() : new Delegate[0];
             }
 
             if (delegates.Count <= 0)
                 return;
 
-            var args = new WorkItemChangedEventArgs(workItemData);
-            //ThreadPool.QueueUserWorkItem(ignore => CallDelegates(delegates, args));
+			var args = new WorkItemsChangedEventArgs(workItems);
             CallDelegates(delegates, args);
         }
 

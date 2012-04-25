@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -23,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                SubscriptionManager<IWorkItemActivityCallback>.Subscribe(_callback, "WorkItemChanged");
+                SubscriptionManager<IWorkItemActivityCallback>.Subscribe(_callback, "WorkItemsChanged");
                 return new WorkItemSubscribeResponse();
             }
             catch (Exception e)
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(_callback, "WorkItemChanged");
+                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(_callback, "WorkItemsChanged");
                 return new WorkItemUnsubscribeResponse();
             }
             catch (Exception e)
@@ -61,12 +62,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                     var dbList = broker.GetWorkItems(null, null, null);
 
-                    var results = new List<WorkItemData>();
-
-                    foreach (var dbItem in dbList)
+					// send in batches of 200
+                    foreach (var batch in BatchItems(dbList, 200))
                     {
-                        PublishManager<IWorkItemActivityCallback>.Publish("WorkItemChanged", WorkItemHelper.FromWorkItem(dbItem));
-                        results.Add(WorkItemHelper.FromWorkItem(dbItem));
+						WorkItemActivityPublisher.WorkItemsChanged(batch.Select(WorkItemHelper.FromWorkItem).ToList());
                     }
                 }
                 return new WorkItemRefreshResponse();
@@ -97,5 +96,22 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         }
 
         #endregion
+
+		private static IEnumerable<List<T>> BatchItems<T>(IEnumerable<T> items, int batchSize)
+		{
+			var batch = new List<T>();
+			foreach (var item in items)
+			{
+				batch.Add(item);
+				if(batch.Count == batchSize)
+				{
+					yield return batch;
+					batch = new List<T>();
+				}
+			}
+
+			if (batch.Count > 0)
+				yield return batch;
+		}
     }
 }

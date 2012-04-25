@@ -11,10 +11,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         bool IsConnected { get; }
         event EventHandler IsConnectedChanged;
 
-        WorkItemTypeEnum[] WorkItemTypeFilters { get; set; }
-        long[] WorkItemIdFilters { get; set; }
-
-        event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
+        event EventHandler<WorkItemsChangedEventArgs> WorkItemsChanged;
         event EventHandler StudiesCleared;
         void Refresh();
 
@@ -77,10 +74,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public abstract bool IsConnected { get; }
         public abstract event EventHandler IsConnectedChanged;
 
-        public abstract WorkItemTypeEnum[] WorkItemTypeFilters { get; set; }
-        public abstract long[] WorkItemIdFilters { get; set; }
-
-        public abstract event EventHandler<WorkItemChangedEventArgs> WorkItemChanged;
+        public abstract event EventHandler<WorkItemsChangedEventArgs> WorkItemsChanged;
         public abstract event EventHandler StudiesCleared;
 
         public void Refresh()
@@ -165,25 +159,5 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         #endregion
-    }
-
-    internal static class WorkItemActivityMonitorExtensions
-    {
-        public static bool WorkItemMatchesFilters(this IWorkItemActivityMonitor activityMonitor, WorkItemData workItemData)
-        {
-            var typeFilters = activityMonitor.WorkItemTypeFilters;
-            bool matchesTypeFilters = typeFilters == null
-                                      || typeFilters.Length == 0
-                                      || typeFilters.Contains(workItemData.Type);
-            if (!matchesTypeFilters)
-                return false;
-
-            var idFilters = activityMonitor.WorkItemIdFilters;
-            bool matchesIdFilters = idFilters == null
-                                      || idFilters.Length == 0
-                                      || idFilters.Contains(workItemData.Identifier);
-
-            return matchesIdFilters;
-        }
     }
 }

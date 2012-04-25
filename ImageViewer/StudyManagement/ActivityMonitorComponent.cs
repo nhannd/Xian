@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (this.Component.ActivityMonitor.IsConnected)
 					return this;
 
-				this.Component.ActivityMonitor.WorkItemChanged -= this.Component.WorkItemChanged;
+				this.Component.ActivityMonitor.WorkItemsChanged -= this.Component.WorkItemsChanged;
 				return new DisconnectedState(this.Component);
 			}
 		}
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					return this;
 
 				// whatever is on the screen is out-of-date and should be refreshed
-				this.Component.ActivityMonitor.WorkItemChanged += this.Component.WorkItemChanged;
+				this.Component.ActivityMonitor.WorkItemsChanged += this.Component.WorkItemsChanged;
 				this.Component.RefreshInternal();
 				return new ConnectedState(this.Component);
 			}
@@ -288,35 +288,41 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_failures.Clear();
 			}
 
-			public void Update(WorkItem newItem)
+			public void Update(IEnumerable<WorkItem> items)
 			{
-				var index = _items.FindIndex(w => w.Id == newItem.Id);
-				if (index > -1)
+				var adds = new List<WorkItem>();
+				foreach (var item in items)
 				{
-					// the item is currently in the list
-					// if the item is marked deleted, or if it no longer meets the filter criteria, remove it
-					// otherwise update it
-					if (newItem.Status == WorkItemStatusEnum.Deleted || newItem.Status == WorkItemStatusEnum.DeleteInProgress || !Include(newItem))
-						_items.RemoveAt(index);
-					else
-						_items[index] = newItem;
-				}
-				else
-				{
-					// the item is not currently in the list
-					// if not deleted and it meets the filter criteria, add it
-                    if (newItem.Status != WorkItemStatusEnum.Deleted && newItem.Status != WorkItemStatusEnum.DeleteInProgress && Include(newItem))
+					var index = _items.FindIndex(w => w.Id == item.Id);
+					if (index > -1)
 					{
-						_items.Add(newItem);
+						// the item is currently in the list
+						// if the item is marked deleted, or if it no longer meets the filter criteria, remove it
+						// otherwise update it
+						if (item.Status == WorkItemStatusEnum.Deleted || item.Status == WorkItemStatusEnum.DeleteInProgress || !Include(item))
+							_items.RemoveAt(index);
+						else
+							_items[index] = item;
+					}
+					else
+					{
+						// the item is not currently in the list
+						// if not deleted and it meets the filter criteria, add it
+						if (item.Status != WorkItemStatusEnum.Deleted && item.Status != WorkItemStatusEnum.DeleteInProgress && Include(item))
+						{
+							adds.Add(item);
+						}
+					}
+
+					// track failures
+					if (item.Status == WorkItemStatusEnum.Failed || _failures.ContainsKey(item.Id))
+					{
+						_failures[item.Id] = item;
 					}
 				}
 
-				// track failures
-				if(newItem.Status == WorkItemStatusEnum.Failed || _failures.ContainsKey(newItem.Id))
-				{
-					_failures[newItem.Id] = newItem;
-				}
-
+				// more efficient to add everything new at once (so GUI only re-draws once)
+				_items.AddRange(adds);
 			}
 
 			private bool Include(WorkItem item)
@@ -468,9 +474,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             private Action CancelAction { get { return this[_cancelKey]; } }
             private Action RestartAction { get { return this[_restartKey]; } }
 
-            public void OnWorkItemChanged(WorkItem item)
+            public void OnWorkItemsChanged(IEnumerable<WorkItem> items)
             {
-                if (SelectedWorkItemIDs.Contains(item.Id))
+                if (items.Any(item => SelectedWorkItemIDs.Contains(item.Id)))
                     UpdateActionEnablement();
             }
 
@@ -598,7 +604,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 	    public override void Stop()
 		{
-			ActivityMonitor.WorkItemChanged -= WorkItemChanged;
+			ActivityMonitor.WorkItemsChanged -= WorkItemsChanged;
 			ActivityMonitor.IsConnectedChanged -= ActivityMonitorIsConnectedChanged;
 			ActivityMonitor.Dispose();
 			ActivityMonitor = null;
@@ -815,17 +821,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			NotifyPropertyChanged("IsConnected");
 		}
 
-		private void WorkItemChanged(object sender, WorkItemChangedEventArgs e)
+		private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
 		{
-			var workItem = e.ItemData;
-			if (workItem.Type != WorkItemTypeEnum.ReapplyRules && workItem.Type != WorkItemTypeEnum.DicomSend)
+			var workItems = e.ChangedItems;
+			if (workItems.Any(item => item.Type != WorkItemTypeEnum.ReapplyRules && item.Type != WorkItemTypeEnum.DicomSend))
 			{
 				_studyCountWatcher.Invalidate();
 			}
 
-		    var item = new WorkItem(e.ItemData);
-			_workItemManager.Update(item);
-            _workItemActionModel.OnWorkItemChanged(item);
+			var items = workItems.Select(item => new WorkItem(item));
+			_workItemManager.Update(items);
+			_workItemActionModel.OnWorkItemsChanged(items);
 
 			// tell view to update this value
 			NotifyPropertyChanged("Failures");

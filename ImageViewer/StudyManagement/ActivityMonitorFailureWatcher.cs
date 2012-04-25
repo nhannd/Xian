@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				// stop listening for workItem changes, so that if the service reconnects, we have a chance
 				// to perform an initial query first prior to receiving changes
-				this.Owner.ActivityMonitor.WorkItemChanged -= this.Owner.ActivityMonitorWorkItemChanged;
+				this.Owner.ActivityMonitor.WorkItemsChanged -= this.Owner.ActivityMonitorWorkItemsChanged;
 				return new DisconnectedState(this.Owner);
 			}
 		}
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				// only start listening to workItem changes after calling AlertTotalFailedWorkItems,
 				// so that we can limit the number of alerts we log
-				this.Owner.ActivityMonitor.WorkItemChanged += this.Owner.ActivityMonitorWorkItemChanged;
+				this.Owner.ActivityMonitor.WorkItemsChanged += this.Owner.ActivityMonitorWorkItemsChanged;
 				return new ConnectedState(this.Owner);
 			}
 		}
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			if (this.ActivityMonitor != null)
 			{
-				this.ActivityMonitor.WorkItemChanged -= ActivityMonitorWorkItemChanged;
+				this.ActivityMonitor.WorkItemsChanged -= ActivityMonitorWorkItemsChanged;
 				this.ActivityMonitor.IsConnectedChanged -= ActivityMonitorIsConnectedChanged;
 				this.ActivityMonitor.Dispose();
 				this.ActivityMonitor = null;
@@ -118,23 +118,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_connectionState = _connectionState.Update();
 		}
 
-		private void ActivityMonitorWorkItemChanged(object sender, WorkItemChangedEventArgs e)
+		private void ActivityMonitorWorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
 		{
-			var item = e.ItemData;
-
-			// check for a new failure, and raise an alert if necessary
-			if (!_failedWorkItems.Contains(item.Identifier) && item.Status == WorkItemStatusEnum.Failed)
+			foreach (var item in e.ChangedItems)
 			{
-				_failedWorkItems.Add(item.Identifier);
+				// check for a new failure, and raise an alert if necessary
+				if (!_failedWorkItems.Contains(item.Identifier) && item.Status == WorkItemStatusEnum.Failed)
+				{
+					_failedWorkItems.Add(item.Identifier);
 
-				var message = string.Format(SR.MessageWorkItemFailed, item.Request.ActivityType.GetDescription());
-				_window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor, window => _showActivityMonitor());
-			}
+					var message = string.Format(SR.MessageWorkItemFailed, item.Request.ActivityType.GetDescription());
+					_window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor, window => _showActivityMonitor());
+				}
 
-			// if a previously failed item is re-tried, remove it from the set of failed items
-			if (_failedWorkItems.Contains(item.Identifier) && item.Status != WorkItemStatusEnum.Failed)
-			{
-				_failedWorkItems.Remove(item.Identifier);
+				// if a previously failed item is re-tried, remove it from the set of failed items
+				if (_failedWorkItems.Contains(item.Identifier) && item.Status != WorkItemStatusEnum.Failed)
+				{
+					_failedWorkItems.Remove(item.Identifier);
+				}
 			}
 		}
 

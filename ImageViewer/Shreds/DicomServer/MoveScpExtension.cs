@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			_sendOperations = new List<SendOperationInfo>();
             _activityMonitor = WorkItemActivityMonitor.Create(false);
-		    _activityMonitor.WorkItemChanged += UpdateProgress;
+		    _activityMonitor.WorkItemsChanged += UpdateProgress;
 		}
 
         #endregion
@@ -160,28 +160,36 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-        private void UpdateProgress(object sender, WorkItemChangedEventArgs workItemChangedEventArgs)
+        private void UpdateProgress(object sender, WorkItemsChangedEventArgs workItemsChangedEventArgs)
+        {
+        	foreach (var item in workItemsChangedEventArgs.ChangedItems)
+        	{
+        		UpdateProgress(item);
+        	}	
+        }
+
+        private void UpdateProgress(WorkItemData workItem)
         {
             try
             {
-                SendOperationInfo sendOperationInfo = GetSendOperationInfo(workItemChangedEventArgs.ItemData);
+				SendOperationInfo sendOperationInfo = GetSendOperationInfo(workItem);
                 if (sendOperationInfo == null)
                 {
                     return;
                 }
 
-                sendOperationInfo.WorkItemData = workItemChangedEventArgs.ItemData;
+				sendOperationInfo.WorkItemData = workItem;
 
                 var progress = GetProgressByMessageId(sendOperationInfo.MessageId);
 
                 var msg = new DicomMessage();
                 DicomStatus status;
 
-                if (workItemChangedEventArgs.ItemData.Status == WorkItemStatusEnum.Failed)
+				if (workItem.Status == WorkItemStatusEnum.Failed)
                 {
                     sendOperationInfo.Complete = true;
                 }
-                else if (progress.RemainingSubOperations == 0 && workItemChangedEventArgs.ItemData.Status != WorkItemStatusEnum.Pending)
+				else if (progress.RemainingSubOperations == 0 && workItem.Status != WorkItemStatusEnum.Pending)
                 {
                     sendOperationInfo.Complete = true;
                 }
@@ -194,9 +202,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                     {
                         foreach (string sopInstanceUid in info.FailedSopInstanceUids)
                             msg.DataSet[DicomTags.FailedSopInstanceUidList].AppendString(sopInstanceUid);
-                        if (workItemChangedEventArgs.ItemData.Status == WorkItemStatusEnum.Canceled)
+						if (workItem.Status == WorkItemStatusEnum.Canceled)
                             status = DicomStatuses.Cancel;
-                        else if (workItemChangedEventArgs.ItemData.Status == WorkItemStatusEnum.Failed)
+						else if (workItem.Status == WorkItemStatusEnum.Failed)
                             status = DicomStatuses.QueryRetrieveUnableToProcess;
                         else if (progress.FailureSubOperations > 0 && status == DicomStatuses.Success)
                             status = DicomStatuses.QueryRetrieveSubOpsOneOrMoreFailures;

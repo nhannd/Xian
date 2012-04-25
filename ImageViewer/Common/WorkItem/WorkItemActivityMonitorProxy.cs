@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
 
@@ -13,9 +11,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         private event EventHandler _isConnectedChanged;
 
-        private IList<WorkItemTypeEnum> _workItemTypeFilters;
-        private IList<long> _workItemIdFilters;
-        private event EventHandler<WorkItemChangedEventArgs> _workItemChanged;
+        private event EventHandler<WorkItemsChangedEventArgs> _workItemsChanged;
         private event EventHandler _studiesCleared;
 
         private volatile bool _disposed;
@@ -59,59 +55,27 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public override WorkItemTypeEnum[] WorkItemTypeFilters
-        {
-            get
-            {
-                return _workItemTypeFilters == null ? null : _workItemTypeFilters.ToArray();
-            }
-            set
-            {
-                //NOTE (Marmot): We purposely don't set the filters on the "real" monitor because it's shared among proxies.
-                if (value == null || value.Length == 0)
-                    _workItemTypeFilters = null;
-                else
-                    _workItemTypeFilters = value.ToList();
-            }
-        }
-
-        public override long[] WorkItemIdFilters
-        {
-            get
-            {
-                return _workItemIdFilters == null ? null : _workItemIdFilters.ToArray();
-            }
-            set
-            {
-                //NOTE (Marmot): We purposely don't set the filters on the "real" monitor because it's shared among proxies.
-                if (value == null || value.Length == 0)
-                    _workItemIdFilters = null;
-                else
-                    _workItemIdFilters = value.ToList();
-            }
-        }
-
-        public override event EventHandler<WorkItemChangedEventArgs> WorkItemChanged
+        public override event EventHandler<WorkItemsChangedEventArgs> WorkItemsChanged
         {
             add
             {
                 CheckDisposed();
 
-                bool subscribeToReal = _workItemChanged == null;
+                bool subscribeToReal = _workItemsChanged == null;
                 if (subscribeToReal)
-                    _real.WorkItemChanged += OnWorkItemChanged;
+                    _real.WorkItemsChanged += OnWorkItemsChanged;
 
-                _workItemChanged += value;
+                _workItemsChanged += value;
             }
             remove
             {
                 CheckDisposed();
 
-                _workItemChanged -= value;
+                _workItemsChanged -= value;
 
-                bool unsubscribeFromReal = _workItemChanged == null;
+                bool unsubscribeFromReal = _workItemsChanged == null;
                 if (unsubscribeFromReal)
-                    _real.WorkItemChanged -= OnWorkItemChanged;
+                    _real.WorkItemsChanged -= OnWorkItemsChanged;
             }
         }
 
@@ -147,12 +111,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 FireIsConnectedChanged();
         }
 
-        private void OnWorkItemChanged(object sender, WorkItemChangedEventArgs e)
+        private void OnWorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
         {
             if (_synchronizationContext != null)
-                _synchronizationContext.Post(ignore => FireWorkItemChanged(e), null);
+                _synchronizationContext.Post(ignore => FireWorkItemsChanged(e), null);
             else
-                FireWorkItemChanged(e);
+                FireWorkItemsChanged(e);
         }
 
         private void OnStudiesCleared(object sender, EventArgs e)
@@ -169,10 +133,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 EventsHelper.Fire(_isConnectedChanged, this, EventArgs.Empty);
         }
 
-        private void FireWorkItemChanged(WorkItemChangedEventArgs e)
+        private void FireWorkItemsChanged(WorkItemsChangedEventArgs e)
         {
-            if (!_disposed && this.WorkItemMatchesFilters(e.ItemData))
-                EventsHelper.Fire(_workItemChanged, this, e);
+            if (!_disposed)
+                EventsHelper.Fire(_workItemsChanged, this, e);
         }
 
         private void FireStudiesCleared(EventArgs e)
@@ -194,8 +158,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (_isConnectedChanged != null)
                 _real.IsConnectedChanged -= OnIsConnectedChanged;
 
-            if (_workItemChanged != null)
-                _real.WorkItemChanged -= OnWorkItemChanged;
+            if (_workItemsChanged != null)
+                _real.WorkItemsChanged -= OnWorkItemsChanged;
 
             OnProxyDisposed();
         }
