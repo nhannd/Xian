@@ -178,11 +178,20 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Images Deleted.
+        ///   Looks up a localized string similar to {0} Image Deleted.
         /// </summary>
         internal static string DeleteProgress_Status {
             get {
                 return ResourceManager.GetString("DeleteProgress_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Images Deleted.
+        /// </summary>
+        internal static string DeleteProgressPlural_Status {
+            get {
+                return ResourceManager.GetString("DeleteProgressPlural_Status", resourceCulture);
             }
         }
         

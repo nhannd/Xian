@@ -312,7 +312,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 if (ImagesToDelete == 0)
                     return string.Empty;
 
-                return string.Format(SR.DeleteProgress_Status,ImagesDeleted);
+                if (ImagesDeleted == 1)
+                    return string.Format(SR.DeleteProgress_Status,ImagesDeleted);
+
+                return string.Format(SR.DeleteProgressPlural_Status, ImagesDeleted);
             }
         }
 

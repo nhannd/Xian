@@ -267,7 +267,7 @@
   <data name="ActivityTypeEnumDeleteStudy" xml:space="preserve">
     <value>Delete Study</value>
   </data>
-  <data name="DeleteProgress_Status" xml:space="preserve">
+  <data name="DeleteProgressPlural_Status" xml:space="preserve">
     <value>{0} Images Deleted</value>
   </data>
   <data name="DeleteSeriesRequest_ActivityDescription" xml:space="preserve">
@@ -293,5 +293,8 @@
   </data>
   <data name="ReapplyRulesRequest_ActivityDescription" xml:space="preserve">
     <value>Reapply Rules for {0}</value>
+  </data>
+  <data name="DeleteProgress_Status" xml:space="preserve">
+    <value>{0} Image Deleted</value>
   </data>
 </root>
