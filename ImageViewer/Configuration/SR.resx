@@ -295,6 +295,9 @@ Streaming Image Port: {1}</value>
   <data name="ServerConfiguration" xml:space="preserve">
     <value>Local Server</value>
   </data>
+  <data name="StorageConfiguration" xml:space="preserve">
+    <value>Storage</value>
+  </data>
   <data name="TitleAddNewServer" xml:space="preserve">
     <value>Add New Server</value>
   </data>
@@ -312,6 +315,9 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="TitleMyServers" xml:space="preserve">
     <value>My Servers</value>
+  </data>
+  <data name="TitleSelectFileStore" xml:space="preserve">
+    <value>Select File Store Folder</value>
   </data>
   <data name="ToolbarAddServer" xml:space="preserve">
     <value>Add server</value>

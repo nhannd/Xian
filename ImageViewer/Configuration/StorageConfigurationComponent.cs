@@ -14,6 +14,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -35,122 +36,68 @@ namespace ClearCanvas.ImageViewer.Configuration
     [AssociateView(typeof(StorageConfigurationComponentViewExtensionPoint))]
     public class StorageConfigurationComponent : ConfigurationApplicationComponent
     {
+        private string _fileStoreDirectory;
+
 		private string _driveName;
 		private long _driveSize;
 		private string _driveDisplay;
 
-        private float _highWatermark;
-		private string _highWatermarkBytesDisplay;
+        private float _maximumUsedSpacePercent;
+		private string _maximumUsedSpaceDisplay;
 		
-		private long _spaceUsedBytes;
-		private float _spaceUsedPercent;
-		private string _spaceUsedPercentDisplay;
-		private string _spaceUsedBytesDisplay;
+		private long _usedSpaceBytes;
+		private float _usedSpacePercent;
+		private string _usedSpacePercentDisplay;
+		private string _usedSpaceBytesDisplay;
 
-    	private string _studyCountText;
-        
-        public StorageConfigurationComponent()
-        {
-        }
-        /*
-		private void HighWatermarkChanged()
+		private void MaximumUsedSpaceChanged()
 		{
-			_highWatermarkBytesDisplay = GetSpaceDescription(_highWatermark / 100F);
+			_maximumUsedSpaceDisplay = GetSpaceDescription(_maximumUsedSpacePercent / 100F);
 
-			NotifyPropertyChanged("HighWatermark");
-			NotifyPropertyChanged("HighatermarkBytesDisplay");
+			NotifyPropertyChanged("MaximumUsedSpace");
+			NotifyPropertyChanged("MaximumUsedSpaceDisplay");
 		}
 
-		private void ConnectToClientInternal()
+        public override void Start()
 		{
-			DiskspaceManagerServiceClient serviceClient = new DiskspaceManagerServiceClient();
+            var configuration = StudyStore.GetConfiguration();
+            var drive = configuration.FileStoreDrive;
+            
+            _fileStoreDirectory = configuration.FileStoreDirectory;
+            _driveName = drive.Name;
+            _driveSize = drive.TotalSize;
+            _driveDisplay = String.Format("{0} ({1})", _driveName, GetSpaceDescription(1F));
 
-			try
-			{
-				serviceClient.Open();
-				DiskspaceManagerServiceInformation serviceInformation = serviceClient.GetServiceInformation();
-				serviceClient.Close();
+            _maximumUsedSpacePercent = configuration.MaximumUsedSpacePercent;
+            MaximumUsedSpaceChanged();
 
-				_driveName = serviceInformation.DriveName;
-				_driveSize = serviceInformation.DriveSize;
-				_driveDisplay = String.Format("{0} ({1})", _driveName, GetSpaceDescription(1F));
-
-				_watermarkMinDifference = (float)_watermarkMinDifferenceBytes/_driveSize * 100F;
-
-				_lowWatermark = serviceInformation.LowWatermark;
-				LowWatermarkChanged();
-				
-				_highWatermark = serviceInformation.HighWatermark;
-				HighWatermarkChanged();
-
-				_spaceUsedBytes = serviceInformation.UsedSpace;
-				_spaceUsedPercent = _spaceUsedBytes / (float)_driveSize * 100F;
-				_spaceUsedPercentDisplay = _spaceUsedPercent.ToString("F3");
-				_spaceUsedBytesDisplay = GetSpaceDescription(_spaceUsedPercent / 100F);
-				
-				_checkFrequency = serviceInformation.CheckFrequency;
-
-				_studyCountText = serviceInformation.StudyCount.ToString();
-
-				_enforceStudyLimit = serviceInformation.EnforceStudyLimit;
-				_studyLimit = serviceInformation.StudyLimit;
-				_minStudyLimit = serviceInformation.MinStudyLimit;
-				_maxStudyLimit = serviceInformation.MaxStudyLimit;
-				this.Enabled = true;
-			}
-			catch
-			{
-				serviceClient.Abort();
-
-				_driveName = "";
-				_driveSize = 0;
-				_driveDisplay = "";
-				
-				_lowWatermark = 0.0F;
-				_lowWatermarkBytesDisplay = "";
-				
-				_highWatermark = 0.0F;
-				_highWatermarkBytesDisplay = "";
-				
-				_spaceUsedBytes = 0;
-				_spaceUsedPercent = 0F;
-				_spaceUsedPercentDisplay = "";
-				_spaceUsedBytesDisplay = "";
-
-				_studyCountText = Services.SR.MessageStudyCountUnavailable;
-				_enforceStudyLimit = false;
-				_studyLimit = 0;
-				_minStudyLimit = 0;
-				_maxStudyLimit = 0;
-				_checkFrequency = 10;
-
-				this.Enabled = false; 
-				
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToRetrieveDiskspaceManagementSettings, MessageBoxActions.Ok);
-			}
-		}
-
-		public override void Start()
-		{
-			Refresh();
-			base.Start();
+            _usedSpaceBytes = drive.TotalSize - drive.AvailableFreeSpace;
+            _usedSpacePercent = _usedSpaceBytes / (float)_driveSize * 100F;
+            _usedSpacePercentDisplay = _usedSpacePercent.ToString("F3");
+            _usedSpaceBytesDisplay = GetSpaceDescription(_usedSpacePercent / 100F);
+            
+            base.Start();
 		}
 
 		public void Refresh()
 		{
-			BlockingOperation.Run(this.ConnectToClientInternal);
 			NotifyAllPropertiesChanged();
 		}
-		
-         */
+
 		public override void Save()
         {
+            if (!Modified)
+                return;
+
+            var configuration = StudyStore.GetConfiguration();
+            var drive = configuration.FileStoreDrive;
+		    long minUsedDiskSpace = (long)(drive.TotalSize * (100 - _maximumUsedSpacePercent)/100.0);
+            StudyStore.UpdateConfiguration(_fileStoreDirectory, minUsedDiskSpace);
         }
 
-        /*
 		private string GetSpaceDescription(float percentSpace)
 		{
-			double space = (double)percentSpace * this.DriveSize;
+			double space = (double)percentSpace * DriveSize;
 			if (space <= 0)
 				return "";
 
@@ -162,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 					break;
 			}
 
-			StringBuilder builder = new StringBuilder(space.ToString("F3"));
+			var builder = new StringBuilder(space.ToString("F3"));
 			switch (i)
 			{ 
 				case 4:
@@ -187,17 +134,20 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         #region Properties
 
-		public bool Enabled
-		{
-			get { return _enabled; }
-			private set
-			{
-				_enabled = value;
-				NotifyPropertyChanged("Enabled");
-			}
-		}
-		
-		public string DriveName
+        public string FileStoreDirectory
+        {
+            get { return _fileStoreDirectory; }
+            set
+            {
+                if (Equals(value, _fileStoreDirectory))
+                    return;
+
+                _fileStoreDirectory = value;
+                NotifyPropertyChanged("FileStoreDirectory");
+            }
+        }
+        
+        public string DriveName
         {
             get { return _driveName; }
         }
@@ -212,168 +162,60 @@ namespace ClearCanvas.ImageViewer.Configuration
 			get { return _driveDisplay; }
 		}
 
-		public long SpaceUsed
+		public long UsedSpace
 		{
-			get { return _spaceUsedBytes; }
+			get { return _usedSpaceBytes; }
 		}
 
-		public float SpaceUsedPercent
+		public float UsedSpacePercent
 		{
-			get { return _spaceUsedPercent; }
+            get { return _usedSpacePercent; }
 		}
 
-		public string SpaceUsedPercentDisplay
+		public string UsedSpacePercentDisplay
 		{
-			get { return _spaceUsedPercentDisplay; }
+			get { return _usedSpacePercentDisplay; }
 		}
 
-		public string SpaceUsedBytesDisplay
+		public string UsedSpaceBytesDisplay
 		{
-			get { return _spaceUsedBytesDisplay; }
+			get { return _usedSpaceBytesDisplay; }
 		}
 
-		public int MinimumCheckFrequency
+		public float MaximumUsedSpacePercent
 		{
-			get { return _minCheckFrequency; }
-		}
-
-		public int MaximumCheckFrequency
-		{
-			get { return _maxCheckFrequency; }
-		}
-		
-		public int CheckFrequency
-		{
-			get { return _checkFrequency; }
+			get { return _maximumUsedSpacePercent; }
 			set
 			{
-				int checkFrequency = Math.Max(value, _minCheckFrequency);
-				checkFrequency = Math.Min(value, _maxCheckFrequency);
+                if (Equals(value, _maximumUsedSpacePercent))
+                    return;
 
-				if (_checkFrequency != checkFrequency)
-				{
-					_checkFrequency = checkFrequency;
-					this.Modified = true;
+			    value = Math.Min(value, 100);
+			    value = Math.Max(value, 5);
 
-					NotifyPropertyChanged("CheckFrequency");
-				}
-			}
-		}
-
-		public float WatermarkMinDifference
-		{
-			get { return _watermarkMinDifference; }
-		}
-
-		public string LowWaterMarkBytesDisplay
-		{
-			get { return _lowWatermarkBytesDisplay; }
-		}
-		
-		public string HighWaterMarkBytesDisplay
-		{
-			get { return _highWatermarkBytesDisplay; }
-		}
-
-		public float LowWatermark
-		{
-			get { return _lowWatermark; }
-			set
-			{
-				if (value >= (100.0F - _watermarkMinDifference))
-				{
-					_lowWatermark = 100.0F - _watermarkMinDifference;
-				}
-				else if (value <= 0.0F)
-				{
-					_lowWatermark = 0.0F;
-				}
-				else
-					_lowWatermark = value;
-
-				LowWatermarkChanged();
-
-				if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
-				{
-					_highWatermark = _lowWatermark + _watermarkMinDifference;
-					HighWatermarkChanged();
-				}
-
+			    _maximumUsedSpacePercent = value;
 				this.Modified = true;
+                NotifyPropertyChanged("MaximumUsedSpacePercent");
 			}
-		}
+        }
 
-		public float HighWatermark
-		{
-			get { return _highWatermark; }
-			set
-			{
-				if (value >= 100.0F)
-				{
-					_highWatermark = 100.0F;
-				}
-				else if (value <= _watermarkMinDifference)
-				{
-					_highWatermark = _watermarkMinDifference;
-				}
-				else
-					_highWatermark = value;
+        public string MaximumUsedSpaceDisplay
+        {
+            get { return _maximumUsedSpaceDisplay; }
+        }
 
-				HighWatermarkChanged();
+        public void ChangeFileStore()
+        {
+            //TODO (Marmot): say stuff in here.
+            var args = new SelectFolderDialogCreationArgs(_fileStoreDirectory) { Prompt = SR.TitleSelectFileStore, AllowCreateNewFolder = true};
+            var result = base.Host.DesktopWindow.ShowSelectFolderDialogBox(args);
+            if (result.Action != DialogBoxAction.Ok)
+                return;
 
-				if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
-				{
-					_lowWatermark = _highWatermark - _watermarkMinDifference;
-					LowWatermarkChanged();
-				}
+            _fileStoreDirectory = result.FileName;
+            NotifyPropertyChanged("FileStoreDirectory");
+        }
 
-				this.Modified = true;
-			}
-		}
-
-		public string StudyCountText
-		{
-			get { return _studyCountText; }
-		}
-
-		public int MinStudyLimit
-		{
-			get { return _minStudyLimit; }
-		}
-
-		public int MaxStudyLimit
-		{
-			get { return _maxStudyLimit; }
-		}
-		
-		public bool EnforceStudyLimit
-    	{
-			get { return _enforceStudyLimit; }
-			set
-			{
-				if (_enforceStudyLimit != value)
-				{
-					_enforceStudyLimit = value;
-					NotifyPropertyChanged("EnforceStudyLimit");
-					this.Modified = true;
-				}
-			}
-    	}
-
-		public int StudyLimit
-		{
-			get { return _studyLimit; }
-			set
-			{
-				if (_studyLimit != value)
-				{
-					_studyLimit = value;
-					NotifyPropertyChanged("StudyLimit");
-					this.Modified = true;
-				}
-			}
-		}
-		#endregion
-        */
+        #endregion
     }
 }

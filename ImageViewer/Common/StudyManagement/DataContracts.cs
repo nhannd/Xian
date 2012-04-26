@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -201,26 +199,26 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         [DataMember(IsRequired = false)]
         public long? MinimumFreeSpaceBytes { get; set; }
 
-        public float? MinimumFreeSpacePercent
+        public float MinimumFreeSpacePercent
         {
             get
             {
                 var minimumFreeSpaceBytes = MinimumFreeSpaceBytes;
                 if (!minimumFreeSpaceBytes.HasValue)
-                    return null;
+                    return 0;
 
                 double ratio = (double)minimumFreeSpaceBytes.Value / FileStoreDrive.TotalSize;
-                return (float) ratio*100;
+                return (float) ratio * 100;
             }
         }
 
-        public float? MaximumUsedSpacePercent
+        public float MaximumUsedSpacePercent
         {
-            get 
-            { 
+            get
+            {
                 var maximumUsedSpaceBytes = MaximumUsedSpaceBytes;
                 if (!maximumUsedSpaceBytes.HasValue)
-                    return null;
+                    return 100;
 
                 double ratio = (double)maximumUsedSpaceBytes.Value / FileStoreDrive.TotalSize;
                 return (float)ratio * 100;
@@ -231,12 +229,12 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         {
             get 
             {
-                if (!MinimumFreeSpaceBytes.HasValue)
-                    return null;
-
                 var drive = FileStoreDrive;
                 if (drive == null)
                     return null;
+
+                if (!MinimumFreeSpaceBytes.HasValue)
+                    return drive.TotalSize;
 
                 return drive.TotalSize - MinimumFreeSpaceBytes.Value;
             }
@@ -276,10 +274,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public override bool Equals(object obj)
         {
-            if (obj is StorageConfiguration)
-                return Equals((StorageConfiguration)obj);
-
-            return false;
+            var storageConfiguration = obj as StorageConfiguration;
+            return storageConfiguration != null && Equals(storageConfiguration);
         }
 
         #region IEquatable<StorageConfiguration> Members

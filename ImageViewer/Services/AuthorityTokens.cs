@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Services
                     new string[] 
                     {
 						AuthorityTokens.Administration.DicomServer,
-						AuthorityTokens.Administration.DiskspaceManager,
+						AuthorityTokens.Administration.Storage,
 						AuthorityTokens.Administration.Services,
 						AuthorityTokens.Administration.ReIndex
                     })
@@ -44,14 +44,13 @@ namespace ClearCanvas.ImageViewer.Services
 	{
 		public static class Administration
 		{
+		    //TODO (Marmot): Move some of these.
 			[AuthorityToken(Description = "Allow administration/configuration of the local DICOM Server (e.g. set AE Title, Port).")]
 			public const string DicomServer = "Viewer/Administration/DICOM Server";
 
-		    //TODO (Marmot): get rid of this?
-			[AuthorityToken(Description = "Allow configuration of disk space management.")]
-			public const string DiskspaceManager = "Viewer/Administration/Diskspace Manager";
+            [AuthorityToken(Description = "Allow configuration of local DICOM storage.", Formerly = "Viewer/Administration/Diskspace Manager")]
+			public const string Storage = "Viewer/Administration/Storage";
 
-		    //TODO (Marmot): move?
             [AuthorityToken(Description = "Permission to re-index the local file store.", Formerly = "Viewer/Administration/Reindex Local Data Store")]
 			public const string ReIndex = "Viewer/Administration/Re-index";
 

@@ -569,6 +569,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Storage.
+        /// </summary>
+        internal static string StorageConfiguration {
+            get {
+                return ResourceManager.GetString("StorageConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add New Server.
         /// </summary>
         internal static string TitleAddNewServer {
@@ -619,6 +628,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string TitleMyServers {
             get {
                 return ResourceManager.GetString("TitleMyServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select File Store Folder.
+        /// </summary>
+        internal static string TitleSelectFileStore {
+            get {
+                return ResourceManager.GetString("TitleSelectFileStore", resourceCulture);
             }
         }
         

@@ -118,208 +118,85 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="_tbLowWatermark.Location" type="System.Drawing.Point, System.Drawing">
-    <value>83, 144</value>
+  <data name="_maxDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>94, 91</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_tbLowWatermark.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="_maxDiskSpace.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="_tbLowWatermark.Size" type="System.Drawing.Size, System.Drawing">
-    <value>171, 42</value>
+  <data name="_maxDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>171, 45</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_tbLowWatermark.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
-  </data>
-  <data name="&gt;&gt;_tbLowWatermark.Name" xml:space="preserve">
-    <value>_tbLowWatermark</value>
-  </data>
-  <data name="&gt;&gt;_tbLowWatermark.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TrackBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_tbLowWatermark.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_tbLowWatermark.ZOrder" xml:space="preserve">
-    <value>22</value>
-  </data>
-  <data name="_tbHighWatermark.Location" type="System.Drawing.Point, System.Drawing">
-    <value>83, 62</value>
-  </data>
-  <data name="_tbHighWatermark.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="_tbHighWatermark.Size" type="System.Drawing.Size, System.Drawing">
-    <value>171, 42</value>
-  </data>
-  <data name="_tbHighWatermark.TabIndex" type="System.Int32, mscorlib">
+  <data name="_maxDiskSpace.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="&gt;&gt;_tbHighWatermark.Name" xml:space="preserve">
-    <value>_tbHighWatermark</value>
+  <data name="&gt;&gt;_maxDiskSpace.Name" xml:space="preserve">
+    <value>_maxDiskSpace</value>
   </data>
-  <data name="&gt;&gt;_tbHighWatermark.Type" xml:space="preserve">
+  <data name="&gt;&gt;_maxDiskSpace.Type" xml:space="preserve">
     <value>System.Windows.Forms.TrackBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_tbHighWatermark.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_maxDiskSpace.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_tbHighWatermark.ZOrder" xml:space="preserve">
-    <value>21</value>
-  </data>
-  <data name="_pbUsedSpace.Location" type="System.Drawing.Point, System.Drawing">
-    <value>90, 108</value>
-  </data>
-  <data name="_pbUsedSpace.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="_pbUsedSpace.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 19</value>
-  </data>
-  <data name="_pbUsedSpace.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;_pbUsedSpace.Name" xml:space="preserve">
-    <value>_pbUsedSpace</value>
-  </data>
-  <data name="&gt;&gt;_pbUsedSpace.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_pbUsedSpace.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_pbUsedSpace.ZOrder" xml:space="preserve">
-    <value>20</value>
-  </data>
-  <data name="_txtUsedSpace.Location" type="System.Drawing.Point, System.Drawing">
-    <value>259, 108</value>
-  </data>
-  <data name="_txtUsedSpace.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="_txtUsedSpace.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 20</value>
-  </data>
-  <data name="_txtUsedSpace.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;_txtUsedSpace.Name" xml:space="preserve">
-    <value>_txtUsedSpace</value>
-  </data>
-  <data name="&gt;&gt;_txtUsedSpace.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_txtUsedSpace.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_txtUsedSpace.ZOrder" xml:space="preserve">
-    <value>19</value>
-  </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>23, 63</value>
-  </data>
-  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 0, 2, 0</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 26</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>High Watermark</value>
-  </data>
-  <data name="label1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>18</value>
-  </data>
-  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>44, 104</value>
-  </data>
-  <data name="label2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 0, 2, 0</value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>38, 26</value>
-  </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Used Space</value>
-  </data>
-  <data name="label2.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>17</value>
-  </data>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>23, 145</value>
-  </data>
-  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 0, 2, 0</value>
-  </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 26</value>
-  </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+  <data name="&gt;&gt;_maxDiskSpace.ZOrder" xml:space="preserve">
     <value>12</value>
   </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Low Watermark</value>
+  <data name="_progressUsedDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>98, 56</value>
   </data>
-  <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
+  <data name="_progressUsedDiskSpace.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
   </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
+  <data name="_progressUsedDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 19</value>
   </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="_progressUsedDiskSpace.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
   </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_progressUsedDiskSpace.Name" xml:space="preserve">
+    <value>_progressUsedDiskSpace</value>
+  </data>
+  <data name="&gt;&gt;_progressUsedDiskSpace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_progressUsedDiskSpace.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>16</value>
+  <data name="&gt;&gt;_progressUsedDiskSpace.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="_usedDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>270, 55</value>
+  </data>
+  <data name="_usedDiskSpace.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="_usedDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 20</value>
+  </data>
+  <data name="_usedDiskSpace.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;_usedDiskSpace.Name" xml:space="preserve">
+    <value>_usedDiskSpace</value>
+  </data>
+  <data name="&gt;&gt;_usedDiskSpace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_usedDiskSpace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_usedDiskSpace.ZOrder" xml:space="preserve">
+    <value>10</value>
   </data>
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>326, 69</value>
+    <value>340, 99</value>
   </data>
   <data name="label4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
@@ -343,13 +220,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>9</value>
   </data>
   <data name="label5.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>326, 111</value>
+    <value>339, 58</value>
   </data>
   <data name="label5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
@@ -373,55 +250,25 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="label6.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>326, 151</value>
-  </data>
-  <data name="label6.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 0, 2, 0</value>
-  </data>
-  <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>15, 13</value>
-  </data>
-  <data name="label6.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
-  </data>
-  <data name="label6.Text" xml:space="preserve">
-    <value>%</value>
-  </data>
-  <data name="&gt;&gt;label6.Name" xml:space="preserve">
-    <value>label6</value>
-  </data>
-  <data name="&gt;&gt;label6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label6.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>8</value>
   </data>
   <data name="label8.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>50, 39</value>
+    <value>44, 23</value>
   </data>
   <data name="label8.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
   </data>
   <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 13</value>
+    <value>51, 13</value>
   </data>
   <data name="label8.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="label8.Text" xml:space="preserve">
-    <value>Drive</value>
+    <value>File Store</value>
   </data>
   <data name="label8.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
@@ -436,408 +283,180 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="label9.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
-    <value>40, 184</value>
-  </data>
-  <data name="label9.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 0, 2, 0</value>
-  </data>
-  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 26</value>
-  </data>
-  <data name="label9.TabIndex" type="System.Int32, mscorlib">
-    <value>17</value>
-  </data>
-  <data name="label9.Text" xml:space="preserve">
-    <value>Check Interval</value>
-  </data>
-  <data name="label9.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
-  <data name="&gt;&gt;label9.Name" xml:space="preserve">
-    <value>label9</value>
-  </data>
-  <data name="&gt;&gt;label9.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="_tbFrequency.Location" type="System.Drawing.Point, System.Drawing">
-    <value>83, 184</value>
-  </data>
-  <data name="_tbFrequency.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="_tbFrequency.Size" type="System.Drawing.Size, System.Drawing">
-    <value>171, 42</value>
-  </data>
-  <data name="_tbFrequency.TabIndex" type="System.Int32, mscorlib">
-    <value>18</value>
-  </data>
-  <data name="&gt;&gt;_tbFrequency.Name" xml:space="preserve">
-    <value>_tbFrequency</value>
-  </data>
-  <data name="&gt;&gt;_tbFrequency.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TrackBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_tbFrequency.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_tbFrequency.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="_txtFrequency.Location" type="System.Drawing.Point, System.Drawing">
-    <value>259, 188</value>
-  </data>
-  <data name="_txtFrequency.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="_txtFrequency.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 20</value>
-  </data>
-  <data name="_txtFrequency.TabIndex" type="System.Int32, mscorlib">
-    <value>19</value>
-  </data>
-  <data name="&gt;&gt;_txtFrequency.Name" xml:space="preserve">
-    <value>_txtFrequency</value>
-  </data>
-  <data name="&gt;&gt;_txtFrequency.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_txtFrequency.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_txtFrequency.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="label10.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
-    <value>326, 191</value>
-  </data>
-  <data name="label10.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 0, 2, 0</value>
-  </data>
-  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 13</value>
-  </data>
-  <data name="label10.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
-  </data>
-  <data name="label10.Text" xml:space="preserve">
-    <value>Min</value>
-  </data>
-  <data name="&gt;&gt;label10.Name" xml:space="preserve">
-    <value>label10</value>
-  </data>
-  <data name="&gt;&gt;label10.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="_bnRefresh.Location" type="System.Drawing.Point, System.Drawing">
-    <value>345, 245</value>
-  </data>
-  <data name="_bnRefresh.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="_bnRefresh.Size" type="System.Drawing.Size, System.Drawing">
-    <value>68, 23</value>
-  </data>
-  <data name="_bnRefresh.TabIndex" type="System.Int32, mscorlib">
-    <value>22</value>
-  </data>
-  <data name="_bnRefresh.Text" xml:space="preserve">
-    <value>Refresh</value>
-  </data>
-  <data name="&gt;&gt;_bnRefresh.Name" xml:space="preserve">
-    <value>_bnRefresh</value>
-  </data>
-  <data name="&gt;&gt;_bnRefresh.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_bnRefresh.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_bnRefresh.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="_txtDriveName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>90, 36</value>
+  <data name="_fileStoreDirectory.Location" type="System.Drawing.Point, System.Drawing">
+    <value>98, 20</value>
   </data>
-  <data name="_txtDriveName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="_fileStoreDirectory.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="_txtDriveName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 20</value>
+  <data name="_fileStoreDirectory.Size" type="System.Drawing.Size, System.Drawing">
+    <value>237, 20</value>
   </data>
-  <data name="_txtDriveName.TabIndex" type="System.Int32, mscorlib">
+  <data name="_fileStoreDirectory.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;_txtDriveName.Name" xml:space="preserve">
-    <value>_txtDriveName</value>
+  <data name="&gt;&gt;_fileStoreDirectory.Name" xml:space="preserve">
+    <value>_fileStoreDirectory</value>
   </data>
-  <data name="&gt;&gt;_txtDriveName.Type" xml:space="preserve">
+  <data name="&gt;&gt;_fileStoreDirectory.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_txtDriveName.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_fileStoreDirectory.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_txtDriveName.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_fileStoreDirectory.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="_txtHighWatermarkBytesDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>345, 67</value>
+  <data name="_maxDiskSpaceDisplay.Location" type="System.Drawing.Point, System.Drawing">
+    <value>353, 96</value>
   </data>
-  <data name="_txtHighWatermarkBytesDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="_maxDiskSpaceDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="_txtHighWatermarkBytesDisplay.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_maxDiskSpaceDisplay.Size" type="System.Drawing.Size, System.Drawing">
     <value>68, 20</value>
   </data>
-  <data name="_txtHighWatermarkBytesDisplay.TabIndex" type="System.Int32, mscorlib">
+  <data name="_maxDiskSpaceDisplay.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="&gt;&gt;_txtHighWatermarkBytesDisplay.Name" xml:space="preserve">
-    <value>_txtHighWatermarkBytesDisplay</value>
+  <data name="&gt;&gt;_maxDiskSpaceDisplay.Name" xml:space="preserve">
+    <value>_maxDiskSpaceDisplay</value>
   </data>
-  <data name="&gt;&gt;_txtHighWatermarkBytesDisplay.Type" xml:space="preserve">
+  <data name="&gt;&gt;_maxDiskSpaceDisplay.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_txtHighWatermarkBytesDisplay.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_maxDiskSpaceDisplay.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_txtHighWatermarkBytesDisplay.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_maxDiskSpaceDisplay.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="_txtUsedSpaceBytesDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>345, 108</value>
+  <data name="_usedDiskSpaceDisplay.Location" type="System.Drawing.Point, System.Drawing">
+    <value>353, 55</value>
   </data>
-  <data name="_txtUsedSpaceBytesDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="_usedDiskSpaceDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="_txtUsedSpaceBytesDisplay.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_usedDiskSpaceDisplay.Size" type="System.Drawing.Size, System.Drawing">
     <value>68, 20</value>
   </data>
-  <data name="_txtUsedSpaceBytesDisplay.TabIndex" type="System.Int32, mscorlib">
+  <data name="_usedDiskSpaceDisplay.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
   </data>
-  <data name="&gt;&gt;_txtUsedSpaceBytesDisplay.Name" xml:space="preserve">
-    <value>_txtUsedSpaceBytesDisplay</value>
+  <data name="&gt;&gt;_usedDiskSpaceDisplay.Name" xml:space="preserve">
+    <value>_usedDiskSpaceDisplay</value>
   </data>
-  <data name="&gt;&gt;_txtUsedSpaceBytesDisplay.Type" xml:space="preserve">
+  <data name="&gt;&gt;_usedDiskSpaceDisplay.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_txtUsedSpaceBytesDisplay.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_usedDiskSpaceDisplay.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_txtUsedSpaceBytesDisplay.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_usedDiskSpaceDisplay.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="_txtLowWatermarkBytesDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>345, 149</value>
+  <data name="_upDownMaxDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>270, 96</value>
   </data>
-  <data name="_txtLowWatermarkBytesDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
+  <data name="_upDownMaxDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 20</value>
   </data>
-  <data name="_txtLowWatermarkBytesDisplay.Size" type="System.Drawing.Size, System.Drawing">
-    <value>68, 20</value>
+  <data name="_upDownMaxDiskSpace.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
   </data>
-  <data name="_txtLowWatermarkBytesDisplay.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
+  <data name="&gt;&gt;_upDownMaxDiskSpace.Name" xml:space="preserve">
+    <value>_upDownMaxDiskSpace</value>
   </data>
-  <data name="&gt;&gt;_txtLowWatermarkBytesDisplay.Name" xml:space="preserve">
-    <value>_txtLowWatermarkBytesDisplay</value>
+  <data name="&gt;&gt;_upDownMaxDiskSpace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_txtLowWatermarkBytesDisplay.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_txtLowWatermarkBytesDisplay.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_upDownMaxDiskSpace.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_txtLowWatermarkBytesDisplay.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_upDownMaxDiskSpace.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="_upDownHighWatermark.Location" type="System.Drawing.Point, System.Drawing">
-    <value>259, 67</value>
+  <data name="_changeFileStore.Location" type="System.Drawing.Point, System.Drawing">
+    <value>346, 18</value>
   </data>
-  <data name="_upDownHighWatermark.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 20</value>
+  <data name="_changeFileStore.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
   </data>
-  <data name="_upDownHighWatermark.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
+  <data name="_changeFileStore.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
   </data>
-  <data name="&gt;&gt;_upDownHighWatermark.Name" xml:space="preserve">
-    <value>_upDownHighWatermark</value>
+  <data name="_changeFileStore.Text" xml:space="preserve">
+    <value>Change</value>
   </data>
-  <data name="&gt;&gt;_upDownHighWatermark.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;_changeFileStore.Name" xml:space="preserve">
+    <value>_changeFileStore</value>
   </data>
-  <data name="&gt;&gt;_upDownHighWatermark.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_changeFileStore.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_changeFileStore.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_upDownHighWatermark.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_changeFileStore.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="_upDownLowWatermark.Location" type="System.Drawing.Point, System.Drawing">
-    <value>259, 149</value>
-  </data>
-  <data name="_upDownLowWatermark.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 20</value>
-  </data>
-  <data name="_upDownLowWatermark.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="&gt;&gt;_upDownLowWatermark.Name" xml:space="preserve">
-    <value>_upDownLowWatermark</value>
-  </data>
-  <data name="&gt;&gt;_upDownLowWatermark.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_upDownLowWatermark.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_upDownLowWatermark.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="label7.AutoSize" type="System.Boolean, mscorlib">
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 19</value>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 58</value>
   </data>
-  <data name="label7.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 0, 2, 0</value>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>90, 13</value>
   </data>
-  <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 13</value>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
   </data>
-  <data name="label7.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Used Disk Space</value>
   </data>
-  <data name="label7.Text" xml:space="preserve">
-    <value>Study Count</value>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
   </data>
-  <data name="label7.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
-  <data name="&gt;&gt;label7.Name" xml:space="preserve">
-    <value>label7</value>
-  </data>
-  <data name="&gt;&gt;label7.Type" xml:space="preserve">
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
-    <value>_studyLimitGroup</value>
-  </data>
-  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="_studyLimit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>245, 17</value>
-  </data>
-  <data name="_studyLimit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 20</value>
-  </data>
-  <data name="_studyLimit.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;_studyLimit.Name" xml:space="preserve">
-    <value>_studyLimit</value>
-  </data>
-  <data name="&gt;&gt;_studyLimit.Type" xml:space="preserve">
-    <value>ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown, ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;_studyLimit.Parent" xml:space="preserve">
-    <value>_studyLimitGroup</value>
-  </data>
-  <data name="&gt;&gt;_studyLimit.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="_studyCount.Location" type="System.Drawing.Point, System.Drawing">
-    <value>76, 17</value>
-  </data>
-  <data name="_studyCount.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="_studyCount.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 20</value>
-  </data>
-  <data name="_studyCount.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;_studyCount.Name" xml:space="preserve">
-    <value>_studyCount</value>
-  </data>
-  <data name="&gt;&gt;_studyCount.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_studyCount.Parent" xml:space="preserve">
-    <value>_studyLimitGroup</value>
-  </data>
-  <data name="&gt;&gt;_studyCount.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="_enforceStudyLimit.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_enforceStudyLimit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>178, 19</value>
-  </data>
-  <data name="_enforceStudyLimit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>62, 17</value>
-  </data>
-  <data name="_enforceStudyLimit.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
-  </data>
-  <data name="_enforceStudyLimit.Text" xml:space="preserve">
-    <value>Limit to:</value>
-  </data>
-  <data name="&gt;&gt;_enforceStudyLimit.Name" xml:space="preserve">
-    <value>_enforceStudyLimit</value>
-  </data>
-  <data name="&gt;&gt;_enforceStudyLimit.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_enforceStudyLimit.Parent" xml:space="preserve">
-    <value>_studyLimitGroup</value>
-  </data>
-  <data name="&gt;&gt;_enforceStudyLimit.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="_studyLimitGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 228</value>
-  </data>
-  <data name="_studyLimitGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>326, 49</value>
-  </data>
-  <data name="_studyLimitGroup.TabIndex" type="System.Int32, mscorlib">
-    <value>21</value>
-  </data>
-  <data name="&gt;&gt;_studyLimitGroup.Name" xml:space="preserve">
-    <value>_studyLimitGroup</value>
-  </data>
-  <data name="&gt;&gt;_studyLimitGroup.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_studyLimitGroup.Parent" xml:space="preserve">
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_studyLimitGroup.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 95</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>88, 13</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Max. Disk Space</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -853,10 +472,10 @@
     <value>2, 2, 2, 2</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>430, 296</value>
+    <value>430, 149</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>DiskspaceManagerConfigurationComponentControl</value>
+    <value>StorageConfigurationComponentControl</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>ClearCanvas.Desktop.View.WinForms.ApplicationComponentUserControl, ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>

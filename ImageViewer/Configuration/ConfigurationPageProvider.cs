@@ -27,7 +27,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 			if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
 				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomConfiguration/ServerConfiguration"));
 
-			return listPages.AsReadOnly();
+            if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.Storage) && Common.StudyManagement.StudyStore.IsSupported)
+                listPages.Add(new ConfigurationPage<StorageConfigurationComponent>("DicomConfiguration/StorageConfiguration"));
+            
+            return listPages.AsReadOnly();
 		}
 
 		#endregion
