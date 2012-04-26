@@ -340,6 +340,33 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} of {1} studies processed.
+        /// </summary>
+        internal static string ReapplyRulesProgress_Status {
+            get {
+                return ResourceManager.GetString("ReapplyRulesProgress_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No studies found when reapplying rules..
+        /// </summary>
+        internal static string ReapplyRulesProgress_StatusNoStudies {
+            get {
+                return ResourceManager.GetString("ReapplyRulesProgress_StatusNoStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reapply Rules for {0}.
+        /// </summary>
+        internal static string ReapplyRulesRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("ReapplyRulesRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} of {1} studies processed, {2} of {3} study folders processed, {4} studies deleted.
         /// </summary>
         internal static string ReindexProgress_Status {

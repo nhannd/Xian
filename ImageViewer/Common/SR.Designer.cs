@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to start reapply rules operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator..
+        /// </summary>
+        internal static string MessageFailedToStartReapplyRules {
+            get {
+                return ResourceManager.GetString("MessageFailedToStartReapplyRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to start reindex operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator..
         /// </summary>
         internal static string MessageFailedToStartReindex {

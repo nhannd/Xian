@@ -194,6 +194,52 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     }
 
     [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemProgressDataContract("D7040F82-8021-420E-B72B-0890053BE8C5")]
+    public class ReapplyRulesProgress : WorkItemProgress
+    {
+        public ReapplyRulesProgress()
+        {
+            IsCancelable = false;
+        }
+
+        [DataMember(IsRequired = true)]
+        public int StudiesToProcess { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int StudiesProcessed { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public bool Complete { get; set; }
+
+        public override string Status
+        {
+            get
+            {
+                if (StudiesToProcess == 0 && StudiesProcessed == 0)
+                {
+                    return Complete ? SR.ReapplyRulesProgress_StatusNoStudies : string.Empty;
+                }
+
+                return string.Format(SR.ReapplyRulesProgress_Status, StudiesProcessed, StudiesToProcess);
+            }
+        }
+
+        public override Decimal PercentComplete
+        {
+            get
+            {
+                if (Complete && StudiesToProcess == 0)
+                    return new decimal(100.0);
+
+                if (StudiesToProcess > 0)
+                    return (Decimal)StudiesProcessed / StudiesToProcess ;
+
+                return new decimal(0.0);
+            }
+        }
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemProgressDataContract("68BCA074-F1F1-4870-8ABD-281B31E10B6A")]
     public class DicomSendProgress : WorkItemProgress
     {

@@ -285,4 +285,13 @@
   <data name="WorkItemTypeEnumDeleteStudy" xml:space="preserve">
     <value>Delete Study</value>
   </data>
+  <data name="ReapplyRulesProgress_Status" xml:space="preserve">
+    <value>{0} of {1} studies processed</value>
+  </data>
+  <data name="ReapplyRulesProgress_StatusNoStudies" xml:space="preserve">
+    <value>No studies found when reapplying rules.</value>
+  </data>
+  <data name="ReapplyRulesRequest_ActivityDescription" xml:space="preserve">
+    <value>Reapply Rules for {0}</value>
+  </data>
 </root>

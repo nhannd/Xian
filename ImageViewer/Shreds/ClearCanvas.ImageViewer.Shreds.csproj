@@ -99,6 +99,8 @@
     <Compile Include="WorkItemService\Import\ImportItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
+    <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesFactory.cs" />
+    <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesItemProcessor.cs" />
     <Compile Include="WorkItemService\WorkItemActivityPublisher.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexFactory.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexItemProcessor.cs" />

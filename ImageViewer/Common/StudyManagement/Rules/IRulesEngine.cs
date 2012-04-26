@@ -19,6 +19,9 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Rules
 
     public interface IRulesEngine
     {
+        bool ApplyAutoRouteActions { get; set; }
+        bool ApplyDeleteActions { get; set; }
+
         /// <summary>
         /// Apply the Study level rules to a Study.
         /// </summary>

@@ -229,6 +229,31 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
+    public class ReapplyRulesClient : WorkItemClient
+    {
+        public void ReapplyRules(string ruleId, string ruleName, bool applyAutoRouteActions, bool applyDeleteActions)
+        {
+            var request = new ReapplyRulesRequest
+                              {
+                                  RuleId = ruleId,
+                                  RuleName = ruleName,
+                                  ApplyAutoRouteActions = applyAutoRouteActions,
+                                  ApplyDeleteActions = applyDeleteActions
+                              };
+
+            try
+            {
+                InsertRequest(request);
+            }
+            catch (Exception ex)
+            {
+                Exception = ex;
+                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToStartReapplyRules);
+                throw;
+            }
+        }
+    }
+
     public class DeleteClient : WorkItemClient
     {
         public void DeleteStudy(IStudyRootData study)

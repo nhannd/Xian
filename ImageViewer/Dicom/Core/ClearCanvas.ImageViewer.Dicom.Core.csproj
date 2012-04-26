@@ -81,6 +81,7 @@
     <Compile Include="DeleteSeriesUtility.cs" />
     <Compile Include="DeleteStudyUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReapplyRulesUtility.cs" />
     <Compile Include="ReindexUtility.cs" />
     <Compile Include="ReprocessStudyFolder.cs" />
     <Compile Include="ImportFilesUtility.cs" />

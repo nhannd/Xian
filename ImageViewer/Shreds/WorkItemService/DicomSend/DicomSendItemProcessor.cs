@@ -184,9 +184,18 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             else if (AutoRoute != null)
             {
                 LoadUids();
-                foreach (WorkItemUid uid in WorkQueueUidList)
+                if (WorkQueueUidList.Count == 0)
                 {
-                    _scu.AddFile(Location.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid));
+                    var studyXml = Location.LoadStudyXml();
+
+                    _scu.LoadStudyFromStudyXml(Location, studyXml);
+                }
+                else
+                {
+                    foreach (var uid in WorkQueueUidList)
+                    {
+                        _scu.AddFile(Location.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid));
+                    }
                 }
             }
             else if (PublishFiles != null)
