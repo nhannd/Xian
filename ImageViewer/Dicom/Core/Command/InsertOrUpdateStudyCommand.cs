@@ -49,11 +49,11 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 {
                     // This is a bit of a hack to handle batch processing of studies
                     Context.ContextStudy = _location.Study;
-                    Context.ContextStudy.StoreTime = Platform.Time;
                     broker.AddStudy(Context.ContextStudy);
                 }
             }
 
+            Context.ContextStudy.StoreTime = Platform.Time;
             Context.ContextStudy.Deleted = false;            
             Context.ContextStudy.NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
             Context.ContextStudy.NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
