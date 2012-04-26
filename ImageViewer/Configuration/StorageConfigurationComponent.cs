@@ -50,14 +50,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 		private string _usedSpacePercentDisplay;
 		private string _usedSpaceBytesDisplay;
 
-		private void MaximumUsedSpaceChanged()
-		{
-			_maximumUsedSpaceDisplay = GetSpaceDescription(_maximumUsedSpacePercent / 100F);
-
-			NotifyPropertyChanged("MaximumUsedSpace");
-			NotifyPropertyChanged("MaximumUsedSpaceDisplay");
-		}
-
         public override void Start()
 		{
             var configuration = StudyStore.GetConfiguration();
@@ -79,11 +71,6 @@ namespace ClearCanvas.ImageViewer.Configuration
             base.Start();
 		}
 
-		public void Refresh()
-		{
-			NotifyAllPropertiesChanged();
-		}
-
 		public override void Save()
         {
             if (!Modified)
@@ -95,44 +82,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             StudyStore.UpdateConfiguration(_fileStoreDirectory, minUsedDiskSpace);
         }
 
-		private string GetSpaceDescription(float percentSpace)
-		{
-			double space = (double)percentSpace * DriveSize;
-			if (space <= 0)
-				return "";
-
-			int i = 0;
-			while (space > 1024)
-			{
-				space /= 1024;
-				if (++i == 4)
-					break;
-			}
-
-			var builder = new StringBuilder(space.ToString("F3"));
-			switch (i)
-			{ 
-				case 4:
-					builder.AppendFormat(" {0}", SR.LabelTerabytes);
-					break;
-				case 3:
-					builder.AppendFormat(" {0}", SR.LabelGigabytes);
-					break;
-				case 2:
-					builder.AppendFormat(" {0}", SR.LabelMegabytes);
-					break;
-				case 1:
-					builder.AppendFormat(" {0}", SR.LabelKilobytes);
-					break;
-				default: //0
-					builder.AppendFormat(" {0}", SR.LabelBytes);
-					break;
-			}
-
-			return builder.ToString();
-		}
-
-        #region Properties
+        #region Presentation Model
 
         public string FileStoreDirectory
         {
@@ -195,13 +145,29 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 			    _maximumUsedSpacePercent = value;
 				this.Modified = true;
-                NotifyPropertyChanged("MaximumUsedSpacePercent");
-			}
+                MaximumUsedSpaceChanged();
+            }
         }
 
         public string MaximumUsedSpaceDisplay
         {
             get { return _maximumUsedSpaceDisplay; }
+        }
+
+        public bool IsMaximumUsedSpaceExceeded
+        {
+            get { return _usedSpacePercent > _maximumUsedSpacePercent; }
+        }
+
+        public string MaximumUsedSpaceExceededMessage
+        {
+            get
+            {
+                if (!IsMaximumUsedSpaceExceeded)
+                    return String.Empty;
+
+                return SR.MaximumUsedSpaceExceededMessage;
+            }
         }
 
         public void ChangeFileStore()
@@ -216,5 +182,52 @@ namespace ClearCanvas.ImageViewer.Configuration
         }
 
         #endregion
+
+        private void MaximumUsedSpaceChanged()
+        {
+            _maximumUsedSpaceDisplay = GetSpaceDescription(_maximumUsedSpacePercent / 100F);
+
+            NotifyPropertyChanged("MaximumUsedSpace");
+            NotifyPropertyChanged("MaximumUsedSpaceDisplay");
+            NotifyPropertyChanged("IsMaximumUsedSpaceExceeded");
+            NotifyPropertyChanged("MaximumUsedSpaceExceededMessage");
+        }
+        
+        private string GetSpaceDescription(float percentSpace)
+        {
+            double space = (double)percentSpace * DriveSize;
+            if (space <= 0)
+                return "";
+
+            int i = 0;
+            while (space > 1024)
+            {
+                space /= 1024;
+                if (++i == 4)
+                    break;
+            }
+
+            var builder = new StringBuilder(space.ToString("F3"));
+            switch (i)
+            { 
+                case 4:
+                    builder.AppendFormat(" {0}", SR.LabelTerabytes);
+                    break;
+                case 3:
+                    builder.AppendFormat(" {0}", SR.LabelGigabytes);
+                    break;
+                case 2:
+                    builder.AppendFormat(" {0}", SR.LabelMegabytes);
+                    break;
+                case 1:
+                    builder.AppendFormat(" {0}", SR.LabelKilobytes);
+                    break;
+                default: //0
+                    builder.AppendFormat(" {0}", SR.LabelBytes);
+                    break;
+            }
+
+            return builder.ToString();
+        }
     }
 }

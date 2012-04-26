@@ -196,6 +196,9 @@ Streaming Image Port: {1}</value>
   <data name="Location" xml:space="preserve">
     <value>Location: {0}</value>
   </data>
+  <data name="MaximumUsedSpaceExceededMessage" xml:space="preserve">
+    <value>Disk usage is above the maximum. The Workstation will not be able to import DICOM files or receive them over the network. You should delete old studies to make room, or increase the maximum usage.</value>
+  </data>
   <data name="MenuAddServer" xml:space="preserve">
     <value>Add server</value>
   </data>

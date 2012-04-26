@@ -272,6 +272,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disk usage is above the maximum. The Workstation will not be able to import DICOM files or receive them over the network. You should delete old studies to make room, or increase the maximum usage..
+        /// </summary>
+        internal static string MaximumUsedSpaceExceededMessage {
+            get {
+                return ResourceManager.GetString("MaximumUsedSpaceExceededMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add server.
         /// </summary>
         internal static string MenuAddServer {

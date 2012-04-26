@@ -10,8 +10,10 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
@@ -32,24 +34,27 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
             _component = component;
 
-            var bindingSource = new BindingSource {DataSource = _component};
+            _fileStoreDirectory.DataBindings.Add("Text", _component, "FileStoreDirectory", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _fileStoreDirectory.DataBindings.Add("Text", bindingSource, "FileStoreDirectory", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            Binding maxDiskUsageBinding = new Binding("Value", bindingSource, "MaximumUsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
+            Binding maxDiskUsageBinding = new Binding("Value", _component, "MaximumUsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
 			maxDiskUsageBinding.Parse += ParseDiskUsageBinding;
 			maxDiskUsageBinding.Format += FormatDiskUsageBinding;
 
-            _maxDiskSpaceDisplay.DataBindings.Add("Text", bindingSource, "MaximumUsedSpaceDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
-            _upDownMaxDiskSpace.DataBindings.Add("Value", bindingSource, "MaximumUsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
+            _maxDiskSpaceDisplay.DataBindings.Add("Text", _component, "MaximumUsedSpaceDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
+            _upDownMaxDiskSpace.DataBindings.Add("Value", _component, "MaximumUsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
 			_maxDiskSpace.DataBindings.Add(maxDiskUsageBinding);
 
-			_progressUsedDiskSpace.DataBindings.Add("Value", bindingSource, "UsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
-            _usedDiskSpace.DataBindings.Add("Text", bindingSource, "UsedSpacePercentDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
-            _usedDiskSpaceDisplay.DataBindings.Add("Text", bindingSource, "UsedSpaceBytesDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
+			_usedSpaceMeter.DataBindings.Add("Value", _component, "UsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
+            _usedSpaceMeter.DataBindings.Add("RenderError", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _usedDiskSpace.DataBindings.Add("Text", _component, "UsedSpacePercentDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
+            _usedDiskSpaceDisplay.DataBindings.Add("Text", _component, "UsedSpaceBytesDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _diskSpaceWarningIcon.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningMessage.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededMessage", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
-		private void FormatDiskUsageBinding(object sender, ConvertEventArgs e)
+        private void FormatDiskUsageBinding(object sender, ConvertEventArgs e)
 		{
 			float value = (float)e.Value;
 			e.Value = (int)(value * 1000F);

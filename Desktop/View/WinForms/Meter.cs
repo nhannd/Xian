@@ -27,6 +27,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 	public class Meter : Label
 	{
 		private int _value;
+	    private int _fillState = VsStyles.ProgressBar.FillStates.PBFS_NORMAL;
 
 		public Meter()
 		{
@@ -61,7 +62,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
+	    [Description("Specifies whether or not the progress bar should indicate an error.")]
+	    [DefaultValue(false)]
+	    public bool RenderError
+	    {
+            get { return _fillState != VsStyles.ProgressBar.FillStates.PBFS_NORMAL; }
+            set
+            {
+                _fillState = value ? VsStyles.ProgressBar.FillStates.PBFS_ERROR : VsStyles.ProgressBar.FillStates.PBFS_NORMAL;
+                Invalidate();
+            }
+	    }
+
+	    protected override void OnPaint(PaintEventArgs e)
 		{
 			var clientRect = this.ClientRectangle;
 			var fillRect = clientRect;
@@ -78,7 +91,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				// draw filled portion
 				renderer.SetParameters(VsStyles.ProgressBar.Progress,
 				   VsStyles.ProgressBar.ProgressParts.PP_FILL,
-				   VsStyles.ProgressBar.FillStates.PBFS_PARTIAL);
+                   _fillState);
 				renderer.DrawBackground(e.Graphics, fillRect);
 			}
 			catch(Exception)
