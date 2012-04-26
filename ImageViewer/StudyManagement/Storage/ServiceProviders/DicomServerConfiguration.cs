@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.IO;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -56,44 +55,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
     internal class DicomServerConfiguration : IDicomServerConfiguration
     {
-        private static readonly string _configurationKey = typeof (DicomServerConfigurationContract).FullName;
-
-        private static readonly object _cacheLock = new object();
-        private static DateTime? _cachedTime;
-        private static DicomServerConfigurationContract _cachedValue;
-
-        private DicomServerConfigurationContract CachedValue
-        {
-            get
-            {
-                lock (_cacheLock)
-                {
-                    if (!_cachedTime.HasValue)
-                        return null;
-
-                    var elapsed = DateTime.Now - _cachedTime.Value;
-                    if (elapsed > TimeSpan.FromSeconds(30))
-                        _cachedValue = null;
-
-                    return _cachedValue;
-                }
-            }
-            set
-            {
-                lock (_cacheLock)
-                {
-                    if (value == null)
-                    {
-                        _cachedTime = null;
-                        _cachedValue = null;
-                        return;
-                    }
-
-                    _cachedValue = value;
-                    _cachedTime = DateTime.Now;
-                }
-            }
-        }
+        private static readonly string _configurationKey = typeof(DicomServerConfigurationContract).FullName;
 
         //Note: the installer is supposed to set these defaults. These are the bottom of the barrel, last-ditch defaults.
         #region Defaults
@@ -108,11 +70,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             get { return "localhost"; }
         }
 
-        private string DefaultFileStoreLocation
-        {
-            get { return Path.Combine(Platform.ApplicationDataDirectory, "filestore"); }
-        }
-
         private int DefaultPort
         {
             get { return 104; }
@@ -124,9 +81,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 
         public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
         {
-            var cachedValue = CachedValue;
+            Platform.CheckForNullReference(request, "request");
+
+            var cachedValue = Cache<DicomServerConfigurationContract>.CachedValue;
             if (cachedValue != null)
-                return new GetDicomServerConfigurationResult {Configuration = cachedValue};
+                return new GetDicomServerConfigurationResult { Configuration = cachedValue.Clone() };
 
             DicomServerConfigurationContract configuration;
             using (var context = new DataAccessContext())
@@ -140,22 +99,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                 configuration.AETitle = DefaultAE;
             if (String.IsNullOrEmpty(configuration.HostName))
                 configuration.HostName = DefaultHostname;
-            if (String.IsNullOrEmpty(configuration.FileStoreDirectory))
-                configuration.FileStoreDirectory = DefaultFileStoreLocation;
 
-            CachedValue = configuration;
-            return new GetDicomServerConfigurationResult { Configuration = configuration };
+            Cache<DicomServerConfigurationContract>.CachedValue = configuration;
+            return new GetDicomServerConfigurationResult { Configuration = configuration.Clone() };
         }
 
         public UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request)
         {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckForNullReference(request.Configuration, "Configuration");
             Platform.CheckForEmptyString(request.Configuration.AETitle, "AETitle");
             Platform.CheckArgumentRange(request.Configuration.Port, 1, 65535, "Port");
 
             //Trim the strings before saving.
             request.Configuration.AETitle = request.Configuration.AETitle.Trim();
-            request.Configuration.FileStoreDirectory = request.Configuration.FileStoreDirectory.Trim();
-            request.Configuration.HostName = request.Configuration.HostName.Trim();
+            if (!String.IsNullOrEmpty(request.Configuration.HostName))
+                request.Configuration.HostName = request.Configuration.HostName.Trim();
 
             using (var context = new DataAccessContext())
             {
@@ -163,10 +122,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                 context.Commit();
                 
                 //Make a copy because the one in the request is a reference object that the caller could change afterwards.
-                CachedValue = new DicomServerConfigurationContract
+                Cache<DicomServerConfigurationContract>.CachedValue = new DicomServerConfigurationContract
                                   {
                                       AETitle = request.Configuration.AETitle,
-                                      FileStoreDirectory = request.Configuration.FileStoreDirectory,
                                       HostName = request.Configuration.HostName,
                                       Port = request.Configuration.Port
                                   };
@@ -190,5 +148,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         }
 
         #endregion
+    }
+
+    internal static class DicomServerConfigurationExtensions
+    {
+        public static DicomServerConfigurationContract Clone(this DicomServerConfigurationContract dicomServerConfiguration)
+        {
+            return new DicomServerConfigurationContract
+            {
+                AETitle = dicomServerConfiguration.AETitle,
+                HostName = dicomServerConfiguration.HostName,
+                Port = dicomServerConfiguration.Port
+            };
+        }
     }
 }

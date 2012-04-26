@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using System.Diagnostics;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -39,22 +40,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Private Methods
 
-        private static DicomServerConfiguration GetServerConfiguration()
-        {
-            DicomServerConfiguration configuration = null;
-            var request = new GetDicomServerConfigurationRequest();
-            Platform.GetService<IDicomServerConfiguration>(s =>
-                                configuration = s.GetConfiguration(request).Configuration);
-
-            return configuration;
-        }
-
 		private void StartServerAsync(object nothing)
 		{
-			DicomServerConfiguration configuration;
-			lock (_syncLock)
-			{
-				configuration = GetServerConfiguration();
+			DicomServerConfiguration serverConfiguration;
+            StorageConfiguration storageConfiguration;
+            lock (_syncLock)
+            {
+                serverConfiguration = Common.DicomServer.DicomServer.GetConfiguration();
+                storageConfiguration = StudyStore.GetConfiguration();
 				_restart = false;
 			}
 
@@ -64,14 +57,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				Trace.WriteLine("Starting Dicom server.");
 
-				server = new DicomServer(configuration.AETitle, configuration.HostName,
-				                         configuration.Port, configuration.FileStoreDirectory);
+				server = new DicomServer(serverConfiguration.AETitle, serverConfiguration.HostName,
+                                         serverConfiguration.Port, storageConfiguration.FileStoreDirectory);
 				server.Start();
 			}
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Failed to start dicom server ({0}/{1}:{2}",
-				             configuration.HostName, configuration.AETitle, configuration.Port);
+				             serverConfiguration.HostName, serverConfiguration.AETitle, serverConfiguration.Port);
 
 				server = null;
 			}

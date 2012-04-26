@@ -51,8 +51,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 				if (_component.ShowLocalServerNode)
 				{
-					_aeTreeView.MouseEnter -= new EventHandler(OnLocalServerConfigurationChanged);
-					_component.ServerTree.LocalServer.ConfigurationChanged -= OnLocalServerConfigurationChanged;
+                    _aeTreeView.MouseEnter -= OnMouseEnter;
 				}
 
 			}
@@ -144,7 +143,5 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.ToolStrip _serverTools;
         private System.Windows.Forms.ContextMenuStrip _contextMenu;
 		private System.Windows.Forms.ImageList _stateImageList;
-
-
     }
 }

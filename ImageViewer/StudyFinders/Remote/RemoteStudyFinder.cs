@@ -201,9 +201,8 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 					{
 						requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(modalityFilter);
 
-						IList<DicomAttributeCollection> results = scu.Find(DicomServerConfigurationHelper.AETitle,
-							server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port,
-							requestCollection);
+                        IList<DicomAttributeCollection> results = scu.Find(
+                            DicomServer.AETitle, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port, requestCollection);
 
 						scu.Join(new TimeSpan(0, 0, 0, 0, 1000));
 

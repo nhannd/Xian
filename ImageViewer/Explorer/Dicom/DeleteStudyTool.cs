@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 {
                     client.DeleteStudy(study);
                     Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                          string.Format(SR.MessageFormatDeleteStudyScheduled, new PersonName(study.PatientsName).FormattedName),
+                          string.Format(SR.MessageFormatDeleteStudyScheduled, study.PatientsName.FormattedName),
                           SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                 }
             }

@@ -13,23 +13,23 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="DiskspaceManagerConfigurationComponent"/>
+    /// Provides a Windows Forms view onto <see cref="StorageConfigurationComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(DiskspaceManagerConfigurationComponentViewExtensionPoint))]
-    public class DiskspaceManagerConfigurationComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(StorageConfigurationComponentViewExtensionPoint))]
+    public class StorageConfigurationComponentView : WinFormsView, IApplicationComponentView
     {
-        private DiskspaceManagerConfigurationComponent _component;
-        private DiskspaceManagerConfigurationComponentControl _control;
+        private StorageConfigurationComponent _component;
+        private StorageConfigurationComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (DiskspaceManagerConfigurationComponent)component;
+            _component = (StorageConfigurationComponent)component;
         }
 
         #endregion
@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new DiskspaceManagerConfigurationComponentControl(_component);
+                    _control = new StorageConfigurationComponentControl(_component);
                 }
                 return _control;
             }

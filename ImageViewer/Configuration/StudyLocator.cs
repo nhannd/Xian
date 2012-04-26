@@ -20,6 +20,8 @@ namespace ClearCanvas.ImageViewer.Configuration
     //Configuration is not the right place for this, but it was in a lonely plugin
     //all by itself, which seems ridiculous.  Badly need to do some code reorg and refactoring.
 
+    //TODO (Marmot): Move to Common?
+
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = false, ConfigurationName = "StudyLocator", Namespace = QueryNamespace.Value)]
 	public class StudyLocator : IStudyRootQuery
 	{

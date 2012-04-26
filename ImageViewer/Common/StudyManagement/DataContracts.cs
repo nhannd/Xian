@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using System;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
@@ -160,6 +162,128 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         ImageIdentifier IStoreEntry<ImageIdentifier>.Identifier
         {
             get { return Image; }
+        }
+
+        #endregion
+    }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class GetStorageConfigurationResult
+    {
+        [DataMember(IsRequired = true)]
+        public StorageConfiguration Configuration { get; set; }
+    }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class GetStorageConfigurationRequest
+    { }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class UpdateStorageConfigurationResult
+    {
+    }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class UpdateStorageConfigurationRequest
+    {
+        [DataMember(IsRequired = true)]
+        public StorageConfiguration Configuration { get; set; }
+    }
+
+    [DataContract(Namespace = StudyManagementNamespace.Value)]
+    public class StorageConfiguration : IEquatable<StorageConfiguration>
+    {
+        [DataMember(IsRequired = false)]
+        public string FileStoreDirectory { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public long? MinimumFreeSpaceBytes { get; set; }
+
+        public float MinimumFreeSpacePercent
+        {
+            get
+            {
+                var minimumFreeSpaceBytes = MinimumFreeSpaceBytes;
+                if (!minimumFreeSpaceBytes.HasValue)
+                    return 0;
+
+                double ratio = (double)minimumFreeSpaceBytes.Value / FileStoreDrive.TotalSize;
+                return (float) ratio * 100;
+            }
+        }
+
+        public float MaximumUsedSpacePercent
+        {
+            get
+            {
+                var maximumUsedSpaceBytes = MaximumUsedSpaceBytes;
+                if (!maximumUsedSpaceBytes.HasValue)
+                    return 100;
+
+                double ratio = (double)maximumUsedSpaceBytes.Value / FileStoreDrive.TotalSize;
+                return (float)ratio * 100;
+            }
+        }
+
+        public long? MaximumUsedSpaceBytes
+        {
+            get 
+            {
+                var drive = FileStoreDrive;
+                if (drive == null)
+                    return null;
+
+                if (!MinimumFreeSpaceBytes.HasValue)
+                    return drive.TotalSize;
+
+                return drive.TotalSize - MinimumFreeSpaceBytes.Value;
+            }
+        }
+
+        public string FileStoreDriveName
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(FileStoreDirectory)
+                    ? Path.GetPathRoot(FileStoreDirectory)
+                    : null;
+            }
+        }
+
+        public DriveInfo FileStoreDrive
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(FileStoreDirectory) 
+                    ? new DriveInfo(FileStoreDriveName)
+                    : null;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 0x2453671;
+
+            if (FileStoreDirectory != null)
+                hash ^= FileStoreDirectory.GetHashCode();
+            if (MinimumFreeSpaceBytes != null)
+                hash ^= MinimumFreeSpaceBytes.GetHashCode();
+
+            return hash;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var storageConfiguration = obj as StorageConfiguration;
+            return storageConfiguration != null && Equals(storageConfiguration);
+        }
+
+        #region IEquatable<StorageConfiguration> Members
+
+        public bool Equals(StorageConfiguration other)
+        {
+            return FileStoreDirectory == other.FileStoreDirectory &&
+                   MinimumFreeSpaceBytes == other.MinimumFreeSpaceBytes;
         }
 
         #endregion

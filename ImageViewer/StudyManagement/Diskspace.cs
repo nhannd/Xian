@@ -40,10 +40,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="drive"></param>
-		public Diskspace(string drive)
+		/// <param name="driveInfo"></param>
+		public Diskspace(DriveInfo driveInfo)
 		{
-			_driveInfo = new DriveInfo(drive);
+		    _driveInfo = driveInfo;
 		}
 
 		/// <summary>

@@ -14,6 +14,7 @@
 using System;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
 {
@@ -29,8 +30,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
                                                {
                                                    AETitle = "Test",
                                                    HostName = "localhost",
-                                                   Port = 103,
-                                                   FileStoreDirectory = @"C:\filestore"
+                                                   Port = 103
                                                }
                        };
         }
@@ -75,6 +75,30 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         #endregion
     }
 
+    internal class TestStorageConfiguration : IStorageConfiguration
+    {
+        #region IStorageConfiguration Members
+
+        public GetStorageConfigurationResult GetConfiguration(GetStorageConfigurationRequest request)
+        {
+            return new GetStorageConfigurationResult
+            {
+                Configuration = new StorageConfiguration
+                {
+                    FileStoreDirectory = @"c:\filestore",
+                    MinimumFreeSpaceBytes = 5 * 1024L * 1024L * 1024L
+                }
+            };
+        }
+
+        public UpdateStorageConfigurationResult UpdateConfiguration(UpdateStorageConfigurationRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
     internal class TestServiceProvider : IServiceProvider
     {
         #region IServiceProvider Members
@@ -83,6 +107,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         {
             if (serviceType == typeof(IDicomServerConfiguration))
                 return new TestDicomServerConfiguration();
+
+            if (serviceType == typeof(IStorageConfiguration))
+                return new TestStorageConfiguration();
 
             if (serviceType == typeof(IServerDirectory))
                 return new TestServerDirectory();

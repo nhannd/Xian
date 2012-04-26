@@ -169,11 +169,26 @@ Please choose another Server Group Name.</value>
     <value>Streaming Header Port: {0}
 Streaming Image Port: {1}</value>
   </data>
+  <data name="LabelBytes" xml:space="preserve">
+    <value>bytes</value>
+  </data>
   <data name="LabelContextMenu" xml:space="preserve">
     <value>Context Menu</value>
   </data>
+  <data name="LabelGigabytes" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="LabelKilobytes" xml:space="preserve">
+    <value>KB</value>
+  </data>
   <data name="LabelMainMenu" xml:space="preserve">
     <value>Main Menu</value>
+  </data>
+  <data name="LabelMegabytes" xml:space="preserve">
+    <value>MB</value>
+  </data>
+  <data name="LabelTerabytes" xml:space="preserve">
+    <value>TB</value>
   </data>
   <data name="LabelToolbar" xml:space="preserve">
     <value>Toolbar</value>
@@ -280,6 +295,9 @@ Streaming Image Port: {1}</value>
   <data name="ServerConfiguration" xml:space="preserve">
     <value>Local Server</value>
   </data>
+  <data name="StorageConfiguration" xml:space="preserve">
+    <value>Storage</value>
+  </data>
   <data name="TitleAddNewServer" xml:space="preserve">
     <value>Add New Server</value>
   </data>
@@ -297,6 +315,9 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="TitleMyServers" xml:space="preserve">
     <value>My Servers</value>
+  </data>
+  <data name="TitleSelectFileStore" xml:space="preserve">
+    <value>Select File Store Folder</value>
   </data>
   <data name="ToolbarAddServer" xml:space="preserve">
     <value>Add server</value>

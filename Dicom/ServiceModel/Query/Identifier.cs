@@ -20,11 +20,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
         [DicomField(DicomTags.SpecificCharacterSet)]
         string SpecificCharacterSet { get; }
 
-        [DicomField(DicomTags.RetrieveAeTitle)]
-        string RetrieveAeTitle { get; }
-
         [DicomField(DicomTags.InstanceAvailability)]
         string InstanceAvailability { get; }
+
+        [DicomField(DicomTags.RetrieveAeTitle)]
+        string RetrieveAeTitle { get; }
 
         IApplicationEntity RetrieveAE { get; }
     }
