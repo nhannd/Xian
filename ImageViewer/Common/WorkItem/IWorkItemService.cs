@@ -165,8 +165,5 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [OperationContract]
         WorkItemQueryResponse Query(WorkItemQueryRequest request);
-
-        [OperationContract]
-        WorkItemPublishResponse Publish(WorkItemPublishRequest request);
     }
 }

@@ -52,10 +52,5 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 	    {
 	        return Channel.Query(request);
 	    }
-
-        public WorkItemPublishResponse Publish(WorkItemPublishRequest request)
-        {
-            return Channel.Publish(request);
-        }
 	}
 }

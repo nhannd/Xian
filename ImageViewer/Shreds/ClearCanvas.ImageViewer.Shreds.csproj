@@ -99,7 +99,7 @@
     <Compile Include="WorkItemService\Import\ImportItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
-    <Compile Include="WorkItemService\WorkItemActivityPublisher.cs" />
+    <Compile Include="WorkItemActivityPublisher.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexFactory.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexItemProcessor.cs" />
     <Compile Include="WorkItemService\DeleteSeries\DeleteSeriesFactory.cs" />

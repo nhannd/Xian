@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             var context = new ImportStudyContext(configuration.AETitle);
 
             // Publish the creation of the StudyImport WorkItems
-            context.StudyWorkItems.ItemAdded += (sender, e) => WorkItemPublisher.Publish(WorkItemHelper.FromWorkItem(e.Item));
+			context.StudyWorkItems.ItemAdded += (sender, e) => WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(e.Item));
 
             var extensions = new List<string>();
 

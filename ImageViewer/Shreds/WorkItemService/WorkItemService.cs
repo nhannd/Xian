@@ -123,16 +123,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Item = WorkItemHelper.FromWorkItem(item);
             }
 
-            try
-            {
-				WorkItemActivityPublisher.WorkItemsChanged(response.Item);
-                if (WorkItemProcessor.Instance != null)
-                    WorkItemProcessor.Instance.SignalThread();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
-            }            
+			WorkItemActivityPublisher.WorkItemChanged(response.Item);
+            if (WorkItemProcessor.Instance != null)
+                WorkItemProcessor.Instance.SignalThread();
 
             return response;
         }
@@ -186,14 +179,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Item = WorkItemHelper.FromWorkItem(workItem);
             } 
 
-            try
-            {
-				WorkItemActivityPublisher.WorkItemsChanged(response.Item);
-			}
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
-            }  
+			WorkItemActivityPublisher.WorkItemChanged(response.Item);
 
             return response;
         }
@@ -217,23 +203,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Items = results.ToArray();
             }
             return response;
-        }
-
-
-        public WorkItemPublishResponse Publish(WorkItemPublishRequest request)
-        {
-            try
-            {
-				WorkItemActivityPublisher.WorkItemsChanged(request.Item);
-				return new WorkItemPublishResponse();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-                var message = SR.ExceptionErrorProcessingUnsubscribe;
-                var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-                throw new WorkItemServiceException(exceptionMessage);
-            }
         }
 
         #endregion

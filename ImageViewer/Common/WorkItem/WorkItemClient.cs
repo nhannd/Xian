@@ -444,19 +444,4 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
     }
-
-    public class WorkItemPublisher
-    {
-        public static void Publish(WorkItemData workItem)
-        {
-            try
-            {            
-                Platform.GetService<IWorkItemService>(s => s.Publish(new WorkItemPublishRequest { Item = workItem }));
-            }
-            catch (Exception ex)
-            {
-                Platform.Log(LogLevel.Error, ex, "Failed to Publish WorkItem status");
-            }     
-        }
-    }
 }

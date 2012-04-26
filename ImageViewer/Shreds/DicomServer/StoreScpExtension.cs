@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
                 // Publish new WorkItems as they're added to the context
                 _importContext.StudyWorkItems.ItemAdded +=
-                    (sender, e) => WorkItemPublisher.Publish(WorkItemHelper.FromWorkItem(e.Item));
+					(sender, e) => WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(e.Item));
             }
 
 		    var importer = new ImportFilesUtility(_importContext);
