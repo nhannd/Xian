@@ -41,11 +41,15 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 			var result = EventResult.Success;
 			try
 			{
+			    WorkItem item;
 				using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
 				{
-					ProcessStudy(study.Oid, context);
+					item = ProcessStudy(study.Oid, context);
 					context.Commit();
 				}
+                if (item != null)
+                        WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(item));
+
 			}
 			catch (Exception)
 			{
@@ -61,14 +65,14 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 			}
 		}
 
-		private static void ProcessStudy(long studyOid, DataAccessContext context)
+		private static WorkItem ProcessStudy(long studyOid, DataAccessContext context)
 		{
 			var studyBroker = context.GetStudyBroker();
 			var study = studyBroker.GetStudy(studyOid);
 
 			// on the off chance it was deleted by another thread/process, there's nothing to do here
 			if (study.Deleted)
-				return;
+				return null;
 
 			// TODO (Marmot): this code was duplicated from DeleteClient.DeleteStudy
 			var now = Platform.Time;
@@ -92,6 +96,7 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 			var workItemBroker = context.GetWorkItemBroker();
 			workItemBroker.AddWorkItem(item);
 			study.Deleted = true;
+		    return item;
 		}
 	}
 }

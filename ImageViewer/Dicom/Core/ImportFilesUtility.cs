@@ -288,6 +288,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 	    WorkItem workItem;
                         if (!_context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem) )
                             _context.StudyWorkItems.Add(studyInstanceUid, command.WorkItem);
+
+                        //TODO (Marmot), this won't work because of where its referenced
+                	    //WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(command.WorkItem));
                 	}
                 	else
                 	{
