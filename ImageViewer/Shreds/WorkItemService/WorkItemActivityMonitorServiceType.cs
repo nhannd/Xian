@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
@@ -54,28 +55,32 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public void Refresh(WorkItemRefreshRequest request)
         {
-            try
-            {
-                using (var context = new DataAccessContext())
-                {
-                    var broker = context.GetWorkItemBroker();
+        	ThreadPool.QueueUserWorkItem(
+				delegate
+        		{
+					try
+					{
+						using (var context = new DataAccessContext())
+						{
+							var broker = context.GetWorkItemBroker();
 
-                    var dbList = broker.GetWorkItems(null, null, null);
+							var dbList = broker.GetWorkItems(null, null, null);
 
-					// send in batches of 200
-                    foreach (var batch in BatchItems(dbList, 200))
-                    {
-						WorkItemActivityPublisher.WorkItemsChanged(batch.Select(WorkItemHelper.FromWorkItem).ToList());
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-                var message = SR.ExceptionErrorProcessingRefresh;
-                var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-                throw new WorkItemServiceException(exceptionMessage);               
-            }            
+							// send in batches of 200
+							foreach (var batch in BatchItems(dbList, 200))
+							{
+								WorkItemActivityPublisher.WorkItemsChanged(batch.Select(WorkItemHelper.FromWorkItem).ToList());
+							}
+						}
+					}
+					catch (Exception e)
+					{
+						Platform.Log(LogLevel.Error, e);
+						var message = SR.ExceptionErrorProcessingRefresh;
+						var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+						throw new WorkItemServiceException(exceptionMessage);
+					}
+				});
         }
 
         #endregion
