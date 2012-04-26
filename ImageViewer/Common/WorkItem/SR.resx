@@ -133,7 +133,7 @@
     <value>{0} of {1} files imported, {2} failed</value>
   </data>
   <data name="ImportFilesRequest_ActivityDescription" xml:space="preserve">
-    <value>Importing Files from {0} locations</value>
+    <value>Importing Files from {0} location</value>
   </data>
   <data name="ImportStudyRequest_AcitivityDescription" xml:space="preserve">
     <value>Import Study</value>
@@ -296,5 +296,8 @@
   </data>
   <data name="DeleteProgress_Status" xml:space="preserve">
     <value>{0} Image Deleted</value>
+  </data>
+  <data name="ImportFilesRequest_ActivityDescriptionPlural" xml:space="preserve">
+    <value>Importing Files from {0} locations</value>
   </data>
 </root>

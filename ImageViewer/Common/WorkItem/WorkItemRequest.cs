@@ -389,7 +389,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.ImportFilesRequest_ActivityDescription, FilePaths.Count); }
+            get
+            {
+                return string.Format(FilePaths.Count > 1
+                                         ? SR.ImportFilesRequest_ActivityDescriptionPlural
+                                         : SR.ImportFilesRequest_ActivityDescription, FilePaths.Count);
+            }
         }
     }
 

@@ -304,11 +304,20 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing Files from {0} locations.
+        ///   Looks up a localized string similar to Importing Files from {0} location.
         /// </summary>
         internal static string ImportFilesRequest_ActivityDescription {
             get {
                 return ResourceManager.GetString("ImportFilesRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing Files from {0} locations.
+        /// </summary>
+        internal static string ImportFilesRequest_ActivityDescriptionPlural {
+            get {
+                return ResourceManager.GetString("ImportFilesRequest_ActivityDescriptionPlural", resourceCulture);
             }
         }
         
