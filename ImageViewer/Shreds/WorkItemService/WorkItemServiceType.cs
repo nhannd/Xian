@@ -79,20 +79,5 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 throw new WorkItemServiceException(exceptionMessage);
             }
         }
-
-        public WorkItemPublishResponse Publish(WorkItemPublishRequest request)
-        {
-            try
-            {
-                return WorkItemService.Instance.Publish(request);
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-                var message = SR.ExceptionErrorProcessingPublish;
-                var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-                throw new WorkItemServiceException(exceptionMessage);
-            }
-        }
     }
 }

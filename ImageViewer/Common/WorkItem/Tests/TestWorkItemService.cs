@@ -33,9 +33,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             return new WorkItemUnsubscribeResponse();
         }
 
-        public WorkItemRefreshResponse Refresh(WorkItemRefreshRequest request)
+        public void Refresh(WorkItemRefreshRequest request)
         {
-            return new WorkItemRefreshResponse();
         }
 
         #endregion

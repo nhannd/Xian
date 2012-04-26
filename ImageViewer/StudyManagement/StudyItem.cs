@@ -86,9 +86,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             set { RetrieveAE = value; }
 	    }
 
-        [Obsolete("Unused - use Server.GetService<T>().")]
-        public string StudyLoaderName { get; set; }
-	}
+        public new PersonName PatientsName
+        {
+            get { return new PersonName(base.PatientsName); }
+            set { base.PatientsName = (value ?? ""); }
+        }
+
+        public new PersonName ReferringPhysiciansName
+        {
+            get { return new PersonName(base.ReferringPhysiciansName); }
+            set { base.ReferringPhysiciansName = (value ?? ""); }
+        }
+    }
 
 	/// <summary>
 	/// A list of <see cref="StudyItem"/> objects.

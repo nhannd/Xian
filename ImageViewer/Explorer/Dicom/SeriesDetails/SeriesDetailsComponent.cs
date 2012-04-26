@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			get
 			{	
 				if (_studyItem.PatientsName != null)
-					return new PersonName(_studyItem.PatientsName).FormattedName;
+					return _studyItem.PatientsName.FormattedName;
 				return "";
 			}
 		}

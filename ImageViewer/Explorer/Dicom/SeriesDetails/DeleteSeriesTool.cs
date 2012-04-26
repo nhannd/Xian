@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 Context.RefreshSeriesTable();
 
                 Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                                string.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, new PersonName(Context.Study.PatientsName).FormattedName),
+                                String.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, Context.Study.PatientsName.FormattedName),
                                 SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
 
             }

@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ColumnPatientName = new TableColumn<StudyTableItem, string>(
                 ColumnNamePatientName,
                 SR.ColumnHeadingPatientName,
-                item => new PersonName(item.PatientsName).FormattedName,
+                item => item.PatientsName.FormattedName,
                 0.6f);
 
             Columns.Add(ColumnPatientName);
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ColumnLastName = new TableColumn<StudyTableItem, string>(
                 ColumnNameLastName,
                 SR.ColumnHeadingLastName,
-                item => new PersonName(item.PatientsName).LastName,
+                item => item.PatientsName.LastName,
                 0.5f);
 
             Columns.Add(ColumnLastName);
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ColumnFirstName = new TableColumn<StudyTableItem, string>(
                 ColumnNameFirstName,
                 SR.ColumnHeadingFirstName,
-                item => new PersonName(item.PatientsName).FirstName,
+                item => item.PatientsName.FirstName,
                 0.5f);
 
             Columns.Add(ColumnFirstName);
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ColumnIdeographicName = new TableColumn<StudyTableItem, string>(
                 ColumnNameIdeographicName,
                 SR.ColumnHeadingIdeographicName,
-                item => new PersonName(item.PatientsName).Ideographic,
+                item => item.PatientsName.Ideographic,
                 0.5f) { Visible = false };
 
             Columns.Add(ColumnIdeographicName);
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ColumnPhoneticName = new TableColumn<StudyTableItem, string>(
                 ColumnNamePhoneticName,
                 SR.ColumnHeadingPhoneticName,
-                item => new PersonName(item.PatientsName).Phonetic,
+                item => item.PatientsName.Phonetic,
                 0.5f) { Visible = false };
 
             Columns.Add(ColumnPhoneticName);
@@ -198,11 +198,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ColumnReferringPhysician = new TableColumn<StudyTableItem, string>(
                 ColumnNameReferringPhysician,
                 SR.ColumnHeadingReferringPhysician,
-                delegate(StudyTableItem entry)
-                    {
-                        var name = new PersonName(entry.ReferringPhysiciansName ?? "");
-                        return name.FormattedName;
-                    },
+                entry => entry.ReferringPhysiciansName.FormattedName,
                 0.5f);
 
             Columns.Add(ColumnReferringPhysician);
@@ -287,12 +283,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             Items.NotifyItemUpdated(e.Item);
         }
 
+        //TODO (Marmot):Unit test?
         private static string FormatDeleteOn(DateTime? deleteOn)
         {
             if (!deleteOn.HasValue)
                 return String.Empty;
 
-            if (deleteOn.Value > DateTime.Now)
+            if (deleteOn.Value < DateTime.Now)
                 return SR.PastDue;
 
             if (deleteOn.Value.Date == DateTime.Now.Date)

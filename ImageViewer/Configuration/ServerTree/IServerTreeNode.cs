@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         int? Port { get; }
         string FileStoreLocation { get; }
 
-        event EventHandler ConfigurationChanged;
+        void Refresh();
     }
     
     public interface IServerTreeGroup : IServerTreeNode

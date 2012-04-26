@@ -249,15 +249,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private void Publish()
         {
-            try
-            {
-                Item.Progress = Progress;
-				WorkItemActivityPublisher.WorkItemsChanged(WorkItemHelper.FromWorkItem(Item));
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItem status");
-            }
+            Item.Progress = Progress;
+			WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(Item));
         }
 
         #endregion

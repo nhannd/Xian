@@ -73,9 +73,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         [DataMember(IsRequired = true)]
         public string HostName { get; set; }
 
-        [DataMember(IsRequired = true)]
-        public string FileStoreDirectory { get; set; }
-
         public override int GetHashCode()
         {
             int hash = 0x5467912;
@@ -84,8 +81,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
                 hash ^= AETitle.GetHashCode();
             if (HostName != null)
                 hash ^= HostName.GetHashCode();
-            if (FileStoreDirectory != null)
-                hash ^= FileStoreDirectory.GetHashCode();
 
             hash ^= Port.GetHashCode();
             return hash;
@@ -105,8 +100,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         {
             return AETitle == other.AETitle &&
                    HostName == other.HostName &&
-                   Port == other.Port &&
-                   FileStoreDirectory == other.FileStoreDirectory;
+                   Port == other.Port;
         }
 
         #endregion

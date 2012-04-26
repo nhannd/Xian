@@ -70,10 +70,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 			if (_component.ShowLocalServerNode)
 			{
-				// A bit cheap, but by doing this we can force a refresh of the tooltip text if the Dicom
-				// Server WCF service hadn't quite started yet when this component was first created.
-				_aeTreeView.MouseEnter += new EventHandler(OnLocalServerConfigurationChanged);
-                _component.ServerTree.LocalServer.ConfigurationChanged += OnLocalServerConfigurationChanged;
+				// A bit cheap, but by doing this we can force a refresh of the tooltip text.
+                _aeTreeView.MouseEnter += OnMouseEnter;
 			}
 
 			BuildServerTreeView(_aeTreeView, _component.ServerTree);
@@ -297,17 +295,11 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			}
 		}
 
-		private void OnLocalServerConfigurationChanged(object sender, EventArgs e)
-		{
-			if (InvokeRequired)
-			{
-				Invoke(new EventHandler(OnLocalServerConfigurationChanged));
-			}
-			else
-			{
-				_aeTreeView.Nodes[0].ToolTipText = _component.ServerTree.LocalServer.ToString();
-			}
-		}
+        private void OnMouseEnter(object sender, EventArgs e)
+        {
+            _component.ServerTree.LocalServer.Refresh();
+            _aeTreeView.Nodes[0].ToolTipText = _component.ServerTree.LocalServer.ToString();
+        }
 
         private void OnServerTreeUpdated(object sender, EventArgs e)
         {

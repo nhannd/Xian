@@ -33,12 +33,7 @@ namespace ClearCanvas.ImageViewer
 			Server = server;
 		}
 
-		internal LoadStudyArgs(StudyItem studyItem)
-		: this(studyItem.StudyInstanceUid, studyItem.Server)
-		{
-		}
-
-	    /// <summary>
+        /// <summary>
 	    /// Gets the Study Instance UID of the study to be loaded.
 	    /// </summary>
 	    public string StudyInstanceUid { get; private set; }

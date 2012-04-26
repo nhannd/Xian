@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core
@@ -269,10 +269,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
         private static string GetFileStoreDirectory()
         {
-            string directory = null;
-            Platform.GetService<IDicomServerConfiguration>(
-                s => directory = s.GetConfiguration(new GetDicomServerConfigurationRequest()).Configuration.FileStoreDirectory);
-
+            string directory = StudyStore.FileStoreDirectory;
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 

@@ -146,8 +146,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [OperationContract]
         WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request);
 
-        [OperationContract]
-        WorkItemRefreshResponse Refresh(WorkItemRefreshRequest request);
+        [OperationContract(IsOneWay = true)]
+        void Refresh(WorkItemRefreshRequest request);
     }
 
     /// <summary>
@@ -165,8 +165,5 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [OperationContract]
         WorkItemQueryResponse Query(WorkItemQueryRequest request);
-
-        [OperationContract]
-        WorkItemPublishResponse Publish(WorkItemPublishRequest request);
     }
 }

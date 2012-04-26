@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -103,7 +104,17 @@ namespace ClearCanvas.Desktop
     	/// Adds all items in the specified enumeration.
     	/// </summary>
     	public virtual void AddRange(IEnumerable<TItem> enumerable)
-        {
+    	{
+			// optimize degenerate cases
+    		var firstTwoItems = enumerable.Take(2).ToList(); // see if we have 0, 1, or more elements
+			if (firstTwoItems.Count == 0)
+				return;
+			if (firstTwoItems.Count == 1)
+			{
+				this.Add(firstTwoItems[0]);
+				return;
+			}
+
             _list.AddRange(enumerable);
             NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
         }

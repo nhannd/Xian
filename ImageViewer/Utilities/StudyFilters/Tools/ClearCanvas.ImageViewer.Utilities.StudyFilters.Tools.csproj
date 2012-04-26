@@ -116,10 +116,6 @@
       <Project>{AD9F87CF-0F30-442D-ACCD-80FACC339F22}</Project>
       <Name>ClearCanvas.ImageViewer.Explorer.Local</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Services\Tools\ClearCanvas.ImageViewer.Services.Tools.csproj">
-      <Project>{EF1E3BC4-21CA-467A-B84F-9B692846F459}</Project>
-      <Name>ClearCanvas.ImageViewer.Services.Tools</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ClearCanvas.ImageViewer.Utilities.StudyFilters.csproj">
       <Project>{49A47B83-BC95-4E1D-96A8-3DF05673797F}</Project>
       <Name>ClearCanvas.ImageViewer.Utilities.StudyFilters</Name>
