@@ -4,7 +4,6 @@ using System.Security.Principal;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
@@ -316,16 +315,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     public class DicomSendClient : WorkItemClient
     {
-        public void MoveStudy(ApplicationEntity remoteAEInfo, IStudyRootData study, WorkItemPriorityEnum priority)
+        public void MoveStudy(IDicomServiceNode remoteAEInfo, IStudyRootData study, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
             {
                 var request = new DicomSendStudyRequest
                 {
-                    AeTitle = remoteAEInfo.AETitle,
-                    Host = remoteAEInfo.ScpParameters.HostName,
-                    Port = remoteAEInfo.ScpParameters.Port,
+                    Destination = remoteAEInfo.Name,
                     Priority = priority,
                     Study = new WorkItemStudy(study),
                     Patient = new WorkItemPatient(study)
@@ -354,16 +351,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void MoveSeries(ApplicationEntity remoteAEInfo, IStudyRootData study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
+        public void MoveSeries(IDicomServiceNode remoteAEInfo, IStudyRootData study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
             {
                 var request = new DicomSendSeriesRequest
                                   {
-                                      AeTitle = remoteAEInfo.AETitle,
-                                      Host = remoteAEInfo.ScpParameters.HostName,
-                                      Port = remoteAEInfo.ScpParameters.Port,
+                                      Destination = remoteAEInfo.Name,
                                       SeriesInstanceUids = new List<string>(),
                                       Priority = priority,
                                       Study = new WorkItemStudy(study),
@@ -392,16 +387,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void MoveSops(ApplicationEntity remoteAEInfo, IStudyRootData study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
+        public void MoveSops(IDicomServiceNode remoteAEInfo, IStudyRootData study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
             {
                 var request = new DicomSendSopRequest
                                   {
-                                      AeTitle = remoteAEInfo.AETitle,
-                                      Host = remoteAEInfo.ScpParameters.HostName,
-                                      Port = remoteAEInfo.ScpParameters.Port,
+                                      Destination = remoteAEInfo.Name,
                                       SeriesInstanceUid = seriesInstanceUid,
                                       SopInstanceUids = new List<string>(),
                                       Priority = priority,
@@ -431,16 +424,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        public void PublishFiles(ApplicationEntity remoteAEInfo, IStudyRootData study, DeletionBehaviour behaviour, List<string> files)
+        public void PublishFiles(IDicomServiceNode remoteAEInfo, IStudyRootData study, DeletionBehaviour behaviour, List<string> files)
         {
             EventResult result = EventResult.Success;
             try
             {
                 var request = new PublishFilesRequest
                                   {
-                                      AeTitle = remoteAEInfo.AETitle,
-                                      Host = remoteAEInfo.ScpParameters.HostName,
-                                      Port = remoteAEInfo.ScpParameters.Port,
+                                      Destination = remoteAEInfo.Name,
                                       Priority = WorkItemPriorityEnum.Stat,
                                       DeletionBehaviour = behaviour,
                                       Study = new WorkItemStudy(study),

@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using System.Linq;
@@ -134,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 					}
 
 					// publish remote files now
-					if (remoteFiles.Count > 0 && !PublishFilesToRemote(server.ToDataContract(), remoteFiles))
+					if (remoteFiles.Count > 0 && !PublishFilesToRemote(server, remoteFiles))
 						hasErrors = true;
 				}
 			}
@@ -207,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return false;
 		}
 
-        private static bool PublishFilesToRemote(ApplicationEntity destination, ICollection<DicomFile> files)
+        private static bool PublishFilesToRemote(IDicomServiceNode destination, ICollection<DicomFile> files)
 		{
 			try
 			{

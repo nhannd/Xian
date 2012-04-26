@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Common
             importClient.PublishLocal(tempFileDirectory,auditedInstances,BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
 		}
 
-		public static void PublishRemote(ICollection<DicomFile> files, ApplicationEntity destinationServer)
+        public static void PublishRemote(ICollection<DicomFile> files, IDicomServiceNode destinationServer)
 		{
 			if (files == null || files.Count == 0)
 				return;

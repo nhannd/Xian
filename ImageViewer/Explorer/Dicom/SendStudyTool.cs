@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 {
                     try
                     {
-                        client.MoveStudy(destination.ToDataContract(), study, WorkItemPriorityEnum.Normal);
+                        client.MoveStudy(destination, study, WorkItemPriorityEnum.Normal);
                         Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudyScheduled, destination.Name, study.PatientsName.FormattedName),
                                                         SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                     }

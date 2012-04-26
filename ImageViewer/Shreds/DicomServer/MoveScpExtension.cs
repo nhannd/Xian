@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             }
         }
 
-	    private void OnReceiveMoveStudiesRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
+	    private void OnReceiveMoveStudiesRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, IDicomServiceNode remoteAEInfo)
 		{
 			IEnumerable<string> studyUids = (string[])message.DataSet[DicomTags.StudyInstanceUid].Values;
 
@@ -275,7 +275,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             }
 		}
 
-        private void OnReceiveMoveSeriesRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
+        private void OnReceiveMoveSeriesRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, IDicomServiceNode remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			var seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
@@ -318,7 +318,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             }
 		}
 
-        private void OnReceiveMoveImageRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, ApplicationEntity remoteAEInfo)
+        private void OnReceiveMoveImageRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, IDicomServiceNode remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
 			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
@@ -389,15 +389,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				if (level.Equals("STUDY"))
 				{
-                    OnReceiveMoveStudiesRequest(server, presentationID, message, remoteAE.ToDataContract());
+                    OnReceiveMoveStudiesRequest(server, presentationID, message, remoteAE);
 				}
 				else if (level.Equals("SERIES"))
 				{
-                    OnReceiveMoveSeriesRequest(server, presentationID, message, remoteAE.ToDataContract());
+                    OnReceiveMoveSeriesRequest(server, presentationID, message, remoteAE);
 				}
 				else if (level.Equals("IMAGE"))
 				{
-                    OnReceiveMoveImageRequest(server, presentationID, message, remoteAE.ToDataContract());
+                    OnReceiveMoveImageRequest(server, presentationID, message, remoteAE);
 				}
 				else
 				{

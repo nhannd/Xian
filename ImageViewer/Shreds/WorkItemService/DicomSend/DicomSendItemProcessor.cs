@@ -15,6 +15,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
@@ -111,8 +112,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
         public override void Process()
         {
             DicomServerConfiguration configuration = GetServerConfiguration();
+            var remoteAE = ServerDirectory.GetRemoteServerByName(Request.Destination);
+            if (remoteAE == null)
+            {
+                Proxy.Fail(string.Format("Unknown destination: {0}",Request.Destination),WorkItemFailureType.Fatal);
+                return;
 
-            _scu = new ImageViewerStorageScu(configuration.AETitle, Request);
+            }
+            _scu = new ImageViewerStorageScu(configuration.AETitle, remoteAE);
 
             LoadImagesToSend();
 

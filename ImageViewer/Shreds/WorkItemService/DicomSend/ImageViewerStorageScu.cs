@@ -20,6 +20,7 @@ using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -57,8 +58,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
         /// </summary>
         /// <param name="localAETitle">The local AE Title.</param>
         /// <param name="request">The <see cref="WorkItemRequest"/> for the association.</param>
-        public ImageViewerStorageScu(string localAETitle, DicomSendRequest request)
-            : base(localAETitle, request.AeTitle, request.Host, request.Port)
+        public ImageViewerStorageScu(string localAETitle, IDicomServiceNode request)
+            : base(localAETitle, request.AETitle, request.ScpParameters.HostName, request.ScpParameters.Port)
         {
         }
 

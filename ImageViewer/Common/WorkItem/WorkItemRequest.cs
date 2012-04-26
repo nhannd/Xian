@@ -188,13 +188,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public abstract class DicomSendRequest : WorkItemStudyRequest
     {
         [DataMember]
-        public string AeTitle { get; set; }
-
-        [DataMember]
-        public string Host { get; set; }
-
-        [DataMember]
-        public int Port { get; set; }
+        public string Destination { get; set; }
 
         [DataMember]
         public CompressionType CompressionType { get; set; }
@@ -219,7 +213,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendStudyRequest_ActivityDescription, AeTitle); }
+            get { return string.Format(SR.DicomSendStudyRequest_ActivityDescription, Destination); }
         }
     }
 
@@ -242,7 +236,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, AeTitle); }
+            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
         }
     }
 
@@ -269,7 +263,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendSopRequest_ActivityDescription, AeTitle); }
+            get { return string.Format(SR.DicomSendSopRequest_ActivityDescription, Destination); }
         }
     }
 
@@ -300,7 +294,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, AeTitle); }
+            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
         }
     }
 
@@ -320,7 +314,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, AeTitle, Patient.PatientsName); }
+            get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, Destination, Patient.PatientsName); }
         }
     }
 
