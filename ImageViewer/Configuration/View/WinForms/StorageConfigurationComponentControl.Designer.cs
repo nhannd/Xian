@@ -116,6 +116,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             // 
             resources.ApplyResources(this._fileStoreDirectory, "_fileStoreDirectory");
             this._fileStoreDirectory.Name = "_fileStoreDirectory";
+            this._fileStoreDirectory.ReadOnly = true;
             // 
             // _maxDiskSpaceDisplay
             // 

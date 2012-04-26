@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Configuration
         public string FileStoreDirectory
         {
             get { return _fileStoreDirectory; }
-            set
+            private set
             {
                 if (Equals(value, _fileStoreDirectory))
                     return;
@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     return;
 
 			    value = Math.Min(value, 100);
-			    value = Math.Max(value, 5);
+			    value = Math.Max(value, 10);
 
 			    _maximumUsedSpacePercent = value;
 				this.Modified = true;
@@ -212,8 +212,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             if (result.Action != DialogBoxAction.Ok)
                 return;
 
-            _fileStoreDirectory = result.FileName;
-            NotifyPropertyChanged("FileStoreDirectory");
+            FileStoreDirectory = result.FileName;
         }
 
         #endregion
