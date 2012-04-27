@@ -196,8 +196,8 @@ Streaming Image Port: {1}</value>
   <data name="Location" xml:space="preserve">
     <value>Location: {0}</value>
   </data>
-  <data name="MaximumUsedSpaceExceededMessage" xml:space="preserve">
-    <value>Disk usage is above the maximum. The Workstation will not be able to import DICOM files or receive them over the network. You should delete old studies to make room, or increase the maximum usage.</value>
+  <data name="MaximumUsedSpaceExceededLabel" xml:space="preserve">
+    <value>Maximum disk usage exceeded</value>
   </data>
   <data name="MenuAddServer" xml:space="preserve">
     <value>Add server</value>
@@ -249,6 +249,11 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="MessageKeyStrokeReserved" xml:space="preserve">
     <value>The shortcut {0} is reserved and cannot be reassigned.</value>
+  </data>
+  <data name="MessageMaximumUsedSpaceExceeded" xml:space="preserve">
+    <value>Disk usage is above the maximum. The Workstation will not be able to import
+DICOM files or receive them over the network. You should delete old studies to
+make room, or increase the maximum usage.</value>
   </data>
   <data name="MessageMouseButtonActiveToolAssignmentConflict" xml:space="preserve">
     <value>The global tool for {0} is already assigned to {1}. You will not be able to use the global shortcut for {1} whenever this tool is active. Do you still wish to assign this mouse button?</value>

@@ -13,7 +13,6 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
-using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
@@ -54,9 +53,18 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _usedDiskSpace.DataBindings.Add("Text", _component, "UsedSpacePercentDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
             _usedDiskSpaceDisplay.DataBindings.Add("Text", _component, "UsedSpaceBytesDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _diskSpaceWarningIcon.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
-            _diskSpaceWarningMessage.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
-            _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededMessage", true, DataSourceUpdateMode.OnPropertyChanged);
+            _warningIcon.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningLabel.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningLabel.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededLabel", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _component.PropertyChanged += OnComponentPropertyChanged;
+            OnComponentPropertyChanged(this, new PropertyChangedEventArgs("MaximumUsedSpaceExceededMessage"));
+        }
+
+        private void OnComponentPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (propertyChangedEventArgs.PropertyName == "MaximumUsedSpaceExceededMessage")
+                _warningTooltip.SetToolTip(_diskSpaceWarningLabel, _component.MaximumUsedSpaceExceededMessage);
         }
 
         private void FormatMeterFillState(object sender, ConvertEventArgs e)

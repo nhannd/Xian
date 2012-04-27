@@ -128,6 +128,17 @@ namespace ClearCanvas.ImageViewer.Configuration
             get { return _configuration.IsMaximumUsedSpaceExceeded; }
         }
 
+        public string MaximumUsedSpaceExceededLabel
+        {
+            get
+            {
+                if (!IsMaximumUsedSpaceExceeded)
+                    return String.Empty;
+
+                return SR.MaximumUsedSpaceExceededLabel;
+            }
+        }
+
         public string MaximumUsedSpaceExceededMessage
         {
             get
@@ -135,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                 if (!IsMaximumUsedSpaceExceeded)
                     return String.Empty;
 
-                return SR.MaximumUsedSpaceExceededMessage;
+                return SR.MessageMaximumUsedSpaceExceeded;
             }
         }
 
@@ -182,6 +193,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             NotifyPropertyChanged("MaximumUsedSpace");
             NotifyPropertyChanged("MaximumUsedSpaceDisplay");
             NotifyPropertyChanged("IsMaximumUsedSpaceExceeded");
+            NotifyPropertyChanged("MaximumUsedSpaceExceededLabel");
             NotifyPropertyChanged("MaximumUsedSpaceExceededMessage");
         }
         

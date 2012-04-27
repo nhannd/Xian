@@ -272,11 +272,11 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disk usage is above the maximum. The Workstation will not be able to import DICOM files or receive them over the network. You should delete old studies to make room, or increase the maximum usage..
+        ///   Looks up a localized string similar to Maximum disk usage exceeded.
         /// </summary>
-        internal static string MaximumUsedSpaceExceededMessage {
+        internal static string MaximumUsedSpaceExceededLabel {
             get {
-                return ResourceManager.GetString("MaximumUsedSpaceExceededMessage", resourceCulture);
+                return ResourceManager.GetString("MaximumUsedSpaceExceededLabel", resourceCulture);
             }
         }
         
@@ -430,6 +430,17 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string MessageKeyStrokeReserved {
             get {
                 return ResourceManager.GetString("MessageKeyStrokeReserved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disk usage is above the maximum. The Workstation will not be able to import
+        ///DICOM files or receive them over the network. You should delete old studies to
+        ///make room, or increase the maximum usage..
+        /// </summary>
+        internal static string MessageMaximumUsedSpaceExceeded {
+            get {
+                return ResourceManager.GetString("MessageMaximumUsedSpaceExceeded", resourceCulture);
             }
         }
         

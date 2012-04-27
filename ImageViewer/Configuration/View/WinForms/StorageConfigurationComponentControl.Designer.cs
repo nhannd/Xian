@@ -61,6 +61,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StorageConfigurationComponentControl));
             this._maxDiskSpace = new System.Windows.Forms.TrackBar();
             this._usedDiskSpace = new System.Windows.Forms.TextBox();
@@ -75,17 +76,18 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this._usedSpaceMeter = new ClearCanvas.Desktop.View.WinForms.Meter();
-            this._diskSpaceWarningMessage = new System.Windows.Forms.Label();
-            this._diskSpaceWarningIcon = new System.Windows.Forms.PictureBox();
+            this._diskSpaceWarningLabel = new System.Windows.Forms.Label();
+            this._warningIcon = new System.Windows.Forms.PictureBox();
+            this._warningTooltip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._warningIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // _maxDiskSpace
             // 
-            this._maxDiskSpace.LargeChange = 10000;
             resources.ApplyResources(this._maxDiskSpace, "_maxDiskSpace");
+            this._maxDiskSpace.LargeChange = 10000;
             this._maxDiskSpace.Maximum = 100000;
             this._maxDiskSpace.Name = "_maxDiskSpace";
             this._maxDiskSpace.SmallChange = 10;
@@ -133,8 +135,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             // 
             // _upDownMaxDiskSpace
             // 
-            this._upDownMaxDiskSpace.DecimalPlaces = 3;
             resources.ApplyResources(this._upDownMaxDiskSpace, "_upDownMaxDiskSpace");
+            this._upDownMaxDiskSpace.DecimalPlaces = 3;
             this._upDownMaxDiskSpace.Name = "_upDownMaxDiskSpace";
             // 
             // _changeFileStore
@@ -160,26 +162,26 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._usedSpaceMeter.Name = "_usedSpaceMeter";
             this._usedSpaceMeter.Value = 50;
             // 
-            // _diskSpaceWarningMessage
+            // _diskSpaceWarningLabel
             // 
-            resources.ApplyResources(this._diskSpaceWarningMessage, "_diskSpaceWarningMessage");
-            this._diskSpaceWarningMessage.AutoEllipsis = true;
-            this._diskSpaceWarningMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this._diskSpaceWarningMessage.Name = "_diskSpaceWarningMessage";
+            resources.ApplyResources(this._diskSpaceWarningLabel, "_diskSpaceWarningLabel");
+            this._diskSpaceWarningLabel.AutoEllipsis = true;
+            this._diskSpaceWarningLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._diskSpaceWarningLabel.Name = "_diskSpaceWarningLabel";
             // 
-            // _diskSpaceWarningIcon
+            // _warningIcon
             // 
-            resources.ApplyResources(this._diskSpaceWarningIcon, "_diskSpaceWarningIcon");
-            this._diskSpaceWarningIcon.Name = "_diskSpaceWarningIcon";
-            this._diskSpaceWarningIcon.TabStop = false;
+            resources.ApplyResources(this._warningIcon, "_warningIcon");
+            this._warningIcon.Name = "_warningIcon";
+            this._warningIcon.TabStop = false;
             // 
             // StorageConfigurationComponentControl
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._usedSpaceMeter);
-            this.Controls.Add(this._diskSpaceWarningIcon);
-            this.Controls.Add(this._diskSpaceWarningMessage);
+            this.Controls.Add(this._warningIcon);
+            this.Controls.Add(this._diskSpaceWarningLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this._changeFileStore);
@@ -195,7 +197,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.Name = "StorageConfigurationComponentControl";
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._warningIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -216,7 +218,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private Desktop.View.WinForms.Meter _usedSpaceMeter;
-        private System.Windows.Forms.Label _diskSpaceWarningMessage;
-        private System.Windows.Forms.PictureBox _diskSpaceWarningIcon;
+        private System.Windows.Forms.Label _diskSpaceWarningLabel;
+        private System.Windows.Forms.PictureBox _warningIcon;
+        private System.Windows.Forms.ToolTip _warningTooltip;
     }
 }

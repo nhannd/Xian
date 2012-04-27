@@ -117,16 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_maxDiskSpace.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_maxDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 88</value>
+    <value>62, 82</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_maxDiskSpace.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
   <data name="_maxDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
-    <value>178, 45</value>
+    <value>208, 45</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_maxDiskSpace.TabIndex" type="System.Int32, mscorlib">
@@ -144,8 +147,11 @@
   <data name="&gt;&gt;_maxDiskSpace.ZOrder" xml:space="preserve">
     <value>14</value>
   </data>
+  <data name="_usedDiskSpace.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="_usedDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
-    <value>270, 55</value>
+    <value>270, 49</value>
   </data>
   <data name="_usedDiskSpace.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -168,11 +174,14 @@
   <data name="&gt;&gt;_usedDiskSpace.ZOrder" xml:space="preserve">
     <value>13</value>
   </data>
+  <data name="label4.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>340, 95</value>
+    <value>340, 89</value>
   </data>
   <data name="label4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
@@ -198,11 +207,14 @@
   <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
     <value>12</value>
   </data>
+  <data name="label5.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="label5.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>339, 59</value>
+    <value>339, 53</value>
   </data>
   <data name="label5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
@@ -232,7 +244,7 @@
     <value>True</value>
   </data>
   <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>44, 23</value>
+    <value>13, 16</value>
   </data>
   <data name="label8.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
@@ -261,14 +273,17 @@
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
+  <data name="_fileStoreDirectory.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <data name="_fileStoreDirectory.Location" type="System.Drawing.Point, System.Drawing">
-    <value>98, 19</value>
+    <value>67, 13</value>
   </data>
   <data name="_fileStoreDirectory.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
   <data name="_fileStoreDirectory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>237, 20</value>
+    <value>268, 20</value>
   </data>
   <data name="_fileStoreDirectory.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -285,8 +300,11 @@
   <data name="&gt;&gt;_fileStoreDirectory.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
+  <data name="_maxDiskSpaceDisplay.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="_maxDiskSpaceDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>353, 91</value>
+    <value>353, 85</value>
   </data>
   <data name="_maxDiskSpaceDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -309,8 +327,11 @@
   <data name="&gt;&gt;_maxDiskSpaceDisplay.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
+  <data name="_usedDiskSpaceDisplay.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="_usedDiskSpaceDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>353, 55</value>
+    <value>353, 49</value>
   </data>
   <data name="_usedDiskSpaceDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -333,8 +354,11 @@
   <data name="&gt;&gt;_usedDiskSpaceDisplay.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
+  <data name="_upDownMaxDiskSpace.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="_upDownMaxDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
-    <value>270, 91</value>
+    <value>270, 85</value>
   </data>
   <data name="_upDownMaxDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
     <value>65, 20</value>
@@ -354,8 +378,11 @@
   <data name="&gt;&gt;_upDownMaxDiskSpace.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
+  <data name="_changeFileStore.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="_changeFileStore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>346, 18</value>
+    <value>346, 11</value>
   </data>
   <data name="_changeFileStore.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -378,20 +405,20 @@
   <data name="&gt;&gt;_changeFileStore.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 59</value>
+    <value>5, 41</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>90, 13</value>
+    <value>59, 36</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Used Disk Space</value>
+    <value>Disk Usage</value>
+  </data>
+  <data name="label1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;label1.Name" xml:space="preserve">
     <value>label1</value>
@@ -405,23 +432,23 @@
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 95</value>
+    <value>8, 81</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>88, 13</value>
+    <value>56, 34</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Max. Disk Space</value>
+    <value>Max. Disk Usage</value>
+  </data>
+  <data name="label2.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;label2.Name" xml:space="preserve">
     <value>label2</value>
@@ -435,11 +462,14 @@
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="_usedSpaceMeter.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <data name="_usedSpaceMeter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>101, 55</value>
+    <value>68, 49</value>
   </data>
   <data name="_usedSpaceMeter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>163, 20</value>
+    <value>195, 20</value>
   </data>
   <data name="_usedSpaceMeter.TabIndex" type="System.Int32, mscorlib">
     <value>17</value>
@@ -456,37 +486,43 @@
   <data name="&gt;&gt;_usedSpaceMeter.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="_diskSpaceWarningMessage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="_diskSpaceWarningLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="_diskSpaceWarningMessage.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="_diskSpaceWarningLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_diskSpaceWarningLabel.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Underline</value>
+  </data>
+  <data name="_diskSpaceWarningLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="_diskSpaceWarningMessage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>28, 127</value>
+  <data name="_diskSpaceWarningLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>65, 129</value>
   </data>
-  <data name="_diskSpaceWarningMessage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>393, 55</value>
+  <data name="_diskSpaceWarningLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>90, 13</value>
   </data>
-  <data name="_diskSpaceWarningMessage.TabIndex" type="System.Int32, mscorlib">
+  <data name="_diskSpaceWarningLabel.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
   </data>
-  <data name="_diskSpaceWarningMessage.Text" xml:space="preserve">
+  <data name="_diskSpaceWarningLabel.Text" xml:space="preserve">
     <value>don't translate me</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Name" xml:space="preserve">
-    <value>_diskSpaceWarningMessage</value>
+  <data name="&gt;&gt;_diskSpaceWarningLabel.Name" xml:space="preserve">
+    <value>_diskSpaceWarningLabel</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Type" xml:space="preserve">
+  <data name="&gt;&gt;_diskSpaceWarningLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_diskSpaceWarningLabel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_diskSpaceWarningLabel.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="_diskSpaceWarningIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="_warningIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAASFJREFUOE9jYMAD
@@ -497,33 +533,36 @@
         taDwAullAJn08qTqf5AiZM2E2HBXXN3t/n9lDz9ZGKSXpDyCTTEA+BuEmGXdKXwAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="_diskSpaceWarningIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="_warningIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="_diskSpaceWarningIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 125</value>
+  <data name="_warningIcon.Location" type="System.Drawing.Point, System.Drawing">
+    <value>41, 127</value>
   </data>
-  <data name="_diskSpaceWarningIcon.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_warningIcon.Size" type="System.Drawing.Size, System.Drawing">
     <value>16, 16</value>
   </data>
-  <data name="_diskSpaceWarningIcon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
+  <data name="_warningIcon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
     <value>AutoSize</value>
   </data>
-  <data name="_diskSpaceWarningIcon.TabIndex" type="System.Int32, mscorlib">
+  <data name="_warningIcon.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Name" xml:space="preserve">
-    <value>_diskSpaceWarningIcon</value>
+  <data name="&gt;&gt;_warningIcon.Name" xml:space="preserve">
+    <value>_warningIcon</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Type" xml:space="preserve">
+  <data name="&gt;&gt;_warningIcon.Type" xml:space="preserve">
     <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_warningIcon.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_warningIcon.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <metadata name="_warningTooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -537,7 +576,13 @@
     <value>2, 2, 2, 2</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>430, 188</value>
+    <value>430, 161</value>
+  </data>
+  <data name="&gt;&gt;_warningTooltip.Name" xml:space="preserve">
+    <value>_warningTooltip</value>
+  </data>
+  <data name="&gt;&gt;_warningTooltip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>StorageConfigurationComponentControl</value>
