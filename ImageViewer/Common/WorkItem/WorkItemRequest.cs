@@ -511,10 +511,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public string RuleName { get; set; }
 
         [DataMember(IsRequired = true)]
-        public bool ApplyAutoRouteActions { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public bool ApplyDeleteActions { get; set; }
+        public RulesEngineContext RulesEngineContext { get; set; }
 
         public override string ActivityDescription
         {

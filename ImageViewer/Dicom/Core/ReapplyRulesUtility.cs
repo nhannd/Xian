@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core
@@ -25,9 +26,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
         private event EventHandler<ReindexUtility.StudyEventArgs> _studyProcessedEvent;
         private readonly object _syncLock = new object();
-        private readonly string _ruleId;
-        private readonly bool _applyAutoRouteActions;
-        private readonly bool _applyDeleteActions;
+        private readonly ReapplyRulesRequest _request;
         private RuleData _rule;
         #endregion
 
@@ -68,11 +67,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
         #region Constructors
 
-        public ReapplyRulesUtility(string ruleId, bool applyAutoRouteActions, bool applyDeleteActions)
+        public ReapplyRulesUtility(ReapplyRulesRequest request)
         {
-            _applyAutoRouteActions = applyAutoRouteActions;
-            _applyDeleteActions = applyDeleteActions;
-            _ruleId = ruleId;
+            _request = request;
         }
 
         #endregion
@@ -92,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 StudyOidList = broker.GetStudyOids();
 
                 var ruleBroker = context.GetRuleBroker();
-                var rule = ruleBroker.GetRule(_ruleId);
+                var rule = ruleBroker.GetRule(_request.RuleId);
                 if (rule != null)
                     _rule = rule.RuleData;
             }
@@ -116,11 +113,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         {
             var ep = new RulesEngineExtensionPoint();
             var ruleExtensions = ep.CreateExtensions();
-            foreach (IRulesEngine engine in ruleExtensions)
-            {
-                engine.ApplyAutoRouteActions = _applyAutoRouteActions;
-                engine.ApplyDeleteActions = _applyDeleteActions;
-            }
+ 
 
             foreach (long oid in StudyOidList)
             {
@@ -137,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 
                         foreach (IRulesEngine engine in ruleExtensions)
                         {
-                            engine.ApplyStudyToRule(studyEntry,_rule);
+                            engine.ApplyStudyToRule(_request.RulesEngineContext, studyEntry,_rule);
                         }
 
 

@@ -16,6 +16,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
@@ -120,6 +122,20 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                     var p = new ProcessStudyUtility(Location);
 
                     p.ProcessBatch(fileList, studyXml);
+
+                    // Now apply Deletion rules
+                    var ep = new RulesEngineExtensionPoint();
+
+                    var ruleContext = new RulesEngineContext
+                                          {
+                                              ApplyDeleteActions = true,
+                                              ApplySendStudyActions = false
+                                          };
+                    StudyEntry studyEntry = p.StudyLocation.Study.ToStoreEntry();
+                    foreach (IRulesEngine engine in ep.CreateExtensions())
+                    {
+                        engine.ApplyStudyRules(ruleContext, studyEntry);
+                    }
                 }
 
             }

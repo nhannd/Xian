@@ -5,6 +5,7 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
@@ -230,14 +231,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     public class ReapplyRulesClient : WorkItemClient
     {
-        public void ReapplyRules(string ruleId, string ruleName, bool applyAutoRouteActions, bool applyDeleteActions)
+        public void ReapplyRules(string ruleId, string ruleName, RulesEngineContext context)
         {
             var request = new ReapplyRulesRequest
                               {
                                   RuleId = ruleId,
                                   RuleName = ruleName,
-                                  ApplyAutoRouteActions = applyAutoRouteActions,
-                                  ApplyDeleteActions = applyDeleteActions
+                                  RulesEngineContext = context
                               };
 
             try

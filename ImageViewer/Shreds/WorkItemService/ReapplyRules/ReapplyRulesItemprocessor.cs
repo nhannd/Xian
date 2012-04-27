@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
             Progress.IsCancelable = false;
             Proxy.UpdateProgress();
 
-            var processor = new ReapplyRulesUtility(Request.RuleId, Request.ApplyAutoRouteActions, Request.ApplyDeleteActions);
+            var processor = new ReapplyRulesUtility(Request);
 
             processor.Initialize();
 

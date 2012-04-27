@@ -104,7 +104,7 @@
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
-    <Compile Include="StudyManagement\Rules\IRulesAction.cs" />
+    <Compile Include="StudyManagement\Rules\IRulesEngineAction.cs" />
     <Compile Include="StudyManagement\Rules\IRulesEngine.cs" />
     <Compile Include="StudyManagement\StoreEntries.cs" />
     <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
