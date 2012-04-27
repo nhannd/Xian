@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -49,8 +50,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 
                 Context.RefreshSeriesTable();
 
+                DateTime? studyDate = DateParser.Parse(Context.Study.StudyDate);
                 Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                                String.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, Context.Study.PatientsName.FormattedName),
+                                String.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, Context.Study.PatientsName.FormattedName, studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
+                                                                          Context.Study.AccessionNumber),
                                 SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
 
             }

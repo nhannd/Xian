@@ -16,14 +16,14 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Shreds
 {
-	internal static class WorkItemActivityPublisher
+	public static class WorkItemActivityPublisher
 	{
-		internal static void WorkItemChanged(WorkItemData workItem)
+		public static void WorkItemChanged(WorkItemData workItem)
 		{
 			WorkItemsChanged(new List<WorkItemData> { workItem });
 		}
 
-		internal static void WorkItemsChanged(List<WorkItemData> workItems)
+		public static void WorkItemsChanged(List<WorkItemData> workItems)
 		{
 			try
 			{

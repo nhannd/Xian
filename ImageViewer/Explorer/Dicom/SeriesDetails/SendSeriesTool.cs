@@ -18,6 +18,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
@@ -84,9 +85,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 try
                 {
                     client.MoveSeries(destination, Context.Study, seriesUids.ToArray(), WorkItemPriorityEnum.Normal);
+                    DateTime? studyDate = DateParser.Parse(Context.Study.StudyDate);
                     Context.DesktopWindow.ShowAlert(AlertLevel.Info,
                                                     string.Format(SR.MessageFormatSendSeriesScheduled, seriesUids.Count,
-                                                                  destination.Name, Context.Study.PatientsName.FormattedName),
+                                                                  destination.Name, Context.Study.PatientsName.FormattedName, studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
+                                                                          Context.Study.AccessionNumber),
                                                     SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                 }
                 catch (EndpointNotFoundException)

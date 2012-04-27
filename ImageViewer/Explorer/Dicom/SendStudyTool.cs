@@ -17,6 +17,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
@@ -88,8 +89,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     try
                     {
                         client.MoveStudy(destination, study, WorkItemPriorityEnum.Normal);
-                        Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudyScheduled, destination.Name, study.PatientsName.FormattedName),
-                                                        SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+                        if (Context.SelectedStudies.Count == 1)
+                        {
+                            DateTime? studyDate = DateParser.Parse(study.StudyDate);
+                            Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+                                                            string.Format(SR.MessageFormatSendStudyScheduled,
+                                                                          destination.Name,
+                                                                          study.PatientsName.FormattedName,
+                                                                          studyDate.HasValue
+                                                                              ? Format.Date(studyDate.Value)
+                                                                              : string.Empty,
+                                                                          study.AccessionNumber),
+                                                            SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+                        }
                     }
                     catch (EndpointNotFoundException)
                     {
@@ -100,6 +112,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                         ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, Context.DesktopWindow);
                     }
                 }
+            }
+            if (Context.SelectedStudies.Count > 1)
+            {
+                Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudiesScheduled,Context.SelectedStudies.Count),
+                                                      SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
             }
 		}
 

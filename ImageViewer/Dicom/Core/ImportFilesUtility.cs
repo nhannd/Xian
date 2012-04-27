@@ -289,7 +289,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                         if (!_context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem) )
                             _context.StudyWorkItems.Add(studyInstanceUid, command.WorkItem);
 
-                        //TODO (Marmot), this won't work because of where its referenced
+                        //TODO (Marmot), this won't work because it would make a circular reference
                 	    //WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(command.WorkItem));
                 	}
                 	else

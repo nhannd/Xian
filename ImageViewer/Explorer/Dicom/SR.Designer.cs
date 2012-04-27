@@ -413,7 +413,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A study for  {0} has been scheduled for deletion..
+        ///   Looks up a localized string similar to {0} studies have been scheduled for deletion..
+        /// </summary>
+        internal static string MessageFormatDeleteStudiesScheduled {
+            get {
+                return ResourceManager.GetString("MessageFormatDeleteStudiesScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A study for {0} [{1}, A#:{2}] has been scheduled for deletion..
         /// </summary>
         internal static string MessageFormatDeleteStudyScheduled {
             get {
@@ -422,7 +431,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The send to {0} for {1} has been scheduled..
+        ///   Looks up a localized string similar to {0} studies have been scheduled to send..
+        /// </summary>
+        internal static string MessageFormatSendStudiesScheduled {
+            get {
+                return ResourceManager.GetString("MessageFormatSendStudiesScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The send to {0} for {1} [{2}, A#:{3}] has been scheduled..
         /// </summary>
         internal static string MessageFormatSendStudyScheduled {
             get {
