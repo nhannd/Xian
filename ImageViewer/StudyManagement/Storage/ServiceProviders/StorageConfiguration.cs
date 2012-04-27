@@ -73,13 +73,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                                 ?? new StorageConfigurationContract();
             }
 
-            if (String.IsNullOrEmpty(configuration.FileStoreDirectory))
-                configuration.FileStoreDirectory = DefaultFileStoreLocation;
-
-            if (!configuration.MinimumFreeSpaceBytes.HasValue)
-                configuration.MinimumFreeSpaceBytes = ComputeMinimumFreeSpaceBytes(configuration.FileStoreDirectory);
-
-            Cache<StorageConfigurationContract>.CachedValue = configuration.Clone();
+            Complete(configuration);
+            Cache<StorageConfigurationContract>.CachedValue = configuration;
             return new GetStorageConfigurationResult {Configuration = configuration.Clone()};
         }
 
@@ -90,22 +85,34 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             Platform.CheckForEmptyString(request.Configuration.FileStoreDirectory, "FileStoreDirectory");
             //Platform.CheckTrue(request.Configuration.MinimumFreeSpaceBytes.HasValue, "MinimumFreeSpaceBytes");
 
+            var configuration = request.Configuration.Clone();
+
             //Trim before saving.
-            request.Configuration.FileStoreDirectory = request.Configuration.FileStoreDirectory.Trim();
+            configuration.FileStoreDirectory = request.Configuration.FileStoreDirectory.Trim();
+            Complete(configuration);
 
             using (var context = new DataAccessContext())
             {
-                context.GetConfigurationBroker().SetDataContractValue(_configurationKey, request.Configuration);
+                context.GetConfigurationBroker().SetDataContractValue(_configurationKey, configuration);
                 context.Commit();
 
                 //Make a copy because the one in the request is a reference object that the caller could change afterwards.
-                Cache<StorageConfigurationContract>.CachedValue = request.Configuration.Clone();
+                Cache<StorageConfigurationContract>.CachedValue = configuration;
             }
 
             return new UpdateStorageConfigurationResult();
         }
 
         #endregion
+
+        private void Complete(StorageConfigurationContract configuration)
+        {
+            if (String.IsNullOrEmpty(configuration.FileStoreDirectory))
+                configuration.FileStoreDirectory = DefaultFileStoreLocation;
+
+            if (configuration.AutoCalculateMinimumFreeSpacePercent)
+                configuration.MinimumFreeSpaceBytes = ComputeMinimumFreeSpaceBytes(configuration.FileStoreDirectory);
+        }
 
         private long ComputeMinimumFreeSpaceBytes(string fileStoreDirectory)
         {
@@ -122,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             return new StorageConfigurationContract
                        {
                            FileStoreDirectory = storageConfiguration.FileStoreDirectory,
-                           MinimumFreeSpaceBytes = storageConfiguration.MinimumFreeSpaceBytes
+                           MinimumFreeSpacePercent = storageConfiguration.MinimumFreeSpacePercent
                        };
         }
     }

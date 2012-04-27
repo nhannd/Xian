@@ -15,6 +15,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -36,140 +38,57 @@ namespace ClearCanvas.ImageViewer.Configuration
     [AssociateView(typeof(StorageConfigurationComponentViewExtensionPoint))]
     public class StorageConfigurationComponent : ConfigurationApplicationComponent
     {
-        private string _fileStoreDirectory;
-
-		private string _driveName;
-		private long _driveSize;
-		private string _driveDisplay;
-
-        private float _maximumUsedSpacePercent;
+        private StorageConfiguration _configuration;
 		private string _maximumUsedSpaceDisplay;
-		
-		private long _usedSpaceBytes;
-		private float _usedSpacePercent;
-		private string _usedSpacePercentDisplay;
+        private string _usedSpacePercentDisplay;
 		private string _usedSpaceBytesDisplay;
-
-		private void MaximumUsedSpaceChanged()
-		{
-			_maximumUsedSpaceDisplay = GetSpaceDescription(_maximumUsedSpacePercent / 100F);
-
-			NotifyPropertyChanged("MaximumUsedSpace");
-			NotifyPropertyChanged("MaximumUsedSpaceDisplay");
-		}
 
         public override void Start()
 		{
-            var configuration = StudyStore.GetConfiguration();
-            var drive = configuration.FileStoreDrive;
-            
-            _fileStoreDirectory = configuration.FileStoreDirectory;
-            _driveName = drive.Name;
-            _driveSize = drive.TotalSize;
-            _driveDisplay = String.Format("{0} ({1})", _driveName, GetSpaceDescription(1F));
-
-            _maximumUsedSpacePercent = configuration.MaximumUsedSpacePercent;
+            _configuration = StudyStore.GetConfiguration();
             MaximumUsedSpaceChanged();
 
-            _usedSpaceBytes = drive.TotalSize - drive.AvailableFreeSpace;
-            _usedSpacePercent = _usedSpaceBytes / (float)_driveSize * 100F;
-            _usedSpacePercentDisplay = _usedSpacePercent.ToString("F3");
-            _usedSpaceBytesDisplay = GetSpaceDescription(_usedSpacePercent / 100F);
+            _usedSpacePercentDisplay = UsedSpacePercent.ToString("F3");
+            _usedSpaceBytesDisplay = GetSpaceDescription(UsedSpacePercent / 100F);
             
             base.Start();
 		}
 
-		public void Refresh()
-		{
-			NotifyAllPropertiesChanged();
-		}
-
 		public override void Save()
         {
-            if (!Modified)
-                return;
-
-            var configuration = StudyStore.GetConfiguration();
-            var drive = configuration.FileStoreDrive;
-		    long minUsedDiskSpace = (long)(drive.TotalSize * (100 - _maximumUsedSpacePercent)/100.0);
-            StudyStore.UpdateConfiguration(_fileStoreDirectory, minUsedDiskSpace);
+		    try
+		    {
+                StudyStore.UpdateConfiguration(_configuration);
+		    }
+		    catch (Exception e)
+		    {
+                ExceptionHandler.Report(e, Host.DesktopWindow);
+		    }
         }
 
-		private string GetSpaceDescription(float percentSpace)
-		{
-			double space = (double)percentSpace * DriveSize;
-			if (space <= 0)
-				return "";
-
-			int i = 0;
-			while (space > 1024)
-			{
-				space /= 1024;
-				if (++i == 4)
-					break;
-			}
-
-			var builder = new StringBuilder(space.ToString("F3"));
-			switch (i)
-			{ 
-				case 4:
-					builder.AppendFormat(" {0}", SR.LabelTerabytes);
-					break;
-				case 3:
-					builder.AppendFormat(" {0}", SR.LabelGigabytes);
-					break;
-				case 2:
-					builder.AppendFormat(" {0}", SR.LabelMegabytes);
-					break;
-				case 1:
-					builder.AppendFormat(" {0}", SR.LabelKilobytes);
-					break;
-				default: //0
-					builder.AppendFormat(" {0}", SR.LabelBytes);
-					break;
-			}
-
-			return builder.ToString();
-		}
-
-        #region Properties
+        #region Presentation Model
 
         public string FileStoreDirectory
         {
-            get { return _fileStoreDirectory; }
+            get { return _configuration.FileStoreDirectory; }
             private set
             {
-                if (Equals(value, _fileStoreDirectory))
+                if (Equals(value, _configuration.FileStoreDirectory))
                     return;
 
-                _fileStoreDirectory = value;
+                _configuration.FileStoreDirectory = value;
                 NotifyPropertyChanged("FileStoreDirectory");
             }
         }
         
-        public string DriveName
-        {
-            get { return _driveName; }
-        }
-
-		public long DriveSize
-		{
-			get { return _driveSize; }
-		}
-
-		public string DriveDisplay
-		{
-			get { return _driveDisplay; }
-		}
-
 		public long UsedSpace
 		{
-			get { return _usedSpaceBytes; }
+			get { return _configuration.FileStoreDrive.TotalUsedSpace; }
 		}
 
-		public float UsedSpacePercent
+		public double UsedSpacePercent
 		{
-            get { return _usedSpacePercent; }
+            get { return _configuration.FileStoreDrive.TotalUsedSpacePercent; }
 		}
 
 		public string UsedSpacePercentDisplay
@@ -182,21 +101,21 @@ namespace ClearCanvas.ImageViewer.Configuration
 			get { return _usedSpaceBytesDisplay; }
 		}
 
-		public float MaximumUsedSpacePercent
+		public double MaximumUsedSpacePercent
 		{
-			get { return _maximumUsedSpacePercent; }
+			get { return _configuration.MaximumUsedSpacePercent; }
 			set
 			{
-                if (Equals(value, _maximumUsedSpacePercent))
+                if (Equals(value, _configuration.MaximumUsedSpacePercent))
                     return;
 
 			    value = Math.Min(value, 100);
 			    value = Math.Max(value, 10);
 
-			    _maximumUsedSpacePercent = value;
+			    _configuration.MaximumUsedSpacePercent = value;
 				this.Modified = true;
-                NotifyPropertyChanged("MaximumUsedSpacePercent");
-			}
+                MaximumUsedSpaceChanged();
+            }
         }
 
         public string MaximumUsedSpaceDisplay
@@ -204,17 +123,103 @@ namespace ClearCanvas.ImageViewer.Configuration
             get { return _maximumUsedSpaceDisplay; }
         }
 
+        public bool IsMaximumUsedSpaceExceeded
+        {
+            get { return _configuration.IsMaximumUsedSpaceExceeded; }
+        }
+
+        public string MaximumUsedSpaceExceededMessage
+        {
+            get
+            {
+                if (!IsMaximumUsedSpaceExceeded)
+                    return String.Empty;
+
+                return SR.MaximumUsedSpaceExceededMessage;
+            }
+        }
+
         public void ChangeFileStore()
         {
-            //TODO (Marmot): say stuff in here.
-            var args = new SelectFolderDialogCreationArgs(_fileStoreDirectory) { Prompt = SR.TitleSelectFileStore, AllowCreateNewFolder = true};
+            if (WorkItemActivityMonitor.IsRunning)
+            {
+                if (DialogBoxAction.No == Host.DesktopWindow.ShowMessageBox(SR.QuestionCannotChangeFileStore, MessageBoxActions.YesNo))
+                    return;
+
+                try
+                {
+                    LocalServiceProcess.Stop();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, SR.MessageUnableToStopLocalService, Host.DesktopWindow);
+                    return;
+                }
+            }
+
+            var args = new SelectFolderDialogCreationArgs(FileStoreDirectory) { Prompt = SR.TitleSelectFileStore, AllowCreateNewFolder = true };
             var result = base.Host.DesktopWindow.ShowSelectFolderDialogBox(args);
             if (result.Action != DialogBoxAction.Ok)
                 return;
 
-            FileStoreDirectory = result.FileName;
+            try
+            {
+                FileStoreDirectory = result.FileName;
+                Host.DesktopWindow.ShowMessageBox(SR.MessageMoveFileStore, MessageBoxActions.Ok);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, Host.DesktopWindow);
+            }
         }
 
         #endregion
+
+        private void MaximumUsedSpaceChanged()
+        {
+            _maximumUsedSpaceDisplay = GetSpaceDescription(MaximumUsedSpacePercent / 100F);
+
+            NotifyPropertyChanged("MaximumUsedSpace");
+            NotifyPropertyChanged("MaximumUsedSpaceDisplay");
+            NotifyPropertyChanged("IsMaximumUsedSpaceExceeded");
+            NotifyPropertyChanged("MaximumUsedSpaceExceededMessage");
+        }
+        
+        private string GetSpaceDescription(double percentSpace)
+        {
+            double space = percentSpace * _configuration.FileStoreDrive.TotalSize;
+            if (space <= 0)
+                return "";
+
+            int i = 0;
+            while (space > 1024)
+            {
+                space /= 1024;
+                if (++i == 4)
+                    break;
+            }
+
+            var builder = new StringBuilder(space.ToString("F3"));
+            switch (i)
+            { 
+                case 4:
+                    builder.AppendFormat(" {0}", SR.LabelTerabytes);
+                    break;
+                case 3:
+                    builder.AppendFormat(" {0}", SR.LabelGigabytes);
+                    break;
+                case 2:
+                    builder.AppendFormat(" {0}", SR.LabelMegabytes);
+                    break;
+                case 1:
+                    builder.AppendFormat(" {0}", SR.LabelKilobytes);
+                    break;
+                default: //0
+                    builder.AppendFormat(" {0}", SR.LabelBytes);
+                    break;
+            }
+
+            return builder.ToString();
+        }
     }
 }

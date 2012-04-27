@@ -272,6 +272,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disk usage is above the maximum. The Workstation will not be able to import DICOM files or receive them over the network. You should delete old studies to make room, or increase the maximum usage..
+        /// </summary>
+        internal static string MaximumUsedSpaceExceededMessage {
+            get {
+                return ResourceManager.GetString("MaximumUsedSpaceExceededMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add server.
         /// </summary>
         internal static string MenuAddServer {
@@ -461,6 +470,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If you wish to keep your existing studies, you must now manually copy them to the new location before restarting the local service. Otherwise, you should start the local service and immediately re-index..
+        /// </summary>
+        internal static string MessageMoveFileStore {
+            get {
+                return ResourceManager.GetString("MessageMoveFileStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
         /// </summary>
         internal static string MessageNoServersSelected {
@@ -515,6 +533,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to stop the local service. Consult the logs for more details..
+        /// </summary>
+        internal static string MessageUnableToStopLocalService {
+            get {
+                return ResourceManager.GetString("MessageUnableToStopLocalService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Window Configuration.
         /// </summary>
         internal static string MonitorConfiguration {
@@ -556,6 +583,17 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string PublishingConfiguration {
             get {
                 return ResourceManager.GetString("PublishingConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The local service must be stopped before the file store can be changed. It is also recommended that you wait for all Work Items to complete before stopping the service.
+        ///
+        ///Would you like to stop the local service now?.
+        /// </summary>
+        internal static string QuestionCannotChangeFileStore {
+            get {
+                return ResourceManager.GetString("QuestionCannotChangeFileStore", resourceCulture);
             }
         }
         

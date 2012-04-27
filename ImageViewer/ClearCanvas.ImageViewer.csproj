@@ -252,6 +252,7 @@
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />
     <Compile Include="StudyManagement\WeightedWindowPrefetchingStrategy.cs" />
+    <Compile Include="Tests\ImageSetGroupsTests.cs" />
     <Compile Include="Tests\ImageDiff.cs" />
     <Compile Include="Tests\MockScreenInfoProvider.cs" />
     <Compile Include="StudyManagement\Tests\StudyBuilder.cs" />

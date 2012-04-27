@@ -37,8 +37,8 @@ namespace ClearCanvas.ImageViewer.Common
             [CommandLineParameter("filestore", "Sets the location of the file store.", Required = false)]
             public string FileStoreDirectory { get; set; }
 
-            [CommandLineParameter("minspacebytes", "Sets the minimum used space required on the file store volume for the server to continue accepting studies.", Required = false)]
-            public long? MinimumFreeSpaceBytes { get; set; }
+            [CommandLineParameter("minspacepercent", "Sets the minimum used space required on the file store volume for the server to continue accepting studies.", Required = false)]
+            public double? MinimumFreeSpacePercent { get; set; }
         }
 
         #region Implementation of IApplicationRoot
@@ -74,7 +74,9 @@ namespace ClearCanvas.ImageViewer.Common
                         Configuration = new StorageConfiguration
                                             {
                                                 FileStoreDirectory = commandLine.FileStoreDirectory,
-                                                MinimumFreeSpaceBytes = commandLine.MinimumFreeSpaceBytes
+                                                MinimumFreeSpacePercent = commandLine.MinimumFreeSpacePercent.HasValue 
+                                                                        ? commandLine.MinimumFreeSpacePercent.Value
+                                                                        : StorageConfiguration.AutoMinimumFreeSpace
                                             }
                     }));
             }
