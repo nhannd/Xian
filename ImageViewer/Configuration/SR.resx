@@ -262,6 +262,9 @@ Streaming Image Port: {1}</value>
   <data name="MessageMouseButtonInitialToolAlreadyAssigned" xml:space="preserve">
     <value>The default tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button?</value>
   </data>
+  <data name="MessageMoveFileStore" xml:space="preserve">
+    <value>If you wish to keep your existing studies, you must now manually copy them to the new location before restarting the local service. Otherwise, you should start the local service and immediately re-index.</value>
+  </data>
   <data name="MessageNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
@@ -280,6 +283,9 @@ Streaming Image Port: {1}</value>
   <data name="MessageServerNameCannotBeEmpty" xml:space="preserve">
     <value>The Server Name cannot be empty.</value>
   </data>
+  <data name="MessageUnableToStopLocalService" xml:space="preserve">
+    <value>Failed to stop the local service. Consult the logs for more details.</value>
+  </data>
   <data name="MonitorConfiguration" xml:space="preserve">
     <value>Window Configuration</value>
   </data>
@@ -294,6 +300,11 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="PublishingConfiguration" xml:space="preserve">
     <value>Publishing</value>
+  </data>
+  <data name="QuestionCannotChangeFileStore" xml:space="preserve">
+    <value>The local service must be stopped before the file store can be changed. It is also recommended that you wait for all Work Items to complete before stopping the service.
+
+Would you like to stop the local service now?</value>
   </data>
   <data name="ServerConfiguration" xml:space="preserve">
     <value>Local Server</value>

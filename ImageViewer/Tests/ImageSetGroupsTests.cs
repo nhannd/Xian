@@ -13,18 +13,17 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;
 using NUnit.Framework;
 using ClearCanvas.Dicom.Tests;
 
-namespace ClearCanvas.ImageViewer.Common.Tests
+namespace ClearCanvas.ImageViewer.Tests
 {
 	[TestFixture]
-	public class FilteredGroupsTest : AbstractTest
+	public class ImageSetGroupsTests : AbstractTest
 	{
-		public FilteredGroupsTest()
+		public ImageSetGroupsTests()
 		{
 		}
 

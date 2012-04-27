@@ -17,7 +17,14 @@ using System.ComponentModel;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	/// <summary>
+    public enum MeterFillState
+    {
+        Normal = VsStyles.ProgressBar.FillStates.PBFS_PARTIAL,
+        Warning = VsStyles.ProgressBar.FillStates.PBFS_PAUSED,
+        Error = VsStyles.ProgressBar.FillStates.PBFS_ERROR
+    }
+
+    /// <summary>
 	/// 
 	/// </summary>
 	/// <remarks>
@@ -27,7 +34,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 	public class Meter : Label
 	{
 		private int _value;
-	    private int _fillState = VsStyles.ProgressBar.FillStates.PBFS_NORMAL;
+        private MeterFillState _fillState = MeterFillState.Normal;
 
 		public Meter()
 		{
@@ -62,14 +69,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-	    [Description("Specifies whether or not the progress bar should indicate an error.")]
-	    [DefaultValue(false)]
-	    public bool RenderError
+	    [Description("The fill state of the meter.")]
+	    [DefaultValue(MeterFillState.Normal)]
+        public MeterFillState FillState
 	    {
-            get { return _fillState != VsStyles.ProgressBar.FillStates.PBFS_NORMAL; }
+            get { return _fillState; }
             set
             {
-                _fillState = value ? VsStyles.ProgressBar.FillStates.PBFS_ERROR : VsStyles.ProgressBar.FillStates.PBFS_NORMAL;
+                _fillState = value;
                 Invalidate();
             }
 	    }
@@ -90,8 +97,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				// draw filled portion
 				renderer.SetParameters(VsStyles.ProgressBar.Progress,
-				   VsStyles.ProgressBar.ProgressParts.PP_FILL,
-                   _fillState);
+				   VsStyles.ProgressBar.ProgressParts.PP_FILL, (int)_fillState);
 				renderer.DrawBackground(e.Graphics, fillRect);
 			}
 			catch(Exception)
@@ -99,11 +105,24 @@ namespace ClearCanvas.Desktop.View.WinForms
 				// the VisualStyles stuff can fail when the OS is < Win7, in which case
 				// draw a very basic progress bar manually
 				e.Graphics.DrawRectangle(Pens.DarkGray, 0, 0, clientRect.Width - 1, clientRect.Height - 1);
-				e.Graphics.FillRectangle(Brushes.DodgerBlue, 1, 1,
+				e.Graphics.FillRectangle(GetStateBrush(), 1, 1,
 					Math.Min(fillRect.Width, clientRect.Width - 2), clientRect.Height - 2);
 			}
 
 			base.OnPaint(e);
 		}
+
+        private Brush GetStateBrush()
+        {
+            switch (_fillState)
+            {
+                case MeterFillState.Warning:
+                    return Brushes.Gold;
+                case MeterFillState.Error:
+                    return Brushes.Red;
+                default:
+                    return Brushes.DodgerBlue;
+            }
+        }
 	}
 }

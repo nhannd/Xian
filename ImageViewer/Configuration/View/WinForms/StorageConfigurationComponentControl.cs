@@ -44,8 +44,13 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _upDownMaxDiskSpace.DataBindings.Add("Value", _component, "MaximumUsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
 			_maxDiskSpace.DataBindings.Add(maxDiskUsageBinding);
 
-			_usedSpaceMeter.DataBindings.Add("Value", _component, "UsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
-            _usedSpaceMeter.DataBindings.Add("RenderError", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            Binding usedSpaceMeterBinding = new Binding("FillState", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            usedSpaceMeterBinding.Parse += ParseMeterFillState;
+            usedSpaceMeterBinding.Format += FormatMeterFillState;
+
+            _usedSpaceMeter.DataBindings.Add(usedSpaceMeterBinding);
+            _usedSpaceMeter.DataBindings.Add("Value", _component, "UsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _usedDiskSpace.DataBindings.Add("Text", _component, "UsedSpacePercentDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
             _usedDiskSpaceDisplay.DataBindings.Add("Text", _component, "UsedSpaceBytesDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -54,16 +59,28 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededMessage", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
+        private void FormatMeterFillState(object sender, ConvertEventArgs e)
+        {
+            bool isMaximumUsedSpaceExceeded = (bool)e.Value;
+            e.Value = isMaximumUsedSpaceExceeded ? MeterFillState.Error : MeterFillState.Normal;
+        }
+
+        private void ParseMeterFillState(object sender, ConvertEventArgs e)
+        {
+            var meterState = (MeterFillState)e.Value;
+            e.Value = meterState == MeterFillState.Error;
+        }
+
         private void FormatDiskUsageBinding(object sender, ConvertEventArgs e)
 		{
-			float value = (float)e.Value;
+            double value = (double)e.Value;
 			e.Value = (int)(value * 1000F);
 		}
 
 		private void ParseDiskUsageBinding(object sender, ConvertEventArgs e)
 		{
 			int value = (int)e.Value;
-			e.Value = value / 1000F;
+			e.Value = value / 1000.0;
 		}
 
         private void _changeFileStore_Click(object sender, EventArgs e)
