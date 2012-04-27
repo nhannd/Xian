@@ -55,13 +55,13 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _usedDiskSpaceDisplay.DataBindings.Add("Text", _component, "UsedSpaceBytesDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _warningIcon.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
-            _diskSpaceWarningLabel.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
-            _diskSpaceWarningLabel.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededLabel", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningMessage.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _component.PropertyChanged += OnComponentPropertyChanged;
             //Set initial values.
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreDirectory"));
-            OnComponentPropertyChanged(this, new PropertyChangedEventArgs("MaximumUsedSpaceExceededMessage"));
+            OnComponentPropertyChanged(this, new PropertyChangedEventArgs("MaximumUsedSpaceExceededDescription"));
         }
 
         private void OnComponentPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -69,8 +69,11 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             if (propertyChangedEventArgs.PropertyName == "FileStoreDirectory")
                 _tooltip.SetToolTip(_fileStoreDirectory, _component.FileStoreDirectory);
 
-            if (propertyChangedEventArgs.PropertyName == "MaximumUsedSpaceExceededMessage")
-                _tooltip.SetToolTip(_diskSpaceWarningLabel, _component.MaximumUsedSpaceExceededMessage);
+            if (propertyChangedEventArgs.PropertyName == "MaximumUsedSpaceExceededDescription")
+            {
+                _tooltip.SetToolTip(_diskSpaceWarningMessage, _component.MaximumUsedSpaceExceededDescription);
+                _tooltip.SetToolTip(_warningIcon, _component.MaximumUsedSpaceExceededDescription);
+            }
         }
 
         private void FormatMeterFillState(object sender, ConvertEventArgs e)

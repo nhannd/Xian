@@ -553,7 +553,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Storage.
+        ///   Looks up a localized string similar to Study Storage.
         /// </summary>
         internal static string StorageConfiguration {
             get {

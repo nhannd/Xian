@@ -47,15 +47,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this.label1 = new System.Windows.Forms.Label();
             this._diskSpacePanel = new System.Windows.Forms.Panel();
             this._diskSpaceMeter = new ClearCanvas.Desktop.View.WinForms.Meter();
+            this._diskSpaceWarningIcon = new System.Windows.Forms.PictureBox();
+            this._diskSpaceWarningMessage = new System.Windows.Forms.Label();
             this._diskSpace = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this._reindexLink = new System.Windows.Forms.LinkLabel();
             this._openFileStoreLink = new System.Windows.Forms.LinkLabel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel1 = new System.Windows.Forms.Panel();
-            this._toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this._diskSpaceWarningLabel = new System.Windows.Forms.Label();
-            this._diskSpaceWarningIcon = new System.Windows.Forms.PictureBox();
+            this._workItemToolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this._activityFilter = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
@@ -63,16 +63,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this._textFilter = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this._workItemToolStrip = new System.Windows.Forms.ToolStrip();
+            this._toolTip = new System.Windows.Forms.ToolTip(this.components);
             this._overviewPanel.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel2.SuspendLayout();
             this._diskSpacePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
             this._workItemToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -269,7 +269,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this.tableLayoutPanel2.SetColumnSpan(this._diskSpacePanel, 2);
             this._diskSpacePanel.Controls.Add(this._diskSpaceMeter);
             this._diskSpacePanel.Controls.Add(this._diskSpaceWarningIcon);
-            this._diskSpacePanel.Controls.Add(this._diskSpaceWarningLabel);
+            this._diskSpacePanel.Controls.Add(this._diskSpaceWarningMessage);
             this._diskSpacePanel.Controls.Add(this._diskSpace);
             this._diskSpacePanel.Location = new System.Drawing.Point(228, 73);
             this._diskSpacePanel.Margin = new System.Windows.Forms.Padding(0);
@@ -285,6 +285,29 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this._diskSpaceMeter.Name = "_diskSpaceMeter";
             this._diskSpaceMeter.Size = new System.Drawing.Size(203, 17);
             this._diskSpaceMeter.TabIndex = 11;
+            // 
+            // _diskSpaceWarningIcon
+            // 
+            this._diskSpaceWarningIcon.Image = ((System.Drawing.Image)(resources.GetObject("_diskSpaceWarningIcon.Image")));
+            this._diskSpaceWarningIcon.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._diskSpaceWarningIcon.Location = new System.Drawing.Point(6, 44);
+            this._diskSpaceWarningIcon.Name = "_diskSpaceWarningIcon";
+            this._diskSpaceWarningIcon.Size = new System.Drawing.Size(16, 16);
+            this._diskSpaceWarningIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this._diskSpaceWarningIcon.TabIndex = 30;
+            this._diskSpaceWarningIcon.TabStop = false;
+            // 
+            // _diskSpaceWarningMessage
+            // 
+            this._diskSpaceWarningMessage.AutoEllipsis = true;
+            this._diskSpaceWarningMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._diskSpaceWarningMessage.ForeColor = System.Drawing.Color.Red;
+            this._diskSpaceWarningMessage.Location = new System.Drawing.Point(28, 44);
+            this._diskSpaceWarningMessage.Name = "_diskSpaceWarningMessage";
+            this._diskSpaceWarningMessage.Size = new System.Drawing.Size(181, 16);
+            this._diskSpaceWarningMessage.TabIndex = 29;
+            this._diskSpaceWarningMessage.Text = "don\'t translate me";
+            this._diskSpaceWarningMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // _diskSpace
             // 
@@ -360,28 +383,23 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this.panel1.Size = new System.Drawing.Size(1010, 504);
             this.panel1.TabIndex = 9;
             // 
-            // _diskSpaceWarningLabel
+            // _workItemToolStrip
             // 
-            this._diskSpaceWarningLabel.AutoEllipsis = true;
-            this._diskSpaceWarningLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._diskSpaceWarningLabel.ForeColor = System.Drawing.Color.Red;
-            this._diskSpaceWarningLabel.Location = new System.Drawing.Point(28, 44);
-            this._diskSpaceWarningLabel.Name = "_diskSpaceWarningLabel";
-            this._diskSpaceWarningLabel.Size = new System.Drawing.Size(181, 16);
-            this._diskSpaceWarningLabel.TabIndex = 29;
-            this._diskSpaceWarningLabel.Text = "don\'t translate me";
-            this._diskSpaceWarningLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // _diskSpaceWarningIcon
-            // 
-            this._diskSpaceWarningIcon.Image = ((System.Drawing.Image)(resources.GetObject("_diskSpaceWarningIcon.Image")));
-            this._diskSpaceWarningIcon.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this._diskSpaceWarningIcon.Location = new System.Drawing.Point(6, 44);
-            this._diskSpaceWarningIcon.Name = "_diskSpaceWarningIcon";
-            this._diskSpaceWarningIcon.Size = new System.Drawing.Size(16, 16);
-            this._diskSpaceWarningIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this._diskSpaceWarningIcon.TabIndex = 30;
-            this._diskSpaceWarningIcon.TabStop = false;
+            this._workItemToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this._workItemToolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this._workItemToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1,
+            this._activityFilter,
+            this.toolStripLabel2,
+            this._statusFilter,
+            this.toolStripLabel3,
+            this._textFilter,
+            this.toolStripSeparator1});
+            this._workItemToolStrip.Location = new System.Drawing.Point(0, 0);
+            this._workItemToolStrip.Name = "_workItemToolStrip";
+            this._workItemToolStrip.Size = new System.Drawing.Size(1010, 25);
+            this._workItemToolStrip.TabIndex = 0;
+            this._workItemToolStrip.Text = "toolStrip1";
             // 
             // toolStripLabel1
             // 
@@ -423,24 +441,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // _workItemToolStrip
-            // 
-            this._workItemToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this._workItemToolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this._workItemToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel1,
-            this._activityFilter,
-            this.toolStripLabel2,
-            this._statusFilter,
-            this.toolStripLabel3,
-            this._textFilter,
-            this.toolStripSeparator1});
-            this._workItemToolStrip.Location = new System.Drawing.Point(0, 0);
-            this._workItemToolStrip.Name = "_workItemToolStrip";
-            this._workItemToolStrip.Size = new System.Drawing.Size(1010, 25);
-            this._workItemToolStrip.TabIndex = 0;
-            this._workItemToolStrip.Text = "toolStrip1";
-            // 
             // ActivityMonitorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -455,12 +455,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this.panel2.PerformLayout();
             this._diskSpacePanel.ResumeLayout(false);
             this._diskSpacePanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).EndInit();
             this._workItemToolStrip.ResumeLayout(false);
             this._workItemToolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -492,7 +492,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private System.Windows.Forms.Panel panel2;
 		private System.Windows.Forms.ToolTip _toolTip;
 		private System.Windows.Forms.LinkLabel _openFileStoreLink;
-        private System.Windows.Forms.Label _diskSpaceWarningLabel;
+        private System.Windows.Forms.Label _diskSpaceWarningMessage;
         private System.Windows.Forms.PictureBox _diskSpaceWarningIcon;
         private System.Windows.Forms.ToolStrip _workItemToolStrip;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;

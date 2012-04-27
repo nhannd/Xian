@@ -63,8 +63,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		    _diskSpaceMeter.DataBindings.Add(diskSpaceMeterFillStateBinding);
 
             _diskSpaceWarningIcon.DataBindings.Add("Visible", _component, "IsMaximumDiskspaceUsageExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
-            _diskSpaceWarningLabel.DataBindings.Add("Visible", _component, "IsMaximumDiskspaceUsageExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
-            _diskSpaceWarningLabel.DataBindings.Add("Text", _component, "DiskSpaceWarningLabel", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningMessage.DataBindings.Add("Visible", _component, "IsMaximumDiskspaceUsageExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "DiskSpaceWarningMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			// need to work with these manually, because data-binding doesn't work well with toolstrip comboboxes
 			_activityFilter.Items.AddRange(_component.ActivityTypeFilterChoices.Cast<object>().Select(i => new FilterItem(i, _component.FormatActivityTypeFilter)).ToArray());
@@ -161,7 +161,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_toolTip.SetToolTip(_aeTitle, string.Format(SR.ActivityMonitorAeTitleToolTip, _component.AeTitle));
 			_toolTip.SetToolTip(_hostName, string.Format(SR.ActivityMonitorHostPortToolTip, FormatHostAndPort()));
 			_toolTip.SetToolTip(_openFileStoreLink, string.Format(SR.ActivityMonitorFileStoreToolTip, _component.FileStore));
-            _toolTip.SetToolTip(_diskSpaceWarningLabel, _component.DiskSpaceWarningMessage);
+            _toolTip.SetToolTip(_diskSpaceWarningIcon, _component.DiskSpaceWarningDescription);
+            _toolTip.SetToolTip(_diskSpaceWarningMessage, _component.DiskSpaceWarningDescription);
         }
 
 		private string FormatHostAndPort()

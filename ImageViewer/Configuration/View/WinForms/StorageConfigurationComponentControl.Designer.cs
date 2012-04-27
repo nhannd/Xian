@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this._usedSpaceMeter = new ClearCanvas.Desktop.View.WinForms.Meter();
-            this._diskSpaceWarningLabel = new System.Windows.Forms.Label();
+            this._diskSpaceWarningMessage = new System.Windows.Forms.Label();
             this._tooltip = new System.Windows.Forms.ToolTip(this.components);
             this._warningIcon = new System.Windows.Forms.PictureBox();
             this._totalDiskSpaceDisplay = new System.Windows.Forms.Label();
@@ -166,12 +166,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._usedSpaceMeter.Name = "_usedSpaceMeter";
             this._usedSpaceMeter.Value = 50;
             // 
-            // _diskSpaceWarningLabel
+            // _diskSpaceWarningMessage
             // 
-            this._diskSpaceWarningLabel.AutoEllipsis = true;
-            resources.ApplyResources(this._diskSpaceWarningLabel, "_diskSpaceWarningLabel");
-            this._diskSpaceWarningLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this._diskSpaceWarningLabel.Name = "_diskSpaceWarningLabel";
+            this._diskSpaceWarningMessage.AutoEllipsis = true;
+            resources.ApplyResources(this._diskSpaceWarningMessage, "_diskSpaceWarningMessage");
+            this._diskSpaceWarningMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._diskSpaceWarningMessage.Name = "_diskSpaceWarningMessage";
             // 
             // _warningIcon
             // 
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._usedDiskSpace, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.label8, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._usedSpaceMeter, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this._diskSpaceWarningLabel, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this._diskSpaceWarningMessage, 1, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // StorageConfigurationComponentControl
@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private Desktop.View.WinForms.Meter _usedSpaceMeter;
-        private System.Windows.Forms.Label _diskSpaceWarningLabel;
+        private System.Windows.Forms.Label _diskSpaceWarningMessage;
         private System.Windows.Forms.ToolTip _tooltip;
         private System.Windows.Forms.PictureBox _warningIcon;
         private System.Windows.Forms.Label _totalDiskSpaceDisplay;

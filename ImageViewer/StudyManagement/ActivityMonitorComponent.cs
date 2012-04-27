@@ -722,14 +722,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             get { return _localServerWatcher.IsMaximumDiskspaceUsageExceeded; }
 	    }
 
-        public string DiskSpaceWarningLabel
-        {
-            get { return SR.LabelMaximumDiskUsageExceeded; }
-        }
-
         public string DiskSpaceWarningMessage
         {
-            get { return SR.MessageMaximumDiskUsageExceeded; }
+            get
+            {
+                if (!IsMaximumDiskspaceUsageExceeded)
+                    return String.Empty;
+                
+                return SR.MessageMaximumDiskUsageExceeded;
+            }
+        }
+
+        public string DiskSpaceWarningDescription
+        {
+            get
+            {
+                if (!IsMaximumDiskspaceUsageExceeded)
+                    return String.Empty;
+
+                return SR.DescriptionMaximumDiskUsageExceeded;
+            }
         }
 
 	    public int TotalStudies

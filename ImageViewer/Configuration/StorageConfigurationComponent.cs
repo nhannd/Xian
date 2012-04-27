@@ -40,13 +40,17 @@ namespace ClearCanvas.ImageViewer.Configuration
     public class StorageConfigurationComponent : ConfigurationApplicationComponent
     {
         private StorageConfiguration _configuration;
-		private string _maximumUsedSpaceBytesDisplay;
+        private string _originalFileStoreDirectory;
+
+        private string _maximumUsedSpaceBytesDisplay;
         private string _usedSpacePercentDisplay;
 		private string _usedSpaceBytesDisplay;
 
         public override void Start()
 		{
             _configuration = StudyStore.GetConfiguration();
+            _originalFileStoreDirectory = _configuration.FileStoreDirectory;
+
             MaximumUsedSpaceChanged();
 
             _usedSpacePercentDisplay = UsedSpacePercent.ToString("F3");
@@ -78,8 +82,15 @@ namespace ClearCanvas.ImageViewer.Configuration
                     return;
 
                 _configuration.FileStoreDirectory = value;
+
                 NotifyPropertyChanged("FileStoreDirectory");
+                NotifyPropertyChanged("HasFileStoreChanged");
             }
+        }
+
+        public bool HasFileStoreChanged
+        {
+            get { return _configuration.FileStoreDirectory != _originalFileStoreDirectory; }
         }
 
         public string TotalSpaceBytesDisplay
@@ -129,17 +140,6 @@ namespace ClearCanvas.ImageViewer.Configuration
             get { return _configuration.IsMaximumUsedSpaceExceeded; }
         }
 
-        public string MaximumUsedSpaceExceededLabel
-        {
-            get
-            {
-                if (!IsMaximumUsedSpaceExceeded)
-                    return String.Empty;
-
-                return StudyManagement.SR.LabelMaximumDiskUsageExceeded;
-            }
-        }
-
         public string MaximumUsedSpaceExceededMessage
         {
             get
@@ -148,6 +148,17 @@ namespace ClearCanvas.ImageViewer.Configuration
                     return String.Empty;
 
                 return StudyManagement.SR.MessageMaximumDiskUsageExceeded;
+            }
+        }
+
+        public string MaximumUsedSpaceExceededDescription
+        {
+            get
+            {
+                if (!IsMaximumUsedSpaceExceeded)
+                    return String.Empty;
+
+                return StudyManagement.SR.DescriptionMaximumDiskUsageExceeded;
             }
         }
 
