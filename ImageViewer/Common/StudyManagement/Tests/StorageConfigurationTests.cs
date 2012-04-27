@@ -29,11 +29,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
         [Test]
         public void TestMinimumFreeSpaceBytes()
         {
-            var driveInfo = new DriveInfo { TotalSize = _petaByte, AvailableFreeSpace = _halfGig, TotalFreeSpace = _halfGig };
+            var diskSpace = new Diskspace { TotalSpace = _petaByte, FreeSpace = _halfGig };
             var configuration = new StorageConfiguration
                                                      {
                                                          FileStoreDirectory = @"c:\filestore",
-                                                         FileStoreDrive = driveInfo
+                                                         FileStoreDiskSpace = diskSpace
                                                      };
 
             configuration.MinimumFreeSpacePercent = 90;
@@ -43,11 +43,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
         [Test]
         public void TestMaximumUsedSpace()
         {
-            var driveInfo = new DriveInfo { TotalSize = _petaByte, AvailableFreeSpace = _halfGig, TotalFreeSpace = _halfGig };
+            var diskSpace = new Diskspace { TotalSpace = _petaByte, FreeSpace = _halfGig };
             var configuration = new StorageConfiguration
             {
                 FileStoreDirectory = @"c:\filestore",
-                FileStoreDrive = driveInfo
+                FileStoreDiskSpace = diskSpace
             };
 
             configuration.MinimumFreeSpacePercent = 90;
@@ -58,11 +58,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
         [Test]
         public void TestSetMinUsedSpace_Auto()
         {
-            var driveInfo = new DriveInfo { TotalSize = _petaByte, AvailableFreeSpace = _halfGig, TotalFreeSpace = _halfGig };
+            var diskSpace = new Diskspace { TotalSpace = _petaByte, FreeSpace = _halfGig };
             var configuration = new StorageConfiguration
             {
                 FileStoreDirectory = @"c:\filestore",
-                FileStoreDrive = driveInfo
+                FileStoreDiskSpace = diskSpace
             };
 
             configuration.MinimumFreeSpacePercent = -10;
@@ -73,11 +73,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void TestSetMinUsedSpace_InvalidPercent()
         {
-            var driveInfo = new DriveInfo { TotalSize = _petaByte, AvailableFreeSpace = _halfGig, TotalFreeSpace = _halfGig };
+            var diskSpace = new Diskspace { TotalSpace = _petaByte, FreeSpace = _halfGig };
             var configuration = new StorageConfiguration
             {
                 FileStoreDirectory = @"c:\filestore",
-                FileStoreDrive = driveInfo
+                FileStoreDiskSpace = diskSpace
             };
 
             configuration.MinimumFreeSpacePercent = 110;
@@ -87,11 +87,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void TestSetMaxUsedSpace_InvalidPercent()
         {
-            var driveInfo = new DriveInfo { TotalSize = _petaByte, AvailableFreeSpace = _halfGig, TotalFreeSpace = _halfGig };
+            var diskSpace = new Diskspace { TotalSpace = _petaByte, FreeSpace = _halfGig };
             var configuration = new StorageConfiguration
             {
                 FileStoreDirectory = @"c:\filestore",
-                FileStoreDrive = driveInfo
+                FileStoreDiskSpace = diskSpace
             };
 
             configuration.MaximumUsedSpacePercent = -1;

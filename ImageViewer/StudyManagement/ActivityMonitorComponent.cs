@@ -24,6 +24,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -387,9 +388,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		#region DiskspaceWatcher class
+        #region LocalServerWatcher class
 
-		class LocalServerWatcher : IDisposable
+        class LocalServerWatcher : IDisposable
 		{
 			private Diskspace _diskspace;
 			private readonly Timer _refreshTimer;
@@ -465,18 +466,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             {
                 get { return StorageConfiguration.FileStoreDirectory; }
             }
+            
             public Diskspace Diskspace
 			{
 				get
 				{
 					if (_diskspace == null)
-						_diskspace = new Diskspace(StorageConfiguration.FileStoreDrive);
+						_diskspace = new Diskspace(StorageConfiguration.FileStoreDriveName);
 
                     return _diskspace;
 				}
 			}
 
-			private void OnTimerElapsed(object state)
+            public bool IsMaximumDiskspaceUsageExceeded
+            {
+                get { return StorageConfiguration.IsMaximumUsedSpaceExceeded; }
+            }
+
+            private void OnTimerElapsed(object state)
 			{
 			    StorageConfiguration = StudyStore.GetConfiguration();
                 DicomServerConfiguration = DicomServer.GetConfiguration();
@@ -693,22 +700,37 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             get { return _localServerWatcher.FileStoreDirectory; }
 		}
 
-		public int DiskspaceUsedPercent
+        public string DiskspaceUsed
+        {
+            get
+            {
+                var ds = _localServerWatcher.Diskspace;
+                return string.Format(SR.DiskspaceTemplate,
+                                        Diskspace.FormatBytes(ds.UsedSpace),
+                                        Diskspace.FormatBytes(ds.TotalSpace),
+                                        ds.UsedSpacePercent.ToString("F1"));
+                                }
+        }
+        
+        public int DiskspaceUsedPercent
 		{
-			get { return _localServerWatcher.Diskspace.UsedSpacePercent; }
+			get { return (int)Math.Round(_localServerWatcher.Diskspace.UsedSpacePercent); }
 		}
 
-		public string DiskspaceUsed
-		{
-			get
-			{
-				var ds = _localServerWatcher.Diskspace;
-				return string.Format(SR.DiskspaceTemplate,
-					Diskspace.FormatBytes(ds.UsedSpace),
-					Diskspace.FormatBytes(ds.TotalSpace),
-					ds.UsedSpacePercent);
-			}
-		}
+	    public bool IsMaximumDiskspaceUsageExceeded
+	    {
+            get { return _localServerWatcher.IsMaximumDiskspaceUsageExceeded; }
+	    }
+
+        public string DiskSpaceWarningLabel
+        {
+            get { return SR.LabelMaximumDiskUsageExceeded; }
+        }
+
+        public string DiskSpaceWarningMessage
+        {
+            get { return SR.MessageMaximumDiskUsageExceeded; }
+        }
 
 	    public int TotalStudies
 	    {
@@ -926,12 +948,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             // if FileStore path changed, diskspace may have changed too
             NotifyPropertyChanged("DiskspaceUsedPercent");
             NotifyPropertyChanged("DiskspaceUsed");
+            NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
+            NotifyPropertyChanged("DiskSpaceWarningLabel");
+            NotifyPropertyChanged("DiskSpaceWarningMessage");
         }
 
 		private void OnDiskspaceChanged()
 		{
 			NotifyPropertyChanged("DiskspaceUsed");
 			NotifyPropertyChanged("DiskspaceUsedPercent");
-		}
+            NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
+            NotifyPropertyChanged("DiskSpaceWarningLabel");
+            NotifyPropertyChanged("DiskSpaceWarningMessage");
+        }
     }
 }

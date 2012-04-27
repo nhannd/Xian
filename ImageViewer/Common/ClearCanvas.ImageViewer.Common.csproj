@@ -95,6 +95,7 @@
     <Compile Include="DicomServer\DicomServerClient.cs" />
     <Compile Include="DicomServer\IDicomServerConfiguration.cs" />
     <Compile Include="DicomServer\IDicomServer.cs" />
+    <Compile Include="Diskspace.cs" />
     <Compile Include="ExtensionData.cs" />
     <Compile Include="FilteredGroup.cs" />
     <Compile Include="IBlockingEnumerator.cs" />
@@ -102,7 +103,6 @@
     <Compile Include="LargeObjectContainerCache.cs" />
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
-    <Compile Include="DriveInfo.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
     <Compile Include="StudyManagement\Rules\IRulesAction.cs" />
@@ -147,7 +147,7 @@
     <Compile Include="StudyManagement\StudyStoreBridge.cs" />
     <Compile Include="StudyManagement\Tests\StorageConfigurationTests.cs" />
     <Compile Include="StudyManagement\Tests\StudyStoreTests.cs" />
-    <Compile Include="Tests\DriveInfoTests.cs" />
+    <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
     <Compile Include="WorkItem\Tests\TestServiceProvider.cs" />

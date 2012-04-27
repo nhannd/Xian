@@ -77,11 +77,14 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.label2 = new System.Windows.Forms.Label();
             this._usedSpaceMeter = new ClearCanvas.Desktop.View.WinForms.Meter();
             this._diskSpaceWarningLabel = new System.Windows.Forms.Label();
+            this._tooltip = new System.Windows.Forms.ToolTip(this.components);
             this._warningIcon = new System.Windows.Forms.PictureBox();
-            this._warningTooltip = new System.Windows.Forms.ToolTip(this.components);
+            this._totalDiskSpaceDisplay = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._warningIcon)).BeginInit();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // _maxDiskSpace
@@ -118,8 +121,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             // _fileStoreDirectory
             // 
             resources.ApplyResources(this._fileStoreDirectory, "_fileStoreDirectory");
+            this.tableLayoutPanel1.SetColumnSpan(this._fileStoreDirectory, 2);
             this._fileStoreDirectory.Name = "_fileStoreDirectory";
-            this._fileStoreDirectory.ReadOnly = true;
             // 
             // _maxDiskSpaceDisplay
             // 
@@ -159,13 +162,14 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             // _usedSpaceMeter
             // 
             resources.ApplyResources(this._usedSpaceMeter, "_usedSpaceMeter");
+            this._usedSpaceMeter.ForeColor = System.Drawing.Color.WhiteSmoke;
             this._usedSpaceMeter.Name = "_usedSpaceMeter";
             this._usedSpaceMeter.Value = 50;
             // 
             // _diskSpaceWarningLabel
             // 
-            resources.ApplyResources(this._diskSpaceWarningLabel, "_diskSpaceWarningLabel");
             this._diskSpaceWarningLabel.AutoEllipsis = true;
+            resources.ApplyResources(this._diskSpaceWarningLabel, "_diskSpaceWarningLabel");
             this._diskSpaceWarningLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this._diskSpaceWarningLabel.Name = "_diskSpaceWarningLabel";
             // 
@@ -175,31 +179,44 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._warningIcon.Name = "_warningIcon";
             this._warningIcon.TabStop = false;
             // 
+            // _totalDiskSpaceDisplay
+            // 
+            resources.ApplyResources(this._totalDiskSpaceDisplay, "_totalDiskSpaceDisplay");
+            this._totalDiskSpaceDisplay.Name = "_totalDiskSpaceDisplay";
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this._changeFileStore, 4, 0);
+            this.tableLayoutPanel1.Controls.Add(this._fileStoreDirectory, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this._usedDiskSpaceDisplay, 4, 2);
+            this.tableLayoutPanel1.Controls.Add(this._upDownMaxDiskSpace, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this._maxDiskSpaceDisplay, 4, 3);
+            this.tableLayoutPanel1.Controls.Add(this._warningIcon, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this._totalDiskSpaceDisplay, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 3, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 3, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this._maxDiskSpace, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this._usedDiskSpace, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label8, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this._usedSpaceMeter, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this._diskSpaceWarningLabel, 1, 4);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
             // StorageConfigurationComponentControl
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._usedSpaceMeter);
-            this.Controls.Add(this._warningIcon);
-            this.Controls.Add(this._diskSpaceWarningLabel);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this._changeFileStore);
-            this.Controls.Add(this._upDownMaxDiskSpace);
-            this.Controls.Add(this._usedDiskSpaceDisplay);
-            this.Controls.Add(this._maxDiskSpaceDisplay);
-            this.Controls.Add(this._fileStoreDirectory);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this._usedDiskSpace);
-            this.Controls.Add(this._maxDiskSpace);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "StorageConfigurationComponentControl";
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._warningIcon)).EndInit();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -219,7 +236,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.Label label2;
         private Desktop.View.WinForms.Meter _usedSpaceMeter;
         private System.Windows.Forms.Label _diskSpaceWarningLabel;
+        private System.Windows.Forms.ToolTip _tooltip;
         private System.Windows.Forms.PictureBox _warningIcon;
-        private System.Windows.Forms.ToolTip _warningTooltip;
+        private System.Windows.Forms.Label _totalDiskSpaceDisplay;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }

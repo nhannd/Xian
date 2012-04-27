@@ -142,6 +142,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximum disk usage exceeded.
+        /// </summary>
+        public static string LabelMaximumDiskUsageExceeded {
+            get {
+                return ResourceManager.GetString("LabelMaximumDiskUsageExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Activity Monitor.
         /// </summary>
         public static string LinkOpenActivityMonitor {
@@ -201,6 +210,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         public static string MessageFailedToStartReindex {
             get {
                 return ResourceManager.GetString("MessageFailedToStartReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disk usage is above the maximum. The Workstation will not be able to import
+        ///DICOM files or receive them over the network. You should delete old studies to
+        ///make room, or increase the maximum usage..
+        /// </summary>
+        public static string MessageMaximumDiskUsageExceeded {
+            get {
+                return ResourceManager.GetString("MessageMaximumDiskUsageExceeded", resourceCulture);
             }
         }
         

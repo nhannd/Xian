@@ -144,6 +144,9 @@
   <data name="DiskspaceTemplate" xml:space="preserve">
     <value>{0} of {1} ({2}%)</value>
   </data>
+  <data name="LabelMaximumDiskUsageExceeded" xml:space="preserve">
+    <value>Maximum disk usage exceeded</value>
+  </data>
   <data name="LinkOpenActivityMonitor" xml:space="preserve">
     <value>Open Activity Monitor</value>
   </data>
@@ -164,6 +167,11 @@
   </data>
   <data name="MessageFailedToStartReindex" xml:space="preserve">
     <value>Failed to start re-index.</value>
+  </data>
+  <data name="MessageMaximumDiskUsageExceeded" xml:space="preserve">
+    <value>Disk usage is above the maximum. The Workstation will not be able to import
+DICOM files or receive them over the network. You should delete old studies to
+make room, or increase the maximum usage.</value>
   </data>
   <data name="MessageReindexInProgress" xml:space="preserve">
     <value>A re-index operation is already in progress.</value>

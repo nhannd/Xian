@@ -191,15 +191,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to bytes.
-        /// </summary>
-        internal static string LabelBytes {
-            get {
-                return ResourceManager.GetString("LabelBytes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Context Menu.
         /// </summary>
         internal static string LabelContextMenu {
@@ -209,47 +200,11 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to GB.
-        /// </summary>
-        internal static string LabelGigabytes {
-            get {
-                return ResourceManager.GetString("LabelGigabytes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to KB.
-        /// </summary>
-        internal static string LabelKilobytes {
-            get {
-                return ResourceManager.GetString("LabelKilobytes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Main Menu.
         /// </summary>
         internal static string LabelMainMenu {
             get {
                 return ResourceManager.GetString("LabelMainMenu", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MB.
-        /// </summary>
-        internal static string LabelMegabytes {
-            get {
-                return ResourceManager.GetString("LabelMegabytes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to TB.
-        /// </summary>
-        internal static string LabelTerabytes {
-            get {
-                return ResourceManager.GetString("LabelTerabytes", resourceCulture);
             }
         }
         
@@ -268,15 +223,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string Location {
             get {
                 return ResourceManager.GetString("Location", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Maximum disk usage exceeded.
-        /// </summary>
-        internal static string MaximumUsedSpaceExceededLabel {
-            get {
-                return ResourceManager.GetString("MaximumUsedSpaceExceededLabel", resourceCulture);
             }
         }
         
@@ -430,17 +376,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string MessageKeyStrokeReserved {
             get {
                 return ResourceManager.GetString("MessageKeyStrokeReserved", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Disk usage is above the maximum. The Workstation will not be able to import
-        ///DICOM files or receive them over the network. You should delete old studies to
-        ///make room, or increase the maximum usage..
-        /// </summary>
-        internal static string MessageMaximumUsedSpaceExceeded {
-            get {
-                return ResourceManager.GetString("MessageMaximumUsedSpaceExceeded", resourceCulture);
             }
         }
         

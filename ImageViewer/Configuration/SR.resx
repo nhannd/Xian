@@ -169,35 +169,17 @@ Please choose another Server Group Name.</value>
     <value>Streaming Header Port: {0}
 Streaming Image Port: {1}</value>
   </data>
-  <data name="LabelBytes" xml:space="preserve">
-    <value>bytes</value>
-  </data>
   <data name="LabelContextMenu" xml:space="preserve">
     <value>Context Menu</value>
   </data>
-  <data name="LabelGigabytes" xml:space="preserve">
-    <value>GB</value>
-  </data>
-  <data name="LabelKilobytes" xml:space="preserve">
-    <value>KB</value>
-  </data>
   <data name="LabelMainMenu" xml:space="preserve">
     <value>Main Menu</value>
-  </data>
-  <data name="LabelMegabytes" xml:space="preserve">
-    <value>MB</value>
-  </data>
-  <data name="LabelTerabytes" xml:space="preserve">
-    <value>TB</value>
   </data>
   <data name="LabelToolbar" xml:space="preserve">
     <value>Toolbar</value>
   </data>
   <data name="Location" xml:space="preserve">
     <value>Location: {0}</value>
-  </data>
-  <data name="MaximumUsedSpaceExceededLabel" xml:space="preserve">
-    <value>Maximum disk usage exceeded</value>
   </data>
   <data name="MenuAddServer" xml:space="preserve">
     <value>Add server</value>
@@ -249,11 +231,6 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="MessageKeyStrokeReserved" xml:space="preserve">
     <value>The shortcut {0} is reserved and cannot be reassigned.</value>
-  </data>
-  <data name="MessageMaximumUsedSpaceExceeded" xml:space="preserve">
-    <value>Disk usage is above the maximum. The Workstation will not be able to import
-DICOM files or receive them over the network. You should delete old studies to
-make room, or increase the maximum usage.</value>
   </data>
   <data name="MessageMouseButtonActiveToolAssignmentConflict" xml:space="preserve">
     <value>The global tool for {0} is already assigned to {1}. You will not be able to use the global shortcut for {1} whenever this tool is active. Do you still wish to assign this mouse button?</value>

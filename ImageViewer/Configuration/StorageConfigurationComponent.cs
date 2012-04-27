@@ -14,6 +14,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Services;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Configuration
     public class StorageConfigurationComponent : ConfigurationApplicationComponent
     {
         private StorageConfiguration _configuration;
-		private string _maximumUsedSpaceDisplay;
+		private string _maximumUsedSpaceBytesDisplay;
         private string _usedSpacePercentDisplay;
 		private string _usedSpaceBytesDisplay;
 
@@ -49,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             MaximumUsedSpaceChanged();
 
             _usedSpacePercentDisplay = UsedSpacePercent.ToString("F3");
-            _usedSpaceBytesDisplay = GetSpaceDescription(UsedSpacePercent / 100F);
+            _usedSpaceBytesDisplay = Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.UsedSpace, "F3");
             
             base.Start();
 		}
@@ -80,15 +81,15 @@ namespace ClearCanvas.ImageViewer.Configuration
                 NotifyPropertyChanged("FileStoreDirectory");
             }
         }
-        
-		public long UsedSpace
-		{
-			get { return _configuration.FileStoreDrive.TotalUsedSpace; }
-		}
 
-		public double UsedSpacePercent
+        public string TotalSpaceBytesDisplay
+        {
+            get { return Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.TotalSpace, "F3"); }
+        }
+
+        public double UsedSpacePercent
 		{
-            get { return _configuration.FileStoreDrive.TotalUsedSpacePercent; }
+            get { return _configuration.FileStoreDiskSpace.UsedSpacePercent; }
 		}
 
 		public string UsedSpacePercentDisplay
@@ -120,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public string MaximumUsedSpaceDisplay
         {
-            get { return _maximumUsedSpaceDisplay; }
+            get { return _maximumUsedSpaceBytesDisplay; }
         }
 
         public bool IsMaximumUsedSpaceExceeded
@@ -135,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                 if (!IsMaximumUsedSpaceExceeded)
                     return String.Empty;
 
-                return SR.MaximumUsedSpaceExceededLabel;
+                return StudyManagement.SR.LabelMaximumDiskUsageExceeded;
             }
         }
 
@@ -146,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                 if (!IsMaximumUsedSpaceExceeded)
                     return String.Empty;
 
-                return SR.MessageMaximumUsedSpaceExceeded;
+                return StudyManagement.SR.MessageMaximumDiskUsageExceeded;
             }
         }
 
@@ -188,50 +189,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         private void MaximumUsedSpaceChanged()
         {
-            _maximumUsedSpaceDisplay = GetSpaceDescription(MaximumUsedSpacePercent / 100F);
+            _maximumUsedSpaceBytesDisplay = Diskspace.FormatBytes(_configuration.MaximumUsedSpaceBytes, "F3");
 
             NotifyPropertyChanged("MaximumUsedSpace");
             NotifyPropertyChanged("MaximumUsedSpaceDisplay");
             NotifyPropertyChanged("IsMaximumUsedSpaceExceeded");
             NotifyPropertyChanged("MaximumUsedSpaceExceededLabel");
             NotifyPropertyChanged("MaximumUsedSpaceExceededMessage");
-        }
-        
-        private string GetSpaceDescription(double percentSpace)
-        {
-            double space = percentSpace * _configuration.FileStoreDrive.TotalSize;
-            if (space <= 0)
-                return "";
-
-            int i = 0;
-            while (space > 1024)
-            {
-                space /= 1024;
-                if (++i == 4)
-                    break;
-            }
-
-            var builder = new StringBuilder(space.ToString("F3"));
-            switch (i)
-            { 
-                case 4:
-                    builder.AppendFormat(" {0}", SR.LabelTerabytes);
-                    break;
-                case 3:
-                    builder.AppendFormat(" {0}", SR.LabelGigabytes);
-                    break;
-                case 2:
-                    builder.AppendFormat(" {0}", SR.LabelMegabytes);
-                    break;
-                case 1:
-                    builder.AppendFormat(" {0}", SR.LabelKilobytes);
-                    break;
-                default: //0
-                    builder.AppendFormat(" {0}", SR.LabelBytes);
-                    break;
-            }
-
-            return builder.ToString();
         }
     }
 }
