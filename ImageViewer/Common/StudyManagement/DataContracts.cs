@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using System;
@@ -193,51 +193,88 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     [DataContract(Namespace = StudyManagementNamespace.Value)]
     public class StorageConfiguration : IEquatable<StorageConfiguration>
     {
-        [DataMember(IsRequired = false)]
-        public string FileStoreDirectory { get; set; }
+        public const double AutoMinimumFreeSpace = -1;
 
-        [DataMember(IsRequired = false)]
-        public long? MinimumFreeSpaceBytes { get; set; }
+        private DriveInfo _fileStoreDrive;
+        private string _fileStoreDirectory;
+        private double _minimumFreeSpacePercent = AutoMinimumFreeSpace;
 
-        public float MinimumFreeSpacePercent
+        [DataMember(IsRequired = true)]
+        public string FileStoreDirectory
         {
-            get
+            get { return _fileStoreDirectory; }
+            set
             {
-                var minimumFreeSpaceBytes = MinimumFreeSpaceBytes;
-                if (!minimumFreeSpaceBytes.HasValue)
-                    return 0;
-
-                double ratio = (double)minimumFreeSpaceBytes.Value / FileStoreDrive.TotalSize;
-                return (float) ratio * 100;
+                _fileStoreDirectory = value;
+                _fileStoreDrive = null;
             }
         }
 
-        public float MaximumUsedSpacePercent
-        {
-            get
-            {
-                var maximumUsedSpaceBytes = MaximumUsedSpaceBytes;
-                if (!maximumUsedSpaceBytes.HasValue)
-                    return 100;
+        public bool AutoCalculateMinimumFreeSpacePercent { get { return MinimumFreeSpacePercent < 0; } }
 
-                double ratio = (double)maximumUsedSpaceBytes.Value / FileStoreDrive.TotalSize;
-                return (float)ratio * 100;
+        [DataMember(IsRequired = true)]
+        public double MinimumFreeSpacePercent
+        {
+            get { return _minimumFreeSpacePercent; }
+            set
+            {
+                if (value < 0)
+                {
+                    _minimumFreeSpacePercent = AutoMinimumFreeSpace;
+                    return;
+                }
+                
+                if (value > 100)
+                    throw new ArgumentException("Value must be between 0 and 100.", "MinimumFreeSpacePercent");
+
+                _minimumFreeSpacePercent = value;
             }
         }
 
-        public long? MaximumUsedSpaceBytes
+        public long MinimumFreeSpaceBytes
         {
-            get 
+            get
             {
-                var drive = FileStoreDrive;
-                if (drive == null)
-                    return null;
+                Platform.CheckMemberIsSet(FileStoreDrive, "FileStoreDrive");
+                if (MinimumFreeSpacePercent < 0)
+                    throw new InvalidOperationException("MinimumFreeSpacePercent must be set.");
 
-                if (!MinimumFreeSpaceBytes.HasValue)
-                    return drive.TotalSize;
-
-                return drive.TotalSize - MinimumFreeSpaceBytes.Value;
+                return (long)(FileStoreDrive.TotalSize * MinimumFreeSpacePercent / 100);
             }
+            set { MinimumFreeSpacePercent = (double)value / FileStoreDrive.TotalSize * 100; }
+        }
+
+        public double MaximumUsedSpacePercent
+        {
+            get
+            {
+                if (MinimumFreeSpacePercent < 0)
+                    throw new InvalidOperationException("MinimumFreeSpacePercent must be set.");
+
+                return 100F - MinimumFreeSpacePercent;
+            }
+            set
+            {
+                if (value < 0 || value > 100)
+                    throw new ArgumentException("Value must be between 0 and 100.", "MaximumUsedSpacePercent");
+
+                MinimumFreeSpacePercent = 100 - value;
+            }
+        }
+
+        public long MaximumUsedSpaceBytes
+        {
+            get
+            {
+                Platform.CheckMemberIsSet(FileStoreDrive, "FileStoreDrive");
+                return FileStoreDrive.TotalSize - MinimumFreeSpaceBytes;
+            }
+            set { MinimumFreeSpaceBytes = FileStoreDrive.TotalSize - value; }
+        }
+
+        public bool IsMaximumUsedSpaceExceeded
+        {
+            get { return FileStoreDrive.TotalUsedSpacePercent > MaximumUsedSpacePercent; }
         }
 
         public string FileStoreDriveName
@@ -245,7 +282,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             get
             {
                 return !String.IsNullOrEmpty(FileStoreDirectory)
-                    ? Path.GetPathRoot(FileStoreDirectory)
+                    ? System.IO.Path.GetPathRoot(FileStoreDirectory)
                     : null;
             }
         }
@@ -254,10 +291,12 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         {
             get
             {
-                return !String.IsNullOrEmpty(FileStoreDirectory) 
-                    ? new DriveInfo(FileStoreDriveName)
-                    : null;
+                if (String.IsNullOrEmpty(FileStoreDirectory))
+                    return null;
+
+                return _fileStoreDrive ?? (_fileStoreDrive = new DriveInfo(FileStoreDriveName));
             }
+            internal set { _fileStoreDrive = value; }
         }
 
         public override int GetHashCode()
@@ -266,8 +305,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
             if (FileStoreDirectory != null)
                 hash ^= FileStoreDirectory.GetHashCode();
-            if (MinimumFreeSpaceBytes != null)
-                hash ^= MinimumFreeSpaceBytes.GetHashCode();
+            
+            hash ^= MinimumFreeSpaceBytes.GetHashCode();
 
             return hash;
         }
@@ -283,7 +322,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         public bool Equals(StorageConfiguration other)
         {
             return FileStoreDirectory == other.FileStoreDirectory &&
-                   MinimumFreeSpaceBytes == other.MinimumFreeSpaceBytes;
+                   MinimumFreeSpacePercent.Equals(other.MinimumFreeSpacePercent);
         }
 
         #endregion

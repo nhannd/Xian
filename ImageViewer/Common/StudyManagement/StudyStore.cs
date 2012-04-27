@@ -34,24 +34,21 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         public abstract GetSeriesEntriesResult GetSeriesEntries(GetSeriesEntriesRequest request);
         public abstract GetImageEntriesResult GetImageEntries(GetImageEntriesRequest request);
 
-        public static StorageConfiguration GetConfiguration()
-        {
-            StorageConfiguration configuration = null;
-                Platform.GetService<IStorageConfiguration>(
-                    s => configuration = s.GetConfiguration(new GetStorageConfigurationRequest()).Configuration);
-            return configuration;
-        }
-
-        public static void UpdateConfiguration(string fileStoreDirectory, long? minimumFreeDiskSpaceBytes)
+        public static void UpdateConfiguration(StorageConfiguration configuration)
         {
             Platform.GetService<IStorageConfiguration>(
                 s => s.UpdateConfiguration(new UpdateStorageConfigurationRequest
-                {
-                    Configuration = new StorageConfiguration
-                    {
-                        FileStoreDirectory = fileStoreDirectory,
-                        MinimumFreeSpaceBytes = minimumFreeDiskSpaceBytes 
-                    }}));
+                                               {
+                                                   Configuration = configuration
+                                               }));
+        }
+
+        public static StorageConfiguration GetConfiguration()
+        {
+            StorageConfiguration configuration = null;
+            Platform.GetService<IStorageConfiguration>(
+                s => configuration = s.GetConfiguration(new GetStorageConfigurationRequest()).Configuration);
+            return configuration;
         }
 
         public static string FileStoreDirectory

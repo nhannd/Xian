@@ -102,6 +102,7 @@
     <Compile Include="LargeObjectContainerCache.cs" />
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
+    <Compile Include="DriveInfo.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
     <Compile Include="StudyManagement\Rules\IRulesEngineAction.cs" />
@@ -144,7 +145,9 @@
     <Compile Include="StudyManagement\Rules\TimeOrigin.cs" />
     <Compile Include="StudyManagement\Rules\TimeUnit.cs" />
     <Compile Include="StudyManagement\StudyStoreBridge.cs" />
+    <Compile Include="StudyManagement\Tests\StorageConfigurationTests.cs" />
     <Compile Include="StudyManagement\Tests\StudyStoreTests.cs" />
+    <Compile Include="Tests\DriveInfoTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
     <Compile Include="WorkItem\Tests\TestServiceProvider.cs" />
