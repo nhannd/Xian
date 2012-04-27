@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             if (_importContext == null)
             {
-                _importContext = new DicomReceiveImportContext(association.CallingAE);
+                _importContext = new DicomReceiveImportContext(association.CallingAE, Context.StorageConfiguration);
 
                 // Publish new WorkItems as they're added to the context
                 _importContext.StudyWorkItems.ItemAdded +=

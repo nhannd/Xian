@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                                                                     file);
                                                                        var context =
                                                                            new ImportStudyContext(
-                                                                               dicomFile.SourceApplicationEntityTitle);
+                                                                               dicomFile.SourceApplicationEntityTitle, StudyStore.GetConfiguration());
                                                                        var importer = new ImportFilesUtility(context);
                                                                        var result = importer.Import(dicomFile, BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
                                                                        if (!result.DicomStatus.Equals(DicomStatuses.Success))
@@ -169,9 +169,13 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                                                                     file);
                                                                        var context =
                                                                            new ImportStudyContext(
-                                                                               lastFile.SourceApplicationEntityTitle);
+                                                                               lastFile.SourceApplicationEntityTitle, StudyStore.GetConfiguration());
                                                                        var importer = new ImportFilesUtility(context);
-                                                                       importer.Import(lastFile,BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
+                                                                       var result = importer.Import(lastFile,BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
+                                                                       if (result.DicomStatus != DicomStatuses.Success)
+                                                                       {
+                                                                           Platform.Log(LogLevel.Warn,"Unable to import file: {0}", result.ErrorMessage);
+                                                                       }
                                                                    }
                                                                }
                                                                catch (Exception x)
