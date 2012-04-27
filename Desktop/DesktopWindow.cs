@@ -377,27 +377,11 @@ namespace ClearCanvas.Desktop
     		{
     			//TODO (CR February 2011) - Low: Not for diagnostic use is a resource, but modified installation isn't?
     			var tags = new List<string>();
-    			
-                if (LicenseInformation.IsEvaluation)
+
+    		    var text = ProductStateInfo.GetTitlebarText();
+                if (!string.IsNullOrEmpty(text))
                 {
-                    var firstRun = LicenseInformation.FirstRun;
-                    if (firstRun==null)
-                    {
-                        tags.Add(SR.LabelEvaluation);
-                    }
-                    else
-                    {
-                        var days = (Platform.Time - firstRun.Value).Days;
-                        if (days>0)
-                        {
-                            var message = string.Format(SR.LabelEvaluationWithDays, days);
-                            tags.Add(message);
-                        }
-                        else
-                        {
-                            tags.Add(SR.LabelEvaluation);
-                        }
-                    }
+                    tags.Add(text);
                 }
 
                 //TODO (CR February 2011) - High: We should have left this as a property on ProductInformation rather than checking for empty string.

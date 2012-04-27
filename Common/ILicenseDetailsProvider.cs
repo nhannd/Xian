@@ -52,29 +52,13 @@ namespace ClearCanvas.Common
 		DateTime? GetExpiryDate();
 
 		/// <summary>
-		/// Gets a value indicating whether or not the current license on local machine is for evaluation purposes.
-		/// </summary>
-		/// <returns>
-		/// True if it's an evaluation license. False otherwise (see remark)
-		/// </returns>
-		/// <remarks>
-		/// The implementation of ILicenseDetailsProvider decides what value to return when license is invalid or does not exist.
-		/// </remarks>
-		bool IsEvaluationLicense();
-
-		/// <summary>
 		/// Gets a value indicating whether or not a specific feature is authorized by the license.
 		/// </summary>
 		/// <param name="featureToken"></param>
 		/// <returns></returns>
 		bool IsFeatureAuthorized(string featureToken);
-
-        /// <summary>
-        /// Gets a value indicating whether a license exists locally
-        /// </summary>
-        /// <returns></returns>
-	    bool IsLicenseInstalled();
 	}
+
 
 	/// <summary>
 	/// Specifies the allowed diagnostic use of the product license.
@@ -149,20 +133,11 @@ namespace ClearCanvas.Common
 				return null;
 			}
 
-			public bool IsEvaluationLicense()
-			{
-				return false;
-			}
-
 			public bool IsFeatureAuthorized(string featureToken)
 			{
 				return true;
 			}
-
-		    public bool IsLicenseInstalled()
-		    {
-                return true;
-		    }
 		}
 	}
+
 }
