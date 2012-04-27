@@ -169,35 +169,17 @@ Please choose another Server Group Name.</value>
     <value>Streaming Header Port: {0}
 Streaming Image Port: {1}</value>
   </data>
-  <data name="LabelBytes" xml:space="preserve">
-    <value>bytes</value>
-  </data>
   <data name="LabelContextMenu" xml:space="preserve">
     <value>Context Menu</value>
   </data>
-  <data name="LabelGigabytes" xml:space="preserve">
-    <value>GB</value>
-  </data>
-  <data name="LabelKilobytes" xml:space="preserve">
-    <value>KB</value>
-  </data>
   <data name="LabelMainMenu" xml:space="preserve">
     <value>Main Menu</value>
-  </data>
-  <data name="LabelMegabytes" xml:space="preserve">
-    <value>MB</value>
-  </data>
-  <data name="LabelTerabytes" xml:space="preserve">
-    <value>TB</value>
   </data>
   <data name="LabelToolbar" xml:space="preserve">
     <value>Toolbar</value>
   </data>
   <data name="Location" xml:space="preserve">
     <value>Location: {0}</value>
-  </data>
-  <data name="MaximumUsedSpaceExceededMessage" xml:space="preserve">
-    <value>Disk usage is above the maximum. The Workstation will not be able to import DICOM files or receive them over the network. You should delete old studies to make room, or increase the maximum usage.</value>
   </data>
   <data name="MenuAddServer" xml:space="preserve">
     <value>Add server</value>
@@ -310,7 +292,7 @@ Would you like to stop the local service now?</value>
     <value>Local Server</value>
   </data>
   <data name="StorageConfiguration" xml:space="preserve">
-    <value>Storage</value>
+    <value>Study Storage</value>
   </data>
   <data name="TitleAddNewServer" xml:space="preserve">
     <value>Add New Server</value>

@@ -10,6 +10,7 @@
 #endregion
 
 using System.Linq;
+using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System;
@@ -56,6 +57,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			_diskSpace.DataBindings.Add("Text", _component, "DiskspaceUsed");
 			_diskSpaceMeter.DataBindings.Add("Value", _component, "DiskspaceUsedPercent");
+            Binding diskSpaceMeterFillStateBinding = new Binding("FillState", _component, "IsMaximumDiskspaceUsageExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            diskSpaceMeterFillStateBinding.Parse += ParseMeterFillState;
+            diskSpaceMeterFillStateBinding.Format += FormatMeterFillState;
+		    _diskSpaceMeter.DataBindings.Add(diskSpaceMeterFillStateBinding);
+
+            _diskSpaceWarningIcon.DataBindings.Add("Visible", _component, "IsMaximumDiskspaceUsageExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningMessage.DataBindings.Add("Visible", _component, "IsMaximumDiskspaceUsageExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "DiskSpaceWarningMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			// need to work with these manually, because data-binding doesn't work well with toolstrip comboboxes
 			_activityFilter.Items.AddRange(_component.ActivityTypeFilterChoices.Cast<object>().Select(i => new FilterItem(i, _component.FormatActivityTypeFilter)).ToArray());
@@ -78,6 +87,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			UpdateTooltips();
 		}
 
+        private void FormatMeterFillState(object sender, ConvertEventArgs e)
+        {
+            bool isMaximumUsedSpaceExceeded = (bool)e.Value;
+            e.Value = isMaximumUsedSpaceExceeded ? MeterFillState.Error : MeterFillState.Normal;
+        }
+
+        private void ParseMeterFillState(object sender, ConvertEventArgs e)
+        {
+            var meterState = (MeterFillState)e.Value;
+            e.Value = meterState == MeterFillState.Error;
+        }
+
 		private void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			switch (e.PropertyName)
@@ -86,6 +107,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				case "HostName":
 				case "Port":
 				case "FileStore":
+                case "IsMaximumDiskspaceUsageExceeded":
 					UpdateTooltips();
 					break;
 			}
@@ -139,7 +161,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_toolTip.SetToolTip(_aeTitle, string.Format(SR.ActivityMonitorAeTitleToolTip, _component.AeTitle));
 			_toolTip.SetToolTip(_hostName, string.Format(SR.ActivityMonitorHostPortToolTip, FormatHostAndPort()));
 			_toolTip.SetToolTip(_openFileStoreLink, string.Format(SR.ActivityMonitorFileStoreToolTip, _component.FileStore));
-		}
+            _toolTip.SetToolTip(_diskSpaceWarningIcon, _component.DiskSpaceWarningDescription);
+            _toolTip.SetToolTip(_diskSpaceWarningMessage, _component.DiskSpaceWarningDescription);
+        }
 
 		private string FormatHostAndPort()
 		{

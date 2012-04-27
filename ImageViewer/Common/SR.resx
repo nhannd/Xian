@@ -117,6 +117,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="LabelBytes" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="LabelGigabytes" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="LabelKilobytes" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="LabelMegabytes" xml:space="preserve">
+    <value>MB</value>
+  </data>
+  <data name="LabelPetabytes" xml:space="preserve">
+    <value>PB</value>
+  </data>
+  <data name="LabelTerabytes" xml:space="preserve">
+    <value>TB</value>
+  </data>
   <data name="MessageActivityMonitorServiceUnavailable" xml:space="preserve">
     <value>The Activity Monitor service is currently unavailable</value>
   </data>

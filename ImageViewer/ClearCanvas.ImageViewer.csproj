@@ -235,7 +235,6 @@
     <Compile Include="StudyManagement\ActivityMonitorTool.cs" />
     <Compile Include="StudyManagement\ActivityMonitorManager.cs" />
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
-    <Compile Include="StudyManagement\Diskspace.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
     <Compile Include="StudyManagement\ProgressBarIconSet.cs" />

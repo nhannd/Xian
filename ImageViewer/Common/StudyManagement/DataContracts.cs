@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Serialization;
@@ -195,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     {
         public const double AutoMinimumFreeSpace = -1;
 
-        private DriveInfo _fileStoreDrive;
+        private Diskspace _fileStoreDiskSpace;
         private string _fileStoreDirectory;
         private double _minimumFreeSpacePercent = AutoMinimumFreeSpace;
 
@@ -206,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             set
             {
                 _fileStoreDirectory = value;
-                _fileStoreDrive = null;
+                _fileStoreDiskSpace = null;
             }
         }
 
@@ -235,13 +236,13 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         {
             get
             {
-                Platform.CheckMemberIsSet(FileStoreDrive, "FileStoreDrive");
+                Platform.CheckMemberIsSet(FileStoreDiskSpace, "FileStoreDiskSpace");
                 if (MinimumFreeSpacePercent < 0)
                     throw new InvalidOperationException("MinimumFreeSpacePercent must be set.");
 
-                return (long)(FileStoreDrive.TotalSize * MinimumFreeSpacePercent / 100);
+                return (long)(FileStoreDiskSpace.TotalSpace * MinimumFreeSpacePercent / 100);
             }
-            set { MinimumFreeSpacePercent = (double)value / FileStoreDrive.TotalSize * 100; }
+            set { MinimumFreeSpacePercent = (double)value / FileStoreDiskSpace.TotalSpace* 100; }
         }
 
         public double MaximumUsedSpacePercent
@@ -266,15 +267,15 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         {
             get
             {
-                Platform.CheckMemberIsSet(FileStoreDrive, "FileStoreDrive");
-                return FileStoreDrive.TotalSize - MinimumFreeSpaceBytes;
+                Platform.CheckMemberIsSet(FileStoreDiskSpace, "FileStoreDiskSpace");
+                return FileStoreDiskSpace.TotalSpace - MinimumFreeSpaceBytes;
             }
-            set { MinimumFreeSpaceBytes = FileStoreDrive.TotalSize - value; }
+            set { MinimumFreeSpaceBytes = FileStoreDiskSpace.TotalSpace - value; }
         }
 
         public bool IsMaximumUsedSpaceExceeded
         {
-            get { return FileStoreDrive.TotalUsedSpacePercent > MaximumUsedSpacePercent; }
+            get { return FileStoreDiskSpace.UsedSpacePercent > MaximumUsedSpacePercent; }
         }
 
         public string FileStoreDriveName
@@ -287,16 +288,16 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             }
         }
 
-        public DriveInfo FileStoreDrive
+        public Diskspace FileStoreDiskSpace
         {
             get
             {
                 if (String.IsNullOrEmpty(FileStoreDirectory))
                     return null;
 
-                return _fileStoreDrive ?? (_fileStoreDrive = new DriveInfo(FileStoreDriveName));
+                return _fileStoreDiskSpace ?? (_fileStoreDiskSpace = new Diskspace(FileStoreDriveName));
             }
-            internal set { _fileStoreDrive = value; }
+            internal set { _fileStoreDiskSpace = value; }
         }
 
         public override int GetHashCode()

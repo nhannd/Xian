@@ -61,6 +61,60 @@ namespace ClearCanvas.ImageViewer.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to B.
+        /// </summary>
+        internal static string LabelBytes {
+            get {
+                return ResourceManager.GetString("LabelBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GB.
+        /// </summary>
+        internal static string LabelGigabytes {
+            get {
+                return ResourceManager.GetString("LabelGigabytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to KB.
+        /// </summary>
+        internal static string LabelKilobytes {
+            get {
+                return ResourceManager.GetString("LabelKilobytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MB.
+        /// </summary>
+        internal static string LabelMegabytes {
+            get {
+                return ResourceManager.GetString("LabelMegabytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PB.
+        /// </summary>
+        internal static string LabelPetabytes {
+            get {
+                return ResourceManager.GetString("LabelPetabytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TB.
+        /// </summary>
+        internal static string LabelTerabytes {
+            get {
+                return ResourceManager.GetString("LabelTerabytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Activity Monitor service is currently unavailable.
         /// </summary>
         internal static string MessageActivityMonitorServiceUnavailable {
