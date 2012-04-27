@@ -84,12 +84,13 @@ namespace ClearCanvas.Desktop.Help
                 this._manifest.ForeColor = AboutSettings.Default.ManifestForeColor;
 				this._manifest.Font = AboutSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._manifest.Font;
                 this._manifest.TextAlign = AboutSettings.Default.ManifestTextAlign;
-
-			    AddLicenseLabels();
-
+			    
 				this._closeButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
 				this._closeButton.Location = AboutSettings.Default.CloseButtonLocation;
 				this._closeButton.LinkColor = AboutSettings.Default.CloseButtonLinkColor;
+
+                AddExtraLabels();
+
 			}
 
 			this.ResumeLayout();
@@ -97,27 +98,14 @@ namespace ClearCanvas.Desktop.Help
 			this._closeButton.Click += new EventHandler(OnCloseClicked);
 		}
 
-        private void AddLicenseLabels()
+        private void AddExtraLabels()
         {
-            // Add some labels that are controlled by license
-            bool isEvaluation = false;
-            bool expired = false;
-            if (!LicenseInformation.IsLicenseInstalled())
+            var text = ProductStateInfo.GetProductLicenseStateDescription();
+            if (!string.IsNullOrEmpty(text))
             {
-                isEvaluation = true;
-                expired = true;
-            }
-            else if (LicenseInformation.IsEvaluation)
-            {
-                isEvaluation = true; 
-                expired = LicenseInformation.Expired;
-            }
-
-            if (isEvaluation)
-            {
-                var evaluationLabel = new Label()
-                 {
-                    Text = expired ? SR.LabelEvaluationExpired : SR.LabelEvaluation,
+                var label = new Label()
+                {
+                    Text = text,
                     Visible = AboutSettings.Default.EvaluationVisible,
                     BackColor = System.Drawing.Color.Transparent,
                     Location = AboutSettings.Default.EvaluationLocation,
@@ -126,17 +114,16 @@ namespace ClearCanvas.Desktop.Help
                     ForeColor = AboutSettings.Default.EvaluationForeColor,
                     TextAlign = AboutSettings.Default.EvaluationTextAlign
                 };
-                    
                 if (AboutSettings.Default.EvaluationFontBold)
-                    evaluationLabel.Font = new Font(evaluationLabel.Font, FontStyle.Bold);
+                    label.Font = new Font(label.Font, FontStyle.Bold);
 
-                this.Controls.Add(evaluationLabel);
+                this.Controls.Add(label);
             }
-
+            
 
             if (LicenseInformation.DiagnosticUse != LicenseDiagnosticUse.Allowed)
             {
-                var text = LicenseInformation.DiagnosticUse == LicenseDiagnosticUse.None
+                text = LicenseInformation.DiagnosticUse == LicenseDiagnosticUse.None
                                ? SR.LabelNotForClinicalUse
                                : SR.LabelNotForHumanDiagnosticUse;
 
@@ -159,7 +146,7 @@ namespace ClearCanvas.Desktop.Help
             }
         }
 
-		private static Stream OpenResourceStream()
+	    private static Stream OpenResourceStream()
 		{
 			var oemPath = System.IO.Path.Combine(Platform.InstallDirectory, @"oem\about.png");
 			if (File.Exists(oemPath))
@@ -185,4 +172,6 @@ namespace ClearCanvas.Desktop.Help
 			Close();
 		}
 	}
+
+
 }

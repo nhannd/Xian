@@ -79,24 +79,6 @@ namespace ClearCanvas.Desktop.Help {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Evaluation Copy.
-        /// </summary>
-        public static string LabelEvaluation {
-            get {
-                return ResourceManager.GetString("LabelEvaluation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Evaluation Copy (Premium Featuers Disabled).
-        /// </summary>
-        public static string LabelEvaluationExpired {
-            get {
-                return ResourceManager.GetString("LabelEvaluationExpired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Not For Clinical Use.
         /// </summary>
         public static string LabelNotForClinicalUse {

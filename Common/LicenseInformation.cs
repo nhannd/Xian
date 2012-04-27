@@ -49,6 +49,7 @@ namespace ClearCanvas.Common
 			}
 		}
 
+
 		/// <summary>
 		/// Gets the number of the concurrent active sessions.
 		/// </summary>
@@ -199,22 +200,6 @@ namespace ClearCanvas.Common
 			}
 		}
 
-		/// <summary>
-		/// Checks if the current license is for evaluation
-		/// </summary>
-		public static bool IsEvaluation
-		{
-			get
-			{
-				CheckLicenseDetailsProvider();
-
-				lock (_syncRoot)
-				{
-					return _licenseDetailsProvider.IsEvaluationLicense();
-				}
-			}
-		}
-
 		public static DateTime? ExpiryTime
 		{
 			get
@@ -227,32 +212,6 @@ namespace ClearCanvas.Common
 				}
 			}
 		}
-
-		/// <summary>
-		/// Checks if the current license has expired
-		/// </summary>
-		public static bool Expired
-		{
-			get
-			{
-				var expiryTime = ExpiryTime;
-				return expiryTime.HasValue && expiryTime.Value < DateTime.Now;
-			}
-		}
-
-        /// <summary>
-        /// Checks if a license is installed. The license can 
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsLicenseInstalled()
-        {
-            CheckLicenseDetailsProvider();
-
-            lock (_syncRoot)
-            {
-                return _licenseDetailsProvider.IsLicenseInstalled();
-            }
-        }
 
 		/// <summary>
 		/// Forces license information to be reloaded when it is requested next time

@@ -181,6 +181,7 @@
     <Compile Include="DesktopObjectCollection.cs" />
     <Compile Include="DesktopWindowCollection.cs" />
     <Compile Include="DesktopWindowCreationArgs.cs" />
+    <Compile Include="ProductStateInfo.cs" />
     <Compile Include="DialogBoxCollection.cs" />
     <Compile Include="DialogBoxCreationArgs.cs" />
     <Compile Include="Actions\DropDownAction.cs" />

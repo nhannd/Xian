@@ -123,12 +123,6 @@
   <data name="LabelClose" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="LabelEvaluation" xml:space="preserve">
-    <value>Evaluation Copy</value>
-  </data>
-  <data name="LabelEvaluationExpired" xml:space="preserve">
-    <value>Evaluation Copy (Premium Featuers Disabled)</value>
-  </data>
   <data name="LabelNotForClinicalUse" xml:space="preserve">
     <value>Not For Clinical Use</value>
   </data>
