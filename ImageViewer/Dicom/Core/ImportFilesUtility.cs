@@ -241,8 +241,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             if (_context.StorageConfiguration.IsMaximumUsedSpaceExceeded)
             {
                 result.SetError(DicomStatuses.StorageStorageOutOfResources,
-                                string.Format("Unable to import, used percent: {0}, maximum used percent: {1}",
-                                              _context.StorageConfiguration.FileStoreDrive.TotalUsedSpacePercent.ToString("00.000"),
+                                string.Format("Unable to import, file store used percent: {0}, maximum used percent: {1}",
+                                              _context.StorageConfiguration.FileStoreDiskSpace.UsedSpacePercent.ToString("00.000"),
                                               _context.StorageConfiguration.MaximumUsedSpacePercent.ToString("00.000")));
                 return result;
             }
