@@ -57,8 +57,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				Trace.WriteLine("Starting Dicom server.");
 
-				server = new DicomServer(serverConfiguration.AETitle, serverConfiguration.HostName,
-                                         serverConfiguration.Port, storageConfiguration.FileStoreDirectory);
+				server = new DicomServer(serverConfiguration, storageConfiguration);
 				server.Start();
 			}
 			catch (Exception e)

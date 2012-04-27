@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -20,7 +21,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 	{
 		string AETitle { get; }
 		string Host { get; }
-		int Port { get; }		
+		int Port { get; }
+	    StorageConfiguration StorageConfiguration { get; }
 	}
 
 	public abstract class ScpExtension : IDicomScp<IDicomServerContext>
