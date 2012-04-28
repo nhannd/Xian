@@ -10,10 +10,11 @@
 #endregion
 
 using System;
-using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -21,6 +22,7 @@ using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+    //TODO (Marmot):Move to IV.StudyManagement?
 
     /// <summary>
     /// Extension point for views onto <see cref="StorageConfigurationComponent"/>
@@ -30,36 +32,52 @@ namespace ClearCanvas.ImageViewer.Configuration
     {
     }
 
-	//NOTE: this may not be the best place for this, but it doesn't make sense to have any of these tools without
-	// the configuration components (or vice versa) anyway.
-
-    /// <summary>
-    /// DiskspaceManagerConfigurationComponent class
-    /// </summary>
     [AssociateView(typeof(StorageConfigurationComponentViewExtensionPoint))]
     public class StorageConfigurationComponent : ConfigurationApplicationComponent
     {
+        private const string _notApplicable = "N/A";
+
+        private DelayedEventPublisher _delaySetFileStoreDirectory;
         private StorageConfiguration _configuration;
+        private string _fileStoreDriveName;
+        private string _currentFileStoreDirectory;
         private string _originalFileStoreDirectory;
 
-        private string _maximumUsedSpaceBytesDisplay;
-        private string _usedSpacePercentDisplay;
-		private string _usedSpaceBytesDisplay;
+        private IWorkItemActivityMonitor _activityMonitor;
 
         public override void Start()
 		{
+            _delaySetFileStoreDirectory = new DelayedEventPublisher(RealSetFileStoreDirectory);
+            _activityMonitor = WorkItemActivityMonitor.Create();
+            _activityMonitor.IsConnectedChanged += ActivityMonitorOnIsConnectedChanged;
+
             _configuration = StudyStore.GetConfiguration();
-            _originalFileStoreDirectory = _configuration.FileStoreDirectory;
-
-            MaximumUsedSpaceChanged();
-
-            _usedSpacePercentDisplay = UsedSpacePercent.ToString("F3");
-            _usedSpaceBytesDisplay = Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.UsedSpace, "F3");
+            _currentFileStoreDirectory = _originalFileStoreDirectory = _configuration.FileStoreDirectory;
             
+            UpdateFileStoreDriveName();
+            MaximumUsedSpaceChanged();
             base.Start();
 		}
 
-		public override void Save()
+        public override void Stop()
+        {
+            base.Stop();
+
+            if (_delaySetFileStoreDirectory != null)
+            {
+                _delaySetFileStoreDirectory.Cancel();
+                _delaySetFileStoreDirectory.Dispose();
+                _delaySetFileStoreDirectory = null;
+            }
+
+            if (_activityMonitor != null)
+            {
+                _activityMonitor.IsConnectedChanged -= ActivityMonitorOnIsConnectedChanged;
+                _activityMonitor.Dispose();
+            }
+        }
+
+        public override void Save()
         {
 		    try
 		    {
@@ -71,53 +89,125 @@ namespace ClearCanvas.ImageViewer.Configuration
 		    }
         }
 
+        public override bool HasValidationErrors
+        {
+            get
+            {
+                _delaySetFileStoreDirectory.PublishNow();
+                return base.HasValidationErrors;
+            }
+        }
+
+        private bool IsDiskspaceAvailable
+        {
+            get { return _configuration.FileStoreDriveExists && _configuration.FileStoreDiskSpace.IsAvailable; }
+        }
+
         #region Presentation Model
 
         public string FileStoreDirectory
         {
-            get { return _configuration.FileStoreDirectory; }
-            private set
+            get { return _currentFileStoreDirectory; }
+            set
             {
-                if (Equals(value, _configuration.FileStoreDirectory))
+                if (Equals(value, _currentFileStoreDirectory))
                     return;
 
-                _configuration.FileStoreDirectory = value;
-
-                NotifyPropertyChanged("FileStoreDirectory");
-                NotifyPropertyChanged("HasFileStoreChanged");
+                Modified = true;
+                _currentFileStoreDirectory = value;
+                _delaySetFileStoreDirectory.Publish(this, EventArgs.Empty);
             }
         }
-
+        
         public bool HasFileStoreChanged
         {
             get { return _configuration.FileStoreDirectory != _originalFileStoreDirectory; }
         }
 
+        public string FileStoreChangedMessage
+        {
+            get
+            {
+                if (!HasFileStoreChanged)
+                    return String.Empty;
+
+                return SR.MessageFileStoreChanged;
+            }
+        }
+
+        public string FileStoreChangedDescription
+        {
+            get
+            {
+                if (!HasFileStoreChanged)
+                    return String.Empty;
+
+                return SR.DescriptionFileStoreChanged;
+            }
+        }
+
+        public bool IsLocalServiceRunning
+        {
+            get { return _activityMonitor.IsConnected; }
+        }
+
+        public bool DoesLocalServiceHaveToStop
+        {
+            get { return IsLocalServiceRunning && HasFileStoreChanged; }
+        }
+
         public string TotalSpaceBytesDisplay
         {
-            get { return Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.TotalSpace, "F3"); }
+            get
+            {
+                if (!IsDiskspaceAvailable)
+                    return _notApplicable;
+
+                return Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.TotalSpace, "F3");
+            }
         }
 
         public double UsedSpacePercent
 		{
-            get { return _configuration.FileStoreDiskSpace.UsedSpacePercent; }
+            get
+            {
+                if (!IsDiskspaceAvailable)
+                    return 0;
+
+                return _configuration.FileStoreDiskSpace.UsedSpacePercent;
+            }
 		}
 
 		public string UsedSpacePercentDisplay
 		{
-			get { return _usedSpacePercentDisplay; }
+            get { return UsedSpacePercent.ToString("F3"); }
 		}
 
 		public string UsedSpaceBytesDisplay
 		{
-			get { return _usedSpaceBytesDisplay; }
+            get
+            {
+                if (!IsDiskspaceAvailable)
+                    return _notApplicable;
+
+                return Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.UsedSpace, "F3");
+            }
 		}
 
 		public double MaximumUsedSpacePercent
 		{
-			get { return _configuration.MaximumUsedSpacePercent; }
+			get
+			{
+                if (!IsDiskspaceAvailable)
+                    return 0;
+
+                return _configuration.MaximumUsedSpacePercent;
+			}
 			set
 			{
+                if (!IsDiskspaceAvailable)
+                    return;
+
                 if (Equals(value, _configuration.MaximumUsedSpacePercent))
                     return;
 
@@ -132,12 +222,24 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public string MaximumUsedSpaceDisplay
         {
-            get { return _maximumUsedSpaceBytesDisplay; }
+            get
+            {
+                if (!IsDiskspaceAvailable)
+                    return _notApplicable;
+
+                return Diskspace.FormatBytes(_configuration.MaximumUsedSpaceBytes, "F3");
+            }
         }
 
         public bool IsMaximumUsedSpaceExceeded
         {
-            get { return _configuration.IsMaximumUsedSpaceExceeded; }
+            get
+            {
+                if (!IsDiskspaceAvailable)
+                    return false;
+
+                return _configuration.IsMaximumUsedSpaceExceeded;
+            }
         }
 
         public string MaximumUsedSpaceExceededMessage
@@ -164,22 +266,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public void ChangeFileStore()
         {
-            if (WorkItemActivityMonitor.IsRunning)
-            {
-                if (DialogBoxAction.No == Host.DesktopWindow.ShowMessageBox(SR.QuestionCannotChangeFileStore, MessageBoxActions.YesNo))
-                    return;
-
-                try
-                {
-                    LocalServiceProcess.Stop();
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, SR.MessageUnableToStopLocalService, Host.DesktopWindow);
-                    return;
-                }
-            }
-
             var args = new SelectFolderDialogCreationArgs(FileStoreDirectory) { Prompt = SR.TitleSelectFileStore, AllowCreateNewFolder = true };
             var result = base.Host.DesktopWindow.ShowSelectFolderDialogBox(args);
             if (result.Action != DialogBoxAction.Ok)
@@ -188,7 +274,6 @@ namespace ClearCanvas.ImageViewer.Configuration
             try
             {
                 FileStoreDirectory = result.FileName;
-                Host.DesktopWindow.ShowMessageBox(SR.MessageMoveFileStore, MessageBoxActions.Ok);
             }
             catch (Exception e)
             {
@@ -196,17 +281,92 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
+        public void StopLocalService()
+        {
+            try
+            {
+                BlockingOperation.Run(LocalServiceProcess.Stop);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Debug, e);
+                Host.DesktopWindow.ShowMessageBox(SR.MessageUnableToStopLocalService, MessageBoxActions.Ok);
+            }
+        }
+
         #endregion
+
+        [ValidationMethodFor("FileStoreDirectory")]
+        private ValidationResult ValidateFileStorePath()
+        {
+            if (!_configuration.IsFileStoreDriveValid)
+                return new ValidationResult(false, SR.ValidationDriveInvalid);
+
+            if (!_configuration.FileStoreDriveExists)
+                return new ValidationResult(false, String.Format(SR.ValidationDriveDoesNotExist, _configuration.FileStoreRootPath));
+
+            if (!IsLocalServiceRunning)
+                return new ValidationResult(true, String.Empty);
+
+            return new ValidationResult(false, SR.ValidationMessageCannotChangeFileStore);
+        }
+
+        private void UpdateFileStoreDriveName()
+        {
+            string value;
+            if (!_configuration.FileStoreDriveExists)
+                value = null;
+            else
+                value = _configuration.FileStoreDriveName.ToUpper();
+
+            if (Equals(value, _fileStoreDriveName))
+                return;
+
+            _fileStoreDriveName = value;
+
+            UsedSpaceChanged();
+            MaximumUsedSpaceChanged();
+        }
+
+        private void UsedSpaceChanged()
+        {
+            NotifyPropertyChanged("UsedSpacePercent");
+            NotifyPropertyChanged("UsedSpacePercentDisplay");
+            NotifyPropertyChanged("UsedSpaceBytesDisplay");
+        }
 
         private void MaximumUsedSpaceChanged()
         {
-            _maximumUsedSpaceBytesDisplay = Diskspace.FormatBytes(_configuration.MaximumUsedSpaceBytes, "F3");
-
             NotifyPropertyChanged("MaximumUsedSpace");
             NotifyPropertyChanged("MaximumUsedSpaceDisplay");
             NotifyPropertyChanged("IsMaximumUsedSpaceExceeded");
-            NotifyPropertyChanged("MaximumUsedSpaceExceededLabel");
             NotifyPropertyChanged("MaximumUsedSpaceExceededMessage");
+            NotifyPropertyChanged("MaximumUsedSpaceExceededDescription");
+        }
+
+        private void ActivityMonitorOnIsConnectedChanged(object sender, EventArgs eventArgs)
+        {
+            NotifyPropertyChanged("IsLocalServiceRunning");
+            NotifyPropertyChanged("DoesLocalServiceHaveToStop");
+        }
+
+        private void RealSetFileStoreDirectory(object sender, EventArgs e)
+        {
+            if (Equals(_currentFileStoreDirectory, _configuration.FileStoreDirectory))
+                return;
+
+            _configuration.FileStoreDirectory = _currentFileStoreDirectory;
+
+            UpdateFileStoreDriveName();
+
+            NotifyPropertyChanged("FileStoreDirectory");
+            NotifyPropertyChanged("HasFileStoreChanged");
+            NotifyPropertyChanged("FileStoreChangedMessage");
+            NotifyPropertyChanged("FileStoreChangedDescription");
+            NotifyPropertyChanged("DoesLocalServiceHaveToStop");
+
+            if (!HasValidationErrors)
+                ShowValidation(false);
         }
     }
 }

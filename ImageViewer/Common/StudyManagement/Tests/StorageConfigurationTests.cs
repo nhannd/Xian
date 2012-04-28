@@ -96,14 +96,32 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
 
             configuration.MaximumUsedSpacePercent = -1;
         }
-
-
+        
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestDriveNotSet()
         {
             var configuration = new StorageConfiguration {FileStoreDirectory = @"c:\filestore"};
             var maxUsedSpace = configuration.MaximumUsedSpaceBytes;
+        }
+
+        [Test]
+        public void TestFileStoreDirectoryValid()
+        {
+            var configuration = new StorageConfiguration { FileStoreDirectory = @"c:\filestore" };
+            Assert.IsTrue(configuration.IsFileStoreDriveValid);
+
+            configuration.FileStoreDirectory = @"A:\\";
+            Assert.IsTrue(configuration.IsFileStoreDriveValid);
+
+            configuration.FileStoreDirectory = @"\";
+            Assert.IsFalse(configuration.IsFileStoreDriveValid);
+
+            configuration.FileStoreDirectory = @"\\";
+            Assert.IsFalse(configuration.IsFileStoreDriveValid);
+
+            configuration.FileStoreDirectory = @"\\test\testing";
+            Assert.IsFalse(configuration.IsFileStoreDriveValid);
         }
     }
 }

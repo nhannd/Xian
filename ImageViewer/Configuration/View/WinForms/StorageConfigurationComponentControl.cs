@@ -34,6 +34,13 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _component = component;
 
             _fileStoreDirectory.DataBindings.Add("Text", _component, "FileStoreDirectory", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _stopLocalService.DataBindings.Add("Visible", _component, "DoesLocalServiceHaveToStop", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _fileStoreWarningIcon.DataBindings.Add("Visible", _component, "HasFileStoreChanged", true, DataSourceUpdateMode.OnPropertyChanged);
+            _fileStoreWarningMessage.DataBindings.Add("Visible", _component, "HasFileStoreChanged", true, DataSourceUpdateMode.OnPropertyChanged);
+            _fileStoreWarningMessage.DataBindings.Add("Text", _component, "FileStoreChangedMessage", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _totalDiskSpaceDisplay.DataBindings.Add("Text", _component, "TotalSpaceBytesDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
 
             var maxDiskUsageBinding = new Binding("Value", _component, "MaximumUsedSpacePercent", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -54,13 +61,14 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _usedDiskSpace.DataBindings.Add("Text", _component, "UsedSpacePercentDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
             _usedDiskSpaceDisplay.DataBindings.Add("Text", _component, "UsedSpaceBytesDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _warningIcon.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diskSpaceWarningIcon.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
             _diskSpaceWarningMessage.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
             _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _component.PropertyChanged += OnComponentPropertyChanged;
             //Set initial values.
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreDirectory"));
+            OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreChangedDescription"));
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("MaximumUsedSpaceExceededDescription"));
         }
 
@@ -69,10 +77,16 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             if (propertyChangedEventArgs.PropertyName == "FileStoreDirectory")
                 _tooltip.SetToolTip(_fileStoreDirectory, _component.FileStoreDirectory);
 
+            if (propertyChangedEventArgs.PropertyName == "FileStoreChangedDescription")
+            {
+                _tooltip.SetToolTip(_fileStoreWarningIcon, _component.FileStoreChangedDescription);
+                _tooltip.SetToolTip(_fileStoreWarningMessage, _component.FileStoreChangedDescription);
+            }
+
             if (propertyChangedEventArgs.PropertyName == "MaximumUsedSpaceExceededDescription")
             {
                 _tooltip.SetToolTip(_diskSpaceWarningMessage, _component.MaximumUsedSpaceExceededDescription);
-                _tooltip.SetToolTip(_warningIcon, _component.MaximumUsedSpaceExceededDescription);
+                _tooltip.SetToolTip(_diskSpaceWarningIcon, _component.MaximumUsedSpaceExceededDescription);
             }
         }
 
@@ -103,6 +117,11 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private void _changeFileStore_Click(object sender, EventArgs e)
         {
             _component.ChangeFileStore();
+        }
+
+        private void _stopLocalServices_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            _component.StopLocalService();
         }
     }
 }

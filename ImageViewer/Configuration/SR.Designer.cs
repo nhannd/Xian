@@ -79,6 +79,17 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If you wish to keep your existing studies, you must manually copy them to the new
+        ///location before restarting the local service. Otherwise, you should restart the local service
+        ///and immediately re-index..
+        /// </summary>
+        internal static string DescriptionFileStoreChanged {
+            get {
+                return ResourceManager.GetString("DescriptionFileStoreChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM.
         /// </summary>
         internal static string DicomConfiguration {
@@ -353,6 +364,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File store has changed.
+        /// </summary>
+        internal static string MessageFileStoreChanged {
+            get {
+                return ResourceManager.GetString("MessageFileStoreChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Host Name cannot be empty..
         /// </summary>
         internal static string MessageHostNameCannotBeEmpty {
@@ -416,15 +436,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If you wish to keep your existing studies, you must now manually copy them to the new location before restarting the local service. Otherwise, you should start the local service and immediately re-index..
-        /// </summary>
-        internal static string MessageMoveFileStore {
-            get {
-                return ResourceManager.GetString("MessageMoveFileStore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
         /// </summary>
         internal static string MessageNoServersSelected {
@@ -479,7 +490,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to stop the local service. Consult the logs for more details..
+        ///   Looks up a localized string similar to Failed to stop the local service. See the logs for more details..
         /// </summary>
         internal static string MessageUnableToStopLocalService {
             get {
@@ -529,17 +540,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string PublishingConfiguration {
             get {
                 return ResourceManager.GetString("PublishingConfiguration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The local service must be stopped before the file store can be changed. It is also recommended that you wait for all Work Items to complete before stopping the service.
-        ///
-        ///Would you like to stop the local service now?.
-        /// </summary>
-        internal static string QuestionCannotChangeFileStore {
-            get {
-                return ResourceManager.GetString("QuestionCannotChangeFileStore", resourceCulture);
             }
         }
         
@@ -729,6 +729,36 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string ValidationAETitleLengthIncorrect {
             get {
                 return ResourceManager.GetString("ValidationAETitleLengthIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified drive ({0}) does not exist..
+        /// </summary>
+        internal static string ValidationDriveDoesNotExist {
+            get {
+                return ResourceManager.GetString("ValidationDriveDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified path is invalid..
+        /// </summary>
+        internal static string ValidationDriveInvalid {
+            get {
+                return ResourceManager.GetString("ValidationDriveInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The local service must be stopped before the file store can be changed. It is also
+        ///recommended that you wait for all Work Items to complete before stopping the service.
+        ///
+        ///You can click the &quot;Stop Local Service&quot; link now, or cancel your changes..
+        /// </summary>
+        internal static string ValidationMessageCannotChangeFileStore {
+            get {
+                return ResourceManager.GetString("ValidationMessageCannotChangeFileStore", resourceCulture);
             }
         }
         

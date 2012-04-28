@@ -123,6 +123,11 @@
   <data name="DescriptionDefaultServers" xml:space="preserve">
     <value>Please check the servers that should be used as defaults for the application.</value>
   </data>
+  <data name="DescriptionFileStoreChanged" xml:space="preserve">
+    <value>If you wish to keep your existing studies, you must manually copy them to the new
+location before restarting the local service. Otherwise, you should restart the local service
+and immediately re-index.</value>
+  </data>
   <data name="DicomConfiguration" xml:space="preserve">
     <value>DICOM</value>
   </data>
@@ -223,6 +228,9 @@ Streaming Image Port: {1}</value>
   <data name="MessageFailedToUpdateDicomServerConfiguration" xml:space="preserve">
     <value>Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
   </data>
+  <data name="MessageFileStoreChanged" xml:space="preserve">
+    <value>File store has changed</value>
+  </data>
   <data name="MessageHostNameCannotBeEmpty" xml:space="preserve">
     <value>The Host Name cannot be empty.</value>
   </data>
@@ -244,9 +252,6 @@ Streaming Image Port: {1}</value>
   <data name="MessageMouseButtonInitialToolAlreadyAssigned" xml:space="preserve">
     <value>The default tool for {0} is already assigned to {1}. Do you wish to reassign the mouse button?</value>
   </data>
-  <data name="MessageMoveFileStore" xml:space="preserve">
-    <value>If you wish to keep your existing studies, you must now manually copy them to the new location before restarting the local service. Otherwise, you should start the local service and immediately re-index.</value>
-  </data>
   <data name="MessageNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
@@ -266,7 +271,7 @@ Streaming Image Port: {1}</value>
     <value>The Server Name cannot be empty.</value>
   </data>
   <data name="MessageUnableToStopLocalService" xml:space="preserve">
-    <value>Failed to stop the local service. Consult the logs for more details.</value>
+    <value>Failed to stop the local service. See the logs for more details.</value>
   </data>
   <data name="MonitorConfiguration" xml:space="preserve">
     <value>Window Configuration</value>
@@ -282,11 +287,6 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="PublishingConfiguration" xml:space="preserve">
     <value>Publishing</value>
-  </data>
-  <data name="QuestionCannotChangeFileStore" xml:space="preserve">
-    <value>The local service must be stopped before the file store can be changed. It is also recommended that you wait for all Work Items to complete before stopping the service.
-
-Would you like to stop the local service now?</value>
   </data>
   <data name="ServerConfiguration" xml:space="preserve">
     <value>Local Server</value>
@@ -350,6 +350,18 @@ Would you like to stop the local service now?</value>
   </data>
   <data name="ValidationAETitleLengthIncorrect" xml:space="preserve">
     <value>The AE Title must be between 1 and 16 characters.</value>
+  </data>
+  <data name="ValidationDriveDoesNotExist" xml:space="preserve">
+    <value>The specified drive ({0}) does not exist.</value>
+  </data>
+  <data name="ValidationDriveInvalid" xml:space="preserve">
+    <value>The specified path is invalid.</value>
+  </data>
+  <data name="ValidationMessageCannotChangeFileStore" xml:space="preserve">
+    <value>The local service must be stopped before the file store can be changed. It is also
+recommended that you wait for all Work Items to complete before stopping the service.
+
+You can click the "Stop Local Service" link now, or cancel your changes.</value>
   </data>
   <data name="ValidationPortOutOfRange" xml:space="preserve">
     <value>The Port must be between 1 and 65535.</value>

@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using System;
+using System.Text.RegularExpressions;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
@@ -196,8 +197,9 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     {
         public const double AutoMinimumFreeSpace = -1;
 
-        private Diskspace _fileStoreDiskSpace;
         private string _fileStoreDirectory;
+        private bool _fileStoreDiskspaceInitialized;
+        private Diskspace _fileStoreDiskspace;
         private double _minimumFreeSpacePercent = AutoMinimumFreeSpace;
 
         [DataMember(IsRequired = true)]
@@ -207,7 +209,76 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             set
             {
                 _fileStoreDirectory = value;
-                _fileStoreDiskSpace = null;
+                FileStoreDiskSpace = null;
+            }
+        }
+
+        public string FileStoreRootPath
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(FileStoreDirectory))
+                    return null;
+
+                if (FileStoreDirectory.IndexOfAny(Path.GetInvalidPathChars(), 0) >= 0)
+                    return null;
+
+                if (!Path.IsPathRooted(FileStoreDirectory))
+                    return null;
+
+                var root = Path.GetPathRoot(FileStoreDirectory);
+                if (root == null)
+                    return null;
+
+                if (!Regex.IsMatch(root, @"[A-Za-z]:\\.*"))
+                    return null;
+
+                return root;
+            }
+        }
+
+        public bool FileStoreDriveExists
+        {
+            get
+            {
+                var root = FileStoreRootPath;
+                if (root == null)
+                    return false;
+
+                return Directory.Exists(root);
+            }
+        }
+
+        public bool IsFileStoreDriveValid
+        {
+            get
+            {
+                return FileStoreRootPath != null;
+            }
+        }
+
+        public string FileStoreDriveName
+        {
+            get
+            {
+                if (!FileStoreDriveExists)
+                    return null;
+
+                return FileStoreDiskSpace.DriveInfo.Name;
+            }
+        }
+
+        public Diskspace FileStoreDiskSpace
+        {
+            get
+            {
+                InitializeDiskSpace();
+                return _fileStoreDiskspace;
+            }
+            internal set
+            {
+                _fileStoreDiskspace = value;
+                _fileStoreDiskspaceInitialized = _fileStoreDiskspace != null;
             }
         }
 
@@ -236,7 +307,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         {
             get
             {
-                Platform.CheckMemberIsSet(FileStoreDiskSpace, "FileStoreDiskSpace");
+                CheckDiskspaceAvailable();
                 if (MinimumFreeSpacePercent < 0)
                     throw new InvalidOperationException("MinimumFreeSpacePercent must be set.");
 
@@ -267,7 +338,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         {
             get
             {
-                Platform.CheckMemberIsSet(FileStoreDiskSpace, "FileStoreDiskSpace");
+                CheckDiskspaceAvailable();
                 return FileStoreDiskSpace.TotalSpace - MinimumFreeSpaceBytes;
             }
             set { MinimumFreeSpaceBytes = FileStoreDiskSpace.TotalSpace - value; }
@@ -275,29 +346,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public bool IsMaximumUsedSpaceExceeded
         {
-            get { return FileStoreDiskSpace.UsedSpacePercent > MaximumUsedSpacePercent; }
-        }
-
-        public string FileStoreDriveName
-        {
             get
             {
-                return !String.IsNullOrEmpty(FileStoreDirectory)
-                    ? System.IO.Path.GetPathRoot(FileStoreDirectory)
-                    : null;
+                CheckDiskspaceAvailable();
+                return FileStoreDiskSpace.UsedSpacePercent > MaximumUsedSpacePercent;
             }
-        }
-
-        public Diskspace FileStoreDiskSpace
-        {
-            get
-            {
-                if (String.IsNullOrEmpty(FileStoreDirectory))
-                    return null;
-
-                return _fileStoreDiskSpace ?? (_fileStoreDiskSpace = new Diskspace(FileStoreDriveName));
-            }
-            internal set { _fileStoreDiskSpace = value; }
         }
 
         public override int GetHashCode()
@@ -327,5 +380,39 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         }
 
         #endregion
+
+        private bool InitializeDiskSpace()
+        {
+            if (_fileStoreDiskspace != null)
+                return true;
+
+            //Try to initialize it only once after the file store directory changes.
+            _fileStoreDiskspaceInitialized = true;
+
+            var root = FileStoreRootPath;
+            if (root == null)
+                return false;
+
+            if (!Directory.Exists(root))
+                return false;
+
+            try
+            {
+
+                var driveInfo = new DriveInfo(root);
+                _fileStoreDiskspace = new Diskspace(driveInfo);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+        }
+
+        private void CheckDiskspaceAvailable()
+        {
+            Platform.CheckMemberIsSet(FileStoreDiskSpace, "FileStoreDiskSpace");
+            Platform.CheckTrue(FileStoreDiskSpace.IsAvailable, "FileStoreDiskSpace.IsAvailable");
+        }
     }
 }

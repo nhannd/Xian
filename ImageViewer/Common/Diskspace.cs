@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.IO;
 
 namespace ClearCanvas.ImageViewer.Common
 {
@@ -18,8 +19,9 @@ namespace ClearCanvas.ImageViewer.Common
 	/// </summary>
 	public class Diskspace
 	{
-        private readonly System.IO.DriveInfo _driveInfo;
         private static readonly string[] Suffix = new[] { SR.LabelBytes, SR.LabelKilobytes, SR.LabelMegabytes, SR.LabelGigabytes, SR.LabelTerabytes, SR.LabelPetabytes };
+
+        private DriveInfo _driveInfo;
 
         //For unit testing.
         private long? _totalSpace;
@@ -29,19 +31,29 @@ namespace ClearCanvas.ImageViewer.Common
         /// Constructor.
         /// </summary>
         public Diskspace(string name)
-            :this (new System.IO.DriveInfo(name))
+            :this (new DriveInfo(name))
         {
         }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Diskspace(System.IO.DriveInfo real)
+        public Diskspace(DriveInfo driveInfo)
         {
-            _driveInfo = real;
+            DriveInfo = driveInfo;
         }
 
-        /// <summary>
+	    public DriveInfo DriveInfo
+	    {
+	        get { return _driveInfo; }
+	        private set
+	        {
+	            _driveInfo = value;
+                Refresh();
+	        }
+	    }
+
+	    /// <summary>
         /// Constructor for unit testing.
         /// </summary>
         internal Diskspace()
@@ -85,9 +97,11 @@ namespace ClearCanvas.ImageViewer.Common
 			return String.Format(formatString, bytes, Suffix[powerOfKB]);
 		}
 
-	    /// <summary>
-		/// Gets the total amount of space on the disk.
-		/// </summary>
+	    public bool IsAvailable
+	    {
+            get { return _driveInfo.IsReady; }
+	    }
+
         public long TotalSpace
         {
             get { return _totalSpace.HasValue ? _totalSpace.Value : (_totalSpace = _driveInfo.TotalSize).Value; }
