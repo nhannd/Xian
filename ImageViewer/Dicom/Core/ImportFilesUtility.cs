@@ -16,6 +16,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
@@ -54,7 +55,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// Constructor.
         /// </summary>
         /// <param name="sourceAE">The AE title of the remote application sending the SOP Instances.</param>
-        public DicomReceiveImportContext(string sourceAE) : base(sourceAE)
+        /// <param name="configuration">Storage configuration. </param>
+        public DicomReceiveImportContext(string sourceAE, StorageConfiguration configuration) : base(sourceAE, configuration)
         {    
         }
 
@@ -88,7 +90,9 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// Constructor.
         /// </summary>
         /// <param name="sourceAE">The local AE title of the application importing the studies.</param>
-        public ImportStudyContext(string sourceAE) : base(sourceAE)
+        /// <param name="configuration">The storage configuration. </param>
+        public ImportStudyContext(string sourceAE, StorageConfiguration configuration)
+            : base(sourceAE, configuration)
         {
         }
 
@@ -122,11 +126,12 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// Creates an instance of <see cref="ImportFilesContext"/> to be used
         /// by <see cref="ImportFilesUtility"/> 
         /// </summary>
-        protected ImportFilesContext(string sourceAE)
+        protected ImportFilesContext(string sourceAE, StorageConfiguration configuration)
         {
             StudyWorkItems = new ObservableDictionary<string, WorkItem>();
             ImportType = WorkItemTypeEnum.ProcessStudy;
             SourceAE = sourceAE;
+            StorageConfiguration = configuration;
         }
 
         #endregion
@@ -152,6 +157,11 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// <param name="message"></param>
         /// <returns></returns>
         public abstract ProcessStudyRequest CreateRequest(DicomMessageBase message);
+
+        /// <summary>
+        /// Storage configuration.
+        /// </summary>
+        public StorageConfiguration  StorageConfiguration { get; private set; }
     }
 
     /// <summary>
@@ -227,6 +237,15 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
 				result.SetError(DicomStatuses.ProcessingFailure, e.Message);
 				return result;
 			}
+
+            if (_context.StorageConfiguration.IsMaximumUsedSpaceExceeded)
+            {
+                result.SetError(DicomStatuses.StorageStorageOutOfResources,
+                                string.Format("Unable to import, file store used percent: {0}, maximum used percent: {1}",
+                                              _context.StorageConfiguration.FileStoreDiskSpace.UsedSpacePercent.ToString("00.000"),
+                                              _context.StorageConfiguration.MaximumUsedSpacePercent.ToString("00.000")));
+                return result;
+            }
 
             // Use the command processor for rollback capabilities.
             using (var commandProcessor = new ViewerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))

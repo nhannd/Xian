@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
@@ -124,6 +125,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 else
                 {
                     Progress.NumberOfImportFailures++;
+                    Progress.StatusDetails = result.ErrorMessage;
                 }
             }
             catch (Exception e)
@@ -139,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
         {
             var configuration = GetServerConfiguration();
 
-            var context = new ImportStudyContext(configuration.AETitle);
+            var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration());
 
             // Publish the creation of the StudyImport WorkItems
 			context.StudyWorkItems.ItemAdded += (sender, e) => WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(e.Item));
