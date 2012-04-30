@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Globalization;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Iods;

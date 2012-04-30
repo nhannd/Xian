@@ -400,4 +400,10 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="ColumnHeadingStationName" xml:space="preserve">
     <value>Station Name</value>
   </data>
+  <data name="MessageFormatRetrieveStudiesScheduled" xml:space="preserve">
+    <value>{0} studies have been scheduled for retrieval.</value>
+  </data>
+  <data name="MessageFormatRetrieveStudyScheduled" xml:space="preserve">
+    <value>The retrieve of {0} for {1} [{2}, A#:{3}] has been scheduled.</value>
+  </data>
 </root>

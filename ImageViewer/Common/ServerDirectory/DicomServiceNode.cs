@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             else
             {
                 if (typeof(T) == typeof(IStudyRootQuery) && ScpParameters != null)
-                    return new DicomStudyRootQuery(DicomServer.DicomServer.AETitle, AETitle, ScpParameters.HostName, ScpParameters.Port) as T;
+                    return new DicomStudyRootQuery(DicomServer.DicomServer.AETitle, this) as T;
             }
 
             return base.GetService<T>();

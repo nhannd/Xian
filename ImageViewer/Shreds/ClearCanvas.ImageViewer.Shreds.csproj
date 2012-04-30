@@ -75,7 +75,6 @@
     <Compile Include="DicomServer\DicomServerServiceType.cs" />
     <Compile Include="DicomServer\DicomServerSettings.cs" />
     <Compile Include="DicomServer\MoveScpExtension.cs" />
-    <Compile Include="DicomServer\DicomRetrieveManager.cs" />
     <Compile Include="DicomServer\ScpExtension.cs" />
     <Compile Include="DicomServer\StoreScpExtension.cs" />
     <Compile Include="DicomServer\VerifyScpExtension.cs" />
@@ -92,6 +91,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="WorkItemService\BaseItemProcessor.cs" />
+    <Compile Include="WorkItemService\DicomRetrieve\ImageViewerMoveScu.cs" />
     <Compile Include="WorkItemService\DicomSend\DicomSendFactory.cs" />
     <Compile Include="WorkItemService\DicomSend\DicomSendItemProcessor.cs" />
     <Compile Include="WorkItemService\DicomSend\ImageViewerStorageScu.cs" />
@@ -110,6 +110,8 @@
     <Compile Include="WorkItemService\DeleteStudy\DeleteStudyItemProcessor.cs" />
     <Compile Include="WorkItemService\ProcessStudy\ProcessStudyFactory.cs" />
     <Compile Include="WorkItemService\ProcessStudy\ProcessStudyItemProcessor.cs" />
+    <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveItemProcessor.cs" />
+    <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveFactory.cs" />
     <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />
     <Compile Include="WorkItemService\WorkItemFactoryExtensionPoint.cs" />
     <Compile Include="WorkItemService\WorkItemProcessor.cs" />

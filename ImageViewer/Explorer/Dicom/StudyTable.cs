@@ -385,16 +385,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private string FormatStationNames(string[] values)
 		{
-			return string.Join(", ", values);
+            if (values == null) return string.Empty; 
+            return string.Join(", ", values);
 		}
 
 		private string FormatSourceAETitles(string[] values)
 		{
+            if (values == null) return string.Empty;
 			return string.Join(", ", values);
 		}
 
 		private string FormatInstitutionNames(string[] values)
 		{
+            if (values == null) return string.Empty;
 			return string.Join(", ", values);
 		}
 

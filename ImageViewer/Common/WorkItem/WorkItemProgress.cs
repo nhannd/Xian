@@ -18,6 +18,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
     [XmlInclude(typeof(ImportFilesProgress))]
     [XmlInclude(typeof(ProcessStudyProgress))]
+    [XmlInclude(typeof(DeleteProgress))]
+    [XmlInclude(typeof(DicomRetrieveProgress))]
+    [XmlInclude(typeof(DicomSendProgress))]
+    [XmlInclude(typeof(ReapplyRulesProgress))]
+    [XmlInclude(typeof(ReindexProgress))]
     [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemProgressDataContract("b2dcf1f6-6e1a-48cd-b807-b720811a6575")]
     public abstract class WorkItemProgress : DataContractBase
@@ -284,6 +289,57 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 if (ImagesToSend > 0)
                     return (Decimal) (WarningSubOperations + FailureSubOperations + SuccessSubOperations)/ImagesToSend;
+
+                return new decimal(0.0);
+            }
+        }
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemProgressDataContract("24DB4BC0-2759-468E-802B-07C54F91A68D")]
+    public class DicomRetrieveProgress : WorkItemProgress
+    {
+        public DicomRetrieveProgress()
+        {
+            IsCancelable = true;
+        }
+
+        [DataMember(IsRequired = true)]
+        public int ImagesToRetrieve { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int WarningSubOperations { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int FailureSubOperations { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public int SuccessSubOperations { get; set; }
+
+        public int RemainingSubOperations
+        {
+            get { return ImagesToRetrieve - (WarningSubOperations + FailureSubOperations + SuccessSubOperations); }
+        }
+
+        public override string Status
+        {
+            get
+            {
+                if (ImagesToRetrieve == 0)
+                    return SR.Progress_Pending;
+
+                return string.Format(SR.DicomRetrieveProgress_Status,
+                                     SuccessSubOperations + WarningSubOperations, FailureSubOperations,
+                                     RemainingSubOperations);
+            }
+        }
+
+        public override Decimal PercentComplete
+        {
+            get
+            {
+                if (ImagesToRetrieve > 0)
+                    return (Decimal)(WarningSubOperations + FailureSubOperations + SuccessSubOperations) / ImagesToRetrieve;
 
                 return new decimal(0.0);
             }

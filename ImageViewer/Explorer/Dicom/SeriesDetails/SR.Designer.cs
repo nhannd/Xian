@@ -133,6 +133,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate retrieving of the selected items..
+        /// </summary>
+        internal static string MessageFailedToRetrieveSeries {
+            get {
+                return ResourceManager.GetString("MessageFailedToRetrieveSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to initiate sending of the selected items..
         /// </summary>
         internal static string MessageFailedToSendSeries {
@@ -160,11 +169,30 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The retrieve of {0} series from {1} for {2} [{3},A#:{4}] has been scheduled..
+        /// </summary>
+        internal static string MessageFormatRetrieveSeriesScheduled {
+            get {
+                return ResourceManager.GetString("MessageFormatRetrieveSeriesScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The send of {0} series to {1} for {2} [{3},A#:{4}] has been scheduled..
         /// </summary>
         internal static string MessageFormatSendSeriesScheduled {
             get {
                 return ResourceManager.GetString("MessageFormatSendSeriesScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the selected eries because the DICOM Server service is not running.
+        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageRetrieveDicomServerServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageRetrieveDicomServerServiceNotRunning", resourceCulture);
             }
         }
         
