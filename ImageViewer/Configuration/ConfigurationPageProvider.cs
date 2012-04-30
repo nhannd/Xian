@@ -11,28 +11,47 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class ConfigurationPageProvider : IConfigurationPageProvider
+	[ExtensionOf(typeof(ActivityMonitorQuickLinkHandlerExtensionPoint))]
+	public class ConfigurationPageProvider : IConfigurationPageProvider, IActivityMonitorQuickLinkHandler
 	{
+		private const string ServerConfigurationPath = "DicomConfiguration/ServerConfiguration";
+		private const string StorageConfigurationPath = "DicomConfiguration/StorageConfiguration";
+
 		#region IConfigurationPageProvider Members
 
-		public IEnumerable<IConfigurationPage> GetPages()
+		IEnumerable<IConfigurationPage> IConfigurationPageProvider.GetPages()
 		{
 			var listPages = new List<IConfigurationPage>();
 
 			if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
-				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomConfiguration/ServerConfiguration"));
+				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>(ServerConfigurationPath));
 
             if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.Storage) && Common.StudyManagement.StudyStore.IsSupported)
-                listPages.Add(new ConfigurationPage<StorageConfigurationComponent>("DicomConfiguration/StorageConfiguration"));
+				listPages.Add(new ConfigurationPage<StorageConfigurationComponent>(StorageConfigurationPath));
             
             return listPages.AsReadOnly();
 		}
 
 		#endregion
+
+		bool IActivityMonitorQuickLinkHandler.CanHandle(ActivityMonitorQuickLink link)
+		{
+			return link == ActivityMonitorQuickLink.LocalServerConfiguration;
+		}
+
+		void IActivityMonitorQuickLinkHandler.Handle(ActivityMonitorQuickLink link, IDesktopWindow window)
+		{
+			if (link == ActivityMonitorQuickLink.LocalServerConfiguration)
+			{
+				ConfigurationDialog.Show(window, ServerConfigurationPath);
+			}
+		}
 	}
 }

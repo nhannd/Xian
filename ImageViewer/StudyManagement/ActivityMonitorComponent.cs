@@ -21,6 +21,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
@@ -628,6 +629,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly LocalServerWatcher _localServerWatcher;
 		private readonly StudyCountWatcher _studyCountWatcher;
 
+		private readonly IActivityMonitorQuickLinkHandler[] _linkHandlers;
+
 	    public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
@@ -636,6 +639,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
 			_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
             _workItemActionModel = new WorkItemActionModel(_workItems.Items);
+			_linkHandlers = (new ActivityMonitorQuickLinkHandlerExtensionPoint()).CreateExtensions().Cast<IActivityMonitorQuickLinkHandler>().ToArray();
 		}
 
 		public override void Start()
@@ -849,6 +853,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				Process.Start(path);
 		}
 
+		public void OpenLocalServerConfigurationPage()
+		{
+			HandleLink(ActivityMonitorQuickLink.LocalServerConfiguration);
+		}
+
+		public bool StudyManagementRulesLinkVisible
+		{
+			get { return _linkHandlers.Any(h => h.CanHandle(ActivityMonitorQuickLink.StudyManagementRules)); }
+		}
+
+		public void OpenStudyManagementRules()
+		{
+			HandleLink(ActivityMonitorQuickLink.StudyManagementRules);
+		}
+
 	    #endregion
 
         private IList<long> SelectedWorkItemIDs { get; set; }
@@ -973,5 +992,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             NotifyPropertyChanged("DiskSpaceWarningLabel");
             NotifyPropertyChanged("DiskSpaceWarningMessage");
         }
+
+		private void HandleLink(ActivityMonitorQuickLink link)
+		{
+			try
+			{
+				var handler = _linkHandlers.FirstOrDefault(h => h.CanHandle(link));
+				if(handler != null)
+				{
+					handler.Handle(link, this.Host.DesktopWindow);
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
     }
 }

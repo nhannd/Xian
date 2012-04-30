@@ -85,6 +85,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		    _component.SetSelection(_workItemsTableView.Selection);
 		    _workItemsTableView.SelectionChanged += (s, e) => _component.SetSelection(_workItemsTableView.Selection);
 			UpdateTooltips();
+
+			// only show study rules link if this feature is actually available
+			_studyRulesLink.DataBindings.Add("Visible", _component, "StudyManagementRulesLinkVisible");
 		}
 
         private void FormatMeterFillState(object sender, ConvertEventArgs e)
@@ -146,15 +149,26 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_component.TextFilter = _textFilter.Text;
 		}
 
-		private void _reindexLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		private void _reindexLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			_component.StartReindex();
 		}
 
-		private void _openFileStoreLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		private void _openFileStoreLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			_component.OpenFileStore();
 		}
+
+		private void _localServerConfigLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			_component.OpenLocalServerConfigurationPage();
+		}
+
+		private void _studyRulesLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			_component.OpenStudyManagementRules();
+		}
+
 
 		private void UpdateTooltips()
 		{
