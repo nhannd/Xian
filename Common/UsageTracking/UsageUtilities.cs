@@ -13,6 +13,7 @@ using System;
 using System.Globalization;
 using System.Net;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
 
@@ -72,6 +73,34 @@ namespace ClearCanvas.Common.UsageTracking
 
         #region Private Methods
 
+        private static bool TrySend(RegisterRequest message, Binding binding, EndpointAddress endpointAddress)
+        {
+            try
+            {
+                Platform.Log(LogLevel.Info, "Attempting {0}", endpointAddress.Uri.ToString());
+
+                RegisterResponse response;
+                using (UsageTrackingServiceClient client = new UsageTrackingServiceClient(binding, endpointAddress))
+                {
+                    response = client.Register(message);
+                }
+                if (response != null
+                    && response.Message != null
+                    && UsageTrackingSettings.Default.DisplayMessages)
+                {
+                    EventsHelper.Fire(Message, null, new ItemEventArgs<DisplayMessage>(response.Message));
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex);
+                return false;
+            }
+        }
+
+
         /// <summary>
         /// Send the UsageTracking message.
         /// </summary>
@@ -107,13 +136,15 @@ namespace ClearCanvas.Common.UsageTracking
 #if UNIT_TESTS_USAGE_TRACKING
                     WSHttpBinding binding = new WSHttpBinding();
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost:8080/UsageTracking");
+                    TrySend(req, binding, endpointAddress);
 #elif	DEBUG
-                   // WSHttpBinding binding = new WSHttpBinding(SecurityMode.None);
+                    // WSHttpBinding binding = new WSHttpBinding(SecurityMode.None);
                    // EndpointAddress endpointAddress = new EndpointAddress("http://localhost/Tracking/Service.svc");
                     WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
                     binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
                     binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
                     EndpointAddress endpointAddress = new EndpointAddress("https://4rf/Tracking/Service.svc");
+                    TrySend(req, binding, endpointAddress);
 #else
                     // This is updated to the real address as part of the build process, when appropriate and
                     // doing an official build.
@@ -121,19 +152,12 @@ namespace ClearCanvas.Common.UsageTracking
                     binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
                     binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
                     EndpointAddress endpointAddress = new EndpointAddress("https://4rf/Tracking/Service.svc");
+                    if (!TrySend(req, binding, endpointAddress))
+                    {
+                        endpointAddress = new EndpointAddress("https://10.19.20.122/Tracking/Service.svc");
+                        TrySend(req, binding, endpointAddress); 
+                    }
 #endif
-
-                    RegisterResponse response;
-                    using (UsageTrackingServiceClient client = new UsageTrackingServiceClient(binding, endpointAddress))
-                    {
-                        response = client.Register(req);
-                    }
-                    if (response != null 
-                        && response.Message != null
-                        && UsageTrackingSettings.Default.DisplayMessages)
-                    {
-                        EventsHelper.Fire(Message, null, new ItemEventArgs<DisplayMessage>(response.Message)); 
-                    }
                 }
             }
             catch (Exception e)
@@ -232,5 +256,7 @@ namespace ClearCanvas.Common.UsageTracking
         }
 
         #endregion
+
+
     }
 }
