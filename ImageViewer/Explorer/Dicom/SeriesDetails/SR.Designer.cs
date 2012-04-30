@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Series scheduled for deletion cannot be sent..
+        /// </summary>
+        internal static string MessageCannotSendSeriesScheduledForDeletion {
+            get {
+                return ResourceManager.GetString("MessageCannotSendSeriesScheduledForDeletion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deleting the remaining series will cause the entire study to be deleted. Are you sure you want to delete the entire study?.
         /// </summary>
         internal static string MessageConfirmDeleteEntireStudy {

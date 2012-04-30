@@ -132,6 +132,9 @@
   <data name="MenuShowSeriesDetails" xml:space="preserve">
     <value>View Series Details</value>
   </data>
+  <data name="MessageCannotSendSeriesScheduledForDeletion" xml:space="preserve">
+    <value>Series scheduled for deletion cannot be sent.</value>
+  </data>
   <data name="MessageConfirmDeleteEntireStudy" xml:space="preserve">
     <value>Deleting the remaining series will cause the entire study to be deleted. Are you sure you want to delete the entire study?</value>
   </data>
