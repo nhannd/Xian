@@ -68,7 +68,10 @@ namespace ClearCanvas.Desktop
 		/// <param name="args"></param>
 		public void Log(AlertNotificationArgs args)
 		{
-			var alert = new Alert(args.Level, Platform.Time, args.Message);
+			var alert = new Alert(args.Level, Platform.Time, args.Message)
+			            	{
+			            		Acknowledged = args.Level == AlertLevel.Info	// info alerts are "pre-acknowledged" (do not require acknowledgement)
+			            	};
 
 			_alerts.Enqueue(alert);
 			while (_alerts.Count > MaxLogSize)
