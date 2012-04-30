@@ -77,8 +77,6 @@ namespace ClearCanvas.Common.UsageTracking
         {
             try
             {
-                Platform.Log(LogLevel.Info, "Attempting {0}", endpointAddress.Uri.ToString());
-
                 RegisterResponse response;
                 using (UsageTrackingServiceClient client = new UsageTrackingServiceClient(binding, endpointAddress))
                 {
@@ -93,9 +91,8 @@ namespace ClearCanvas.Common.UsageTracking
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Platform.Log(LogLevel.Error, ex);
                 return false;
             }
         }
@@ -162,7 +159,10 @@ namespace ClearCanvas.Common.UsageTracking
             }
             catch (Exception e)
             {
+                // silient
+                #if	DEBUG
                 Platform.Log(LogLevel.Debug, e);
+                #endif
             }
         }
 
