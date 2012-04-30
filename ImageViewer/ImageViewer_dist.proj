@@ -542,7 +542,7 @@
 
   <Target Name="Copy JScript Files">
 
-    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration)"/>
+    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration);KeyFile=$(StrongNameKeyFile)"/>
     <Copy Condition="$(DesktopBuild)" SourceFiles="@(JScriptFiles)" DestinationFolder="$(PluginsDirectory)" />
 
   </Target>

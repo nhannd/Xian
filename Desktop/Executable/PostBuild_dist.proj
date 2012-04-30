@@ -117,11 +117,11 @@
   </ItemGroup>
 
   <!-- Re-signs the desktop executable's strong name if modified for PE flags after strong name is originally applied -->
-  <Target Name="ReSignExeSN" Condition="'$(AssemblyOriginatorKeyFile)' != '' and Exists('$(AssemblyOriginatorKeyFile)')">
+  <Target Name="ReSignExeSN" Condition="'$(StrongNameKeyFile)' != '' and Exists('$(StrongNameKeyFile)')">
     <GetFrameworkSdkPath>
       <Output TaskParameter="Path" PropertyName="SdkPath" />
     </GetFrameworkSdkPath>
-    <Exec Command="sn -Ra &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot; &quot;$(AssemblyOriginatorKeyFile)&quot;" WorkingDirectory="$(SdkPath)\bin\" />
+    <Exec Command="sn -Ra &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot; &quot;$(StrongNameKeyFile)&quot;" WorkingDirectory="$(SdkPath)\bin\" />
     <Warning Text="corflags warning CF011 can be ignored - the strong-named assembly in question has been re-signed" />
   </Target>
 
@@ -220,7 +220,7 @@
     </CreateProperty>
 
     <!-- Run the solution specific build file -->
-    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options);Localizations=$(Localizations);ReleaseType=$(ReleaseType)" />
+    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);StrongNameKeyFile=$(StrongNameKeyFile);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options);Localizations=$(Localizations);ReleaseType=$(ReleaseType)" />
   </Target>
 
   <Target Name="Default Target">
