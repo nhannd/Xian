@@ -11,6 +11,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         GetStorageConfigurationResult GetConfiguration(GetStorageConfigurationRequest request);
 
         [OperationContract]
+        [FaultContract(typeof(ServiceStateFault))]
         UpdateStorageConfigurationResult UpdateConfiguration(UpdateStorageConfigurationRequest request);
     }
 }

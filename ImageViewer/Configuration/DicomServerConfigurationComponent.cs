@@ -35,6 +35,7 @@ namespace ClearCanvas.ImageViewer.Configuration
     [AssociateView(typeof(DicomServerConfigurationComponentViewExtensionPoint))]
     public class DicomServerConfigurationComponent : ConfigurationApplicationComponent
     {
+        private string _hostName;
         private string _aeTitle;
         private int _port;
 
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
 			base.Start();
 
+    	    _hostName = DicomServer.HostName;
             _aeTitle = DicomServer.AETitle;
             _port = DicomServer.Port;
 		}
@@ -50,7 +52,12 @@ namespace ClearCanvas.ImageViewer.Configuration
     	{
     		try
     		{
-                DicomServer.UpdateConfiguration("localhost", _aeTitle, _port);
+    		    DicomServer.UpdateConfiguration(new DicomServerConfiguration
+    		                                        {
+    		                                            HostName = _hostName,
+    		                                            AETitle = AETitle,
+    		                                            Port = Port
+    		                                        });
     		}
     		catch (Exception e)
     		{

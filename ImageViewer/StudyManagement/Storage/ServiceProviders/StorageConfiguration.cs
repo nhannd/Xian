@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using StorageConfigurationContract = ClearCanvas.ImageViewer.Common.StudyManagement.StorageConfiguration;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
@@ -84,6 +87,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             Platform.CheckForNullReference(request.Configuration, "Configuration");
             Platform.CheckForEmptyString(request.Configuration.FileStoreDirectory, "FileStoreDirectory");
             //Platform.CheckTrue(request.Configuration.MinimumFreeSpaceBytes.HasValue, "MinimumFreeSpaceBytes");
+
+            if (WorkItemActivityMonitor.IsRunning)
+            {
+                var fault = new ServiceStateFault {CurrentState = ServiceStateEnum.Started, RequiredState = ServiceStateEnum.Stopped};
+                throw new FaultException<ServiceStateFault>(fault);
+            }
 
             var configuration = request.Configuration.Clone();
 

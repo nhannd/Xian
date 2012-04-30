@@ -10,14 +10,6 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         public const string Value = ImageViewerNamespace.Value + "/serverDirectory";
     }
 
-    //TODO (Marmot): Name - Device Directory? In the database, it's "Devices", but maybe should rename that.
-    [DataContract(Namespace = ServerDirectoryNamespace.Value)]
-    public class ServerDirectoryEntry : DataContractBase
-    {
-        [DataMember(IsRequired = true)]
-        public ApplicationEntity Server { get; set; }
-    }
-
     #region Get
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]

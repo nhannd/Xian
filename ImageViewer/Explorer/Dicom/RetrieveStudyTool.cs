@@ -106,7 +106,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-            //TODO (Marmot):Supports IRetrieveStudy? Hardly seems worth it for what it is.
 			Enabled = Context.SelectedStudies.Count > 0
                         && !Context.SelectedServers.IsLocalServer
                         && WorkItemActivityMonitor.IsRunning;

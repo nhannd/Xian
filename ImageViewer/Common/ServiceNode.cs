@@ -144,8 +144,9 @@ namespace ClearCanvas.ImageViewer.Common
             if (!String.IsNullOrEmpty(identifier.RetrieveAeTitle))
                 server = ServerDirectory.ServerDirectory.GetRemoteServersByAETitle(identifier.RetrieveAeTitle).FirstOrDefault();
 
-            if (server == null && defaultToLocal)
-                server = ServerDirectory.ServerDirectory.GetLocalServer();
+            var local = ServerDirectory.ServerDirectory.GetLocalServer();
+            if ((server == null && defaultToLocal) || identifier.RetrieveAeTitle == local.AETitle)
+                server = local;
 
             return server;
         }

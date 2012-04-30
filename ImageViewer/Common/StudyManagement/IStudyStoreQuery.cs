@@ -1,4 +1,5 @@
 ﻿using System.ServiceModel;
+using ClearCanvas.Dicom.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
@@ -19,9 +20,12 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         GetStudyEntriesResult GetStudyEntries(GetStudyEntriesRequest request);
 
         [OperationContract]
+        [FaultContract(typeof(StudyNotFoundFault))]
         GetSeriesEntriesResult GetSeriesEntries(GetSeriesEntriesRequest request);
 
         [OperationContract]
+        [FaultContract(typeof(StudyNotFoundFault))]
+        [FaultContract(typeof(SeriesNotFoundFault))]
         GetImageEntriesResult GetImageEntries(GetImageEntriesRequest request);
     }
 }

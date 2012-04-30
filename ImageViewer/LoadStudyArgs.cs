@@ -11,7 +11,6 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -37,8 +36,6 @@ namespace ClearCanvas.ImageViewer
 	    /// Gets the Study Instance UID of the study to be loaded.
 	    /// </summary>
 	    public string StudyInstanceUid { get; private set; }
-
-	    //TODO (Marmot):IApplicationEntity?
 
         /// <summary>
         /// Gets the server from which the study can be loaded.

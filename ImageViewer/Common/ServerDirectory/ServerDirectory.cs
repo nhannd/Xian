@@ -11,7 +11,6 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         {
             try
             {
-                //TODO (Marmot): This really the best way to do this?
                 var service = Platform.GetService<IServerDirectory>();
                 IsSupported = service != null;
                 var disposable = service as IDisposable;

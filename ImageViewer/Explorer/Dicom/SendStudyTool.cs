@@ -10,15 +10,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -33,8 +29,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[IconSet("activate", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
 
     [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Send)]
-
-	//TODO (Marmot):Restore.
 
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
     public class SendStudyTool : StudyBrowserTool

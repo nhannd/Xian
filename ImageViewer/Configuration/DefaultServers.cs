@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         internal static List<IDicomServiceNode> SelectFrom(ServerTree.ServerTree serverTree)
         {
-            return serverTree.RootServerGroup.ToDicomServiceNodes();
+            return SelectFrom(serverTree.RootServerGroup.GetAllServers().OfType<IServerTreeDicomServer>());
         }
 
         public static List<IDicomServiceNode> GetAll()
@@ -62,13 +62,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 
             foreach (var server in streamingServers)
 			{
-				var remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
+				var remoteQuery = new DicomStudyRootQuery(localAE, server);
 				yield return remoteQuery;
 			}
 
             foreach (var server in nonStreamingServers)
 			{
-                var remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
+                var remoteQuery = new DicomStudyRootQuery(localAE, server);
 				yield return remoteQuery;
 			}
 		}

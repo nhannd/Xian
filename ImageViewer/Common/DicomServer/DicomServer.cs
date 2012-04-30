@@ -87,15 +87,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
             return configuration;
         }
 
-        public static void UpdateConfiguration(string hostName, string aeTitle, int port)
+        public static void UpdateConfiguration(DicomServerConfiguration configuration)
         {
             Platform.GetService<IDicomServerConfiguration>(
                 s => s.UpdateConfiguration(new UpdateDicomServerConfigurationRequest
                                                {
-                                                    Configuration = new DicomServerConfiguration
-                                                                     {
-                                                                         AETitle = aeTitle, HostName = hostName, Port = port
-                                                                     }  
+                                                   Configuration = configuration
                                                }));
         }
 

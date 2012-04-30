@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
                     // try to determine the origin and source AE from the image frame's SOP data source (should be the same for all frames from a given study)
                     var sopDataSource = sourceFrame.ParentImageSop.DataSource;
                     publisher.OriginServerAE = sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString();
-                    publisher.SourceServerAE = sopDataSource.Server is IApplicationEntity ? ((IApplicationEntity)sopDataSource.Server).AETitle : string.Empty;
+                    publisher.SourceServerAE = sopDataSource.Server != null ? sopDataSource.Server.AETitle : string.Empty;
                 }
 
                 // publish all files now
