@@ -77,6 +77,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>$(MSBuildBinPath)\Msbuild $(ProjectDir)\PostBuild_dist.proj /p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);DistributionDir=$(DistributionDir)</PostBuildEvent>
+    <PostBuildEvent>$(MSBuildBinPath)\Msbuild $(ProjectDir)\PostBuild_dist.proj /p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);StrongNameKeyFile=$(AssemblyOriginatorKeyFile);DistributionDir=$(DistributionDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>
