@@ -605,17 +605,16 @@ namespace ClearCanvas.Desktop.View.WinForms
     	public virtual void ShowAlert(AlertNotificationArgs args)
     	{
     		var dialog = GetAlertDialog(args.Level);
-    		var icon = _alertContext.GetIcon(args.Level);
-    		var c = _alertContext.UnacknowledgedErrorWarningCount;
-    		dialog.AlertIcon = icon.CreateIcon(IconSize.Large, new ResourceResolver(typeof (DesktopWindow).Assembly));
+    		
+			var c = _alertContext.UnacknowledgedErrorWarningCount;
+			dialog.OpenLogLinkText = args.Level != AlertLevel.Info && c > 1 ? string.Format(SR.LinkMoreNewAlerts, c - 1) : SR.LinkViewAllAlerts;
+
+			var icon = _alertContext.GetIcon(args.Level);
+			dialog.AlertIcon = icon.CreateIcon(IconSize.Large, new ResourceResolver(typeof(DesktopWindow).Assembly));
     		dialog.Message = args.Message;
     		dialog.LinkText = args.LinkText ?? "";
     		dialog.LinkHandler = AlertLinkHandler(args.LinkAction);
- 			dialog.OpenLogLinkText = args.Level != AlertLevel.Info && c > 1 ? string.Format(SR.LinkMoreNewAlerts, c - 1) : SR.LinkViewAllAlerts;
  			dialog.Popup(args.Level == AlertLevel.Info && GetAlertDialog(AlertLevel.Error).Visible ? 1 : 0);
-			
-			// steal focus back - there is no point in having the alert dialog be the active window
-			_form.Activate();
 		}
 
     	/// <summary>

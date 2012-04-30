@@ -11,6 +11,7 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 using Crownwood.DotNetMagic.Forms;
@@ -18,7 +19,16 @@ using Crownwood.DotNetMagic.Forms;
 namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class AlertNotificationForm : DotNetMagicForm
-    {
+	{
+		#region Native Definitions
+
+		private const int SW_SHOWNOACTIVATE = 4;
+
+		[DllImport("user32.dll")]
+		private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+		#endregion
+
 		public class DismissedEventArgs : EventArgs
 		{
 			internal DismissedEventArgs(bool auto)
@@ -109,7 +119,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			SetLocation();
 
 			if (!this.Visible)
-				Show();
+			{
+				ShowWindow(this.Handle, SW_SHOWNOACTIVATE);
+			}
 
 			_timer.Start();
 		}
