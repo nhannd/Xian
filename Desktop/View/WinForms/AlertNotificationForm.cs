@@ -60,9 +60,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				_closeButtonBitmap = new Bitmap(s);
 			}
+
+			owner.Move += OwnerFormMoved;
+        	owner.Resize += OwnerFormResized;
         }
 
-		#region Public API
+    	#region Public API
 
 		public event EventHandler<DismissedEventArgs> Dismissed;
 		public event EventHandler OpenLogClicked;
@@ -281,6 +284,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 				rectSrc = new Rectangle(new Point(0, 0), size);
 
 			g.DrawImage(_closeButtonBitmap, rectDest, rectSrc, GraphicsUnit.Pixel);
+		}
+
+		#endregion
+
+		#region Main window move handlers
+
+		private void OwnerFormMoved(object sender, EventArgs e)
+		{
+			SetLocation();
+		}
+
+		private void OwnerFormResized(object sender, EventArgs e)
+		{
+			SetLocation();
 		}
 
 		#endregion
