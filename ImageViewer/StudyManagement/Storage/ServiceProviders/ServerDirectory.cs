@@ -109,7 +109,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             {
                 List<Device> devices;
                 if (!String.IsNullOrEmpty(request.Name))
-                    devices = new List<Device> { context.GetDeviceBroker().GetDeviceByName(request.Name) };
+                {
+                    var device = context.GetDeviceBroker().GetDeviceByName(request.Name);
+                    devices = new List<Device> ();
+                    if (device != null) devices.Add(device);
+                }
                 else if (!String.IsNullOrEmpty(request.AETitle))
                     devices = context.GetDeviceBroker().GetDevicesByAETitle(request.AETitle);
                 else

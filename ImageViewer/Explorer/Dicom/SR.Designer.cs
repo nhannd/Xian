@@ -431,6 +431,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} studies have been scheduled for retrieval..
+        /// </summary>
+        internal static string MessageFormatRetrieveStudiesScheduled {
+            get {
+                return ResourceManager.GetString("MessageFormatRetrieveStudiesScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The retrieve of {0} for {1} [{2}, A#:{3}] has been scheduled..
+        /// </summary>
+        internal static string MessageFormatRetrieveStudyScheduled {
+            get {
+                return ResourceManager.GetString("MessageFormatRetrieveStudyScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} studies have been scheduled to send..
         /// </summary>
         internal static string MessageFormatSendStudiesScheduled {

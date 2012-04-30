@@ -10,10 +10,14 @@
 #endregion
 
 using System;
+using System.Linq;
+using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
@@ -29,69 +33,38 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		public void RetrieveSeries()
 		{
 		    //TODO (Marmot):Restore this.
-		    base.Context.DesktopWindow.ShowMessageBox("Restore!", MessageBoxActions.Ok);
-
-		    /*
-
 			if (!Enabled || SelectedSeries.Count == 0)
 				return;
 
-            var result = EventResult.Success;
-
-			var applicationEntity = Server as IApplicationEntity;
-			if (applicationEntity == null || applicationEntity.ScpParameters == null)
-				return;
-
-			var studyInformation = new StudyInformation
-			                           {
-			                               PatientId = Patient.PatientId,
-			                               PatientsName = Patient.PatientsName,
-			                               StudyDate = ParseDicomDate(Study.StudyDate),
-			                               StudyDescription = Study.StudyDescription,
-			                               StudyInstanceUid = Study.StudyInstanceUid
-			                           };
-
-		    var seriesToRetrieve = new List<string>(CollectionUtils.Map<ISeriesIdentifier, string>(SelectedSeries, s => s.SeriesInstanceUid));
-
+		    var client = new DicomRetrieveClient();
+            var seriesUids = Context.SelectedSeries.Select(item => item.SeriesInstanceUid).ToList();
+		 
 			try
 			{
-			    Platform.GetService(delegate(IDicomServer service)
-			            {
-			                var source = new ApplicationEntity
-			                                 {
-			                                     AETitle = applicationEntity.AETitle,
-			                                     ScpParameters = new ScpParameters(applicationEntity.ScpParameters)
-			                                 };
+                client.RetrieveSeries(Server, Context.Study, seriesUids.ToArray());
 
-			                service.RetrieveSeries(source, studyInformation, seriesToRetrieve);
-			            });
-
-			    //TODO (Marmot): Restore - notify the user it's been scheduled.
-                //LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
+                DateTime? studyDate = DateParser.Parse(Context.Study.StudyDate);
+                Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+                                string.Format(SR.MessageFormatRetrieveSeriesScheduled, seriesUids.Count,
+                                              Server.Name, Context.Study.PatientsName.FormattedName, studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
+                                                      Context.Study.AccessionNumber),
+                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+                  
 			}
 			catch (EndpointNotFoundException)
 			{
-				result = EventResult.MajorFailure;
-				Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
+			    Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (Exception ex)
 			{
-				result = EventResult.MajorFailure;
-				ExceptionHandler.Report(ex, SR.MessageFailedToRetrieveStudy, Context.DesktopWindow);
-			}
-			finally
-			{
-				var requestedInstances = new AuditedInstances();
-				requestedInstances.AddInstance(studyInformation.PatientId, studyInformation.PatientsName, studyInformation.StudyInstanceUid);
-				AuditHelper.LogBeginReceiveInstances(applicationEntity.AETitle, applicationEntity.ScpParameters.HostName, requestedInstances, EventSource.CurrentUser, result);
-
+			    ExceptionHandler.Report(ex, SR.MessageFailedToRetrieveSeries, Context.DesktopWindow);
 			}
 
 			//TODO (CR Sept 2010): put a Close method on the context, or put a property on SeriesDetailsTool
 			//that somehow allows a tool to flag that when it is clicked, the component should close.
-			if (result == EventResult.Success)
-				SeriesDetailsComponent.Close();
-            */
+			//if (result == EventResult.Success)
+			//	SeriesDetailsComponent.Close();
+            
 		}
 
 		protected override void OnSelectedSeriesChanged()
@@ -104,13 +77,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		    Enabled = Context.SelectedSeries.Count > 0
                       && !Context.Server.IsLocal
 		              && WorkItemActivityMonitor.IsRunning;
-		}
-
-		private static DateTime ParseDicomDate(string dicomDate)
-		{
-			DateTime value;
-			DateParser.Parse(dicomDate, out value);
-			return value;
 		}
 	}
 }

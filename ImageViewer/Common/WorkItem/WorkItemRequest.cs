@@ -74,6 +74,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (PublishFilesRequest),
                                                           typeof (DicomAutoRouteRequest),
                                                           typeof (DicomRetrieveRequest),
+                                                          typeof (DicomRetrieveStudyRequest),
+                                                          typeof (DicomRetrieveSeriesRequest),
                                                           typeof (ProcessStudyRequest),
                                                           typeof (DicomReceiveRequest),
                                                           typeof (ImportStudyRequest),
@@ -86,6 +88,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           typeof (ImportFilesProgress),
                                                           typeof (ReindexProgress),
                                                           typeof (DicomSendProgress),
+                                                          typeof (DicomRetrieveProgress),
                                                           typeof (DeleteProgress),
                                                           typeof (ReapplyRulesProgress)
                                                       };
@@ -109,6 +112,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [XmlInclude(typeof(PublishFilesRequest))]
     [XmlInclude(typeof(DicomAutoRouteRequest))]
     [XmlInclude(typeof(DicomRetrieveRequest))]
+    [XmlInclude(typeof(DicomRetrieveStudyRequest))]
+    [XmlInclude(typeof(DicomRetrieveSeriesRequest))]
     [XmlInclude(typeof(ProcessStudyRequest))]
     [XmlInclude(typeof(DicomReceiveRequest))]
     [XmlInclude(typeof(ImportStudyRequest))]
@@ -398,23 +403,56 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// </summary>
     [DataContract(Namespace = ImageViewerNamespace.Value)]
     [WorkItemRequestDataContract("0e04fa53-3f45-4ae2-9444-f3208047757c")]
-    public class DicomRetrieveRequest : WorkItemStudyRequest
+    public abstract class DicomRetrieveRequest : WorkItemStudyRequest
     {
-        DicomRetrieveRequest()
+        [DataMember]
+        public string Source { get; set; }
+    }
+
+    /// <summary>
+    /// <see cref="WorkItemRequest"/> for retrieving a study from a DICOM AE.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("61AB2801-5284-480B-B054-F0314865D84F")]
+    public class DicomRetrieveStudyRequest : DicomRetrieveRequest
+    {
+        public DicomRetrieveStudyRequest()
         {
             Type = WorkItemTypeEnum.DicomRetrieve;
-            Priority = WorkItemPriorityEnum.Normal;
+            Priority = WorkItemPriorityEnum.Stat;
             ActivityType = ActivityTypeEnum.DicomRetrieve;
         }
 
-        [DataMember(IsRequired = true)]
-        public string FromAETitle { get; set; }
+        public override string ActivityDescription
+        {
+            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, Source); }
+        }
+    }
+
+    
+    /// <summary>
+    /// <see cref="WorkItemRequest"/> for retrieving a study from a DICOM AE.
+    /// </summary>
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [WorkItemRequestDataContract("09547DF4-E8B8-45E8-ABAF-33159E2C7098")]
+    public class DicomRetrieveSeriesRequest : DicomRetrieveRequest
+    {
+        public DicomRetrieveSeriesRequest()
+        {
+            Type = WorkItemTypeEnum.DicomRetrieve;
+            Priority = WorkItemPriorityEnum.Stat;
+            ActivityType = ActivityTypeEnum.DicomRetrieve;
+        }
+
+        [DataMember(IsRequired = false)]
+        public List<string> SeriesInstanceUids { get; set; }
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, FromAETitle); }
+            get { return string.Format(SR.DicomRetreiveSeriesRequest_ActivityDescription, Source); }
         }
     }
+
 
     /// <summary>
     /// Abstract Study Process Request

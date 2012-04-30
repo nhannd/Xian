@@ -141,6 +141,9 @@
   <data name="MessageFailedToDeleteSeries" xml:space="preserve">
     <value>Failed to initiate deletion of the series.</value>
   </data>
+  <data name="MessageFailedToRetrieveSeries" xml:space="preserve">
+    <value>Failed to initiate retrieving of the selected items.</value>
+  </data>
   <data name="MessageFailedToSendSeries" xml:space="preserve">
     <value>Failed to initiate sending of the selected items.</value>
   </data>
@@ -150,8 +153,15 @@
   <data name="MessageFormatDeleteSeriesScheduled" xml:space="preserve">
     <value>The deletion of {0} series in the study for {1} [{2},A#:{3}] has been scheduled.</value>
   </data>
+  <data name="MessageFormatRetrieveSeriesScheduled" xml:space="preserve">
+    <value>The retrieve of {0} series from {1} for {2} [{3},A#:{4}] has been scheduled.</value>
+  </data>
   <data name="MessageFormatSendSeriesScheduled" xml:space="preserve">
     <value>The send of {0} series to {1} for {2} [{3},A#:{4}] has been scheduled.</value>
+  </data>
+  <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
+    <value>Failed to retrieve the selected eries because the DICOM Server service is not running.
+Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageSelectDestination" xml:space="preserve">
     <value>Please select a destination.</value>

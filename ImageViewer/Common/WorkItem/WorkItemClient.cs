@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (WorkItem == null)
                 return;
 
-            if (WorkItem.Progress == null || !WorkItem.Progress.IsCancelable) 
+            if (WorkItem.Progress != null && !WorkItem.Progress.IsCancelable) 
                 return;
 
             WorkItemUpdateResponse response = null;
@@ -455,6 +455,77 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName,
                                                   instances,
                                                   string.IsNullOrEmpty(Request.UserName)
+                                                      ? EventSource.CurrentProcess
+                                                      : EventSource.CurrentUser, result);
+            }
+        }
+    }
+
+    public class DicomRetrieveClient : WorkItemClient
+    {
+        public void RetrieveStudy(IDicomServiceNode remoteAEInfo, IStudyRootData study)
+        {
+            EventResult result = EventResult.Success;
+            try
+            {
+                var request = new DicomRetrieveStudyRequest
+                {
+                    Source = remoteAEInfo.Name,
+                    Study = new WorkItemStudy(study),
+                    Patient = new WorkItemPatient(study)
+
+                };
+
+                InsertRequest(request);
+            }
+            catch (Exception ex)
+            {
+                result = EventResult.MajorFailure;
+                Exception = ex;
+                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToSendStudy);
+                throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogBeginReceiveInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName,
+                                                     instances, string.IsNullOrEmpty(Request.UserName)
+                                                                    ? EventSource.CurrentProcess
+                                                                    : EventSource.CurrentUser, result);
+            }
+        }
+
+        public void RetrieveSeries(IDicomServiceNode remoteAEInfo, IStudyRootData study, string[] seriesInstanceUids)
+        {
+            EventResult result = EventResult.Success;
+            try
+            {
+                var request = new DicomRetrieveSeriesRequest
+                {
+                    Source = remoteAEInfo.Name,
+                    SeriesInstanceUids = new List<string>(),
+                    Study = new WorkItemStudy(study),
+                    Patient = new WorkItemPatient(study)
+                };
+
+                request.SeriesInstanceUids.AddRange(seriesInstanceUids);
+                InsertRequest(request);
+            }
+            catch (Exception ex)
+            {
+                result = EventResult.MajorFailure;
+                Exception = ex;
+                throw;
+            }
+            finally
+            {
+                var instances = new AuditedInstances();
+                instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+                AuditHelper.LogBeginReceiveInstances(remoteAEInfo.AETitle, remoteAEInfo.ScpParameters.HostName,
+                                       instances, string.IsNullOrEmpty(Request.UserName)
                                                       ? EventSource.CurrentProcess
                                                       : EventSource.CurrentUser, result);
             }

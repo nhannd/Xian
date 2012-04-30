@@ -10,8 +10,11 @@
 #endregion
 
 using System;
+using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -23,10 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipRetrieveStudy")]
 	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
-
     [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Retrieve)]
-
-	//TODO (Marmot):Restore.
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class RetrieveStudyTool : StudyBrowserTool
 	{
@@ -40,72 +40,46 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void RetrieveStudy()
 		{
 		    //TODO (Marmot):Restore.
-            base.Context.DesktopWindow.ShowMessageBox("Restore!", MessageBoxActions.Ok);
-            /*
-
-            if (!Enabled || Context.SelectedServerGroup.IsLocalDatastore || Context.SelectedStudy == null)
+         
+            if (!Enabled || Context.SelectedServers.IsLocalServer || Context.SelectedStudy == null)
                 return;
-
-            EventResult result = EventResult.Success;
-
-            var retrieveInformation = new Dictionary<IApplicationEntity, List<StudyInformation>>();
-            foreach (StudyItem item in Context.SelectedStudies)
-            {
-                var applicationEntity = item.Server as IApplicationEntity;
-                if (applicationEntity != null && applicationEntity.ScpParameters != null && !retrieveInformation.ContainsKey(applicationEntity))
-                    retrieveInformation[applicationEntity] = new List<StudyInformation>();
-                else continue;
-
-                var studyInformation = new StudyInformation {PatientId = item.PatientId, PatientsName = item.PatientsName};
-                DateTime studyDate;
-                DateParser.Parse(item.StudyDate, out studyDate);
-                studyInformation.StudyDate = studyDate;
-                studyInformation.StudyDescription = item.StudyDescription;
-                studyInformation.StudyInstanceUid = item.StudyInstanceUid;
-
-                retrieveInformation[applicationEntity].Add(studyInformation);
-            }
 
             try
             {
-                Platform.GetService(delegate(IDicomServer service)
-                                        {
-                                            foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
-                                            {
-                                                var aeInformation = new ApplicationEntity
-                                                                        {
-                                                                            AETitle = kvp.Key.AETitle,
-                                                                            ScpParameters = new ScpParameters(kvp.Key.ScpParameters)
-                                                                        };
+                var client = new DicomRetrieveClient();
 
-                                                service.RetrieveStudies(aeInformation, kvp.Value);
-                                            }
-                                        });
+                foreach (StudyTableItem study in Context.SelectedStudies)
+                {
+                    client.RetrieveStudy(study.Server, study);
+                    if (Context.SelectedStudies.Count == 1)
+                    {
+                        DateTime? studyDate = DateParser.Parse(study.StudyDate);
+                        Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+                                                        string.Format(SR.MessageFormatRetrieveStudyScheduled,
+                                                                      study.Server.Name,
+                                                                      study.PatientsName.FormattedName,
+                                                                      studyDate.HasValue
+                                                                          ? Format.Date(studyDate.Value)
+                                                                          : string.Empty,
+                                                                      study.AccessionNumber),
+                                                        SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+                    }
+                }
 
-                //TODO (Marmot): Restore - just tell the user it's been scheduled.
-                //LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
+                if (Context.SelectedStudies.Count > 1)
+                {
+                    Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatRetrieveStudiesScheduled, Context.SelectedStudies.Count),
+                                                   SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+                }
             }
             catch (EndpointNotFoundException)
             {
-                result = EventResult.MajorFailure;
-                Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
+                 Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
             }
             catch (Exception e)
             {
-                result = EventResult.MajorFailure;
                 ExceptionHandler.Report(e, SR.MessageFailedToRetrieveStudy, Context.DesktopWindow);
-            }
-            finally
-            {
-                foreach (KeyValuePair<IApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
-                {
-                    var requestedInstances = new AuditedInstances();
-                    foreach (StudyInformation study in kvp.Value)
-                        requestedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
-                    AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.ScpParameters.HostName, requestedInstances, EventSource.CurrentUser, result);
-                }
-            }
-             */
+            }        
 		}
 
 		private bool GetAtLeastOneServerSupportsLoading()
@@ -115,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (!GetAtLeastOneServerSupportsLoading() && base.Context.SelectedServers.Count > 0)
+			if (!GetAtLeastOneServerSupportsLoading() && Context.SelectedServers.Count > 0)
 				Context.DefaultActionHandler = RetrieveStudy;
 		}
 

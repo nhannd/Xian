@@ -241,6 +241,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retrieve of Series from {0}.
+        /// </summary>
+        internal static string DicomRetreiveSeriesRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("DicomRetreiveSeriesRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Images Retrieved, {1} Images Failed, {2} Images Pending.
+        /// </summary>
+        internal static string DicomRetrieveProgress_Status {
+            get {
+                return ResourceManager.GetString("DicomRetrieveProgress_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} Images Sent, {1} Images Failed, {2} Images Pending.
         /// </summary>
         internal static string DicomSend_Status {
