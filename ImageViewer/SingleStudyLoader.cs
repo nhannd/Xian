@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer
 			private readonly LoadStudyArgs _args;
 			private readonly StudyItem _studyItem;
 
-		    private IStudyLoader _studyLoader;
+		    private string _studyLoaderName;
 
 			private readonly object _syncLock = new object();
 			private List<Sop> _sops;
@@ -124,8 +124,18 @@ namespace ClearCanvas.ImageViewer
 
 			private List<Sop> LoadSops()
 			{
-                _studyLoader = Server.GetService<IStudyLoader>();
-                
+			    IStudyLoader studyLoader;
+			    try
+			    {
+                    studyLoader = Server.GetService<IStudyLoader>();
+                    _studyLoaderName = studyLoader.Name;
+                }
+			    catch (Exception e)
+			    {
+                    //For legacy reasons, so code expecting one of these exceptions will still get one.
+                    throw new StudyLoaderNotFoundException(e);
+			    }
+
                 var args = new StudyLoaderArgs(StudyInstanceUid, Server);
 				int total;
 				var sops = new List<Sop>();
@@ -148,7 +158,7 @@ namespace ClearCanvas.ImageViewer
 						}
 					}
 
-                    total = _studyLoader.Start(args);
+                    total = studyLoader.Start(args);
 					if (total <= 0)
 						throw new NotFoundLoadStudyException(args.StudyInstanceUid);
 				}
@@ -165,7 +175,7 @@ namespace ClearCanvas.ImageViewer
 				{
 					while (true)
 					{
-                        Sop sop = _studyLoader.LoadNextSop();
+                        Sop sop = studyLoader.LoadNextSop();
 						if (sop == null)
 							break;
 
@@ -232,7 +242,9 @@ namespace ClearCanvas.ImageViewer
 				{
 					_viewer.EventBroker.OnStudyLoaded(new StudyLoadedEventArgs(study, error));
 
-                    IPrefetchingStrategy prefetchingStrategy = _studyLoader.PrefetchingStrategy;
+                    //We have to use the viewer's instance of the loader so that we don't end up with a prefetching
+                    //strategy per study loaded into the viewer.
+                    IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[_studyLoaderName].PrefetchingStrategy;
 					if (prefetchingStrategy != null)
 						prefetchingStrategy.Start(_viewer);
 				}
