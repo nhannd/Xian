@@ -55,8 +55,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 }
             }
 
-            Proxy.Delete();
+            // Now cleanup the actual WorkItemUid references
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            {
+                var broker = context.GetWorkItemUidBroker();
+                var uidBroker = context.GetWorkItemUidBroker();
 
+                var list = broker.GetWorkItemUidsForWorkItem(Proxy.Item.Oid);
+                foreach (WorkItemUid sop in list)
+                {
+                    uidBroker.Delete(sop);
+                }
+                context.Commit();
+            }
+
+            Proxy.Delete();
         }
 
         /// <summary>
