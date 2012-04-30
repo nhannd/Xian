@@ -70,15 +70,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
         private bool ConfirmDeletion()
         {
-            string message = Context.SelectedSeries.Count == 1
-                                 ? SR.MessageConfirmDeleteSeries
-                                 : String.Format(SR.MessageFormatConfirmDeleteSeries, Context.SelectedSeries.Count);
+            string message;
+            var notYetDeleted = AllSeries.Where(series => !series.DeleteTime.HasValue);
+            if (SelectedSeries.Any(selected => selected.DeleteTime.HasValue))
+            {
+                message = SR.MessageSelectSeriesNotAlreadyScheduledForDeletion;
+                Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+                return false;
+            }
+            
+            if (notYetDeleted.All(notDeleted => SelectedSeries.Any(selected => selected.SeriesInstanceUid == notDeleted.SeriesInstanceUid)))
+            {
+                message = SR.MessageConfirmDeleteEntireStudy;
+            }
+            else
+            {
+                message = Context.SelectedSeries.Count == 1
+                                     ? SR.MessageConfirmDeleteSeries
+                                     : String.Format(SR.MessageFormatConfirmDeleteSeries, Context.SelectedSeries.Count);
+            }
 
-            DialogBoxAction action = Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
-
-            if (action == DialogBoxAction.Yes)
-                return true;
-            return false;
+            return DialogBoxAction.Yes == Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
         }
 
         // This is a total hack to prevent a user from deleting a study

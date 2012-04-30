@@ -131,7 +131,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
                 //This will throw when Uid parameter is empty.
                 IStudy study = GetStudy(studyInstanceUid);
-
+                if (study == null)
+                    return new List<Series>();
+                
                 //TODO (Marmot): make extended data queryable, too.
                 var dicomCriteria = criteria.Series.ToDicomAttributeCollection();
                 var filters = new SeriesPropertyFilters(dicomCriteria);
@@ -157,6 +159,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
                 //This will throw when either Uid parameter is empty.
                 var series = GetSeries(studyInstanceUid, seriesInstanceUid);
+                if (series == null)
+                    return new List<SopInstance>();
 
                 //TODO (Marmot): make extended data queryable, too.
                 var dicomCriteria = criteria.Image.ToDicomAttributeCollection();
@@ -188,6 +192,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         private List<DicomAttributeCollection> SeriesQuery(DicomAttributeCollection queryCriteria)
         {
             var study = GetStudy(queryCriteria[DicomTags.StudyInstanceUid]);
+            if (study == null)
+                return new List<DicomAttributeCollection>();
 
             try
             {
@@ -204,7 +210,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
         private List<DicomAttributeCollection> ImageQuery(DicomAttributeCollection queryCriteria)
         {
             var series = GetSeries(queryCriteria[DicomTags.StudyInstanceUid], queryCriteria[DicomTags.SeriesInstanceUid]);
-            
+            if (series == null)
+                return new List<DicomAttributeCollection>();
+
             try
             {
                 var filters = new SopInstancePropertyFilters(queryCriteria);
@@ -224,7 +232,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
             IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyInstanceUid select s).FirstOrDefault();
             if (study == null)
-                throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyInstanceUid));
+                Platform.Log(LogLevel.Debug, "No study exists with the given study uid ({0}).", studyInstanceUid);
 
             return study;
         }
@@ -236,14 +244,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery
 
             IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyInstanceUid select s).FirstOrDefault();
             if (study == null)
-                throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyInstanceUid));
+            {
+                Platform.Log(LogLevel.Debug, "No study exists with the given study uid ({0}).", studyInstanceUid);
+                return null;
+            }
 
             ISeries series = (from s in study.GetSeries() where s.SeriesInstanceUid == seriesInstanceUid select s).FirstOrDefault();
             if (series == null)
-            {
-                string message = String.Format("No series exists with the given study and series uids ({0}, {1})", studyInstanceUid, seriesInstanceUid);
-                throw new ArgumentException(message);
-            }
+                Platform.Log(LogLevel.Debug, "No series exists with the given study and series uids ({0}, {1})", studyInstanceUid, seriesInstanceUid);
 
             return series;
         }

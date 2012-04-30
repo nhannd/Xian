@@ -132,6 +132,9 @@
   <data name="MenuShowSeriesDetails" xml:space="preserve">
     <value>View Series Details</value>
   </data>
+  <data name="MessageConfirmDeleteEntireStudy" xml:space="preserve">
+    <value>Deleting the remaining series will cause the entire study to be deleted. Are you sure you want to delete the entire study?</value>
+  </data>
   <data name="MessageConfirmDeleteSeries" xml:space="preserve">
     <value>Are you sure you want to delete the selected series?</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="MessageSelectDestination" xml:space="preserve">
     <value>Please select a destination.</value>
+  </data>
+  <data name="MessageSelectSeriesNotAlreadyScheduledForDeletion" xml:space="preserve">
+    <value>Please select series that are not already scheduled for deletion.</value>
   </data>
   <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
     <value>Failed to send the selected studies because the DICOM Server service is not running.

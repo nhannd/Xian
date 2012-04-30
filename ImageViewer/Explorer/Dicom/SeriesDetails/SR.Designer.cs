@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleting the remaining series will cause the entire study to be deleted. Are you sure you want to delete the entire study?.
+        /// </summary>
+        internal static string MessageConfirmDeleteEntireStudy {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteEntireStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the selected series?.
         /// </summary>
         internal static string MessageConfirmDeleteSeries {
@@ -174,6 +183,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         internal static string MessageSelectDestination {
             get {
                 return ResourceManager.GetString("MessageSelectDestination", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select series that are not already scheduled for deletion..
+        /// </summary>
+        internal static string MessageSelectSeriesNotAlreadyScheduledForDeletion {
+            get {
+                return ResourceManager.GetString("MessageSelectSeriesNotAlreadyScheduledForDeletion", resourceCulture);
             }
         }
         
