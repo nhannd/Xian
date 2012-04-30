@@ -391,4 +391,13 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="MessageFormatSendStudiesScheduled" xml:space="preserve">
     <value>{0} studies have been scheduled to send.</value>
   </data>
+  <data name="ColumnHeadingInstitutionName" xml:space="preserve">
+    <value>Institution</value>
+  </data>
+  <data name="ColumnHeadingSourceAETitle" xml:space="preserve">
+    <value>Source AE</value>
+  </data>
+  <data name="ColumnHeadingStationName" xml:space="preserve">
+    <value>Station Name</value>
+  </data>
 </root>

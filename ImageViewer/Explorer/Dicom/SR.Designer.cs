@@ -124,6 +124,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Institution.
+        /// </summary>
+        internal static string ColumnHeadingInstitutionName {
+            get {
+                return ResourceManager.GetString("ColumnHeadingInstitutionName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last Name.
         /// </summary>
         internal static string ColumnHeadingLastName {
@@ -192,6 +201,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string ColumnHeadingServer {
             get {
                 return ResourceManager.GetString("ColumnHeadingServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source AE.
+        /// </summary>
+        internal static string ColumnHeadingSourceAETitle {
+            get {
+                return ResourceManager.GetString("ColumnHeadingSourceAETitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Station Name.
+        /// </summary>
+        internal static string ColumnHeadingStationName {
+            get {
+                return ResourceManager.GetString("ColumnHeadingStationName", resourceCulture);
             }
         }
         

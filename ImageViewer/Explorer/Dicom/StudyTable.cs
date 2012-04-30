@@ -29,6 +29,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         public const string ColumnNameNumberOfInstances = @"Instances";
         public const string ColumnNameServer = @"Server";
         public const string ColumnNameAvailability = @"Availability";
+		public const string ColumnNameInstitutionName = @"Institution Name";
+		public const string ColumnNameSourceAeTitle = @"Source AE Title";
+		public const string ColumnNameStationName = @"Station Name";
 
         private TableColumn<StudyTableItem, string> ColumnPatientId { get; set; }
         private TableColumn<StudyTableItem, string> ColumnPatientName { get; set; }
@@ -47,6 +50,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private TableColumn<StudyTableItem, string> ColumnNumberOfInstances { get; set; }
         private TableColumn<StudyTableItem, string> ColumnServer { get; set; }
         private TableColumn<StudyTableItem, string> ColumnAvailability { get; set; }
+		private TableColumn<StudyTableItem, string> ColumnInstitutionName { get; set; }
+		private TableColumn<StudyTableItem, string> ColumnSourceAeTitle { get; set; }
+		private TableColumn<StudyTableItem, string> ColumnStationName { get; set; }
 
         public bool UseSinglePatientNameColumn
         {
@@ -76,6 +82,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             ColumnIdeographicName.Visible = ColumnPhoneticName.Visible = visible;
         }
+
+		public void SetStudySourceColumnsVisibility(bool visible)
+		{
+			ColumnInstitutionName.Visible = visible;
+			ColumnSourceAeTitle.Visible = visible;
+			ColumnStationName.Visible = visible;
+		}
 
         public void SetColumnVisibility(string columnHeading, bool visible)
         {
@@ -249,9 +262,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                                                              0.3f);
 
             Columns.Add(ColumnAvailability);
-        }
 
-        private void AddExtensionColumns()
+
+			ColumnInstitutionName = new TableColumn<StudyTableItem, string>(ColumnNameInstitutionName, SR.ColumnHeadingInstitutionName,
+												 item => FormatInstitutionNames(item.InstitutionNamesInStudy),
+												 0.3f);
+			Columns.Add(ColumnInstitutionName);
+
+			ColumnSourceAeTitle = new TableColumn<StudyTableItem, string>(ColumnNameSourceAeTitle, SR.ColumnHeadingSourceAETitle,
+												 item => FormatSourceAETitles(item.SourceAETitlesInStudy),
+												 0.3f);
+			Columns.Add(ColumnSourceAeTitle);
+
+			ColumnStationName = new TableColumn<StudyTableItem, string>(ColumnNameStationName, SR.ColumnHeadingStationName,
+												 item => FormatStationNames(item.StationNamesInStudy),
+												 0.3f);
+			Columns.Add(ColumnStationName);
+		}
+
+    	private void AddExtensionColumns()
         {
             try
             {
@@ -353,5 +382,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return StandardModalities.Modalities.Contains(modality) ? imageModality : unknownModality;
 			}
 		}
-    }
+
+		private string FormatStationNames(string[] values)
+		{
+			return string.Join(", ", values);
+		}
+
+		private string FormatSourceAETitles(string[] values)
+		{
+			return string.Join(", ", values);
+		}
+
+		private string FormatInstitutionNames(string[] values)
+		{
+			return string.Join(", ", values);
+		}
+
+	}
 }
