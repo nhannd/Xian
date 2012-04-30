@@ -21,7 +21,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
@@ -613,6 +612,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		enum StatusFilterValue
+		{
+			Active,
+			Complete,
+			Canceled,
+			Failed
+		}
+
 		private static readonly object NoFilter = new object();
 
 		private readonly WorkItemActionModel _workItemActionModel;
@@ -620,7 +627,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly WorkItemUpdateManager _workItemManager;
 
 		private ConnectionState _connectionState;
-		private WorkItemStatusEnum? _statusFilter;
+		private StatusFilterValue? _statusFilter;
         private ActivityTypeEnum? _activityFilter;
 
 		private string _textFilter;
@@ -770,12 +777,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public IList StatusFilterChoices
 		{
-            get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(WorkItemStatusEnum)).Cast<object>().OrderBy<object, string>(FormatStatusFilter)).ToList(); }
+			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(StatusFilterValue)).Cast<object>().OrderBy<object, string>(FormatStatusFilter)).ToList(); }
 		}
 
 		public string FormatStatusFilter(object value)
 		{
-			return value == NoFilter ? SR.NoFilterItem : ((WorkItemStatusEnum)value).GetDescription();
+			if(value == NoFilter)
+				return SR.NoFilterItem;
+			switch ((StatusFilterValue)value)
+			{
+				case StatusFilterValue.Active:
+					return "Active";
+				case StatusFilterValue.Complete:
+					return "Complete";
+				case StatusFilterValue.Canceled:
+					return "Canceled";
+				case StatusFilterValue.Failed:
+					return "Failed";
+				default:
+					throw new ArgumentOutOfRangeException("value");
+			}
 		}
 
 		public object StatusFilter
@@ -783,7 +804,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _statusFilter.HasValue ? _statusFilter.Value : NoFilter; }
 			set
 			{
-				var v = (value == NoFilter) ? (WorkItemStatusEnum?)null : (WorkItemStatusEnum)value;
+				var v = (value == NoFilter) ? (StatusFilterValue?)null : (StatusFilterValue)value;
 				if (_statusFilter != v)
 				{
 					_statusFilter = v;
@@ -945,7 +966,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             if (_activityFilter.HasValue && item.ActivityType != _activityFilter.Value)
 				return false;
 
-			if (_statusFilter.HasValue && item.Status != _statusFilter.Value)
+			if (_statusFilter.HasValue && WorkItemStatuses(_statusFilter.Value).All(s => s != item.Status))
 				return false;
 
 			if (!string.IsNullOrEmpty(_textFilter) && !item.ContainsText(_textFilter))
@@ -1006,6 +1027,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		private WorkItemStatusEnum[] WorkItemStatuses(StatusFilterValue filterValue)
+		{
+			switch (filterValue)
+			{
+				case StatusFilterValue.Active:
+					return new[]{WorkItemStatusEnum.Pending, WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle};
+				case StatusFilterValue.Complete:
+					return new[] { WorkItemStatusEnum.Complete };
+				case StatusFilterValue.Canceled:
+					return new[] { WorkItemStatusEnum.Canceled };
+				case StatusFilterValue.Failed:
+					return new[] { WorkItemStatusEnum.Failed };
+				default:
+					throw new ArgumentOutOfRangeException("filterValue");
 			}
 		}
     }
