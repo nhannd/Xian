@@ -50,16 +50,12 @@ namespace ClearCanvas.ImageViewer.Common
 
             try
             {
-                Platform.GetService<IDicomServerConfiguration>(
-                    s => s.UpdateConfiguration(new UpdateDicomServerConfigurationRequest
-                    {
-                        Configuration = new DicomServerConfiguration
-                        {
-                            AETitle = commandLine.AETitle,
-                            HostName = commandLine.HostName,
-                            Port = commandLine.Port
-                        }
-                    }));
+                DicomServer.DicomServer.UpdateConfiguration(new DicomServerConfiguration
+                                                                {
+                                                                    HostName = commandLine.HostName,
+                                                                    AETitle = commandLine.AETitle,
+                                                                    Port = commandLine.Port
+                                                                });
             }
             catch (Exception e)
             {
@@ -68,17 +64,14 @@ namespace ClearCanvas.ImageViewer.Common
 
             try
             {
-                Platform.GetService<IStorageConfiguration>(
-                    s => s.UpdateConfiguration(new UpdateStorageConfigurationRequest
-                    {
-                        Configuration = new StorageConfiguration
-                                            {
-                                                FileStoreDirectory = commandLine.FileStoreDirectory,
-                                                MinimumFreeSpacePercent = commandLine.MinimumFreeSpacePercent.HasValue 
-                                                                        ? commandLine.MinimumFreeSpacePercent.Value
-                                                                        : StorageConfiguration.AutoMinimumFreeSpace
-                                            }
-                    }));
+                StudyStore.UpdateConfiguration(new StorageConfiguration
+                                                   {
+                                                       FileStoreDirectory = commandLine.FileStoreDirectory,
+                                                       MinimumFreeSpacePercent =
+                                                           commandLine.MinimumFreeSpacePercent.HasValue
+                                                               ? commandLine.MinimumFreeSpacePercent.Value
+                                                               : StorageConfiguration.AutoMinimumFreeSpace
+                                                   });
             }
             catch (Exception e)
             {

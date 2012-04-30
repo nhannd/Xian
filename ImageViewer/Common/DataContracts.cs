@@ -9,7 +9,6 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common
@@ -30,5 +29,15 @@ namespace ClearCanvas.ImageViewer.Common
         Started,
         [EnumMember]
         Stopping
+    }
+
+    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    public class ServiceStateFault
+    {
+        [DataMember(IsRequired = true)]
+        public ServiceStateEnum CurrentState { get; set; }
+        
+        [DataMember(IsRequired = true)]
+        public ServiceStateEnum RequiredState { get; set; }
     }
 }

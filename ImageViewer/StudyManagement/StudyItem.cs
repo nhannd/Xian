@@ -18,7 +18,7 @@ using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-    //TODO (Marmot):Remove or move to Common.
+    //TODO (Marmot): move to Common.
 
 	/// <summary>
 	/// A study item.

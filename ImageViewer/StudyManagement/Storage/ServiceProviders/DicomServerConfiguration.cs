@@ -122,12 +122,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                 context.Commit();
                 
                 //Make a copy because the one in the request is a reference object that the caller could change afterwards.
-                Cache<DicomServerConfigurationContract>.CachedValue = new DicomServerConfigurationContract
-                                  {
-                                      AETitle = request.Configuration.AETitle,
-                                      HostName = request.Configuration.HostName,
-                                      Port = request.Configuration.Port
-                                  };
+                Cache<DicomServerConfigurationContract>.CachedValue = request.Configuration.Clone();
             }
 
             //TODO (Marmot): While it doesn't do any harm to do this here, the listener should also poll periodically for configuration changes, just in case.
