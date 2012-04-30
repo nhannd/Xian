@@ -275,7 +275,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get
             {
                 if (ImagesToSend == 0)
-                    return SR.Progress_Pending;
+                    return string.Empty;
 
                 return string.Format(SR.DicomSendProgress_Status,
                                      SuccessSubOperations + WarningSubOperations, FailureSubOperations,
@@ -326,7 +326,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get
             {
                 if (ImagesToRetrieve == 0)
-                    return SR.Progress_Pending;
+                    return string.Empty;
 
                 return string.Format(SR.DicomRetrieveProgress_Status,
                                      SuccessSubOperations + WarningSubOperations, FailureSubOperations,
