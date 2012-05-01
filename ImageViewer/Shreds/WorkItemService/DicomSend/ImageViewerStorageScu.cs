@@ -231,7 +231,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.RleLossless);
                 if (pcid != 0)
                 {
-                    message.ChangeTransferSyntax(TransferSyntax.RleLossless);
                     return pcid;
                 }
             }
@@ -240,7 +239,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
                 if (pcid != 0)
                 {
-                    message.ChangeTransferSyntax(TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
                     return pcid;
                 }
             }
@@ -249,7 +247,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
                 if (pcid != 0)
                 {
-                    message.ChangeTransferSyntax(TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
                     return pcid;
                 }
             }
@@ -282,6 +279,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
                             message.ChangeTransferSyntax(TransferSyntax.Jpeg2000ImageCompression, codec.GetDicomCodec(),
                                                          codec.GetCodecParameters(doc));
+                            message.TransferSyntax = TransferSyntax.Jpeg2000ImageCompression;
                             return pcid;
                         }
                 }
@@ -318,6 +316,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                             {
                                 message.ChangeTransferSyntax(TransferSyntax.JpegBaselineProcess1, codec.GetDicomCodec(),
                                                              codec.GetCodecParameters(doc));
+                                message.TransferSyntax = TransferSyntax.JpegBaselineProcess1;
                                 return pcid;
                             }
                     }
@@ -350,6 +349,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                             {
                                 message.ChangeTransferSyntax(TransferSyntax.JpegExtendedProcess24, codec.GetDicomCodec(),
                                                              codec.GetCodecParameters(doc));
+                                message.TransferSyntax = TransferSyntax.JpegExtendedProcess24;
                                 return pcid;
                             }
                     }
