@@ -119,13 +119,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 return;
 
             }
-            _scu = new ImageViewerStorageScu(configuration.AETitle, remoteAE);
 
+            _scu = new ImageViewerStorageScu(configuration.AETitle, remoteAE);
+            
             LoadImagesToSend();
 
             if (Request.CompressionType != CompressionType.None)
             {
-                
+                _scu.LoadPreferredSyntaxes(Request);    
             }
 
             Progress.ImagesToSend = _scu.TotalSubOperations;            
