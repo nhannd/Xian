@@ -148,6 +148,12 @@ namespace ClearCanvas.Dicom.Samples
             this.folderBrowserDialogStorageScp = new System.Windows.Forms.FolderBrowserDialog();
             this.folderBrowserDialogStorageScu = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this._checkBoxStorageScpJpegLossless = new System.Windows.Forms.CheckBox();
+            this._checkBoxStorageScpJpegLossy = new System.Windows.Forms.CheckBox();
+            this._checkBoxStorageScpJ2KLossless = new System.Windows.Forms.CheckBox();
+            this._checkBoxStorageScpJ2KLossy = new System.Windows.Forms.CheckBox();
+            this._checkBoxStorageScpRLE = new System.Windows.Forms.CheckBox();
+            this._checkBoxStorageScpList = new System.Windows.Forms.CheckBox();
             this.SamplesSplitContainer.Panel1.SuspendLayout();
             this.SamplesSplitContainer.Panel2.SuspendLayout();
             this.SamplesSplitContainer.SuspendLayout();
@@ -345,6 +351,12 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // StorageScpTab
             // 
+            this.StorageScpTab.Controls.Add(this._checkBoxStorageScpList);
+            this.StorageScpTab.Controls.Add(this._checkBoxStorageScpRLE);
+            this.StorageScpTab.Controls.Add(this._checkBoxStorageScpJ2KLossy);
+            this.StorageScpTab.Controls.Add(this._checkBoxStorageScpJ2KLossless);
+            this.StorageScpTab.Controls.Add(this._checkBoxStorageScpJpegLossy);
+            this.StorageScpTab.Controls.Add(this._checkBoxStorageScpJpegLossless);
             this.StorageScpTab.Controls.Add(this._checkBoxStorageScpBitbucket);
             this.StorageScpTab.Controls.Add(this.label6);
             this.StorageScpTab.Controls.Add(this._textBoxStorageScpAeTitle);
@@ -365,7 +377,7 @@ namespace ClearCanvas.Dicom.Samples
             // _checkBoxStorageScpBitbucket
             // 
             this._checkBoxStorageScpBitbucket.AutoSize = true;
-            this._checkBoxStorageScpBitbucket.Location = new System.Drawing.Point(181, 74);
+            this._checkBoxStorageScpBitbucket.Location = new System.Drawing.Point(440, 80);
             this._checkBoxStorageScpBitbucket.Name = "_checkBoxStorageScpBitbucket";
             this._checkBoxStorageScpBitbucket.Size = new System.Drawing.Size(71, 17);
             this._checkBoxStorageScpBitbucket.TabIndex = 8;
@@ -375,7 +387,7 @@ namespace ClearCanvas.Dicom.Samples
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(181, 19);
+            this.label6.Location = new System.Drawing.Point(118, 19);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(44, 13);
             this.label6.TabIndex = 7;
@@ -384,7 +396,7 @@ namespace ClearCanvas.Dicom.Samples
             // _textBoxStorageScpAeTitle
             // 
             this._textBoxStorageScpAeTitle.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScpAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this._textBoxStorageScpAeTitle.Location = new System.Drawing.Point(181, 37);
+            this._textBoxStorageScpAeTitle.Location = new System.Drawing.Point(118, 37);
             this._textBoxStorageScpAeTitle.Name = "_textBoxStorageScpAeTitle";
             this._textBoxStorageScpAeTitle.Size = new System.Drawing.Size(124, 20);
             this._textBoxStorageScpAeTitle.TabIndex = 6;
@@ -392,7 +404,7 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // _buttonStorageScuSelectStorageLocation
             // 
-            this._buttonStorageScuSelectStorageLocation.Location = new System.Drawing.Point(707, 35);
+            this._buttonStorageScuSelectStorageLocation.Location = new System.Drawing.Point(644, 35);
             this._buttonStorageScuSelectStorageLocation.Name = "_buttonStorageScuSelectStorageLocation";
             this._buttonStorageScuSelectStorageLocation.Size = new System.Drawing.Size(75, 23);
             this._buttonStorageScuSelectStorageLocation.TabIndex = 5;
@@ -403,7 +415,7 @@ namespace ClearCanvas.Dicom.Samples
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(503, 19);
+            this.label5.Location = new System.Drawing.Point(440, 19);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(88, 13);
             this.label5.TabIndex = 4;
@@ -412,7 +424,7 @@ namespace ClearCanvas.Dicom.Samples
             // _textBoxStorageScpStorageLocation
             // 
             this._textBoxStorageScpStorageLocation.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScpStorageFolder", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this._textBoxStorageScpStorageLocation.Location = new System.Drawing.Point(503, 37);
+            this._textBoxStorageScpStorageLocation.Location = new System.Drawing.Point(440, 37);
             this._textBoxStorageScpStorageLocation.Name = "_textBoxStorageScpStorageLocation";
             this._textBoxStorageScpStorageLocation.Size = new System.Drawing.Size(198, 20);
             this._textBoxStorageScpStorageLocation.TabIndex = 3;
@@ -431,7 +443,7 @@ namespace ClearCanvas.Dicom.Samples
             // _textBoxStorageScpPort
             // 
             this._textBoxStorageScpPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScpPort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this._textBoxStorageScpPort.Location = new System.Drawing.Point(354, 37);
+            this._textBoxStorageScpPort.Location = new System.Drawing.Point(291, 37);
             this._textBoxStorageScpPort.Name = "_textBoxStorageScpPort";
             this._textBoxStorageScpPort.Size = new System.Drawing.Size(100, 20);
             this._textBoxStorageScpPort.TabIndex = 1;
@@ -440,7 +452,7 @@ namespace ClearCanvas.Dicom.Samples
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(351, 20);
+            this.label4.Location = new System.Drawing.Point(288, 20);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(26, 13);
             this.label4.TabIndex = 0;
@@ -1070,6 +1082,66 @@ namespace ClearCanvas.Dicom.Samples
             this.saveFileDialog.DefaultExt = "dcm";
             this.saveFileDialog.Title = "Save DICOM File";
             // 
+            // _checkBoxStorageScpJpegLossless
+            // 
+            this._checkBoxStorageScpJpegLossless.AutoSize = true;
+            this._checkBoxStorageScpJpegLossless.Location = new System.Drawing.Point(771, 9);
+            this._checkBoxStorageScpJpegLossless.Name = "_checkBoxStorageScpJpegLossless";
+            this._checkBoxStorageScpJpegLossless.Size = new System.Drawing.Size(96, 17);
+            this._checkBoxStorageScpJpegLossless.TabIndex = 9;
+            this._checkBoxStorageScpJpegLossless.Text = "JPEG Lossless";
+            this._checkBoxStorageScpJpegLossless.UseVisualStyleBackColor = true;
+            // 
+            // _checkBoxStorageScpJpegLossy
+            // 
+            this._checkBoxStorageScpJpegLossy.AutoSize = true;
+            this._checkBoxStorageScpJpegLossy.Location = new System.Drawing.Point(771, 32);
+            this._checkBoxStorageScpJpegLossy.Name = "_checkBoxStorageScpJpegLossy";
+            this._checkBoxStorageScpJpegLossy.Size = new System.Drawing.Size(83, 17);
+            this._checkBoxStorageScpJpegLossy.TabIndex = 10;
+            this._checkBoxStorageScpJpegLossy.Text = "JPEG Lossy";
+            this._checkBoxStorageScpJpegLossy.UseVisualStyleBackColor = true;
+            // 
+            // _checkBoxStorageScpJ2KLossless
+            // 
+            this._checkBoxStorageScpJ2KLossless.AutoSize = true;
+            this._checkBoxStorageScpJ2KLossless.Location = new System.Drawing.Point(771, 55);
+            this._checkBoxStorageScpJ2KLossless.Name = "_checkBoxStorageScpJ2KLossless";
+            this._checkBoxStorageScpJ2KLossless.Size = new System.Drawing.Size(123, 17);
+            this._checkBoxStorageScpJ2KLossless.TabIndex = 11;
+            this._checkBoxStorageScpJ2KLossless.Text = "JPEG 2000 Lossless";
+            this._checkBoxStorageScpJ2KLossless.UseVisualStyleBackColor = true;
+            // 
+            // _checkBoxStorageScpJ2KLossy
+            // 
+            this._checkBoxStorageScpJ2KLossy.AutoSize = true;
+            this._checkBoxStorageScpJ2KLossy.Location = new System.Drawing.Point(771, 77);
+            this._checkBoxStorageScpJ2KLossy.Name = "_checkBoxStorageScpJ2KLossy";
+            this._checkBoxStorageScpJ2KLossy.Size = new System.Drawing.Size(110, 17);
+            this._checkBoxStorageScpJ2KLossy.TabIndex = 12;
+            this._checkBoxStorageScpJ2KLossy.Text = "JPEG 2000 Lossy";
+            this._checkBoxStorageScpJ2KLossy.UseVisualStyleBackColor = true;
+            // 
+            // _checkBoxStorageScpRLE
+            // 
+            this._checkBoxStorageScpRLE.AutoSize = true;
+            this._checkBoxStorageScpRLE.Location = new System.Drawing.Point(771, 100);
+            this._checkBoxStorageScpRLE.Name = "_checkBoxStorageScpRLE";
+            this._checkBoxStorageScpRLE.Size = new System.Drawing.Size(47, 17);
+            this._checkBoxStorageScpRLE.TabIndex = 13;
+            this._checkBoxStorageScpRLE.Text = "RLE";
+            this._checkBoxStorageScpRLE.UseVisualStyleBackColor = true;
+            // 
+            // _checkBoxStorageScpList
+            // 
+            this._checkBoxStorageScpList.AutoSize = true;
+            this._checkBoxStorageScpList.Location = new System.Drawing.Point(540, 80);
+            this._checkBoxStorageScpList.Name = "_checkBoxStorageScpList";
+            this._checkBoxStorageScpList.Size = new System.Drawing.Size(42, 17);
+            this._checkBoxStorageScpList.TabIndex = 14;
+            this._checkBoxStorageScpList.Text = "List";
+            this._checkBoxStorageScpList.UseVisualStyleBackColor = true;
+            // 
             // SamplesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1190,6 +1262,12 @@ namespace ClearCanvas.Dicom.Samples
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.TextBox textBoxMoveMessage;
         private System.Windows.Forms.Button buttonMoveScuMove;
+        private System.Windows.Forms.CheckBox _checkBoxStorageScpRLE;
+        private System.Windows.Forms.CheckBox _checkBoxStorageScpJ2KLossy;
+        private System.Windows.Forms.CheckBox _checkBoxStorageScpJ2KLossless;
+        private System.Windows.Forms.CheckBox _checkBoxStorageScpJpegLossy;
+        private System.Windows.Forms.CheckBox _checkBoxStorageScpJpegLossless;
+        private System.Windows.Forms.CheckBox _checkBoxStorageScpList;
     }
 }
 

@@ -171,8 +171,17 @@ namespace ClearCanvas.Dicom.Samples
             else
             {
                 _buttonStorageScpStartStop.Text = "Stop";
+
                 StorageScp.StorageLocation = _textBoxStorageScpStorageLocation.Text;
                 StorageScp.Bitbucket = _checkBoxStorageScpBitbucket.Checked;
+                StorageScp.List = _checkBoxStorageScpList.Checked;
+
+                StorageScp.J2KLossless = _checkBoxStorageScpJ2KLossless.Checked;
+                StorageScp.J2KLossy = _checkBoxStorageScpJ2KLossy.Checked;
+                StorageScp.JpegLossless = _checkBoxStorageScpJpegLossless.Checked;
+                StorageScp.JpegLossy = _checkBoxStorageScpJpegLossy.Checked;
+                StorageScp.Rle = _checkBoxStorageScpRLE.Checked;
+
                 StorageScp.StartListening(_textBoxStorageScpAeTitle.Text,
                     int.Parse(_textBoxStorageScpPort.Text));
 
