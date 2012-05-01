@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             attributes[DicomTags.InstanceAvailability].SetEmptyValue();
             attributes[DicomTags.QueryRetrieveLevel].SetEmptyValue();
 
-            return attributes.Any(a => !a.IsNull && !a.IsEmpty);
+            return !attributes.Any(a => !a.IsNull && !a.IsEmpty);
         }
 
         public static StudyRootStudyIdentifier ToIdentifier(this DicomExplorerSearchCriteria explorerSearchCriteria, bool addWildcards)
