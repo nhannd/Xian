@@ -676,7 +676,7 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="StudyFinderNotFoundException">Thrown when a matching <see cref="IStudyFinder"/> does not exist.</exception>
 		public static StudyItemList FindStudy(
 			QueryParameters queryParameters,
-			object targetServer,
+			IApplicationEntity targetServer,
 			string studyFinderName)
 		{
 			Platform.CheckForNullReference(queryParameters, "queryParameters");

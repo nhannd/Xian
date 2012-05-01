@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Local
         {
         }
 
-        public override StudyItemList Query(QueryParameters queryParams, object targetServer)
+        public override StudyItemList Query(QueryParameters queryParams, IApplicationEntity server)
         {
 			Platform.CheckForNullReference(queryParams, "queryParams");
 

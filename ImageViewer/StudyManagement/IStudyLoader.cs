@@ -10,8 +10,6 @@
 #endregion
 
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {

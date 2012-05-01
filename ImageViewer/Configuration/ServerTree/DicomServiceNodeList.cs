@@ -11,20 +11,24 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
-    public class DicomServiceNodeList : List<IDicomServiceNode>
+    public class DicomServiceNodeList : IList<IDicomServiceNode>
     {
+        private readonly ReadOnlyCollection<IDicomServiceNode> _serviceNodes;
+
         public DicomServiceNodeList()
         {
+            _serviceNodes = new ReadOnlyCollection<IDicomServiceNode>(new List<IDicomServiceNode>());
         }
 
         public DicomServiceNodeList(IEnumerable<IDicomServiceNode> toDicomServiceNodes)
-            : base(toDicomServiceNodes)
         {
+            _serviceNodes = new ReadOnlyCollection<IDicomServiceNode>(toDicomServiceNodes.ToList());
         }
 
         public string Name { get; set; }
@@ -55,29 +59,86 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             return this.All(s => s.IsSupported<T>());
         }
 
-        public bool NoneSupport<T>() where T : class
+        #region IList<IDicomServiceNode> Members
+
+        public int IndexOf(IDicomServiceNode item)
         {
-            return !this.Any(s => s.IsSupported<T>());
+            return _serviceNodes.IndexOf(item);
         }
 
-        public bool HasAnyNonStreamingServers()
+        void IList<IDicomServiceNode>.Insert(int index, IDicomServiceNode item)
         {
-            return this.Any(s => s.StreamingParameters == null);
+            throw new NotSupportedException();
         }
 
-        public bool HasAnyStreamingServers()
+        void IList<IDicomServiceNode>.RemoveAt(int index)
         {
-            return this.Any(s => s.StreamingParameters != null);
+            throw new NotSupportedException();
         }
 
-        public bool IsOnlyNonStreamingServers()
+        public IDicomServiceNode this[int index]
         {
-            return this.All(s => s.StreamingParameters != null);
+            get { return _serviceNodes[index]; }
+            set { throw new NotSupportedException(); }
         }
 
-        public bool IsOnlyStreamingServers()
+        #endregion
+
+        #region ICollection<IDicomServiceNode> Members
+
+        void ICollection<IDicomServiceNode>.Add(IDicomServiceNode item)
         {
-            return this.All(s => s.StreamingParameters == null);
+            throw new NotSupportedException();
         }
+
+        void ICollection<IDicomServiceNode>.Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Contains(IDicomServiceNode item)
+        {
+            return _serviceNodes.Contains(item);
+        }
+
+        public void CopyTo(IDicomServiceNode[] array, int arrayIndex)
+        {
+            _serviceNodes.CopyTo(array, arrayIndex);
+        }
+
+        public int Count
+        {
+            get { return _serviceNodes.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return true; }
+        }
+
+        bool ICollection<IDicomServiceNode>.Remove(IDicomServiceNode item)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion
+
+        #region IEnumerable<IDicomServiceNode> Members
+
+        public IEnumerator<IDicomServiceNode> GetEnumerator()
+        {
+            return _serviceNodes.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return _serviceNodes.GetEnumerator();
+        }
+
+        #endregion
     }
 }

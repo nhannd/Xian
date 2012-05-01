@@ -120,14 +120,16 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		public ServerTreeComponent()
 		{
-			_selectedServers = new DicomServiceNodeList();
 			_serverTree = new ServerTree();
 
 			if (_serverTree.CurrentNode != null)
 			{
-			    _selectedServers.AddRange(_serverTree.CurrentNode.ToDicomServiceNodes());
-				_selectedServers.Name = _serverTree.CurrentNode.DisplayName;
-				_selectedServers.Id = _serverTree.CurrentNode.Path;
+			    _selectedServers = new DicomServiceNodeList(_serverTree.CurrentNode.ToDicomServiceNodes())
+			                           {Name = _serverTree.CurrentNode.DisplayName, Id = _serverTree.CurrentNode.Path};
+			}
+			else
+			{
+                _selectedServers = new DicomServiceNodeList();
 			}
 		}
 

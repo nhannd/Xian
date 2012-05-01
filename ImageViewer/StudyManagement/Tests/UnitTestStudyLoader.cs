@@ -17,6 +17,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 {
@@ -28,10 +29,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// <summary>
 		/// Called to get <see cref="ISopDataSource"/>s matching the specified query arguments.
 		/// </summary>
-		/// <param name="server">The object representing the "server" from which the data sources are "retrieved."</param>
+		/// <param name="server">The server from which the data sources are "retrieved."</param>
 		/// <param name="studyInstanceUid">The study instance UID of the data sources to be "retrieved."</param>
 		/// <returns>An enumerable of matching <see cref="ISopDataSource"/> results. May be null.</returns>
-		IEnumerable<ISopDataSource> GetSopDataSources(object server, string studyInstanceUid);
+        IEnumerable<ISopDataSource> GetSopDataSources(IApplicationEntity server, string studyInstanceUid);
 	}
 
 	/// <summary>
@@ -144,7 +145,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		private static IEnumerable<ISopDataSource> GetSopDataSources(object server, string studyInstanceUid)
+		private static IEnumerable<ISopDataSource> GetSopDataSources(IApplicationEntity server, string studyInstanceUid)
 		{
 			var combinedResults = new List<ISopDataSource>();
 			lock (_syncLock)
@@ -245,7 +246,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 				get { return CollectionUtils.Select(SopDataSources, s => s != null && s.StudyInstanceUid == studyInstanceUid); }
 			}
 
-			IEnumerable<ISopDataSource> IUnitTestStudyProvider.GetSopDataSources(object server, string studyInstanceUid)
+            IEnumerable<ISopDataSource> IUnitTestStudyProvider.GetSopDataSources(IApplicationEntity server, string studyInstanceUid)
 			{
 				if (!Equals(Server, server))
 					return null;

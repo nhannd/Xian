@@ -17,7 +17,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using System.Linq;
-using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
@@ -50,15 +49,15 @@ namespace ClearCanvas.ImageViewer.Configuration
 		/// If the subject study is streamed from an ImageServer, the source AE would be the streaming server.
 		/// If the subject study is on a remote PACS server, the source AE would be the remote server.
 		/// </remarks>
-		public string SourceServerAE { get; set; }
+        public IDicomServiceNode SourceServer { get; set; }
 
 		/// <summary>
 		/// Gets or sets the remote server AE from which the study originated.
 		/// </summary>
 		/// <remarks>
-		/// In most cases, this is the value of the <see cref="DicomTags.SourceApplicationEntityTitle"/> attribute in the file's metadata.
+		/// In most cases, this is the server identified by the <see cref="DicomTags.SourceApplicationEntityTitle"/> attribute in the file's metadata.
 		/// </remarks>
-		public string OriginServerAE { get; set; }
+		public IDicomServiceNode OriginServer { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether or not the previous call to <see cref="Publish"/> files resulted in one or more errors.
@@ -72,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		/// Publishes the specified files.
 		/// </summary>
 		/// <remarks>
-		/// Files are published to one or more of the servers identified by the <see cref="SourceServerAE"/> and <see cref="OriginServerAE"/> properties,
+		/// Files are published to one or more of the servers identified by the <see cref="SourceServer"/> and <see cref="OriginServer"/> properties,
 		/// and the <see cref="DefaultServers"/> depending on the current user configuration.
 		/// </remarks>
 		/// <returns>True if the files were published to all relevant destinations successfully; False if publishing to one or more destinations failed.</returns>
@@ -101,15 +100,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 				// if configured to publish to the original server, resolve the origin and add to list of destinations
 				if (PublishingSettings.Default.PublishLocalToSourceAE)
 				{
-					var originServer = ResolveRemoteServer(OriginServerAE);
-					if (originServer != null && !ContainsServer(servers, originServer))
-						servers.Add(originServer);
+                    if (OriginServer != null && !OriginServer.IsLocal && !ContainsServer(servers, OriginServer))
+                        servers.Add(OriginServer);
 				}
 
 				// resolve the source server and add to list of destinations
-				var sourceServer = ResolveRemoteServer(SourceServerAE);
-				if (sourceServer != null && !ContainsServer(servers, sourceServer))
-					servers.Add(sourceServer);
+                if (SourceServer != null && !SourceServer.IsLocal && !ContainsServer(servers, SourceServer))
+                    servers.Add(SourceServer);
 
 				// enumerate the list of destination servers
 				foreach (var server in servers)
@@ -170,12 +167,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         private static bool ContainsServer(IEnumerable<IDicomServiceNode> servers, IDicomServiceNode server)
 		{
-			return server != null && CollectionUtils.Contains(servers, s => s.Name == server.Name);
-		}
-
-        private static IDicomServiceNode ResolveRemoteServer(string aetitle)
-		{
-            return ServerDirectory.GetRemoteServersByAETitle(aetitle).FirstOrDefault(s => s.ScpParameters != null);
+			return server != null && servers.Any(s => s.Name == server.Name);
 		}
 
 		private static bool StudyExistsOnLocal(string studyInstanceUid)

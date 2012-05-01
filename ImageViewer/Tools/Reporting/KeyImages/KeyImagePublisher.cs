@@ -11,12 +11,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.KeyObjects;
@@ -156,10 +158,9 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
                     if (presentationFrame.Value != null)
                         publisher.Files.Add(presentationFrame.Value.DicomFile);
 
-                    // try to determine the origin and source AE from the image frame's SOP data source (should be the same for all frames from a given study)
                     var sopDataSource = sourceFrame.ParentImageSop.DataSource;
-                    publisher.OriginServerAE = sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString();
-                    publisher.SourceServerAE = sopDataSource.Server != null ? sopDataSource.Server.AETitle : string.Empty;
+                    publisher.OriginServer = ServerDirectory.GetRemoteServersByAETitle(sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString()).FirstOrDefault();
+                    publisher.SourceServer = sopDataSource.Server;
                 }
 
                 // publish all files now

@@ -55,9 +55,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 		{
 		}
 
-        public override StudyItemList Query(QueryParameters queryParams, object targetServer)
+        public override StudyItemList Query(QueryParameters queryParams, IApplicationEntity targetServer)
         {
-            var selectedServer = ((IApplicationEntity) targetServer).ToServiceNode();
+            Platform.CheckForNullReference(queryParams, "queryParams");
+            Platform.CheckForNullReference(targetServer, "targetServer");
+
+            var selectedServer = targetServer.ToServiceNode();
 
             //.NET strings are unicode, therefore, so is all the query data.
             const string utf8 = "ISO_IR 192";

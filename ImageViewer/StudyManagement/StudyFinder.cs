@@ -9,6 +9,8 @@
 
 #endregion
 
+using ClearCanvas.Dicom.Iod;
+
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
@@ -42,10 +44,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _name; }
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Queries for studies on a target server matching the specified query parameters.
 		/// </summary>
-		public abstract StudyItemList Query(QueryParameters queryParams, object targetServer);
+        public abstract StudyItemList Query(QueryParameters queryParams, IApplicationEntity targetServer);
 
 		#endregion
 	}

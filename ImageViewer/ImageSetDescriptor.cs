@@ -67,10 +67,7 @@ namespace ClearCanvas.ImageViewer
 		{
             Platform.CheckForNullReference(sourceStudy, "sourceStudy");
             SourceStudy = sourceStudy;
-            if (server != null)
-                Server = server;
-            else
-                Server = sourceStudy.FindServer(true);
+            Server = server ?? sourceStudy.FindServer(true);
 
 	        LoadStudyError = loadStudyError;
             IsOffline = loadStudyError is OfflineLoadStudyException;

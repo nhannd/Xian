@@ -299,6 +299,9 @@ namespace ClearCanvas.ImageViewer.Configuration
         [ValidationMethodFor("FileStoreDirectory")]
         private ValidationResult ValidateFileStorePath()
         {
+            if (!HasFileStoreChanged)
+                return new ValidationResult(true, String.Empty);
+
             if (!_configuration.IsFileStoreDriveValid)
                 return new ValidationResult(false, SR.ValidationDriveInvalid);
 
