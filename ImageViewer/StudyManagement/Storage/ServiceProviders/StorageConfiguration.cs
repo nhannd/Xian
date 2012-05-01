@@ -88,10 +88,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             Platform.CheckForEmptyString(request.Configuration.FileStoreDirectory, "FileStoreDirectory");
             //Platform.CheckTrue(request.Configuration.MinimumFreeSpaceBytes.HasValue, "MinimumFreeSpaceBytes");
 
-            if (WorkItemActivityMonitor.IsRunning)
+            using (var workItemActivityMonitor = WorkItemActivityMonitor.Create(false))
             {
-                var fault = new ServiceStateFault {CurrentState = ServiceStateEnum.Started, RequiredState = ServiceStateEnum.Stopped};
-                throw new FaultException<ServiceStateFault>(fault);
+                if (workItemActivityMonitor.IsConnected)
+                {
+                    var fault = new ServiceStateFault{CurrentState = ServiceStateEnum.Started, RequiredState = ServiceStateEnum.Stopped};
+                    throw new FaultException<ServiceStateFault>(fault);
+                }
             }
 
             var configuration = request.Configuration.Clone();

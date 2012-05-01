@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using System.Globalization;
 
 namespace ClearCanvas.ImageViewer.Common
 {
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Common
             public string FileStoreDirectory { get; set; }
 
             [CommandLineParameter("minspacepercent", "Sets the minimum used space required on the file store volume for the server to continue accepting studies.", Required = false)]
-            public double? MinimumFreeSpacePercent { get; set; }
+            public string MinimumFreeSpacePercent { get; set; }
         }
 
         #region Implementation of IApplicationRoot
@@ -46,7 +47,17 @@ namespace ClearCanvas.ImageViewer.Common
         public void RunApplication(string[] args)
         {
             var commandLine = new CommandLine();
-            commandLine.Parse(args);
+            try
+            {
+                commandLine.Parse(args);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Info, e);
+                Console.WriteLine(e.Message);
+                commandLine.PrintUsage(Console.Out);
+                Environment.Exit(-1);
+            }
 
             try
             {
@@ -59,22 +70,25 @@ namespace ClearCanvas.ImageViewer.Common
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message); 
                 Platform.Log(LogLevel.Warn, e);
             }
 
             try
             {
-                StudyStore.UpdateConfiguration(new StorageConfiguration
+                if (!String.IsNullOrEmpty(commandLine.FileStoreDirectory))
+                    StudyStore.UpdateConfiguration(new StorageConfiguration
                                                    {
                                                        FileStoreDirectory = commandLine.FileStoreDirectory,
                                                        MinimumFreeSpacePercent =
-                                                           commandLine.MinimumFreeSpacePercent.HasValue
-                                                               ? commandLine.MinimumFreeSpacePercent.Value
+                                                           commandLine.MinimumFreeSpacePercent != null
+                                                               ? double.Parse(commandLine.MinimumFreeSpacePercent)
                                                                : StorageConfiguration.AutoMinimumFreeSpace
                                                    });
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 Platform.Log(LogLevel.Warn, e);
             }
         }
