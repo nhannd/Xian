@@ -192,16 +192,39 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
             message = new DicomMessage(file);
 
-            if (file.TransferSyntax.Encapsulated)
+            // If Lossy compressed & we have a matching context, send
+            // If we don't have a codec, just return
+            if (file.TransferSyntax.Encapsulated && file.TransferSyntax.LossyCompressed)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
-                                                                        file.TransferSyntax);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, file.TransferSyntax);                
+                if (pcid != 0) return pcid;
 
                 if (DicomCodecRegistry.GetCodec(file.TransferSyntax) == null)
                     return 0;
             }
 
-            if (pcid != 0) return pcid;
+            // If the image is lossless compressed & we don't have a codec, send if we
+            // can as is.
+            if (file.TransferSyntax.Encapsulated && file.TransferSyntax.LosslessCompressed)
+            {
+                if (DicomCodecRegistry.GetCodec(file.TransferSyntax) == null)
+                {
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, file.TransferSyntax);
+                    return pcid;
+                }
+            }
+
+            // If lossless compressed & requesting lossy syntax, just send as is
+            if (file.TransferSyntax.Encapsulated
+                && file.TransferSyntax.LosslessCompressed
+                && ((_sendRequest.CompressionType == CompressionType.Rle
+                || _sendRequest.CompressionType == CompressionType.JpegLossless
+                || _sendRequest.CompressionType == CompressionType.JpegLossless)))
+            {
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, file.TransferSyntax);
+                if (pcid != 0) return pcid;
+            }
+
 
             if (_sendRequest.CompressionType == CompressionType.Rle)
             {
@@ -214,21 +237,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
             else if (_sendRequest.CompressionType == CompressionType.JpegLossless)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
-                                                                        TransferSyntax.
-                                                                            JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
                 if (pcid != 0)
                 {
-                    message.ChangeTransferSyntax(
-                        TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
+                    message.ChangeTransferSyntax(TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
                     return pcid;
                 }
             }
             else if (_sendRequest.CompressionType == CompressionType.J2KLossless)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
-                                                                        TransferSyntax.
-                                                                            Jpeg2000ImageCompressionLosslessOnly);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
                 if (pcid != 0)
                 {
                     message.ChangeTransferSyntax(TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
@@ -237,8 +255,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
             else if (_sendRequest.CompressionType == CompressionType.J2KLossy)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
-                                                                        TransferSyntax.Jpeg2000ImageCompression);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.Jpeg2000ImageCompression);
                 if (pcid != 0)
                 {
                     var doc = new XmlDocument();
