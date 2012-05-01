@@ -219,6 +219,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
             String patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
 
+            // TODO (Marmot) - Not sure if we want to do anythign about this.
             // Scrub the name for invalid characters.
             //string newName = XmlUtils.XmlCharacterScrub(patientsName);
             string newName = patientsName;
@@ -346,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
        
         private static void Validate(DicomMessageBase message)
         {
-            //TODO
+            //TODO (Marmot)
         }
 
         static private DicomFile ConvertToDicomFile(DicomMessageBase message, string filename, string sourceAE)

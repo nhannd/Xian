@@ -9,13 +9,11 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Configuration;
-using ClearCanvas.Server.ShredHost;
 using System.IO;
-using ClearCanvas.Common.Utilities;
+using System.Configuration;
 using System.Xml;
-using System.Collections;
+using ClearCanvas.Server.ShredHost;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
@@ -220,11 +218,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             {
                 if (_instance == null)
                 {
-                    _instance = ShredConfigManager.GetConfigSection(DicomServerSettings.SettingName) as DicomServerSettings;
+                    _instance = ShredConfigManager.GetConfigSection(SettingName) as DicomServerSettings;
                     if (_instance == null)
                     {
                         _instance = new DicomServerSettings();
-                        ShredConfigManager.UpdateConfigSection(DicomServerSettings.SettingName, _instance);
+                        ShredConfigManager.UpdateConfigSection(SettingName, _instance);
                     }
                 }
 

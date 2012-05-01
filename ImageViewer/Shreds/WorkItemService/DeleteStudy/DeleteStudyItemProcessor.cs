@@ -15,7 +15,10 @@ using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
 {
-    public class DeleteStudyItemProcessor : BaseItemProcessor<DeleteStudyRequest, DeleteProgress>
+    /// <summary>
+    /// Class for processing requests to delete studies.
+    /// </summary>
+    internal class DeleteStudyItemProcessor : BaseItemProcessor<DeleteStudyRequest, DeleteProgress>
     {
         public override bool Initialize(WorkItemStatusProxy proxy)
         {

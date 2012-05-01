@@ -1,6 +1,16 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2012, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
@@ -40,9 +50,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         private bool _subscribedToService;
         
         private event EventHandler _isConnectedChanged;
-
-        private IList<WorkItemTypeEnum> _workItemTypeFilters;
-        private IList<long> _workItemIdFilters;
         private event EventHandler<WorkItemsChangedEventArgs> _workItemsChanged;
         private event EventHandler _studiesCleared;
 

@@ -15,7 +15,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 {
      
-   [ExtensionOf(typeof(WorkItemFactoryExtensionPoint))]
+   [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class DicomSendFactory : IWorkItemProcessorFactory
     {
         public WorkItemTypeEnum GetWorkQueueType()

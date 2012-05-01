@@ -113,7 +113,7 @@
     <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveItemProcessor.cs" />
     <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveFactory.cs" />
     <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />
-    <Compile Include="WorkItemService\WorkItemFactoryExtensionPoint.cs" />
+    <Compile Include="WorkItemService\WorkItemProcessorFactoryExtensionPoint.cs" />
     <Compile Include="WorkItemService\WorkItemProcessor.cs" />
     <Compile Include="WorkItemService\WorkItemProcessorExtension.cs" />
     <Compile Include="WorkItemService\WorkItemService.cs" />

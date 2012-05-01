@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
     /// Plugin for WorkItem processors implementing <see cref="IWorkItemProcessorFactory"/>.
     /// </summary>
     [ExtensionPoint]
-    public class WorkItemFactoryExtensionPoint : ExtensionPoint<IWorkItemProcessorFactory>
+    public class WorkItemProcessorFactoryExtensionPoint : ExtensionPoint<IWorkItemProcessorFactory>
     {
     }
 }

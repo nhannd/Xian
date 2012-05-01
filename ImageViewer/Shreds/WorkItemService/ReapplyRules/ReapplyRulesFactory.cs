@@ -14,7 +14,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
 {
-    [ExtensionOf(typeof(WorkItemFactoryExtensionPoint))]
+    [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class ReapplyRulesFactory : IWorkItemProcessorFactory
     {
         public WorkItemTypeEnum GetWorkQueueType()

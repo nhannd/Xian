@@ -14,7 +14,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteSeries
 {
-    [ExtensionOf(typeof(WorkItemFactoryExtensionPoint))]
+    [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class SeriesDeleteFactory : IWorkItemProcessorFactory
     {
         public WorkItemTypeEnum GetWorkQueueType()

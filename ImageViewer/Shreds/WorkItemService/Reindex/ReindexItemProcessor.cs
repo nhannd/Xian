@@ -13,11 +13,10 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
-using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 {
-    public class ReindexItemProcessor : BaseItemProcessor<ReindexRequest, ReindexProgress>
+    internal class ReindexItemProcessor : BaseItemProcessor<ReindexRequest, ReindexProgress>
     {
         public override bool Initialize(WorkItemStatusProxy proxy)
         {

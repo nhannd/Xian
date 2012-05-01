@@ -17,6 +17,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core
 {
+    /// <summary>
+    /// Utility class for deleting a study.
+    /// </summary>
     public class DeleteStudyUtility
     {
         private StudyLocation _location;

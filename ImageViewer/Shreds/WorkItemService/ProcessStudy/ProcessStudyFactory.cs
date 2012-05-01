@@ -14,7 +14,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 {
-    [ExtensionOf(typeof(WorkItemFactoryExtensionPoint))]
+    [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class StudyProcessFactory : IWorkItemProcessorFactory
     {
         public WorkItemTypeEnum GetWorkQueueType()

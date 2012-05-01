@@ -15,8 +15,10 @@ using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteSeries
 {
-
-    public class SeriesDeleteProcessor : BaseItemProcessor<DeleteSeriesRequest, DeleteProgress>
+    /// <summary>
+    /// Class for processing requests to delete individual series within a study.
+    /// </summary>
+    internal class SeriesDeleteProcessor : BaseItemProcessor<DeleteSeriesRequest, DeleteProgress>
     {
         /// <summary>
         /// Process the Series delete request.

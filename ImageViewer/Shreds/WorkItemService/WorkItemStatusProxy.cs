@@ -241,6 +241,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         public void UpdateProgress()
         {
             // We were originally committing to the database here, but decided to only commit when done processing the WorkItem.
+            // This could lead to some misleading progress if a Refresh is done.
              Publish();
         }
 

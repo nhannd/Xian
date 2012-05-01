@@ -9,10 +9,8 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Net;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;

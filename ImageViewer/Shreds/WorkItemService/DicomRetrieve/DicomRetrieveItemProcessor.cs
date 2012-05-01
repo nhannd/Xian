@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
     /// <summary>
     ///  Class for procesing DICOM Retrieves.
     /// </summary>
-    public class DicomRetrieveItemProcessor : BaseItemProcessor<DicomRetrieveRequest, DicomRetrieveProgress>
+    internal class DicomRetrieveItemProcessor : BaseItemProcessor<DicomRetrieveRequest, DicomRetrieveProgress>
     {
         #region Private Members
 

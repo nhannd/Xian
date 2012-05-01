@@ -21,6 +21,9 @@ using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 {
+    /// <summary>
+    /// Class for processing 
+    /// </summary>
     internal class ImageViewerMoveScu : StudyRootMoveScu
     {
         #region Private Fields
@@ -166,5 +169,4 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 
         #endregion
     }
-
 }

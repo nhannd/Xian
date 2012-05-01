@@ -14,7 +14,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 {
-    [ExtensionOf(typeof(WorkItemFactoryExtensionPoint))]
+    [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class ImportFactory : IWorkItemProcessorFactory
     {
         public WorkItemTypeEnum GetWorkQueueType()

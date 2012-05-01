@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
     /// <summary>
     ///  Class for processing DICOM Sends.
     /// </summary>
-    public class DicomSendItemProcessor : BaseItemProcessor<DicomSendRequest, DicomSendProgress>
+    internal class DicomSendItemProcessor : BaseItemProcessor<DicomSendRequest, DicomSendProgress>
     {
         #region Private Members
 

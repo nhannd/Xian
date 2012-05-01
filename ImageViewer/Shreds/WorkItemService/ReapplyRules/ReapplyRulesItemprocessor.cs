@@ -14,9 +14,8 @@ using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
 {
-    public class ReapplyRulesItemProcessor : BaseItemProcessor<ReapplyRulesRequest, ReapplyRulesProgress>
+    internal class ReapplyRulesItemProcessor : BaseItemProcessor<ReapplyRulesRequest, ReapplyRulesProgress>
     {
-
         public override void Process()
         {
             if (CancelPending)

@@ -21,6 +21,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core
 {
+    /// <summary>
+    /// Utility class for deleting a series.
+    /// </summary>
     public class DeleteSeriesUtility
     {
         private StudyLocation _location;

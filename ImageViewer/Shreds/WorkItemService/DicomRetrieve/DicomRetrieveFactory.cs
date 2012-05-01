@@ -14,7 +14,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 {
-    [ExtensionOf(typeof(WorkItemFactoryExtensionPoint))]
+    [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class DicomRetrieveFactory : IWorkItemProcessorFactory
     {
         public WorkItemTypeEnum GetWorkQueueType()

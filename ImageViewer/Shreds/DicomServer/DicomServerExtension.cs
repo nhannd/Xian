@@ -65,7 +65,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             {
                 Platform.Log(LogLevel.Error, e);
                 Console.WriteLine(String.Format(SR.FormatServiceFailedToStart, SR.DicomServer));
-                return;
             }
         }
 

@@ -20,6 +20,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Dicom.Core
 {
+    /// <summary>
+    /// Reapply Rules Utility class.
+    /// </summary>
     public class ReapplyRulesUtility
     {
         #region Private members

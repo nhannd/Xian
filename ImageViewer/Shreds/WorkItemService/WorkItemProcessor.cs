@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			                      ThreadPoolName = name + " Pool"
 			                  };
 
-			var ep = new WorkItemFactoryExtensionPoint();
+			var ep = new WorkItemProcessorFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();
 
             if (factories == null || factories.Length == 0)
