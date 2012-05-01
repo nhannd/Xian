@@ -419,7 +419,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DicomRetrieveStudyRequest()
         {
             Type = WorkItemTypeEnum.DicomRetrieve;
-            Priority = WorkItemPriorityEnum.Stat;
+            Priority = WorkItemPriorityEnum.Normal;
             ActivityType = ActivityTypeEnum.DicomRetrieve;
         }
 
@@ -440,7 +440,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DicomRetrieveSeriesRequest()
         {
             Type = WorkItemTypeEnum.DicomRetrieve;
-            Priority = WorkItemPriorityEnum.Stat;
+            Priority = WorkItemPriorityEnum.Normal;
             ActivityType = ActivityTypeEnum.DicomRetrieve;
         }
 

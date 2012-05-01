@@ -112,7 +112,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         public void Postpone()
         {
-            DateTime newScheduledTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+            DateTime now = Platform.Time;
+            DateTime newScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
@@ -120,14 +121,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item = workItemBroker.GetWorkItem(Item.Oid);
                 Item.Progress = Progress;
                 Item.ScheduledTime = newScheduledTime;
-                if (Item.ScheduledTime > Item.ExpirationTime)
+                if (Item.ScheduledTime > Item.ExpirationTime && Item.ExpirationTime > now)
                     Item.ScheduledTime = Item.ExpirationTime;
                 Item.Status = WorkItemStatusEnum.Pending;
                 context.Commit();
             }
 
             Publish();
-            Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
+            Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
         }
 
         /// <summary>
@@ -185,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
 
             Publish();
-            Platform.Log(LogLevel, "Idling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
+            Platform.Log(LogLevel, "Idling {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
         }
 
         /// <summary>

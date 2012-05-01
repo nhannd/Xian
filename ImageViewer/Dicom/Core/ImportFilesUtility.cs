@@ -132,6 +132,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             ImportType = WorkItemTypeEnum.ProcessStudy;
             SourceAE = sourceAE;
             StorageConfiguration = configuration;
+            ExpirationDelaySeconds = 45;
         }
 
         #endregion
@@ -162,6 +163,11 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
         /// Storage configuration.
         /// </summary>
         public StorageConfiguration  StorageConfiguration { get; private set; }
+
+        /// <summary>
+        /// Delay to expire inserted WorkItems
+        /// </summary>
+        public int ExpirationDelaySeconds { get; set; }
     }
 
     /// <summary>
@@ -298,6 +304,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid)
                             : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid);                        
                     }
+                    command.ExpirationDelaySeconds = _context.ExpirationDelaySeconds;
                     commandProcessor.AddCommand(command);
 
                 	if (commandProcessor.Execute())
@@ -313,6 +320,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 	}
                 	else
                 	{
+                        Platform.Log(LogLevel.Warn, "Failure Importing file: {0}", file.Filename);
                 		string failureMessage = String.Format("Failure processing message: {0}. Sending failure status.",
                 		                                      commandProcessor.FailureReason);
                 		result.SetError(DicomStatuses.ProcessingFailure, failureMessage);

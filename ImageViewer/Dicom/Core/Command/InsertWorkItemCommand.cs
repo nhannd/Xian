@@ -31,6 +31,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         private readonly WorkItemRequest _request;
         private readonly string _studyInstanceUid;
 
+        public int ExpirationDelaySeconds { get; set; }
+
         public WorkItemUid WorkItemUid { get; set; }
 
         public WorkItem WorkItem { get; set; }
@@ -39,6 +41,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         {
             _request = request;
             _studyInstanceUid = studyInstanceUid;
+            ExpirationDelaySeconds = 60;
 
             WorkItemUid = new WorkItemUid
             {
@@ -55,6 +58,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         {
             _request = item.Request;
             _studyInstanceUid = studyInstanceUid;
+            ExpirationDelaySeconds = 60;
 
             WorkItem = item;
 
@@ -76,6 +80,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         {
             _request = request;
             _studyInstanceUid = studyInstanceUid;
+            ExpirationDelaySeconds = 60;
 
             WorkItemUid = new WorkItemUid
             {
@@ -93,6 +98,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         {
             _request = item.Request;
             _studyInstanceUid = studyInstanceUid;
+            ExpirationDelaySeconds = 60;
 
             WorkItem = item;
 
@@ -119,7 +125,10 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
             {
                 // Already have a committed WorkItem, just set the Oid
                 WorkItemUid.WorkItemOid = WorkItem.Oid;
-                //WorkItem.ExpirationTime = Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.)
+                
+                WorkItem = workItemBroker.GetWorkItem(WorkItem.Oid);
+                WorkItem.ExpirationTime = now.AddSeconds(ExpirationDelaySeconds);
+
                 var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
                 workItemUidBroker.AddWorkItemUid(WorkItemUid);
             }
@@ -136,7 +145,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                                        Priority = _request.Priority,
                                        Type = _request.Type,
                                        DeleteTime = now.AddHours(2),
-                                       ExpirationTime = now.AddMinutes(2),
+                                       ExpirationTime = now.AddSeconds(ExpirationDelaySeconds),
                                        StudyInstanceUid = _studyInstanceUid,
                                        Status = WorkItemStatusEnum.Pending
                                    };
@@ -149,6 +158,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                 }
                 else
                 {
+                    WorkItem.ExpirationTime = now.AddSeconds(ExpirationDelaySeconds);
                     WorkItemUid.WorkItemOid = WorkItem.Oid;
                     var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
                     workItemUidBroker.AddWorkItemUid(WorkItemUid);

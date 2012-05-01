@@ -17,6 +17,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Dicom.Core;
+using ClearCanvas.ImageViewer.Shreds.WorkItemService;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
@@ -138,7 +139,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             if (_importContext == null)
             {
-                _importContext = new DicomReceiveImportContext(association.CallingAE, Context.StorageConfiguration);
+                _importContext = new DicomReceiveImportContext(association.CallingAE, Context.StorageConfiguration)
+                                     {
+                                         ExpirationDelaySeconds =
+                                             WorkItemServiceSettings.Instance.ExpireDelaySeconds
+                                     };
 
                 // Publish new WorkItems as they're added to the context
                 _importContext.StudyWorkItems.ItemAdded +=
