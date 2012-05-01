@@ -94,9 +94,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
                 else
                 {
-                    if (Item.ExpirationTime < now)
-                        Item.ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
                     Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                    if (Item.ExpirationTime < Item.ScheduledTime)
+                        Item.ExpirationTime = Item.ScheduledTime;
                     Item.Status = WorkItemStatusEnum.Pending;
                 }
 
@@ -120,8 +120,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 Item = workItemBroker.GetWorkItem(Item.Oid);
                 Item.Progress = Progress;
                 Item.ScheduledTime = newScheduledTime;
-                if (Item.ExpirationTime > Item.ScheduledTime)
-                    Item.ExpirationTime = Item.ScheduledTime;
+                if (Item.ScheduledTime > Item.ExpirationTime)
+                    Item.ScheduledTime = Item.ExpirationTime;
                 Item.Status = WorkItemStatusEnum.Pending;
                 context.Commit();
             }
@@ -177,8 +177,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 Item.Progress = Progress;
                 Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
-                if (Item.ExpirationTime > Item.ScheduledTime)
-                    Item.ExpirationTime = Item.ScheduledTime;
+                if (Item.ScheduledTime > Item.ExpirationTime)
+                    Item.ScheduledTime = Item.ExpirationTime;
                 Item.Status = WorkItemStatusEnum.Idle;
 
                 context.Commit();

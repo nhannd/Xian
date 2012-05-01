@@ -23,7 +23,7 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 {
     /// <summary>
-    ///  Class for procesing DICOM Sends.
+    ///  Class for processing DICOM Sends.
     /// </summary>
     public class DicomSendItemProcessor : BaseItemProcessor<DicomSendRequest, DicomSendProgress>
     {

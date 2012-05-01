@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     {
                         failed = true;
                     }
-                    if (!sop.Complete)
+                    else if (!sop.Complete)
                         complete = false;
                 }
 
