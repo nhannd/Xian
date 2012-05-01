@@ -21,8 +21,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public abstract class SopDataSource : ISopDataSource
 	{
-		private string _studyLoaderName;
-
 	    /// <summary>
 		/// Constructs a new <see cref="SopDataSource"/>.
 		/// </summary>
@@ -99,7 +97,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public virtual bool IsStored
 		{
-			get { return !String.IsNullOrEmpty(_studyLoaderName); }
+            get { return Server != null; }
 		}
 
 	    public IDicomServiceNode Server { get; protected internal set; }
