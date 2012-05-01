@@ -217,6 +217,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Request != null ? _data.Request.ActivityDescription : null; }
 			}
 
+			public DateTime ScheduledTime
+			{
+				get { return _data.ScheduledTime; }
+			}
+
 			public string ProgressStatus
 			{
 				get { return _data.Progress != null ? _data.Progress.Status : null; }
@@ -227,9 +232,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Progress != null ? _data.Progress.StatusDetails : null; }
 			}
 
-			public DateTime ScheduledTime
+			public decimal ProgressValue
 			{
-				get { return _data.ScheduledTime; }
+				get { return _data.Progress != null ? _data.Progress.PercentComplete : 0; }
 			}
 
 			public IconSet ProgressIcon
@@ -660,7 +665,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus));
             _workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .6f });
             _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .3f });
-			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon) { WidthFactor = .5f});
+			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon)
+			                     	{WidthFactor = .5f, Comparison = (x, y) => x.ProgressValue.CompareTo(y.ProgressValue)});
 
 			this.ActivityMonitor = WorkItemActivityMonitor.Create(true);
 			_connectionState = _connectionState.Update();
