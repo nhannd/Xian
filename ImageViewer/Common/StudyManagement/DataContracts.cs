@@ -383,7 +383,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         private bool InitializeDiskSpace()
         {
-            if (_fileStoreDiskspace != null)
+            if (_fileStoreDiskspaceInitialized)
                 return true;
 
             //Try to initialize it only once after the file store directory changes.
