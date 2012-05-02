@@ -78,7 +78,10 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         {
             List<ServerDirectoryEntry> entries = null;
             Platform.GetService<IServerDirectory>(s => entries = s.GetServers(new GetServersRequest()).ServerEntries);
-            return entries.Where(e => e.Data.IsPriorsServer).Select(e => e.ToServiceNode()).ToList();
+            var priorsServers = entries.Where(e => e.Data.IsPriorsServer).Select(e => e.ToServiceNode()).ToList();
+            if (includeLocal)
+                priorsServers.Add(GetLocalServer());
+            return priorsServers;
         }
 
         public abstract GetServersResult GetServers(GetServersRequest request);

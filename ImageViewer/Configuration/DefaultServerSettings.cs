@@ -11,13 +11,14 @@
 
 using System.Configuration;
 using ClearCanvas.Desktop;
-using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+    //TODO (Marmot): Migration, custom user upgrade step?
+
 	[SettingsGroupDescription("Stores a list of default servers for the application.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class DefaultServerSettings : ApplicationSettingsBase, IMigrateSettings
+	internal sealed partial class DefaultServerSettings : ApplicationSettingsBase
 	{
         private static DefaultServerSettings _default = ((DefaultServerSettings)Synchronized(new DefaultServerSettings()));
         
@@ -48,14 +49,5 @@ namespace ClearCanvas.ImageViewer.Configuration
                 this["DefaultServerPaths"] = value;
             }
         }
-
-        #region IMigrateSettings Members
-
-        public void MigrateSettingsProperty(SettingsPropertyMigrationValues migrationValues)
-        {
-            //TODO (Marmot):
-        }
-
-        #endregion
     }
 }

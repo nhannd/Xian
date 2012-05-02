@@ -153,13 +153,13 @@
     <value>10, 23</value>
   </data>
   <data name="_publishToDefaultServers.Size" type="System.Drawing.Size, System.Drawing">
-    <value>275, 17</value>
+    <value>267, 17</value>
   </data>
   <data name="_publishToDefaultServers.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="_publishToDefaultServers.Text" xml:space="preserve">
-    <value>Publish to Default Servers that have the parent study</value>
+    <value>Publish to Priors Servers that have the parent study</value>
   </data>
   <data name="&gt;&gt;_publishToDefaultServers.Name" xml:space="preserve">
     <value>_publishToDefaultServers</value>
